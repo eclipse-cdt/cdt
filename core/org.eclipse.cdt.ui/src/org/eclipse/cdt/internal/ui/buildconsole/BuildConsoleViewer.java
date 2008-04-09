@@ -127,6 +127,7 @@ public class BuildConsoleViewer extends TextViewer implements LineStyleListener 
 	 * 
 	 * @see org.eclipse.jface.text.ITextViewer#setDocument(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument doc) {
 		IDocument oldDoc = getDocument();
 		IDocument document = doc;

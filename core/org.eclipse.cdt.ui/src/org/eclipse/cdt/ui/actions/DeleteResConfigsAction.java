@@ -146,6 +146,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				CoreModel.getDefault().setProjectDescription(res.getProject(), prjd);
 			} catch (CoreException e) {}
 		}
+		@Override
 		public String toString() {
 			return "[" + cfgd.getName() + "] for " + res.getName();   //$NON-NLS-1$ //$NON-NLS-2$
 		}

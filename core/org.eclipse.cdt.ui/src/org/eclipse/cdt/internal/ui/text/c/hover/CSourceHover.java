@@ -801,6 +801,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	private String searchInIndex(final ITranslationUnit tUnit, IRegion textRegion) {
 		final ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion);
 		Job job= new Job(CHoverMessages.CSourceHover_jobTitle) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
 			}
@@ -855,6 +856,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 * @since 3.0
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {

@@ -57,6 +57,7 @@ public class CPElementGroup {
 		return kind;
 	}
 
+	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 == this) {
 			return true;
@@ -68,6 +69,7 @@ public class CPElementGroup {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		int hashCode = parent != null ? parent.hashCode() : 0;
 		hashCode += resource != null ? resource.hashCode() : 0;

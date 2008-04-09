@@ -51,6 +51,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 		makeActions();
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection)getContext().getSelection();
 		boolean anyResourceSelected = !selection.isEmpty()
@@ -65,6 +66,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		updateActionBars();
 
@@ -81,6 +83,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
 	}
 
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 

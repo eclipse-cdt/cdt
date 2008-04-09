@@ -59,6 +59,7 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 	/*
 	 * @see IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 //		PreferenceConstants.getPreferenceStore().removePropertyChangeListener(this);
 		super.dispose();
@@ -67,6 +68,7 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 	/*
 	 * @see CUILabelProvider#evaluateImageFlags()
 	 */
+	@Override
 	protected int evaluateImageFlags(Object element) {
 		return getImageFlags() & fImageFlagMask;
 	}
@@ -74,6 +76,7 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 	/*
 	 * @see CUILabelProvider#evaluateTextFlags()
 	 */
+	@Override
 	protected int evaluateTextFlags(Object element) {
 		return getTextFlags() & fTextFlagMask;
 	}

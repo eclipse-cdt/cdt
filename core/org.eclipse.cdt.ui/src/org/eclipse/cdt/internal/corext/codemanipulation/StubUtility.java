@@ -468,9 +468,8 @@ public class StubUtility {
 			int idx= markers.indexOf(',');
 			if (idx == -1) {
 				return markers;
-			} else {
-				return markers.substring(0, idx);
 			}
+			return markers.substring(0, idx);
 		}
 		return CCorePreferenceConstants.DEFAULT_TASK_TAG;
 	}

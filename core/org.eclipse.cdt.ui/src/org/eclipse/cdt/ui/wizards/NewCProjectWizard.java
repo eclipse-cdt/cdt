@@ -98,6 +98,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */		
+	@Override
 	public void addPages() {
 		fMainPage= new NewCProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
 		fMainPage.setTitle(wz_title);
@@ -160,6 +161,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */		
+	@Override
 	public boolean performFinish() {
 		if (!invokeRunnable(getRunnable())) {
 			return false;
@@ -198,6 +200,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	/*
 	 * Reimplemented method from superclass
 	 */
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(CPluginImages.DESC_WIZABAN_NEW_PROJ);
 	}
@@ -205,6 +208,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	/* (non-Javadoc)
 	 * Method declared on IWorkbenchWizard.
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
 		setWindowTitle(CUIPlugin.getResourceString(WINDOW_TITLE));

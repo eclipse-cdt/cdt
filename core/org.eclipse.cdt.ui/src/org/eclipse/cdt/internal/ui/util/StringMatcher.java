@@ -101,6 +101,7 @@ public class StringMatcher {
 	 * specifying if case should be ignored
 	 * @deprecated Use StringMatcher(pattern, ignoreCase, ignoreWildCards).
 	 */
+	@Deprecated
 	public StringMatcher(String aPattern, boolean ignoreCase) {
 		this(aPattern, ignoreCase, false);
 	}

@@ -25,6 +25,7 @@ public class DefaultAction extends Action {
 		this.shell = shell;
 	}
 
+	@Override
 	public void run() {
 		MessageBox errorMsg = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CViewMessages.getString("DefaultAction.WIP")); //$NON-NLS-1$

@@ -140,6 +140,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 
 	private void reopenEditors(final IWorkbenchWindow window, final IEditorPart[] editorParts) throws CoreException {
 		WorkbenchJob job= new WorkbenchJob(Messages.EditorReopener_ReopenJobStart) {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IEditorPart oldActive= window.getActivePage().getActiveEditor();
 				IEditorPart newActive= null;

@@ -101,6 +101,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	private final static Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 30 };
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, true));
@@ -161,10 +162,12 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
   	    tv.setLabelProvider(new RichLabelProvider());
   	    
 	    table.addSelectionListener(new SelectionAdapter() {
-	    	public void widgetSelected(SelectionEvent e) {
+	    	@Override
+			public void widgetSelected(SelectionEvent e) {
 	    		updateButtons();
 	    	}
-	    	public void widgetDefaultSelected(SelectionEvent e) {
+	    	@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 	    		if (buttonIsEnabled(1) && table.getSelectionIndex() != -1)
     				buttonPressed(1);
 	    	}
@@ -184,6 +187,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
 	    lb1.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				CDTPrefUtil.spinDMode();
 				update();
@@ -191,7 +195,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 	    showBIButton = setupCheck(usercomp, UIMessages.getString("AbstractLangsListTab.0"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 	    showBIButton.addSelectionListener(new SelectionAdapter() {
-	    	public void widgetSelected(SelectionEvent e) {
+	    	@Override
+			public void widgetSelected(SelectionEvent e) {
 	    		update(); 
 	    	}
 	    });
@@ -200,6 +205,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
 	    lb2.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				CDTPrefUtil.spinWMode();
 				updateLbs(null, lb2);
@@ -214,7 +220,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
      * Updates state for all buttons
      * Called when table selection changes.
      */
-    protected void updateButtons() {
+    @Override
+	protected void updateButtons() {
     	int index = table.getSelectionIndex();
     	int[] ids = table.getSelectionIndices(); 
     	boolean canAdd = langTree.getItemCount() > 0;
@@ -254,6 +261,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		langTree.setHeaderVisible(true);
 		
 		langTree.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] items = langTree.getSelection();
 				if (items.length > 0) {
@@ -277,7 +285,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		langCol.setResizable(false);
 		langTree.getAccessible().addAccessibleListener(
 			   new AccessibleAdapter() {                       
-	               public void getName(AccessibleEvent e) {
+	               @Override
+				public void getName(AccessibleEvent e) {
 	                       e.result = UIMessages.getString("AbstractLangsListTab.1"); //$NON-NLS-1$
 	               }
 			   }
@@ -339,6 +348,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	 * Called when configuration changed
 	 * Refreshes languages list and calls table refresh.
 	 */
+	@Override
 	public void updateData(ICResourceDescription cfg) {
 		if (cfg == null || !canBeVisible()) return;
 		updateExport();
@@ -485,6 +495,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	/**
 	 * Unified buttons handler
 	 */
+	@Override
 	public void buttonPressed(int i) {
 		ICLanguageSettingEntry old;
 		int n = table.getSelectionIndex();
@@ -588,6 +599,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		}
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (page.isMultiCfg()) {
 			ICLanguageSetting [] sr = ls;
@@ -616,6 +628,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		}	
 	}
 	
+	@Override
 	protected void performDefaults() {
 		TreeItem[] tis = langTree.getItems();
 		for (int i=0; i<tis.length; i++) {
@@ -630,6 +643,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	// Extended label provider
 	private class RichLabelProvider extends LabelProvider implements IFontProvider, ITableLabelProvider /*, IColorProvider*/{
 		public RichLabelProvider(){}
+		@Override
 		public Image getImage(Object element) {
 			return getColumnImage(element, 0);
 		}
@@ -644,6 +658,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			else 
 				return IMG_FS;
 		}
+		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
@@ -717,6 +732,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	}
 
 	
+	@Override
 	public boolean canBeVisible() {
 		if (getResDesc() == null) return true;
 		ICLanguageSetting [] ls = getLangSetting(getResDesc());

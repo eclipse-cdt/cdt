@@ -32,6 +32,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
+	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
 		fSite = anActionSite;
 		fEditGroup = new CNavigatorEditActionGroup(fSite.getViewSite().getShell());
@@ -40,6 +41,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() { 
 		fEditGroup.dispose();
 	}
@@ -47,6 +49,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) { 
 		fEditGroup.fillActionBars(actionBars);
 	}
@@ -54,6 +57,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) { 
 		fEditGroup.fillContextMenu(menu);
 	}
@@ -61,6 +65,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
 	 */
+	@Override
 	public void setContext(ActionContext context) { 
 		if (context != null) {
 			// convert non-IResource to IResources on the fly
@@ -74,6 +79,7 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
 	 */
+	@Override
 	public void updateActionBars() { 
 		fEditGroup.updateActionBars();
 	}

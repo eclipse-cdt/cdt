@@ -132,6 +132,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	/* (non-Javadoc)
 	 * @see ILabelProvider#getImage
 	 */
+	@Override
 	public Image getImage(Object element) {
 		Image result= fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
 		if (result == null && (element instanceof IStorage)) {
@@ -155,6 +156,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	/* (non-Javadoc)
 	 * @see ILabelProvider#getText
 	 */
+	@Override
 	public String getText(Object element) {
 		String result= CElementLabels.getTextLabel(element, evaluateTextFlags(element));
 		if (result.length() == 0 && (element instanceof IStorage)) {
@@ -167,6 +169,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	/* (non-Javadoc)
 	 * @see IBaseLabelProvider#dispose
 	 */
+	@Override
 	public void dispose() {
 		if (fLabelDecorators != null) {
 			for (int i= 0; i < fLabelDecorators.size(); i++) {
@@ -182,6 +185,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	/* (non-Javadoc)
 	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fLabelDecorators != null) {
 			for (int i= 0; i < fLabelDecorators.size(); i++) {
@@ -195,6 +199,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	/* (non-Javadoc)
 	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return true;	
 	}
@@ -202,6 +207,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	/* (non-Javadoc)
 	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		if (fLabelDecorators != null) {
 			for (int i= 0; i < fLabelDecorators.size(); i++) {

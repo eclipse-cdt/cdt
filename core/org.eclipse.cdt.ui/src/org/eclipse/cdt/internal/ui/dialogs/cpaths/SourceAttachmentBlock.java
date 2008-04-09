@@ -90,6 +90,7 @@ public class SourceAttachmentBlock {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public SourceAttachmentBlock(IWorkspaceRoot root, IStatusChangeListener context, ILibraryEntry oldEntry) {
 		this(context, oldEntry, null);
 	}

@@ -42,6 +42,7 @@ public class GotoActionGroup extends CViewActionGroup {
 		super(cview);
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
                 IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
@@ -60,6 +61,7 @@ public class GotoActionGroup extends CViewActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.GO_INTO, goIntoAction);
 		actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(), backAction);
@@ -72,6 +74,7 @@ public class GotoActionGroup extends CViewActionGroup {
 		toolBar.add(upAction);
 	}
 
+	@Override
 	protected void makeActions() {
 		FrameList frameList = getCView().getFrameList();
 		goIntoAction = new GoIntoAction(frameList);
@@ -82,6 +85,7 @@ public class GotoActionGroup extends CViewActionGroup {
 
 	/* (non-Javadoc)
 	 */
+	@Override
 	public void updateActionBars() {
 		ActionContext context = getContext();
 		boolean enable = false;

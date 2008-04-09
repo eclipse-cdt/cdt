@@ -90,6 +90,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		}
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
@@ -176,6 +177,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		//		WorkbenchHelp.setHelp(newShell,

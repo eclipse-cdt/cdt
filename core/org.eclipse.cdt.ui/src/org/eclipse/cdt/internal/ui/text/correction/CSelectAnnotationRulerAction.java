@@ -55,7 +55,8 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
         fStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         // is there an equivalent preference for the C Editor?
         // if (fStore.getBoolean(PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER))
         //     return;
@@ -66,7 +67,8 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
     /*
      * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
      */
-    public void runWithEvent(Event event) {
+    @Override
+	public void runWithEvent(Event event) {
         if (fHasCorrection) {
             ITextOperationTarget operation= (ITextOperationTarget) fTextEditor.getAdapter(ITextOperationTarget.class);
             final int opCode= ISourceViewer.QUICK_ASSIST;
@@ -84,7 +86,8 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
      * (non-Javadoc)
      * @see org.eclipse.ui.texteditor.SelectMarkerRulerAction#update()
      */
-    public void update() {
+    @Override
+	public void update() {
         findCAnnotation();
         setEnabled(true); 
 

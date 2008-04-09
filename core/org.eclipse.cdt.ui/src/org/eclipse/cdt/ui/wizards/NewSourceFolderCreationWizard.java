@@ -32,6 +32,7 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 	/*
 	 * @see Wizard#addPages
 	 */	
+	@Override
 	public void addPages() {
 		super.addPages();
 		fPage= new NewSourceFolderWizardPage();
@@ -42,6 +43,7 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.wizards.NewElementWizard#finishPage(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
 		fPage.createSourceRoot(monitor); // use the full progress monitor
 	}
@@ -49,6 +51,7 @@ public class NewSourceFolderCreationWizard extends NewElementWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		boolean res= super.performFinish();
 		if (res) {

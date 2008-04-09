@@ -136,6 +136,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#hasHeader()
 	 */
+	@Override
 	protected boolean hasHeader() {
 		return true;
 	}
@@ -143,6 +144,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#createCompareViewerControl(org.eclipse.swt.widgets.Composite, int, org.eclipse.compare.CompareConfiguration)
 	 */
+	@Override
 	protected CompareViewerControl createCompareViewerControl(Composite parent, int style, CompareConfiguration compareConfig) {
 		Splitter splitter= new Splitter(parent, SWT.VERTICAL);
 		splitter.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -155,6 +157,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#createContentViewer(org.eclipse.swt.widgets.Composite, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration)
 	 */
+	@Override
 	protected Viewer createContentViewer(Composite parent, ICompareInput input, CompareConfiguration cc) {
 		fMacroCompareViewer= new CMacroCompareViewer(parent, SWT.NULL, cc);
 		if (fInput != null) {
@@ -216,19 +219,22 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 
 	protected void registerCommandHandlers() {
         IHandler backwardHandler= new AbstractHandler() {
-            public Object execute(ExecutionEvent event) throws ExecutionException {
+            @Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
                 backward();
                 return null;
             }
         };
         IHandler forwardHandler= new AbstractHandler() {
-            public Object execute(ExecutionEvent event) throws ExecutionException {
+            @Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
                 forward();
                 return null;
             }
         };
         IHandler gotoDefinitionHandler= new AbstractHandler() {
-            public Object execute(ExecutionEvent event) throws ExecutionException {
+            @Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
                 gotoMacroDefinition();
                 return null;
             }
@@ -252,6 +258,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#fillViewMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillViewMenu(IMenuManager viewMenu) {
 		super.fillViewMenu(viewMenu);
 		final CommandContributionItemParameter params= new CommandContributionItemParameter(
@@ -319,6 +326,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#close()
 	 */
+	@Override
 	public boolean close() {
 		unregisterCommandHandlers();
 		return super.close();
@@ -327,6 +335,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#getId()
 	 */
+	@Override
 	protected String getId() {
 		return "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration"; //$NON-NLS-1$
 	}
@@ -334,6 +343,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#setInput(java.lang.Object)
 	 */
+	@Override
 	public void setInput(Object input) {
 		if (input instanceof CMacroExpansionInput) {
 			setMacroExpansionInput((CMacroExpansionInput) input);

@@ -53,6 +53,7 @@ public class RankedWordProposal implements Comparable {
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public final boolean equals(Object object) {
 		if (object instanceof RankedWordProposal)
 			return object.hashCode() == hashCode();
@@ -81,6 +82,7 @@ public class RankedWordProposal implements Comparable {
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public final int hashCode() {
 		return fText.hashCode();
 	}

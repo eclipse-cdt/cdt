@@ -37,6 +37,8 @@ public class PrefPage_Abstract extends AbstractPrefPage {
 		}
 	}
 
+	@Override
 	protected String getHeader() { return null;	}
+	@Override
 	protected boolean isSingle() { return true; }
 }

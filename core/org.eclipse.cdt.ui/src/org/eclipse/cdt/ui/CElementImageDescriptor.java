@@ -53,6 +53,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/**  
 	 * @deprecated flag never had an effect
 	 */
+	@Deprecated
 	public final static int RUNNABLE= 		0x010;
 	
 	/** Flag to render the warning adornment */
@@ -64,11 +65,13 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/**  
 	 * @deprecated flag never had an effect 
 	 */
+	@Deprecated
 	public final static int OVERRIDES= 		0x080;
 	
 	/**  
 	 * @deprecated flag never had an effect 
 	 */
+	@Deprecated
 	public final static int IMPLEMENTS= 	0x100;		
 
     /** Flag to render the 'relates to' adornment (for trees, an arrow down) */
@@ -167,6 +170,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/* (non-Javadoc)
 	 * Method declared in CompositeImageDescriptor
 	 */
+	@Override
 	protected Point getSize() {
 		return fSize;
 	}
@@ -174,6 +178,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/* (non-Javadoc)
 	 * Method declared on Object.
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (!CElementImageDescriptor.class.equals(object.getClass()))
 			return false;
@@ -185,6 +190,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/* (non-Javadoc)
 	 * Method declared on Object.
 	 */
+	@Override
 	public int hashCode() {
 		return fBaseImage.hashCode() | fFlags | fSize.hashCode();
 	}
@@ -192,6 +198,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/* (non-Javadoc)
 	 * Method declared in CompositeImageDescriptor
 	 */
+	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData bg;
 		if ((bg= fBaseImage.getImageData()) == null)

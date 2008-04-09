@@ -74,6 +74,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	/*
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		Composite groupComposite= new Composite(parent,SWT.NONE);
 		groupComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -87,6 +88,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 		useTemplateButton.setText(NewFileWizardMessages.WizardNewFileFromTemplateCreationPage_useTemplate_label);
 		useTemplateButton.setSelection(fUseTemplate);
 		SelectionListener useTemplateListener= new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fUseTemplate= useTemplateButton.getSelection();
 					fTemplatesCombo.setEnabled(fUseTemplate);
@@ -102,6 +104,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 		configureButton.setText(NewFileWizardMessages.WizardNewFileFromTemplateCreationPage_configure_label);
 
 		SelectionListener changeTemplateListener= new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					editTemplates();
 				}
@@ -133,6 +136,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	/*
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#getInitialContents()
 	 */
+	@Override
 	protected InputStream getInitialContents() {
 		Template template= getSelectedTemplate();
 		if (fUseTemplate && template != null) {
@@ -157,6 +161,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	/*
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void handleEvent(Event event) {
 		updateTemplates();
 		super.handleEvent(event);

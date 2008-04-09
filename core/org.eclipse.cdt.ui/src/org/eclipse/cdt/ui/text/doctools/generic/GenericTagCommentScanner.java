@@ -67,6 +67,7 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 	/*
 	 * @see org.eclipse.jface.text.rules.RuleBasedScanner#nextToken()
 	 */
+	@Override
 	public IToken nextToken() {
 		fTokenStore.ensureTokensInitialised();
 		return super.nextToken();

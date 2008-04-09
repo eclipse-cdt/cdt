@@ -128,6 +128,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	 * @return Image.
 	 */
 
+	@Override
 	public Image getImage() {
 		Image result = super.getImage();
 
@@ -184,6 +185,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	/**
 	 * Overloaded from DialogPage
 	 */
+	@Override
 	public Shell getShell() {
 		IWizardContainer container = getContainer();
 
@@ -253,6 +255,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	/**
 	 * @return String, Page name of this page.
 	 */
+	@Override
 	public String toString() {
 		return name;
 	}

@@ -52,6 +52,7 @@ public class THHistoryAction extends Action {
 	/*
 	 * @see Action#run()
 	 */
+	@Override
 	public void run() {
 		fViewPart.setInput(fElement, null);
 	}

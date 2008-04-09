@@ -73,6 +73,7 @@ public class RadioButtonsArea extends Composite {
 		createControl(parent, labelText);
 	}
 	
+	@Override
 	public void setEnabled(boolean enabled) {
 		for( int i = 0; i < radioButtons.length; i++ ) {
 			radioButtons[i].setEnabled(enabled);
@@ -121,6 +122,7 @@ public class RadioButtonsArea extends Composite {
 
 		radioButtons = new Button[labelsAndValues.length];
 		listener =  new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				value = (String) (event.widget.getData());
 				fireSelectionEvent(event); // Infor any external listener

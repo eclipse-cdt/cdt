@@ -330,6 +330,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 			fLocations= locations;
 		}
 
+		@Override
 		public void safeRun(ContributedProcessorDescriptor desc) throws Exception {
 			IQuickFixProcessor curr= (IQuickFixProcessor) desc.getProcessor(fContext.getTranslationUnit());
 			if (curr != null) {
@@ -354,6 +355,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 			fProposals= proposals;
 		}
 
+		@Override
 		public void safeRun(ContributedProcessorDescriptor desc) throws Exception {
 			IQuickFixProcessor curr= (IQuickFixProcessor) desc.getProcessor(fContext.getTranslationUnit());
 			if (curr != null) {
@@ -380,6 +382,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 			return fHasAssists;
 		}
 
+		@Override
 		public void safeRun(ContributedProcessorDescriptor desc) throws Exception {
 			IQuickAssistProcessor processor= (IQuickAssistProcessor) desc.getProcessor(fContext.getTranslationUnit());
 			if (processor != null && processor.canAssist(fContext)) {
@@ -403,6 +406,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 			return fHasCorrections;
 		}
 
+		@Override
 		public void safeRun(ContributedProcessorDescriptor desc) throws Exception {
 			IQuickFixProcessor processor= (IQuickFixProcessor) desc.getProcessor(fCu);
 			if (processor != null && processor.hasCorrections(fCu, fProblemId)) {

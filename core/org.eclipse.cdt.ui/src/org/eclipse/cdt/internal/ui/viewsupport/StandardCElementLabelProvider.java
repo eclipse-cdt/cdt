@@ -23,6 +23,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @deprecated Use {@link AppearanceAwareLabelProvider} instead.
  */
+@Deprecated
 public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider implements IPropertyChangeListener {
 
 	/**
@@ -50,6 +51,7 @@ public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider 
 	/*
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		//String property= event.getProperty();
 		/* if (property.equals(AppearancePreferencePage.PREF_METHOD_RETURNTYPE)
@@ -64,6 +66,7 @@ public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider 
 	/*
 	 * @see IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.dispose();

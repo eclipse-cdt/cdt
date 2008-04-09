@@ -45,7 +45,8 @@ public class TranslationUnitPreview extends CPreview {
         super(workingValues, parent);
     }
 
-    protected void doFormatPreview() {
+    @Override
+	protected void doFormatPreview() {
         if (fPreviewText == null) {
             fPreviewDocument.set(""); //$NON-NLS-1$
             return;

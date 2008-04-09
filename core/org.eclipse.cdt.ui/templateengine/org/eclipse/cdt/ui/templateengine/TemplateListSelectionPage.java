@@ -195,11 +195,13 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 		return wizard.getStartingPage();
 	}
 	
+	@Override
 	public boolean canFlipToNextPage() {
 		IStructuredSelection ssel = (IStructuredSelection)wizardSelectionViewer.getSelection();
 		return ssel != null && !ssel.isEmpty() && (ssel.getFirstElement() instanceof Template);
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			Template[] templates = parentWizard.getTemplates();

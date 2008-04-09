@@ -84,7 +84,7 @@ public class FileTemplateContextType extends TemplateContextType {
 		public void resolve(TemplateVariable variable, TemplateContext context) {
 			fFormat= null;
 			TemplateVariableType type= variable.getVariableType();
-			List params= type.getParams();
+			List<?> params= type.getParams();
 			if (params.size() == 1) {
 				fFormat= params.get(0).toString();
 			}
@@ -179,7 +179,7 @@ public class FileTemplateContextType extends TemplateContextType {
 
 	@Override
 	protected void validateVariables(TemplateVariable[] variables) throws TemplateException {
-		ArrayList required=  new ArrayList(5);
+		ArrayList<String> required=  new ArrayList<String>(5);
 		for (int i= 0; i < variables.length; i++) {
 			String type= variables[i].getType();
 			if (getResolver(type) == null) {
@@ -188,7 +188,7 @@ public class FileTemplateContextType extends TemplateContextType {
 			required.remove(type);
 		}
 		if (!required.isEmpty()) {
-			String missing= (String) required.get(0);
+			String missing= required.get(0);
 			throw new TemplateException(Messages.format(TemplateMessages.FileTemplateContextType_validate_missingvariable, missing)); 
 		}
 		super.validateVariables(variables);

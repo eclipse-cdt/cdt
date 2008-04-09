@@ -56,6 +56,7 @@ public class DocCommentOwnerComposite extends Composite {
 		return fDocCombo.getSelectedDocCommentOwner();
 	}
 	
+	@Override
 	public void setEnabled(boolean enabled) {
 		desc.setEnabled(enabled);
 		comboLabel.setEnabled(enabled);

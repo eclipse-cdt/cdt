@@ -83,6 +83,7 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 		}
 	}
 	
+	@Override
 	public void run() {
 	    // for now, run the default action
 	    // we might want the last run action at some point

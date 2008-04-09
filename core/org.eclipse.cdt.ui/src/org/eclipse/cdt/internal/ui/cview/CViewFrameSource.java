@@ -17,7 +17,8 @@ import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
 public class CViewFrameSource extends TreeViewerFrameSource {
         private CView cview;
 
-        protected TreeFrame createFrame(Object input) {
+        @Override
+		protected TreeFrame createFrame(Object input) {
                 TreeFrame frame = super.createFrame(input);
                 frame.setToolTipText(cview.getToolTipText(input));
                 return frame;
@@ -25,7 +26,8 @@ public class CViewFrameSource extends TreeViewerFrameSource {
         /**
          * Also updates the title of the packages explorer
          */
-        protected void frameChanged(TreeFrame frame) {
+        @Override
+		protected void frameChanged(TreeFrame frame) {
                 super.frameChanged(frame);
                 cview.updateTitle();
         }

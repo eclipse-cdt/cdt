@@ -76,11 +76,13 @@ public class CreateProfileDialog extends StatusDialog {
 	}
 	
 	
+	@Override
 	public void create() {
 		super.create();
 		setTitle(FormatterMessages.CreateProfileDialog_dialog_title); 
 	}
 	
+	@Override
 	public Control createDialogArea(Composite parent) {
 				
 		final int numColumns= 2;
@@ -178,6 +180,7 @@ public class CreateProfileDialog extends StatusDialog {
 		updateStatus(fOk);
 	}
 	
+	@Override
 	protected void okPressed() {
 		if (!getStatus().isOK()) 
 			return;

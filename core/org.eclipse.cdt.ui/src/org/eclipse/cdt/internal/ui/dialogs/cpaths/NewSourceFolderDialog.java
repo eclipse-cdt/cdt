@@ -85,6 +85,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 		fContainerDialogField.setLabelText(message);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
@@ -175,6 +176,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		//		WorkbenchHelp.setHelp(newShell,

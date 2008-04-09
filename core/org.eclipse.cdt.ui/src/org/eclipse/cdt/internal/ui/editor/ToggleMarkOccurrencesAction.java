@@ -49,6 +49,7 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 	/*
 	 * @see IAction#actionPerformed
 	 */
+	@Override
 	public void run() {
 		fStore.setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, isChecked());
 	}
@@ -56,6 +57,7 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 	/*
 	 * @see TextEditorAction#update
 	 */
+	@Override
 	public void update() {
 		ITextEditor editor= getTextEditor();
 
@@ -70,6 +72,7 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 	/*
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 
 		super.setEditor(editor);

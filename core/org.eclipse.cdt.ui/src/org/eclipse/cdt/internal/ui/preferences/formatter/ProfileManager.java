@@ -134,10 +134,12 @@ public abstract class ProfileManager extends Observable {
 			fProfileKind= profileKind;
 		}
 		
+		@Override
 		public String getName() { 
 			return fName;	
 		}
 		
+		@Override
 		public Profile rename(String name, ProfileManager manager) {
 			final String trimmed= name.trim();
 		 	CustomProfile newProfile= new CustomProfile(trimmed, fSettings, fCurrentVersion, fProfileKind);
@@ -145,13 +147,16 @@ public abstract class ProfileManager extends Observable {
 			return newProfile;
 		}
 		
+		@Override
 		public Map getSettings() {
 			return fSettings;
 		}
 	
+		@Override
 		public void setSettings(Map settings) {
 		}
 	
+		@Override
 		public String getID() { 
 			return fID; 
 		}
@@ -163,15 +168,18 @@ public abstract class ProfileManager extends Observable {
 			return -1;
 		}
 
+		@Override
 		public boolean isProfileToSave() {
 			return false;
 		}
 		
+		@Override
 		public boolean isBuiltInProfile() {
 			return true;
 		}
 
-        public int getVersion() {
+        @Override
+		public int getVersion() {
 	        return fCurrentVersion;
         }
 	
@@ -194,10 +202,12 @@ public abstract class ProfileManager extends Observable {
 			fKind= kind;
 		}
 		
+		@Override
 		public String getName() {
 			return fName;
 		}
 		
+		@Override
 		public Profile rename(String name, ProfileManager manager) {
 			final String trimmed= name.trim();
 			if (trimmed.equals(getName())) 
@@ -210,10 +220,12 @@ public abstract class ProfileManager extends Observable {
 			return this;
 		}
 
+		@Override
 		public Map getSettings() { 
 			return fSettings;
 		}
 		
+		@Override
 		public void setSettings(Map settings) {
 			if (settings == null)
 				throw new IllegalArgumentException();
@@ -223,6 +235,7 @@ public abstract class ProfileManager extends Observable {
 			}
 		}
 		
+		@Override
 		public String getID() { 
 			return ID_PREFIX + fName;
 		}
@@ -235,6 +248,7 @@ public abstract class ProfileManager extends Observable {
 			return fManager;
 		}
 
+		@Override
 		public int getVersion() {
 			return fVersion;
 		}
@@ -253,6 +267,7 @@ public abstract class ProfileManager extends Observable {
 			return 1;
 		}
 		
+		@Override
 		public boolean isProfileToSave() {
 			return true;
 		}
@@ -269,6 +284,7 @@ public abstract class ProfileManager extends Observable {
 			super(oldName, options, version, profileKind);
 		}
 		
+		@Override
 		public Profile rename(String name, ProfileManager manager) {
 			CustomProfile profile= new CustomProfile(name.trim(), getSettings(), getVersion(), getKind());
 
@@ -276,18 +292,22 @@ public abstract class ProfileManager extends Observable {
 			return profile;
 		}
 				
+		@Override
 		public String getID() { 
 			return SHARED_PROFILE;
 		}
 		
+		@Override
 		public final int compareTo(Object o) {
 			return 1;
 		}
 		
+		@Override
 		public boolean isProfileToSave() {
 			return false;
 		}
 		
+		@Override
 		public boolean isSharedProfile() {
 			return true;
 		}

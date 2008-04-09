@@ -97,6 +97,7 @@ public class FormatterProfileManager extends ProfileManager {
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager#getSelectedProfileId(org.eclipse.core.runtime.preferences.IScopeContext)
      */
+	@Override
 	protected String getSelectedProfileId(IScopeContext instanceScope) { 
 		String profileId= instanceScope.getNode(CUIPlugin.PLUGIN_ID).get(PROFILE_KEY, null);
 		if (profileId == null) {
@@ -119,7 +120,8 @@ public class FormatterProfileManager extends ProfileManager {
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager#getDefaultProfile()
      */
-    public Profile getDefaultProfile() {
+    @Override
+	public Profile getDefaultProfile() {
 	    return getProfile(DEFAULT_PROFILE);
     }
     

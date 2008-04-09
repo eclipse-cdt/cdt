@@ -58,6 +58,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
  * @author Doug Schaefer
  */
 public class IndexLabelProvider extends LabelProvider {
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IndexNode) {
 			return ((IndexNode) element).fText;
@@ -65,6 +66,7 @@ public class IndexLabelProvider extends LabelProvider {
 		return super.getText(element);
 	}
 	
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IndexNode) {
 			return ((IndexNode) element).fImage;

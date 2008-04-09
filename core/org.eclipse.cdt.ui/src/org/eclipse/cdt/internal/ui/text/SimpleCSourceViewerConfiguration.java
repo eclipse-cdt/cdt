@@ -56,6 +56,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getAutoEditStrategies(ISourceViewer, String)
 	 */
+	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
@@ -63,6 +64,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
 	 */
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return null;
 	}
@@ -70,6 +72,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getOverviewRulerAnnotationHover(ISourceViewer)
 	 */
+	@Override
 	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
 		return null;
 	}
@@ -77,6 +80,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
 	 */
+	@Override
 	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
@@ -84,6 +88,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String, int)
 	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
 		return null;
 	}
@@ -91,6 +96,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String)
 	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
@@ -98,6 +104,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getContentFormatter(ISourceViewer)
 	 */
+	@Override
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		if (fConfigureFormatter)
 			return super.getContentFormatter(sourceViewer);
@@ -108,6 +115,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getInformationControlCreator(ISourceViewer)
 	 */
+	@Override
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
 		return null;
 	}
@@ -115,6 +123,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getInformationPresenter(ISourceViewer)
 	 */
+	@Override
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		return null;
 	}
@@ -122,6 +131,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see SourceViewerConfiguration#getHyperlinkDetectors(ISourceViewer)
 	 */
+	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		return null;
 	}
@@ -129,6 +139,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	/*
 	 * @see CSourceViewerConfiguration#getOutlinePresenter(ISourceViewer)
 	 */
+	@Override
 	public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
 		return null;
 	}

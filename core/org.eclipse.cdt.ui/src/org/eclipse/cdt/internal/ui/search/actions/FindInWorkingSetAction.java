@@ -47,6 +47,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 		fWorkingSets= workingSets;
 	}
 	
+	@Override
 	final public void run() {
 		IWorkingSet[] initial= fWorkingSets;
 		if (fWorkingSets == null) {
@@ -59,10 +60,12 @@ public abstract class FindInWorkingSetAction extends FindAction {
 		fWorkingSets= initial;
 	}
 
+	@Override
 	final protected String getScopeDescription() {
 		return scopeDescription;
 	}
 
+	@Override
 	final protected ICElement[] getScope() {
 		if (fWorkingSets == null) {
 			return new ICElement[0];

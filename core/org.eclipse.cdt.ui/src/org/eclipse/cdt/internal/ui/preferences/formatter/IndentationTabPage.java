@@ -94,6 +94,7 @@ public class IndentationTabPage extends FormatterTabPage {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreatePreferences(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected void doCreatePreferences(Composite composite, int numColumns) {
 
 		final Group generalGroup= createGroup(numColumns, composite, FormatterMessages.IndentationTabPage_general_group_title); 
@@ -144,6 +145,7 @@ public class IndentationTabPage extends FormatterTabPage {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#initializePage()
 	 */
+	@Override
 	public void initializePage() {
 	    fPreview.setPreviewText(PREVIEW);
 	}
@@ -151,7 +153,8 @@ public class IndentationTabPage extends FormatterTabPage {
     /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreateCPreview(org.eclipse.swt.widgets.Composite)
      */
-    protected CPreview doCreateCPreview(Composite parent) {
+    @Override
+	protected CPreview doCreateCPreview(Composite parent) {
         fPreview= new TranslationUnitPreview(fWorkingValues, parent);
         return fPreview;
     }
@@ -159,7 +162,8 @@ public class IndentationTabPage extends FormatterTabPage {
     /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doUpdatePreview()
      */
-    protected void doUpdatePreview() {
+    @Override
+	protected void doUpdatePreview() {
         fPreview.update();
     }
 

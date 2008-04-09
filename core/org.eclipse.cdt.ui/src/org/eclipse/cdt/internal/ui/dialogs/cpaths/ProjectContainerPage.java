@@ -113,6 +113,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 		viewer.getTable().setLayoutData(gd);
 		viewer.addFilter(new ViewerFilter() {
 
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return !element.equals(fCProject);
 			}

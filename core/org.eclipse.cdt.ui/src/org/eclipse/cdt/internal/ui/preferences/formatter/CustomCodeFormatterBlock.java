@@ -146,6 +146,7 @@ public class CustomCodeFormatterBlock extends Observable {
 		fFormatterCombo.setFont(parent.getFont());
 		fFormatterCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFormatterCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleFormatterChanged();
 			}

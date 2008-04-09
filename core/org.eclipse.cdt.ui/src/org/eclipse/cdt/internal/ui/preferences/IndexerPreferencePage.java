@@ -41,6 +41,7 @@ public class IndexerPreferencePage extends PreferencePage implements
 		fCacheBlock= new CacheSizeBlock(this);
 	}
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		GridLayout gl;
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -85,6 +86,7 @@ public class IndexerPreferencePage extends PreferencePage implements
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean performOk() {
 		try {
 			fOptionBlock.performApply(new NullProgressMonitor());
@@ -94,6 +96,7 @@ public class IndexerPreferencePage extends PreferencePage implements
 		return true;
 	}
 	
+	@Override
 	public void performDefaults() {
 		fOptionBlock.performDefaults();
 		fStrategyBlock.performDefaults();

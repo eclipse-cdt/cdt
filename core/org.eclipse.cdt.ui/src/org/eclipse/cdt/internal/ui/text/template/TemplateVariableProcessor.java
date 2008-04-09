@@ -37,6 +37,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 			return proposal0.getDisplayString().compareTo(proposal1.getDisplayString());
 		}
 
+		@Override
 		public boolean equals(Object arg0) {
 			return false;
 		}

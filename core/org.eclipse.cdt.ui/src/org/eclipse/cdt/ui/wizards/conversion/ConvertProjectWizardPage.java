@@ -155,6 +155,7 @@ public abstract class ConvertProjectWizardPage
 		
 
 		SelectionListener cListener =  new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {				
 				convertToC = cRadioButton.getSelection();
 				convertToCC = ccRadioButton.getSelection();	
@@ -212,7 +213,8 @@ public abstract class ConvertProjectWizardPage
         table.setLinesVisible(false);
         table.getAccessible().addAccessibleListener(
             new AccessibleAdapter() {                       
-                public void getName(AccessibleEvent e) {
+                @Override
+				public void getName(AccessibleEvent e) {
                         e.result = CUIPlugin.getResourceString(PROJECT_LIST);
                 }
             }
@@ -232,7 +234,8 @@ public abstract class ConvertProjectWizardPage
 
         // define and assign sorter
         tableViewer.setSorter(new ViewerSorter() {
-            public int compare(Viewer viewer, Object object1, Object object2) {
+            @Override
+			public int compare(Viewer viewer, Object object1, Object object2) {
 
                 if ((object1 instanceof IProject) && (object2 instanceof IProject)) {
                     IProject left = (IProject)object1;
@@ -247,7 +250,8 @@ public abstract class ConvertProjectWizardPage
                 return super.compare(viewer, object1, object2);
             }
 
-            public boolean isSorterProperty(Object element, String property) {
+            @Override
+			public boolean isSorterProperty(Object element, String property) {
                 return true;
             }
         });

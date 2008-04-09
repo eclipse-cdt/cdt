@@ -117,6 +117,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		/*
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 		    return getColumnText(element, 0); // needed to make the sorter work
 		}
@@ -344,6 +345,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		
 		ScrolledPageContent scrolled= new ScrolledPageContent(parent, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -452,6 +454,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 	    Link link= new Link(composite, SWT.NONE | SWT.WRAP);
 		link.setText(PreferencesMessages.CodeAssistAdvancedConfigurationBlock_key_binding_hint);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
 			}
@@ -523,6 +526,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		});
 		
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleTableSelection();
 			}
@@ -542,7 +546,8 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		fUpButton= new Button(composite, SWT.PUSH | SWT.CENTER);
         fUpButton.setText(PreferencesMessages.CodeAssistAdvancedConfigurationBlock_Up);
         fUpButton.addSelectionListener(new SelectionAdapter() {
-        	public void widgetSelected(SelectionEvent e) {
+        	@Override
+			public void widgetSelected(SelectionEvent e) {
         		int index= getSelectionIndex();
         		if (index != -1) {
         			((ModelElement) fModel.elements.get(index)).moveUp();
@@ -557,7 +562,8 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
         fDownButton= new Button(composite, SWT.PUSH | SWT.CENTER);
         fDownButton.setText(PreferencesMessages.CodeAssistAdvancedConfigurationBlock_Down);
         fDownButton.addSelectionListener(new SelectionAdapter() {
-        	public void widgetSelected(SelectionEvent e) {
+        	@Override
+			public void widgetSelected(SelectionEvent e) {
         		int index= getSelectionIndex();
         		if (index != -1) {
         			((ModelElement) fModel.elements.get(index)).moveDown();
@@ -593,6 +599,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#updateControls()
 	 */
+	@Override
 	protected void updateControls() {
 		super.updateControls();
 
@@ -623,6 +630,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#processChanges(org.eclipse.ui.preferences.IWorkbenchPreferenceContainer)
 	 */
+	@Override
 	protected boolean processChanges(IWorkbenchPreferenceContainer container) {
 		for (Iterator it= fModel.elements.iterator(); it.hasNext();) {
 			ModelElement item= (ModelElement) it.next();
@@ -635,6 +643,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#validateSettings(org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock.Key, java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected void validateSettings(Key changedKey, String oldValue, String newValue) {
 	}
 
@@ -649,6 +658,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#dispose()
 	 */
+	@Override
 	public void dispose() {
 		for (Iterator it= fImages.values().iterator(); it.hasNext();) {
 			Image image= (Image) it.next();

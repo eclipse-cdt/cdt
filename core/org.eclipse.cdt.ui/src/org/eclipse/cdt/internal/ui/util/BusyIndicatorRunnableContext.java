@@ -43,6 +43,7 @@ public class BusyIndicatorRunnableContext implements IRunnableContext {
 				super(name);
 				fRunnable= runnable;
 			}
+			@Override
 			public void run() {
 				try {
 					fRunnable.run(new NullProgressMonitor());

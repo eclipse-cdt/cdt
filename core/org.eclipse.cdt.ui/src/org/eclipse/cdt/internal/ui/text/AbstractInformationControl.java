@@ -79,6 +79,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		/*
 		 * Method declared on ViewerFilter.
 		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			StringMatcher matcher= getMatcher();
 			if (matcher == null || !(viewer instanceof TreeViewer))
@@ -155,6 +156,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * @return The control representing the main content.
 	 * 
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		fTreeViewer= createTreeViewer(parent, fTreeStyle);
 
@@ -212,6 +214,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		});
 
 		tree.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseUp(MouseEvent e) {
 
 				if (tree.getSelectionCount() < 1)
@@ -459,6 +462,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * @see org.eclipse.jface.dialogs.PopupDialog#fillDialogMenu(IMenuManager)
 	 * 
 	 */
+	@Override
 	protected void fillDialogMenu(IMenuManager dialogMenu) {
 		super.fillDialogMenu(dialogMenu);
 		fillViewMenu(dialogMenu);
@@ -612,6 +616,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		String sectionName= getId();
 
@@ -625,6 +630,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	/*
 	 * Overridden to insert the filter text into the title and menu area.
 	 */
+	@Override
 	protected Control createTitleMenuArea(Composite parent) {
 		fViewMenuButtonComposite= (Composite) super.createTitleMenuArea(parent);
 
@@ -643,6 +649,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * if there is no header specified.
 	 * 
 	 */
+	@Override
 	protected Control createTitleControl(Composite parent) {
 		if (hasHeader()) {
 			return super.createTitleControl(parent);
@@ -654,6 +661,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#setTabOrder(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void setTabOrder(Composite composite) {
 		if (hasHeader()) {
 			composite.setTabList(new Control[] { fFilterText, fTreeViewer.getTree() });

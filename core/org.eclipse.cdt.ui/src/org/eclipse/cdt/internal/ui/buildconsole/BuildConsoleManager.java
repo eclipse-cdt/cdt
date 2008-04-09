@@ -52,7 +52,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	ListenerList listeners = new ListenerList();
 	BuildConsole fConsole;
-	private Map fConsoleMap = new HashMap();
+	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<IProject, BuildConsolePartitioner>();
 	Color infoColor, outputColor, errorColor;
 	BuildConsoleStream infoStream, outputStream, errorStream;
 	String fName, fContextMenuId;
@@ -137,7 +137,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		IResource resource = event.getResource();
 		if (resource != null && resource.getType() == IResource.PROJECT) {
 			if (event.getType() == IResourceChangeEvent.PRE_DELETE || event.getType() == IResourceChangeEvent.PRE_CLOSE) {
-				IDocumentPartitioner partioner = (IDocumentPartitioner)fConsoleMap.remove(resource);
+				IDocumentPartitioner partioner = fConsoleMap.remove(resource);
 				if (partioner != null) {
 					partioner.disconnect();
 					Object[] list = listeners.getListeners();
@@ -273,7 +273,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 	
 	private BuildConsolePartitioner getConsolePartioner(IProject project) {
-		BuildConsolePartitioner partioner = (BuildConsolePartitioner)fConsoleMap.get(project);
+		BuildConsolePartitioner partioner = fConsoleMap.get(project);
 		if (partioner == null) {
 			partioner = new BuildConsolePartitioner(this);
 			fConsoleMap.put(project, partioner);

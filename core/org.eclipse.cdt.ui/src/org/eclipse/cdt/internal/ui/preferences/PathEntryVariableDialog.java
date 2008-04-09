@@ -169,6 +169,7 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (newVariable)
@@ -183,6 +184,7 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// top level composite
 		Composite parentComposite = (Composite) super.createDialogArea(parent);
@@ -315,6 +317,7 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 		fileButton.setFont(font);
 		
 		fileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectFile();
 			}
@@ -336,6 +339,7 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 		folderButton.setFont(font);
 		
 		folderButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectFolder();
 			}
@@ -418,6 +422,7 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton = createButton(parent, IDialogConstants.OK_ID,
 				IDialogConstants.OK_LABEL, true);

@@ -48,10 +48,12 @@ public class THInformationControl extends AbstractInformationControl implements 
 		super(parent, shellStyle, treeStyle, ICEditorActionDefinitionIds.OPEN_QUICK_TYPE_HIERARCHY, true);
 	}
 
+	@Override
 	protected boolean hasHeader() {
 		return true;
 	}
 
+	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		Display display= getShell().getDisplay();
 		fModel= new THHierarchyModel(this, display);
@@ -76,6 +78,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 		}
 	}
 
+	@Override
 	public void setInput(Object input) {
 		if (input instanceof ICElement[]) {
 			ICElement[] splitInput= (ICElement[]) input;
@@ -96,10 +99,12 @@ public class THInformationControl extends AbstractInformationControl implements 
         }
 	}
 
+	@Override
 	protected String getId() {
 		return "org.eclipse.cdt.internal.ui.typehierarchy.QuickHierarchy"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected Object getSelectedElement() {
 		THNode node= selectionToNode(fHierarchyTreeViewer.getSelection());
 		if (node != null) {
@@ -119,7 +124,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 	private THNode selectionToNode(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) selection;
-			for (Iterator iter = ss.iterator(); iter.hasNext(); ) {
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
 				Object cand= iter.next();
 				if (cand instanceof THNode) {
 					return (THNode) cand;
@@ -129,6 +134,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 		return null;
 	}
 
+	@Override
 	public void widgetDisposed(DisposeEvent event) {
 		fDisposed= true;
 		super.widgetDisposed(event);
@@ -159,6 +165,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 		return null;
 	}
 	
+	@Override
 	protected void selectFirstMatch() {
 		Tree tree= fHierarchyTreeViewer.getTree();
 		Object element= findElement(tree.getItems());
@@ -177,11 +184,9 @@ public class THInformationControl extends AbstractInformationControl implements 
 				if (fStringMatcher == null)
 					return element;
 	
-				if (element != null) {
-					String label= fHierarchyLabelProvider.getText(element);
-					if (fStringMatcher.match(label))
-						return element;
-				}
+				String label= fHierarchyLabelProvider.getText(element);
+				if (fStringMatcher.match(label))
+					return element;
 			}
 			element= findElement(items[i].getItems());
 			if (element != null)

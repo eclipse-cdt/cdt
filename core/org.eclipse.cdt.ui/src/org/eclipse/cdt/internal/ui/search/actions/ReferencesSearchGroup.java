@@ -60,6 +60,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 	/* 
 	 * Method declared on ActionGroup.
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		
 		super.fillContextMenu(menu);
@@ -108,6 +109,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 	/* 
 	 * Overrides method declared in ActionGroup
 	 */
+	@Override
 	public void dispose() {
 		fFindRefsAction= null;
 		fFindRefsProjectAction=null;

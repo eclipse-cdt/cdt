@@ -48,6 +48,7 @@ implements IWorkbenchPreferencePage {
 	 * 
 	 * @see PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -99,6 +100,7 @@ implements IWorkbenchPreferencePage {
 	 * Disposes the path variables group.
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		pathEntryVariablesGroup.dispose();
 		super.dispose();
@@ -118,6 +120,7 @@ implements IWorkbenchPreferencePage {
 	 * 
 	 * @see PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		return pathEntryVariablesGroup.performOk();
 	}

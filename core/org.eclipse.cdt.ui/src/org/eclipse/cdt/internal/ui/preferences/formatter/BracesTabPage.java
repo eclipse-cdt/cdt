@@ -120,6 +120,7 @@ public class BracesTabPage extends FormatterTabPage {
 		super(modifyDialog, workingValues);
 	}
 	
+	@Override
 	protected void doCreatePreferences(Composite composite, int numColumns) {
 		
 		final Group group= createGroup(numColumns, composite, FormatterMessages.BracesTabPage_group_brace_positions_title); 
@@ -153,10 +154,12 @@ public class BracesTabPage extends FormatterTabPage {
 		arrayInitCheckBox.setEnabled(!arrayInitOption.hasValue(DefaultCodeFormatterConstants.END_OF_LINE));
 	}
 
+	@Override
 	protected void initializePage() {
 	    fPreview.setPreviewText(PREVIEW);
 	}
 	
+	@Override
 	protected CPreview doCreateCPreview(Composite parent) {
 	    fPreview= new TranslationUnitPreview(fWorkingValues, parent);
 	    return fPreview;
@@ -178,7 +181,8 @@ public class BracesTabPage extends FormatterTabPage {
 	}
 	
 
-    protected void doUpdatePreview() {
+    @Override
+	protected void doUpdatePreview() {
         fPreview.update();
     }
 

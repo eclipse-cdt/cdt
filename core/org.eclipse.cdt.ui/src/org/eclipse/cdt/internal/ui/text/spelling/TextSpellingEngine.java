@@ -29,6 +29,7 @@ public class TextSpellingEngine extends SpellingEngine {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.SpellingEngine#check(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion[], org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker, org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void check(IDocument document, IRegion[] regions, ISpellChecker checker, ISpellingProblemCollector collector, IProgressMonitor monitor) {
 		ISpellEventListener listener= new SpellEventListener(collector, document);
 		try {

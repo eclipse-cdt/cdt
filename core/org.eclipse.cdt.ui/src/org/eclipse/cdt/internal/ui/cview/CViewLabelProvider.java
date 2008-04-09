@@ -42,6 +42,7 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
 			final IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
@@ -93,6 +94,7 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
 			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();

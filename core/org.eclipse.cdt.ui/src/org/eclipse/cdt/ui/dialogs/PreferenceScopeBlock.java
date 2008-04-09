@@ -44,6 +44,7 @@ abstract public class PreferenceScopeBlock {
 		fStoreWithProject= ControlFactory.createCheckBox(two, DialogsMessages.PreferenceScopeBlock_storeWithProject);
 		
 		SelectionListener sl= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnablement();
 				onPreferenceScopeChange();
@@ -56,6 +57,7 @@ abstract public class PreferenceScopeBlock {
 		fLink.setText(DialogsMessages.PreferenceScopeBlock_preferenceLink);
 		fLink.setLayoutData(new GridData());
 		sl= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), fPrefPageID, null, null).open();
 				onPreferenceScopeChange();

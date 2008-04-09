@@ -49,6 +49,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		fContentTypeMappings = new TreeMap();
 	}
 	
+	@Override
 	public Composite createContents(Composite parent, String description) {
 		fContents = new Composite(parent, SWT.NONE);
 		fContents.setLayout(new GridLayout(2, false));
@@ -64,6 +65,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		fTable.setHeaderVisible(true);
 		fTable.setLinesVisible(true);
 		fTable.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = PreferencesMessages.WorkspaceLanguagesPreferencePage_mappingTableTitle;
 			}
@@ -138,6 +140,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		return fContents;
 	}
 
+	@Override
 	public void refreshMappings() {
 		if (fTable == null) {
 			return;

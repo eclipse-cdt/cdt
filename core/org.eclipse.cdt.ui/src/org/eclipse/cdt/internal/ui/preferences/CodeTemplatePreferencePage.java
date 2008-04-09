@@ -48,6 +48,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		IWorkbenchPreferenceContainer container= (IWorkbenchPreferenceContainer) getContainer();
 		fCodeTemplateConfigurationBlock= new CodeTemplateBlock(getNewStatusChangedListener(), getProject(), container);
@@ -59,6 +60,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#createPreferenceContent(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createPreferenceContent(Composite composite) {
 		return fCodeTemplateConfigurationBlock.createContents(composite);
 	}
@@ -66,6 +68,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#enableProjectSpecificSettings(boolean)
 	 */
+	@Override
 	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
 		super.enableProjectSpecificSettings(useProjectSpecificSettings);
 		if (fCodeTemplateConfigurationBlock != null) {
@@ -76,6 +79,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if (fCodeTemplateConfigurationBlock != null) {
 			return fCodeTemplateConfigurationBlock.performOk(useProjectSettings());
@@ -86,6 +90,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		if (fCodeTemplateConfigurationBlock != null) {
@@ -96,6 +101,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fCodeTemplateConfigurationBlock != null) {
 			fCodeTemplateConfigurationBlock.dispose();
@@ -114,6 +120,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		if (fCodeTemplateConfigurationBlock != null) {
 			fCodeTemplateConfigurationBlock.performCancel();
@@ -124,6 +131,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#hasProjectSpecificOptions(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	protected boolean hasProjectSpecificOptions(IProject project) {
 		return fCodeTemplateConfigurationBlock.hasProjectSpecificOptions(project);
 	}
@@ -131,6 +139,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPreferencePageID()
 	 */
+	@Override
 	protected String getPreferencePageID() {
 		return PREF_ID;
 	}
@@ -138,6 +147,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPropertyPageID()
 	 */
+	@Override
 	protected String getPropertyPageID() {
 		return null;
 		// TODO project specific settings
@@ -147,6 +157,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	/*
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			Object id= ((Map) data).get(DATA_SELECT_TEMPLATE);

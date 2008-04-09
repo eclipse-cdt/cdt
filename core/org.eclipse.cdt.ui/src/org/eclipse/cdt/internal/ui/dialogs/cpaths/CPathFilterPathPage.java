@@ -15,6 +15,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 public class CPathFilterPathPage extends Wizard {
 
+	@Override
 	public boolean performFinish() {
 		return true;
 	}

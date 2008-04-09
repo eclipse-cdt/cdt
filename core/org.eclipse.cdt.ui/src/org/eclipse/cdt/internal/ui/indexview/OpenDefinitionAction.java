@@ -61,6 +61,7 @@ public class OpenDefinitionAction extends IndexAction {
 		return null;
 	}
 
+	@Override
 	public void run() {
 		IndexNode bindingNode= getBindingNode();
 		if (bindingNode == null) {
@@ -129,6 +130,7 @@ public class OpenDefinitionAction extends IndexAction {
 		}
 	}
 	
+	@Override
 	public boolean valid() {
 		return getBindingNode() != null;
 	}

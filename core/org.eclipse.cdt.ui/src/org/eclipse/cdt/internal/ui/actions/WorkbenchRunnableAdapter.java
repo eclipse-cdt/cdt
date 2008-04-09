@@ -73,6 +73,7 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					WorkbenchRunnableAdapter.this.run(monitor);
@@ -89,6 +90,7 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress {
 				}
 				return Status.OK_STATUS;
 			}
+			@Override
 			public boolean belongsTo(Object family) {
 				return jobFamiliy == family;
 			}

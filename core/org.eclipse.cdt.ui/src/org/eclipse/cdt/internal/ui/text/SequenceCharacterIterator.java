@@ -156,6 +156,7 @@ public class SequenceCharacterIterator implements CharacterIterator {
 	/*
 	 * @see java.text.CharacterIterator#clone()
 	 */
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();

@@ -80,6 +80,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		    this(null, null, _name);
 		}
 		
+		@Override
 		public String toString() {
 			return name;
 		}
@@ -601,6 +602,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreatePreferences(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected void doCreatePreferences(Composite composite, int numColumns) {
 	
 		final Group lineWidthGroup= createGroup(numColumns, composite, FormatterMessages.LineWrappingTabPage_width_indent); 
@@ -663,6 +665,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreatePreviewPane(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected Composite doCreatePreviewPane(Composite composite, int numColumns) {
 		
 		super.doCreatePreviewPane(composite, numColumns);
@@ -684,7 +687,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
     /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreateCPreview(org.eclipse.swt.widgets.Composite)
      */
-    protected CPreview doCreateCPreview(Composite parent) {
+    @Override
+	protected CPreview doCreateCPreview(Composite parent) {
         fPreview= new TranslationUnitPreview(fWorkingValues, parent);
         return fPreview;
     }
@@ -692,22 +696,26 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#initializePage()
 	 */
+	@Override
 	protected void initializePage() {
 		
 		fCategoriesViewer.addSelectionChangedListener(fCategoryListener);
 		fCategoriesViewer.addDoubleClickListener(fCategoryListener);
 		
 		fForceSplit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				forceSplitChanged(fForceSplit.getSelection());
 			}
 		});
 		fIndentStyleCombo.addSelectionListener( new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				indentStyleChanged(((Combo)e.widget).getSelectionIndex());
 			}
 		});
 		fWrappingStyleCombo.addSelectionListener( new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				wrappingStyleChanged(((Combo)e.widget).getSelectionIndex());
 			}
@@ -724,6 +732,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doUpdatePreview()
 	 */
+	@Override
 	protected void doUpdatePreview() {
 		final Object normalSetting= fWorkingValues.get(LINE_SPLIT);
 		fWorkingValues.put(LINE_SPLIT, fPreviewPreferences.get(LINE_SPLIT));

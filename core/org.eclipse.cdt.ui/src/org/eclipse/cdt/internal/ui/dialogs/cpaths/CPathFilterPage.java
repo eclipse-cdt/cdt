@@ -85,6 +85,7 @@ public class CPathFilterPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (fPaths != null) {
 			viewer.setInput(fPaths);

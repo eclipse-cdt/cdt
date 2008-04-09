@@ -110,6 +110,7 @@ public abstract class OptionsConfigurationBlock {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return fQualifier + '/' + fKey;
 		}
@@ -513,6 +514,7 @@ public abstract class OptionsConfigurationBlock {
 		excomposite.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 		excomposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, nColumns, 1));
 		excomposite.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				expandedStateChanged((ExpandableComposite) e.getSource());
 			}

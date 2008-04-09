@@ -75,7 +75,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 			
 			monitor.beginTask(CEditorMessages.getString("AddIncludesOperation.description"), 2); //$NON-NLS-1$
 			
-			List elements = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
+			List<?> elements = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
 			for (int i = 0; i < fIncludes.length; ++i) {
 				String name = fIncludes[i].getIncludeName();
 				boolean found = false;
@@ -129,7 +129,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 			
 			monitor.beginTask(CEditorMessages.getString("AddIncludesOperation.description"), 2); //$NON-NLS-1$
 			
-			List elements = fTranslationUnit.getChildrenOfType(ICElement.C_USING);
+			List<?> elements = fTranslationUnit.getChildrenOfType(ICElement.C_USING);
 			for (int i = 0; i < fUsings.length; ++i) {
 				String name = fUsings[i];
 				boolean found = false;
@@ -154,7 +154,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 				}
 				
 				int pos;
-				List includes = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
+				List<?> includes = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
 				if (includes.size() > 0) {
 					IInclude lastInclude = (IInclude)includes.get(includes.size() - 1);
 					ISourceRange range = lastInclude.getSourceRange();

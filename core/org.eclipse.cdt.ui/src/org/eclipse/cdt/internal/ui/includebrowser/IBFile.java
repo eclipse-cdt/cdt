@@ -52,6 +52,7 @@ public class IBFile {
 		return fLocation;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IBFile) {
 			IBFile file = (IBFile) obj;
@@ -61,6 +62,7 @@ public class IBFile {
 		return super.equals(obj);
 	}
 
+	@Override
 	public int hashCode() {
 		return CoreUtility.safeHashcode(fLocation)
 			+ 31* (CoreUtility.safeHashcode(fTU) 

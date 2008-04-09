@@ -18,12 +18,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdapterFactory;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 
 public class ResourceAdapterFactory implements IAdapterFactory {
 
-	private static Class[] PROPERTIES= new Class[] {
+	private static Class<?>[] PROPERTIES= new Class[] {
 		ICElement.class
 	};
 	
@@ -33,13 +33,14 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	/**
 	 * @see IAdapterFactory#getAdapterList
 	 */	
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return PROPERTIES;
 	}
 	
 	/**
 	 * @see IAdapterFactory#getAdapter
 	 */
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Object element, Class key) {
 		if (ICElement.class.equals(key)) {
 			//try {

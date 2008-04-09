@@ -52,6 +52,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	
 	public ConfigMultiSelectionDialog(Shell parentShell) { super(parentShell); }
 
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(UIMessages.getString("ConfigMultiSelectionDialog.0")); //$NON-NLS-1$
@@ -60,6 +61,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	/**
 	 * Method is overridden to disable "OK" button at start
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control out = super.createContents(parent);
 		b_ok = getButton(IDialogConstants.OK_ID);
@@ -70,6 +72,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());

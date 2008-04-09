@@ -196,6 +196,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			if (element instanceof String)
 				return (String) element;
@@ -472,6 +473,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
         return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
     }
     
+	@Override
 	public void initialize() {
 		super.initialize();
 		
@@ -479,6 +481,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		fListViewer.setSelection(new StructuredSelection(fCodeCategory));
 	}
 
+	@Override
 	public void performDefaults() {
 		super.performDefaults();
 		
@@ -495,6 +498,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
 	 */
+	@Override
 	public void dispose() {
 		uninstallSemanticHighlighting();
 		fColorManager.dispose();
@@ -554,6 +558,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		Link link= new Link(colorComposite, SWT.NONE);
 		link.setText(PreferencesMessages.CEditorColoringConfigurationBlock_link);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), e.text, null, null); 
 			}
@@ -591,6 +596,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		fListViewer.setLabelProvider(new ColorListLabelProvider());
 		fListViewer.setContentProvider(new ColorListContentProvider());
 		fListViewer.setSorter(new ViewerSorter() {
+			@Override
 			public int category(Object element) {
 				// don't sort the top level categories
 				if (fCodeCategory.equals(element))

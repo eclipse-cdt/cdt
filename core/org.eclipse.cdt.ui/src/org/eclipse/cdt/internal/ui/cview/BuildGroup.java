@@ -89,7 +89,7 @@ public class BuildGroup extends CViewActionGroup {
 
 		menu.add(new GroupMarker(BUILD_GROUP_MARKER));
 
-		Iterator resources = selection.iterator();
+		Iterator<?> resources = selection.iterator();
 		while (resources.hasNext() && (!hasOpenProjects || !hasClosedProjects || hasBuilder || isProjectSelection)) {
 			Object next = resources.next();
 			IProject project = null;

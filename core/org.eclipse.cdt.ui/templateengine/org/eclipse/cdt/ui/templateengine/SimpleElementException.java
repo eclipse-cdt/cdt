@@ -55,6 +55,7 @@ public class SimpleElementException extends Exception {
 	 * 
 	 * @return String
 	 */
+	@Override
 	public String toString() {
 		return expDefinition;
 	}

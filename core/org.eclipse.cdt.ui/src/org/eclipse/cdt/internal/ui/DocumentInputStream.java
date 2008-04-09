@@ -36,7 +36,8 @@ public class DocumentInputStream extends InputStream {
 	/**
 	 * {@inheritDoc}
 	 */
-	 public int read() throws IOException {
+	 @Override
+	public int read() throws IOException {
 	 	try {
 		 	if (fCurrPos < fDocument.getLength()) {
 		 	 	return fDocument.getChar(fCurrPos++);

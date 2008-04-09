@@ -31,6 +31,7 @@ public class PageLayout extends Layout {
 	 */
 	private Point minimumPageSize = new Point(200, 200);
 
+	@Override
 	public void layout(Composite composite, boolean force) {
 		Rectangle rect = composite.getClientArea();
 		Control[] children = composite.getChildren();
@@ -38,6 +39,7 @@ public class PageLayout extends Layout {
 			children[i].setSize(rect.width, rect.height);
 		}
 	}
+	@Override
 	public Point computeSize(Composite composite, int wHint, int hHint,	boolean force) {
 		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 			return new Point(wHint, hHint);

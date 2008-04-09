@@ -37,6 +37,7 @@ public class FormatterProfileStore extends ProfileStore {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List readProfiles(IScopeContext scope) throws CoreException {
 		final IEclipsePreferences node= scope.getNode(CUIPlugin.PLUGIN_ID);
 		final String profilesValue= node.get(PREF_FORMATTER_PROFILES_OLD, null);

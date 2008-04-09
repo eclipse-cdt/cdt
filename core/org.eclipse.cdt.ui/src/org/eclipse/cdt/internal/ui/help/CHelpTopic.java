@@ -32,6 +32,7 @@ public class CHelpTopic implements IHelpResource {
 	public String getLabel() {
 		return title;
 	}
+	@Override
 	public String toString() {
 		return "<topic href=\"" + href + "\" title=\"" + title + "\">"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

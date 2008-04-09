@@ -47,6 +47,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 	 * 
 	 * @param uiComposite
 	 */
+	@Override
 	public void createWidgets(final UIComposite uiComposite) {
 		GridData gridData = null;
 
@@ -85,6 +86,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 	 * call the dispose method on the widgets. This is to ensure that the
 	 * widgets are properly disposed.
 	 */
+	@Override
 	public void disposeWidget() {
 		label.dispose();
 		fileListControl = null;

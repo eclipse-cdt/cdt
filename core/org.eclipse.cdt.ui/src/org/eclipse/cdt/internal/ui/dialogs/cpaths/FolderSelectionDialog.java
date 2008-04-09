@@ -50,6 +50,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite result= (Composite)super.createDialogArea(parent);
 		
@@ -58,6 +59,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 		Button button = new Button(result, SWT.PUSH);
 		button.setText(CPathEntryMessages.getString("FolderSelectionDialog.button")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				newFolderButtonPressed();
 			}

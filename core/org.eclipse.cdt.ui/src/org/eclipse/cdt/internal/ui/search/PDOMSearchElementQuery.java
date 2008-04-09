@@ -38,6 +38,7 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 		this.element = element;
 	}
 
+	@Override
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
 			if (element instanceof ICElement) {
@@ -52,6 +53,7 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 		}
 	}
 
+	@Override
 	public String getLabel() {
 		if (element instanceof ICElement)
 			return super.getLabel() + " " + ((ICElement)element).getElementName(); //$NON-NLS-1$

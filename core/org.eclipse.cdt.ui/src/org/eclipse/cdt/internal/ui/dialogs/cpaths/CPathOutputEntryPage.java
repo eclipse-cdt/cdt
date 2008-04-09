@@ -95,6 +95,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		fOutputList.setTreeExpansionLevel(2);
 	}
 
+	@Override
 	public Image getImage() {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_CONTAINER);
 	}
@@ -119,6 +120,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -518,6 +520,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#getSelection
 	 */
+	@Override
 	public List getSelection() {
 		return fOutputList.getSelectedElements();
 	}
@@ -525,6 +528,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#setSelection
 	 */
+	@Override
 	public void setSelection(List selElements) {
 		fOutputList.selectElements(new StructuredSelection(selElements));
 	}
@@ -534,6 +538,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_OUTPUT;
 	}
@@ -543,6 +548,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	}
 
@@ -551,6 +557,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 	}
 

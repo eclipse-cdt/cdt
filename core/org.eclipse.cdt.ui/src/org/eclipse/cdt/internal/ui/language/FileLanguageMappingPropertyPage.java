@@ -80,6 +80,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		fLanguageIds = LanguageVerifier.computeAvailableLanguages();
 	}
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		IFile file = getFile();
 		IProject project = file.getProject();
@@ -105,6 +106,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		Link link = new Link(fContents, SWT.NONE);
 		link.setText(PreferencesMessages.FileLanguagesPropertyPage_description);
 		link.addListener(SWT.Selection, new LanguageMappingLinkListener(parent.getShell(), project) {
+			@Override
 			protected void refresh() {
 				try {
 					refreshMappings();
@@ -128,6 +130,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		fTable.setHeaderVisible(true);
 		fTable.setLinesVisible(true);
 		fTable.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = PreferencesMessages.FileLanguagesPropertyPage_mappingTableTitle;
 			}
@@ -307,6 +310,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		combo.select(0);
 	}
 
+	@Override
 	public boolean performOk() {
 		try {
 			if (!fHasChanges) {
@@ -348,6 +352,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		return (IFile) getElement().getAdapter(IFile.class);
 	}
 
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 	}

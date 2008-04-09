@@ -122,7 +122,8 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         /* (non-Javadoc)
          * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPElementFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
-        public boolean select(Viewer viewer, Object parent, Object element) {
+        @Override
+		public boolean select(Viewer viewer, Object parent, Object element) {
             IResource res = null;
             if (element instanceof CPElement) {
                 CPElement cpElem = (CPElement) element;
@@ -212,7 +213,8 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         IncludeSymbolAdapter adapter = new IncludeSymbolAdapter();
         fIncludeSymPathsList = new TreeListDialogField(adapter, buttonLabel, new CPElementLabelProvider(true, false)) {
 
-            protected int getTreeStyle() {
+            @Override
+			protected int getTreeStyle() {
                 return super.getTreeStyle() & ~SWT.MULTI;
             }
         };
@@ -238,7 +240,8 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
                 false, true);
     }
 
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         PixelConverter converter = new PixelConverter(parent);
 
         Composite composite = new Composite(parent, SWT.NONE);
@@ -254,11 +257,13 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
     }
 
-    public Image getImage() {
+    @Override
+	public Image getImage() {
         return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
     }
 
-    public void init(ICElement cElement, List cPaths) {
+    @Override
+	public void init(ICElement cElement, List cPaths) {
         fCurrCElement = cElement;
         fCurrCProject = cElement.getCProject();
         List elements = createGroups(cElement, cPaths);
@@ -1099,14 +1104,16 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
             super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
         }
 
-        protected void createButtonsForButtonBar(Composite parent) {
+        @Override
+		protected void createButtonsForButtonBar(Composite parent) {
             super.createButtonsForButtonBar(parent);
             Button browse = createButton(parent, 3,
                     CPathEntryMessages.getString("IncludeSymbolEntryPage.addExternal.button.browse"), //$NON-NLS-1$
                     false);
             browse.addSelectionListener(new SelectionAdapter() {
 
-                public void widgetSelected(SelectionEvent ev) {
+                @Override
+				public void widgetSelected(SelectionEvent ev) {
                     DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
                     dialog.setText(CPathEntryMessages.getString("IncludeSymbolEntryPage.browseForFolder")); //$NON-NLS-1$
                     String currentName = getText().getText();
@@ -1128,7 +1135,8 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
      * 
      * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#getSelection()
      */
-    public List getSelection() {
+    @Override
+	public List getSelection() {
         return fIncludeSymPathsList.getSelectedElements();
     }
 
@@ -1137,21 +1145,26 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
      * 
      * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#setSelection(java.util.List)
      */
-    public void setSelection(List selElements) {
+    @Override
+	public void setSelection(List selElements) {
         fIncludeSymPathsList.selectElements(new StructuredSelection(selElements));
     }
 
-    public boolean isEntryKind(int kind) {
+    @Override
+	public boolean isEntryKind(int kind) {
         return kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO;
     }
 
-    public void performApply(IProgressMonitor monitor) throws CoreException {
+    @Override
+	public void performApply(IProgressMonitor monitor) throws CoreException {
     }
 
-    public void performDefaults() {
+    @Override
+	public void performDefaults() {
     }
 
-    public List getCPaths() {
+    @Override
+	public List getCPaths() {
         List cPaths = new ArrayList();
         List groups = fIncludeSymPathsList.getElements();
         for (int i = 0; i < groups.size(); i++) {

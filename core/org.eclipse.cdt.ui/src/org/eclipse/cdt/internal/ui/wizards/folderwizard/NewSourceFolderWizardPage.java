@@ -223,6 +223,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 	/*
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {

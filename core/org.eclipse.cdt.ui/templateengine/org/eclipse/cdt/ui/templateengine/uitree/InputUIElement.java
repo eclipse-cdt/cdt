@@ -67,6 +67,7 @@ public abstract class InputUIElement extends UIElement {
 	 * @param uiElement
 	 * @throws SimpleElementException
 	 */
+	@Override
 	public void addToChildList(UIElement uiElement) throws SimpleElementException {
 		throw new SimpleElementException();
 	}
@@ -76,6 +77,7 @@ public abstract class InputUIElement extends UIElement {
 	 * 
 	 * @see UIElement
 	 */
+	@Override
 	public int getChildCount() throws SimpleElementException {
 		throw new SimpleElementException();
 	}
@@ -85,6 +87,7 @@ public abstract class InputUIElement extends UIElement {
 	 * 
 	 * @see UIElement
 	 */
+	@Override
 	public UIElement getChild(int index) throws SimpleElementException {
 		throw new SimpleElementException();
 	}

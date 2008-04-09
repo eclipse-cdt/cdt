@@ -24,6 +24,7 @@ public class TypedCDTViewerFilter extends ViewerFilter {
 	/**
 	 * @see ViewerFilter#select
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		for (int i= 0; i < types.length; i++) {
 			if (types[i].isInstance(element)) return true;

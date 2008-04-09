@@ -126,6 +126,7 @@ public class StatusInfo implements IStatus {
 	 * Returns a string representation of the status, suitable 
 	 * for debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("StatusInfo "); //$NON-NLS-1$

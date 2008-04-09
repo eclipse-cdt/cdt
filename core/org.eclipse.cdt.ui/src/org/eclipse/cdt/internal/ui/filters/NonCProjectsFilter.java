@@ -28,6 +28,7 @@ public class NonCProjectsFilter extends ViewerFilter {
 	/*
 	 * @see ViewerFilter
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof ICProject) {
 			return true;

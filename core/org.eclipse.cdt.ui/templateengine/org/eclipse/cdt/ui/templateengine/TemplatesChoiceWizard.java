@@ -46,6 +46,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	protected IWorkbench workbench;
 	protected IStructuredSelection selection;
 
+	@Override
 	public final void addPages() {		
 		IWizardPage[] pages = getPagesBeforeTemplatePages();
 		for(int i=0; i<pages.length; i++) {
@@ -107,6 +108,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		return new IWizardDataPage[0];		
 	}
 
+	@Override
 	public boolean performFinish() {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {

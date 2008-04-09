@@ -58,6 +58,7 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	/*
 	 * @see IContextInformation#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {
 			IContextInformation contextInformation= (IContextInformation) object;

@@ -55,6 +55,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -110,6 +111,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 		String cppfilt = null;
 		IProject proj = getContainer().getProject();
@@ -129,6 +131,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Group comp = new Group(parent, SWT.SHADOW_ETCHED_IN);
 		comp.setText(CUIMessages.getString("BinaryParserBlock.binaryParserOptions")); //$NON-NLS-1$
@@ -153,6 +156,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 		Button button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleCPPFiltButtonSelected();
 				//updateLaunchConfigurationDialog();

@@ -90,6 +90,7 @@ public class CStructureCreator extends StructureCreator {
 	/*
 	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#createStructureComparator(java.lang.Object, org.eclipse.jface.text.IDocument, org.eclipse.compare.ISharedDocumentAdapter, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IStructureComparator createStructureComparator(Object element,
 			IDocument document, ISharedDocumentAdapter sharedDocumentAdapter,
 			IProgressMonitor monitor) throws CoreException {
@@ -153,6 +154,7 @@ public class CStructureCreator extends StructureCreator {
 	/*
 	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#getDocumentPartitioning()
 	 */
+	@Override
 	protected String getDocumentPartitioning() {
 		return ICPartitions.C_PARTITIONING;
 	}
@@ -160,6 +162,7 @@ public class CStructureCreator extends StructureCreator {
 	/*
 	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#getDocumentPartitioner()
 	 */
+	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(null);
 	}

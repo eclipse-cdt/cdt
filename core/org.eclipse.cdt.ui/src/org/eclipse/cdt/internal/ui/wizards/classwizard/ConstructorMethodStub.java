@@ -29,7 +29,8 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
         super(NAME, access, false, isInline);
     }
 
-    public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
+    @Override
+	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
         StringBuffer buf = new StringBuffer();
         buf.append(className);
         buf.append("()"); //$NON-NLS-1$
@@ -48,7 +49,8 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
         return buf.toString();
     }
 
-    public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
+    @Override
+	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
         if (fIsInline) {
             return ""; //$NON-NLS-1$
         }
@@ -69,11 +71,13 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
         return buf.toString();
     }
 
-    public boolean isConstructor() {
+    @Override
+	public boolean isConstructor() {
         return true;
     }
 
-    public boolean canModifyVirtual() {
+    @Override
+	public boolean canModifyVirtual() {
         return false;
     }
 }

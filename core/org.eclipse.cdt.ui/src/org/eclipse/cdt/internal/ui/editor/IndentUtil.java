@@ -182,8 +182,6 @@ public final class IndentUtil {
 		boolean indentInsideLineComments= indentInsideLineComments(project);
 		String current= getCurrentIndent(document, lines.getStartLine(), indentInsideLineComments);
 		StringBuffer correct= new StringBuffer(computeIndent(document, lines.getStartLine(), indenter, scanner));
-		if (correct == null)
-			return result; // bail out
 		
 		int tabSize= CodeFormatterUtil.getTabWidth(project);
 		StringBuffer addition= new StringBuffer();

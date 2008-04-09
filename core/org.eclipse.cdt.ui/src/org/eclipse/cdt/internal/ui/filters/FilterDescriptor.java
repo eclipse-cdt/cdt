@@ -47,6 +47,7 @@ public class FilterDescriptor implements Comparable {
 	/**
 	 * @deprecated as of 3.0 use {@link FilterDescriptor#TARGET_ID_ATTRIBUTE}
 	 */
+	@Deprecated
 	private static final String VIEW_ID_ATTRIBUTE= "viewId"; //$NON-NLS-1$
 	private static final String TARGET_ID_ATTRIBUTE= "targetId"; //$NON-NLS-1$
 	private static final String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
@@ -56,6 +57,7 @@ public class FilterDescriptor implements Comparable {
 	/**
 	 * @deprecated	use "enabled" instead
 	 */
+	@Deprecated
 	private static final String SELECTED_ATTRIBUTE= "selected"; //$NON-NLS-1$
 
 	private static FilterDescriptor[] fgFilterDescriptors;

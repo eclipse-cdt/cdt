@@ -34,19 +34,23 @@ public class CHMultiDefNode extends CHNode {
 		return fChildren;
 	}
 
+	@Override
 	public boolean isMacro() {
 		return fChildren[0].isMacro();
 	}
 
+	@Override
 	public boolean isVariableOrEnumerator() {
 		return fChildren[0].isVariableOrEnumerator();
 	}
 
 	
+	@Override
 	public ICElement getOneRepresentedDeclaration() {
 		return fChildren[0].getRepresentedDeclaration();
 	}
 
+	@Override
 	public boolean isMultiDef() {
 		return true;
 	}

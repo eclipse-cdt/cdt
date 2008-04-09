@@ -99,6 +99,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	// -------- ui creation
 
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -112,6 +113,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		fContainersList.getTreeViewer().addFilter(new ViewerFilter() {
 
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof CPElementGroup) {
 					return ((CPElementGroup)element).getChildren().length != 0;
@@ -438,6 +440,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_CONTAINER;
 	}
@@ -445,6 +448,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#getSelection
 	 */
+	@Override
 	public List getSelection() {
 		return fContainersList.getSelectedElements();
 	}
@@ -452,13 +456,16 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#setSelection
 	 */
+	@Override
 	public void setSelection(List selElements) {
 		fContainersList.selectElements(new StructuredSelection(selElements));
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	}
 
+	@Override
 	public void performDefaults() {
 	}
 }

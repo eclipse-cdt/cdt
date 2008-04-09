@@ -42,6 +42,7 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 	
 	public BuildVarListDialog(Shell parent, Object[] input) {
 		super(parent, new LabelProvider () {
+			@Override
 			public String getText(Object element) {
 					if (element instanceof ICdtVariable) 
 						return ((ICdtVariable)element).getName();
@@ -53,6 +54,7 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 		setElements(input);
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite container) {
 		Composite c = (Composite) super.createDialogArea(container);
 
@@ -76,7 +78,8 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 		if (fFilteredList != null) {
 			fFilteredList.getAccessible().addAccessibleListener(
 	            new AccessibleAdapter() {                       
-	                public void getName(AccessibleEvent e) {
+	                @Override
+					public void getName(AccessibleEvent e) {
 	                        e.result = LIST_DESCRIPTION;
 	                }
 	            }
@@ -86,6 +89,7 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 		return c;
 	}
 	
+	@Override
 	protected void handleSelectionChanged() {
 		super.handleSelectionChanged();
 		Object[] objects = getSelectedElements();

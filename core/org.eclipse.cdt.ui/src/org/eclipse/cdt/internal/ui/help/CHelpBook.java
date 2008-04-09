@@ -163,6 +163,7 @@ public class CHelpBook implements ICHelpBook {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return "<helpBook title=\"" +title +"\" type=\"" + type + "\">"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

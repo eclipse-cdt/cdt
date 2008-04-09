@@ -55,7 +55,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
         /* (non-Javadoc)
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
-        public IStatus runInUIThread(IProgressMonitor monitor) {
+        @Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
             if (getControl().isDisposed() || element == null) {
                 return Status.OK_STATUS;
             }            
@@ -123,7 +124,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
         /* (non-Javadoc)
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
-        public IStatus runInUIThread(IProgressMonitor monitor) {
+        @Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
             if (getControl().isDisposed() || selection == null) {
                 return Status.OK_STATUS;
             }
@@ -247,7 +249,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object)
      */
-    public synchronized void add(Object parentElement, Object childElement) {
+    @Override
+	public synchronized void add(Object parentElement, Object childElement) {
         super.add(parentElement, childElement);
         runDeferredUpdates();
     }
@@ -255,7 +258,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object[])
      */
-    public synchronized void add(Object parentElement, Object[] childElements) {
+    @Override
+	public synchronized void add(Object parentElement, Object[] childElements) {
         super.add(parentElement, childElements);
         runDeferredUpdates();
     }
@@ -263,6 +267,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
 	 */
+	@Override
 	public synchronized void remove(Object element) {
 	    validateDeferredUpdates(element);
 		super.remove(element);
@@ -271,6 +276,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
+	@Override
 	public synchronized void remove(Object[] elements) {
 	    for (int i = 0; i < elements.length; i++) {
             validateDeferredUpdates(elements[i]);
@@ -336,7 +342,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
     	}
     }
 
-    public Object[] filter(Object[] elements) {
+    @Override
+	public Object[] filter(Object[] elements) {
         return super.filter(elements);
     }
     

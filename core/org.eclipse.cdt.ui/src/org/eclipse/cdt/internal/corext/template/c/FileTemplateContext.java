@@ -46,9 +46,10 @@ public class FileTemplateContext extends TemplateContext {
 	/*
 	 * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
 	 */
+	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		// test that all variables are defined
-		Iterator iterator= getContextType().resolvers();
+		Iterator<?> iterator= getContextType().resolvers();
 		while (iterator.hasNext()) {
 			TemplateVariableResolver var= (TemplateVariableResolver) iterator.next();
 			if (var.getClass() == FileTemplateContextType.FileTemplateVariableResolver.class) {
@@ -95,6 +96,7 @@ public class FileTemplateContext extends TemplateContext {
 	/*
 	 * @see org.eclipse.jface.text.templates.TemplateContext#canEvaluate(org.eclipse.jface.text.templates.Template)
 	 */
+	@Override
 	public boolean canEvaluate(Template template) {
 		return true;
 	}

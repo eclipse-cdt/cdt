@@ -120,6 +120,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 
 	protected abstract void addPages(Map values);
 
+	@Override
 	public void create() {
 		super.create();
 		int lastFocusNr= 0;
@@ -137,6 +138,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		}
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		
 		final Composite composite= (Composite)super.createDialogArea(parent);
@@ -182,6 +184,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		return composite;
 	}
 	
+	@Override
 	public void updateStatus(IStatus status) {
 		if (status == null) {
 			doValidate();
@@ -193,6 +196,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
+	@Override
 	protected Point getInitialSize() {
 		Point initialSize= super.getInitialSize();
 		try {
@@ -211,6 +215,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		try {
 			return new Point(fDialogSettings.getInt(fKeyPreferredX), fDialogSettings.getInt(fKeyPreferredY));
@@ -219,6 +224,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		}
 	}
 	    
+	@Override
 	public boolean close() {
 		final Rectangle shell= getShell().getBounds();
 
@@ -233,12 +239,14 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		applyPressed();
 		super.okPressed();
 	}
 	
-    protected void buttonPressed(int buttonId) {
+    @Override
+	protected void buttonPressed(int buttonId) {
 		if (buttonId == APPLAY_BUTTON_ID) {
 			applyPressed();
 			setTitle(Messages.format(FormatterMessages.ModifyDialog_dialog_title, fProfile.getName()));
@@ -294,7 +302,8 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		}
 	}
     
-    protected void createButtonsForButtonBar(Composite parent) {
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
 	    fApplyButton= createButton(parent, APPLAY_BUTTON_ID, FormatterMessages.ModifyDialog_apply_button, false); 
 		fApplyButton.setEnabled(false);
 		
@@ -321,6 +330,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		doValidate();
 	}
 
+	@Override
 	protected void updateButtonsEnableState(IStatus status) {
 	    super.updateButtonsEnableState(status);
 	    if (fApplyButton != null && !fApplyButton.isDisposed()) {

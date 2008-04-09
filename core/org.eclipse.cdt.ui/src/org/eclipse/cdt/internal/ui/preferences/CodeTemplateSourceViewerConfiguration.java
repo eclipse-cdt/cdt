@@ -105,6 +105,7 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 	/*
 	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
@@ -135,6 +136,7 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 	/*
 	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String, int)
 	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
 		return new TemplateVariableTextHover(fProcessor);
 	}
@@ -142,6 +144,7 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IPresentationReconciler getPresentationReconciler( ISourceViewer sourceViewer) {
 		if (fProcessor.getContextType() instanceof CodeTemplateContextType) {
 			return super.getPresentationReconciler(sourceViewer);

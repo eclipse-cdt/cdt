@@ -48,6 +48,7 @@ public class CPElementFilter extends ViewerFilter {
 	/*
 	 * @see ViewerFilter#select
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof CPElement) {
 			for (int i = 0; i < fKind.length; i++) {

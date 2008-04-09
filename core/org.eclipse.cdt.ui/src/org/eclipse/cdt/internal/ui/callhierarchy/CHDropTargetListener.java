@@ -56,7 +56,7 @@ public class CHDropTargetListener implements DropTargetListener {
 	private ICElement checkLocalSelection() {
 		ISelection sel= LocalSelectionTransfer.getTransfer().getSelection();
 		if (sel instanceof IStructuredSelection) {
-			for (Iterator iter = ((IStructuredSelection)sel).iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ((IStructuredSelection)sel).iterator(); iter.hasNext();) {
 				Object element = iter.next();
 				if (element instanceof ICElement) {
 					return (ICElement) element;

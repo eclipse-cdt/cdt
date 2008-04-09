@@ -78,6 +78,7 @@ public class OpenIncludeAction extends Action {
 		fSelectionProvider= provider;
 	}
 			
+	@Override
 	public void run() {
 		IInclude include= getIncludeStatement(fSelectionProvider.getSelection());
 		if (include == null) {
@@ -255,6 +256,7 @@ public class OpenIncludeAction extends Action {
 
 	private IPath chooseFile(ArrayList filesFound) {
 		ILabelProvider renderer= new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IPath) {
 					IPath file= (IPath)element;

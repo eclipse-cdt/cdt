@@ -11,9 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,8 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * A class to select one or more elements out of an indexed property
@@ -57,6 +56,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * @private
 	 * @see Dialog#cancelPressed
 	 */
+	@Override
 	protected void cancelPressed() {
 		setResult(null);
 		super.cancelPressed();
@@ -68,6 +68,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * @private
 	 * @see Window#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite contents= (Composite)super.createDialogArea(parent);
 		
@@ -116,6 +117,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * @private
 	 * @see Window#create(Shell)
 	 */
+	@Override
 	public void create() {
 		super.create();
 	     	if (isEmptyList()) {
@@ -143,9 +145,9 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * Returns the widget selection. Returns empty list when the widget is not
 	 * usable.
 	 */
-	protected List getWidgetSelection() {
+	protected List<?> getWidgetSelection() {
 		if (fSelectionList == null || fSelectionList.isDisposed())
-			return new ArrayList(0);
+			return Collections.emptyList();
 		return fSelectionList.getSelection();	
 	}
 	/**
@@ -195,6 +197,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/*
 	 * @private
 	 */
+	@Override
 	public int open() {
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
@@ -227,6 +230,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * Sets the message to be shown above the match text field.
 	 * Must be set before widget creation
 	 */
+	@Override
 	public void setMessage(String message) {
 		fMessageText= message;
 	}
@@ -247,7 +251,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * Initializes the selection list widget with the given list of
 	 * elements.
 	 */
-	protected void setSelectionListElements(List elements, boolean refilter) {
+	protected void setSelectionListElements(List<?> elements, boolean refilter) {
 		fSelectionList.setElements(elements, refilter);
 	}
 	/**
@@ -262,7 +266,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * accordingly.
 	 */
 	protected boolean verifyCurrentSelection() {
-		List sel= getWidgetSelection();
+		List<?> sel= getWidgetSelection();
 		int length= sel.size();
 		if (length > 0) {
 			if (fValidator != null) {

@@ -80,6 +80,7 @@ public class ProfileStore {
 		private Map fSettings;
 		private String fKind;
 
+		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 			if (qName.equals(XML_NODE_SETTING)) {
@@ -110,6 +111,7 @@ public class ProfileStore {
 			}
 		}
 		
+		@Override
 		public void endElement(String uri, String localName, String qName) {
 			if (qName.equals(XML_NODE_PROFILE)) {
 				fProfiles.add(new CustomProfile(fName, fSettings, fVersion, fKind));

@@ -162,6 +162,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#clone()
 		 */
+		@Override
 		public Object clone() {
 			DocumentCharacterIterator i= new DocumentCharacterIterator();
 			i.fDocument= fDocument;

@@ -67,6 +67,7 @@ public class TemplateEngine {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
 		 */
+		@Override
 		public IInformationControlCreator getInformationControlCreator() {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {

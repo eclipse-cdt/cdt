@@ -50,6 +50,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	CPathTabBlock fCPathsBlock;
 	IPathEntryStore fStore;
 
+	@Override
 	protected Control createContents(Composite parent) {
 		IProject project = getProject();
 		Control result;
@@ -110,6 +111,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		return label;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (fCPathsBlock != null) {
 			if (!visible) {
@@ -161,6 +163,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	/*
 	 * @see IPreferencePage#performOk
 	 */
+	@Override
 	public boolean performOk() {
 		if (fCPathsBlock != null) {
 			getSettings().put(INDEX, fCPathsBlock.getPageIndex());
@@ -207,6 +210,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	 * 
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		if (fCPathsBlock != null) {
 			getSettings().put(INDEX, fCPathsBlock.getPageIndex());

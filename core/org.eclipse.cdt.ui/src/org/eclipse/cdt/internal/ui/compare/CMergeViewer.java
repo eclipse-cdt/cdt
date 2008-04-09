@@ -37,6 +37,7 @@ public class CMergeViewer extends AbstractMergeViewer {
 		super(parent, styles, mp);
 	}
 
+	@Override
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
 			CTextTools tools= CUIPlugin.getDefault().getTextTools();
@@ -46,6 +47,7 @@ public class CMergeViewer extends AbstractMergeViewer {
 		return fSourceViewerConfiguration;
 	}
 
+	@Override
 	public String getTitle() {
 		return CUIPlugin.getResourceString(TITLE);
 	}
@@ -53,6 +55,7 @@ public class CMergeViewer extends AbstractMergeViewer {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#handlePropertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 		super.handlePropertyChange(event);
 

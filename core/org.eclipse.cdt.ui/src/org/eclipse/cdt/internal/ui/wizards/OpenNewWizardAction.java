@@ -67,6 +67,7 @@ public class OpenNewWizardAction extends AbstractOpenWizardAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.wizards.AbstractOpenWizardAction#createWizard()
 	 */
+	@Override
 	protected Wizard createWizard() throws CoreException {
 		return (Wizard) CoreUtility.createExtension(fConfigurationElement, ATT_CLASS);
 	}

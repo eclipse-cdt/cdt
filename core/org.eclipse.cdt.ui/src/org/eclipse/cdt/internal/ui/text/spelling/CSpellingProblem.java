@@ -62,6 +62,7 @@ public class CSpellingProblem extends SpellingProblem {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingProblem#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		return fSpellEvent.getBegin();
 	}
@@ -69,6 +70,7 @@ public class CSpellingProblem extends SpellingProblem {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingProblem#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fSpellEvent.getEnd() - fSpellEvent.getBegin() + 1;
 	}
@@ -76,6 +78,7 @@ public class CSpellingProblem extends SpellingProblem {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingProblem#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		if (isSentenceStart() && isDictionaryMatch())
 			return Messages.bind(Messages.Spelling_error_case_label, fSpellEvent.getWord());
@@ -86,6 +89,7 @@ public class CSpellingProblem extends SpellingProblem {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingProblem#getProposals()
 	 */
+	@Override
 	public ICompletionProposal[] getProposals() {
 		String[] arguments= getArguments();
 		if (arguments == null)

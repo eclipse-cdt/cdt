@@ -42,10 +42,12 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		setEnabled(fEditor != null && CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
 	}
 
+	@Override
 	public void run(ITextSelection sel) {
 		CallHierarchyUI.open(fEditor, sel);
 	}
 	
+	@Override
 	public void run(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
 			Object selectedObject= selection.getFirstElement();
@@ -56,9 +58,11 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		}
 	}
 
+	@Override
 	public void selectionChanged(ITextSelection sel) {
 	}
 			
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			setEnabled(false);
@@ -88,6 +92,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object getAdapter(Object object, Class desiredClass) {
 		if (desiredClass.isInstance(object)) {
 			return object;

@@ -85,6 +85,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		protected LevelDialog() {
 			super(CUIPlugin.getActiveWorkbenchShell());
 		}
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite c = new Composite(parent, 0);
 			c.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -97,6 +98,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			sp.setMinimum(0);
 			sp.setSelection(currentLevel);
 			sp.addSelectionListener(new SelectionAdapter () {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					currentLevel = ((Spinner)e.widget).getSelection();
 				}
@@ -160,6 +162,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		return ti;
 	}
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(5, false));
@@ -178,6 +181,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		} else
 			combo.select(1); // ConfigurationDescription
 		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateData(cfg);
 			}});
@@ -188,6 +192,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		b1.setLayoutData(gd);
 		b1.setText(UIMessages.getString("StructureTreeTab.5")); //$NON-NLS-1$
 		b1.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				tree.setRedraw(false);
 				expandAll(tree.getItem(0), true, -1);
@@ -200,6 +205,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		b2.setLayoutData(gd);
 		b2.setText(UIMessages.getString("StructureTreeTab.6")); //$NON-NLS-1$
 		b2.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				LevelDialog ld = new LevelDialog();
 				if (ld.open() == Window.OK) {
@@ -215,6 +221,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		b3.setLayoutData(gd);
 		b3.setText(UIMessages.getString("StructureTreeTab.7")); //$NON-NLS-1$
 		b3.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				tree.setRedraw(false);
 				expandAll(tree.getItem(0), false, -1);
@@ -307,8 +314,10 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		return x;
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription src,ICResourceDescription dst) {}
 
+	@Override
 	protected void performDefaults() {}
 	
 	private void update(ICProjectDescription prj) {
@@ -748,6 +757,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		return ti;
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription rcfg) {
 		cfg = rcfg;
 		tree.getDisplay().asyncExec(new Runnable() {
@@ -778,9 +788,11 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	}
 	
 	// This page can be displayed if it's permitted in prefs
+	@Override
 	public boolean canBeVisible() {
 		return CDTPrefUtil.getBool(CDTPrefUtil.KEY_DTREE);
 	}
 
+	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

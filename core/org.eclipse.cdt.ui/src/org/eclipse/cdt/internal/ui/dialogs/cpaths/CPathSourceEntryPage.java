@@ -95,6 +95,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		fFoldersList.setTreeExpansionLevel(2);
 	}
 
+	@Override
 	public Image getImage() {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_SOURCE_ROOT);
 	}
@@ -118,6 +119,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -497,6 +499,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#getSelection
 	 */
+	@Override
 	public List getSelection() {
 		return fFoldersList.getSelectedElements();
 	}
@@ -504,6 +507,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#setSelection
 	 */
+	@Override
 	public void setSelection(List selElements) {
 		fFoldersList.selectElements(new StructuredSelection(selElements));
 	}
@@ -513,6 +517,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_SOURCE;
 	}
@@ -522,6 +527,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	}
 
@@ -530,6 +536,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 	}
 }

@@ -168,6 +168,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		IncludeSymbolAdapter adapter = new IncludeSymbolAdapter();
 		fIncludeSymPathsList = new TreeListDialogField(adapter, buttonLabel, new CPElementLabelProvider(true, false)) {
 
+			@Override
 			protected int getTreeStyle() {
 				return super.getTreeStyle() & ~SWT.MULTI;
 			}
@@ -192,6 +193,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 				true);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -208,10 +210,12 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
 	}
 
+	@Override
 	public Image getImage() {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
 	}
 
+	@Override
 	public void init(ICElement cElement, List cPaths) {
 		fCurrCProject = cElement.getCProject();
 		List elements = createGroups(cElement, cPaths);
@@ -1044,6 +1048,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 		}
 
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			Button browse = createButton(parent, 3,
@@ -1051,6 +1056,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 					false);
 			browse.addSelectionListener(new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected(SelectionEvent ev) {
 					DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
 					dialog.setText(CPathEntryMessages.getString("IncludeSymbolEntryPage.browseForFolder")); //$NON-NLS-1$
@@ -1073,6 +1079,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 	 * 
 	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#getSelection()
 	 */
+	@Override
 	public List getSelection() {
 		return fIncludeSymPathsList.getSelectedElements();
 	}
@@ -1082,20 +1089,25 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 	 * 
 	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#setSelection(java.util.List)
 	 */
+	@Override
 	public void setSelection(List selElements) {
 		fIncludeSymPathsList.selectElements(new StructuredSelection(selElements));
 	}
 
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO;
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	}
 
+	@Override
 	public void performDefaults() {
 	}
 
+	@Override
 	public List getCPaths() {
 		List cPaths = new ArrayList();
 		List groups = fIncludeSymPathsList.getElements();

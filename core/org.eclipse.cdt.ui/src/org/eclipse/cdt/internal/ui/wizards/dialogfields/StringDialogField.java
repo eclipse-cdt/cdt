@@ -42,6 +42,7 @@ public class StringDialogField extends DialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 		
@@ -56,6 +57,7 @@ public class StringDialogField extends DialogField {
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */
+	@Override
 	public int getNumberOfControls() {
 		return 2;	
 	}
@@ -73,6 +75,7 @@ public class StringDialogField extends DialogField {
 	/*
 	 * @see DialogField#setFocus
 	 */
+	@Override
 	public boolean setFocus() {
 		if (isOkToUse(fTextControl)) {
 			fTextControl.setFocus();
@@ -120,6 +123,7 @@ public class StringDialogField extends DialogField {
 	/*
 	 * @see DialogField#updateEnableState
 	 */		
+	@Override
 	protected void updateEnableState() {
 		super.updateEnableState();		
 		if (isOkToUse(fTextControl)) {

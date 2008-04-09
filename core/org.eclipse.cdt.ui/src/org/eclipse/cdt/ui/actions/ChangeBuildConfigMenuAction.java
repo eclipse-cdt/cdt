@@ -93,6 +93,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	 */
 	private void addMenuListener(Menu menu) {
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				fillMenu((Menu)e.widget);
 			}

@@ -114,6 +114,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	/*
 	 * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void drop(final DropTargetEvent event) {
 		try {
 			TransferData dataType= event.currentDataType;
@@ -141,6 +142,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	/*
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		TransferData dataType= event.currentDataType;
 		if (isFileDataType(dataType)) {
@@ -168,6 +170,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	/*
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragOver(DropTargetEvent event) {
 		TransferData dataType= event.currentDataType;
 		if (isFileDataType(dataType)) {
@@ -208,6 +211,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	/*
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dropAccept(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dropAccept(DropTargetEvent event) {
 		TransferData dataType= event.currentDataType;
 		if (isTextDataType(dataType)) {
@@ -236,6 +240,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	/*
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		TransferData dataType= event.currentDataType;
 		if (isFileDataType(dataType)) {
@@ -276,6 +281,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	/*
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragLeave(DropTargetEvent event) {
 		fDropSelection= null;
 	}
@@ -410,13 +416,12 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 		if (fViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
 			return extension.widgetOffset2ModelOffset(widgetOffset);
-		} else {
-			IRegion visible= fViewer.getVisibleRegion();
-			if (widgetOffset > visible.getLength()) {
-				return -1;
-			}
-			return widgetOffset + visible.getOffset();
 		}
+		IRegion visible= fViewer.getVisibleRegion();
+		if (widgetOffset > visible.getLength()) {
+			return -1;
+		}
+		return widgetOffset + visible.getOffset();
 	}
 
 	/**

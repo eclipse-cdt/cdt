@@ -67,6 +67,7 @@ public class UISelectWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#getValues()
 	 */
+	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> values = new HashMap<String, String>();
 		if(currentValue != null) {
@@ -78,6 +79,7 @@ public class UISelectWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
+	@Override
 	public void setValues(Map<String, String> valueMap) {
 		defaultValue= valueMap.get(uiAttributes.get(InputUIElement.ID));
 		if (combo != null) {
@@ -94,6 +96,7 @@ public class UISelectWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
+	@Override
 	public void createWidgets(final UIComposite uiComposite) {
 		label= new Label(uiComposite, SWT.LEFT);
 		label.setText(uiAttributes.get(InputUIElement.WIDGETLABEL));
@@ -118,6 +121,7 @@ public class UISelectWidget extends InputUIElement {
 		}
 		combo.select(defaultIndex);
 		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				currentValue= getValue(combo.getItem(combo.getSelectionIndex()));
 				uiComposite.firePatternEvent(createPatternEvent());
@@ -135,6 +139,7 @@ public class UISelectWidget extends InputUIElement {
 	 * @return whether this widget has been set to a valid state. For this 
 	 * widget type that means whether the user has selected a non-empty string name.
 	 */
+	@Override
 	public boolean isValid() {
 		boolean retVal = true;
 		if(Boolean.parseBoolean(uiAttributes.get(InputUIElement.MANDATORY))) {
@@ -156,6 +161,7 @@ public class UISelectWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */
+	@Override
 	public void disposeWidget() {
 		label.dispose();
 		combo.dispose();

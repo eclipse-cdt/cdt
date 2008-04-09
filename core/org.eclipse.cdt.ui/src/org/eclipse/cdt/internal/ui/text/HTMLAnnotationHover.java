@@ -28,6 +28,7 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 	/*
 	 * Formats a message as HTML text.
 	 */
+	@Override
 	protected String formatSingleMessage(String message) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
@@ -39,6 +40,7 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 	/*
 	 * Formats several message as HTML text.
 	 */
+	@Override
 	protected String formatMultipleMessages(List messages) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);

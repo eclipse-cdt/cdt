@@ -40,6 +40,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		//setDescription(PreferencesMessages.getString("CodeAssistPreferencePage.description")); //$NON-NLS-1$
 	}
 
+	@Override
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList overlayKeys = new ArrayList();
 
@@ -66,6 +67,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
@@ -74,6 +76,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
 		fOverlayStore.start();
@@ -146,6 +149,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 	}

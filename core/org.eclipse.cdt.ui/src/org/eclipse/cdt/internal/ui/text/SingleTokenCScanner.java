@@ -45,6 +45,7 @@ public final class SingleTokenCScanner extends AbstractCScanner {
 	/**
 	 * setRange -- sets the range to be scanned
 	 */
+	@Override
 	public void setRange(IDocument document, int offset, int length) {
 		
 		super.setRange(document, offset, length);
@@ -58,6 +59,7 @@ public final class SingleTokenCScanner extends AbstractCScanner {
 	 *
 	 * @return the next token in the document
 	 */
+	@Override
 	public IToken nextToken() {
 		fTokenOffset = position;
 		
@@ -69,6 +71,7 @@ public final class SingleTokenCScanner extends AbstractCScanner {
 		return Token.EOF;
 	}
 	
+	@Override
 	public int getTokenLength() {
 		return size;
 	}

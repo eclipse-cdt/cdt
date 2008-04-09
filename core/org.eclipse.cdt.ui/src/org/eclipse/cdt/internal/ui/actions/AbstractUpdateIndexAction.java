@@ -43,15 +43,15 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 			return;
 		
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
-		Iterator i= cElements.iterator();
-		ArrayList tuSelection= new ArrayList();
+		Iterator<?> i= cElements.iterator();
+		ArrayList<ICElement> tuSelection= new ArrayList<ICElement>();
 		while (i.hasNext()) {
 			Object o= i.next();
 			if (o instanceof ICProject || o instanceof ICContainer || o instanceof ITranslationUnit) {
-				tuSelection.add(o);
+				tuSelection.add((ICElement) o);
 			}
 		}
-		ICElement[] tuArray= (ICElement[]) tuSelection.toArray(new ICElement[tuSelection.size()]);
+		ICElement[] tuArray= tuSelection.toArray(new ICElement[tuSelection.size()]);
 		
 		try {
 			CCorePlugin.getIndexManager().update(tuArray, getUpdateOptions());

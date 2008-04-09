@@ -22,7 +22,8 @@ public abstract class ASTSpecificNameVisitor extends ASTNameVisitor {
         fSearchForName= name;
     }
     
-    final public int visitName(IASTName name) {
+    @Override
+	final public int visitName(IASTName name) {
         String nameStr= name.toString();
         if (nameStr != null) {
             final int len= nameStr.length();

@@ -76,6 +76,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return null; // JavaPluginImages.get(JavaPluginImages.IMG_OBJS_REFACTORING_INFO);
 		}
@@ -83,6 +84,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
@@ -128,6 +130,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	}
 	
 	private static class TodoTaskSorter extends ViewerComparator {
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getComparator().compare(((TodoTask) e1).name, ((TodoTask) e2).name);
 		}
@@ -234,6 +237,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		}			
 	}
 		
+	@Override
 	protected Control createContents(Composite parent) {
 		setShell(parent.getShell());
 		
@@ -269,6 +273,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		return markersComposite;
 	}
 
+	@Override
 	protected void validateSettings(Key changedKey, String oldValue, String newValue) {
 		if (!areSettingsEnabled()) {
 			return;
@@ -317,6 +322,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#updateControls()
 	 */
+	@Override
 	protected void updateControls() {
 		unpackTodoTasks();
 	}

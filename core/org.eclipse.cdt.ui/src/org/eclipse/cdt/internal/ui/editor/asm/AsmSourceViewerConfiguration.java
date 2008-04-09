@@ -110,6 +110,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * Constructor for AsmSourceViewerConfiguration.
 	 * @deprecated
 	 */
+	@Deprecated
 	public AsmSourceViewerConfiguration(AsmTextTools tools, IPreferenceStore store) {
 		this(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING);
 	}
@@ -118,6 +119,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * Constructor for AsmSourceViewerConfiguration.
 	 * @deprecated
 	 */
+	@Deprecated
 	public AsmSourceViewerConfiguration(ITextEditor editor, IPreferenceStore store) {
 		this(CUIPlugin.getDefault().getAsmTextTools().getColorManager(), store, editor, ICPartitions.C_PARTITIONING);
 	}
@@ -208,6 +210,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		if (fDocumentPartitioning != null)
 			return fDocumentPartitioning;
@@ -217,6 +220,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
 		PresentationReconciler reconciler= new PresentationReconciler();
@@ -253,6 +257,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { 	
 				IDocument.DEFAULT_CONTENT_TYPE, 
@@ -266,6 +271,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/*
 	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fTextEditor != null) {
 			MonoReconciler reconciler= new MonoReconciler(new AsmReconcilingStrategy(fTextEditor), false);

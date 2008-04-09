@@ -83,7 +83,9 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		public BinaryParserConfiguration(IExtension extension) { fExtension = extension; }
 		public String getID() {	return fExtension.getUniqueIdentifier();}
 		public String getName() { return fExtension.getLabel();	}
+		@Override
 		public String toString() { return fExtension.getUniqueIdentifier();	}
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof BinaryParserConfiguration) {
 				return this.getID().equals(((BinaryParserConfiguration) obj).getID());
@@ -110,6 +112,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		return CCorePlugin.BINARY_PARSER_SIMPLE_ID;
 	}
 
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(usercomp, ICHelpContextIds.BINARY_PARSER_PAGE);
@@ -131,6 +134,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		table = new Table(c1, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleBinaryParserChanged();
 				updateButtons();
@@ -144,6 +148,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
 		tv.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				String txt = (element != null) ? element.toString() : EMPTY_STR;
 				if (element instanceof BinaryParserConfiguration)
@@ -181,11 +186,13 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		handleBinaryParserChanged();
 	}
 
-    public void setVisible(boolean _visible) {
+    @Override
+	public void setVisible(boolean _visible) {
     	super.setVisible(_visible);
     	page.enableConfigSelection(!_visible);
     }
 
+	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		String[] ids = null;
 		if (page.isForPrefs()) { // prefs
@@ -270,6 +277,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		return false; // invalid extension definition (must have at least cextension elements)
 	}
 	
+	@Override
 	public void updateButtons() {
 		int cnt = table.getItemCount();
 		int pos = table.getSelectionIndex();
@@ -316,6 +324,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		return ((BinaryParserConfiguration)table.getItem(x).getData()).getID();
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (page.isMultiCfg()) {
 			src = ((ICResourceDescription[])((ICMultiResourceDescription)src).getItems())[0];
@@ -328,6 +337,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}
 	}
 	
+	@Override
 	protected void performDefaults() {
 		if (page.isForProject())
 			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), null);
@@ -355,6 +365,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}
 	}
 	
+	@Override
 	public void buttonPressed(int i) {
 		switch (i) {
 		case 0:
@@ -402,6 +413,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}
 	}
 	// This page can be displayed for project only
+	@Override
 	public boolean canBeVisible() {
 		return page.isForProject() || page.isForPrefs();
 	}

@@ -669,7 +669,7 @@ public class ASTManager {
         IASTDeclaration decl= null;
 		if( method instanceof CPPMethod )
 			decl = ((CPPMethod)method).getPrimaryDeclaration();
-		else if( decl instanceof CPPImplicitMethod )
+		else if( method instanceof CPPImplicitMethod )
 			decl = ((CPPImplicitMethod)method).getPrimaryDeclaration();
 			
         IASTDeclSpecifier spec= null;

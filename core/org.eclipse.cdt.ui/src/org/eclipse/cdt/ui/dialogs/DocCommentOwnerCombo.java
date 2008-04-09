@@ -77,6 +77,7 @@ public class DocCommentOwnerCombo extends Composite {
 		fCombo.select(0);
 	}
 	
+	@Override
 	public void setEnabled(boolean enabled) {
 		fCombo.setEnabled(enabled);
 	}

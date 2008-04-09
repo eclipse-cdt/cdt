@@ -105,12 +105,14 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	 */
 	private void addMenuListener(Menu menu) {
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				fillMenu((Menu)e.widget);
 			}
 		});
 	}
 
+	@Override
 	protected IAction makeAction(String sName, StringBuffer builder, int accel) {
 		return new BuildConfigAction(fProjects, sName, builder.toString(), accel + 1, buildaction);
 	}

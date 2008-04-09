@@ -49,6 +49,7 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	/*
 	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#format()
 	 */
+	@Override
 	public void format() {
 		super.format();
 		
@@ -80,6 +81,7 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	/*
 	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
 	 */
+	@Override
 	public void formatterStarts(final IFormattingContext context) {
 		super.formatterStarts(context);
 		
@@ -90,6 +92,7 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	/*
 	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStops()
 	 */
+	@Override
 	public void formatterStops() {
 		super.formatterStops();
 

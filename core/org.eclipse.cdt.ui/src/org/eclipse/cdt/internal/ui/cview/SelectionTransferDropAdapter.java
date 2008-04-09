@@ -17,14 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.dnd.CDTViewerDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -38,9 +30,19 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.ui.dnd.CDTViewerDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+
 public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implements TransferDropTargetListener {
 
-	private List fElements;
+	private List<?> fElements;
 	private ICElement[] fMoveData;
 	private ICElement[] fCopyData;
 
@@ -66,11 +68,13 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 
 	//---- Actual DND -----------------------------------------------------------------
 	
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		clear();
 		super.dragEnter(event);
 	}
 	
+	@Override
 	public void dragLeave(DropTargetEvent event) {
 		clear();
 		super.dragLeave(event);
@@ -82,6 +86,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		fCopyData = null;
 	}
 	
+	@Override
 	public void validateDrop(Object target, DropTargetEvent event, int operation) {
 		event.detail= DND.DROP_NONE;
 		
@@ -127,6 +132,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		return Math.abs(LocalSelectionTransfer.getInstance().getSelectionSetTime() - (event.time & 0xFFFFFFFFL)) < DROP_TIME_DIFF_TRESHOLD;
 	}	
 
+	@Override
 	public void drop(Object target, DropTargetEvent event) {
 		try {
 			switch(event.detail) {
@@ -194,8 +200,10 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 			ICElement parent = elements[0];
 			for (int i = 0; i < elements.length; ++i) {
 				ICElement p = elements[i].getParent();
-				if (parent == null && p!= null) {
-					return false;
+				if (parent == null) {
+					if (p != null) {
+						return false;
+					}
 				} else if (!parent.equals(p)){
 					return false;
 				}
@@ -318,17 +326,17 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		context.run(true, true, runnable);
 	}
 
-	public static ICElement[] getCElements(List elements) {
-		List resources= new ArrayList(elements.size());
-		for (Iterator iter= elements.iterator(); iter.hasNext();) {
+	public static ICElement[] getCElements(List<?> elements) {
+		List<ICElement> resources= new ArrayList<ICElement>(elements.size());
+		for (Iterator<?> iter= elements.iterator(); iter.hasNext();) {
 			Object element= iter.next();
 			if (element instanceof ITranslationUnit) {
 				continue;
 			}
 			if (element instanceof ICElement)
-				resources.add(element);
+				resources.add((ICElement) element);
 		}
-		return (ICElement[]) resources.toArray(new ICElement[resources.size()]);
+		return resources.toArray(new ICElement[resources.size()]);
 	}
 
 }

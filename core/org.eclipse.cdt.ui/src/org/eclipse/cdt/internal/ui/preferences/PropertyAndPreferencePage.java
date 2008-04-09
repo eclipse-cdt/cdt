@@ -88,7 +88,8 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		return fData == null || !Boolean.TRUE.equals(fData.get(DATA_NO_LINK));
 	}
 	
-    protected Label createDescriptionLabel(Composite parent) {
+    @Override
+	protected Label createDescriptionLabel(Composite parent) {
 		fParentComposite= parent;
 		if (isProjectPreferencePage()) {
 			Composite composite= new Composite(parent, SWT.NONE);
@@ -133,6 +134,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#createContents(Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -292,6 +294,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		if (useProjectSettings()) {
 			enableProjectSpecificSettings(false);
@@ -328,6 +331,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			fData= (Map) data;

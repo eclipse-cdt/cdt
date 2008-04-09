@@ -103,6 +103,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		fLibrariesList.setTreeExpansionLevel(2);
 	}
 
+	@Override
 	public Image getImage() {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_ARCHIVE);
 	}
@@ -121,6 +122,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#getSelection()
 	 */
+	@Override
 	public List getSelection() {
 		return fLibrariesList.getSelectedElements();
 	}
@@ -128,6 +130,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#setSelection(java.util.List)
 	 */
+	@Override
 	public void setSelection(List selElements) {
 		fLibrariesList.selectElements(new StructuredSelection(selElements));
 	}
@@ -135,6 +138,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#isEntryKind(int)
 	 */
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_LIBRARY;
 	}
@@ -142,18 +146,21 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);

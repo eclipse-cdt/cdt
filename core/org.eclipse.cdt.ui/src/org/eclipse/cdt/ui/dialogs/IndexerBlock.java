@@ -135,7 +135,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 		}
     }
 
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
 		fParent= parent;
 
         Composite composite = ControlFactory.createComposite(parent, 1);
@@ -148,6 +149,7 @@ public class IndexerBlock extends AbstractCOptionPage {
       
 		if (getProject() != null || getContainer() instanceof ICOptionContainerExtension) {
 			fPrefScopeBlock= new PreferenceScopeBlock(PREF_PAGE_ID) {
+				@Override
 				protected void onPreferenceScopeChange() {
 					IndexerBlock.this.onPreferenceScopeChange();
 				}
@@ -168,6 +170,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		gd.grabExcessHorizontalSpace= true;
 		fIndexersComboBox = ControlFactory.createSelectCombo(group,"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		fIndexersComboBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				onIndexerChange();
 			}
@@ -186,7 +189,8 @@ public class IndexerBlock extends AbstractCOptionPage {
         	fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerBlock_fixedBuildConfig, null, null);
         	fBuildConfigComboBox= ControlFactory.createSelectCombo(group, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
         	final SelectionAdapter listener = new SelectionAdapter() {
-        		public void widgetSelected(SelectionEvent e) {
+        		@Override
+				public void widgetSelected(SelectionEvent e) {
         			setUseActiveBuildConfig(fUseActiveBuildButton.getSelection());
         		}
         	};
@@ -456,7 +460,8 @@ public class IndexerBlock extends AbstractCOptionPage {
         return null;
     }
     
-    public void performApply(IProgressMonitor monitor) throws CoreException {
+    @Override
+	public void performApply(IProgressMonitor monitor) throws CoreException {
     	int scope= computeScope();
     	IProject project= getProject();
     	String indexerID = getSelectedIndexerID();
@@ -503,7 +508,8 @@ public class IndexerBlock extends AbstractCOptionPage {
     	CCoreInternals.savePreferences(project);
     }
 
-    public void performDefaults() {
+    @Override
+	public void performDefaults() {
     	fCurrentProperties= null;
     	if (fPrefScopeBlock != null) {
     		fPrefScopeBlock.setInstanceScope();
@@ -518,6 +524,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     /**
      * @deprecated always returns false
      */
+	@Deprecated
 	public boolean isIndexEnabled() {
 		return false;
 	}

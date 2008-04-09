@@ -83,7 +83,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	    /** (non-Javadoc)
 	     * Method declared on IDialogPage.
 	     */
-	    public void createControl(Composite parent) {
+	    @Override
+		public void createControl(Composite parent) {
 	    	super.createControl(parent);
 	    	
 	    	createDynamicGroup((Composite)getControl()); 
@@ -112,6 +113,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        tree = new Tree(c, SWT.SINGLE | SWT.BORDER);
 	        tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 	        tree.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					TreeItem[] tis = tree.getSelection();
 					if (tis == null || tis.length == 0) return;
@@ -120,7 +122,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				}});
 	        tree.getAccessible().addAccessibleListener(
 					 new AccessibleAdapter() {                       
-		                 public void getName(AccessibleEvent e) {
+		                 @Override
+						public void getName(AccessibleEvent e) {
 		                         e.result = UIMessages.getString("CMainWizardPage.0"); //$NON-NLS-1$
 		                 }
 		             }
@@ -135,6 +138,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        gd.horizontalSpan = 2;
 	        show_sup.setLayoutData(gd);
 	        show_sup.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (h_selected != null)
 						h_selected.setSupportedOnly(show_sup.getSelection());
@@ -146,7 +150,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
 	    }
 	    
-	    public IWizardPage getNextPage() {
+	    @Override
+		public IWizardPage getNextPage() {
 			return (h_selected == null) ? null : h_selected.getSpecificPage();
 	    }		
 
@@ -161,7 +166,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	     * @return <code>true</code> if all controls are valid, and
 	     *   <code>false</code> if at least one is invalid
 	     */
-	    protected boolean validatePage() {
+	    @Override
+		protected boolean validatePage() {
     		setMessage(null);
 	    	if (!super.validatePage())
 	    		return false;

@@ -66,6 +66,7 @@ public class UIStringListWidget extends InputUIElement {
 	/**
 	 * @return String_List value contained in the String_List Widget.
 	 */
+	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> retMap = new HashMap<String, String>();
 		String itemString = new String();
@@ -82,6 +83,7 @@ public class UIStringListWidget extends InputUIElement {
 	 * 
 	 * @param valueMap
 	 */
+	@Override
 	public void setValues(Map valueMap) {
 		String items = (String) valueMap.get(uiAttributes.get(InputUIElement.ID));
 
@@ -101,6 +103,7 @@ public class UIStringListWidget extends InputUIElement {
 	 * 
 	 * @param uiComposite
 	 */
+	@Override
 	public void createWidgets(final UIComposite uiComposite) {
 		GridData gridData = null;
 
@@ -149,6 +152,7 @@ public class UIStringListWidget extends InputUIElement {
 	 * 
 	 * @return boolean.
 	 */
+	@Override
 	public boolean isValid() {
 		boolean retVal = true;
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
@@ -163,6 +167,7 @@ public class UIStringListWidget extends InputUIElement {
 	 * call the dispose method on the widgets. This is to ensure that the
 	 * widgets are properly disposed.
 	 */
+	@Override
 	public void disposeWidget() {
 		label.dispose();
 		fileListControl = null;

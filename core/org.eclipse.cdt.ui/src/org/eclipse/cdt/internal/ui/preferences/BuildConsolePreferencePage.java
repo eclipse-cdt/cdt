@@ -45,6 +45,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
 
+	@Override
 	protected void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
 		BooleanFieldEditor clearConsole = new BooleanFieldEditor(PREF_CLEAR_CONSOLE,

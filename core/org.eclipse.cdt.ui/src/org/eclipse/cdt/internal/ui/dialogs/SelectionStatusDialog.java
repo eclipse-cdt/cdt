@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.dialogs;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -22,10 +23,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.dialogs.SelectionDialog;
-
-import org.eclipse.core.runtime.IStatus;
 
 /**
  * An abstract base class for dialogs with a status bar and ok/cancel buttons.
@@ -49,6 +47,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * Method declared in Window.
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fImage != null)
@@ -57,6 +56,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * Method declared in Dialog.
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
@@ -80,6 +80,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * Method declared in Dialog.
 	 */
+	@Override
 	public void create() {
 		super.create();
 		if (fLastStatus != null) {
@@ -92,7 +93,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * @return the first element of the initial selection.
 	 */
 	protected Object getPrimaryInitialSelection() {
-		List result= getInitialElementSelections();
+		List<?> result= getInitialElementSelections();
 		if (result == null || result.size() == 0)
 			return null;
 		return result.get(0);	
@@ -117,6 +118,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * Method declared in Dialog.
 	 */
+	@Override
 	protected void okPressed() {
 		computeResult();
 		super.okPressed();
@@ -130,7 +132,8 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		fImage= image;
 	}
 	protected void setInitialSelection(int position, Object element) {
-		List l= getInitialElementSelections();
+		@SuppressWarnings("unchecked")
+		List<Object> l= getInitialElementSelections();
 		l.set(position, element);
 		fInitialSelectionSet= true;
 	}
@@ -148,6 +151,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 			setInitialSelections(new Object[0]);
 		}
 	}
+	@Override
 	public void setInitialSelections(Object[] selectedElements) {
 		super.setInitialSelections(selectedElements);
 		fInitialSelectionSet= true;

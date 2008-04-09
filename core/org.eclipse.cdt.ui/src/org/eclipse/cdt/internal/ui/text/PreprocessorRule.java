@@ -77,6 +77,7 @@ public class PreprocessorRule extends WordRule {
 	/*
 	 * @see org.eclipse.jface.text.rules.WordRule#addWord(java.lang.String, org.eclipse.jface.text.rules.IToken)
 	 */
+	@Override
 	public void addWord(String word, IToken token) {
 		if (word.charAt(0) == '#') {
 			word= word.substring(1);
@@ -87,6 +88,7 @@ public class PreprocessorRule extends WordRule {
 	/*
 	 * @see IRule#evaluate
 	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c;
 		int nCharsToRollback = 0;

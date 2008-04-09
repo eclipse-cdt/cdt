@@ -38,6 +38,7 @@ public class RefsTab extends AbstractCPropertyTab {
 
 	static private final String ACTIVE = "[" + UIMessages.getString("RefsTab.3") + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		initButtons(new String[] {UIMessages.getString("RefsTab.0"), UIMessages.getString("RefsTab.2")}, 120); //$NON-NLS-1$ //$NON-NLS-2$
@@ -47,7 +48,8 @@ public class RefsTab extends AbstractCPropertyTab {
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.getAccessible().addAccessibleListener(
             new AccessibleAdapter() {                       
-                public void getName(AccessibleEvent e) {
+                @Override
+				public void getName(AccessibleEvent e) {
                         e.result = UIMessages.getString("RefsTab.4"); //$NON-NLS-1$
                 }
             }
@@ -55,6 +57,7 @@ public class RefsTab extends AbstractCPropertyTab {
 		initData();
 		tree.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if ((e.detail & SWT.CHECK) == SWT.CHECK && e.item != null && (e.item instanceof TreeItem)) {
 					TreeItem sel = (TreeItem)e.item;
@@ -110,16 +113,19 @@ public class RefsTab extends AbstractCPropertyTab {
 		public ActiveCfg(IProject _project) {
 			project = _project; 
 		}
+		@Override
 		public String toString() {
 			return ACTIVE;
 		}
 	}
 
-    public void buttonPressed(int n) {
+    @Override
+	public void buttonPressed(int n) {
    		for (TreeItem item : tree.getItems()) 
    			item.setExpanded(n==0);
     }
 
+	@Override
 	protected void updateData(ICResourceDescription cfgd) {
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
@@ -198,20 +204,24 @@ public class RefsTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		dst.getConfiguration().setReferenceInfo(src.getConfiguration().getReferenceInfo());
 	}
 
 	// This page can be displayed for project only
+	@Override
 	public boolean canBeVisible() {
 		return page.isForProject() && ! page.isMultiCfg();
 	}
 
+	@Override
 	protected void performDefaults() {
 		getResDesc().getConfiguration().setReferenceInfo(new HashMap<String, String>());
 		initData();
 	}
 	
+	@Override
 	protected void updateButtons() {
 		updateButtons(null, false, false);
 	}

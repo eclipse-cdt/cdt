@@ -21,7 +21,8 @@ public class AsyncTreeWorkInProgressNode {
     public Object getParent() {
         return fParent;
     }
-    public String toString() {
+    @Override
+	public String toString() {
         return "..."; //$NON-NLS-1$
     }
 }

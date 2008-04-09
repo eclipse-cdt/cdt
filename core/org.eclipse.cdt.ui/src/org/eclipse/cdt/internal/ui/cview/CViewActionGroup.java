@@ -97,13 +97,16 @@ public abstract class CViewActionGroup extends ActionGroup {
 	 * Called when the context menu is about to open.
 	 * Override to add your own context dependent menu contributions.
 	 */
+	@Override
 	public abstract void fillContextMenu(IMenuManager menu);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public abstract void fillActionBars(IActionBars actionBars);
 
+	@Override
 	public abstract void updateActionBars();
 
 	/**

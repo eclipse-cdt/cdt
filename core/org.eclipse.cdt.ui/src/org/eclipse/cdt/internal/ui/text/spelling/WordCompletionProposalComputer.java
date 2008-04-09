@@ -80,6 +80,7 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 								/*
 								 * @see org.eclipse.cdt.internal.ui.text.java.JavaCompletionProposal#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
 								 */
+								@Override
 								public boolean validate(IDocument doc, int validate_offset, DocumentEvent event) {
 									return offset == validate_offset;
 								}

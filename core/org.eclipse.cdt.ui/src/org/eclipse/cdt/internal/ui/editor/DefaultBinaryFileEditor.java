@@ -145,6 +145,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#createDocument(java.lang.Object)
 		 */
+		@Override
 		protected IDocument createDocument(Object element) throws CoreException {
 			IFile file= ResourceUtil.getFile(element);
 			if (file != null) {
@@ -158,12 +159,14 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#isModifiable(java.lang.Object)
 		 */
+		@Override
 		public boolean isModifiable(Object element) {
 			return false;
 		}
 		/*
 		 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#isReadOnly(java.lang.Object)
 		 */
+		@Override
 		public boolean isReadOnly(Object element) {
 			return true;
 		}
@@ -178,6 +181,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
+	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		ISourceViewer sourceViewer= super.createSourceViewer(parent, ruler, styles);
 		sourceViewer.setEditable(false);

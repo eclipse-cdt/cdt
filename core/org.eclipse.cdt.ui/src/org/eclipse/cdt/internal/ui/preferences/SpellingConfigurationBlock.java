@@ -269,6 +269,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 			setValue(PREF_SPELLING_LOCALE, SpellCheckEngine.getDefaultLocale().toString());
 	}
 
+	@Override
 	protected Combo addComboBox(Composite parent, String label, Key key, String[] values, String[] valueLabels, int indent) {
 		ControlData data= new ControlData(key, values);
 		
@@ -305,6 +306,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(final Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -390,6 +392,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 		button.setText(PreferencesMessages.SpellingPreferencePage_browse_label); 
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(final SelectionEvent event) {
 				handleBrowseButtonSelected();
 			}
@@ -401,6 +404,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 		button=new Button(buttons, SWT.PUSH);
 		button.setText(PreferencesMessages.SpellingPreferencePage_variables);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleVariablesButtonSelected();
 			}
@@ -494,6 +498,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 		DialogPage fakePage= new DialogPage() {
 			public void createControl(Composite c) {
 			}
+			@Override
 			public void setErrorMessage(String newMessage) {
 				StatusInfo status= new StatusInfo();
 				if (newMessage != null)
@@ -527,6 +532,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		fEncodingEditor.store();
 		if (fEncodingEditor.presentsDefaultValue())
@@ -539,6 +545,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#performApply()
 	 */
+	@Override
 	public boolean performApply() {
 		fEncodingEditor.store();
 		if (fEncodingEditor.presentsDefaultValue())
@@ -551,6 +558,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 		super.performDefaults();
 		
@@ -584,6 +592,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#validateSettings(java.lang.String,java.lang.String)
 	 */
+	@Override
 	protected void validateSettings(final Key key, final String oldValue, final String newValue) {
 		if (key == null || PREF_SPELLING_PROPOSAL_THRESHOLD.equals(key))
 			fThresholdStatus= validatePositiveNumber(getValue(PREF_SPELLING_PROPOSAL_THRESHOLD));
@@ -604,6 +613,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#updateCheckBox(org.eclipse.swt.widgets.Button)
 	 */
+	@Override
 	protected void updateCheckBox(Button curr) {
 		super.updateCheckBox(curr);
 		Event event= new Event();

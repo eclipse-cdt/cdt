@@ -43,6 +43,7 @@ public class MemberFilterAction extends Action {
 	/*
 	 * @see Action#actionPerformed
 	 */
+	@Override
 	public void run() {	
 		fFilterActionGroup.setMemberFilter(fFilterProperty, isChecked());
 	}

@@ -73,6 +73,7 @@ public class CBreakIterator extends BreakIterator {
 	}
 
 	static final class Whitespace extends Run {
+		@Override
 		protected boolean isValid(char ch) {
 			return Character.isWhitespace(ch) && ch != '\n' && ch != '\r';
 		}
@@ -87,6 +88,7 @@ public class CBreakIterator extends BreakIterator {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#init()
 		 */
+		@Override
 		protected void init() {
 			super.init();
 			fState= INIT;
@@ -95,6 +97,7 @@ public class CBreakIterator extends BreakIterator {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#consume(char)
 		 */
+		@Override
 		protected boolean consume(char ch) {
 			if (!isValid(ch) || fState == EXIT)
 				return false;
@@ -112,6 +115,7 @@ public class CBreakIterator extends BreakIterator {
 			}
 		}
 
+		@Override
 		protected boolean isValid(char ch) {
 			return ch == '\n' || ch == '\r';
 		}
@@ -121,6 +125,7 @@ public class CBreakIterator extends BreakIterator {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#isValid(char)
 		 */
+		@Override
 		protected boolean isValid(char ch) {
 			return Character.isJavaIdentifierPart(ch);
 		}
@@ -157,6 +162,7 @@ public class CBreakIterator extends BreakIterator {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#init()
 		 */
+		@Override
 		protected void init() {
 			super.init();
 			fState= S_INIT;
@@ -165,6 +171,7 @@ public class CBreakIterator extends BreakIterator {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#consumes(char)
 		 */
+		@Override
 		protected boolean consume(char ch) {
 			int kind= getKind(ch);
 			fState= MATRIX[fState][kind];
@@ -206,6 +213,7 @@ public class CBreakIterator extends BreakIterator {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#isValid(char)
 		 */
+		@Override
 		protected boolean isValid(char ch) {
 			return Character.isJavaIdentifierPart(ch);
 		}
@@ -215,6 +223,7 @@ public class CBreakIterator extends BreakIterator {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#isValid(char)
 		 */
+		@Override
 		protected boolean isValid(char ch) {
 			return !Character.isWhitespace(ch) && !Character.isJavaIdentifierPart(ch);
 		}
@@ -247,6 +256,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#current()
 	 */
+	@Override
 	public int current() {
 		return fIndex;
 	}
@@ -254,6 +264,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#first()
 	 */
+	@Override
 	public int first() {
 		fIndex= fIterator.first();
 		return fIndex;
@@ -262,6 +273,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#following(int)
 	 */
+	@Override
 	public int following(int offset) {
 		// work around too eager IAEs in standard implementation
 		if (offset == getText().getEndIndex())
@@ -331,6 +343,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#getText()
 	 */
+	@Override
 	public CharacterIterator getText() {
 		return fIterator.getText();
 	}
@@ -338,6 +351,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#isBoundary(int)
 	 */
+	@Override
 	public boolean isBoundary(int offset) {
         if (offset == getText().getBeginIndex())
             return true;
@@ -348,6 +362,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#last()
 	 */
+	@Override
 	public int last() {
 		fIndex= fIterator.last();
 		return fIndex;
@@ -356,6 +371,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#next()
 	 */
+	@Override
 	public int next() {
 		fIndex= following(fIndex);
 		return fIndex;
@@ -364,6 +380,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#next(int)
 	 */
+	@Override
 	public int next(int n) {
 		return fIterator.next(n);
 	}
@@ -371,6 +388,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#preceding(int)
 	 */
+	@Override
 	public int preceding(int offset) {
 		if (offset == getText().getBeginIndex())
 			return DONE;
@@ -395,6 +413,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#previous()
 	 */
+	@Override
 	public int previous() {
 		fIndex= preceding(fIndex);
 		return fIndex;
@@ -403,6 +422,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#setText(java.lang.String)
 	 */
+	@Override
 	public void setText(String newText) {
 		setText((CharSequence) newText);
 	}
@@ -420,6 +440,7 @@ public class CBreakIterator extends BreakIterator {
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#setText(java.text.CharacterIterator)
 	 */
+	@Override
 	public void setText(CharacterIterator newText) {
 		if (newText instanceof CharSequence) {
 			fText= (CharSequence) newText;

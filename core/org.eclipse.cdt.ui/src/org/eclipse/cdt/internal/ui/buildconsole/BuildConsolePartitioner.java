@@ -16,10 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.cdt.core.ConsoleOutputStream;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
@@ -35,6 +31,12 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+
 public class BuildConsolePartitioner
 		implements
 			IDocumentPartitioner,
@@ -45,7 +47,7 @@ public class BuildConsolePartitioner
 	/**
 	 * List of partitions
 	 */
-	List fPartitions = new ArrayList(5);
+	List<ITypedRegion> fPartitions = new ArrayList<ITypedRegion>(5);
 
 	private int fMaxLines;
 
@@ -64,7 +66,7 @@ public class BuildConsolePartitioner
 	 * Intentionally a vector to obtain synchronization as entries are added and
 	 * removed.
 	 */
-	Vector fQueue = new Vector(5);
+	Vector<StreamEntry> fQueue = new Vector<StreamEntry>(5);
 
 	//private boolean fAppending;
 
@@ -129,7 +131,7 @@ public class BuildConsolePartitioner
 		synchronized (fQueue) {
 			int i = fQueue.size();
 			if (i > 0) {
-				StreamEntry entry = (StreamEntry)fQueue.get(i - 1);
+				StreamEntry entry = fQueue.get(i - 1);
 				// if last stream is the same and we have not exceeded our
 				// display write limit, append.
 				if (entry.getStream() == stream && entry.size() < 10000) {
@@ -146,7 +148,7 @@ public class BuildConsolePartitioner
 			public void run() {
 				StreamEntry entry;
 				try {
-					entry = (StreamEntry)fQueue.remove(0);
+					entry = fQueue.remove(0);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					return;
 				}
@@ -227,19 +229,19 @@ public class BuildConsolePartitioner
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		if (offset == 0 && length == fDocument.getLength()) {
-			return (ITypedRegion[])fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
+			return fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
 		}
 		int end = offset + length;
-		List list = new ArrayList();
+		List<ITypedRegion> list = new ArrayList<ITypedRegion>();
 		for (int i = 0; i < fPartitions.size(); i++) {
-			ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
+			ITypedRegion partition = fPartitions.get(i);
 			int partitionStart = partition.getOffset();
 			int partitionEnd = partitionStart + partition.getLength();
 			if ( (offset >= partitionStart && offset <= partitionEnd) || (offset < partitionStart && end >= partitionStart)) {
 				list.add(partition);
 			}
 		}
-		return (ITypedRegion[])list.toArray(new ITypedRegion[list.size()]);
+		return list.toArray(new ITypedRegion[list.size()]);
 	}
 
 	/**
@@ -247,7 +249,7 @@ public class BuildConsolePartitioner
 	 */
 	public ITypedRegion getPartition(int offset) {
 		for (int i = 0; i < fPartitions.size(); i++) {
-			ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
+			ITypedRegion partition = fPartitions.get(i);
 			int start = partition.getOffset();
 			int end = start + partition.getLength();
 			if (offset >= start && offset < end) {
@@ -295,10 +297,10 @@ public class BuildConsolePartitioner
 				} catch (BadLocationException e1) {
 				}
 				// update partitions
-				List newParitions = new ArrayList(fPartitions.size());
-				Iterator partitions = fPartitions.iterator();
+				List<ITypedRegion> newParitions = new ArrayList<ITypedRegion>(fPartitions.size());
+				Iterator<ITypedRegion> partitions = fPartitions.iterator();
 				while (partitions.hasNext()) {
-					ITypedRegion region = (ITypedRegion)partitions.next();
+					ITypedRegion region = partitions.next();
 					if (region instanceof BuildConsolePartition) {
 						BuildConsolePartition messageConsolePartition = (BuildConsolePartition)region;
 
@@ -389,13 +391,16 @@ public class BuildConsolePartitioner
 			fStream = stream;
 		}
 
+		@Override
 		public void flush() throws IOException {
 		}
 
+		@Override
 		public void close() throws IOException {
 			flush();
 		}
 
+		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
 			appendToDocument(new String(b, off, len), fStream);
 		}

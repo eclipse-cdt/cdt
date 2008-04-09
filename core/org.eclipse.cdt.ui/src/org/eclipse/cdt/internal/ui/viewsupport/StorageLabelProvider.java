@@ -40,6 +40,7 @@ public class StorageLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see ILabelProvider#getImage
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IStorage) 
 			return getImageForJarEntry((IStorage)element);
@@ -50,6 +51,7 @@ public class StorageLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see ILabelProvider#getText
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IStorage)
 			return ((IStorage)element).getName();
@@ -61,6 +63,7 @@ public class StorageLabelProvider extends LabelProvider {
 	 * 
 	 * @see IBaseLabelProvider#dispose
 	 */
+	@Override
 	public void dispose() {
 		if (fJarImageMap != null) {
 			Iterator each= fJarImageMap.values().iterator();

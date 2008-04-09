@@ -167,7 +167,7 @@ public class CFormatter {
 	}
 
 	private void format(IDocument doc) throws BadLocationException {
-		Map options;
+		Map<String, String> options;
 		if (fProject != null)
 			options= fProject.getOptions(true); 
 		else

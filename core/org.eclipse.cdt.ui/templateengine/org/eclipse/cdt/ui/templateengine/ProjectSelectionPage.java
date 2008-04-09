@@ -260,6 +260,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 		});	
 	}
 	
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 	}	
@@ -342,6 +343,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		if(next != null) {
 			return next;

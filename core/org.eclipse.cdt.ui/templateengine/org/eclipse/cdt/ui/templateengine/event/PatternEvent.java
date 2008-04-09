@@ -66,6 +66,7 @@ public class PatternEvent extends EventObject {
 	 * 
 	 * @return String
 	 */
+	@Override
 	public String toString() {
 		return eventMessage;
 	}

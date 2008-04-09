@@ -82,6 +82,7 @@ implements IExecutableExtension, IWizardWithMemory
 		wz_desc = desc;
 	}
 	
+	@Override
 	public void addPages() {
 		fMainPage= new CDTMainWizardPage(CUIPlugin.getResourceString(PREFIX));
 		fMainPage.setTitle(wz_title);
@@ -180,6 +181,7 @@ implements IExecutableExtension, IWizardWithMemory
 		return true;
 	}
 
+	@Override
 	public boolean performFinish() {
 		boolean needsPost = (newProject != null && !isChanged());
 		// create project if it is not created yet
@@ -210,7 +212,8 @@ implements IExecutableExtension, IWizardWithMemory
 		return false;
 	}
 	
-    public boolean performCancel() {
+    @Override
+	public boolean performCancel() {
     	clearProject();
         return true;
     }
@@ -275,11 +278,13 @@ implements IExecutableExtension, IWizardWithMemory
 	protected abstract IProject continueCreation(IProject prj); 
 	public abstract String[] getNatures();
 	
+	@Override
 	public void dispose() {
 		fMainPage.dispose();
 	}
 	
-    public boolean canFinish() {
+    @Override
+	public boolean canFinish() {
     	if (fMainPage.h_selected != null) {
     		if(!fMainPage.h_selected.canFinich())
     			return false;

@@ -92,6 +92,7 @@ public class ProjectContentsArea {
 		createUserEntryArea(projectGroup, defaultEnabled);
 
 		useDefaultsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean useDefaults = useDefaultsButton.getSelection();
 
@@ -140,6 +141,7 @@ public class ProjectContentsArea {
 		browseButton = new Button(composite, SWT.PUSH);
 		browseButton.setText(BROWSE_LABEL);
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				handleLocationBrowseButtonPressed();
 			}

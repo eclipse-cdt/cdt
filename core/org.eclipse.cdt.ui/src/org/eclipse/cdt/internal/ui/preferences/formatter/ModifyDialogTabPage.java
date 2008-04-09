@@ -175,6 +175,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			updateWidget();
 
 			fCheckbox.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					checkboxChecked(((Button)e.widget).getSelection());
 				}
@@ -187,6 +188,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			notifyObservers();
 		}
 		
+		@Override
 		protected void updateWidget() {
 			if (getKey() != null) {
 				fCheckbox.setEnabled(getEnabled());
@@ -207,6 +209,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			checkboxChecked(checked);	
 		}
 		
+		@Override
 		public Control getControl() {
 			return fCheckbox;
 		}
@@ -264,6 +267,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			updateWidget();
 
 			fCombo.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					comboSelected(((Combo)e.widget).getSelectionIndex());
 				}
@@ -276,6 +280,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			notifyObservers(fValues[index]);
 		}
 		
+		@Override
 		protected void updateWidget() {
 			if (getKey() != null) {
 				fCombo.setEnabled(getEnabled());
@@ -300,6 +305,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			return value.equals(getPreferences().get(getKey()));
 		}
 		
+		@Override
 		public Control getControl() {
 			return fCombo;
 		}
@@ -419,6 +425,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			notifyObservers();
 		}
 		
+		@Override
 		protected void updateWidget() {
 		    final boolean hasKey= getKey() != null;
 
@@ -440,6 +447,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			}
 		}
 		
+		@Override
 		public Control getControl() {
 			return fNumberText;
 		}
@@ -474,6 +482,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			fIndex= 0;
 		}
 
+		@Override
 		public void focusGained(FocusEvent e) {
 			fDialogSettings.put(PREF_LAST_FOCUS_INDEX, ((Integer)fItemMap.get(e.widget)).intValue());
 		}
@@ -528,6 +537,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			fMinimalHight= minimalHight;
 		}
 		
+		@Override
 		public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
@@ -565,6 +575,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			return new Point(x, y);
 		}
 
+		@Override
 		public void layout(Composite composite, boolean force) {
 			Rectangle rect = composite.getClientArea();
 			Control[] children = composite.getChildren();

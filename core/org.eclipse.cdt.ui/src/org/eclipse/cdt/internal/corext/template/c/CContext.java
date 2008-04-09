@@ -64,6 +64,7 @@ public class CContext extends TranslationUnitContext {
 	/*
 	 * @see DocumentTemplateContext#getStart()
 	 */ 
+	@Override
 	public int getStart() {
 		if (fIsManaged && getCompletionLength() > 0)
 			return super.getStart();
@@ -90,6 +91,7 @@ public class CContext extends TranslationUnitContext {
 		}
 	}
 
+	@Override
 	public int getEnd() {
 		if (fIsManaged || getCompletionLength() == 0)
 			return super.getEnd();
@@ -113,6 +115,7 @@ public class CContext extends TranslationUnitContext {
 	/*
 	 * @see TemplateContext#evaluate(Template)
 	 */
+	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
 			return null;

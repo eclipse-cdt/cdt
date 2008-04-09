@@ -58,7 +58,8 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
     public AsyncTreeContentProvider(Display disp) {
         fDisplay= disp;
         fJob= new Job(CUIMessages.getString("AsyncTreeContentProvider.JobName")) { //$NON-NLS-1$
-            protected IStatus run(final IProgressMonitor monitor) {
+            @Override
+			protected IStatus run(final IProgressMonitor monitor) {
                 return runJob(monitor);
             }
         };

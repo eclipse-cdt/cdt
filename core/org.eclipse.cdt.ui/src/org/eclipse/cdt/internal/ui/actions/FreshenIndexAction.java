@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 
 public class FreshenIndexAction extends AbstractUpdateIndexAction {
 
+	@Override
 	protected int getUpdateOptions() {
 		return IIndexManager.UPDATE_ALL;
 	}

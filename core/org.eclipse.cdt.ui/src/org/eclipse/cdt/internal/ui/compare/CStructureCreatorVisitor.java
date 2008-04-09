@@ -63,7 +63,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	private static final String TRANSLATION_UNIT_NAME = CUIMessages.getString("CStructureCreatorVisitor.translationUnitName"); //$NON-NLS-1$
 	private static final String ANONYMOUS_NAME= CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
 	
-	private Stack fStack = new Stack();
+	private Stack<DocumentRangeNode> fStack = new Stack<DocumentRangeNode>();
 	private IDocument fDocument;
 	private String fTranslationUnitFileName;
 
@@ -86,6 +86,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 	 */
+	@Override
 	public int visit(IASTTranslationUnit tu) {
 		fTranslationUnitFileName= tu.getFilePath();
 
@@ -167,6 +168,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 /*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#leave(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 	 */
+	@Override
 	public int leave(IASTTranslationUnit tu) {
 		super.leave(tu);
 		assert getCurrentContainer().getTypeCode() == ICElement.C_UNIT;
@@ -177,6 +179,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
+	@Override
 	public int visit(IASTDeclaration node) {
 		boolean isTemplateDecl= isTemplateDecl(node);
 		final int startOffset= isTemplateDecl ? getStartOffset(node.getParent()) : getStartOffset(node);
@@ -285,6 +288,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
+	@Override
 	public int visit(ICPPASTNamespaceDefinition namespace) {
 		push(ICElement.C_NAMESPACE, ASTStringUtil.getQualifiedName(namespace.getName()), getStartOffset(namespace));
 		return super.visit(namespace);
@@ -293,6 +297,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
+	@Override
 	public int visit(IASTEnumerator enumerator) {
 		push(ICElement.C_ENUMERATOR, ASTStringUtil.getQualifiedName(enumerator.getName()), getStartOffset(enumerator));
 		pop(getEndOffset(enumerator));
@@ -302,6 +307,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#leave(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
+	@Override
 	public int leave(IASTDeclaration node) {
 		super.leave(node);
 		boolean isTemplateDecl= isTemplateDecl(node);
@@ -408,6 +414,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
+	@Override
 	public int leave(ICPPASTNamespaceDefinition namespace) {
 		assert getCurrentContainer().getTypeCode() == ICElement.C_NAMESPACE;
 		pop(getEndOffset(namespace));
@@ -415,7 +422,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 	}
 
 	private DocumentRangeNode getCurrentContainer() {
-		return (DocumentRangeNode) fStack.peek();
+		return fStack.peek();
 	}
 
 	/**

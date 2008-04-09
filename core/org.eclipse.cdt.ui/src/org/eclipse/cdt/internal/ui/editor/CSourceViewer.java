@@ -153,6 +153,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
 	 * @see ISourceViewer#configure(SourceViewerConfiguration)
 	 */
+	@Override
 	public void configure(SourceViewerConfiguration configuration) {
 		// Prevent access to colors disposed in unconfigure().
 		StyledText textWidget= getTextWidget();
@@ -278,7 +279,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
     /*
      * @see org.eclipse.jface.text.source.SourceViewer#unconfigure()
      */
-    public void unconfigure() {
+    @Override
+	public void unconfigure() {
         if (fOutlinePresenter != null) {
             fOutlinePresenter.uninstall();  
             fOutlinePresenter= null;
@@ -348,6 +350,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewer#createControl(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected void createControl(Composite parent, int styles) {
 
 		// Use LEFT_TO_RIGHT unless otherwise specified.
@@ -360,7 +363,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
 	 */
-    public void doOperation(int operation) {
+    @Override
+	public void doOperation(int operation) {
 
 		if (getTextWidget() == null) {
 			return;
@@ -381,7 +385,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
     /*
      * @see org.eclipse.jface.text.source.projection.ProjectionViewer#canDoOperation(int)
      */
-    public boolean canDoOperation(int operation) {
+    @Override
+	public boolean canDoOperation(int operation) {
 		switch (operation) {
         case SHOW_OUTLINE:
             return fOutlinePresenter != null;
@@ -435,6 +440,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * </p>
 	 * @since 4.0
 	 */
+	@Override
 	protected void setVisibleDocument(IDocument document) {
 		if (fIsSetVisibleDocumentDelayed) {
 			fIsSetVisibleDocumentDelayed= false;
@@ -457,6 +463,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * untouched we reuse the given range as return value.
 	 * </p>
 	 */
+	@Override
 	protected StyleRange modelStyleRange2WidgetStyleRange(StyleRange range) {
 		IRegion region= modelRange2WidgetRange(new Region(range.start, range.length));
 		if (region != null) {
@@ -471,6 +478,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
 	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#setVisibleRegion(int, int)
 	 */
+	@Override
 	public void setVisibleRegion(int start, int length) {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=195808
 		if (!fWasProjectionMode && isProjectionMode()) {
@@ -482,6 +490,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
 	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#resetVisibleRegion()
 	 */
+	@Override
 	public void resetVisibleRegion() {
 		super.resetVisibleRegion();
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=195808
@@ -506,6 +515,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#shift(boolean, boolean, boolean)
 	 */
+	@Override
 	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
 		if (!useDefaultPrefixes) {
 			// simple shift case
@@ -594,7 +604,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
      * work around for memory leak in TextViewer$WidgetCommand
      */
-    protected void updateTextListeners(WidgetCommand cmd) {
+    @Override
+	protected void updateTextListeners(WidgetCommand cmd) {
         super.updateTextListeners(cmd);
         cmd.preservedText= null;
         cmd.event= null;

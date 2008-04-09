@@ -76,7 +76,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 		boolean isProjectSelection = true;
 		boolean hasOpenProjects = false;
 		boolean hasClosedProjects = false;
-		Iterator resources = selection.iterator();
+		Iterator<?> resources = selection.iterator();
 
 		while (resources.hasNext() && (!hasOpenProjects || !hasClosedProjects || isProjectSelection)) {
 			Object next = resources.next();

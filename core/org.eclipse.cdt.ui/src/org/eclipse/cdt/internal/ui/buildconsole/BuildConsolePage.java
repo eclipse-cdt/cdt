@@ -102,8 +102,8 @@ public class BuildConsolePage extends Page
 
 	// actions
 	private ClearOutputAction fClearOutputAction;
-	private Map fGlobalActions = new HashMap(10);
-	private List fSelectionActions = new ArrayList(3);
+	private Map<String, IAction> fGlobalActions = new HashMap<String, IAction>(10);
+	private List<String> fSelectionActions = new ArrayList<String>(3);
 
 	// menus
 	private Menu fMenu;
@@ -180,6 +180,7 @@ public class BuildConsolePage extends Page
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		fViewer = new BuildConsoleViewer(parent);
 
@@ -217,11 +218,11 @@ public class BuildConsolePage extends Page
 	 *            menu
 	 */
 	protected void contextMenuAboutToShow(IMenuManager menu) {
-		menu.add((IAction)fGlobalActions.get(ActionFactory.COPY.getId()));
-		menu.add((IAction)fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.COPY.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add((IAction)fGlobalActions.get(ActionFactory.FIND.getId()));
-		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
+		menu.add(fGlobalActions.get(ActionFactory.FIND.getId()));
+		menu.add(fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -287,14 +288,14 @@ public class BuildConsolePage extends Page
 	}
 
 	protected void updateSelectionDependentActions() {
-		Iterator iterator = fSelectionActions.iterator();
+		Iterator<String> iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
-			updateAction((String)iterator.next());
+			updateAction(iterator.next());
 		}
 	}
 
 	protected void updateAction(String actionId) {
-		IAction action = (IAction)fGlobalActions.get(actionId);
+		IAction action = fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
 			((IUpdate)action).update();
 		}
@@ -328,6 +329,7 @@ public class BuildConsolePage extends Page
 	 * 
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getSite().getPage().removeSelectionListener(this);
 		getConsole().getConsoleManager().removeConsoleListener(this);
@@ -335,6 +337,7 @@ public class BuildConsolePage extends Page
 		super.dispose();
 	}
 
+	@Override
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 		getSite().getPage().addSelectionListener(this);
@@ -400,16 +403,14 @@ public class BuildConsolePage extends Page
 		Object element = ssel.getFirstElement();
 		if (element instanceof IAdaptable) {
 			IAdaptable input = (IAdaptable)element;
-			if (input != null) {
-				IResource resource = null;
-				if (input instanceof IResource) {
-					resource = (IResource)input;
-				} else {
-					resource = (IResource)input.getAdapter(IResource.class);
-				}
-				if (resource != null) {
-					project = resource.getProject();
-				}
+			IResource resource = null;
+			if (input instanceof IResource) {
+				resource = (IResource)input;
+			} else {
+				resource = (IResource)input.getAdapter(IResource.class);
+			}
+			if (resource != null) {
+				project = resource.getProject();
 			}
 		}
 		return project;
@@ -420,6 +421,7 @@ public class BuildConsolePage extends Page
 	 * 
 	 * @see org.eclipse.ui.part.IPage#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		if (fViewer != null) {
 			return fViewer.getControl();
@@ -432,6 +434,7 @@ public class BuildConsolePage extends Page
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		Control control = getControl();
 		if (control != null) {
@@ -470,6 +473,7 @@ public class BuildConsolePage extends Page
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
 			return getViewer().getFindReplaceTarget();

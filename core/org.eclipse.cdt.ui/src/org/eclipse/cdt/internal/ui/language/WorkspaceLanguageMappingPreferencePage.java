@@ -39,6 +39,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 		fMappingWidget = new WorkspaceLanguageMappingWidget();
 	}
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		try {
 			fetchMappings();
@@ -67,6 +68,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 	public void init(IWorkbench workbench) {
 	}
 	
+	@Override
 	public boolean performOk() {
 		try {
 			if (!fMappingWidget.isChanged()) {
@@ -86,6 +88,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 		}
 	}
 	
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		try {

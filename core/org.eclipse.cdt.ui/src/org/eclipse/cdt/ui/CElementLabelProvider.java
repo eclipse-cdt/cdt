@@ -102,6 +102,7 @@ public class CElementLabelProvider extends LabelProvider {
 		fCElementLabelProvider= new CUILabelProvider(getTextFlags() | CElementBaseLabels.TEMPLATE_PARAMETERS, getImageFlags());
 	}
 
+	@Override
 	public String getText(Object element) {
 		if (element instanceof ICElement) {
 			return fCElementLabelProvider.getText(element);
@@ -109,10 +110,12 @@ public class CElementLabelProvider extends LabelProvider {
 		return fWorkbenchLabelProvider.getText(element);
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		return fImageLabelProvider.getImageLabel(element, getImageFlags());
 	}
 	
+	@Override
 	public void dispose() {
 		if (fCElementLabelProvider != null) {
 			fCElementLabelProvider.dispose();

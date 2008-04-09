@@ -142,6 +142,7 @@ public class SelectionListenerWithASTManager {
 				return;
 			
 			fCurrentJob= new Job(Messages.SelectionListenerWithASTManager_jobName) { 
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					if (!monitor.isCanceled() && isSelectionValid(selection)) {
 						return calculateASTandInform(workingCopy, selection, monitor);

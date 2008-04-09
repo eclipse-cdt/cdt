@@ -50,6 +50,7 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 
 	//---- Actual DND -----------------------------------------------------------------
 	
+	@Override
 	public void validateDrop(Object target, DropTargetEvent event, int operation) {
 		event.detail= DND.DROP_NONE;
 		boolean isContainer = false;
@@ -70,6 +71,7 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 		}
 	}
 
+	@Override
 	public void drop(Object dropTarget, final DropTargetEvent event) {
 		int operation= event.detail;
 		

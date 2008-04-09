@@ -50,6 +50,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		cfgd = _cfgd;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite c) {
 		c.setLayout(new GridLayout(4, true));
 		GridData gd;
@@ -125,6 +126,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		b_ok.setEnabled(txt1.getText().trim().length() > 0);
 	}
 	
+	@Override
 	public void buttonPressed(SelectionEvent e) {
 		if (e.widget.equals(b_ok)) { 
 			super.text1 = txt1.getText();

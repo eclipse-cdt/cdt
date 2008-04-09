@@ -21,6 +21,7 @@ public class NewTypeDropDownAction extends AbstractWizardDropDownAction {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.OPEN_CLASS_WIZARD_ACTION);
 	}
 
+	@Override
 	protected IAction[] getWizardActions() {
 		return CWizardRegistry.getTypeWizardActions();
 	}

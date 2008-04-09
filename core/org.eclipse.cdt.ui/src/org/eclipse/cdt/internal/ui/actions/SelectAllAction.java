@@ -40,6 +40,7 @@ public class SelectAllAction extends Action {
 	/**
 	 * Selects all resources in the view.
 	 */
+	@Override
 	public void run() {
 		fViewer.getTable().selectAll();
 		// force viewer selection change

@@ -34,6 +34,7 @@ public class IBHistoryDropDownAction extends Action implements IMenuCreator {
 			fView= view;
 		}
 			
+		@Override
 		public void run() {
 			fView.setHistoryEntries(new ITranslationUnit[0]);
 			fView.setInput(null);
@@ -99,6 +100,7 @@ public class IBHistoryDropDownAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
+	@Override
 	public void run() {
 		(new IBHistoryListAction(fHierarchyView)).run();
 	}

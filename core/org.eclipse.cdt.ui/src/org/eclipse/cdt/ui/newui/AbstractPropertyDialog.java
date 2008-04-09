@@ -55,7 +55,8 @@ public abstract class AbstractPropertyDialog extends Dialog {
 		b.setText(text);
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.addSelectionListener(new SelectionAdapter() {
-	        public void widgetSelected(SelectionEvent event) {
+	        @Override
+			public void widgetSelected(SelectionEvent event) {
 	        	buttonPressed(event);
 	    }});
 		return b;

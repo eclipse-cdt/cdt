@@ -36,18 +36,22 @@ public class WorkingSetFindAction extends FindAction {
 		setText(string); 
 	}
 
+	@Override
 	protected String getScopeDescription() {
 		return findAction.getScopeDescription();
 	}
 
+	@Override
 	protected ICElement[] getScope() {
 		return findAction.getScope();
 	}
 
+	@Override
 	protected int getLimitTo() {
 		return findAction.getLimitTo();
 	}
 	
+	@Override
 	public void run() {
 		findAction.run();
 	}

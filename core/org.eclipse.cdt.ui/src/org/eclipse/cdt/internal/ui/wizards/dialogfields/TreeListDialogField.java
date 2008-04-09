@@ -154,6 +154,7 @@ public class TreeListDialogField extends DialogField {
 	 *        
 	 * @deprecated Use {@link #setViewerComparator(ViewerComparator)} instead.
 	 */
+	@Deprecated
 	public void setViewerSorter(ViewerSorter viewerSorter) {
 		setViewerComparator(viewerSorter);
 	}
@@ -206,6 +207,7 @@ public class TreeListDialogField extends DialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -243,6 +245,7 @@ public class TreeListDialogField extends DialogField {
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */
+	@Override
 	public int getNumberOfControls() {
 		return 3;
 	}
@@ -276,6 +279,7 @@ public class TreeListDialogField extends DialogField {
 			fTreeControl = (Tree) fTree.getControl();
 			fTreeControl.addKeyListener(new KeyAdapter() {
 
+				@Override
 				public void keyPressed(KeyEvent e) {
 					handleKeyPressed(e);
 				}
@@ -427,6 +431,7 @@ public class TreeListDialogField extends DialogField {
 	/*
 	 * @see DialogField#dialogFieldChanged
 	 */
+	@Override
 	public void dialogFieldChanged() {
 		super.dialogFieldChanged();
 		updateButtonState();
@@ -472,6 +477,7 @@ public class TreeListDialogField extends DialogField {
 	/*
 	 * @see DialogField#updateEnableState
 	 */
+	@Override
 	protected void updateEnableState() {
 		super.updateEnableState();
 

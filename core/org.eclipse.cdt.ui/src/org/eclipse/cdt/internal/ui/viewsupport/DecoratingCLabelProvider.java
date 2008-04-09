@@ -43,6 +43,7 @@ public class DecoratingCLabelProvider extends DecoratingLabelProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		// label provider is a JavaUILabelProvider
 		return ((IColorProvider) getLabelProvider()).getForeground(element);
@@ -51,6 +52,7 @@ public class DecoratingCLabelProvider extends DecoratingLabelProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		// label provider is a JavaUILabelProvider
 		return ((IColorProvider) getLabelProvider()).getBackground(element);

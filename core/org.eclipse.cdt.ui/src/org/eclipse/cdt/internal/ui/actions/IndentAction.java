@@ -14,9 +14,9 @@ package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -88,6 +88,7 @@ public class IndentAction extends TextEditorAction {
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		// update has been called by the framework
 		if (!isEnabled() || !validateEditorInputState())
@@ -290,9 +291,8 @@ public class IndentAction extends TextEditorAction {
 		if (!indent.equals(currentIndent)) {
 			document.replace(offset, length, indent);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -446,6 +446,7 @@ public class IndentAction extends TextEditorAction {
 	/*
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		super.update();
 		
@@ -483,10 +484,9 @@ public class IndentAction extends TextEditorAction {
 			// or the selection has to extend over multiple lines
 			if (length == 0) {
 				return document.get(lineOffset, offset - lineOffset).trim().length() == 0;
-			} else {
-//				return lineOffset + firstLine.getLength() < offset + length;
-				return false; // only enable for empty selections for now
-			}
+			} 
+//			return lineOffset + firstLine.getLength() < offset + length;
+			return false; // only enable for empty selections for now
 		} catch (BadLocationException e) {
 		}
 		

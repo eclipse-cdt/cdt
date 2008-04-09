@@ -64,6 +64,7 @@ public class NewCProjectWizardPage extends WizardNewProjectCreationPage {
 	 * @return <code>true</code> if all controls are valid, and
 	 *   <code>false</code> if at least one is invalid
 	 */
+	@Override
 	protected boolean validatePage() {
 		if (super.validatePage() == true) {
 

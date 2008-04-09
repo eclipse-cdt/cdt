@@ -345,11 +345,13 @@ public final class CompletionProposalComputerRegistry {
 		String message= status.getMessage();
         // inlined from MessageDialog.openError
         MessageDialog dialog = new MessageDialog(CUIPlugin.getActiveWorkbenchShell(), title, null /* default image */, message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0) {
-        	protected Control createCustomArea(Composite parent) {
+        	@Override
+			protected Control createCustomArea(Composite parent) {
         		Link link= new Link(parent, SWT.NONE);
         		link.setText(avoidHint);
         		link.addSelectionListener(new SelectionAdapter() {
-        			public void widgetSelected(SelectionEvent e) {
+        			@Override
+					public void widgetSelected(SelectionEvent e) {
         				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced", null, null).open(); //$NON-NLS-1$
         			}
         		});

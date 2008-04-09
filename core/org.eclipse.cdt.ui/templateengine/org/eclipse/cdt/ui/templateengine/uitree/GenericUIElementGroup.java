@@ -29,14 +29,17 @@ public class GenericUIElementGroup extends UIElement {
 	/**
 	 * @deprecated use {@value UIGroupTypeEnum#PAGES_ONLY}
 	 */
+	@Deprecated
 	public static String PAGES_ONLY = UIGroupTypeEnum.PAGES_ONLY.getId();
 	/**
 	 * @deprecated use {@value UIGroupTypeEnum#PAGES_ONLY}
 	 */
+	@Deprecated
 	public static String PAGES_TAB = UIGroupTypeEnum.PAGES_TAB.getId();
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static String LOGTYPE = "UIElement"; //$NON-NLS-1$
 
 	UIGroupTypeEnum type = null;
@@ -60,6 +63,7 @@ public class GenericUIElementGroup extends UIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
+	@Override
 	public void setValues(Map<String,String> valueMap) {
 		int childCount = getChildCount();
 
@@ -71,6 +75,7 @@ public class GenericUIElementGroup extends UIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#getValues()
 	 */
+	@Override
 	public Map<String, String> getValues() {
 		HashMap<String, String> valueMap = new HashMap<String, String>();
 		int childCount = getChildCount();
@@ -85,6 +90,7 @@ public class GenericUIElementGroup extends UIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
+	@Override
 	public void createWidgets(UIComposite uiComposite) {
 		int childCount = getChildCount();
 
@@ -101,6 +107,7 @@ public class GenericUIElementGroup extends UIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */
+	@Override
 	public void disposeWidget() {
 		int childCount = getChildCount();
 
@@ -116,6 +123,7 @@ public class GenericUIElementGroup extends UIElement {
 	 * @param index
 	 * @return child uiElement
 	 */
+	@Override
 	public UIElement getChild(int index) {
 		return childList.get(index);
 	}
@@ -127,6 +135,7 @@ public class GenericUIElementGroup extends UIElement {
 	 * @see UIElement
 	 * @param aUIElement
 	 */
+	@Override
 	public void addToChildList(UIElement aUIElement) {
 		childList.add(aUIElement);
 	}
@@ -138,6 +147,7 @@ public class GenericUIElementGroup extends UIElement {
 	 * @see UIElement
 	 * @return the child count of UIElement
 	 */
+	@Override
 	public int getChildCount() {
 		return childList.size();
 	}
@@ -153,6 +163,7 @@ public class GenericUIElementGroup extends UIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		boolean retVal = true;
 

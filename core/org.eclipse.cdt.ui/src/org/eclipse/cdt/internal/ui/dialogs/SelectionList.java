@@ -12,8 +12,10 @@
 package org.eclipse.cdt.internal.ui.dialogs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -28,8 +30,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.viewers.ILabelProvider;
 
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.internal.ui.util.TwoArrayQuickSort;
@@ -122,11 +122,11 @@ public class SelectionList extends Composite {
 	 * returned in the list are the same as the ones passed to the selection list
 	 * via <code>setElements</code>. The list doesn't contain the rendered strings.
 	 */
-	public List getSelection() {
+	public List<?> getSelection() {
 		if (fList == null || fList.isDisposed() || fList.getSelectionCount() == 0)
-			return new ArrayList(0);
+			return Collections.emptyList();
 		int[] listSelection= fList.getSelectionIndices();
-		List selected= new ArrayList(listSelection.length);
+		List<Object> selected= new ArrayList<Object>(listSelection.length);
 		for (int i= 0; i < listSelection.length; i++) {
 			selected.add(fElements[fFilteredElements[listSelection[i]]]);
 		}
@@ -175,7 +175,7 @@ public class SelectionList extends Composite {
 	/**
 	 * Sets the list of elements presented in the widget.
 	 */
-	public void setElements(List elements, boolean refilter) {
+	public void setElements(List<?> elements, boolean refilter) {
 		// We copy the list since we sort it.
 		if (elements == null)
 			fElements= new Object[0];
@@ -189,6 +189,7 @@ public class SelectionList extends Composite {
 	/* 
 	 * Non Java-doc
 	 */
+	@Override
 	public void setEnabled(boolean enable) {
 		super.setEnabled(enable);
 		fText.setEnabled(enable);
@@ -205,12 +206,14 @@ public class SelectionList extends Composite {
 	/*
 	 * Non Java-doc
 	 */
+	@Override
 	public boolean setFocus() {
 		return fText.setFocus();
 	}
 	/*
 	 * Non Java-doc
 	 */
+	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		fText.setFont(font);

@@ -481,6 +481,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		parent.setTopCenter(memberToolBar);
 		
 		memberToolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				if (e.childID != ACC.CHILDID_SELF) {
 					ToolItem item = memberToolBar.getItem(e.childID);
@@ -977,7 +978,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private ICElement selectionToElement(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) selection;
-			for (Iterator iter = ss.iterator(); iter.hasNext(); ) {
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
 				Object cand= iter.next();
 				if (cand instanceof ICElement) {
 					return (ICElement) cand;
@@ -996,7 +997,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private THNode selectionToNode(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) selection;
-			for (Iterator iter = ss.iterator(); iter.hasNext(); ) {
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
 				Object cand= iter.next();
 				if (cand instanceof THNode) {
 					return (THNode) cand;

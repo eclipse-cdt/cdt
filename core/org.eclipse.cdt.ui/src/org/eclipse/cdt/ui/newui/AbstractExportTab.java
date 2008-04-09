@@ -89,6 +89,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		
 	}
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, false));
@@ -112,10 +113,12 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
   	    tv.setLabelProvider(new RichLabelProvider());
   	    
 	    table.addSelectionListener(new SelectionAdapter() {
-	    	public void widgetSelected(SelectionEvent e) {
+	    	@Override
+			public void widgetSelected(SelectionEvent e) {
 	    		updateButtons();
 	    	}
-	    	public void widgetDefaultSelected(SelectionEvent e) {
+	    	@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 	    		if (buttonIsEnabled(1) && table.getSelectionIndex() != -1)
     				buttonPressed(1);
 	    	}
@@ -142,7 +145,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
      * Updates state of add/edit/delete buttons
      * Called when table selection changes.
      */
-    protected void updateButtons() {
+    @Override
+	protected void updateButtons() {
     	int i = table.getSelectionIndex();
 		boolean x = i != -1;
 		boolean y = x;
@@ -198,6 +202,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	 * Called when configuration changed
 	 * Refreshes languages list and calls table refresh.
 	 */
+	@Override
 	public void updateData(ICResourceDescription rcfg) {
 		if (rcfg == null) return;
 		if (page.isMultiCfg()) {
@@ -212,6 +217,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	/**
 	 * Unified "Add/Edit/Delete" buttons handler
 	 */
+	@Override
 	public void buttonPressed(int i) {
 		ICLanguageSettingEntry[] ent = new ICLanguageSettingEntry[1];
 		ExtData old;
@@ -327,6 +333,7 @@ outer:
 		return ein;
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		ICConfigurationDescription c1 = src.getConfiguration();
 		ICConfigurationDescription c2 = dst.getConfiguration();
@@ -338,6 +345,7 @@ outer:
 				v[i].getCompatibleExtensions(), v[i].getEntries()); 
 	}
 
+	@Override
 	protected void performDefaults() {
 		cfg.removeExternalSettings();
 		updateData(this.getResDesc());
@@ -346,6 +354,7 @@ outer:
 	// Extended label provider
 	private class RichLabelProvider extends LabelProvider implements IFontProvider, ITableLabelProvider /*, IColorProvider*/{
 		public RichLabelProvider(){}
+		@Override
 		public Image getImage(Object element) {
 			return getColumnImage(element, 0);
 		}
@@ -359,6 +368,7 @@ outer:
 			else 
 				return IMG_FS;
 		}
+		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
@@ -388,6 +398,7 @@ outer:
 		}
 	}
 
+	@Override
 	public boolean canBeVisible() {
 		if (! page.isForProject() ) 
 			return false;

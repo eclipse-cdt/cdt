@@ -65,6 +65,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getActiveEditor();
 		if (editor == null)

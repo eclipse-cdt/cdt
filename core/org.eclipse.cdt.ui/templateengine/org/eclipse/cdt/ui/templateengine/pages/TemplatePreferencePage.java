@@ -181,6 +181,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	 * @return subComposite
 	 */
 
+	@Override
 	protected Control createContents(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -303,6 +304,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	private void addTableListener() {
 
 		SelectionListener sListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean isSelected = table.isSelected(table.getSelectionIndex());
 				int selectionCount = table.getSelectionCount();
@@ -378,6 +380,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		inputDialog = new TemplateInputDialog(getShell());
 		SelectionListener listener = new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (e.getSource().equals(editButton)) {
 					String editItemString = getSelectedItemNameFromTable();

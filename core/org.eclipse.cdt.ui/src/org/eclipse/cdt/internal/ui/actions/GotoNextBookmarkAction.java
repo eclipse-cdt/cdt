@@ -27,10 +27,8 @@ public class GotoNextBookmarkAction extends TextEditorAction {
     /**
 	 * Private class to handle comparison of markers using their line numbers.
 	 */
-	private class CompareMarker implements Comparator {
-		public int compare(Object o1, Object o2) {
-			IMarker m1 = (IMarker) o1;
-			IMarker m2 = (IMarker) o2;
+	private class CompareMarker implements Comparator<IMarker> {
+		public int compare(IMarker m1, IMarker m2) {
 			int l1 = MarkerUtilities.getLineNumber(m1);
 			int l2 = MarkerUtilities.getLineNumber(m2);
 			if (l1 > l2) return 1;
@@ -50,7 +48,7 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();
 		if (editor == null )

@@ -60,6 +60,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		fMappingWidget.setElement(getProject());
 		
@@ -153,12 +154,14 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		}
 	}
 
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		fetchMappings(getProject());
 		fMappingWidget.refreshMappings();
 	}
 
+	@Override
 	public boolean performOk() {
 		try {
 			if (!fMappingWidget.isChanged()) {
@@ -176,6 +179,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		}
 	}
 	
+	@Override
 	public void dispose() {
 		super.dispose();
 		LanguageManager.getInstance().unregisterLanguageChangeListener(fInheritedMappingsChangeListener);

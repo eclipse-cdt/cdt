@@ -65,10 +65,12 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		fCPathList.setDialogFieldListener(adapter);
 	}
 
+	@Override
 	protected List getCPaths() {
 		return fCPathList.getElements();
 	}
 
+	@Override
 	protected void addTabs() {
 		fSourcePage = new CPathSourceEntryPage(fCPathList);
 		addPage(fSourcePage);
@@ -87,6 +89,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
 		if (getCProject() != null) {
@@ -100,6 +103,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		return control;
 	}
 
+	@Override
 	protected void initialize(ICElement element, List cPaths) {
 
 		fCPathList.setElements(cPaths);
@@ -116,10 +120,12 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		initializeTimeStamps();
 	}
 
+	@Override
 	protected int[] getFilteredTypes() {
 		return pathTypes;
 	}
 
+	@Override
 	protected int[] getAppliedFilteredTypes() {
 		return pathTypes;
 	}

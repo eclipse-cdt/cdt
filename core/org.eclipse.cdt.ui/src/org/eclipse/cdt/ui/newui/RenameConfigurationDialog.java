@@ -76,6 +76,7 @@ public class RenameConfigurationDialog extends Dialog {
 	 * We don't have to worry that the index or name is wrong because we 
 	 * enable the OK button IFF those conditions are met.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			newName = configName.getText().trim();
@@ -87,6 +88,7 @@ public class RenameConfigurationDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null) shell.setText(title);
@@ -95,6 +97,7 @@ public class RenameConfigurationDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		configName.setFocus();
@@ -104,6 +107,7 @@ public class RenameConfigurationDialog extends Dialog {
 		validateState();
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		
 		Composite composite = new Composite(parent, SWT.NULL);

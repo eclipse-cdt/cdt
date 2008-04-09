@@ -75,6 +75,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 	/*
 	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#canEvaluate(org.eclipse.jface.text.templates.Template)
 	 */
+	@Override
 	public boolean canEvaluate(Template template) {
 		if (fForceEvaluation)
 			return true;
@@ -89,6 +90,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 	/*
 	 * @see org.eclipse.cdt.internal.corext.template.DocumentTemplateContext#getKey()
 	 */
+	@Override
 	public String getKey() {
 		if (getCompletionLength() == 0)		
 			return super.getKey();

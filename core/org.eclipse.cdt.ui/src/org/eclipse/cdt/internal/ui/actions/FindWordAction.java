@@ -40,6 +40,7 @@ public class FindWordAction extends TextEditorAction {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();
 		if (editor == null )

@@ -43,6 +43,7 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
 	 */
+	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		final FileInfo info= super.createFileInfo(element);
 		if (info != null && info.fModel == null) {

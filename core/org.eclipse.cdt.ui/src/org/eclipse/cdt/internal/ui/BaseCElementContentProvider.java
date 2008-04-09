@@ -16,6 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -38,14 +47,6 @@ import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.NamespacesGrouping;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.model.IWorkbenchAdapter;
  
 /**
  * A base content provider for C elements. It provides access to the
@@ -328,7 +329,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		if (!cproject.getProject().isOpen())
 			return NO_CHILDREN;
 			
-		List list= new ArrayList();
+		List<ICElement> list= new ArrayList<ICElement>();
 		ICElement[] children = cproject.getChildren();
 		for (int i= 0; i < children.length; i++) {
 			ICElement child = children[i];
@@ -355,7 +356,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		Object[] children = unit.getChildren();
 		if (fIncludesGrouping) {
 			boolean hasInclude = false;
-			ArrayList list = new ArrayList(children.length);
+			ArrayList<Object> list = new ArrayList<Object>(children.length);
 			for (int i = 0; i < children.length; i++) {
 				if (!(children[i] instanceof IInclude)) {
 					list.add(children[i]);
@@ -370,12 +371,12 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		if (fNamespacesGrouping) {
 			// check if there is another namespace with the same name for the same parent			
-			List list = new ArrayList(children.length);
-			Map map = new HashMap();
+			List<Object> list = new ArrayList<Object>(children.length);
+			Map<String, NamespacesGrouping> map = new HashMap<String, NamespacesGrouping>();
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof INamespace) {
 					INamespace n1 = (INamespace)children[i];
-					NamespacesGrouping namespacesGrouping = (NamespacesGrouping)map.get(n1.getElementName());
+					NamespacesGrouping namespacesGrouping = map.get(n1.getElementName());
 					if (namespacesGrouping == null) {
 						for (int j = i + 1; j < children.length; ++j) {
 							if (children[j] instanceof INamespace) {
@@ -457,7 +458,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		} catch (CModelException e) {
 			roots = new ISourceRoot[0];
 		}
-		List nonCResources = new ArrayList(objects.length);
+		List<Object> nonCResources = new ArrayList<Object>(objects.length);
 		for (int i= 0; i < objects.length; i++) {
 			Object o= objects[i];
 			// A folder can also be a source root in the following case
@@ -533,7 +534,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected IBinary[] getBinaries(IBinaryContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
-		ArrayList list = new ArrayList(celements.length);
+		ArrayList<IBinary> list = new ArrayList<IBinary>(celements.length);
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i] instanceof IBinary) {
 				IBinary bin = (IBinary)celements[i];
@@ -552,7 +553,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected IArchive[] getArchives(IArchiveContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
-		ArrayList list = new ArrayList(celements.length);
+		ArrayList<IArchive> list = new ArrayList<IArchive>(celements.length);
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i] instanceof IArchive) {
 				IArchive ar = (IArchive)celements[i];

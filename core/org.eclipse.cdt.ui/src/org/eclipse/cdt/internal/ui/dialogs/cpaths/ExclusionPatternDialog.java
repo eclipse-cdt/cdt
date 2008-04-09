@@ -55,11 +55,13 @@ public class ExclusionPatternDialog extends StatusDialog {
 	
 	private static class ExclusionPatternLabelProvider extends LabelProvider {
 				
+		@Override
 		public Image getImage(Object element) {
 			ImageDescriptorRegistry registry= CUIPlugin.getImageDescriptorRegistry();
 			return registry.get(CPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB);
 		}
 
+		@Override
 		public String getText(Object element) {
 			return (String) element;
 		}
@@ -121,6 +123,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	}
 	
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite= (Composite)super.createDialogArea(parent);
 
@@ -224,6 +227,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 //		WorkbenchHelp.setHelp(newShell, ICHelpContextIds.EXCLUSION_PATTERN_DIALOG);

@@ -23,6 +23,7 @@ public class UIGroupTypeEnum {
 		this.id = id;
 	}
 	
+	@Override
 	public boolean equals(Object other) {
 		if(other instanceof UIGroupTypeEnum) {
 			return id.equals(((UIGroupTypeEnum)other).id);
@@ -30,6 +31,7 @@ public class UIGroupTypeEnum {
 		return false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.hashCode();
 	}
@@ -38,6 +40,7 @@ public class UIGroupTypeEnum {
 		return id;
 	}
 	
+	@Override
 	public String toString() {
 		return id;
 	}

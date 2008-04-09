@@ -31,6 +31,7 @@ public class DiscardExternalDefsAction extends IndexAction {
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$	
 	}
 	
+	@Override
 	public void run() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
@@ -38,6 +39,7 @@ public class DiscardExternalDefsAction extends IndexAction {
 		indexView.toggleExternalDefs();
 	}
 	
+	@Override
 	public boolean valid() {
 		return false;
 	}

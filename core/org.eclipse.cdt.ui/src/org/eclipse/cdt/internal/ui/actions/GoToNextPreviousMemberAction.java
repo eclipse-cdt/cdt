@@ -73,6 +73,7 @@ public class GoToNextPreviousMemberAction extends TextEditorAction {
     /*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
 	 */
+	@Override
 	public void update() {
         final ITextEditor editor = getTextEditor();
 		setEnabled(editor instanceof CEditor && ((CEditor)editor).getInputCElement() != null);
@@ -81,7 +82,8 @@ public class GoToNextPreviousMemberAction extends TextEditorAction {
 	/**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         final CEditor editor = (CEditor) getTextEditor();
         final ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
         final IEditorInput editorInput = editor.getEditorInput();

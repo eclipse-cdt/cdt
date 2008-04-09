@@ -44,14 +44,17 @@ public class FindDeclarationsAction extends FindAction {
 		setToolTipText(tooltip);
 	}
 
+	@Override
 	protected ICElement[] getScope() {
 		return null;
 	}
 	
+	@Override
 	protected String getScopeDescription() {
 		return CSearchMessages.WorkspaceScope; 
 	}
 	
+	@Override
 	protected int getLimitTo() {
 		return PDOMSearchQuery.FIND_DECLARATIONS_DEFINITIONS;
 	}

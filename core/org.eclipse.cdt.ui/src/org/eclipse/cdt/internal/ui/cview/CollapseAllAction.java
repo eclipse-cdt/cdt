@@ -31,6 +31,7 @@ class CollapseAllAction extends Action {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.COLLAPSE_ALL_ACTION);
 	}
  
+	@Override
 	public void run() { 
 		cview.collapseAll();
 	}

@@ -61,6 +61,7 @@ public class StringButtonDialogField extends StringDialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */		
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 		
@@ -77,6 +78,7 @@ public class StringButtonDialogField extends StringDialogField {
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */		
+	@Override
 	public int getNumberOfControls() {
 		return 3;	
 	}
@@ -132,6 +134,7 @@ public class StringButtonDialogField extends StringDialogField {
 	/*
 	 * @see DialogField#updateEnableState
 	 */	
+	@Override
 	protected void updateEnableState() {
 		super.updateEnableState();
 		if (isOkToUse(fBrowseButton)) {

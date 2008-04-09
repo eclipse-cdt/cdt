@@ -31,6 +31,7 @@ public abstract class AbstractPrefPage extends AbstractPage
 
 	public Label titleLabel;
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		//	Create the container we return to the property page editor
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -53,11 +54,16 @@ public abstract class AbstractPrefPage extends AbstractPage
     	return composite;
 	}
 
+	@Override
 	protected boolean checkElement() { return true; } 
+	@Override
 	public boolean isForPrefs()    { return true; }
 	public void init(IWorkbench workbench) {}
+	@Override
 	public ICResourceDescription getResDesc() { return null; }
+	@Override
 	public void performApply() { performOk(); }
+	@Override
 	public boolean performOk() { 
 		forEach(ICPropertyTab.OK, null);
 		return true; 

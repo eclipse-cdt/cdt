@@ -39,6 +39,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @deprecated Use generic IShowInTarget support instead.
  */
+@Deprecated
 public class ShowInCViewAction extends SelectionProviderAction {
 
 	private IWorkbenchPage page;
@@ -62,6 +63,7 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
 	}
 
+	@Override
 	public void run() {
 		ISelection selection = getSelection();
 		if (selection instanceof ITextSelection) {
@@ -106,6 +108,7 @@ public class ShowInCViewAction extends SelectionProviderAction {
 	 * (non-Javadoc)
 	 * Method declared on SelectionProviderAction.
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(!getSelection().isEmpty());
 	}

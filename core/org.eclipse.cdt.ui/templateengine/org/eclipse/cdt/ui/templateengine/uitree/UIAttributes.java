@@ -30,11 +30,13 @@ public class UIAttributes extends HashMap<String, String> {
 		this.templateInfo = templateInfo;
 	}
 	
+	@Override
 	public String put(String key, String value) {
 		value = TemplateEngineHelper.externalizeTemplateString(templateInfo, value);
 		return super.put(key, value);
 	}
 
+	@Override
 	public void putAll(Map<? extends String, ? extends String> map) {
 		for(String key : map.keySet()) {
 			String value = map.get(key);

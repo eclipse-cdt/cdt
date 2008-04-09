@@ -127,7 +127,7 @@ public class SelectionConverter {
 	}
 
 	public static boolean allResourcesAreOfType(IStructuredSelection selection, int resourceMask) {
-		Iterator resources = selection.iterator();
+		Iterator<?> resources = selection.iterator();
 		while (resources.hasNext()) {
 			Object next = resources.next();
 			if (next instanceof IAdaptable) {
@@ -159,7 +159,7 @@ public class SelectionConverter {
 	 * @see IResource#getType()
 	 */
 	public static IStructuredSelection allResources(IStructuredSelection selection, int resourceMask) {
-		Iterator adaptables = selection.iterator();
+		Iterator<?> adaptables = selection.iterator();
 		List<IResource> result = new ArrayList<IResource>();
 		while (adaptables.hasNext()) {
 			Object next = adaptables.next();

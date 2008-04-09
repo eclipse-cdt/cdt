@@ -68,6 +68,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		this.type = IResource.FILE;
 	}
 	
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 		//initializeDialogUnits(parent);
@@ -101,6 +102,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */		
+	@Override
 	public int getNumberOfControls() {
 		return 4;	
 	}
@@ -112,6 +114,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			linkButton.setSelection(createLink);
 			linkButton.setFont(parent.getFont());
 			SelectionListener selectionListener = new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					createLink = linkButton.getSelection();
 					browseButton.setEnabled(createLink);
@@ -128,10 +131,12 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		return linkButton;
 	}
 	
+	@Override
 	public String getText() {
 		return linkTargetField.getText();
 	}
 	
+	@Override
 	public void setText(String text) {
 		if (isOkToUse(linkTargetField)) {
 			preventDialogFieldChanged = true;
@@ -141,6 +146,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 //		dialogFieldChanged();
 	}
 	
+	@Override
 	public Text getTextControl(Composite parent){
 		if(linkTargetField == null){
 			assertCompositeNotNull(parent);
@@ -180,6 +186,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			browseButton.setFont(parent.getFont());
 			browseButton.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
 			browseButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent event) {
 					handleLinkTargetBrowseButtonPressed();
 				}

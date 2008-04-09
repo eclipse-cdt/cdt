@@ -32,7 +32,8 @@ public class NewClassCreationWizard extends NewElementWizard {
     /*
      * @see Wizard#createPages
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         fPage = new NewClassCreationWizardPage();
         addPage(fPage);
@@ -44,7 +45,8 @@ public class NewClassCreationWizard extends NewElementWizard {
      * 
      * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#canRunForked()
      */
-    protected boolean canRunForked() {
+    @Override
+	protected boolean canRunForked() {
         return !fPage.isNamespaceSelected();
     }
     
@@ -53,7 +55,8 @@ public class NewClassCreationWizard extends NewElementWizard {
      * 
      * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#finishPage(org.eclipse.core.runtime.IProgressMonitor)
      */
-    protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
+    @Override
+	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
         fPage.createClass(monitor); // use the full progress monitor
     }
     
@@ -62,7 +65,8 @@ public class NewClassCreationWizard extends NewElementWizard {
      * 
      * @see org.eclipse.jface.wizard.IWizard#performFinish()
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         boolean finished = super.performFinish();
         if (finished) {
             if (fPage.openClassInEditor()) {

@@ -74,6 +74,7 @@ public class CCodeReader extends SingleCharReader {
 	/*
 	 * @see Reader#close()
 	 */
+	@Override
 	public void close() throws IOException {
 		fDocument= null;
 	}
@@ -81,6 +82,7 @@ public class CCodeReader extends SingleCharReader {
 	/*
 	 * @see SingleCharReader#read()
 	 */
+	@Override
 	public int read() throws IOException {
 		try {
 			return fForward ? readForwards() : readBackwards();

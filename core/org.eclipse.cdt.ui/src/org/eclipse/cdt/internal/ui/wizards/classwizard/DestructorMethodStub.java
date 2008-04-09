@@ -30,7 +30,8 @@ public final class DestructorMethodStub extends AbstractMethodStub {
         super(NAME, access, isVirtual, isInline);
     }
 
-    public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
+    @Override
+	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
         StringBuffer buf = new StringBuffer();
     	if (fIsVirtual){
     	    buf.append("virtual "); //$NON-NLS-1$
@@ -53,7 +54,8 @@ public final class DestructorMethodStub extends AbstractMethodStub {
         return buf.toString();
     }
 
-    public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
+    @Override
+	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
     	if (fIsInline) {
     		return ""; //$NON-NLS-1$
     	}
@@ -74,7 +76,8 @@ public final class DestructorMethodStub extends AbstractMethodStub {
     	return buf.toString();
     }
 
-    public boolean isDestructor() {
+    @Override
+	public boolean isDestructor() {
         return true;
     }
 }

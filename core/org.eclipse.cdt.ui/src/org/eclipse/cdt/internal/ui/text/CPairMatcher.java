@@ -39,6 +39,7 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	}
 
 	/* @see ICharacterPairMatcher#match(IDocument, int) */
+	@Override
 	public IRegion match(IDocument document, int offset) {
 		try {
 			return performMatch(document, offset);

@@ -58,6 +58,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		
 		if (getEditor() == null)
@@ -99,6 +100,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 	/*
 	 * @see IJavaEditorTextHover#setEditor(IEditorPart)
 	 */
+	@Override
 	public void setEditor(IEditorPart editor) {
 		if (editor instanceof CEditor)
 			super.setEditor(editor);

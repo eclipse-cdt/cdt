@@ -78,6 +78,7 @@ public class ManageConfigDialog extends Dialog {
 		prj = _prj;
 	}
 
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null) shell.setText(title);
@@ -86,6 +87,7 @@ public class ManageConfigDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
@@ -114,6 +116,7 @@ public class ManageConfigDialog extends Dialog {
 		actBtn.setText(UIMessages.getString("ManageConfigDialog.4")); //$NON-NLS-1$
 		actBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		actBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TableItem[] tis = table.getSelection();
 				if (tis == null || tis.length != 1) return;
@@ -127,6 +130,7 @@ public class ManageConfigDialog extends Dialog {
 		newBtn.setText(UIMessages.getString(NEW));
 		newBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		newBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleNewPressed();
 			}} ); 
@@ -135,6 +139,7 @@ public class ManageConfigDialog extends Dialog {
 		delBtn.setText(UIMessages.getString(REMOVE));
 		delBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		delBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemovePressed();
 			}} ); 
@@ -143,6 +148,7 @@ public class ManageConfigDialog extends Dialog {
 		renBtn.setText(UIMessages.getString(RENAME));
 		renBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		renBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRenamePressed();
 			}} ); 

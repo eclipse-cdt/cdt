@@ -124,6 +124,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			fStatements = statements;
 		}
 
+		@Override
 		public int visit(IASTStatement statement) {
 			++fLevel;
 			// if it's not part of the displayed - file, we don't need it
@@ -216,11 +217,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 
+		@Override
 		public int leave(IASTStatement statement) {
 			--fLevel;
 			return PROCESS_CONTINUE;
 		}
 
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			if (!declaration.isPartOfTranslationUnitFile())
 				return PROCESS_SKIP;// we neither need its descendants
@@ -234,6 +237,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			return PROCESS_CONTINUE;
 		}
 
+		@Override
 		public int leave(IASTDeclaration declaration) {
 			if (declaration instanceof IASTFunctionDefinition) {
 				fFunction= ""; //$NON-NLS-1$
@@ -531,6 +535,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return "CProjectionAnnotation:\n" + //$NON-NLS-1$
 					"\tkey: \t"+ fKey + "\n" + //$NON-NLS-1$ //$NON-NLS-2$

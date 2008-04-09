@@ -69,6 +69,7 @@ public class CHelpEntry {
 	public IHelpResource[] getHelpResource() {
 		return hts;
 	}
+	@Override
 	public String toString() {
 		return "<entry keyword=\"" + keyword + "\">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

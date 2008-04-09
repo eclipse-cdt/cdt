@@ -34,6 +34,7 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 			fView= view;
 		}
 			
+		@Override
 		public void run() {
 			fView.setHistoryEntries(new ICElement[0]);
 			fView.setInput(null, null);
@@ -99,6 +100,7 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
+	@Override
 	public void run() {
 		(new THHistoryListAction(fHierarchyView)).run();
 	}

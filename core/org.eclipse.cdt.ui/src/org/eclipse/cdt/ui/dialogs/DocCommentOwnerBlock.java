@@ -51,6 +51,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		fLink.setVisible(!fCheckbox.getSelection());
 	}
 	
+	@Override
 	public void createControl(final Composite parent) {
 		Composite pane= new Composite(parent, SWT.NONE);
 		pane.setLayout(new GridLayout(2, true));
@@ -61,6 +62,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		fCheckbox= ControlFactory.createCheckBox(pane, DialogsMessages.DocCommentOwnerBlock_EnableProjectSpecificSettings);
 		fCheckbox.setLayoutData(GridDataFactory.fillDefaults().grab(true,false).create());
 		fCheckbox.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleCheckBox();
 			}
@@ -70,6 +72,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		fLink.setText(DialogsMessages.PreferenceScopeBlock_preferenceLink);
 		fLink.setLayoutData(GridDataFactory.fillDefaults().align(GridData.CENTER, GridData.BEGINNING).grab(true,false).create());
 		fLink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), EDITOR_PREF_PAGE_ID, null, null).open();
 			}
@@ -86,6 +89,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		handleCheckBox();
 	}
 	
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if(!fCheckbox.getSelection())
 			fManager.setCommentOwner(getProject(), null, true);
@@ -112,6 +116,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		return null;
 	}
 
+	@Override
 	public void performDefaults() {
 	}
 }

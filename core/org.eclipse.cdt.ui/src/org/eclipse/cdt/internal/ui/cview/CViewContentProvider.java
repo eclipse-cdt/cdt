@@ -13,6 +13,12 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IWorkbenchPartSite;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -22,14 +28,10 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.ui.CElementContentProvider;
+
 import org.eclipse.cdt.internal.ui.util.RemoteTreeContentManager;
 import org.eclipse.cdt.internal.ui.util.RemoteTreeViewer;
-import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * CViewContentProvider
@@ -68,6 +70,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		Object[] objs = null;
 
@@ -102,7 +105,6 @@ public class CViewContentProvider extends CElementContentProvider {
 				extras =  ((ILibraryReference)element).getChildren();
 			}*/
 		} catch (CModelException e) {
-			extras = null;
 		}
 		if (extras != null && extras.length > 0) {
 			objs = concatenate(objs, extras);
@@ -165,7 +167,7 @@ public class CViewContentProvider extends CElementContentProvider {
 
 	protected IBinary[] getExecutables(IBinaryContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
-		ArrayList list = new ArrayList(celements.length);
+		ArrayList<IBinary> list = new ArrayList<IBinary>(celements.length);
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i] instanceof IBinary) {
 				IBinary bin = (IBinary)celements[i];
@@ -182,6 +184,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#internalGetParent(java.lang.Object)
 	 */
+	@Override
 	public Object internalGetParent(Object element) {
 		// since we insert logical containers we have to fix
 		// up the parent for {IInclude,ILibrary}Reference so that they refer
@@ -203,6 +206,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (fManager != null) {
 			if (element instanceof IBinary) {
@@ -244,6 +248,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fManager != null) {
 			fManager.cancel();
@@ -254,6 +259,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (fManager != null) {
 			fManager.cancel();

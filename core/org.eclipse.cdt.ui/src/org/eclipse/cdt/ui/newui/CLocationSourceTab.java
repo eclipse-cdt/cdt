@@ -23,20 +23,25 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 
 public class CLocationSourceTab extends CLocationTab {
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		label.setText(UIMessages.getString("CLocationSourceTab.0"));  //$NON-NLS-1$
 	}
 	
+	@Override
 	public ICExclusionPatternPathEntry newEntry(IPath p, IPath[] ex, boolean isWorkspacePath) {
 		return new CSourceEntry(p, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);
 	}
+	@Override
 	public ICExclusionPatternPathEntry newEntry(IFolder f, IPath[] ex, boolean isWorkspacePath) {
 		return new CSourceEntry(f, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);
 	}
+	@Override
 	public ICExclusionPatternPathEntry[] getEntries(ICResourceDescription cfgd) {
 		return cfgd.getConfiguration().getSourceEntries();
 	}
+	@Override
 	public void setEntries(ICResourceDescription cfgd, ICExclusionPatternPathEntry[] data) {
 		ICSourceEntry[] out = null;
 		if (data != null) {

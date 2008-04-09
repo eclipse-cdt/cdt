@@ -116,6 +116,7 @@ public class TodoTaskInputDialog extends StatusDialog {
 		return task;
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		
@@ -161,6 +162,7 @@ public class TodoTaskInputDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ICHelpContextIds.TODO_TASK_INPUT_DIALOG);

@@ -51,6 +51,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 	
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fGroups == null)
@@ -60,6 +61,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		if (fGroups == null)
@@ -69,6 +71,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		if (fGroups == null)
@@ -78,6 +81,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		if (fGroups == null)
@@ -87,6 +91,7 @@ public class CompositeActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void updateActionBars() {
 		super.updateActionBars();
 		if (fGroups == null)

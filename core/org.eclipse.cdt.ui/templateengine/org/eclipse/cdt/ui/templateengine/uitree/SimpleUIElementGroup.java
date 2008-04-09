@@ -29,6 +29,7 @@ public class SimpleUIElementGroup extends GenericUIElementGroup {
 	/**
 	 * @see UIElement
 	 */
+	@Override
 	public void setValues(Map<String, String> valueMap) {
 		super.setValues(valueMap);
 	}
@@ -36,6 +37,7 @@ public class SimpleUIElementGroup extends GenericUIElementGroup {
 	/**
 	 * @see UIElement
 	 */
+	@Override
 	public Map<String, String> getValues() {
 		return super.getValues();
 	}
@@ -43,6 +45,7 @@ public class SimpleUIElementGroup extends GenericUIElementGroup {
 	/**
 	 * @see UIElement
 	 */
+	@Override
 	public void createWidgets(UIComposite uiComposite) {
 		super.createWidgets(uiComposite);
 	}
@@ -53,11 +56,13 @@ public class SimpleUIElementGroup extends GenericUIElementGroup {
 	 * 
 	 * @see UIElement
 	 */
+	@Override
 	public void disposeWidget() {
 		super.disposeWidget();
 	}
 
 	// @see UIElement
+	@Override
 	public boolean isValid() {
 		return super.isValid();
 	}

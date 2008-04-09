@@ -47,6 +47,7 @@ public class FindRefsProjectAction extends FindAction {
 		setToolTipText(tooltip);
 	}
 
+	@Override
 	protected ICElement[] getScope() {
 		ICProject project = null;
 		if (fEditor != null) {
@@ -65,10 +66,12 @@ public class FindRefsProjectAction extends FindAction {
 		return project != null ? new ICElement[] { project } : null;
 	}
 
+	@Override
 	protected String getScopeDescription() {
 		return CSearchMessages.ProjectScope; 
 	}
 
+	@Override
 	protected int getLimitTo() {
 		return PDOMSearchQuery.FIND_REFERENCES;
 	}

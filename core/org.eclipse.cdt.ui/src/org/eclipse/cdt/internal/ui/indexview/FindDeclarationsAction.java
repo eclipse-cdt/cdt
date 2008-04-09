@@ -47,6 +47,7 @@ public class FindDeclarationsAction extends IndexAction {
 		return null;
 	}
 	
+	@Override
 	public void run() {
 		IndexNode binding = getBindingNode();
 		if (binding != null) {
@@ -64,6 +65,7 @@ public class FindDeclarationsAction extends IndexAction {
 		}
 	}
 	
+	@Override
 	public boolean valid() {
 		return getBindingNode() != null;
 	}

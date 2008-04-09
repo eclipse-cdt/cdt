@@ -119,6 +119,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy#customizeAfterNewLineForDeclaration(org.eclipse.jface.text.IDocument, org.eclipse.cdt.core.dom.ast.IASTDeclaration, org.eclipse.jface.text.ITypedRegion)
 	 */
+	@Override
 	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion partition) {
 
 		while(dec instanceof ICPPASTTemplateDeclaration) /* if? */

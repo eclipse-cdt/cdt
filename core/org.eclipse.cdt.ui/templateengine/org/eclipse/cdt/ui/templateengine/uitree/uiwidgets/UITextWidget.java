@@ -78,6 +78,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	/**
 	 * @return String, value contained in the Text Widget.
 	 */
+	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> retMap = new HashMap<String, String>();
 		retMap.put(uiAttributes.get(InputUIElement.ID), textValue);
@@ -90,6 +91,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * 
 	 * @param valueMap
 	 */
+	@Override
 	public void setValues(Map<String, String> valueMap) {
 		String val = valueMap.get(uiAttributes.get(InputUIElement.ID));
 		String key = null;
@@ -115,6 +117,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * 
 	 * @param uiComposite
 	 */
+	@Override
 	public void createWidgets(UIComposite uiComposite) {
 
 		GridData gd = new GridData();
@@ -144,6 +147,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * call the dispose method on the widgets. This is to ensure that the
 	 * widgets are properly disposed.
 	 */
+	@Override
 	public void disposeWidget() {
 		label.dispose();
 		text.dispose();
@@ -253,6 +257,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * 
 	 * @return boolean.
 	 */
+	@Override
 	public boolean isValid() {
 		boolean retVal = true;
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);

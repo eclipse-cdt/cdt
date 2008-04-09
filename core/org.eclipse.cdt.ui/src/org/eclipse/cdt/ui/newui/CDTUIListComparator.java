@@ -26,6 +26,7 @@ public class CDTUIListComparator extends CDTListComparator implements Comparator
 			comparator = new CDTUIListComparator();
 		return comparator;
 	}
+	@Override
 	public int compare(Object a, Object b) {
 		if (a == null || b == null) 
 			return 0;

@@ -39,10 +39,12 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 		setEnabled(fEditor != null && CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
 	}
 
+	@Override
 	public void run(ITextSelection sel) {
 		TypeHierarchyUI.open(fEditor, sel);
 	}
 	
+	@Override
 	public void run(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
 			Object selectedObject= selection.getFirstElement();
@@ -53,9 +55,11 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 		}
 	}
 
+	@Override
 	public void selectionChanged(ITextSelection sel) {
 	}
 			
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			setEnabled(false);
@@ -72,6 +76,7 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object getAdapter(Object object, Class desiredClass) {
 		if (desiredClass.isInstance(object)) {
 			return object;

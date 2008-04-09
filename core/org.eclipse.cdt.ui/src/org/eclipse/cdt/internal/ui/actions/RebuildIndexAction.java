@@ -32,7 +32,7 @@ public class RebuildIndexAction implements IObjectActionDelegate {
 	
 	public void run(IAction action) {
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
-		for (Iterator i = cElements.iterator(); i.hasNext();) {
+		for (Iterator<?> i = cElements.iterator(); i.hasNext();) {
 			Object elem = i.next();
 			if (elem instanceof ICProject) {
 				CCorePlugin.getIndexManager().reindex((ICProject) elem);

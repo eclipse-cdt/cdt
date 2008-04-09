@@ -36,6 +36,7 @@ public class NamespacesGrouping extends CElementGrouping {
 		fName = namespace.getElementName();
 	}
 
+	@Override
 	public String getLabel(Object object) {
 		return fName;
 	}
@@ -43,6 +44,7 @@ public class NamespacesGrouping extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object object) {
 		List<ICElement> list = new ArrayList<ICElement>();
 		for (int i = 0; i < fNamespaces.length; ++i) {
@@ -60,6 +62,7 @@ public class NamespacesGrouping extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object object) {
 		return fUnit;
 	}
@@ -74,6 +77,7 @@ public class NamespacesGrouping extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IncludesGrouping) {
 			return fUnit.equals(((IncludesGrouping)obj).getParent(obj)) ;

@@ -52,6 +52,7 @@ public class SelectionSearchGroup extends ActionGroup {
 	/* 
 	 * Method declared on ActionGroup.
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		
@@ -83,6 +84,7 @@ public class SelectionSearchGroup extends ActionGroup {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fDeclarationsSearchGroup != null) {
 			fDeclarationsSearchGroup.dispose();

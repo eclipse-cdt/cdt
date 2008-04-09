@@ -20,12 +20,14 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class IncludeTab extends AbstractLangsListTab {
 	
-   public void additionalTableSet() {
+   @Override
+public void additionalTableSet() {
 	   columnToFit = new TableColumn(table, SWT.NONE);
 	   columnToFit.setText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
 	   showBIButton.setSelection(true);
    }
 	
+	@Override
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_DIR,
@@ -43,6 +45,7 @@ public class IncludeTab extends AbstractLangsListTab {
 			return null;
 	}
 
+	@Override
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_DIR,
@@ -57,5 +60,6 @@ public class IncludeTab extends AbstractLangsListTab {
 			return null;
 	}
 	
+	@Override
 	public int getKind() { return ICSettingEntry.INCLUDE_PATH; }
 }

@@ -43,6 +43,7 @@ public class CSpellingService extends SpellingService {
 		return fInstance;
 	}
 
+	@Override
 	public void check(final IDocument document, final IRegion[] regions, final SpellingContext context,
 			final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
 		try {

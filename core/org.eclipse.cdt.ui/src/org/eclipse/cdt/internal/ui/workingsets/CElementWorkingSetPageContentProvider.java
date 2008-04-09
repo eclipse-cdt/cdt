@@ -26,6 +26,7 @@ class CElementWorkingSetPageContentProvider extends BaseCElementContentProvider 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof IWorkspaceRoot) {
 			IWorkspaceRoot root = (IWorkspaceRoot)element;

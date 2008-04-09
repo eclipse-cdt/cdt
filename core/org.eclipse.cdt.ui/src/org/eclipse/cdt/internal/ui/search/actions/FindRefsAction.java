@@ -42,14 +42,17 @@ public class FindRefsAction extends FindAction {
 		setToolTipText(tooltip);
 	}
 
+	@Override
 	protected String getScopeDescription() {
 		return CSearchMessages.WorkspaceScope; 
 	}
 
+	@Override
 	protected ICElement[] getScope() {
         return null;
     }
 
+	@Override
 	protected int getLimitTo() {
 		return PDOMSearchQuery.FIND_REFERENCES;
 	}

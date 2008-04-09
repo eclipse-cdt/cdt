@@ -125,7 +125,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		
 		final String title= action.getText().replace("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
-		Iterator i= cElements.iterator();
+		Iterator<?> i= cElements.iterator();
 		ArrayList<ITranslationUnit> tuSelection= new ArrayList<ITranslationUnit>();
 		while (i.hasNext()) {
 			Object o= i.next();

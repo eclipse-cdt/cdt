@@ -34,6 +34,7 @@ public class FastCPartitioner extends FastPartitioner {
 		super(scanner, legalContentTypes);
 	}
 
+	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		if (preferOpenPartitions && offset == fDocument.getLength() && offset > 0) {
 			ITypedRegion region = super.getPartition(offset - 1, false);

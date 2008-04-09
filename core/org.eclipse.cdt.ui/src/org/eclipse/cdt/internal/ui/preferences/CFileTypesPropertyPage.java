@@ -62,6 +62,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			return new IContentTypeManager.ContentTypeChangeEvent(source, context);
 		}
 
+		@Override
 		public boolean performOk() {
 			boolean changed = super.performOk();
 			if (changed) {
@@ -78,6 +79,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferenceBlock#addAssociation(org.eclipse.core.runtime.preferences.IScopeContext, org.eclipse.core.runtime.content.IContentType, java.lang.String, int)
 		 */
+		@Override
 		protected void addAssociation(IScopeContext context, IContentType contentType, String spec, int type) {
 			super.addAssociation(context, contentType, spec, type);
 			// accumulate the events
@@ -87,6 +89,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferenceBlock#removeAssociation(org.eclipse.core.runtime.preferences.IScopeContext, org.eclipse.core.runtime.content.IContentType, java.lang.String, int)
 		 */
+		@Override
 		protected void removeAssociation(IScopeContext context, IContentType contentType, String spec, int type) {
 			super.removeAssociation(context, contentType, spec, type);
 			// accumulate the events
@@ -107,6 +110,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite topPane = new Composite(parent, SWT.NONE);
 
@@ -169,6 +173,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fUseWorkspace.setSelection(true);
 		fUseProject.setSelection(false);
@@ -180,6 +185,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean useProjectContentTypes= fUseProject.getSelection();
 		IProject project = getProject();

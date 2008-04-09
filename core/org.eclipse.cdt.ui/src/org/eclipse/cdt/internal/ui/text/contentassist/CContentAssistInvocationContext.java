@@ -261,6 +261,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		return fIsAutoActivated;
 	}
 
+	@Override
 	public void dispose() {
 		if (fIndex != null) {
 			fIndex.releaseReadLock();

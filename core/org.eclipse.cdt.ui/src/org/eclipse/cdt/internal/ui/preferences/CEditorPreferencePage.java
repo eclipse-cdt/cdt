@@ -73,6 +73,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		super();
 	}
 
+	@Override
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
 
@@ -107,6 +108,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_PREF_PAGE);
@@ -190,6 +192,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		foregroundColorButton.setLayoutData(gd);
 
 		SelectionListener colorDefaultSelectionListener= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean systemDefault= fAppearanceColorDefault.getSelection();
 				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
@@ -211,11 +214,13 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
 
 		fAppearanceColorList.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAppearanceColorListSelection();
 			}
 		});
 		foregroundColorButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int i = fAppearanceColorList.getSelectionIndex();
 				String key = fAppearanceColorListModel[i][1];
@@ -270,6 +275,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
 		fOverlayStore.start();
@@ -310,6 +316,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		DocCommentOwnerManager.getInstance().setWorkspaceCommentOwner(fDocCommentOwnerComposite.getSelectedDocCommentOwner());
 		return super.performOk();
@@ -328,6 +335,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		initializeDefaultColors();

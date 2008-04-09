@@ -28,7 +28,7 @@ import org.eclipse.swt.dnd.TransferData;
  */
 public class DelegatingDragAdapter implements DragSourceListener {
 	private TransferDragSourceListener[] fPossibleListeners;
-	private List fActiveListeners;
+	private List<TransferDragSourceListener> fActiveListeners;
 	private TransferDragSourceListener fFinishListener;
 	
 	public DelegatingDragAdapter(TransferDragSourceListener[] listeners) {
@@ -49,8 +49,8 @@ public class DelegatingDragAdapter implements DragSourceListener {
 		boolean saveDoit= event.doit;
 		Object saveData= event.data;
 		boolean doIt= false;
-		List transfers= new ArrayList(fPossibleListeners.length);
-		fActiveListeners= new ArrayList(fPossibleListeners.length);
+		List<Transfer> transfers= new ArrayList<Transfer>(fPossibleListeners.length);
+		fActiveListeners= new ArrayList<TransferDragSourceListener>(fPossibleListeners.length);
 		
 		for (int i= 0; i < fPossibleListeners.length; i++) {
 			TransferDragSourceListener listener= fPossibleListeners[i];
@@ -63,7 +63,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 			doIt= doIt || event.doit;
 		}
 		if (doIt) {
-			((DragSource)event.widget).setTransfer((Transfer[])transfers.toArray(new Transfer[transfers.size()]));
+			((DragSource)event.widget).setTransfer(transfers.toArray(new Transfer[transfers.size()]));
 		}
 		event.data= saveData;
 		event.doit= doIt;

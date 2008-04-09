@@ -39,6 +39,7 @@ public class ChangeCaseProposal extends WordCorrectionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		return Messages.Spelling_case_label;
 	}

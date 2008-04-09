@@ -17,14 +17,18 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 public class ExpSymbolTab extends AbstractExportTab {
 
 	// isWsp is ignored for symbols
+	@Override
 	public ICLanguageSettingEntry doAdd(String s1, String s2, boolean isWsp) {
 		return new CMacroEntry(s1, s2, 0);
 	}
 
+	@Override
 	public ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp) {
 		return doAdd(s1, s2, isWsp);
 	}
 	
+	@Override
 	public int getKind() { return ICSettingEntry.MACRO; }
+	@Override
 	public boolean hasValues() { return true; }
 }

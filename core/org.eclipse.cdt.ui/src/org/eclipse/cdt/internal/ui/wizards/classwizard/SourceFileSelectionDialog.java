@@ -87,7 +87,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     	implements ISelectionChangedListener, IDoubleClickListener, IDialogFieldListener {
         
         // -- SelectionAdapter --
-        public void widgetDefaultSelected(SelectionEvent e) {
+        @Override
+		public void widgetDefaultSelected(SelectionEvent e) {
             doStatusUpdate();
             if (fCurrStatus.isOK())
                 buttonPressed(IDialogConstants.OK_ID);
@@ -162,7 +163,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
             super(FILTER_TYPES);
         }
         
-        public boolean select(Viewer viewer, Object parent, Object obj) {
+        @Override
+		public boolean select(Viewer viewer, Object parent, Object obj) {
             if (obj instanceof ICElement) {
                 ICElement elem = (ICElement)obj;
                 if (!(fInput instanceof ICModel)) {
@@ -227,6 +229,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 	 * 
 	 * @param status status to apply
 	 */
+	@Override
 	protected void updateStatus(IStatus status) {
 		fCurrStatus = status;
 	    super.updateStatus(status);
@@ -341,7 +344,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
      * 
      * @see org.eclipse.jface.window.Window#open()
      */
-    public int open() {
+    @Override
+	public int open() {
         super.open();
         return getReturnCode();
     }
@@ -349,7 +353,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     /**
      * Handles cancel button pressed event.
      */
-    protected void cancelPressed() {
+    @Override
+	protected void cancelPressed() {
         setResult(null);
         super.cancelPressed();
     }
@@ -357,7 +362,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     /*
      * @see SelectionStatusDialog#computeResult()
      */
-    protected void computeResult() {
+    @Override
+	protected void computeResult() {
         setResult(((IStructuredSelection) fViewer.getSelection()).toList());
     }
     
@@ -366,7 +372,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
      * 
      * @see org.eclipse.jface.window.Window#create()
      */
-    public void create() {
+    @Override
+	public void create() {
         BusyIndicator.showWhile(null, new Runnable() {
             public void run() {
                 superCreate();
@@ -384,7 +391,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     /*
      * @see Dialog#createDialogArea(Composite)
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
         // Label messageLabel = createMessageArea(composite);
         int nColumns = 4;
@@ -460,7 +468,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     /**
      * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
      */
-    protected void handleShellCloseEvent() {
+    @Override
+	protected void handleShellCloseEvent() {
         super.handleShellCloseEvent();
         
         //Handle the closing of the shell by selecting the close icon

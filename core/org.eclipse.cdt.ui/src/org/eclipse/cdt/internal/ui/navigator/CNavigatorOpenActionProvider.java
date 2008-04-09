@@ -33,6 +33,7 @@ public class CNavigatorOpenActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
+	@Override
 	public void init(ICommonActionExtensionSite site) {
 		ICommonViewerWorkbenchSite workbenchSite = null;
 		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite) {
@@ -50,6 +51,7 @@ public class CNavigatorOpenActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fOpenGroup != null) {
 			fOpenGroup.dispose();
@@ -61,6 +63,7 @@ public class CNavigatorOpenActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		if (fOpenGroup != null) {
 			fOpenGroup.updateActionBars();
@@ -74,6 +77,7 @@ public class CNavigatorOpenActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		if (fOpenGroup != null) {
 			fOpenGroup.fillContextMenu(menu);
@@ -83,6 +87,7 @@ public class CNavigatorOpenActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
 	 */
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		if (fOpenGroup != null) {

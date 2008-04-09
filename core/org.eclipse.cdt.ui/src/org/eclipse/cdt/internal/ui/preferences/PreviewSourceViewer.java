@@ -28,6 +28,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 /**
  * @deprecated Use {@link org.eclipse.cdt.internal.ui.editor.CSourceViewer} instead.
  */
+@Deprecated
 class PreviewSourceViewer extends SourceViewer implements IPropertyChangeListener {
 
 	/**
@@ -140,6 +141,7 @@ class PreviewSourceViewer extends SourceViewer implements IPropertyChangeListene
 	/*
 	 * @see ISourceViewer#configure(SourceViewerConfiguration)
 	 */
+	@Override
 	public void configure(SourceViewerConfiguration configuration) {
 
 		/*
@@ -171,6 +173,7 @@ class PreviewSourceViewer extends SourceViewer implements IPropertyChangeListene
 	 * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
 	 * @since 3.0
 	 */
+	@Override
 	public void unconfigure() {
 		if (fForegroundColor != null) {
 			fForegroundColor.dispose();

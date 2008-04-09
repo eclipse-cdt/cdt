@@ -47,10 +47,12 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	protected Composite pageContainer;
 	protected List<String> templatePagesOrderVector;
 	
+	@Override
 	public final void addPage(IWizardPage page) {
         page.setWizard(this);
 	}
 
+	@Override
 	public final void addPages() {
 		IWizardPage[] pages = getPagesBeforeTemplatePages();
 		for(int i=0; i<pages.length; i++) {
@@ -82,6 +84,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	 */
 	protected abstract Template getTemplate();
 
+	@Override
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (pageIndex > pagesBeforeTemplatePages.size() + templatePagesOrderVector.size()) {//current is some page after template pages other than the first post-template page
 			pageIndex--;
@@ -96,6 +99,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 		return null;
 	}
 
+	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (pageIndex < pagesBeforeTemplatePages.size() - 1) {//current is a page before template pages that is not the final one
 			pageIndex++;
@@ -124,6 +128,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 		return null;
 	}
 
+	@Override
 	public final boolean canFinish() {
 		for(Iterator i = pagesBeforeTemplatePages.iterator(); i.hasNext(); ) {
 			IWizardPage page = (IWizardPage) i.next();
@@ -149,6 +154,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
         return true;
 	}
 
+	@Override
 	public boolean performFinish() {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -178,6 +184,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	    }
 	}
 	
+	@Override
 	public final void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
 		this.pageContainer = pageContainer;

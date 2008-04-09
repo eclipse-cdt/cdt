@@ -82,6 +82,7 @@ public class ControlStatementsTabPage extends FormatterTabPage {
 		super(modifyDialog, workingValues);
 	}
 
+	@Override
 	protected void doCreatePreferences(Composite composite, int numColumns) {
 		
 		final Group generalGroup= createGroup(numColumns, composite, FormatterMessages.ControlStatementsTabPage_general_group_title); 
@@ -113,6 +114,7 @@ public class ControlStatementsTabPage extends FormatterTabPage {
 //		createCheckboxPref(ifElseGroup, numColumns, FormatterMessages.ControlStatementsTabPage_if_else_group_keep_guardian_clause_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_GUARDIAN_CLAUSE_ON_ONE_LINE, FALSE_TRUE); 
 	}
 	
+	@Override
 	protected void initializePage() {
 	    fPreview.setPreviewText(PREVIEW);
 	}
@@ -120,7 +122,8 @@ public class ControlStatementsTabPage extends FormatterTabPage {
     /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreateCPreview(org.eclipse.swt.widgets.Composite)
      */
-    protected CPreview doCreateCPreview(Composite parent) {
+    @Override
+	protected CPreview doCreateCPreview(Composite parent) {
         fPreview= new TranslationUnitPreview(fWorkingValues, parent);
         return fPreview;
     }
@@ -128,7 +131,8 @@ public class ControlStatementsTabPage extends FormatterTabPage {
     /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doUpdatePreview()
      */
-    protected void doUpdatePreview() {
+    @Override
+	protected void doUpdatePreview() {
     	super.doUpdatePreview();
         fPreview.update();
     }

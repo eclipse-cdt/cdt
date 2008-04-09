@@ -91,6 +91,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/**
 	 * Initializes this editor.
 	 */
+	@Override
 	protected void initializeEditor() {
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
 		// FIXME: Should this editor have a different preference store ?
@@ -107,6 +108,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
 	 */
+	@Override
 	protected String[] collectContextMenuPreferencePages() {
 		// Add Assembly Editor relevant pages
 		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
@@ -120,6 +122,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
 			return getOutlinePage();
@@ -130,6 +133,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
@@ -142,6 +146,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fOutlinePage != null) {
 			fOutlinePage.dispose();
@@ -158,6 +163,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
 	 * Pulled in from 2.0
 	 */
+	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 		if (configuration instanceof AsmSourceViewerConfiguration) {
@@ -169,6 +175,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 		if (configuration instanceof AsmSourceViewerConfiguration) {
@@ -180,6 +187,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		// marker for contributions to the top
 		menu.add(new GroupMarker(ICommonMenuConstants.GROUP_TOP));
@@ -277,6 +285,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/**
 	 * Get the StatusLineManager.
 	 */
+	@Override
 	protected IStatusLineManager getStatusLineManager() {
 		IEditorActionBarContributor contributor = getEditorSite().getActionBarContributor();
 		if (contributor instanceof EditorActionBarContributor) {

@@ -62,6 +62,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 		return baseName;
 	}
 	
+	@Override
 	protected boolean validatePage() {
 		if (super.validatePage() == true) {
 			IStatus validName = isValidName(getProjectName());
@@ -121,6 +122,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		if(next != null) {
 			return next;

@@ -40,6 +40,7 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 		setControl(fOptionBlock.createContents(parent));
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		fOptionBlock.setVisible(visible);

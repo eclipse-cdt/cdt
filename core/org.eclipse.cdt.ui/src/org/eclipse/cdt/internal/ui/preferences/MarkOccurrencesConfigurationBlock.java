@@ -103,6 +103,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 		Link link= new Link(composite, SWT.NONE);
 		link.setText(PreferencesMessages.MarkOccurrencesConfigurationBlock_link);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), e.text, null, null); 
 			}

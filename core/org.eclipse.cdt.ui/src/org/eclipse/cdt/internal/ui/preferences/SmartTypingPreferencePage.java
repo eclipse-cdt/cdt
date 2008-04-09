@@ -26,6 +26,7 @@ public final class SmartTypingPreferencePage extends AbstractConfigurationBlockP
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
+	@Override
 	protected String getHelpId() {
 		return ICHelpContextIds.C_EDITOR_TYPING_PAGE;
 	}
@@ -33,6 +34,7 @@ public final class SmartTypingPreferencePage extends AbstractConfigurationBlockP
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
+	@Override
 	protected void setDescription() {
 		String description= PreferencesMessages.CEditorPreferencePage_typing_tabTitle; 
 		setDescription(description);
@@ -41,11 +43,13 @@ public final class SmartTypingPreferencePage extends AbstractConfigurationBlockP
 	/*
 	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */
+	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
 	
 	
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look.
 	}
@@ -53,6 +57,7 @@ public final class SmartTypingPreferencePage extends AbstractConfigurationBlockP
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.ui.internal.editors.text.OverlayPreferenceStore)
 	 */
+	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new SmartTypingConfigurationBlock(overlayPreferenceStore);
 	}

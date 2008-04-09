@@ -56,6 +56,7 @@ public abstract class AbstractWizardDataPage extends WizardPage implements IWiza
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		if(next != null) {
 			return next;

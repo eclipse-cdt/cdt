@@ -41,6 +41,7 @@ public class CountNodeAction extends IndexAction {
 		super(view, viewer, CUIPlugin.getResourceString("IndexView.CountSymbols.name")); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean valid() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
@@ -59,6 +60,7 @@ public class CountNodeAction extends IndexAction {
 	static final int DECLS = 4;
 	static final int DEFS = 5;
 	
+	@Override
 	public void run() {
 		final int[] count = new int[6];
 		

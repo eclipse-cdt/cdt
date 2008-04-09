@@ -25,10 +25,12 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 	IPathEntryStore fStore;
 	private static final int[] PRIVATE_SASH_WEIGHTS = new int[] { 0, 30 };
 
+	@Override
 	public void additionalTableSet() {
 		columnToFit = new TableColumn(table, SWT.NONE);
 	}
 
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
   	    sashForm.setWeights(PRIVATE_SASH_WEIGHTS);
@@ -39,6 +41,7 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 		updateData(getResDesc());
 	}
 
+	@Override
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_FILE,
@@ -54,6 +57,7 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 		return null;
 	}
 
+	@Override
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_FILE,
@@ -68,10 +72,12 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 		return null;
 	}
 	
+	@Override
 	public int getKind() { 
 		return ICSettingEntry.LIBRARY_FILE; 
 	}
 	
+	@Override
 	protected boolean isHeaderVisible() {
 		return false;
 	}

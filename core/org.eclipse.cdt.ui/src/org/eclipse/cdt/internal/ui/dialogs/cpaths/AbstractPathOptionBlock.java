@@ -195,6 +195,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		fUserSettingsTimeStamp = getEncodedSettings();
 	}
 
+	@Override
 	abstract protected void addTabs();
 
 	protected void setCElement(ICElement element) {
@@ -228,6 +229,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 	// -------- tab switching ----------
 
+	@Override
 	public void setCurrentPage(ICOptionPage page) {
 		super.setCurrentPage(page);
 		CPathBasePage newPage = (CPathBasePage) page;
@@ -278,6 +280,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		fPageCount++;
 	}
 
+	@Override
 	protected ICOptionPage getStartPage() {
 		if (fCurrPage == null) {
 			return super.getStartPage();

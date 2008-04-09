@@ -74,6 +74,7 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
     /*
 	 * @see Dialog#createButtonsForButtonBar
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ADD_ID, NewClassWizardMessages.getString("NewBaseClassSelectionDialog.addButton.label"), true); //$NON-NLS-1$
 		super.createButtonsForButtonBar(parent);
@@ -82,6 +83,7 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see Dialog#buttonPressed
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == ADD_ID){
 			addType(getLowerSelectedElement());
@@ -92,6 +94,7 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see Dialog#okPressed
 	 */
+	@Override
 	protected void okPressed() {
 	    addType(getLowerSelectedElement());
 		super.okPressed();
@@ -167,6 +170,7 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see AbstractElementListSelectionDialog#handleDefaultSelected()
 	 */
+	@Override
 	protected void handleDefaultSelected() {
 		if (validateCurrentSelection())
 			buttonPressed(ADD_ID);

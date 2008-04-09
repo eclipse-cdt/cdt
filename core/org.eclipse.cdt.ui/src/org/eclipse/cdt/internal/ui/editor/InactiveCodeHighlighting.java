@@ -102,6 +102,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		synchronized (fJobLock) {
 			if (fUpdateJob == null) {
 				fUpdateJob = new Job(CEditorMessages.getString("InactiveCodeHighlighting_job")) { //$NON-NLS-1$
+					@Override
 					protected IStatus run(final IProgressMonitor monitor) {
 						IStatus result = Status.OK_STATUS;
 						if (fTranslationUnit != null) {

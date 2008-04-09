@@ -63,6 +63,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			isWsp = true;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite c) {
 		c.setLayout(new GridLayout(2, false));
 		GridData gd;
@@ -119,6 +120,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		c_wsp.setLayoutData(gd);
 		c_wsp.setSelection(isWsp);
 		c_wsp.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
 			}});
@@ -161,6 +163,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_ok.setEnabled(text.getText().trim().length() > 0);
 	}
 	
+	@Override
 	public void buttonPressed(SelectionEvent e) {
 		String s;
 		if (e.widget.equals(b_ok)) { 

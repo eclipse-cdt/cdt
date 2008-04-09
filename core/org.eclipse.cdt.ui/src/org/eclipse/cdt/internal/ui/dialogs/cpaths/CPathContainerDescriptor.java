@@ -46,6 +46,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	 * @author Dave
 	 * @deprecated
 	 */
+	@Deprecated
 	public static class PathEntryContainerPageAdapter implements IWizardPage, IPathEntryContainerPage {
 		public static IPathEntryContainerPage createAdapter(Object elem) {
 			if (elem instanceof org.eclipse.cdt.ui.wizards.ICPathContainerPage) {

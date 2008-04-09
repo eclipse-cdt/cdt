@@ -88,6 +88,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 
 		checkTextHovers();
@@ -112,6 +113,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		
 		checkTextHovers();
@@ -145,6 +147,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (fBestHover instanceof ITextHoverExtension)
 			return ((ITextHoverExtension)fBestHover).getHoverControlCreator();
@@ -156,6 +159,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 * @since 3.0
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		// this is wrong, but left here for backwards compatibility
 		if (fBestHover instanceof IInformationProviderExtension2)

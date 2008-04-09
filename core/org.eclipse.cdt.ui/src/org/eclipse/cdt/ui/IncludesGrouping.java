@@ -30,6 +30,7 @@ public class IncludesGrouping extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object object) {
 		try {
 			return tu.getChildrenOfType(ICElement.C_INCLUDE).toArray();
@@ -41,6 +42,7 @@ public class IncludesGrouping extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object object) {
 		return tu;
 	}
@@ -48,6 +50,7 @@ public class IncludesGrouping extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IncludesGrouping) {
 			return tu.equals(((IncludesGrouping)obj).getParent(obj)) ;

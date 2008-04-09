@@ -23,6 +23,7 @@ public class FormatterModifyDialog extends ModifyDialog {
 		super(parentShell, profile, profileManager, profileStore, newProfile, dialogPreferencesKey, lastSavePathKey);
 	}
 	
+	@Override
 	protected void addPages(Map values) {
 	    addTabPage(FormatterMessages.ModifyDialog_tabpage_indentation_title, new IndentationTabPage(this, values)); 
 		addTabPage(FormatterMessages.ModifyDialog_tabpage_braces_title, new BracesTabPage(this, values)); 

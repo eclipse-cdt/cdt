@@ -24,7 +24,8 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class SymbolTab extends AbstractLangsListTab {
-    public void additionalTableSet() {
+    @Override
+	public void additionalTableSet() {
     	TableColumn tc = new TableColumn(table, SWT.LEFT);
     	tc.setText(UIMessages.getString("SymbolTab.0")); //$NON-NLS-1$
     	tc.setWidth(80);
@@ -33,13 +34,15 @@ public class SymbolTab extends AbstractLangsListTab {
     	tc.setWidth(130);
     	table.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {                       
-                    public void getName(AccessibleEvent e) {
+                    @Override
+					public void getName(AccessibleEvent e) {
                             e.result = UIMessages.getString("SymbolTab.0"); //$NON-NLS-1$
                     }
                 }
 		  );
     }
 
+	@Override
 	public ICLanguageSettingEntry doAdd() {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), true,
@@ -48,10 +51,11 @@ public class SymbolTab extends AbstractLangsListTab {
 			toAllCfgs = dlg.check1;
 			toAllLang = dlg.check3;
 			return new CMacroEntry(dlg.text1, dlg.text2, 0);
-		} else 
-			return null;
+		}
+		return null;
 	}
 
+	@Override
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), false,
@@ -59,15 +63,16 @@ public class SymbolTab extends AbstractLangsListTab {
 				ent.getValue(), getResDesc());
 		if (dlg.open())
 			return new CMacroEntry(dlg.text1, dlg.text2, 0);
-		else 
-			return null;
+		return null;
 	}
 	
+	@Override
 	public int getKind() { 
 		return ICSettingEntry.MACRO; 
 	}
 
 	// Specific version of "update()" for Symbols tab only
+	@Override
 	public void update() {
 		if (lang != null) {
 			int x = table.getSelectionIndex();

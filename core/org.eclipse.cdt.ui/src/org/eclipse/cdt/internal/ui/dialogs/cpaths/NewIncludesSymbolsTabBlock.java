@@ -36,15 +36,18 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 		super(context, pageToShow);
 	}
 
+	@Override
 	protected void addTab(ICOptionPage tab) {
 		tab.setContainer(this);
 		tab.createControl(fComposite);
 		addOptionPage(tab);
 	}
 
+	@Override
 	protected void addTabs() {
 	}
 
+	@Override
 	public Control createContents(Composite parent) {
 		fComposite = new Composite(parent, SWT.NONE);
 		fComposite.setLayout(new GridLayout(1, false));
@@ -60,6 +63,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 		return fComposite;
 	}
 
+	@Override
 	protected List getCPaths() {
 		if (fIncludeSymbols != null) {
 			return fIncludeSymbols.getCPaths();
@@ -67,14 +71,17 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 		return fCPaths;
 	}
 
+	@Override
 	protected int[] getFilteredTypes() {
 		return new int[] {IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER};
 	}
 
+	@Override
 	protected int[] getAppliedFilteredTypes() {
 		return new int[] {IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO};
 	}
 	
+	@Override
 	protected void initialize(ICElement element, List cPaths) {
 		fCPaths = cPaths;
 

@@ -59,6 +59,7 @@ public class CStringDoubleClickSelector extends CDoubleClickSelector {
 	/*
 	 * @see ITextDoubleClickStrategy#doubleClicked(ITextViewer)
 	 */
+	@Override
 	public void doubleClicked(ITextViewer textViewer) {
 		int offset= textViewer.getSelectedRange().x;
 

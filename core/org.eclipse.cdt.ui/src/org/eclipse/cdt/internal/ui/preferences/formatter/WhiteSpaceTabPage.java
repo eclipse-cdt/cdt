@@ -390,7 +390,8 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	        fJavaElementComponent= new JavaElementComponent();
 	    }
 	    
-        public void widgetSelected(SelectionEvent e) {
+        @Override
+		public void widgetSelected(SelectionEvent e) {
             final int index= fSwitchCombo.getSelectionIndex();
             if (index == 0) {
     		    fDialogSettings.put(PREF_VIEW_KEY, false);
@@ -459,20 +460,24 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 		fSwitchComponent= new SwitchComponent();
 	}
 
+	@Override
 	protected void doCreatePreferences(Composite composite, int numColumns) {
 		fSwitchComponent.createContents(numColumns, composite);
 	}
 
+	@Override
 	protected void initializePage() {
         fSwitchComponent.initialize();
 	}
 	
-    protected CPreview doCreateCPreview(Composite parent) {
+    @Override
+	protected CPreview doCreateCPreview(Composite parent) {
         fPreview= new SnippetPreview(fWorkingValues, parent);
         return fPreview;
     }
 
-    protected void doUpdatePreview() {
+    @Override
+	protected void doUpdatePreview() {
     	super.doUpdatePreview();
         fPreview.update();
     }

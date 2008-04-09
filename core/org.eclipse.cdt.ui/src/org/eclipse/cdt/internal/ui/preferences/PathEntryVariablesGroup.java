@@ -213,6 +213,7 @@ public class PathEntryVariablesGroup {
 		}
 		variableTable = new Table(pageComponent, tableStyle);
 		variableTable.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();
 				if (selectionListener != null)
@@ -337,6 +338,7 @@ public class PathEntryVariablesGroup {
 		addButton = new Button(groupComponent, SWT.PUSH);
 		addButton.setText(PreferencesMessages.PathEntryVariablesBlock_addVariableButton); 
 		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				addNewVariable();
 			}
@@ -347,6 +349,7 @@ public class PathEntryVariablesGroup {
 		editButton = new Button(groupComponent, SWT.PUSH);
 		editButton.setText(PreferencesMessages.PathEntryVariablesBlock_editVariableButton); 
 		editButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				editSelectedVariable();
 			}
@@ -357,6 +360,7 @@ public class PathEntryVariablesGroup {
 		removeButton = new Button(groupComponent, SWT.PUSH);
 		removeButton.setText(PreferencesMessages.PathEntryVariablesBlock_removeVariableButton); 
 		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedVariables();
 			}

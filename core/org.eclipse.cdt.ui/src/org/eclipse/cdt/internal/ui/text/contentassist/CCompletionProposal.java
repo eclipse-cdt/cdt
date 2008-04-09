@@ -666,6 +666,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fIdString.hashCode();
 	}
@@ -673,6 +674,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if(!(other instanceof ICCompletionProposal))
 			return false;

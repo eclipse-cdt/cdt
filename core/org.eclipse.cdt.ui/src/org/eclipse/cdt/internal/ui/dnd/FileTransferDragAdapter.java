@@ -18,10 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -31,7 +29,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -43,6 +40,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public class FileTransferDragAdapter implements TransferDragSourceListener {
 	private final ISelectionProvider provider;
@@ -77,12 +79,12 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 	}
 
 	private static class RefreshOperation extends WorkspaceModifyOperation {
-		private final Set roots;
+		private final Set<IResource> roots;
 
 		public RefreshOperation(List resources) {
 			super();
 
-			roots = new HashSet(resources.size());
+			roots = new HashSet<IResource>(resources.size());
 
 			for (Iterator iterator = resources.iterator(); iterator.hasNext();) {
 				IResource resource = (IResource) iterator.next();
@@ -92,6 +94,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 			}
 		}
 
+		@Override
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
 				monitor.beginTask(CUIMessages.getString("FileTransferDragAdapter.refreshing"), roots.size()); //$NON-NLS-1$
@@ -118,13 +121,13 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 	}
 
 	private List getResources() {
-		List result = Collections.EMPTY_LIST;
+		List<IResource> result = Collections.emptyList();
 		ISelection selection = provider.getSelection();
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
 
-			result = new ArrayList(structured.size());
+			result = new ArrayList<IResource>(structured.size());
 
 			for (Iterator iterator = structured.iterator(); iterator.hasNext();) {
 				Object object = iterator.next();
@@ -147,7 +150,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 	private static String[] getResourceLocations(List resources) {
 		if (!resources.isEmpty()) {
 			int count = resources.size();
-			List locations = new ArrayList(count);
+			List<String> locations = new ArrayList<String>(count);
 			
 			for (Iterator iterator = resources.iterator(); iterator.hasNext();) {
 				IResource resource = (IResource) iterator.next();

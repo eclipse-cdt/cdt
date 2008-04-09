@@ -63,11 +63,13 @@ public class AlreadyExistsDialog extends StatusDialog {
 	}
 	
 	
+	@Override
 	public void create() {
 		super.create();
 		setTitle(FormatterMessages.AlreadyExistsDialog_dialog_title); 
 	}
 	
+	@Override
 	public Control createDialogArea(Composite parent) {
 				
 		initializeComposite(parent);
@@ -184,6 +186,7 @@ public class AlreadyExistsDialog extends StatusDialog {
 		updateStatus(fOk);
 	}
 	
+	@Override
 	protected void okPressed() {
 		if (!getStatus().isOK()) 
 			return;

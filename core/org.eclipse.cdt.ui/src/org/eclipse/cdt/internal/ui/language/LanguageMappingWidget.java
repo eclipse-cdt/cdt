@@ -106,6 +106,7 @@ public abstract class LanguageMappingWidget {
 		link.setText(description);
 
 		link.addListener(SWT.Selection, new LanguageMappingLinkListener(fContents.getShell(), getElement()) {
+			@Override
 			protected void refresh() {
 				refreshMappings();
 			}

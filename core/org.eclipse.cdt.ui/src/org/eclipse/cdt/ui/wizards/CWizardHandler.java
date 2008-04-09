@@ -199,6 +199,7 @@ public class CWizardHandler implements Cloneable {
 
 	public boolean canFinich() {return true;}
 
+	@Override
 	public Object clone() {
 		try {
 			CWizardHandler clone = (CWizardHandler)super.clone();

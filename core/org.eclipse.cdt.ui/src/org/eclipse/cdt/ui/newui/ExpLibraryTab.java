@@ -24,16 +24,20 @@ public class ExpLibraryTab extends AbstractExportTab implements IPathEntryStoreL
 		updateData(getResDesc());
 	}
 
+	@Override
 	public ICLanguageSettingEntry doAdd(String s1, String s2, boolean isWsp) {
 		int flags = isWsp ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0;
 		return new CLibraryFileEntry(s2, flags);
 	}
 
+	@Override
 	public ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp) {
 		return doAdd(s1, s2, isWsp);
 	}
 	
+	@Override
 	public int getKind() { return ICSettingEntry.LIBRARY_FILE; }
+	@Override
 	public boolean hasValues() { return false; }	
 }
 

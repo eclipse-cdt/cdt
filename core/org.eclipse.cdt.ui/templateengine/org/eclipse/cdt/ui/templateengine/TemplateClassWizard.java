@@ -42,21 +42,25 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 		//setDefaultPageImageDescriptor(TemplateEnginePlugin.imageDescriptorFromPlugin(TemplateEnginePlugin.getDefault().getWizardIconPluginID(), TemplateEnginePlugin.getDefault().getWizardIconFile()));
 	}
 
+	@Override
 	public String getListSelectionTitle()
 	{
 		return Messages.getString("TemplateClassWizard.1"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getListSelectionDescription()
 	{
 		return Messages.getString("TemplateClassWizard.2"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getListSelectionLabel()
 	{
 		return Messages.getString("TemplateClassWizard.3"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected IWizardDataPage[] getPagesBeforeTemplatePages() {
 		if (pagesBeforeTemplatePages == null) {
 			projectSelectionPage = new ProjectSelectionPage();
@@ -68,6 +72,7 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 		return pagesBeforeTemplatePages;
 	}
 
+	@Override
 	protected IWizardDataPage[] getPagesAfterTemplatePages() {
 		if (pagesAfterTemplatePages == null) {
 			pagesAfterTemplatePages = new IWizardDataPage[] {};
@@ -85,12 +90,14 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 		configElement = config;
 	}
 
+	@Override
 	public boolean performFinish() {
 		boolean retVal = super.performFinish();
 		BasicNewProjectResourceWizard.updatePerspective(configElement);
 		return retVal;
 	}
 
+	@Override
 	protected IWizardDataPage[] getPagesAfterTemplateSelection() {
 		if (pagesAfterTemplateSelection == null) {
 			pagesAfterTemplateSelection = new IWizardDataPage[] {};

@@ -59,6 +59,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		fCPathList = cPathList;
 	}
 
+	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 	}
@@ -68,6 +69,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	}
 
@@ -76,6 +78,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 	}
 
@@ -84,6 +87,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -179,6 +183,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#getSelection
 	 */
+	@Override
 	public List getSelection() {
 		return fProjectsList.getSelectedElements();
 	}
@@ -186,6 +191,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#setSelection
 	 */
+	@Override
 	public void setSelection(List selElements) {
 		fProjectsList.selectElements(new StructuredSelection(selElements));
 	}
@@ -195,6 +201,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
+	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_PROJECT;
 	}

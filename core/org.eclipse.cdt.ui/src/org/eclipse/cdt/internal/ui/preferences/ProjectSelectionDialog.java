@@ -65,6 +65,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fProjectsWithSpecifics= projectsWithSpecifics;
 		
 		fFilter= new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return fProjectsWithSpecifics.contains(element);
 			}
@@ -75,6 +76,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
 		Composite composite= (Composite) super.createDialogArea(parent);
@@ -151,6 +153,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
+	@Override
 	protected void computeResult() {
 	}
 }

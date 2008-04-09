@@ -28,6 +28,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 	private DocCommentOwnerBlock fDocBlock;
 	private boolean isProjectLevel;
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		isProjectLevel= getProject() != null;
 		if(isProjectLevel) {
@@ -39,6 +40,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 		return parent;
 	}
 	
+	@Override
 	protected void performDefaults() {
 		if(isProjectLevel) {
 			fDocBlock.performDefaults();
@@ -46,6 +48,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 		super.performDefaults();
 	}
 	
+	@Override
 	public boolean performOk() {
 		if(isProjectLevel) {
 			try {

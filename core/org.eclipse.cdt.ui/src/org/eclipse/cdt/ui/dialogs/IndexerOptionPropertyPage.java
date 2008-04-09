@@ -39,6 +39,7 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 		optionPage.setContainer(this);
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -49,10 +50,12 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 		return composite;
 	}
 
+	@Override
 	protected void performDefaults() {
 		optionPage.performDefaults();
 	}
 		
+	@Override
 	public boolean performOk() {
 		try {
 			optionPage.performApply(new NullProgressMonitor());

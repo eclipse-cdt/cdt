@@ -40,6 +40,7 @@ public class BasicSelectionTransferDragAdapter extends DragSourceAdapter impleme
 	/* non Java-doc
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart
 	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		ISelection selection= fProvider.getSelection();
 		LocalSelectionTransfer.getInstance().setSelection(selection);
@@ -63,6 +64,7 @@ public class BasicSelectionTransferDragAdapter extends DragSourceAdapter impleme
 	/* non Java-doc
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData
 	 */		
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		// For consistency set the data to the selection even though
 		// the selection is provided by the LocalSelectionTransfer
@@ -74,6 +76,7 @@ public class BasicSelectionTransferDragAdapter extends DragSourceAdapter impleme
 	/* non Java-doc
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished
 	 */	
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		// Make sure we don't have to do any remaining work
 		Assert.isTrue(event.detail != DND.DROP_MOVE);

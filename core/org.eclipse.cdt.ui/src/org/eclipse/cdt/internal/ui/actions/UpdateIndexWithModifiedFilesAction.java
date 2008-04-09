@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 
 public class UpdateIndexWithModifiedFilesAction extends AbstractUpdateIndexAction {
 
+	@Override
 	protected int getUpdateOptions() {
 		return IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONFIGURATION;
 	}

@@ -83,6 +83,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
 		createArgumentArea((Composite)control);
@@ -129,7 +130,8 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fArgumentText.setLayoutData(gd);		
 		fArgumentText.getAccessible().addAccessibleListener(new AccessibleAdapter() {                       
-            public void getName(AccessibleEvent e) {
+            @Override
+			public void getName(AccessibleEvent e) {
                     e.result = Messages.StringVariableSelectionDialog_columnArgument;
             }
 		});
@@ -155,6 +157,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 * 
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleSelectionChanged()
 	 */
+	@Override
 	protected void handleSelectionChanged() {
 		super.handleSelectionChanged();
 		Object[] objects = getSelectedElements();
@@ -177,6 +180,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fArgumentValue = fArgumentText.getText().trim();
 		super.okPressed();
@@ -194,7 +198,8 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {

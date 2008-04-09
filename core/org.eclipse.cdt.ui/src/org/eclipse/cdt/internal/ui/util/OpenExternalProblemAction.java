@@ -44,6 +44,7 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 		
 	}
 
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		Object object = selection.getFirstElement();
 		if (object instanceof IMarker) {
@@ -75,6 +76,7 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 		return cproject ;
 	}
 	
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
 		if (selection instanceof IStructuredSelection) {

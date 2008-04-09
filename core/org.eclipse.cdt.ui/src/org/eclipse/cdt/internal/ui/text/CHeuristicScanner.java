@@ -95,6 +95,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
+		@Override
 		public boolean stop(char ch, int position, boolean forward) {
 			return !Character.isWhitespace(ch);
 		}
@@ -109,6 +110,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
+		@Override
 		public boolean stop(char ch, int position, boolean forward) {
 			return super.stop(ch, position, true) && isDefaultPartition(position);
 		}
@@ -116,6 +118,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
+		@Override
 		public int nextPosition(int position, boolean forward) {
 			ITypedRegion partition= getPartition(position);
 			if (fPartition.equals(partition.getType()))
@@ -141,6 +144,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
+		@Override
 		public boolean stop(char ch, int position, boolean forward) {
 			return !Character.isJavaIdentifierPart(ch);
 		}
@@ -155,6 +159,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
+		@Override
 		public boolean stop(char ch, int position, boolean forward) {
 			return super.stop(ch, position, true) || !isDefaultPartition(position);
 		}
@@ -162,6 +167,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
+		@Override
 		public int nextPosition(int position, boolean forward) {
 			ITypedRegion partition= getPartition(position);
 			if (fPartition.equals(partition.getType()))
@@ -208,6 +214,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char, int)
 		 */
+		@Override
 		public boolean stop(char ch, int position, boolean forward) {
 			return Arrays.binarySearch(fChars, ch) >= 0 && isDefaultPartition(position);
 		}
@@ -215,6 +222,7 @@ public final class CHeuristicScanner implements Symbols {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
+		@Override
 		public int nextPosition(int position, boolean forward) {
 			ITypedRegion partition= getPartition(position);
 			if (fPartition.equals(partition.getType()))

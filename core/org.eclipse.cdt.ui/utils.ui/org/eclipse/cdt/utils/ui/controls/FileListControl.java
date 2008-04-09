@@ -112,6 +112,7 @@ public class FileListControl {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			
@@ -121,6 +122,7 @@ public class FileListControl {
 				/* Browse button for workspace folders/files */
 				final Button workspaceButton = createButton(parent, 3, WORKSPACEBUTTON_NAME, false);
 				workspaceButton.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent ev) {
 						/* Before opening the browse dialog we try to convert the current
 						 * path text to a valid workspace resource, so we can set it
@@ -232,6 +234,7 @@ public class FileListControl {
 				/* Browse button for external directories/files */
 				final Button externalButton = createButton(parent, 4, FILESYSTEMBUTTON_NAME, false);
 				externalButton.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent ev) {
 						String currentName;
 						String result;
@@ -426,6 +429,7 @@ public class FileListControl {
 		list.addSelectionListener(getSelectionListener());
 		//Add a double-click event handler
 		list.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				// Popup the editor on the selected item from the list
 				editSelection();
@@ -436,6 +440,7 @@ public class FileListControl {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.KeyAdapter#keyPressed(org.eclipse.swt.events.KeyEvent)
 			 */
+			@Override
 			public void keyPressed(KeyEvent e) {
 				// Is this the delete key
 				if (e.keyCode == SWT.DEL) {
@@ -535,6 +540,7 @@ public class FileListControl {
 	 */
 	private void createSelectionListener() {
 		selectionListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				Widget widget = event.widget;
 				if (widget == addItem) {

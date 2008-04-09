@@ -83,6 +83,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 		fCompositeParent.setLayout(new TabFolderLayout());
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		handleBinaryParserChanged();
@@ -141,6 +142,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 
 	abstract protected String[] getBinaryParserIDs();
 
+	@Override
 	abstract public void createControl(Composite parent);
 
 	/*
@@ -148,6 +150,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	abstract public void performApply(IProgressMonitor monitor) throws CoreException;
 
 	/*
@@ -155,6 +158,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
+	@Override
 	abstract public void performDefaults();
 
 }

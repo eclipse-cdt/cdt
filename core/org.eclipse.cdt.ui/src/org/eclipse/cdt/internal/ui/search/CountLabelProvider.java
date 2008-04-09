@@ -43,10 +43,12 @@ public class CountLabelProvider extends LabelProvider {
 		return fLabelProvider;
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		return fLabelProvider.getImage(element);
 	}
 
+	@Override
 	public String getText(Object element) {
 		int c = fPage.getInput().getMatchCount(element);
 		
@@ -57,6 +59,7 @@ public class CountLabelProvider extends LabelProvider {
 		return fLabelProvider.getText(element) + " "+ Messages.format(CSearchMessages.CSearchResultCollector_matches, matchCount);  //$NON-NLS-1$
 	}
 
+	@Override
 	public void dispose() {
 		fLabelProvider.dispose();
 		super.dispose();

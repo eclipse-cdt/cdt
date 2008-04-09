@@ -63,6 +63,7 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 	 * 
 	 * @param composite
 	 */
+	@Override
 	public void createWidgets(UIComposite composite) {
 		uiComposite = composite;
 
@@ -92,6 +93,7 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 		button.setText(InputUIElement.BROWSELABEL);
 
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				onBrowsePushed();
 			}
@@ -115,6 +117,7 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 	 * call the dispose method on the widgets. This is to ensure that the
 	 * widgets are properly disposed.
 	 */
+	@Override
 	public void disposeWidget() {
 		label.dispose();
 		text.dispose();

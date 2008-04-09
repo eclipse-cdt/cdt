@@ -32,6 +32,7 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
+	@Override
 	public void init(ICommonActionExtensionSite site) {
 		ICommonViewerWorkbenchSite workbenchSite= null;
 		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite) {
@@ -47,6 +48,7 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fSearchGroup != null) {
 			fSearchGroup.dispose();
@@ -58,6 +60,7 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		if (fSearchGroup != null) {
 			fSearchGroup.fillActionBars(actionBars);
@@ -67,6 +70,7 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		if (fSearchGroup != null) {
 			ISelection selection = getContext().getSelection();
@@ -79,6 +83,7 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
 	 */
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		if (fSearchGroup != null) {
@@ -89,6 +94,7 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
 	 */
+	@Override
 	public void updateActionBars() {
 		if (fSearchGroup != null) {
 			fSearchGroup.updateActionBars();

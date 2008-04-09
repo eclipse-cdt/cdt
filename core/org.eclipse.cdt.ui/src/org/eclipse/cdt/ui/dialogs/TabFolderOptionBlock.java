@@ -120,6 +120,7 @@ public abstract class TabFolderOptionBlock {
 
 		fFolder.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!initializingTabs) {
 					setCurrentPage((ICOptionPage) ((TabItem)e.item).getData());

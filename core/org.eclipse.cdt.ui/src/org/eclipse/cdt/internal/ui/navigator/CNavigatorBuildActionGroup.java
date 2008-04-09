@@ -54,6 +54,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 		super(viewPart);
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 	}
 
@@ -70,6 +71,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 	 * @param menu
 	 *            context menu to add actions to
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection= (IStructuredSelection) getContext().getSelection();
 		boolean isProjectSelection= true;
@@ -138,11 +140,13 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 		return false;
 	}
 
+	@Override
 	protected void makeActions() {
 		fCleanAction= new BuildAction(getViewPart().getSite(), IncrementalProjectBuilder.CLEAN_BUILD);
 		fCleanAction.setText(CViewMessages.getString("CleanAction.label")); //$NON-NLS-1$
 	}
 
+	@Override
 	public void updateActionBars() {
 	}
 }

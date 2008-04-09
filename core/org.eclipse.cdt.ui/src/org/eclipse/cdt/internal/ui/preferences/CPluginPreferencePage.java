@@ -50,6 +50,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
 	
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_PREF_PAGE);
@@ -58,6 +59,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * @see FieldEditorPreferencePage#createControl(Composite)
 	 */	
+	@Override
 	protected void createFieldEditors() {
 		Composite parent= getFieldEditorParent();
 
@@ -164,6 +166,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if (!super.performOk())
 			return false;
@@ -173,7 +176,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		return true;
 	}
 
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
     	super.performDefaults();
 		ACBuilder.setAllConfigBuild(false);
 		b1.setSelection(true);

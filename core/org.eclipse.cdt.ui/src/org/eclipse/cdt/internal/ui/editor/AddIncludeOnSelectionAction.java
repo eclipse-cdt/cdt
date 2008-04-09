@@ -144,6 +144,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		return fEditor.getSite().getShell();
 	}
 
+	@Override
 	public void run() {
 		ITranslationUnit tu= getTranslationUnit();
 		if (tu == null) {
@@ -160,10 +161,8 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			return;
 		}
 		try {
-			if (tu != null) {
-				extractIncludes(fEditor, index);
-				addInclude(tu);
-			}
+			extractIncludes(fEditor, index);
+			addInclude(tu);
 		}
 		finally {
 			index.releaseReadLock();
@@ -186,15 +185,14 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			this.binding= binding;
 		}
 
+		@Override
 		public String toString()
 		{			
 			try {				
-				if (binding != null)
-				{
+				if (binding != null) {
 					return getBindingQualifiedName(binding) + " - " + name.getFileLocation().getFileName(); //$NON-NLS-1$
 				}
-				else
-					return null;
+				return null;
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				return null;
@@ -257,7 +255,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				IndexFilter filter= new IndexFilter() {
 				};
 				IIndexBinding[] bindings= index.findBindings(pattern, false, filter, new NullProgressMonitor());
-				ArrayList pdomNames= new ArrayList();
+				ArrayList<DisplayName> pdomNames= new ArrayList<DisplayName>();
 				for (int i = 0; i < bindings.length; ++i) {
 					IIndexBinding binding= bindings[i];
 					IIndexName[] defs= null;
@@ -286,7 +284,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 						Object[] selects = dialog.getResult();
 
 						fRequiredIncludes = new IRequiredInclude[selects.length];
-						List usings = new ArrayList(selects.length);
+						List<String> usings = new ArrayList<String>(selects.length);
 						for (int i = 0; i < fRequiredIncludes.length; i++) {
 							IRequiredInclude include = getRequiredInclude(((DisplayName)selects[i]).getName().getFileLocation().getFileName(), getTranslationUnit());
 							if (include != null) {
@@ -307,7 +305,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 							fUsings = new String[usings.size()];
 							for (int i = 0; i < usings.size(); i++)
 							{
-								fUsings[i] = (String) usings.get(i);
+								fUsings[i] = usings.get(i);
 							}
 						}						
 					}
@@ -315,9 +313,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				else if (pdomNames.size() == 1)
 				{	
 					// we should use the IIndexName.getLocation here rather than getFileLocation
-					String fileName = ((DisplayName)pdomNames.get(0)).getName().getFileLocation().getFileName();
+					String fileName = (pdomNames.get(0)).getName().getFileLocation().getFileName();
 					fRequiredIncludes = new IRequiredInclude[] {getRequiredInclude(fileName, getTranslationUnit())};
-					IIndexBinding binding = ((DisplayName)pdomNames.get(0)).getBinding();
+					IIndexBinding binding = (pdomNames.get(0)).getBinding();
 
 					if (binding instanceof ICPPBinding) {
 						//find the enclosing namespace, if there's one

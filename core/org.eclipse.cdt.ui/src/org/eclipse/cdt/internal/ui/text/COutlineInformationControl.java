@@ -74,7 +74,8 @@ public class COutlineInformationControl extends AbstractInformationControl {
 	/**
 	 * {@inheritDoc}
 	 */
-    protected TreeViewer createTreeViewer(Composite parent, int treeStyle) {
+    @Override
+	protected TreeViewer createTreeViewer(Composite parent, int treeStyle) {
         TreeViewer treeViewer = new ProblemTreeViewer(parent, treeStyle);
         final Tree tree = treeViewer.getTree();
         tree.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -91,6 +92,7 @@ public class COutlineInformationControl extends AbstractInformationControl {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractInformationControl#getId()
 	 */
+	@Override
 	protected String getId() {
 		return "org.eclipse.cdt.internal.ui.text.QuickOutline"; //$NON-NLS-1$
 	}
@@ -98,6 +100,7 @@ public class COutlineInformationControl extends AbstractInformationControl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setInput(Object information) {
 		if (information == null || information instanceof String) {
 			inputChanged(null, null);
@@ -114,6 +117,7 @@ public class COutlineInformationControl extends AbstractInformationControl {
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.AbstractInformationControl#fillViewMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillViewMenu(IMenuManager viewMenu) {
 		super.fillViewMenu(viewMenu);
 
@@ -127,6 +131,7 @@ public class COutlineInformationControl extends AbstractInformationControl {
 			return true;
 		}
 		
+		@Override
 		public int category(Object obj) {
 			if (obj instanceof ICElement) {
 				ICElement elem= (ICElement)obj;
@@ -221,7 +226,8 @@ public class COutlineInformationControl extends AbstractInformationControl {
     	/*
     	 * @see org.eclipse.jface.action.Action#run()
     	 */
-    	public void run() {
+    	@Override
+		public void run() {
     		final boolean on= isChecked();
     		fOutlineViewer.setComparator(on ? fSorter : null);
     		getDialogSettings().put(STORE_LEXICAL_SORTING_CHECKED, on);

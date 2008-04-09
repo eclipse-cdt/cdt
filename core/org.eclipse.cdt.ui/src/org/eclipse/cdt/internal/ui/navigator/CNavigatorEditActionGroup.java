@@ -58,6 +58,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		makeActions();
 	}
 
+	@Override
 	public void dispose() {
 		if (clipboard != null) {
 			clipboard.dispose();
@@ -66,6 +67,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		super.dispose();
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext()
 				.getSelection();
@@ -87,6 +89,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 
 		if (textActionHandler == null) {
@@ -133,6 +136,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		deleteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 	}
 
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext()
 				.getSelection();

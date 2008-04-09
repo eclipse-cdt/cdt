@@ -68,7 +68,8 @@ public final class WhiteSpaceOptions {
 	        return fParent;
 	    }
 
-	    public final String toString() {
+	    @Override
+		public final String toString() {
 	        return fName;
 	    }
 	    
@@ -86,7 +87,8 @@ public final class WhiteSpaceOptions {
             super(parent, workingValues, messageKey);
         }
 
-	    public void setChecked(boolean checked) {
+	    @Override
+		public void setChecked(boolean checked) {
 	        for (final Iterator iter = fChildren.iterator(); iter.hasNext();)
 	            ((Node)iter.next()).setChecked(checked);
 	    }
@@ -95,7 +97,8 @@ public final class WhiteSpaceOptions {
 	        fChildren.add(child);
 	    }
 
-        public List getSnippets() {
+        @Override
+		public List getSnippets() {
             final ArrayList snippets= new ArrayList(fChildren.size());
             for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
                 final List childSnippets= ((Node)iter.next()).getSnippets();
@@ -108,7 +111,8 @@ public final class WhiteSpaceOptions {
             return snippets;
         }
         
-        public void getCheckedLeafs(List list) {
+        @Override
+		public void getCheckedLeafs(List list) {
             for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
                 ((Node)iter.next()).getCheckedLeafs(list);
             }
@@ -130,7 +134,8 @@ public final class WhiteSpaceOptions {
 	        fSnippets.add(snippet);
 	    }
 	    
-        public void setChecked(boolean checked) {
+        @Override
+		public void setChecked(boolean checked) {
         	fWorkingValues.put(fKey, checked ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
         }
         
@@ -138,11 +143,13 @@ public final class WhiteSpaceOptions {
             return CCorePlugin.INSERT.equals(fWorkingValues.get(fKey));
         }
         
-        public List getSnippets() {
+        @Override
+		public List getSnippets() {
             return fSnippets;
         }
         
-        public void getCheckedLeafs(List list) {
+        @Override
+		public void getCheckedLeafs(List list) {
             if (getChecked()) 
                 list.add(this);
         }

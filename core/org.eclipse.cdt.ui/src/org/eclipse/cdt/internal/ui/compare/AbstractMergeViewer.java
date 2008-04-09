@@ -90,6 +90,7 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 		return fPreferenceStore;
 	}
 
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		if (fPreferenceChangeListener != null) {
 			fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
@@ -130,14 +131,17 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 		}
 	}
 
+	@Override
 	protected String getDocumentPartitioning() {
 		return ICPartitions.C_PARTITIONING;
 	}
 
+	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(null);
 	}
 
+	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
 			((SourceViewer)textViewer).configure(getSourceViewerConfiguration());
@@ -147,6 +151,7 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 	/*
 	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#getTitle()
 	 */
+	@Override
 	public abstract String getTitle();
 
 	/**

@@ -165,9 +165,7 @@ public class TypeHierarchyUI {
 				}
 			}
 			finally {
-				if (index != null) {
-					index.releaseReadLock();
-				}
+				index.releaseReadLock();
 			}
 		}
 		catch (CoreException e) {
@@ -198,9 +196,7 @@ public class TypeHierarchyUI {
 				}
 			}
 			finally {
-				if (index != null) {
-					index.releaseReadLock();
-				}
+				index.releaseReadLock();
 			}
 		}
 		catch (CoreException e) {

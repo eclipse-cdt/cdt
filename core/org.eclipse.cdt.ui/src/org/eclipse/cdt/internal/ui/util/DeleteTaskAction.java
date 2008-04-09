@@ -34,6 +34,7 @@ public class DeleteTaskAction extends ActionDelegate implements IObjectActionDel
 	/**
 	 * @see ActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// Add your code here to perform the action
 		if (selection != null) {
@@ -71,6 +72,7 @@ public class DeleteTaskAction extends ActionDelegate implements IObjectActionDel
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
 		if (selection instanceof IStructuredSelection) {

@@ -207,6 +207,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			Button configureButton= new Button(parent, SWT.PUSH);
 			configureButton.setText(NewFileWizardMessages.AbstractFileCreationWizardPage_configure_label);
 			configureButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					editTemplates();
 				}
@@ -602,6 +603,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	/*
 	 * @see WizardPage#becomesVisible
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {

@@ -40,6 +40,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	 * Default control creator.
 	 */
 	private static final class ControlCreator extends AbstractReusableInformationControlCreator {
+		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			return new DefaultInformationControl(parent);
 		}

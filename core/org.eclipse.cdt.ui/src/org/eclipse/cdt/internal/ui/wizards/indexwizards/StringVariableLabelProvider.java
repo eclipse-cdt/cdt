@@ -23,6 +23,7 @@ public class StringVariableLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IStringVariable) {
 			IStringVariable variable = (IStringVariable)element;

@@ -60,6 +60,7 @@ public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel
 		fLocationAttribute= locationAttribute;
 	}
 
+	@Override
 	protected IMarker[] retrieveMarkers() throws CoreException {
 		IMarker[] markers = null;
 		if (getResource() != null) {
@@ -68,6 +69,7 @@ public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel
 		return markers;
 	}
 
+	@Override
 	protected boolean isAcceptable(IMarker marker) {
 		boolean acceptable = false;
 		String externalFileName = marker.getAttribute(fLocationAttribute, null);

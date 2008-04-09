@@ -95,13 +95,13 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 	}
 
 	private IResource[] getSelectedResources() {
-		List resources = Collections.EMPTY_LIST;
+		List<IResource> resources = Collections.emptyList();
 		ISelection selection = provider.getSelection();
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
 
-			resources = new ArrayList(structured.size());
+			resources = new ArrayList<IResource>(structured.size());
 
 			for (Iterator iterator = structured.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();

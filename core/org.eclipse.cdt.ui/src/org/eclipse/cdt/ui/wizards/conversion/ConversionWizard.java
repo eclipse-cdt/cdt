@@ -62,7 +62,8 @@ public abstract class ConversionWizard
     /* (non-Javadoc)
      * Method declared on IWorkbenchWizard.
      */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+    @Override
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         super.init(workbench, currentSelection);
         setWindowTitle(getWindowTitleResource());
     }
@@ -114,7 +115,8 @@ public abstract class ConversionWizard
      * Method doRun calls the doRunPrologue and mainPage's  doRun method and the
      * doRunEpliogue. Subclasses may overwrite to add further actions
      */
-    protected void doRun(IProgressMonitor monitor) throws CoreException {
+    @Override
+	protected void doRun(IProgressMonitor monitor) throws CoreException {
         try{
             mainPage.doRun(monitor, getProjectID(), getBuildSystemId());
         } catch (CoreException ce){
@@ -129,7 +131,8 @@ public abstract class ConversionWizard
      * Return the type of project that it is being converted to
      * The default if a make project
      */
-    public abstract String getProjectID();
+    @Override
+	public abstract String getProjectID();
 
     /**
      * Method addPages allows subclasses to add as many pages as they need. Overwrite
@@ -143,19 +146,22 @@ public abstract class ConversionWizard
      * 
      * @see NewCProjectWizard#addPages
      */
-    public abstract void addPages();
+    @Override
+	public abstract void addPages();
 
     /**
      * Required by superclass but with no implementation here
      * 
      * @param monitor 
      */
-    protected void doRunPrologue(IProgressMonitor monitor) {}
+    @Override
+	protected void doRunPrologue(IProgressMonitor monitor) {}
 
     /**
      * Required by superclass but with no implementation here
      * 
      * @param monitor 
      */
-    protected void doRunEpilogue(IProgressMonitor monitor) {}
+    @Override
+	protected void doRunEpilogue(IProgressMonitor monitor) {}
 }

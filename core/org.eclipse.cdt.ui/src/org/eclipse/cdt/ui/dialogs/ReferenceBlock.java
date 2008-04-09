@@ -53,6 +53,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		setDescription(CUIPlugin.getResourceString(DESC));
 	}
 
+	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 	}
@@ -65,6 +66,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 	 */
 	protected IStructuredContentProvider getContentProvider() {
 		return new WorkbenchContentProvider() {
+			@Override
 			public Object[] getChildren(Object element) {
 				if (!(element instanceof IWorkspace))
 					return new Object[0];
@@ -106,6 +108,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		return projects;	
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -155,6 +158,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		IProject[] refProjects = getReferencedProjects();
 		if (refProjects != null) {
@@ -173,6 +177,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		
 	}
 
+	@Override
 	public void performDefaults() {
 		initializeValues();
 	}

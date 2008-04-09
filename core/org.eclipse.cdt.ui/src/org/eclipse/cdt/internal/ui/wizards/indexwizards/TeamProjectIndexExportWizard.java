@@ -35,12 +35,14 @@ public class TeamProjectIndexExportWizard extends Wizard implements IExportWizar
         setDialogSettings(section);
 	}
 
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         fMainPage = new TeamProjectIndexExportWizardPage(fSelection);
         addPage(fMainPage);
     }
 
+	@Override
 	public boolean performFinish() {
         return fMainPage.finish();
     }

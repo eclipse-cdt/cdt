@@ -45,6 +45,7 @@ public class ChangeConfigAction extends Action {
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		Iterator iter = fProjects.iterator();
 		while (iter.hasNext()) {

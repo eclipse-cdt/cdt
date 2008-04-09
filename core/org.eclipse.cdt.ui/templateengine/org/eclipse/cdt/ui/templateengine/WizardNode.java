@@ -74,6 +74,7 @@ class WizardNode implements IWizardNode {
 			
 			private boolean finishPressed;
 			
+			@Override
 			public void addPages() {
 				IWizardPage[] wpages = null;
 				try {
@@ -96,6 +97,7 @@ class WizardNode implements IWizardNode {
 				}
 			}
 			
+			@Override
 			public boolean performFinish() {
 				Map<String, String> valueStore = template.getValueStore();
 				finishPressed = true;
@@ -110,10 +112,12 @@ class WizardNode implements IWizardNode {
 				return true;
 			}
 			
+			@Override
 			public boolean canFinish(){
 				return !finishPressed && super.canFinish();
 			}
 
+			@Override
 			public void createPageControls(Composite pageContainer) {
 				super.createPageControls(pageContainer);
 				parentPage.adjustTemplateValues(template);
@@ -125,6 +129,7 @@ class WizardNode implements IWizardNode {
 				}
 			}
 
+			@Override
 			public Image getDefaultPageImage() {
 				return parentPage.getImage();
 			}

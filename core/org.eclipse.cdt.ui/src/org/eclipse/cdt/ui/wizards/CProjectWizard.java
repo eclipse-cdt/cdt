@@ -24,10 +24,12 @@ public class CProjectWizard extends CDTCommonProjectWizard {
 			  UIMessages.getString("NewModelProjectWizard.5")); //$NON-NLS-1$
 	}
 
+	@Override
 	public String[] getNatures() {
 		return new String[] { CProjectNature.C_NATURE_ID };
 	}
 
+	@Override
 	protected IProject continueCreation(IProject prj) {
 		try {
 			CProjectNature.addCNature(prj, new NullProgressMonitor());

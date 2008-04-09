@@ -33,6 +33,7 @@ public class NonCElementFilter  extends ViewerFilter {
 	 *
 	 * @return Returns true if element should be included in filtered set
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof ICElement)
 			return true;

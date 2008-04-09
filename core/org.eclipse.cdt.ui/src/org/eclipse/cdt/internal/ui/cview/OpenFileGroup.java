@@ -43,10 +43,12 @@ public class OpenFileGroup extends CViewActionGroup {
 		super(cview);
 	}
 
+	@Override
 	protected void makeActions() {
 		openFileAction = new OpenFileAction(getCView().getSite().getPage());
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
                 IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
@@ -116,17 +118,20 @@ public class OpenFileGroup extends CViewActionGroup {
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
      */
-    public void fillActionBars(IActionBars actionBars) {
+    @Override
+	public void fillActionBars(IActionBars actionBars) {
     }
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
      */
-    public void updateActionBars() {
+    @Override
+	public void updateActionBars() {
     }
 
 	/**
 	 * Runs the default action (open file).
 	 */
+	@Override
 	public void runDefaultAction(IStructuredSelection selection) {
 		Object obj = selection.getFirstElement();
 		if (obj instanceof ICElement) {

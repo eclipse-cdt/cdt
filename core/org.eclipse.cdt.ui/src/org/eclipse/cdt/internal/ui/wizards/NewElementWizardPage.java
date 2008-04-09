@@ -42,6 +42,7 @@ public abstract class NewElementWizardPage extends WizardPage {
 	/*
 	 * @see WizardPage#becomesVisible
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		fPageVisible = visible;

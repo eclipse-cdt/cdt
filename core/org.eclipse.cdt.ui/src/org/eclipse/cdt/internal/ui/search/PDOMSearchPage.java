@@ -338,6 +338,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		// Pattern combo
 		patternCombo = new Combo( result, SWT.SINGLE | SWT.BORDER );
 		patternCombo.addSelectionListener( new SelectionAdapter() {
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 				//handlePatternSelected();
 			}
@@ -360,6 +361,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		gd= new GridData();
 		caseSensitiveButton.setLayoutData(gd);
 		caseSensitiveButton.addSelectionListener( new SelectionAdapter() {
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 //				isCaseSensitive = caseSensitiveButton.getSelection();
 				setPerformActionEnabled();
@@ -395,6 +397,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		result.setLayout(layout);
 		
 		SelectionAdapter searchForSelectionAdapter = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				Button me = (Button)event.widget;
 				if (me == searchForButtons[searchAllButtonIndex]) {
@@ -466,6 +469,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		return searchSettings;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			if (firstTime) {

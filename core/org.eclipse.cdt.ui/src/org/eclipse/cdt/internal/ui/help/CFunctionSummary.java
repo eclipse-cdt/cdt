@@ -105,6 +105,7 @@ public class CFunctionSummary implements IFunctionSummary {
 		public boolean isStandard() {
 			return std;
 		}
+		@Override
 		public String toString() {
 			if (std) 
 				return "#include <" + iname + ">";   //$NON-NLS-1$ //$NON-NLS-2$
@@ -112,6 +113,7 @@ public class CFunctionSummary implements IFunctionSummary {
 				return "#include \"" + iname + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		}		
 	}
+	@Override
 	public String toString() {
 		return "<functionSummary> : " + getPrototype().getPrototypeString(false); //$NON-NLS-1$
 	}

@@ -169,6 +169,7 @@ public class DocumentCharacterIterator implements CharacterIterator, CharSequenc
 	/*
 	 * @see java.text.CharacterIterator#clone()
 	 */
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();

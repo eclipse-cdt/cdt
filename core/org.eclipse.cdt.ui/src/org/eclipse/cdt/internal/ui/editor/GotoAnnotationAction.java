@@ -31,17 +31,20 @@ public class GotoAnnotationAction extends TextEditorAction {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.GOTO_PREVIOUS_ERROR_ACTION);
 	}
 	
+	@Override
 	public void run() {
 		CEditor e= (CEditor) getTextEditor();
 		e.gotoAnnotation(fForward);
 	}
 	
+	@Override
 	public void setEditor(ITextEditor editor) {
 		if (editor instanceof CEditor) 
 			super.setEditor(editor);
 		update();
 	}
 	
+	@Override
 	public void update() {
 		setEnabled(getTextEditor() instanceof CEditor);
 	}

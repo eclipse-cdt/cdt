@@ -87,6 +87,7 @@ public class SWTUtil {
 	 * @deprecated
 	 * @see IDialogConstants#BUTTON_HEIGHT
 	 */		
+	@Deprecated
 	public static int getButtonHeigthHint(Button button) {
 		if (button.getFont().equals(JFaceResources.getDefaultFont()))
 			button.setFont(JFaceResources.getDialogFont());

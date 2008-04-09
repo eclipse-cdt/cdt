@@ -123,6 +123,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 		 */
+		@Override
 		public int visit(IASTDeclarator declarator) {
 			if (declarator instanceof IASTFunctionDeclarator) {
 				IASTName name= declarator.getName();
@@ -198,6 +199,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		IWorkingCopy currentUnit= getWorkingCopy();
 		if (currentUnit == null) {
@@ -230,6 +232,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 	/*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
 	 */
+	@Override
 	public void update() {
 		setEnabled(getWorkingCopy() != null);
 	}

@@ -36,6 +36,7 @@ public class BuildConfigAction extends ChangeConfigAction {
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		super.run();
 		buildAction.selectionChanged(new StructuredSelection(fProjects.toArray()));

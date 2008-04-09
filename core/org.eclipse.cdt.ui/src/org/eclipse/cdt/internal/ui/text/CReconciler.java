@@ -73,6 +73,7 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			if (!monitor.isCanceled()) {
 				fCode.run();
@@ -165,6 +166,7 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.swt.events.ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
 		 */
+		@Override
 		public void shellActivated(ShellEvent e) {
 			if (!fControl.isDisposed() && fControl.isVisible()) {
 				if (hasCModelChanged())
@@ -176,6 +178,7 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.swt.events.ShellListener#shellDeactivated(org.eclipse.swt.events.ShellEvent)
 		 */
+		@Override
 		public void shellDeactivated(ShellEvent e) {
 			if (!fControl.isDisposed() && fControl.getShell() == e.getSource()) {
 				setEditorActive(false);
@@ -303,6 +306,7 @@ public class CReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconciler#install(org.eclipse.jface.text.ITextViewer)
 	 */
+	@Override
 	public void install(ITextViewer textViewer) {
 		super.install(textViewer);
 		
@@ -331,6 +335,7 @@ public class CReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconciler#uninstall()
 	 */
+	@Override
 	public void uninstall() {
 		fTriggerReconcilerJob.cancel();
 		
@@ -364,6 +369,7 @@ public class CReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#forceReconciling()
 	 */
+	@Override
 	protected void forceReconciling() {
 		if (!fInitialProcessDone)
 			return;
@@ -373,6 +379,7 @@ public class CReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#aboutToBeReconciled()
 	 */
+	@Override
 	protected void aboutToBeReconciled() {
 		CCompositeReconcilingStrategy strategy= (CCompositeReconcilingStrategy)getReconcilingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
 		strategy.aboutToBeReconciled();
@@ -381,6 +388,7 @@ public class CReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.MonoReconciler#initialProcess()
 	 */
+	@Override
 	protected void initialProcess() {
 		super.initialProcess();
 		fInitialProcessDone= true;
@@ -392,6 +400,7 @@ public class CReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.MonoReconciler#process(org.eclipse.jface.text.reconciler.DirtyRegion)
 	 */
+	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 		fIsReconciling= true;
 		setCModelChanged(false);

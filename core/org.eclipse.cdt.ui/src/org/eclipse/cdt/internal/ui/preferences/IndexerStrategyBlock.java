@@ -48,7 +48,8 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
     	setContainer(container);
     }
 
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
     	GridData gd;
     	GridLayout gl;
         Composite composite = ControlFactory.createComposite(parent, 1);
@@ -63,6 +64,7 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 		setControl(composite);
       
 		SelectionListener updateEnablement= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnablement();
 			}
@@ -108,6 +110,7 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
     	fImmediateUpdateButton.setSelection(updatePolicy == IndexerPreferences.UPDATE_POLICY_IMMEDIATE);
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		int updatePolicy;
 		if (!fAutoUpdateButton.getSelection()) {
@@ -131,7 +134,8 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
     	prjDescMgr.setProjectDescriptionWorkspacePreferences(prefs, false, new NullProgressMonitor());
 	}
 
-    public void performDefaults() {
+    @Override
+	public void performDefaults() {
     	initUpdatePolicy(IndexerPreferences.getDefaultUpdatePolicy());
     	fUseActiveBuildButton.setSelection(false);
     	fUseFixedBuildConfig.setSelection(true);

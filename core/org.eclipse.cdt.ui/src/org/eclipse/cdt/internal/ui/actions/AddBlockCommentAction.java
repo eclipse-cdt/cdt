@@ -50,10 +50,11 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	/*
 	 * @see org.eclipse.jdt.internal.ui.actions.BlockCommentAction#runInternal(org.eclipse.jface.text.ITextSelection, org.eclipse.jface.text.IDocumentExtension3, org.eclipse.jdt.internal.ui.actions.BlockCommentAction.Edit.EditFactory)
 	 */
+	@Override
 	protected void runInternal(ITextSelection selection, IDocumentExtension3 docExtension, Edit.EditFactory factory) throws BadLocationException, BadPartitioningException {
 		int selectionOffset= selection.getOffset();
 		int selectionEndOffset= selectionOffset + selection.getLength();
-		List edits= new LinkedList();
+		List<Edit> edits= new LinkedList<Edit>();
 		ITypedRegion partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, selectionOffset, false);
 
 		handleFirstPartition(partition, edits, factory, selectionOffset);
@@ -75,7 +76,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	 * @param factory
 	 * @param offset
 	 */
-	private void handleFirstPartition(ITypedRegion partition, List edits, Edit.EditFactory factory, int offset) throws BadLocationException {
+	private void handleFirstPartition(ITypedRegion partition, List<Edit> edits, Edit.EditFactory factory, int offset) throws BadLocationException {
 		
 		int partOffset= partition.getOffset();
 		String partType= partition.getType();
@@ -104,7 +105,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	 * @throws BadPartitioningException
 	 * @return the region
 	 */
-	private ITypedRegion handleInteriorPartition(ITypedRegion partition, List edits, Edit.EditFactory factory, IDocumentExtension3 docExtension) throws BadPartitioningException, BadLocationException {
+	private ITypedRegion handleInteriorPartition(ITypedRegion partition, List<Edit> edits, Edit.EditFactory factory, IDocumentExtension3 docExtension) throws BadPartitioningException, BadLocationException {
 
 		// end of previous partition
 		String partType= partition.getType();
@@ -136,7 +137,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	 * @param factory
 	 * @param endOffset
 	 */
-	private void handleLastPartition(ITypedRegion partition, List edits, Edit.EditFactory factory, int endOffset) throws BadLocationException {
+	private void handleLastPartition(ITypedRegion partition, List<Edit> edits, Edit.EditFactory factory, int endOffset) throws BadLocationException {
 
 		String partType= partition.getType();
 		
@@ -167,6 +168,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	/*
 	 * @see org.eclipse.jdt.internal.ui.actions.BlockCommentAction#validSelection(org.eclipse.jface.text.ITextSelection)
 	 */
+	@Override
 	protected boolean isValidSelection(ITextSelection selection) {
 		return selection != null && !selection.isEmpty() && selection.getLength() > 0;
 	}

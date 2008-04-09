@@ -59,11 +59,11 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/** The viewer's widget */
 	private StyledText fTextWidget;
 	/** Text positions (cursor line position is always at index 0 */
-	private List fPositions= new ArrayList();
+	private List<Position> fPositions= new ArrayList<Position>();
 	/** Cached text positions */
-	private List fLastPositions= new ArrayList();
+	private List<Position> fLastPositions= new ArrayList<Position>();
 	/** Temporary changed positions */
-	private List fChangedPositions= new ArrayList();
+	private List<Position> fChangedPositions= new ArrayList<Position>();
 	/** Cursor line position */
 	private Position fCursorLine= new TypedPosition(0, 0, CURSOR_LINE_TYPE);
 	/** Saved cursor line position */
@@ -73,7 +73,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/** Whether cursor line highlighting is active */
 	private boolean fCursorLineActive;
 	/** Map of position type to color */
-	private Map fColorMap= new HashMap();
+	private Map<String, Color> fColorMap= new HashMap<String, Color>();
 
 	/**
 	 * Creates a new painter for the given text viewer.
@@ -134,7 +134,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * 
 	 * @param positions a list of <code>Position</code>s
 	 */
-	public void setHighlightPositions(List positions) {
+	public void setHighlightPositions(List<Position> positions) {
 		boolean isActive= fIsActive;
 		deactivate(isActive);
 		fPositions.clear();
@@ -151,7 +151,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * 
 	 * @param positions a list of <code>Position</code>s
 	 */
-	public void addHighlightPositions(List positions) {
+	public void addHighlightPositions(List<Position> positions) {
 		boolean isActive= fIsActive;
 		deactivate(isActive);
 		fPositions.addAll(positions);
@@ -165,7 +165,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * 
 	 * @param positions a list of <code>Position</code>s
 	 */
-	public void removeHighlightPositions(List positions) {
+	public void removeHighlightPositions(List<Position> positions) {
 		boolean isActive= fIsActive;
 		deactivate(isActive);
 		fPositions.removeAll(positions);
@@ -180,7 +180,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * @param removePositions a list of <code>Position</code>s to remove
 	 * @param addPositions a list of <code>Position</code>s to add
 	 */
-	public void replaceHighlightPositions(List removePositions, List addPositions) {
+	public void replaceHighlightPositions(List<Position> removePositions, List<Position> addPositions) {
 		boolean isActive= fIsActive;
 		deactivate(isActive);
 		fPositions.removeAll(removePositions);
@@ -203,13 +203,13 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * Manage all positions.
 	 * @param positions
 	 */
-	private void managePositions(List positions) {
+	private void managePositions(List<Position> positions) {
 		if (fPositionManager == null) {
 			return;
 		}
 		int sz= fPositions.size();
 		for (int i= 0; i < sz; ++i) {
-			Position position= (Position)positions.get(i);
+			Position position= positions.get(i);
 			fPositionManager.managePosition(position);
 		}
 	}
@@ -218,13 +218,13 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * Unmanage all positions.
 	 * @param positions
 	 */
-	private void unmanagePositions(List positions) {
+	private void unmanagePositions(List<Position> positions) {
 		if (fPositionManager == null) {
 			return;
 		}
 		int sz= fPositions.size();
 		for (int i= 0; i < sz; ++i) {
-			Position position= (Position)positions.get(i);
+			Position position= positions.get(i);
 			fPositionManager.unmanagePosition(position);
 		}
 	}
@@ -286,7 +286,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 				updateCursorLine();
 			}
 		}
-		List changedPositions= getChangedPositions();
+		List<Position> changedPositions= getChangedPositions();
 		if (changedPositions != null) {
 			redrawPositions(changedPositions);
 			updatePositions();
@@ -319,14 +319,14 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	private void updatePositions() {
 		int sz= fPositions.size();
 		for (int i= 0; i < sz; ++i) {
-			Position position= (Position)fPositions.get(i);
+			Position position= fPositions.get(i);
 			Position copy;
 			if (i == fLastPositions.size()) {
 				copy= new Position(position.offset, position.length);
 				copy.isDeleted= position.isDeleted;
 				fLastPositions.add(copy);
 			} else {
-				copy= (Position)fLastPositions.get(i);
+				copy= fLastPositions.get(i);
 				copy.offset= position.offset;
 				copy.length= position.length;
 				copy.isDeleted= position.isDeleted;
@@ -344,14 +344,14 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * Check which positions have changed since last redraw.
 	 * @return a list of changed positions or <code>null</code> if none changed.
 	 */
-	private List getChangedPositions() {
+	private List<Position> getChangedPositions() {
 		if (fLastPositions.size() != fPositions.size()) {
 			return fLastPositions;
 		}
-		List changedPositions= null;
+		List<Position> changedPositions= null;
 		for (int i= 0, sz= fPositions.size(); i < sz; ++i) {
-			Position previous= (Position)fLastPositions.get(i);
-			Position current= (Position)fPositions.get(i);
+			Position previous= fLastPositions.get(i);
+			Position current= fPositions.get(i);
 			if (!previous.equals(current)) {
 				if (changedPositions == null) {
 					changedPositions= fChangedPositions;
@@ -368,7 +368,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 * 
 	 * @param positions
 	 */
-	private void redrawPositions(List positions) {
+	private void redrawPositions(List<Position> positions) {
 		// TextViewer.getTopIndexStartOffset is buggy
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=174419
 //		final int minOffset= fTextViewer.getTopIndexStartOffset();
@@ -378,7 +378,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		int width= clientArea.width + fTextWidget.getHorizontalPixel();
 		int lineHeight= fTextWidget.getLineHeight();
 		for (int i= 0, sz= positions.size(); i < sz; ++i) {
-			Position position= (Position)positions.get(i);
+			Position position= positions.get(i);
 			// if the position that is about to be drawn was deleted then we can't
 			if (position.isDeleted()) {
 				continue;
@@ -456,14 +456,13 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
 			return extension.modelOffset2WidgetOffset(documentOffset);
-		} else {
-			IRegion visible= fTextViewer.getVisibleRegion();
-			int widgetOffset= documentOffset - visible.getOffset();
-			if (widgetOffset > visible.getLength()) {
-				return -1;
-			}
-			return widgetOffset;
 		}
+		IRegion visible= fTextViewer.getVisibleRegion();
+		int widgetOffset= documentOffset - visible.getOffset();
+		if (widgetOffset > visible.getLength()) {
+			return -1;
+		}
+		return widgetOffset;
 	}
 
 	/**
@@ -475,13 +474,12 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
 			return extension.widgetOffset2ModelOffset(widgetOffset);
-		} else {
-			IRegion visible= fTextViewer.getVisibleRegion();
-			if (widgetOffset > visible.getLength()) {
-				return -1;
-			}
-			return widgetOffset + visible.getOffset();
 		}
+		IRegion visible= fTextViewer.getVisibleRegion();
+		if (widgetOffset > visible.getLength()) {
+			return -1;
+		}
+		return widgetOffset + visible.getOffset();
 	}
 
 	/*
@@ -507,15 +505,14 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	private Color getColorForPosition(Position position) {
 		if (position == fCursorLine) {
 			if (fCursorLine.length == 0) {
-				return (Color)fColorMap.get(CURSOR_LINE_TYPE);
+				return fColorMap.get(CURSOR_LINE_TYPE);
 			}
 		} else {
 			if (position instanceof TypedPosition) {
 				String type= ((TypedPosition)position).getType();
-				return (Color)fColorMap.get(type);
-			} else {
-				return (Color)fColorMap.get(DEFAULT_TYPE);
+				return fColorMap.get(type);
 			}
+			return fColorMap.get(DEFAULT_TYPE);
 		}
 		return null;
 	}
@@ -528,7 +525,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	private Position findIncludingPosition(int offset) {
 		// TLETODO [performance] Use binary search?
 		for (int i= fCursorLineActive ? 0 : 1, sz= fPositions.size(); i < sz; ++i) {
-			Position position= (Position)fPositions.get(i);
+			Position position= fPositions.get(i);
 			if (position.offset == offset || position.includes(offset)) {
 				return position;
 			}

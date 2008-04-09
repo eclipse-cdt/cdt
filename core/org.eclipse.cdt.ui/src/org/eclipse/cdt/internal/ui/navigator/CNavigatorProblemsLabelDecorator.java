@@ -32,6 +32,7 @@ public class CNavigatorProblemsLabelDecorator extends ProblemsLabelDecorator {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator#fireProblemsChanged(org.eclipse.core.resources.IResource[], boolean)
 	 */
+	@Override
 	protected void fireProblemsChanged(IResource[] changedResources,
 			boolean isMarkerChange) {
 		// performance: if the number of changed resources is large, it is faster

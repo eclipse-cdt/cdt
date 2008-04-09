@@ -65,6 +65,7 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 	/*
 	 * @see org.eclipse.jface.text.rules.RuleBasedScanner#nextToken()
 	 */
+	@Override
 	public IToken nextToken() {
 		fTokenStore.ensureTokensInitialised();
 		return super.nextToken();

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @deprecated Use {@link ElementSelectionDialog} instead.
  */
+@Deprecated
 public class OpenTypeDialog extends ElementSelectionDialog {
 
 	/**

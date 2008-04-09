@@ -65,6 +65,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#isSupportedType(org.eclipse.swt.dnd.TransferData)
 	 */
+	@Override
 	public boolean isSupportedType(TransferData transferType) {
 		return super.isSupportedType(transferType)
 				|| ResourceTransfer.getInstance().isSupportedType(transferType)
@@ -74,6 +75,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#handleDrop(org.eclipse.ui.navigator.CommonDropAdapter, org.eclipse.swt.dnd.DropTargetEvent, java.lang.Object)
 	 */
+	@Override
 	public IStatus handleDrop(CommonDropAdapter dropAdapter,
 			DropTargetEvent event, Object target) {
 
@@ -162,6 +164,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
 	 */
+	@Override
 	public IStatus validateDrop(Object target, int operation,
 			TransferData transferType) {
 

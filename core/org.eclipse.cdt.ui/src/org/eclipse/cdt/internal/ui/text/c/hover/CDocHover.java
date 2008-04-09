@@ -42,6 +42,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer viewer, IRegion region) {
 		String expression = null;
 		
@@ -116,6 +117,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
 		Point selectedRange = viewer.getSelectedRange();
 		if (selectedRange.x >= 0 && 

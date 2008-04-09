@@ -132,6 +132,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		initializeColors();
 		Control contents= super.createContents(parent);
@@ -139,6 +140,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 		return contents;
 	}
 	
+	@Override
 	protected void applyBackgroundColor(Color color, Control control) {
 		super.applyBackgroundColor(fBackgroundColor, control);
 	}
@@ -150,6 +152,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * @return The control representing the main content.
 	 * 
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		CompareConfiguration compareConfig= new CompareConfiguration();
 		compareConfig.setLeftEditable(false);
@@ -260,6 +263,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#fillDialogMenu(IMenuManager)
 	 */
+	@Override
 	protected void fillDialogMenu(IMenuManager dialogMenu) {
 		super.fillDialogMenu(dialogMenu);
 		fillViewMenu(dialogMenu);
@@ -287,6 +291,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 		close();
 	}
 
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		if (!restoresSize()) {
 			Point size = new Point(400, 400);
@@ -392,6 +397,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getFocusControl()
 	 */
+	@Override
 	protected Control getFocusControl() {
 		return fCompareViewerControl;
 	}
@@ -428,6 +434,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		String sectionName= getId();
 		if (sectionName == null) {

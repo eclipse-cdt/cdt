@@ -84,6 +84,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	/*
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
@@ -91,6 +92,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	/*
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		String p = event.getProperty();
 		if (p.equals(fCLPEnableKey)) {
@@ -209,6 +211,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	/*
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#install(org.eclipse.jface.preference.IPreferenceStore)
 	 */
+	@Override
 	public void install(IPreferenceStore store) {
 		super.install(store);
 		fPrefStore = store;
@@ -223,6 +226,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	/*
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#uninstall()
 	 */
+	@Override
 	public void uninstall() {
 		uninstallLineBackgroundPainter();
 		super.uninstall();
@@ -295,6 +299,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	/*
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#setCursorLinePainterPreferenceKeys(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setCursorLinePainterPreferenceKeys(String enableKey, String colorKey) {
 		// this is a dirty hack to override the original cursor line painter
 		// and replace it with the generic BackgroundLinePainter

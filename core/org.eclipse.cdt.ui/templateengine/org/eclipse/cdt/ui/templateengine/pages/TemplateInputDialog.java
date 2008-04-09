@@ -105,6 +105,7 @@ public class TemplateInputDialog extends Dialog {
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		this.shell = shell;
@@ -117,6 +118,7 @@ public class TemplateInputDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		this.parent = parent;
@@ -229,6 +231,7 @@ public class TemplateInputDialog extends Dialog {
 	 *      overridden to perform custom events on OK button.
 	 */
 
+	@Override
 	protected void okPressed() {
 		if (option == TemplatePreferencePage.OPTION_ADD) {
 			String name = nameText.getText();
@@ -283,6 +286,7 @@ public class TemplateInputDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
+	@Override
 	protected void cancelPressed() {
 
 		sharedDialog.close();

@@ -67,6 +67,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		return fConfigurationContentTypeMappings;
 	}
 
+	@Override
 	public Composite createContents(Composite parent, String description) {
 		fContents = new Composite(parent, SWT.NONE);
 		fContents.setLayout(new GridLayout(2, false));
@@ -82,6 +83,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		fTable.setHeaderVisible(true);
 		fTable.setLinesVisible(true);
 		fTable.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = PreferencesMessages.ProjectLanguagesPropertyPage_mappingTableTitle;
 			}
@@ -198,6 +200,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		return filter;
 	}
 	
+	@Override
 	public void refreshMappings() {
 		if (fTable == null) {
 			return;

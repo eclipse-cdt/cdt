@@ -37,5 +37,6 @@ public abstract class AbstractToggleLinkingAction extends Action {
 	/**
 	 * Runs the action.
 	 */
+	@Override
 	public abstract void run();
 }

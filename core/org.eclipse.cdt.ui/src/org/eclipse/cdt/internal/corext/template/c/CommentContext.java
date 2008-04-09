@@ -61,6 +61,7 @@ public class CommentContext extends TranslationUnitContext {
 	/*
 	 * @see DocumentTemplateContext#getStart()
 	 */ 
+	@Override
 	public int getStart() {
 		if (fIsManaged && getCompletionLength() > 0)
 			return super.getStart();
@@ -104,6 +105,7 @@ public class CommentContext extends TranslationUnitContext {
 	/*
 	 * @see org.eclipse.jdt.internal.corext.template.DocumentTemplateContext#getEnd()
 	 */
+	@Override
 	public int getEnd() {
 		if (fIsManaged || getCompletionLength() == 0)		
 			return super.getEnd();
@@ -127,6 +129,7 @@ public class CommentContext extends TranslationUnitContext {
 	/*
 	 * @see TemplateContext#evaluate(Template)
 	 */
+	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(template);

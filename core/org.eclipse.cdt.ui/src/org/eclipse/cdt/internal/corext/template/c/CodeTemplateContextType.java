@@ -97,6 +97,7 @@ public class CodeTemplateContextType extends FileTemplateContextType {
 			super("todo", TemplateMessages.CodeTemplateContextType_variable_description_todo);  //$NON-NLS-1$
 		}
 		
+		@Override
 		protected String resolve(TemplateContext context) {
 			String todoTaskTag= StubUtility.getTodoTaskTag(((CodeTemplateContext) context).getCProject());
 			if (todoTaskTag == null)
@@ -184,6 +185,7 @@ public class CodeTemplateContextType extends FileTemplateContextType {
 	/*
 	 * @see org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType#addResourceVariables()
 	 */
+	@Override
 	protected void addResourceVariables() {
 		// don't add resource variables by default
 	}
@@ -213,6 +215,7 @@ public class CodeTemplateContextType extends FileTemplateContextType {
 		registry.addContextType(new CodeTemplateContextType(CodeTemplateContextType.DESTRUCTORCOMMENT_CONTEXTTYPE));
 	}
 
+	@Override
 	public void validate(String pattern) throws TemplateException {
 		super.validate(pattern);
 		if (fIsComment) {

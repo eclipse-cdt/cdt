@@ -770,7 +770,7 @@ public class CHViewPart extends ViewPart {
 	private CHNode selectionToNode(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) selection;
-			for (Iterator iter = ss.iterator(); iter.hasNext(); ) {
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
 				Object cand= iter.next();
 				if (cand instanceof CHNode) {
 					return (CHNode) cand;

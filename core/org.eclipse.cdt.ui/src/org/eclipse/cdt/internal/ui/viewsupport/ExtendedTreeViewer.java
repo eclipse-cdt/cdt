@@ -36,7 +36,8 @@ public class ExtendedTreeViewer extends TreeViewer {
         });
     }
 
-    protected void preservingSelection(Runnable updateCode) {
+    @Override
+	protected void preservingSelection(Runnable updateCode) {
         if (fPreservingSelection) {
             updateCode.run();
         }

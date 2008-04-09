@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.ui.dnd;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,6 +30,8 @@ import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
+
+import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * ResourceTransferDropAdapter
@@ -62,6 +63,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 		return target instanceof ICElement || target instanceof IResource;
 	}
 
+	@Override
 	public void validateDrop(Object target, DropTargetEvent event, int op) {
 		IContainer destination = getDestination(target);
 		if (destination == null) {
@@ -86,6 +88,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 		}
 	}
 
+	@Override
 	public void drop(Object dropTarget, final DropTargetEvent event) {
 		int op= event.detail;
 		
@@ -128,7 +131,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources() {
-		ArrayList selectedResources = new ArrayList();
+		ArrayList<IResource> selectedResources = new ArrayList<IResource>();
 		
 		ISelection selection = LocalSelectionTransfer.getInstance()
 		.getSelection();
@@ -137,7 +140,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 			for (Iterator i = ssel.iterator(); i.hasNext();) {
 				Object o = i.next();
 				if (o instanceof IResource) {
-					selectedResources.add(o);
+					selectedResources.add((IResource) o);
 				}
 				else if (o instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) o;
@@ -148,7 +151,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 				}
 			}
 		}
-		return (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
+		return selectedResources.toArray(new IResource[selectedResources.size()]);
 	}
 
 	/**

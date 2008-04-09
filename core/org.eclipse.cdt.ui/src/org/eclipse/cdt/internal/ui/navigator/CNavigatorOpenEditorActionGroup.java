@@ -61,10 +61,12 @@ public class CNavigatorOpenEditorActionGroup extends AbstractCNavigatorActionGro
 		super(viewPart);
 	}
 
+	@Override
 	protected void makeActions() {
 		fOpenFileAction= new OpenCElementAction(getViewPart().getSite().getPage());
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
         IStructuredSelection celements= (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection= SelectionConverter.convertSelectionToResources(celements);
@@ -132,13 +134,15 @@ public class CNavigatorOpenEditorActionGroup extends AbstractCNavigatorActionGro
     /*
      * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
      */
-    public void fillActionBars(IActionBars actionBars) {
+    @Override
+	public void fillActionBars(IActionBars actionBars) {
     }
 
     /*
      * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
      */
-    public void updateActionBars() {
+    @Override
+	public void updateActionBars() {
         IStructuredSelection celements= (IStructuredSelection) getContext().getSelection();
 		fOpenFileAction.selectionChanged(celements);
     }

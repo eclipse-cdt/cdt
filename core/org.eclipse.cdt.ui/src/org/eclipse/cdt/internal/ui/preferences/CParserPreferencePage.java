@@ -38,6 +38,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * @deprecated the one preference found on the page was moved to the 
  * indexer preference page.
  */
+@Deprecated
 public class CParserPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	
@@ -62,6 +63,7 @@ public class CParserPreferencePage extends PreferencePage implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
 		fOverlayStore.start();
@@ -120,6 +122,7 @@ public class CParserPreferencePage extends PreferencePage implements
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 		
@@ -162,6 +165,7 @@ public class CParserPreferencePage extends PreferencePage implements
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fOverlayStore.loadDefaults();
 		initialize();

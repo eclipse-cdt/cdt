@@ -96,9 +96,9 @@ class THGraph {
 		
 		while (!stack.isEmpty()) {
 			THGraphNode node= stack.remove(stack.size()-1);
-			List out= node.getOutgoing();
-			for (Iterator iterator = out.iterator(); iterator.hasNext();) {
-				THGraphEdge	edge= (THGraphEdge) iterator.next();
+			List<THGraphEdge> out= node.getOutgoing();
+			for (Iterator<THGraphEdge> iterator = out.iterator(); iterator.hasNext();) {
+				THGraphEdge	edge= iterator.next();
 				node= edge.getEndNode();
 				if (node == from) {
 					return true;
@@ -109,9 +109,9 @@ class THGraph {
 			}
 		}
 		// check if edge is already there.
-		List out= from.getOutgoing();
-		for (Iterator iterator = out.iterator(); iterator.hasNext();) {
-			THGraphEdge edge = (THGraphEdge) iterator.next();
+		List<THGraphEdge> out= from.getOutgoing();
+		for (Iterator<THGraphEdge> iterator = out.iterator(); iterator.hasNext();) {
+			THGraphEdge edge = iterator.next();
 			if (edge.getEndNode() == to) {
 				return true;
 			}

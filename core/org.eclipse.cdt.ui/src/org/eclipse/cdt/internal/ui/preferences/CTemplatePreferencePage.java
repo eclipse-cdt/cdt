@@ -61,11 +61,13 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 		/*
 		 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage.EditTemplateDialog#createViewer(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected SourceViewer createViewer(Composite parent) {
 			IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
 			CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
 			CTextTools tools= CUIPlugin.getDefault().getTextTools();
 			CSourceViewerConfiguration configuration= new CSourceViewerConfiguration(tools.getColorManager(), store, null, tools.getDocumentPartitioning()) {
+				@Override
 				public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 					ContentAssistant assistant= new ContentAssistant();
 					assistant.enableAutoActivation(true);
@@ -100,6 +102,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.TEMPLATE_PREFERENCE_PAGE);
@@ -108,6 +111,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	/*
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#getFormatterPreferenceKey()
 	 */
+	@Override
 	protected String getFormatterPreferenceKey() {
 		return PreferenceConstants.TEMPLATES_USE_CODEFORMATTER;
 	}
@@ -115,6 +119,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	/*
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createTemplateEditDialog2(org.eclipse.jface.text.templates.Template, boolean, boolean)
 	 */
+	@Override
 	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
 		CEditTemplateDialog dialog= new CEditTemplateDialog(getShell(), template, edit, isNameModifiable, getContextTypeRegistry());
 		if (dialog.open() == Window.OK) {
@@ -126,6 +131,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean ok= super.performOk();
 		CUIPlugin.getDefault().savePluginPreferences();
@@ -135,6 +141,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	/*
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected SourceViewer createViewer(Composite parent) {
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
 		CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
@@ -155,6 +162,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 		control.setLayoutData(data);
 	
 		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {			
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = PreferencesMessages.TemplatePreferencePage_Viewer_preview; 
 		}});

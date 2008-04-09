@@ -32,6 +32,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary#getName()
 	 */
+	@Override
 	protected final URL getURL() {
 		return null;
 	}
@@ -39,6 +40,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.AbstractSpellDictionary#load(java.net.URL)
 	 */
+	@Override
 	protected synchronized boolean load(final URL url) {
 		final Plugin plugin= CCorePlugin.getDefault();
 		if (plugin != null) {
@@ -59,6 +61,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellDictionary#unload()
 	 */
+	@Override
 	public synchronized void unload() {
 		final Plugin plugin= CCorePlugin.getDefault();
 		if (plugin != null)
@@ -89,6 +92,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary#stripNonLetters(java.lang.String)
 	 */
+	@Override
 	protected String stripNonLetters(String word) {
 		return word;
 	}

@@ -79,6 +79,7 @@ public class SelectionButtonDialogField extends DialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 		
@@ -98,6 +99,7 @@ public class SelectionButtonDialogField extends DialogField {
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */	
+	@Override
 	public int getNumberOfControls() {
 		return 1;	
 	}	
@@ -178,6 +180,7 @@ public class SelectionButtonDialogField extends DialogField {
 	/*
 	 * @see DialogField#updateEnableState
 	 */	
+	@Override
 	protected void updateEnableState() {
 		super.updateEnableState();
 		if (isOkToUse(fButton)) {

@@ -48,6 +48,7 @@ public class IndexViewSearchQuery extends PDOMSearchQuery {
 		fName= name;
 	}
 	
+	@Override
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
 			if (CCoreInternals.getPDOMManager().getPDOM(fProject).getLastWriteAccess() == fLastWrite) {
@@ -59,6 +60,7 @@ public class IndexViewSearchQuery extends PDOMSearchQuery {
 		}
 	}
 
+	@Override
 	public String getLabel() {
 		return super.getLabel() + " " + fName; //$NON-NLS-1$
 	}

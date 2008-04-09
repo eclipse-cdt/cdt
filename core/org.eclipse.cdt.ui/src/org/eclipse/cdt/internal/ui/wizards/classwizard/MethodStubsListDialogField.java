@@ -135,17 +135,20 @@ public class MethodStubsListDialogField extends CheckedListDialogField {
         setTableColumns(new ListDialogField.ColumnsDescription(columns, headers, true));
     }
     
-    protected boolean managedButtonPressed(int index) {
+    @Override
+	protected boolean managedButtonPressed(int index) {
         super.managedButtonPressed(index);
         return false;
     }
     
-    protected TableViewer createTableViewer(Composite parent) {
+    @Override
+	protected TableViewer createTableViewer(Composite parent) {
         TableViewer viewer = super.createTableViewer(parent);
         Table table = viewer.getTable();
         table.getAccessible().addAccessibleListener(
             new AccessibleAdapter() {                       
-                public void getName(AccessibleEvent e) {
+                @Override
+				public void getName(AccessibleEvent e) {
                         e.result = NewClassWizardMessages.getString("NewClassCreationWizardPage.methodStubs.label"); //$NON-NLS-1$
                 }
             }

@@ -34,6 +34,7 @@ public class FindRefsInWorkingSetAction extends FindInWorkingSetAction {
 				workingSets);
 	}
 	
+	@Override
 	protected int getLimitTo() {
 		return PDOMSearchQuery.FIND_REFERENCES;
 	}

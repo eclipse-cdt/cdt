@@ -490,6 +490,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 				/*
 				 * @see org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
 				 */
+				@Override
 				protected Control createCustomArea(Composite composite) {
 					// wrap link and checkbox in one composite without space
 					Composite parent= new Composite(composite, SWT.NONE);
@@ -509,7 +510,8 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	        		Link link= new Link(linkComposite, SWT.NONE);
 	        		link.setText(linkMessage);
 	        		link.addSelectionListener(new SelectionAdapter() {
-	        			public void widgetSelected(SelectionEvent e) {
+	        			@Override
+						public void widgetSelected(SelectionEvent e) {
 	        				setReturnCode(settingsId);
 	        				close();
 	        			}
@@ -527,6 +529,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 				/*
 				 * @see org.eclipse.jface.dialogs.MessageDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 				 */
+				@Override
 				protected void createButtonsForButtonBar(Composite parent) {
 			        Button[] buttons= new Button[2];
 					buttons[0]= createButton(parent, restoreId, restoreButtonLabel, false);

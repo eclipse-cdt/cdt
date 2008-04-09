@@ -67,11 +67,13 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), "WORK_IN_PROGRESS_PREFERENCE_PAGE"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
 		
@@ -106,6 +108,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	/*
 	 * @see org.eclipse.jface.preference.PreferencePage#doGetPreferenceStore()
 	 */
+	@Override
 	protected IPreferenceStore doGetPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
@@ -113,6 +116,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		IPreferenceStore store= getPreferenceStore();
 		for (int i= 0; i < fCheckBoxes.size(); i++) {
@@ -137,6 +141,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		IPreferenceStore store= getPreferenceStore();
 		for (int i= 0; i < fCheckBoxes.size(); i++) {

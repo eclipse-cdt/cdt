@@ -61,6 +61,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -125,6 +126,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 		String addr2line = null;
 		String cppfilt = null;
@@ -156,6 +158,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite composite) {
 		Group comp = new Group(composite, SWT.SHADOW_ETCHED_IN);
 		comp.setText(CUIMessages.getString("BinaryParserBlock.binaryParserOptions")); //$NON-NLS-1$
@@ -180,6 +183,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		Button button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleAddr2LineButtonSelected();
 				//updateLaunchConfigurationDialog();
@@ -218,6 +222,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse1")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleCPPFiltButtonSelected();
 				//updateLaunchConfigurationDialog();
@@ -256,6 +261,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse2")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleCygPathButtonSelected();
 				//updateLaunchConfigurationDialog();
@@ -295,6 +301,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse2")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleCygPathButtonSelected();
 				//updateLaunchConfigurationDialog();

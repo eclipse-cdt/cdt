@@ -51,7 +51,8 @@ public class SnippetPreview extends CPreview {
         fSnippets= new ArrayList();
     }
 
-    protected void doFormatPreview() {
+    @Override
+	protected void doFormatPreview() {
         if (fSnippets.isEmpty()) { 
             fPreviewDocument.set(""); //$NON-NLS-1$
             return;

@@ -14,22 +14,21 @@ package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-
-import org.eclipse.cdt.ui.CElementLabelProvider;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 public class OpenActionUtil {
 	
@@ -57,12 +56,12 @@ public class OpenActionUtil {
 	 * Filters out source references from the given code resolve results.
 	 * A utility method that can be called by subclassers. 
 	 */
-	public static List filterResolveResults(ICElement[] codeResolveResults) {
+	public static List<ISourceReference> filterResolveResults(ICElement[] codeResolveResults) {
 		int nResults= codeResolveResults.length;
-		List refs= new ArrayList(nResults);
+		List<ISourceReference> refs= new ArrayList<ISourceReference>(nResults);
 		for (int i= 0; i < nResults; i++) {
 			if (codeResolveResults[i] instanceof ISourceReference)
-				refs.add(codeResolveResults[i]);
+				refs.add((ISourceReference) codeResolveResults[i]);
 		}
 		return refs;
 	}

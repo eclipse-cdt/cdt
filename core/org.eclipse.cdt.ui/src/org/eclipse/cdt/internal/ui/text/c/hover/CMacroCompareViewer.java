@@ -127,6 +127,7 @@ class CMacroCompareViewer extends CMergeViewer {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
 	 */
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		fLeftViewer.removeTextPresentationListener(fLeftHighlighter);
 		fRightViewer.removeTextPresentationListener(fRightHighlighter);
@@ -134,6 +135,7 @@ class CMacroCompareViewer extends CMergeViewer {
 		super.handleDispose(event);
 	}
 	
+	@Override
 	protected IToolBarManager getToolBarManager(Composite parent) {
 		// no toolbar
 		return null;
@@ -142,6 +144,7 @@ class CMacroCompareViewer extends CMergeViewer {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#configureTextViewer(org.eclipse.jface.text.TextViewer)
 	 */
+	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		super.configureTextViewer(textViewer);
 		
@@ -161,6 +164,7 @@ class CMacroCompareViewer extends CMergeViewer {
 	/*
 	 * @see org.eclipse.compare.contentmergeviewer.TextMergeViewer#createTokenComparator(java.lang.String)
 	 */
+	@Override
 	protected ITokenComparator createTokenComparator(String line) {
 		return new NullTokenComparator();
 	}
@@ -178,6 +182,7 @@ class CMacroCompareViewer extends CMergeViewer {
 	/*
 	 * @see org.eclipse.jface.viewers.ContentViewer#setInput(java.lang.Object)
 	 */
+	@Override
 	public void setInput(Object input) {
 		fLeftViewer.setRedraw(false);
 		fRightViewer.setRedraw(false);

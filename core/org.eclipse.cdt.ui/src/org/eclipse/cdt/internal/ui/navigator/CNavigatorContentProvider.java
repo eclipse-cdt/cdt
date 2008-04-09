@@ -108,6 +108,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.cdt.ui.CElementContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
 		// TLETODO [CN] use extension state model for view options persistence
@@ -155,6 +156,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.cdt.ui.CElementContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { 
 		fRealInput= newInput;
 		super.inputChanged(viewer, oldInput, findInputElement(newInput));
@@ -200,6 +202,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object element) {
 		Object parent= super.getParent(element);
 		if (parent instanceof ICModel) {
@@ -228,6 +231,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object parent) {
 		if (parent instanceof IWorkspaceRoot) {
 			return ((IWorkspaceRoot)parent).getProjects();
@@ -240,6 +244,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.cdt.internal.ui.cview.CViewContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		Object children[];
 		if (element instanceof IWorkspaceRoot) {
@@ -255,6 +260,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.cdt.internal.ui.cview.CViewContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IProject) {
 			IProject project= (IProject) element;
@@ -431,9 +437,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		return false;
 	}
 
+	@Override
 	protected void postContainerRefresh(final IParent container, final ICProject cproject) {
 		postRefreshable(new RefreshContainer(container, cproject.getProject()));
 	}
+	@Override
 	protected void postRefresh(final Object element) {
 		if (element instanceof ICModel) {
 			// don't refresh workspace root
@@ -450,6 +458,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		}
 	}
 
+	@Override
 	protected void postAdd(final Object parent, final Object element) {
 		if (parent instanceof ICModel) {
 			if (element instanceof ICElement) {
@@ -471,10 +480,12 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		}
 	}
 
+	@Override
 	protected void postRemove(final Object element) {
 		postRefresh(internalGetParent(element));
 	}
 
+	@Override
 	protected void postProjectStateChanged(final Object element) {
 		if (element instanceof ICModel) {
 			super.postProjectStateChanged(fRealInput);

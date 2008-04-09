@@ -68,6 +68,7 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	/*
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		IDocument doc= fViewer.getDocument();
 		try {
@@ -91,6 +92,7 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	/*
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		IDocument doc= fViewer.getDocument();
 		try {
@@ -104,6 +106,7 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	/*
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		if (!fIsEnabled) {
 			event.doit= false;
@@ -196,13 +199,12 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 		if (fViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5)fViewer;
 			return extension.widgetOffset2ModelOffset(widgetOffset);
-		} else {
-			IRegion visible= fViewer.getVisibleRegion();
-			if (widgetOffset > visible.getLength()) {
-				return -1;
-			}
-			return widgetOffset + visible.getOffset();
 		}
+		IRegion visible= fViewer.getVisibleRegion();
+		if (widgetOffset > visible.getLength()) {
+			return -1;
+		}
+		return widgetOffset + visible.getOffset();
 	}
 
 	/**

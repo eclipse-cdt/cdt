@@ -42,6 +42,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 
 	/*
 	*/
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

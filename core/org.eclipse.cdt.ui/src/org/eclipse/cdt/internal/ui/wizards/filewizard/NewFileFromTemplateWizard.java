@@ -48,7 +48,8 @@ public class NewFileFromTemplateWizard extends BasicNewResourceWizard {
     /*
      * Method declared on IWizard.
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         mainPage = new WizardNewFileFromTemplateCreationPage("newFilePage1", getSelection());//$NON-NLS-1$
         mainPage.setTitle(NewFileWizardMessages.NewFileFromTemplateWizard_pageTitle);
@@ -59,7 +60,8 @@ public class NewFileFromTemplateWizard extends BasicNewResourceWizard {
     /*
      * Method declared on IWorkbenchWizard.
      */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+    @Override
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         super.init(workbench, currentSelection);
         setWindowTitle(NewFileWizardMessages.NewFileFromTemplateWizard_shellTitle);
         setNeedsProgressMonitor(true);
@@ -68,7 +70,8 @@ public class NewFileFromTemplateWizard extends BasicNewResourceWizard {
     /*
      * Method declared on BasicNewResourceWizard.
      */
-    protected void initializeDefaultPageImageDescriptor() {
+    @Override
+	protected void initializeDefaultPageImageDescriptor() {
        ImageDescriptor desc = CPluginImages.DESC_WIZBAN_NEW_FILE;
 	   setDefaultPageImageDescriptor(desc);
     }
@@ -76,7 +79,8 @@ public class NewFileFromTemplateWizard extends BasicNewResourceWizard {
     /*
      * Method declared on IWizard.
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         IFile file = mainPage.createNewFile();
         if (file == null) {
 			return false;

@@ -165,6 +165,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * 
 	 * @param numColumns the number of columns
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		GridData gd = (GridData) textField.getLayoutData();
 		gd.horizontalSpan = numColumns - 1;
@@ -226,6 +227,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * but must call <code>super.doFillIntoGrid</code>.
 	 * </p>
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 
 		title = new Label(parent, SWT.UP);
@@ -250,6 +252,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * the field editor.
 	 * </p>
 	 */
+	@Override
 	protected void doLoad() {
 		if (textField != null) {
 			String value = getPreferenceStore().getString(getPreferenceName());
@@ -266,6 +269,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * the field editor.
 	 * </p>
 	 */
+	@Override
 	protected void doLoadDefault() {
 		if (textField != null) {
 			String value =
@@ -278,6 +282,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doStore()
 	 */
+	@Override
 	protected void doStore() {
 		getPreferenceStore().setValue(getPreferenceName(), textField.getText());
 	}
@@ -296,6 +301,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 		*
 		* @return the number of controls
 		*/
+	@Override
 	public int getNumberOfControls() {
 		return 2;
 	}
@@ -339,15 +345,18 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 			switch (validateStrategy) {
 				case VALIDATE_ON_KEY_STROKE :
 					textField.addKeyListener(new KeyAdapter() {
+						@Override
 						public void keyPressed(KeyEvent e) {
 							valueChanged();
 						}
 					});
 
 					textField.addFocusListener(new FocusAdapter() {
+						@Override
 						public void focusGained(FocusEvent e) {
 							refreshValidState();
 						}
+						@Override
 						public void focusLost(FocusEvent e) {
 							clearErrorMessage();
 						}
@@ -355,14 +364,17 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 					break;
 				case VALIDATE_ON_FOCUS_LOST :
 					textField.addKeyListener(new KeyAdapter() {
+						@Override
 						public void keyPressed(KeyEvent e) {
 							clearErrorMessage();
 						}
 					});
 					textField.addFocusListener(new FocusAdapter() {
+						@Override
 						public void focusGained(FocusEvent e) {
 							refreshValidState();
 						}
+						@Override
 						public void focusLost(FocusEvent e) {
 							valueChanged();
 							clearErrorMessage();
@@ -409,6 +421,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * and <code>false</code> if invalid
 	 * @see #refreshValidState
 	 */
+	@Override
 	public boolean isValid() {
 		return isValid;
 	}
@@ -423,6 +436,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * both this method and <code>isValid</code>.
 	 * </p>
 	 */
+	@Override
 	protected void refreshValidState() {
 		isValid = checkState();
 	}
@@ -454,6 +468,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	 * does nothing. Subclasses may reimplement.
 	 * </p>
 	*/
+	@Override
 	public void setFocus() {
 		if (textField != null) {
 			textField.setFocus();

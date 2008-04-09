@@ -40,6 +40,7 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite topPane = new Composite(parent, SWT.NONE);
 
@@ -61,6 +62,7 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 	}
@@ -68,6 +70,7 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		
 		if (fPrefsBlock.performOk()) {

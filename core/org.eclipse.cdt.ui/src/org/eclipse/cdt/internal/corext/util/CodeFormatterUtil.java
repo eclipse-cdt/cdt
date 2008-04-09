@@ -33,7 +33,7 @@ public class CodeFormatterUtil {
 	 * @return the indent string
 	 */
 	public static String createIndentString(int indentationUnits, ICProject project) {
-		Map options= project != null ? project.getOptions(true) : CCorePlugin.getOptions();		
+		Map<String, String> options= project != null ? project.getOptions(true) : CCorePlugin.getOptions();		
 		return ToolFactory.createDefaultCodeFormatter(options).createIndentationString(indentationUnits);
 	} 
 		
@@ -117,7 +117,7 @@ public class CodeFormatterUtil {
 	 * @throws IllegalArgumentException If the offset and length are not inside the string, a
 	 *  IllegalArgumentException is thrown.
 	 */
-	public static TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator, Map options) {
+	public static TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator, Map<String, String> options) {
 		if (offset < 0 || length < 0 || offset + length > source.length()) {
 			throw new IllegalArgumentException("offset or length outside of string. offset: " + offset + ", length: " + length + ", string size: " + source.length());   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		}
@@ -128,7 +128,7 @@ public class CodeFormatterUtil {
 		return null;
 	}
 	
-	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator, Map options) {
+	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator, Map<String, String> options) {
 		String prefix= ""; //$NON-NLS-1$
 		String suffix= ""; //$NON-NLS-1$
 		switch (kind) {

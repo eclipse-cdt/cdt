@@ -91,6 +91,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.APPEARANCE_PREFERENCE_PAGE);
@@ -99,6 +100,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
 		int nColumns= 1;
@@ -154,6 +156,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		IPreferenceStore prefs= getPreferenceStore();
 		prefs.setValue(PreferenceConstants.PREF_SHOW_CU_CHILDREN, fShowTUChildren.isSelected());
@@ -168,6 +171,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		IPreferenceStore prefs= getPreferenceStore();
 		fShowTUChildren.setSelection(prefs.getDefaultBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN));

@@ -43,6 +43,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#hasHeader()
 	 */
+	@Override
 	protected boolean hasHeader() {
 		return true;
 	}
@@ -50,6 +51,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#getId()
 	 */
+	@Override
 	protected String getId() {
 		return "org.eclipse.cdt.ui.text.hover.CMacroExpansion"; //$NON-NLS-1$
 	}
@@ -70,6 +72,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {

@@ -20,10 +20,12 @@ public class CDTProjectWizard extends CDTCommonProjectWizard {
 		super(UIMessages.getString("NewModelProjectWizard.0"), UIMessages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	@Override
 	public String[] getNatures() {
 		return new String[0];
 	}
 
+	@Override
 	protected IProject continueCreation(IProject prj) {
 		return prj;
 	}

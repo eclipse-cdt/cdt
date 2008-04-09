@@ -67,6 +67,7 @@ public class RemoteTreeContentManager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
 				Object element = null;
@@ -207,7 +208,8 @@ public class RemoteTreeContentManager {
              * 
              * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
              */
-            public IStatus runInUIThread(IProgressMonitor updateMonitor) {
+            @Override
+			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
                 //Cancel the job if the tree viewer got closed
                 if (fViewer.getControl().isDisposed())
                     return Status.CANCEL_STATUS;
@@ -235,7 +237,8 @@ public class RemoteTreeContentManager {
              * 
              * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
              */
-            public IStatus runInUIThread(IProgressMonitor updateMonitor) {
+            @Override
+			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
                 //Cancel the job if the tree viewer got closed
                 if (fViewer.getControl().isDisposed())
                     return Status.CANCEL_STATUS;
@@ -265,7 +268,8 @@ public class RemoteTreeContentManager {
              * 
              * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
              */
-            public IStatus runInUIThread(IProgressMonitor monitor) {
+            @Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
                 if (!placeholder.isRemoved()) {
                     Control control = fViewer.getControl();
                     if (control.isDisposed())

@@ -37,7 +37,8 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 	 	public ReturnType() {
 	 	 	super("return_type", TemplateMessages.CContextType_variable_description_return_type);  //$NON-NLS-1$
 	 	}
-	 	public String resolve(TemplateContext context) {
+	 	@Override
+		public String resolve(TemplateContext context) {
 			ICElement element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_METHOD);
 			if (element == null) {
 				element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_FUNCTION);
@@ -57,6 +58,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		public File() {
 			super("file", TemplateMessages.CContextType_variable_description_file);  //$NON-NLS-1$
 		}
+		@Override
 		public String resolve(TemplateContext context) {
 			ITranslationUnit unit= ((TranslationUnitContext) context).getTranslationUnit();
 			
@@ -71,6 +73,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 			super(name, description);
 			fElementType= elementType;
 		}
+		@Override
 		public String resolve(TemplateContext context) {
 			ICElement element= ((TranslationUnitContext) context).findEnclosingElement(fElementType);
 			return (element == null) ? null : element.getElementName();
@@ -87,6 +90,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		public Project() {
 			super("enclosing_project", TemplateMessages.CContextType_variable_description_enclosing_project);  //$NON-NLS-1$
 		}
+		@Override
 		public String resolve(TemplateContext context) {
 			ITranslationUnit unit= ((TranslationUnitContext) context).getTranslationUnit();
 			return (unit == null) ? null : unit.getCProject().getElementName();
@@ -97,6 +101,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		public Arguments() {
 			super("enclosing_method_arguments", TemplateMessages.CContextType_variable_description_enclosing_method_arguments);  //$NON-NLS-1$
 		}
+		@Override
 		public String resolve(TemplateContext context) {
 			ICElement element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_FUNCTION);
 			if (element == null) {
@@ -130,6 +135,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		public Todo() {
 			super("todo", TemplateMessages.CContextType_variable_description_todo);  //$NON-NLS-1$
 		}
+		@Override
 		protected String resolve(TemplateContext context) {
 			TranslationUnitContext cContext= (TranslationUnitContext) context;
 			ITranslationUnit tUnit= cContext.getTranslationUnit();

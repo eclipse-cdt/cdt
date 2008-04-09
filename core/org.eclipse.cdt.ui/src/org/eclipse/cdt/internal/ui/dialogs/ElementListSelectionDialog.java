@@ -14,30 +14,31 @@ package org.eclipse.cdt.internal.ui.dialogs;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * A class to select one or more elements out of an indexed property
  */
 public class ElementListSelectionDialog extends AbstractElementListSelectionDialog {
 	
-	private List fElements;
+	private List<?> fElements;
 	
 	/*
 	 * @private
 	 */
+	@Override
 	protected void computeResult() {
 		setResult(getWidgetSelection());
 	}
 	/*
 	 * @private
 	 */	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control result= super.createDialogArea(parent);
 		
@@ -62,6 +63,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 	/*
 	 * @private
 	 */	
+	@Override
 	protected void handleDoubleClick() {
 		if (verifyCurrentSelection()) {
 			buttonPressed(IDialogConstants.OK_ID);
@@ -96,7 +98,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 	 * @param elements The elements to show in the list
 	 * @return Returns OK or CANCEL
 	 */	
-	public int open(List elements) {
+	public int open(List<?> elements) {
 		setElements(elements);
 		return open();
 	}
@@ -106,7 +108,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 	 * @param initialSelection The initial content of the match text box.
 	 * @return Returns OK or CANCEL
 	 */
-	public int open(List elements, String initialSelection) {
+	public int open(List<?> elements, String initialSelection) {
 		setElements(elements);
 		setInitialSelection(initialSelection);
 		return open();
@@ -114,7 +116,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 	/**
 	 * Sets the elements presented by this dialog.
 	 */
-	public void setElements(List elements) {
+	public void setElements(List<?> elements) {
 		fElements= elements;	
 	}
 }

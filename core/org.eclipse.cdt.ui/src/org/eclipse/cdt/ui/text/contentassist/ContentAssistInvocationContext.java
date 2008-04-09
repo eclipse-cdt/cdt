@@ -185,6 +185,7 @@ public class ContentAssistInvocationContext {
 	 * @param obj {@inheritDoc}
 	 * @return {@inheritDoc}
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
@@ -197,6 +198,7 @@ public class ContentAssistInvocationContext {
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return 23459213 << 5 | (fViewer == null ? 0 : fViewer.hashCode() << 3) | fOffset;
 	}

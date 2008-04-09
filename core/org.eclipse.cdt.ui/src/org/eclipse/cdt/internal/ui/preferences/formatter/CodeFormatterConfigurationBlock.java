@@ -101,18 +101,22 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		fCustomCodeFormatterBlock= new CustomCodeFormatterBlock(project, access);
 	}
 
+	@Override
 	protected IProfileVersioner createProfileVersioner() {
 	    return new ProfileVersioner();
     }
 	
+	@Override
 	protected ProfileStore createProfileStore(IProfileVersioner versioner) {
 	    return new FormatterProfileStore(versioner);
     }
 	
+	@Override
 	protected ProfileManager createProfileManager(List profiles, IScopeContext context, PreferencesAccess access, IProfileVersioner profileVersioner) {
 	    return new FormatterProfileManager(profiles, context, access, profileVersioner);
     }
 	
+	@Override
 	protected void configurePreview(Composite composite, int numColumns, ProfileManager profileManager) {
 		fCustomCodeFormatterBlock.createContents(composite);
 
@@ -132,13 +136,15 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		new PreviewController(profileManager);
 	}
 
-    protected ModifyDialog createModifyDialog(Shell shell, Profile profile, ProfileManager profileManager, ProfileStore profileStore, boolean newProfile) {
+    @Override
+	protected ModifyDialog createModifyDialog(Shell shell, Profile profile, ProfileManager profileManager, ProfileStore profileStore, boolean newProfile) {
         return new FormatterModifyDialog(shell, profile, profileManager, profileStore, newProfile, FORMATTER_DIALOG_PREFERENCE_KEY, DIALOGSTORE_LASTSAVELOADPATH);
     }
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileConfigurationBlock#performApply()
 	 */
+	@Override
 	public void performApply() {
 		if (fCustomCodeFormatterBlock != null) {
 			fCustomCodeFormatterBlock.performOk();
@@ -149,6 +155,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileConfigurationBlock#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 		if (fCustomCodeFormatterBlock != null) {
 			fCustomCodeFormatterBlock.performDefaults();
@@ -159,6 +166,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ProfileConfigurationBlock#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if (fCustomCodeFormatterBlock != null) {
 			fCustomCodeFormatterBlock.performOk();

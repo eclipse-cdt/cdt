@@ -198,6 +198,7 @@ implements
 		}
 	}
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		//	Create the container we return to the property page editor
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -267,6 +268,7 @@ implements
 				gd.minimumWidth = 150;
 				manageButton.setLayoutData(gd);
 				manageButton.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						IProject[] obs = new IProject[] { getProject() };
 						IConfigManager cm = ManageConfigSelector.getManager(obs);
@@ -305,6 +307,7 @@ implements
 				gd.horizontalSpan = 3;
 				excludeFromBuildCheck.setLayoutData(gd);
 				excludeFromBuildCheck.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						getResDesc().setExcluded(excludeFromBuildCheck.getSelection());
 					}
@@ -337,7 +340,8 @@ implements
 		// selection event on not-initialized tab items 
 		if (folder != null) {
 		    folder.addSelectionListener(new SelectionAdapter() {
-			      public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
+			      @Override
+				public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
 			    	  if (folder.getSelection().length > 0 ) {
 			    		  ICPropertyTab newTab = (ICPropertyTab)folder.getSelection()[0].getData();
 			    		  if (newTab != null && currentTab != newTab) {
@@ -414,17 +418,20 @@ implements
 		}
 	}
 	
-    public boolean performCancel() {
+    @Override
+	public boolean performCancel() {
 		if (! noContentOnPage && displayedConfig) forEach(ICPropertyTab.CANCEL);
 		
 		CDTPropertyManager.performCancel(this);
 		
         return true;
     }
+	@Override
 	public void performDefaults() {
 		if (! noContentOnPage && displayedConfig) forEach(ICPropertyTab.DEFAULTS);
 	}
-    public void performApply() { performSave(SAVE_MODE_APPLY); }
+    @Override
+	public void performApply() { performSave(SAVE_MODE_APPLY); }
     
     /**
      * There are 2 ways to perform OK for CDT property pages.
@@ -444,7 +451,8 @@ implements
      *   <workspace>/.metadata/.plugins/org.eclipse.cdt.ui/apply_mode
      */
     
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
     	File f = CUIPlugin.getDefault().getStateLocation().append("apply_mode").toFile(); //$NON-NLS-1$
     	if (f.exists()) 
         	return performSave(SAVE_MODE_APPLYOK); 
@@ -599,11 +607,13 @@ implements
 	public void updateTitle() {	}
 	public void updateContainer() {	}
 
+	@Override
 	public boolean isValid() {
 		updateContainer();
 		return super.isValid();
 	}
 	
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
@@ -664,6 +674,7 @@ implements
 		} catch (CoreException e) {}
 	}
 
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
@@ -782,6 +793,7 @@ implements
 		}
 	}
 	
+	@Override
 	public void dispose() {
 		if (displayedConfig) forEach(ICPropertyTab.DISPOSE);
 		
@@ -1015,6 +1027,7 @@ implements
 	}
 	
 	// override parent's method to use proper class
+	@Override
 	public IAdaptable getElement() {
 		if (internalElement == null && !checkElement()) 
 			throw (new NullPointerException(UIMessages.getString("AbstractPage.15"))); //$NON-NLS-1$

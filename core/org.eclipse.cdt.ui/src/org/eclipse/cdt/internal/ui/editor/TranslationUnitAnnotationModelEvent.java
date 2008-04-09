@@ -67,6 +67,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationAdded(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public void annotationAdded(Annotation annotation) {
 		super.annotationAdded(annotation);
 		testIfProblemMarker(annotation);
@@ -76,6 +77,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationRemoved(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
 	 */
+	@Override
 	public void annotationRemoved(Annotation annotation, Position position) {
 		super.annotationRemoved(annotation, position);
 		testIfProblemMarker(annotation);
@@ -84,6 +86,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationRemoved(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public void annotationRemoved(Annotation annotation) {
 		super.annotationRemoved(annotation);
 		testIfProblemMarker(annotation);
@@ -92,6 +95,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationChanged(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public void annotationChanged(Annotation annotation) {
 		testIfProblemMarker(annotation);
 		super.annotationChanged(annotation);

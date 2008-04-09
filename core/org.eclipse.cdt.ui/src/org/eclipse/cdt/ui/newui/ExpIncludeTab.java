@@ -16,15 +16,19 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class ExpIncludeTab extends AbstractExportTab {
 	
+	@Override
 	public ICLanguageSettingEntry doAdd(String s1, String s2, boolean isWsp) {
 		int flags = isWsp ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0;
 		return new CIncludePathEntry(s2, flags);
 	}
 
+	@Override
 	public ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp) {
 		return doAdd(s1, s2, isWsp);
 	}
 	
+	@Override
 	public int getKind() { return ICSettingEntry.INCLUDE_PATH; }
+	@Override
 	public boolean hasValues() { return false; }
 }

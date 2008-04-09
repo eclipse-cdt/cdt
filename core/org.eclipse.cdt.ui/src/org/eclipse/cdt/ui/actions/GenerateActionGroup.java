@@ -338,6 +338,7 @@ public class GenerateActionGroup extends ActionGroup {
 	/* 
 	 * Method declared in ActionGroup
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBar) {
 		super.fillActionBars(actionBar);
 		setGlobalActionHandlers(actionBar);
@@ -346,6 +347,7 @@ public class GenerateActionGroup extends ActionGroup {
 	/* 
 	 * Method declared in ActionGroup
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		String menuText= ActionMessages.getString("SourceMenu_label");  //$NON-NLS-1$
@@ -430,6 +432,7 @@ public class GenerateActionGroup extends ActionGroup {
 	/* 
 	 * Method declared in ActionGroup
 	 */
+	@Override
 	public void dispose() {
 		if (fRegisteredSelectionListeners != null) {
 			ISelectionProvider provider= fSite.getSelectionProvider();

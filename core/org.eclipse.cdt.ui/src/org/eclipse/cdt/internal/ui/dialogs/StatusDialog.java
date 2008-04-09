@@ -78,6 +78,7 @@ public abstract class StatusDialog extends Dialog {
 	/* 
 	 * @see Window#create(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fTitle != null)
@@ -87,6 +88,7 @@ public abstract class StatusDialog extends Dialog {
 	/*
 	 * @see Window#create()
 	 */	
+	@Override
 	public void create() {
 		super.create();
 		if (fLastStatus != null) {
@@ -103,6 +105,7 @@ public abstract class StatusDialog extends Dialog {
 	/*
 	 * @see Dialog#createButtonsForButtonBar(Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		fOkButton= createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -111,6 +114,7 @@ public abstract class StatusDialog extends Dialog {
 	/*
 	 * @see Dialog#createButtonBar(Composite)
 	 */				
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();

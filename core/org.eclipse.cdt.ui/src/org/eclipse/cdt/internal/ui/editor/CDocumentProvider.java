@@ -347,6 +347,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			fTranslationUnit= unit;
 		}
 		
+		@Override
 		protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
 			String markerType= MarkerUtilities.getMarkerType(marker);
 			if (markerType != null && markerType.startsWith(CMarkerAnnotation.C_MARKER_TYPE_PREFIX)) {
@@ -359,6 +360,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#createPositionFromMarker(org.eclipse.core.resources.IMarker)
 		 */
+		@Override
 		protected Position createPositionFromMarker(IMarker marker) {
 			int start= MarkerUtilities.getCharStart(marker);
 			int end= MarkerUtilities.getCharEnd(marker);
@@ -397,6 +399,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipse.jface.text.source.AnnotationModel#createAnnotationModelEvent()
 		 */
+		@Override
 		protected AnnotationModelEvent createAnnotationModelEvent() {
 			return new TranslationUnitAnnotationModelEvent(this, getResource());
 		}
@@ -638,6 +641,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see AnnotationModel#addAnnotation(Annotation, Position, boolean)
 		 */
+		@Override
 		@SuppressWarnings("unchecked")
 		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {				
 			super.addAnnotation(annotation, position, fireModelChanged);
@@ -661,6 +665,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see AnnotationModel#removeAllAnnotations(boolean)
 		 */
+		@Override
 		protected void removeAllAnnotations(boolean fireModelChanged) {
 			super.removeAllAnnotations(fireModelChanged);
 			synchronized (getLockObject()) {
@@ -671,6 +676,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see AnnotationModel#removeAnnotation(Annotation, boolean)
 		 */
+		@Override
 		protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
 			Position position= getPosition(annotation);
 			synchronized (getLockObject()) {
@@ -759,6 +765,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#connect(java.lang.Object)
 	 */
+	@Override
 	public void connect(Object element) throws CoreException {
 		super.connect(element);
 		IDocument document= getDocument(element);
@@ -796,6 +803,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createEmptyFileInfo()
 	 */
+	@Override
 	protected FileInfo createEmptyFileInfo() {
 		return new TranslationUnitInfo();
 	}
@@ -803,6 +811,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
 	 */
+	@Override
 	protected IAnnotationModel createAnnotationModel(IFile file) {
 		return new TranslationUnitAnnotationModel(file);
 	}
@@ -810,6 +819,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
 	 */
+	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		ITranslationUnit original = null;
 		if (element instanceof IFileEditorInput) {
@@ -884,6 +894,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#disposeFileInfo(java.lang.Object,
 	 *      org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)
 	 */
+	@Override
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		if (info instanceof TranslationUnitInfo) {
 			TranslationUnitInfo tuInfo = (TranslationUnitInfo) info;
@@ -922,6 +933,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createSaveOperation(java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
 	 */
+	@Override
 	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document, final boolean overwrite) throws CoreException {
 		//add a newline to the end of the document (if it is not already present)
 		//-----------------------------------------------------------------------
@@ -957,12 +969,14 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				/*
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 				 */
+				@Override
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					commitWorkingCopy(monitor, element, (TranslationUnitInfo) info, overwrite);
 				}
 				/*
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFile file= ((IFileEditorInput) info.fElement).getFile();

@@ -78,16 +78,19 @@ public abstract class AbstractCNavigatorActionGroup extends ActionGroup {
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public abstract void fillContextMenu(IMenuManager menu);
 
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public abstract void fillActionBars(IActionBars actionBars);
 
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
 	 */
+	@Override
 	public abstract void updateActionBars();
 
 }

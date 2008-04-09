@@ -198,6 +198,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 			 */
 			IASTDeclaration stopWhenLeaving;
 			
+			@Override
 			public int visit(IASTDeclaration declaration) {
 				IASTNodeLocation loc= declaration.getFileLocation();
 				if(loc != null) {
@@ -216,6 +217,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 				}
 				return PROCESS_CONTINUE;
 			}
+			@Override
 			public int leave(IASTDeclaration declaration) {
 				if(declaration==stopWhenLeaving) 
 					return PROCESS_ABORT;

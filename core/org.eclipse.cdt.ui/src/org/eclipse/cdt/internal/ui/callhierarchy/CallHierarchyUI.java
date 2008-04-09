@@ -60,7 +60,8 @@ public class CallHierarchyUI {
         	final Display display= Display.getCurrent();
 
         	Job job= new Job(CHMessages.CallHierarchyUI_label) {
-        		protected IStatus run(IProgressMonitor monitor) {
+        		@Override
+				protected IStatus run(IProgressMonitor monitor) {
         			final ICElement[] elems= findDefinitions(input);
 					if (elems != null && elems.length > 0) {
 						display.asyncExec(new Runnable() {
@@ -120,6 +121,7 @@ public class CallHierarchyUI {
 				final Display display= Display.getCurrent();
 
 				Job job= new Job(CHMessages.CallHierarchyUI_label) {
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							StatusLineHandler.clearStatusLine(editor.getSite());
@@ -183,9 +185,7 @@ public class CallHierarchyUI {
 				}
 			}
 			finally {
-				if (index != null) {
-					index.releaseReadLock();
-				}
+				index.releaseReadLock();
 			}
 		}
 		catch (CoreException e) {
@@ -222,9 +222,7 @@ public class CallHierarchyUI {
 					}
 				}
 				finally {
-					if (index != null) {
-						index.releaseReadLock();
-					}
+					index.releaseReadLock();
 				}
 			}
 		}

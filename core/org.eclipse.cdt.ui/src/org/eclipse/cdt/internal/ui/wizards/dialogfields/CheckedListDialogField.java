@@ -70,6 +70,7 @@ public class CheckedListDialogField extends ListDialogField {
 	/*
 	 * @see ListDialogField#createTableViewer
 	 */
+	@Override
 	protected TableViewer createTableViewer(Composite parent) {
 		Table table= new Table(parent, SWT.CHECK + getListStyle());
 		CheckboxTableViewer tableViewer= new CheckboxTableViewer(table);
@@ -85,6 +86,7 @@ public class CheckedListDialogField extends ListDialogField {
 	/*
 	 * @see ListDialogField#getListControl
 	 */
+	@Override
 	public Control getListControl(Composite parent) {
 		Control control= super.getListControl(parent);
 		if (parent != null) {
@@ -97,6 +99,7 @@ public class CheckedListDialogField extends ListDialogField {
 	 * @see DialogField#dialogFieldChanged
 	 * Hooks in to get element changes to update check model.
 	 */
+	@Override
 	public void dialogFieldChanged() {
 		for (int i= fCheckElements.size() -1; i >= 0; i--) {
 			if (!fElements.contains(fCheckElements.get(i))) {
@@ -195,6 +198,7 @@ public class CheckedListDialogField extends ListDialogField {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField#replaceElement(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void replaceElement(Object oldElement, Object newElement) throws IllegalArgumentException {
 		boolean wasChecked= isChecked(oldElement);
 		super.replaceElement(oldElement, newElement);
@@ -206,6 +210,7 @@ public class CheckedListDialogField extends ListDialogField {
 	/*
 	 * @see ListDialogField#getManagedButtonState
 	 */
+	@Override
 	protected boolean getManagedButtonState(ISelection sel, int index) {
 		if (index == fCheckAllButtonIndex) {
 			return !fElements.isEmpty();
@@ -218,6 +223,7 @@ public class CheckedListDialogField extends ListDialogField {
 	/*
 	 * @see ListDialogField#extraButtonPressed
 	 */	
+	@Override
 	protected boolean managedButtonPressed(int index) {
 		if (index == fCheckAllButtonIndex) {
 			checkAll(true);

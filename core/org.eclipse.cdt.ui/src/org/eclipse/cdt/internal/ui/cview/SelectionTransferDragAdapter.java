@@ -13,12 +13,14 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.internal.ui.dnd.BasicSelectionTransferDragAdapter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+
+import org.eclipse.cdt.internal.ui.dnd.BasicSelectionTransferDragAdapter;
 
 public class SelectionTransferDragAdapter extends BasicSelectionTransferDragAdapter {
 	
@@ -26,9 +28,10 @@ public class SelectionTransferDragAdapter extends BasicSelectionTransferDragAdap
 		super(provider);
 	}
 	
+	@Override
 	protected boolean isDragable(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator iter= ((IStructuredSelection)selection).iterator(); iter.hasNext();) {
+			for (Iterator<?> iter= ((IStructuredSelection)selection).iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				if (element instanceof ICElement) {
 					if (!(element instanceof ISourceReference)) {

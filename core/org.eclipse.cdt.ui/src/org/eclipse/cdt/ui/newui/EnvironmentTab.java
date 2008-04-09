@@ -90,9 +90,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private class EnvironmentLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider , ITableFontProvider, IColorProvider{
 		public EnvironmentLabelProvider(boolean user){
 		}
+		@Override
 		public Image getImage(Object element) {
 			return null; // JavaPluginImages.get(JavaPluginImages.IMG_OBJS_REFACTORING_INFO);
 		}
+		@Override
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
@@ -148,6 +150,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    }
 	}
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, true));
@@ -203,6 +206,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    b1.setToolTipText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
 	    b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    b1.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (cfgd != null)
 					ce.setAppendEnvironment(true, cfgd);
@@ -215,6 +219,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
 	    lb1.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				CDTPrefUtil.spinDMode();
 				updateData();
@@ -225,6 +230,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    b2.setToolTipText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
 	    b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    b2.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (cfgd != null)
 					ce.setAppendEnvironment(false, cfgd);
@@ -237,6 +243,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
 	    lb2.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				CDTPrefUtil.spinWMode();
 				updateLbs(null, lb2);
@@ -244,6 +251,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    initButtons(new String[] {UIMessages.getString("EnvironmentTab.5"),UIMessages.getString("EnvironmentTab.6"),UIMessages.getString("EnvironmentTab.7"),UIMessages.getString("EnvironmentTab.8"),UIMessages.getString("EnvironmentTab.9")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 	
+	@Override
 	public void buttonPressed(int i) {
 		switch (i) {
 		case 0:
@@ -264,6 +272,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		}
 	}
 	
+	@Override
 	public void updateButtons() {
 		if (table == null || table.isDisposed()) return;
 		
@@ -273,6 +282,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		buttonSetEnabled(4, pos != -1);
 	}
 
+	@Override
 	public void updateData(ICResourceDescription _cfgd) {
 		// null means preference configuration 
 		cfgd = (_cfgd != null) ? _cfgd.getConfiguration() : null;
@@ -307,6 +317,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription _src, ICResourceDescription _dst) {
 		ICConfigurationDescription src = _src.getConfiguration();
 		ICConfigurationDescription dst = _dst.getConfiguration();
@@ -330,7 +341,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    public MyListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider) {
 	        super(parentShell, input, contentProvider, new LabelProvider() {}, UIMessages.getString("EnvironmentTab.12")); //$NON-NLS-1$
 	    }
-	    protected Control createDialogArea(Composite parent) {
+	    @Override
+		protected Control createDialogArea(Composite parent) {
 	    	Composite composite = (Composite) super.createDialogArea(parent);
 	    	Button b = new Button(composite, SWT.CHECK);
 	    	b.setText(UIMessages.getString("EnvironmentTab.13")); //$NON-NLS-1$
@@ -339,7 +351,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    		b.setVisible(false);
 	    	else
 	    		b.addSelectionListener(new SelectionAdapter() {
-	    			public void widgetSelected(SelectionEvent e) {
+	    			@Override
+					public void widgetSelected(SelectionEvent e) {
 	    				toAll = ((Button)e.widget).getSelection();
 	    			}});
 	    	return composite;
@@ -494,10 +507,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		};
 	}
 	// This page can be displayed for project only
+	@Override
 	public boolean canBeVisible() {
 		return page.isForProject() || page.isForPrefs();
 	}
 
+	@Override
 	protected void performOK() {
 		if (vars != null) {
 			if (fUserSupplier.setWorkspaceEnvironment(vars))
@@ -508,11 +523,13 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		super.performOK();
 	}
 	
+	@Override
 	protected void performCancel() {
 		vars = null;
 		super.performCancel();
 	}
 	
+	@Override
 	protected void performDefaults() {
 		ce.restoreDefaults(cfgd); // both for proj & prefs
 		vars = null;

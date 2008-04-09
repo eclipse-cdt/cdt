@@ -59,11 +59,13 @@ public abstract class ContentTypeMappingDialog extends Dialog {
 		return fSelectedLanguageID;
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PreferencesMessages.ContentTypeMappingsDialog_title);
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);

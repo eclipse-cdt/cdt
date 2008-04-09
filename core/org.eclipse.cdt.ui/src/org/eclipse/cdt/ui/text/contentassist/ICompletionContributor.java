@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
  *             <tt>completionProprosalComputer</tt> and implement interface
  *             {@link ICompletionProposalComputer}
  */
+@Deprecated
 public interface ICompletionContributor {
 
 	/**

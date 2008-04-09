@@ -111,6 +111,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	/**
 	 * Handles cancel button pressed event.
 	 */
+	@Override
 	protected void cancelPressed() {
 		setSelectionResult(null);
 		super.cancelPressed();
@@ -119,6 +120,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	/*
 	 * @see SelectionStatusDialog#computeResult()
 	 */
+	@Override
 	protected void computeResult() {
 		Object[] checked = fViewer.getCheckedElements();
 		if (fExisting == null) {
@@ -149,6 +151,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	/*
 	 * @see Window#create()
 	 */
+	@Override
 	public void create() {
 
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -218,6 +221,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
@@ -236,6 +240,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		button.setText(CPathEntryMessages.getString("MultipleFolderSelectionDialog.button")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				newFolderButtonPressed();
 			}

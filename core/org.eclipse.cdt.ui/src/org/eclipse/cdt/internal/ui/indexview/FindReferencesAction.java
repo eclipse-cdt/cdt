@@ -46,6 +46,7 @@ public class FindReferencesAction extends IndexAction {
 		return null;
 	}
 	
+	@Override
 	public void run() {
 		IndexNode binding = getBindingNode();
 		if (binding != null) {
@@ -63,6 +64,7 @@ public class FindReferencesAction extends IndexAction {
 		}
 	}
 	
+	@Override
 	public boolean valid() {
 		return getBindingNode() != null;
 	}

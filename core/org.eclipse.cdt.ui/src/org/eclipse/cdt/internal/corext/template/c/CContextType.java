@@ -31,6 +31,7 @@ public class CContextType extends TranslationUnitContextType {
 	/*
 	 * @see org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType#createContext(org.eclipse.jface.text.IDocument, int, int, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
+	@Override
 	public TranslationUnitContext createContext(IDocument document, int offset,
 			int length, ITranslationUnit translationUnit) {
 		return new CContext(this, document, offset, length, translationUnit);
@@ -39,6 +40,7 @@ public class CContextType extends TranslationUnitContextType {
 	/*
 	 * @see org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType#createContext(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
+	@Override
 	public TranslationUnitContext createContext(IDocument document,
 			Position position, ITranslationUnit translationUnit) {
 		return new CContext(this, document, position, translationUnit);

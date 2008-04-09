@@ -14,6 +14,7 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 
 public class DocCommentSinglelineProposalComputer extends AbstractDocCommentProposalComputer {
+	@Override
 	protected IDocCommentViewerConfiguration getConfiguration(IDocCommentOwner owner) {
 		return owner.getSinglelineConfiguration();
 	}

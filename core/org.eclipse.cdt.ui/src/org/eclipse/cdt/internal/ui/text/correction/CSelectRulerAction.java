@@ -22,7 +22,8 @@ public class CSelectRulerAction extends AbstractRulerActionDelegate {
     /*
      * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
      */
-    protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
+    @Override
+	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
         return new CSelectAnnotationRulerAction(CEditorMessages.getResourceBundle(), "CSelectAnnotationRulerAction.", editor, rulerInfo); //$NON-NLS-1$
     }
 }

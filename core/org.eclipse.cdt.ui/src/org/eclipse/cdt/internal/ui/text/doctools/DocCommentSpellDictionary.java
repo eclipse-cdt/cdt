@@ -37,6 +37,7 @@ public class DocCommentSpellDictionary extends AbstractSpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary#getName()
 	 */
+	@Override
 	protected final URL getURL() {
 		return null;
 	}
@@ -44,6 +45,7 @@ public class DocCommentSpellDictionary extends AbstractSpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.AbstractSpellDictionary#load(java.net.URL)
 	 */
+	@Override
 	protected synchronized boolean load(final URL url) {
 		unload();
 

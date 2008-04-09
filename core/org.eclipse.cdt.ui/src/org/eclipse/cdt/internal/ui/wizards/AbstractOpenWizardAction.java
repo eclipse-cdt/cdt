@@ -141,6 +141,7 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 	/**
 	 * The user has invoked this action.
 	 */
+	@Override
 	public void run() {
 /*		if (!fNoChecking && !canActionBeAdded()) {
 			return;

@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.ui.views.properties.FilePropertySource;
@@ -20,7 +18,10 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-public class BinaryPropertySource extends FilePropertySource implements IPropertySource {
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+public class BinaryPropertySource extends FilePropertySource {
 	
 	private final static String ELF_CPU= "CElementProperties.elf_cpu"; //$NON-NLS-1$
 	private final static String ELF_TEXT= "CElementProperties.elf_text"; //$NON-NLS-1$
@@ -101,6 +102,7 @@ public class BinaryPropertySource extends FilePropertySource implements IPropert
 	/**
 	 * @see IPropertySource#getPropertyDescriptors
 	 */
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		if (fgPropertyDescriptors == null) {
 			initializeBinaryDescriptors();
@@ -111,6 +113,7 @@ public class BinaryPropertySource extends FilePropertySource implements IPropert
 	/**
 	 * @see IPropertySource#getPropertyValue
 	 */	
+	@Override
 	public Object getPropertyValue(Object name) {
 		if (element != null) {
 			Object returnValue = super.getPropertyValue(name);
@@ -176,6 +179,7 @@ public class BinaryPropertySource extends FilePropertySource implements IPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
 	 */
+	@Override
 	public Object getEditableValue() {
 		return this;
 	}
@@ -183,6 +187,7 @@ public class BinaryPropertySource extends FilePropertySource implements IPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.properties.IPropertySource#isPropertySet(java.lang.Object)
 	 */
+	@Override
 	public boolean isPropertySet(Object id) {
 		return false;
 	}
@@ -190,12 +195,14 @@ public class BinaryPropertySource extends FilePropertySource implements IPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.properties.IPropertySource#resetPropertyValue(java.lang.Object)
 	 */
+	@Override
 	public void resetPropertyValue(Object id) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.properties.IPropertySource#setPropertyValue(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void setPropertyValue(Object id, Object value) {
 	}
 

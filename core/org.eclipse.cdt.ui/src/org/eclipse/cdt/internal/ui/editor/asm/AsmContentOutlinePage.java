@@ -33,6 +33,7 @@ public class AsmContentOutlinePage extends AbstractCModelOutlinePage {
 		super("#ASMOutlineContext", editor); //$NON-NLS-1$
 	}
 
+	@Override
 	protected OpenViewActionGroup createOpenViewActionGroup() {
 		OpenViewActionGroup ovag= new OpenViewActionGroup(this);
 		ovag.setEnableIncludeBrowser(false);
@@ -41,6 +42,7 @@ public class AsmContentOutlinePage extends AbstractCModelOutlinePage {
 		return ovag;
 	}
 
+	@Override
 	protected ActionGroup createCustomFiltersActionGroup() {
 		return new CustomFiltersActionGroup("org.eclipse.cdt.ui.AsmOutlinePage", getTreeViewer()); //$NON-NLS-1$
 	}

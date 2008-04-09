@@ -34,6 +34,7 @@ public class CEditorColoringPreferencePage extends AbstractConfigurationBlockPre
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
+	@Override
 	protected String getHelpId() {
 		return ICHelpContextIds.C_EDITOR_COLORS_PREF_PAGE;
 	}
@@ -41,12 +42,14 @@ public class CEditorColoringPreferencePage extends AbstractConfigurationBlockPre
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
+	@Override
 	protected void setDescription() {
 		String description= PreferencesMessages.CEditorPreferencePage_colors; 
 		setDescription(description);
 	}
 	
 	
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null;
 	}
@@ -54,6 +57,7 @@ public class CEditorColoringPreferencePage extends AbstractConfigurationBlockPre
 	/*
 	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */
+	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
@@ -61,6 +65,7 @@ public class CEditorColoringPreferencePage extends AbstractConfigurationBlockPre
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.ui.internal.editors.text.OverlayPreferenceStore)
 	 */
+	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new CEditorColoringConfigurationBlock(overlayPreferenceStore);
 	}

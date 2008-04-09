@@ -76,6 +76,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		private Set fSections= new HashSet();
 		private boolean fIsBeingManaged= false;
 		private ExpansionAdapter fListener= new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				ExpandableComposite source= (ExpandableComposite) e.getSource();
 				updateSectionStyle(source);

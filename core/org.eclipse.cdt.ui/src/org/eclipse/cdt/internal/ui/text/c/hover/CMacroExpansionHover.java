@@ -33,6 +33,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover {
 
 	private Reference<CMacroExpansionInput> fCache;
 
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		Object hoverInfo= getHoverInfo2(textViewer, hoverRegion);
 		return hoverInfo != null ? hoverInfo.toString() : null;
@@ -41,6 +42,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.c.hover.AbstractCEditorTextHover#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		CMacroExpansionInput input= CMacroExpansionInput.create(getEditor(), hoverRegion, false);
 		return input;
@@ -49,6 +51,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover {
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
@@ -60,6 +63,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.c.hover.AbstractCEditorTextHover#getInformationPresenterControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {

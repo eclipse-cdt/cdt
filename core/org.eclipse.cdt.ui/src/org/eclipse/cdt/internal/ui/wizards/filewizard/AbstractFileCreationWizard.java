@@ -36,7 +36,8 @@ public abstract class AbstractFileCreationWizard extends NewElementWizard {
      * 
      * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#canRunForked()
      */
-    protected boolean canRunForked() {
+    @Override
+	protected boolean canRunForked() {
     	return true;
     }
     
@@ -45,7 +46,8 @@ public abstract class AbstractFileCreationWizard extends NewElementWizard {
      * 
      * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#finishPage(org.eclipse.core.runtime.IProgressMonitor)
      */
-    protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
+    @Override
+	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
         fPage.createFile(monitor); // use the full progress monitor
     }
     
@@ -54,7 +56,8 @@ public abstract class AbstractFileCreationWizard extends NewElementWizard {
      * 
      * @see org.eclipse.jface.wizard.IWizard#performFinish()
      */
-    public boolean performFinish() {
+    @Override
+	public boolean performFinish() {
         boolean res = super.performFinish();
         if (res) {
             //TODO need prefs option for opening editor

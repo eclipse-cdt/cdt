@@ -420,6 +420,7 @@ public class CPElement {
 	/*
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if (other != null && other.getClass().equals(getClass())) {
 			CPElement elem = (CPElement)other;
@@ -456,6 +457,7 @@ public class CPElement {
 	/*
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		final int HASH_FACTOR = 89;
 		int hashCode = fPath.hashCode() + fEntryKind;
@@ -494,6 +496,7 @@ public class CPElement {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getPathEntry().toString();
 	}

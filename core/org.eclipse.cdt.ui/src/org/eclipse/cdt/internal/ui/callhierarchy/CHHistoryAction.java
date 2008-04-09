@@ -52,6 +52,7 @@ public class CHHistoryAction extends Action {
 	/*
 	 * @see Action#run()
 	 */
+	@Override
 	public void run() {
 		fViewPart.setInput(fElement);
 	}

@@ -85,6 +85,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	 * We don't have to worry that the index or name is wrong because we 
 	 * enable the OK button IFF those conditions are met.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			String description = new String();
@@ -120,6 +121,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null)
@@ -129,6 +131,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		configName.setFocus();
@@ -138,6 +141,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		validateState();
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
@@ -223,6 +227,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
 		cloneConfigSelector.setLayoutData(gd);
 		cloneConfigSelector.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateState();		
 			}

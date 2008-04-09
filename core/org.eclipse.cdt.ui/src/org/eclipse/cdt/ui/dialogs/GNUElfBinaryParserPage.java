@@ -22,6 +22,7 @@ public class GNUElfBinaryParserPage extends AbstractGNUBinaryParserPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.AbstractGNUBinaryParserPage#getRealBinaryParserPage()
 	 */
+	@Override
 	protected AbstractGNUBinaryParserPage getRealBinaryParserPage() {
 		return this;
 	}

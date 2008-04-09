@@ -97,9 +97,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				if (fComputeReferencedBy) {
 					return asyncronouslyComputeReferencedBy(node);
 				}
-				else {
-					return asyncronouslyComputeRefersTo(node);
-				}
+				return asyncronouslyComputeRefersTo(node);
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);

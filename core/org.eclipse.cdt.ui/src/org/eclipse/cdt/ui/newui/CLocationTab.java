@@ -82,6 +82,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			return s;
 		}
 		
+		@Override
 		public String toString() {
 			String[] s = getExts();
 			if (s.length == 0) 
@@ -101,6 +102,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			ent = _ent;
 			f[0] = new _Filter(this);
 		}
+		@Override
 		public String toString() { 
 			return getPath() == null ? 
 					EMPTY_STR : 
@@ -114,6 +116,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		} 
 	}
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
@@ -122,6 +125,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		tree = new TreeViewer(usercomp);
 		tree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.getTree().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}});
@@ -149,6 +153,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			}});
 
 		tree.setLabelProvider(new LabelProvider() {
+			@Override
 			public Image getImage(Object element) {
 				if (element instanceof _Entry)
 					return IMG_EN;
@@ -165,12 +170,14 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	 * Edit: enabled if 1 element selected (entry or filter)
 	 * Delete: enabled if selected element is entry
 	 */
+	@Override
 	protected void updateButtons() {
 		TreeItem[] sel = tree.getTree().getSelection();
     	buttonSetEnabled(2, sel.length == 1);
     	buttonSetEnabled(3, sel.length > 0 && sel[0].getData() instanceof _Entry);
 	}
 	
+	@Override
 	public void buttonPressed(int x) {
 		Shell shell = usercomp.getShell();
 		TreeItem[] sel = tree.getTree().getSelection();
@@ -187,6 +194,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		// create / link	
 		case 1:
 			NewFolderDialog  d = new NewFolderDialog(shell, page.getProject()) {
+				@Override
 				public void create() {
 					super.create();
 					handleAdvancedButtonSelect();
@@ -239,6 +247,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		updateData(cfgd);
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription _cfgd) {
 		if (page.isMultiCfg()) {
 			usercomp.setVisible(false);
@@ -265,10 +274,12 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	protected abstract ICExclusionPatternPathEntry newEntry(IPath p, IPath[] ex, boolean workspacePath);
 	protected abstract ICExclusionPatternPathEntry newEntry(IFolder f, IPath[] ex, boolean workspacePath);
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		setEntries(dst, getEntries(src));
 	}
 
+	@Override
 	protected void performDefaults() {
 			setEntries(cfgd, null);
 			updateData(cfgd);
@@ -276,6 +287,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 
 	
 	// This page can be displayed for project only
+	@Override
 	public boolean canBeVisible() {
 		if (page.getResDesc() instanceof ICMultiItemsHolder)
 			return false; // cannot work with multi cfg
@@ -355,7 +367,8 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			super(parent,
 					
 			new WorkbenchLabelProvider() {
- 			    protected String decorateText(String input, Object element) {
+ 			    @Override
+				protected String decorateText(String input, Object element) {
 			    	if (element instanceof Holder &&
 			    	    ((Holder)element).isRoot())
 			    			return UIMessages.getString("CLocationTab.8"); //$NON-NLS-1$
@@ -364,6 +377,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			},
 			
 			new WorkbenchContentProvider() {
+				@Override
 				public Object[] getChildren(Object element) {
 					if (element instanceof IProject) {
 						Object[] ob1 = super.getChildren(element);
@@ -397,6 +411,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			});
 			
 			addFilter(new ViewerFilter () {
+				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					if (! (element instanceof Holder))
 						return false;

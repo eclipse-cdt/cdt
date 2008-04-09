@@ -44,6 +44,7 @@ public class OpenCElementAction extends OpenFileAction {
 	/*
 	 * @see org.eclipse.ui.actions.OpenSystemEditorAction#run()
 	 */
+	@Override
 	public void run() {
 		if (fOpenElement != null) {
 			IEditorPart part;
@@ -63,6 +64,7 @@ public class OpenCElementAction extends OpenFileAction {
 	/*
 	 * @see org.eclipse.ui.actions.OpenSystemEditorAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		fOpenElement = null;
 		if (selection.size() == 1) {

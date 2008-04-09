@@ -122,6 +122,7 @@ public class CElementSorter extends ViewerSorter {
 		fSeparateHeaderAndSource= store.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE);
 	}
 	
+	@Override
 	public int category (Object element) {
 		if (element instanceof ICModel) {
 			return CMODEL;
@@ -233,6 +234,7 @@ public class CElementSorter extends ViewerSorter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		int cat1 = category(e1);
 		int cat2 = category(e2);

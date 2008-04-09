@@ -112,6 +112,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(IRegion region) {
 		if (fRequestor != null && isSpellingEnabled())
 			super.reconcile(region);
@@ -124,6 +125,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy#createSpellingProblemCollector()
 	 */
+	@Override
 	protected ISpellingProblemCollector createSpellingProblemCollector() {
 		return new SpellingProblemCollector();
 	}
@@ -131,6 +133,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy#getContentType()
 	 */
+	@Override
 	protected IContentType getContentType() {
 		return CXX_CONTENT_TYPE;
 	}
@@ -138,6 +141,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument document) {
 		super.setDocument(document);
 		updateProblemRequester();
@@ -154,6 +158,7 @@ public class CSpellingReconcileStrategy extends SpellingReconcileStrategy {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy#getAnnotationModel()
 	 */
+	@Override
 	protected IAnnotationModel getAnnotationModel() {
 		final IDocumentProvider documentProvider= fEditor.getDocumentProvider();
 		if (documentProvider == null)

@@ -75,12 +75,14 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	/*
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		inDirect.dispose();
 		inDirect= null;
 		super.dispose();
 	}
 	
+	@Override
 	public String getText(Object element) {
 		if (element instanceof CPElement) {
 			return getCPElementText((CPElement)element);
@@ -356,6 +358,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	private static final Point SMALL_SIZE = new Point(16, 16);
 
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof CPElement) {
 			CPElement cpentry = (CPElement)element;

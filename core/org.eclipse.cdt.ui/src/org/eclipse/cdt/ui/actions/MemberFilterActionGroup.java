@@ -47,6 +47,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	public static final int FILTER_FIELDS= MemberFilter.FILTER_FIELDS;
 	
 	/** @deprecated Unsupported filter constant */
+	@Deprecated
 	public static final int FILTER_LOCALTYPES= MemberFilter.FILTER_LOCALTYPES;
 	
 	public static final int ALL_FILTERS= FILTER_NONPUBLIC | FILTER_FIELDS | FILTER_STATIC;
@@ -310,6 +311,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	/* (non-Javadoc)
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		contributeToToolBar(actionBars.getToolBarManager());
 	}
@@ -351,6 +353,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	/* (non-Javadoc)
 	 * @see ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fFilterActions= null;
 		fFilter= null;

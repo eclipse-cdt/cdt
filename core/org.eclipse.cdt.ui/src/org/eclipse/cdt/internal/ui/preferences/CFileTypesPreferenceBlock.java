@@ -78,6 +78,7 @@ public class CFileTypesPreferenceBlock {
 	private Button				fBtnRemove;
 
 	private class AssocSorter extends ViewerSorter {
+		@Override
 		public int category(Object element) {
 			if (element instanceof CFileTypeAssociation) {
 				CFileTypeAssociation assoc = (CFileTypeAssociation) element;

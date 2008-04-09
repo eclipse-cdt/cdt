@@ -39,6 +39,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -52,12 +53,14 @@ public class CPathOrderExportPage extends CPathBasePage {
 		fCPathList.setButtonsMinWidth(buttonBarWidth);
 	}
 
+	@Override
 	public Image getImage() {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_ORDER);
 	}
 	/*
 	 * @see BuildPathBasePage#getSelection
 	 */
+	@Override
 	public List getSelection() {
 		return fCPathList.getSelectedElements();
 	}
@@ -65,6 +68,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	/*
 	 * @see BuildPathBasePage#setSelection
 	 */
+	@Override
 	public void setSelection(List selElements) {
 		fCPathList.selectElements(new StructuredSelection(selElements));
 	}
@@ -74,6 +78,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
+	@Override
 	public boolean isEntryKind(int kind) {
 		return true;
 	}
@@ -83,6 +88,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 
 	}
@@ -92,6 +98,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 	}
 

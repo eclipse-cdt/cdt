@@ -69,6 +69,7 @@ public class ProblemTreeViewer extends TreeViewer {
 	/*
 	 * @see StructuredViewer#mapElement(Object, Widget)
 	 */
+	@Override
 	protected void mapElement(Object element, Widget item) {
 		super.mapElement(element, item);
 		if (item instanceof Item) {
@@ -79,6 +80,7 @@ public class ProblemTreeViewer extends TreeViewer {
 	/*
 	 * @see StructuredViewer#unmapElement(Object, Widget)
 	 */
+	@Override
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
 			fResourceToItemsMapper.removeFromMap(element, (Item) item);
@@ -89,6 +91,7 @@ public class ProblemTreeViewer extends TreeViewer {
 	/*
 	 * @see StructuredViewer#unmapAllElements()
 	 */
+	@Override
 	protected void unmapAllElements() {
 		fResourceToItemsMapper.clearMap();
 		super.unmapAllElements();
@@ -97,6 +100,7 @@ public class ProblemTreeViewer extends TreeViewer {
 	/*
 	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
 	 */
+	@Override
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		Object source= event.getElement();
 		if (source == null) {
@@ -139,6 +143,7 @@ public class ProblemTreeViewer extends TreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#isExpandable(java.lang.Object)
 	 */
+	@Override
 	public boolean isExpandable(Object element) {
 		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
 		if (cp == null)

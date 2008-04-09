@@ -69,6 +69,7 @@ public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase 
 	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				fillMenu((Menu)e.widget);
 			}

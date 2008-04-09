@@ -39,10 +39,12 @@ public class OpenIncludeBrowserAction extends SelectionDispatchAction {
 		setEnabled(fEditor != null && CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
 	}
 
+	@Override
 	public void run(ITextSelection sel) {
 		IncludeBrowserUI.open(fEditor, sel);
 	}
 	
+	@Override
 	public void run(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
 			Object selectedObject= selection.getFirstElement();
@@ -53,9 +55,11 @@ public class OpenIncludeBrowserAction extends SelectionDispatchAction {
 		}
 	}
 
+	@Override
 	public void selectionChanged(ITextSelection sel) {
 	}
 			
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			setEnabled(false);

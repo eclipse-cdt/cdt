@@ -601,8 +601,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 					// indent the first pasted line
 					String current= IndentUtil.getCurrentIndent(temp, l, indentInsideLineComments);
 					StringBuffer correct= new StringBuffer(IndentUtil.computeIndent(temp, l, indenter, scanner));
-					if (correct == null)
-						return; // bail out
 
 					insertLength= subtractIndent(correct, current, addition);
 					// workaround for bug 181139
@@ -1117,6 +1115,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	/*
 	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(IDocument, DocumentCommand)
 	 */
+	@Override
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 		if (!c.doit)
 			return;

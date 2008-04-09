@@ -12,10 +12,8 @@ package org.eclipse.cdt.internal.ui.dialogs;
 
 import java.util.Collection;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.core.runtime.Assert;
-
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 
@@ -29,16 +27,16 @@ public class TypedElementSelectionValidator implements ISelectionStatusValidator
 	private IStatus fgErrorStatus= new StatusInfo(IStatus.ERROR, ""); //$NON-NLS-1$
 	private IStatus fgOKStatus= new StatusInfo();
 
-	private Class[] fAcceptedTypes;
+	private Class<?>[] fAcceptedTypes;
 	private boolean fAllowMultipleSelection;
-	private Collection fRejectedElements;
+	private Collection<?> fRejectedElements;
 	
 	/**
 	 * @param acceptedTypes The types accepted by the validator
 	 * @param allowMultipleSelection If set to <code>true</code>, the validator
 	 * allows multiple selection.
 	 */
-	public TypedElementSelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
+	public TypedElementSelectionValidator(Class<?>[] acceptedTypes, boolean allowMultipleSelection) {
 		this(acceptedTypes, allowMultipleSelection, null);
 	}
 	
@@ -48,7 +46,7 @@ public class TypedElementSelectionValidator implements ISelectionStatusValidator
 	 * allows multiple selection.
 	 * @param rejectedElements A list of elements that are not accepted
 	 */
-	public TypedElementSelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection, Collection rejectedElements) {
+	public TypedElementSelectionValidator(Class<?>[] acceptedTypes, boolean allowMultipleSelection, Collection<Object> rejectedElements) {
 		Assert.isNotNull(acceptedTypes);
 		fAcceptedTypes= acceptedTypes;
 		fAllowMultipleSelection= allowMultipleSelection;

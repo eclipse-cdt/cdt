@@ -28,7 +28,8 @@ public class NewHeaderFileCreationWizard extends AbstractFileCreationWizard {
     /*
      * @see Wizard#createPages
      */
-    public void addPages() {
+    @Override
+	public void addPages() {
         super.addPages();
         fPage = new NewHeaderFileCreationWizardPage();
         addPage(fPage);

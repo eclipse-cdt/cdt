@@ -137,6 +137,7 @@ class EditTemplateDialog extends StatusDialog {
 		/**
 		 * @see Action#run()
 		 */
+		@Override
 		public void run() {
 			if (fOperationCode != -1 && fOperationTarget != null) {
 				fOperationTarget.doOperation(fOperationCode);
@@ -215,6 +216,7 @@ class EditTemplateDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
@@ -222,6 +224,7 @@ class EditTemplateDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.dialogs.StatusDialog#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		updateStatusAndButtons();
@@ -231,6 +234,7 @@ class EditTemplateDialog extends StatusDialog {
 	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite ancestor) {
 		Composite parent= new Composite(ancestor, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -576,6 +580,7 @@ class EditTemplateDialog extends StatusDialog {
 		return -1;
 	}
 	
+	@Override
 	protected void okPressed() {
 		String name= fNameText == null ? fTemplate.getName() : fNameText.getText();
 		boolean isAutoInsertable= fAutoInsertCheckbox != null && fAutoInsertCheckbox.getSelection();
@@ -610,6 +615,7 @@ class EditTemplateDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ICHelpContextIds.EDIT_TEMPLATE_DIALOG);
@@ -650,6 +656,7 @@ class EditTemplateDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
 		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings();

@@ -40,10 +40,12 @@ public class CPathContainerSelectionPage extends WizardPage {
 
 
 	private static class CPathContainerLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			return ((IContainerDescriptor) element).getName();
 		}
 		
+		@Override
 		public Image getImage(Object element) {
 			return ((IContainerDescriptor) element).getImage();
 		}
@@ -51,6 +53,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 
 	private static class CPathContainerSorter extends ViewerSorter {
 		
+		@Override
 		public int category(Object element) {
 			if ( element instanceof ProjectContainerDescriptor) {
 				return 0;
@@ -139,6 +142,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see IWizardPage#canFlipToNextPage()
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return isPageComplete(); // avoid the getNextPage call to prevent potential plugin load
 	}
@@ -146,6 +150,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (!visible && fListViewer != null) {
 			fDialogSettings.put(DIALOGSTORE_CONTAINER_IDX, fListViewer.getTable().getSelectionIndex());

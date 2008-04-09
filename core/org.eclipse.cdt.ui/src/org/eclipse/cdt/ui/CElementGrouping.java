@@ -40,6 +40,7 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
+	@Override
 	public String getLabel(Object object) {
 		switch (type) {
 			case INCLUDES_GROUPING:
@@ -51,6 +52,7 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		switch (type) {
 			case INCLUDES_GROUPING:

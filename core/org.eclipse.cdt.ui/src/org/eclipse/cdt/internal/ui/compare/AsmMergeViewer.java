@@ -46,6 +46,7 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#getSourceViewerConfiguration()
 	 */
+	@Override
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
 			AsmTextTools tools= CUIPlugin.getDefault().getAsmTextTools();
@@ -58,6 +59,7 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#getTitle()
 	 */
+	@Override
 	public String getTitle() {
 		return CUIPlugin.getResourceString(TITLE);
 	}
@@ -65,6 +67,7 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#handlePropertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 		super.handlePropertyChange(event);
 

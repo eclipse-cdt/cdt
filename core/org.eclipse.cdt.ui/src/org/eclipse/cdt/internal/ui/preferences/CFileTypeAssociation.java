@@ -26,6 +26,7 @@ public class CFileTypeAssociation {
 	private int fType;
 	private IContentType fContentType;
 
+	@Override
 	public int hashCode() {
 		final int PRIME = 31;
 		int result = 1;
@@ -35,6 +36,7 @@ public class CFileTypeAssociation {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

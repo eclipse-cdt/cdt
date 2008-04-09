@@ -36,6 +36,7 @@ public class IBSetInputJob extends Job {
 		fDisplay= disp;
 	}
 	
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
     	if (CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, monitor)) {
     		try {

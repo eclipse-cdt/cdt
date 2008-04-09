@@ -33,6 +33,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#getSupportedTransferTypes()
 	 */
+	@Override
 	public Transfer[] getSupportedTransferTypes() {
 		Transfer[] transfers= new Transfer[] {
 				LocalSelectionTransfer.getTransfer()
@@ -43,6 +44,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#setDragData(org.eclipse.swt.dnd.DragSourceEvent, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public boolean setDragData(DragSourceEvent event,
 			IStructuredSelection selection) {
 		if (selection != null) {

@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.model.ICElement;
  */
 public class CElementAdapterFactory implements IAdapterFactory {
 	
-	private static Class[] PROPERTIES= new Class[] {
+	private static Class<?>[] PROPERTIES= new Class[] {
 		IPropertySource.class,
 		IResource.class,
 		IWorkbenchAdapter.class,
@@ -45,13 +45,14 @@ public class CElementAdapterFactory implements IAdapterFactory {
 	/**
 	 * @see CElementAdapterFactory#getAdapterList
 	 */
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return PROPERTIES;
 	}
 
 	/**
 	 * @see CElementAdapterFactory#getAdapter
 	 */	
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Object element, Class key) {
 		ICElement celem = (ICElement) element;
 		

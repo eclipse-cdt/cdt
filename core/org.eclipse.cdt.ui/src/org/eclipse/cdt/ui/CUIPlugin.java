@@ -597,6 +597,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/** @deprecated Use {@link EditorsUI#getSharedTextColors()} instead. */
+	@Deprecated
 	public ISharedTextColors getSharedTextColors() {
 		return EditorsUI.getSharedTextColors();
 	}

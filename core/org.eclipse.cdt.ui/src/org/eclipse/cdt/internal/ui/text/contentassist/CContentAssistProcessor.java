@@ -136,6 +136,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
 	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		if (fValidator == null) {
 			fValidator= new CParameterListValidator();
@@ -146,6 +147,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#filterAndSort(java.util.List, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected List filterAndSortProposals(List proposals, IProgressMonitor monitor, ContentAssistInvocationContext context) {
 		IProposalFilter filter = getCompletionFilter();
 		ICCompletionProposal[] proposalsInput= new ICCompletionProposal[proposals.size()];
@@ -219,6 +221,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		return filter;
 	}
 	
+	@Override
 	protected List filterAndSortContextInformation(List contexts,
 			IProgressMonitor monitor) {
 		return contexts;
@@ -227,6 +230,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#createContext(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		return new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion, isAutoActivated());
 	}
@@ -234,6 +238,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#verifyAutoActivation(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	protected boolean verifyAutoActivation(ITextViewer viewer, int offset) {
 		IDocument doc= viewer.getDocument();
 		if (doc == null) {

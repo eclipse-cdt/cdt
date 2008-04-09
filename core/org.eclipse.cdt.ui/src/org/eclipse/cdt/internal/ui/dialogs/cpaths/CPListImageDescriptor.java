@@ -40,6 +40,7 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see CompositeImageDescriptor#getSize()
 	 */
+	@Override
 	protected Point getSize() {
 		if (fSize == null) {
 			ImageData data = fBaseImage.getImageData();
@@ -51,6 +52,7 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof CPListImageDescriptor)) {
 			return false;
@@ -63,6 +65,7 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fBaseImage.hashCode() & flags | fSize.hashCode();
 	}
@@ -70,6 +73,7 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
 	 */
+	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData bg = fBaseImage.getImageData();
 		if (bg == null) {

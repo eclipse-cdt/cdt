@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +27,8 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /**
  * Standard action for pasting resources on the clipboard to the selected resource's location.
@@ -77,7 +78,7 @@ public class PasteAction extends SelectionListenerAction {
 	 * @return the actual target of the paste action
 	 */
 	private IResource getTarget() {
-		List selectedResources = getSelectedResources();
+		List<?> selectedResources = getSelectedResources();
 
 		for (int i = 0; i < selectedResources.size(); i++) {
 			IResource resource = (IResource) selectedResources.get(i);
@@ -111,6 +112,7 @@ public class PasteAction extends SelectionListenerAction {
 	/**
 	 * Implementation of method defined on <code>IAction</code>.
 	 */
+	@Override
 	public void run() {
 		// try a resource transfer
 		ResourceTransfer resTransfer = ResourceTransfer.getInstance();
@@ -149,7 +151,7 @@ public class PasteAction extends SelectionListenerAction {
 	 * Returns the container to hold the pasted resources.
 	 */
 	private IContainer getContainer() {
-		List selection = getSelectedResources();
+		List<?> selection = getSelectedResources();
 		if (selection.get(0) instanceof IFile)
 			return ((IFile) selection.get(0)).getParent();
 		return (IContainer) selection.get(0);
@@ -159,6 +161,7 @@ public class PasteAction extends SelectionListenerAction {
 	 * <code>SelectionListenerAction</code> method enables this action if 
 	 * a resource compatible with what is on the clipboard is selected.
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (!super.updateSelection(selection))
 			return false;
@@ -172,11 +175,7 @@ public class PasteAction extends SelectionListenerAction {
 			}
 		});
 		IResource[] resourceData = clipboardData[0];
-		boolean isProjectRes = resourceData != null
-			&& resourceData.length > 0
-			&& resourceData[0].getType() == IResource.PROJECT;
-                                                                                                                             
-		if (isProjectRes) {
+		if (resourceData != null && resourceData.length > 0	&& resourceData[0].getType() == IResource.PROJECT) {
 			for (int i = 0; i < resourceData.length; i++) {
 				// make sure all resource data are open projects
 				// can paste open projects regardless of selection
@@ -199,7 +198,7 @@ public class PasteAction extends SelectionListenerAction {
 
 		// can paste files and folders to a single selection (file, folder,
 		// open project) or multiple file selection with the same parent
-		List selectedResources = getSelectedResources();
+		List<?> selectedResources = getSelectedResources();
 		if (selectedResources.size() > 1) {
 			// if more than one resource is selected the selection has 
 			// to be all files with the same parent

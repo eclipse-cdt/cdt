@@ -63,6 +63,7 @@ public class CCompositeReconcilingStrategy  extends CompositeReconcilingStrategy
 	/*
 	 * @see org.eclipse.jface.text.reconciler.CompositeReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		IProblemRequestorExtension e= getProblemRequestorExtension();
 		if (e != null) {
@@ -80,6 +81,7 @@ public class CCompositeReconcilingStrategy  extends CompositeReconcilingStrategy
 	/*
 	 * @see org.eclipse.jface.text.reconciler.CompositeReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(IRegion partition) {
 		IProblemRequestorExtension e= getProblemRequestorExtension();
 		if (e != null) {
@@ -97,6 +99,7 @@ public class CCompositeReconcilingStrategy  extends CompositeReconcilingStrategy
 	/*
 	 * @see org.eclipse.jface.text.reconciler.CompositeReconcilingStrategy#initialReconcile()
 	 */
+	@Override
 	public void initialReconcile() {
 		IProblemRequestorExtension e = getProblemRequestorExtension();
 		if (e != null) {

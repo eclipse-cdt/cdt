@@ -26,18 +26,22 @@ public class CHMultiDefChildNode extends CHNode {
     	super(parent, fileOfReferences, timestamp, decl);
     }
     
+	@Override
 	public int getReferenceCount() {
 		return getParent().getReferenceCount();
 	}
 	
+	@Override
 	public CHReferenceInfo getReference(int idx) {
 		return getParent().getReference(idx);
 	}
 	
+	@Override
 	public int getFirstReferenceOffset() {
 		return getParent().getFirstReferenceOffset();
 	}
 	
+	@Override
 	public void addReference(CHReferenceInfo info) {
 		assert false;
 	}

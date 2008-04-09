@@ -39,6 +39,7 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 		fFilteredContentTypes = Collections.EMPTY_SET;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = new Composite(parent, SWT.NONE);
 		area.setLayout(new GridLayout(2, false));
@@ -102,6 +103,7 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 		fFilteredContentTypes = contentTypes;
 	}
 
+	@Override
 	protected boolean isValidSelection() {
 		return fContentType.getSelectionIndex() != -1 && fLanguage.getSelectionIndex() != -1;
 	}

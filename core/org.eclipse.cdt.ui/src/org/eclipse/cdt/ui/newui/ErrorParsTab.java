@@ -41,11 +41,13 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	private CheckboxTableViewer tv;
 	private ICConfigurationDescription cfgd;
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new FillLayout());
 		table = new Table(usercomp, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 		}});
@@ -88,6 +90,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		}
 	}
 	
+	@Override
 	public void buttonPressed (int n) {
 		switch (n) {
 		case 0: // up
@@ -136,9 +139,11 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			key   = _key;
 			value = _value;
 		}
+		@Override
 		public String toString() { return value; } 
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription _cfgd) {
 		cfgd = _cfgd.getConfiguration();
 		if (mapParsers == null) return;
@@ -175,6 +180,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 
+	@Override
 	public void updateButtons() {
 		int cnt = table.getItemCount();
 		int pos = table.getSelectionIndex();
@@ -184,6 +190,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		buttonSetEnabled(4, cnt > 0);
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		ICConfigurationDescription sd = src.getConfiguration();
 		ICConfigurationDescription dd = dst.getConfiguration();
@@ -214,10 +221,12 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			cfgd.getBuildSetting().setErrorParserIDs(s);
 	}
 	// This page can be displayed for project only
+	@Override
 	public boolean canBeVisible() {
 		return page.isForProject() || page.isForPrefs();
 	}
 
+	@Override
 	protected void performDefaults() {
 		if (cfgd instanceof ICMultiConfigDescription)
 			((ICMultiConfigDescription)cfgd).setErrorParserIDs(null);

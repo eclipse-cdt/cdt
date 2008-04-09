@@ -62,6 +62,7 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 		}
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = new Composite(parent, SWT.NONE);
 		area.setLayout(new GridLayout(2, false));
@@ -144,6 +145,7 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 		}
 	}
 
+	@Override
 	protected boolean isValidSelection() {
 		return fContentType.getSelectionIndex() != -1 && fLanguage.getSelectionIndex() != -1 && fConfiguration.getSelectionIndex() != -1;
 	}

@@ -125,6 +125,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control contents= super.createContents(parent);
 		for (Iterator<Control> it= fColorExclusionControls.iterator(); it.hasNext(); ) {
@@ -141,6 +142,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * @return The control representing the main content.
 	 * 
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		fSourceViewer= createSourceViewer(parent, fTextStyle);
 
@@ -183,6 +185,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#createInfoTextArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createInfoTextArea(Composite parent) {
 		Control infoText= super.createInfoTextArea(parent);
 		fColorExclusionControls.add(infoText);
@@ -192,6 +195,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#createTitleControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createTitleControl(Composite parent) {
 		Control titleText= super.createTitleControl(parent);
 		fColorExclusionControls.add(titleText);
@@ -201,6 +205,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
 	 */
+	@Override
 	protected List<Control> getBackgroundColorExclusions() {
 		List<Control> exclusions= super.getBackgroundColorExclusions();
 		exclusions.addAll(fColorExclusionControls);
@@ -210,6 +215,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getForegroundColorExclusions()
 	 */
+	@Override
 	protected List<Control> getForegroundColorExclusions() {
 		List<Control> exclusions= super.getForegroundColorExclusions();
 		exclusions.addAll(fColorExclusionControls);
@@ -286,6 +292,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#fillDialogMenu(IMenuManager)
 	 */
+	@Override
 	protected void fillDialogMenu(IMenuManager dialogMenu) {
 		super.fillDialogMenu(dialogMenu);
 		fillViewMenu(dialogMenu);
@@ -313,6 +320,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		close();
 	}
 
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		if (!restoresLocation()) {
 			Point size = new Point(400, 400);
@@ -419,6 +427,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getFocusControl()
 	 */
+	@Override
 	protected Control getFocusControl() {
 		return fSourceViewer.getTextWidget();
 	}
@@ -455,6 +464,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		String sectionName= getId();
 		if (sectionName == null) {

@@ -205,6 +205,7 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 		gd.widthHint= 300; // don't get wider initially
 		link.setLayoutData(gd);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage", null, null); //$NON-NLS-1$
 			}

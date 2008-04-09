@@ -22,6 +22,7 @@ public class GNUXCoffBinaryParserPage extends AbstractGNUBinaryParserPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.GNUElfBinaryParserPage#getRealBinaryParserPage()
 	 */
+	@Override
 	protected AbstractGNUBinaryParserPage getRealBinaryParserPage() {
 		return this;
 	}

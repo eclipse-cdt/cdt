@@ -83,10 +83,12 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			return fExtension.getLabel();
 		}
 
+		@Override
 		public String toString() {
 			return fExtension.getUniqueIdentifier();
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof BinaryParserConfiguration) {
 				return this.getID().equals(((BinaryParserConfiguration) obj).getID());
@@ -97,6 +99,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	protected class BinaryParserLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText(Object element) {
 			return ((BinaryParserConfiguration) element).getName();
 		}
@@ -125,6 +128,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		binaryList = new CheckedListDialogField(listAdapter, buttonLabels, new BinaryParserLabelProvider()) {
 
+			@Override
 			protected int getListStyle() {
 				int style = super.getListStyle();
 				return style & ~SWT.MULTI;
@@ -176,6 +180,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		return false; // invalid extension definition (must have at least cextension elements)
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -210,6 +215,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -269,6 +275,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		monitor.done();
 	}
 
+	@Override
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 
@@ -349,6 +356,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		return new String[0];
 	}
 
+	@Override
 	public void performDefaults() {
 		String id = null;
 
@@ -386,6 +394,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		getContainer().updateContainer();
 	}
 
+	@Override
 	protected String getCurrentBinaryParserID() {
 		List list = binaryList.getSelectedElements();
 		if (list.size() > 0) {
@@ -398,6 +407,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		return null;
 	}
 
+	@Override
 	protected String[] getBinaryParserIDs() {
 		return (String[]) configMap.keySet().toArray(new String[configMap.keySet().size()]);
 	}

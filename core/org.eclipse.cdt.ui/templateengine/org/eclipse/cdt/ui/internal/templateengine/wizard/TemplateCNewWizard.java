@@ -29,6 +29,7 @@ public class TemplateCNewWizard extends CNewWizard {
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */
+	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		Template[] templates = TemplateEngineUI.getDefault().getTemplates();
 		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
@@ -46,6 +47,7 @@ public class TemplateCNewWizard extends CNewWizard {
 		return items.toArray(new EntryDescriptor[items.size()]);
 	}
 
+	@Override
 	public void setDependentControl(Composite parent,
 			IWizardItemsListListener page) {
 		//nothing to do?

@@ -22,15 +22,18 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class NullIndexerBlock extends AbstractIndexerPage {
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		ControlEnableState.disable(getControl());
 	}
 
+	@Override
 	public Properties getProperties() {
 		return new Properties();
 	}
 
+	@Override
 	public void setProperties(Properties properties) {
 	}
 }

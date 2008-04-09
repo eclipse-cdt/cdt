@@ -58,6 +58,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	/**
 	 * Sets the focus on the starting input field.
 	 */		
+	@Override
 	protected void setFocus() {
 		fNewFileDialogField.setFocus();
 	}
@@ -69,6 +70,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	 * @param parent the parent composite
 	 * @param nColumns number of columns to span
 	 */		
+	@Override
 	protected void createFileControls(Composite parent, int nColumns) {
 		fNewFileDialogField.doFillIntoGrid(parent, nColumns);
 		Text textControl = fNewFileDialogField.getTextControl(null);
@@ -76,6 +78,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 		textControl.addFocusListener(new StatusFocusListener(NEW_FILE_ID));
 	}
 	
+	@Override
 	public IPath getFileFullPath() {
 		String str = fNewFileDialogField.getText();
         IPath path = null;
@@ -90,6 +93,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	    return path;
 	}
 
+	@Override
 	protected IStatus fileNameChanged() {
 		StatusInfo status = new StatusInfo();
 		
@@ -136,6 +140,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 		return status;
 	}
 	
+	@Override
 	public void createFile(IProgressMonitor monitor) throws CoreException {
         IPath filePath = getFileFullPath();
         if (filePath != null) {
@@ -162,6 +167,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizardPage#getCreatedFileTU()
 	 */
+	@Override
 	public ITranslationUnit getCreatedFileTU() {
 		return fNewFileTU;
 	}
@@ -169,6 +175,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	/*
 	 * @see org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizardPage#getApplicableTemplates()
 	 */
+	@Override
 	protected Template[] getApplicableTemplates() {
 		return StubUtility.getFileTemplatesForContentTypes(
 				new String[] { CCorePlugin.CONTENT_TYPE_CXXHEADER, CCorePlugin.CONTENT_TYPE_CHEADER }, null);

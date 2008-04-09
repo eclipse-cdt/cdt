@@ -50,6 +50,7 @@ public interface IOccurrencesFinder {
 			return fDescription;
 		}
 
+		@Override
 		public String toString() {
 			return "[" + fOffset + " / " + fLength + "] " + fDescription; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}

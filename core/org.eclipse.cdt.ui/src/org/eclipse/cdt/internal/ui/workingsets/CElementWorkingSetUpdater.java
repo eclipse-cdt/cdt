@@ -60,6 +60,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 		/*
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (fWorkingSet) {
 				checkElementExistence(fWorkingSet);
@@ -123,6 +124,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 		check.setRule(SingletonRule.INSTANCE);
 		check.schedule(2000 + fWorkingSets.size() * 100);
 		check.addJobChangeListener(new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				synchronized (fWorkingSets) {
 					fWorkingSets.add(workingSet);

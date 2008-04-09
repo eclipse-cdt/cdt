@@ -31,6 +31,7 @@ import org.eclipse.jface.wizard.IWizardPage;
  * @deprecated - use IPathEntryContainerPage 
  */
 
+@Deprecated
 public interface ICPathContainerPage extends IWizardPage {
 
 	/**

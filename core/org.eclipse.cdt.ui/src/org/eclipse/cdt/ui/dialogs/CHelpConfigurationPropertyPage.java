@@ -61,6 +61,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 			fHelpProviderIcon= CPluginImages.DESC_OBJS_LIBRARY;
 		}
 		
+		@Override
 		public String getText(Object element) {
 			if (element instanceof CHelpBookDescriptor) {
 				return ((CHelpBookDescriptor)element).getCHelpBook().getTitle();
@@ -68,6 +69,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 			return super.getText(element);
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof CHelpBookDescriptor) {
 				return fRegistry.get(fHelpProviderIcon);
@@ -157,6 +159,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		fCHelpSettingsDisplay= new CHelpSettingsDisplay();
 		fCHelpSettingsDisplay.init(getResource());
@@ -171,6 +174,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		return (IResource)element.getAdapter(IResource.class);
 	}
 
+	@Override
 	public boolean performOk() {
 		fCHelpSettingsDisplay.performOk();
 		super.performOk();

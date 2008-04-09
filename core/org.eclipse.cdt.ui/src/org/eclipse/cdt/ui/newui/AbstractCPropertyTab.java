@@ -183,7 +183,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			
 			buttons[i].setLayoutData(gdb);
 			buttons[i].addSelectionListener(new SelectionAdapter() {
-		        public void widgetSelected(SelectionEvent event) {
+		        @Override
+				public void widgetSelected(SelectionEvent event) {
 		        	buttonPressed(event);
 		        }});
 		}
@@ -336,7 +337,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		 b.setText(name);
 		 setupControl(b, span, mode);
 		 b.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent event) {
+		    @Override
+			public void widgetSelected(SelectionEvent event) {
 		    	setGrayed((Button)event.widget, false);
 		    	checkPressed(event);
 		 }});

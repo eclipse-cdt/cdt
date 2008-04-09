@@ -62,6 +62,7 @@ public class UIBooleanWidget extends InputUIElement {
 	/**
 	 * @return HashMap which contains the values in the Boolean Widget.
 	 */
+	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> values = new HashMap<String, String>();
 		values.put(uiAttributes.get(InputUIElement.ID), Boolean.toString(booleanValue));
@@ -71,6 +72,7 @@ public class UIBooleanWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
+	@Override
 	public void setValues(Map<String, String> valueMap) {
 		booleanValue = new Boolean(valueMap.get(uiAttributes.get(InputUIElement.ID))).booleanValue();
 	}
@@ -78,6 +80,7 @@ public class UIBooleanWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
+	@Override
 	public void createWidgets(UIComposite uiComposite) {
 		GridData gridData = null;
 		this.uiComposite = uiComposite;
@@ -101,6 +104,7 @@ public class UIBooleanWidget extends InputUIElement {
 		button.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
 		button.setSelection(new Boolean(booleanValue).booleanValue());
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				booleanValue = button.getSelection();
 			}
@@ -110,6 +114,7 @@ public class UIBooleanWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		boolean retVal= true;
 		String mandatory= uiAttributes.get(InputUIElement.MANDATORY);
@@ -122,6 +127,7 @@ public class UIBooleanWidget extends InputUIElement {
 	/*
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */
+	@Override
 	public void disposeWidget() {
 		label.dispose();
 		button.dispose();

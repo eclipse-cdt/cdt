@@ -25,7 +25,8 @@ public class IBWorkingSetFilter extends ViewerFilter {
         fWorkingSetFilter= wsFilter;
     }
     
-    public boolean select(Viewer viewer, Object parentElement, Object element) {
+    @Override
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
         if (parentElement instanceof IBNode && element instanceof IBNode) {
             IBNode node= (IBNode) element;
             if (!fWorkingSetFilter.isPartOfWorkingSet(node.getRepresentedTranslationUnit())) {

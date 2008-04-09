@@ -149,6 +149,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
+		@Override
 		public int category(Object element) {
 			if (element == COMMENT_NODE) {
 				return 1;
@@ -208,6 +209,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 //			if (element == COMMENT_NODE || element == CODE_NODE || element == FILE_NODE) {
 //				return null;
@@ -245,6 +247,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			if (element == COMMENT_NODE || element == CODE_NODE || element == FILE_NODE) {
 				return (String) element;
@@ -359,6 +362,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		fCodeTemplateTree.postSetSelection(new StructuredSelection(element));
 	}
 
+	@Override
 	public boolean hasProjectSpecificOptions(IProject project) {
 		if (super.hasProjectSpecificOptions(project))
 			return true;
@@ -369,6 +373,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		return false;
 	}	
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		fPixelConverter=  new PixelConverter(parent);
 
@@ -397,6 +402,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#updateControls()
 	 */
+	@Override
 	protected void updateControls() {
 		fGenerateComments.setSelection(getBooleanValue(PREF_GENERATE_COMMENTS));
 	}
@@ -770,6 +776,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			Messages.format(PreferencesMessages.CodeTemplateBlock_export_exists_message, file.getAbsolutePath())); 
 	}
 
+	@Override
 	public void performDefaults() {
 		super.performDefaults();
 		fTemplateStore.restoreDefaults();
@@ -827,6 +834,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.OptionsConfigurationBlock#validateSettings(java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected void validateSettings(Key changedKey, String oldValue, String newValue) {
 		// no validation here
 	}

@@ -75,6 +75,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	 * 
 	 * @param prefs
 	 */
+	@Deprecated
 	public AbstractErrorParserBlock(Preferences prefs) {
 		this();
 //		usingDeprecatedContructor = true;
@@ -86,6 +87,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		setDescription(CUIPlugin.getResourceString(DESC));
 	}
 
+	@Override
 	public Image getImage() {
 		return null;
 	}
@@ -108,6 +110,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			 * 
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
+			@Override
 			public String getText(Object element) {
 				String name = (String)mapParsers.get(element.toString());
 				return name != null ? name : element.toString(); 
@@ -157,6 +160,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	 *  @deprecated - use getErrorParserIDs(boolean defaults)
 	 * @return String[]
 	 */
+	@Deprecated
 	protected String[] getErrorParserIDs() {
 		return new String[0];
 	}
@@ -172,6 +176,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	 * @param parserIDs
 	 */
 
+	@Deprecated
 	protected void saveErrorParsers(Preferences prefs, String[] parserIDs) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < parserIDs.length; i++) {
@@ -250,6 +255,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
@@ -283,6 +289,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		initializeValues();
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if (listDirty) {
 			IProject project = getContainer().getProject();
@@ -313,6 +320,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		}
 	}
 
+	@Override
 	public void performDefaults() {
 		setDefaults();
 	}

@@ -31,6 +31,7 @@ public class MemberFilter extends ViewerFilter{
 	public static final int FILTER_STATIC= 2;
 	public static final int FILTER_FIELDS= 4;
 	/** @deprecated Unsupported filter constant */
+	@Deprecated
 	public static final int FILTER_LOCALTYPES= 8;
 	
 	private int fFilterProperties;
@@ -63,6 +64,7 @@ public class MemberFilter extends ViewerFilter{
 	/*
 	 * @see ViewerFilter@select
 	 */		
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if(element instanceof IDeclaration){
 			try {

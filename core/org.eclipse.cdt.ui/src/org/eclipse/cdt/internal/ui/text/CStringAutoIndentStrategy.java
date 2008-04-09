@@ -176,6 +176,7 @@ public class CStringAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 	/*
 	 * @see org.eclipse.jface.text.IAutoIndentStrategy#customizeDocumentCommand(IDocument, DocumentCommand)
 	 */
+	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 		try {
 			if (command.length != 0 || command.text == null)

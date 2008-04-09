@@ -68,6 +68,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	/* 
 	 * Method declared on ActionGroup.
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		
@@ -133,6 +134,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	/* 
 	 * Overrides method declared in ActionGroup
 	 */
+	@Override
 	public void dispose() {
 		fFindDeclarationsAction= null;
 		fFindDeclarationsProjectAction=null;

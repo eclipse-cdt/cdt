@@ -135,6 +135,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fListener != null) {
@@ -150,6 +151,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		boolean isTU = newInput instanceof ITranslationUnit;
 
@@ -175,6 +177,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/**
 	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		Object[] children = null;
 		// Use the deferred manager for the first time (when parsing)
@@ -194,6 +197,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return super.hasChildren(element);
 	}

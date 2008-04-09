@@ -29,6 +29,7 @@ public class CPElementSorter extends ViewerSorter {
 	/*
 	 * @see ViewerSorter#category(Object)
 	 */
+	@Override
 	public int category(Object obj) {
 		if (obj instanceof CPElement) {
 			switch ( ((CPElement)obj).getEntryKind()) {
@@ -60,6 +61,7 @@ public class CPElementSorter extends ViewerSorter {
 		return OTHER;
 	}
 
+	@Override
 	public void sort(Viewer viewer, Object[] elements) {
 		// include paths and symbol definitions must not be sorted
 		List sort = new ArrayList(elements.length);

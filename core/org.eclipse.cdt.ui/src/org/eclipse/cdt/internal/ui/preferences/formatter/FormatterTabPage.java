@@ -37,6 +37,7 @@ public abstract class FormatterTabPage extends ModifyDialogTabPage {
 		fDialogSettings= CUIPlugin.getDefault().getDialogSettings();
 	}
 
+	@Override
 	protected Composite doCreatePreviewPane(Composite composite, int numColumns) {
 		
 		createLabel(numColumns - 1, composite, FormatterMessages.ModifyDialogTabPage_preview_label_text);  
@@ -45,6 +46,7 @@ public abstract class FormatterTabPage extends ModifyDialogTabPage {
 		fShowInvisibleButton.setText(FormatterMessages.FormatterTabPage_ShowInvisibleCharacters_label);
 		fShowInvisibleButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
 		fShowInvisibleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fPreview.showInvisibleCharacters(fShowInvisibleButton.getSelection());
 				fDialogSettings.put(SHOW_INVISIBLE_PREFERENCE_KEY, fShowInvisibleButton.getSelection());
@@ -69,6 +71,7 @@ public abstract class FormatterTabPage extends ModifyDialogTabPage {
 		return fDialogSettings.getBoolean(SHOW_INVISIBLE_PREFERENCE_KEY);
 	}
 	
+	@Override
 	protected void doUpdatePreview() {
 		boolean showInvisible= isShowInvisible();
 		fPreview.showInvisibleCharacters(showInvisible);

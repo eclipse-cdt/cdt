@@ -180,11 +180,13 @@ public class Template extends TemplateCore {
 	 * resources to each process (Ref. ProcessResourceManager).
 	 * @param monitor 
 	 */
+	@Override
 	public IStatus[] executeTemplateProcesses(IProgressMonitor monitor, final boolean showError) {
 		setDirty();
 		TemplateEngine.getDefault().updateSharedDefaults(this);
 		final IStatus[][] result = new IStatus[1][];
 		WorkspaceModifyOperation wmo = new WorkspaceModifyOperation() {
+			@Override
 			protected void execute(IProgressMonitor monitor) throws org.eclipse.core.runtime.CoreException ,java.lang.reflect.InvocationTargetException ,InterruptedException {
 				try {
 					result[0] = getProcessHandler().processAll(monitor);

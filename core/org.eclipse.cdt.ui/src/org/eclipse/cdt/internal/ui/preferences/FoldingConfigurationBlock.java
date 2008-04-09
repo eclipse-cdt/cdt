@@ -220,6 +220,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 			/*
 			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 			 */
+			@Override
 			public Image getImage(Object element) {
 				return null;
 			}
@@ -227,6 +228,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 			/*
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
+			@Override
 			public String getText(Object element) {
 				return ((CFoldingStructureProviderDescriptor) element).getName();
 			}

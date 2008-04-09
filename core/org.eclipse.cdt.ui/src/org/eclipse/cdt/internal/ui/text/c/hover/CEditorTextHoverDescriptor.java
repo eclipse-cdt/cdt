@@ -167,12 +167,14 @@ public class CEditorTextHoverDescriptor implements Comparable {
 		return Boolean.valueOf(fElement.getAttribute(ACTIVATE_PLUG_IN_ATTRIBUTE)).booleanValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null)
 			return false;
 		return getId().equals(((CEditorTextHoverDescriptor)obj).getId());
 	}
 
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}

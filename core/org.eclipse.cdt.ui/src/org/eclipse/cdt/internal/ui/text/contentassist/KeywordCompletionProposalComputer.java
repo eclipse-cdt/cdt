@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 public class KeywordCompletionProposalComputer extends ParsingBasedProposalComputer implements ICompletionProposalComputer {
 
+	@Override
 	protected List<CCompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix)

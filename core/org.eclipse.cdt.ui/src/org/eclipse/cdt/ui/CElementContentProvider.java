@@ -105,7 +105,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
     /**
      * @see org.eclipse.jface.viewers.IContentProvider#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         super.dispose();
         CoreModel.getDefault().removeElementChangedListener(this);
     }
@@ -113,7 +114,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
     /**
      * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         super.inputChanged(viewer, oldInput, newInput);
 
@@ -329,14 +331,16 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				fViewer.refresh(project);
 			}
 	    }
-	    public boolean equals(Object o) {
+	    @Override
+		public boolean equals(Object o) {
 	    	if (o instanceof RefreshContainer) {
 	    		RefreshContainer c = (RefreshContainer)o;
 	    		return c.container.equals(container) && c.project.equals(project);
 	    	}
 	        return false;
 	    }
-	    public int hashCode() {
+	    @Override
+		public int hashCode() {
 	    	return container.hashCode()*10903143 + 31181;
 	    }
 	}
@@ -358,14 +362,16 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				fViewer.refresh(element);						
 			}
 		}
-	    public boolean equals(Object o) {
+	    @Override
+		public boolean equals(Object o) {
 	    	if (o instanceof RefreshElement) {
 	    		RefreshElement c = (RefreshElement)o;
 	    		return c.element.equals(element);
 	    	}
 	        return false;
 	    }
-	    public int hashCode() {
+	    @Override
+		public int hashCode() {
 	    	return element.hashCode()*7 + 490487;
 	    }
 	}
@@ -381,14 +387,16 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			// enable state.
 			fViewer.setSelection(fViewer.getSelection());
 		}
-	    public boolean equals(Object o) {
+	    @Override
+		public boolean equals(Object o) {
 	    	if (o instanceof RefreshElement) {
 	    		RefreshElement c = (RefreshElement)o;
 	    		return c.element.equals(element);
 	    	}
 	        return false;
 	    }
-	    public int hashCode() {
+	    @Override
+		public int hashCode() {
 	    	return element.hashCode()*11 + 490487;
 	    }
 	}

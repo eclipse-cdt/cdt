@@ -33,6 +33,7 @@ public class BuildConsolePartition extends TypedRegion {
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object partition) {
 		if (super.equals(partition)) {
 			return fStream.equals(((BuildConsolePartition) partition).getStream());
@@ -43,6 +44,7 @@ public class BuildConsolePartition extends TypedRegion {
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return super.hashCode() + fStream.hashCode();
 	}

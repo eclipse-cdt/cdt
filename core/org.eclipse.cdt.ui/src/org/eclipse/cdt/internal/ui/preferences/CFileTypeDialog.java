@@ -43,11 +43,13 @@ public class CFileTypeDialog extends Dialog {
 	private String		fPattern;
 	private IContentType fType;
 	
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PreferencesMessages.CFileTypeDialog_title); 
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -55,6 +57,7 @@ public class CFileTypeDialog extends Dialog {
 		getOkayButton().setEnabled(getPatternFromControl().length() > 0);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		((GridLayout) composite.getLayout()).numColumns = 2;
@@ -158,6 +161,7 @@ public class CFileTypeDialog extends Dialog {
 		return type;
 	}
 	
+	@Override
 	protected void okPressed() {
 		fPattern 	=	getPatternFromControl();
 		fType		=	getTypeFromControl();

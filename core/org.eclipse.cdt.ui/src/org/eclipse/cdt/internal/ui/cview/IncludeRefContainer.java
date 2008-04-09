@@ -12,13 +12,15 @@
 package org.eclipse.cdt.internal.ui.cview;
 
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * IncludeRefContainer
@@ -38,6 +40,8 @@ public class IncludeRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;
@@ -51,6 +55,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		try {
 			IIncludeReference[] references = fCProject.getIncludeReferences();
@@ -67,6 +72,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return CPluginImages.DESC_OBJS_INCLUDES_CONTAINER;
 	}
@@ -74,6 +80,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
+	@Override
 	public String getLabel(Object o) {
 		return CViewMessages.getString("IncludeRefContainer.Includes");  //$NON-NLS-1$
 	}
@@ -81,6 +88,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object o) {
 		return getCProject();
 	}
@@ -92,6 +100,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IncludeRefContainer) {
 			IncludeRefContainer other = (IncludeRefContainer)obj;
@@ -103,6 +112,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		if (fCProject != null) {
 			return fCProject.hashCode();

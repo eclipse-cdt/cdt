@@ -33,6 +33,7 @@ public class ASMEditorActionContributor extends TextEditorActionContributor {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#init(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
@@ -41,6 +42,7 @@ public class ASMEditorActionContributor extends TextEditorActionContributor {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
 		internalSetActiveEditor(part);
@@ -57,6 +59,7 @@ public class ASMEditorActionContributor extends TextEditorActionContributor {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		internalSetActiveEditor(null);
 		super.dispose();

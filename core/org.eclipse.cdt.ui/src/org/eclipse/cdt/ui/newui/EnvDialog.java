@@ -57,12 +57,14 @@ public class EnvDialog extends Dialog {
 	/**
 	 * Method is overridden to disable "OK" button at start
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control out = super.createContents(parent);
 		setButtons();
 		return out;
 	}	
 	
+	@Override
 	protected Control createDialogArea(Composite c) {
 		c.setLayout(new GridLayout(3, false));
 		GridData gd;
@@ -93,6 +95,7 @@ public class EnvDialog extends Dialog {
 		final Button b = new Button(c, SWT.PUSH);
 		b.setText(UIMessages.getString("EnvDialog.2")); //$NON-NLS-1$
 		b.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String x = AbstractCPropertyTab.getVariableDialog(b.getShell(), cfgd);
 				if (x != null) {
@@ -111,6 +114,7 @@ public class EnvDialog extends Dialog {
 			b_add2all.setVisible(false);
 		else
 			b_add2all.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					toAll = b_add2all.getSelection();
 				}});

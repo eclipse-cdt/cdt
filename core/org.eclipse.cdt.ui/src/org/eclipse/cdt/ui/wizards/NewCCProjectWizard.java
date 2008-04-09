@@ -33,6 +33,7 @@ public abstract class NewCCProjectWizard extends NewCProjectWizard {
 	}
 
 
+	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		super.doRun(monitor);
 		// Add C++ Nature to the newly created project.

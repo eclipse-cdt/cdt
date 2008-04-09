@@ -50,6 +50,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	NewIncludesSymbolsTabBlock fIncludesSymbolsBlock;
 	IPathEntryStore fStore;
 
+	@Override
 	protected Control createContents(Composite parent) {
 		IProject project = getProject();
 		Control result;
@@ -118,12 +119,14 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fStore != null) {
 			fStore.removePathEntryStoreListener(this);
 		}
 	}
 	
+	@Override
 	public void setVisible(boolean visible) {
 		if (fIncludesSymbolsBlock != null) {
 			if (!visible) {
@@ -182,6 +185,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	/*
 	 * @see IPreferencePage#performOk
 	 */
+	@Override
 	public boolean performOk() {
 		if (fIncludesSymbolsBlock != null) {
 			getSettings().put(INDEX, fIncludesSymbolsBlock.getPageIndex());
@@ -228,6 +232,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	 * 
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		if (fIncludesSymbolsBlock != null) {
 			getSettings().put(INDEX, fIncludesSymbolsBlock.getPageIndex());

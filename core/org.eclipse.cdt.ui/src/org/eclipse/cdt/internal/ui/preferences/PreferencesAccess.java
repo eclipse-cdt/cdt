@@ -70,14 +70,17 @@ public class PreferencesAccess {
 			return new WorkingCopyScopeContext(fWorkingCopyManager, original);
 		}
 		
+		@Override
 		public IScopeContext getDefaultScope() {
 			return getWorkingCopyScopeContext(super.getDefaultScope());
 		}
 		
+		@Override
 		public IScopeContext getInstanceScope() {
 			return getWorkingCopyScopeContext(super.getInstanceScope());
 		}
 		
+		@Override
 		public IScopeContext getProjectScope(IProject project) {
 			return getWorkingCopyScopeContext(super.getProjectScope(project));
 		}
@@ -85,6 +88,7 @@ public class PreferencesAccess {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.preferences.PreferencesAccess#applyChanges()
 		 */
+		@Override
 		public void applyChanges() throws BackingStoreException {
 			fWorkingCopyManager.applyChanges();
 		}

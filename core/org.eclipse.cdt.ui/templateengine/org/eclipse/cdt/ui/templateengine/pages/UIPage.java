@@ -114,6 +114,7 @@ public abstract class UIPage extends DialogPage {
 	 * 
 	 * @return Control.
 	 */
+	@Override
 	public Control getControl() {
 		return uiComposite;
 	}

@@ -355,6 +355,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	/*
 	 * @see PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		fOverlayStore.propagate();
 		CUIPlugin.getDefault().savePluginPreferences();
@@ -364,6 +365,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fOverlayStore.loadDefaults();
 		initializeFields();
@@ -373,6 +375,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	/*
 	 * @see DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fOverlayStore != null) {
 			fOverlayStore.stop();

@@ -23,11 +23,12 @@ import org.eclipse.cdt.core.model.ICProject;
  */
 public class CProjectAdapterFactory implements IAdapterFactory {
 
-	private static final Class[] ADAPTERS = { IProject.class };
+	private static final Class<?>[] ADAPTERS = { IProject.class };
 
 	/*
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IProject.class.equals(adapterType)) {
 			return ((ICProject)adaptableObject).getProject();
@@ -38,7 +39,7 @@ public class CProjectAdapterFactory implements IAdapterFactory {
 	/*
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return ADAPTERS;
 	}
 

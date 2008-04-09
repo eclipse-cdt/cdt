@@ -29,13 +29,18 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.rse.tests,
  org.eclipse.rse.tests.core,
  org.eclipse.rse.tests.core.connection,
+ org.eclipse.rse.tests.core.passwords,
  org.eclipse.rse.tests.core.registries,
+ org.eclipse.rse.tests.initialization,
  org.eclipse.rse.tests.internal;x-internal:=true,
  org.eclipse.rse.tests.internal.testsubsystem;x-internal:=true,
  org.eclipse.rse.tests.persistence,
  org.eclipse.rse.tests.preferences,
+ org.eclipse.rse.tests.profiles,
  org.eclipse.rse.tests.subsystems.files,
  org.eclipse.rse.tests.subsystems.testsubsystem,
  org.eclipse.rse.tests.testsubsystem,
- org.eclipse.rse.tests.testsubsystem.interfaces
+ org.eclipse.rse.tests.testsubsystem.interfaces,
+ org.eclipse.rse.tests.ui.mnemonics,
+ org.eclipse.rse.tests.ui.preferences
 Bundle-ClassPath: rsetests.jar

@@ -18,6 +18,7 @@ Eclipse-LazyStart: true
 Export-Package: 
  org.eclipse.rse.connectorservice.dstore,
  org.eclipse.rse.connectorservice.dstore.util,
- org.eclipse.rse.internal.connectorservice.dstore;x-internal:=true
+ org.eclipse.rse.internal.connectorservice.dstore;x-internal:=true,
+ org.eclipse.rse.internal.connectorservice.dstore.ui.propertypages;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

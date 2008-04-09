@@ -59,6 +59,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return null;
 	}
@@ -66,6 +67,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
 	 */
+	@Override
 	protected CElementInfo createElementInfo() {
 		return new OpenableInfo(this);
 	}
@@ -80,6 +82,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
 		return computeChildren(info, underlyingResource);
 	}
@@ -144,6 +147,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return fPath;
 	}

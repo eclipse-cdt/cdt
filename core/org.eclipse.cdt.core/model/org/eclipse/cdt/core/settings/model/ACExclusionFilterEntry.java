@@ -36,6 +36,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 		this.exclusionPatterns = exclusionPatterns != null ? (IPath[])exclusionPatterns.clone() : new IPath[0];
 	}
 
+	@Override
 	protected final boolean isFile() {
 		return false;
 	}
@@ -67,6 +68,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 		return this.fullCharExclusionPatterns;
 	}
 	
+	@Override
 	public boolean equals(Object other) {
 		if(!super.equals(other))
 			return false;
@@ -75,10 +77,12 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 		return Arrays.equals(exclusionPatterns, otherEntry.exclusionPatterns);
 	}
 
+	@Override
 	public int hashCode() {
 		return super.hashCode() + exclusionPatterns.hashCode();
 	}
 
+	@Override
 	public boolean equalsByContents(ICSettingEntry entry) {
 		if(!super.equalsByContents(entry))
 			return false;
@@ -87,6 +91,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 		return Arrays.equals(exclusionPatterns, otherEntry.exclusionPatterns);
 	}
 
+	@Override
 	protected String contentsToString() {
 		String result = super.contentsToString();
 		if(exclusionPatterns.length != 0){

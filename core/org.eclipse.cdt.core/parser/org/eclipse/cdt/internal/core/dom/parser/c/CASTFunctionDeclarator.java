@@ -57,7 +57,8 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
         varArgs = value;
     }
 
-    protected boolean postAccept( ASTVisitor action ){
+    @Override
+	protected boolean postAccept( ASTVisitor action ){
         IASTParameterDeclaration [] params = getParameters();
         for ( int i = 0; i < params.length; i++ ) {
             if( !params[i].accept( action ) ) return false;

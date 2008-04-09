@@ -57,6 +57,7 @@ public class QualifierTypeClone implements IQualifierType, ITypeContainer, IInde
 	public void setType(IType type) {
 		this.type = type;
 	}
+	@Override
 	public Object clone() {
 		return new QualifierTypeClone(this);
 	}

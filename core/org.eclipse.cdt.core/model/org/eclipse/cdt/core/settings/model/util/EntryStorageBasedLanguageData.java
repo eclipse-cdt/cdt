@@ -31,6 +31,7 @@ public abstract class EntryStorageBasedLanguageData extends CDefaultLanguageData
 		super(id, languageId, ids, isContentTypes);
 	}
 
+	@Override
 	public ICLanguageSettingEntry[] getEntries(int kind) {
 		AbstractEntryStorage storage = getStorage(kind);
 		if(storage != null){
@@ -40,6 +41,7 @@ public abstract class EntryStorageBasedLanguageData extends CDefaultLanguageData
 		return new ICLanguageSettingEntry[0];
 	}
 
+	@Override
 	public void setEntries(int kind, ICLanguageSettingEntry[] entries) {
 		AbstractEntryStorage storage = getStorage(kind);
 		if(storage != null){
@@ -55,6 +57,7 @@ public abstract class EntryStorageBasedLanguageData extends CDefaultLanguageData
 		return fStore.getEntries(kind);
 	}
 	
+	@Override
 	protected EntryStore createStore(){
 		return new EntryStore(false);
 	}

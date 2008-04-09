@@ -29,6 +29,7 @@ public class CPPBlockScope extends CPPNamespaceScope implements ICPPBlockScope {
 		super( physicalNode );
 	}
 	
+	@Override
 	public IName getScopeName(){
 	    IASTNode node = getPhysicalNode();
 	    if( node instanceof IASTCompoundStatement && node.getParent() instanceof IASTFunctionDefinition ){

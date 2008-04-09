@@ -41,9 +41,11 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegmentCount()
 	 */
+	@Override
 	public int getSegmentCount() {
 		return numSegments;
 	}
+	@Override
 	public ITokenDuple getLastSegment()
 	{
 		IToken first = null, last = null, token = null;
@@ -91,10 +93,12 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getTemplateIdArgLists()
 	 */
+	@Override
 	public List[] getTemplateIdArgLists() {
 		return argLists;
 	}
 	
+	@Override
 	public ITokenDuple[] getSegments()
 	{
 		List r = new ArrayList();

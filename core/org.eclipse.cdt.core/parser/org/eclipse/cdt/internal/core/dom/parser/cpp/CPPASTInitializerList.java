@@ -38,7 +38,8 @@ public class CPPASTInitializerList extends CPPASTNode implements IASTInitializer
     private IASTInitializer [] initializers = null;
     private int initializersPos=-1;
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitInitializers ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

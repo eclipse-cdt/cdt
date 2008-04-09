@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  @deprecated - use org.eclipse.cdt.ui.utils.AR
  *  @see ARHeader
  */
+@Deprecated
 public class PEArchive {
 
 	protected String filename;
@@ -47,6 +48,7 @@ public class PEArchive {
 	/**
 	 * Do not leak fds.
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		try {
 			dispose();

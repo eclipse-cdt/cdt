@@ -55,6 +55,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		super(pdom, record);
 	}
 
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ITypedef) {
 			ITypedef td= (ITypedef) newBinding;
@@ -110,10 +111,12 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		return true;
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CTYPEDEF;
 	}
@@ -144,5 +147,6 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 	}
 
 	public void setType(IType type) {fail();}		
+	@Override
 	public Object clone() {fail(); return null;}
 }

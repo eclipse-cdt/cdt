@@ -67,6 +67,7 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		return getLanguageSettings();
 	}
 
+	@Override
 	protected CLanguageData copyLanguageData(CLanguageData base, boolean clone) {
 		return new CLanguageSettingCache(base, this);
 	}
@@ -79,6 +80,7 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		return exclude == isExcluded();
 	}
 
+	@Override
 	public void setPath(IPath path) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -119,11 +121,13 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public CLanguageData createLanguageDataForContentTypes(String languageId,
 			String[] typesIds) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public CLanguageData createLanguageDataForExtensions(String languageId,
 			String[] extensions) {
 		throw ExceptionFactory.createIsReadOnlyException();
@@ -133,10 +137,12 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		return getPath().segmentCount() == 0;
 	}
 	
+	@Override
 	public IPath getPath() {
 		return ResourceDescriptionHolder.normalizePath(super.getPath());
 	}
 
+	@Override
 	public boolean hasCustomSettings() {
 		return true;
 	}

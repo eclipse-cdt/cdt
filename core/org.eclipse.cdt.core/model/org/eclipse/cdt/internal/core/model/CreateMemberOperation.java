@@ -60,6 +60,7 @@ public abstract class CreateMemberOperation extends CreateElementInTUOperation {
 	 * create this new element.
 	 * Used by the <code>CopyElementsOperation</code> for renaming
 	 */
+	@Override
 	protected void setAlteredName(String newName) {
 		fAlteredName = newName;
 	}
@@ -72,6 +73,7 @@ public abstract class CreateMemberOperation extends CreateElementInTUOperation {
 	  *	<li>NAME_COLLISION - A name collision occurred in the destination
 	 * </ul>
 	 */
+	@Override
 	public ICModelStatus verify() {
 		ICModelStatus status = super.verify();
 		if (!status.isOK()) {

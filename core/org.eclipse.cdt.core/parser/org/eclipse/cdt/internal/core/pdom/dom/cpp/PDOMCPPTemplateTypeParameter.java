@@ -62,10 +62,12 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 		super(pdom, bindingRecord);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_TYPE_PARAMETER;
 	}
@@ -110,5 +112,6 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 		return (ICPPBinding) getParentBinding();
 	}
 	
+	@Override
 	public Object clone() { fail();return null; }
 }

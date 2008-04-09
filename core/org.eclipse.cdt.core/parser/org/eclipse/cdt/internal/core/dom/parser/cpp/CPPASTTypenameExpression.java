@@ -75,7 +75,8 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
         return init;
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

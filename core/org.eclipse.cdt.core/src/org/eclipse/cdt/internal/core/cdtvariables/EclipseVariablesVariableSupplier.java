@@ -70,6 +70,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
 		 */
+		@Override
 		public String getStringValue() throws CdtVariableException {
 			if(!fInitialized){
 				loadValue(fVariable);

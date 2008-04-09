@@ -23,6 +23,7 @@ public class Using extends SourceManipulation implements IUsing {
 		directive = isDirective;
 	}
 
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
 	}

@@ -82,6 +82,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		pdom.getDB().putByte(record + ANNOTATIONS, annotations);
 	}
 
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IFunction) {
 			IFunction func= (IFunction) newBinding;
@@ -145,10 +146,12 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		super(pdom, record);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CFUNCTION;
 	}

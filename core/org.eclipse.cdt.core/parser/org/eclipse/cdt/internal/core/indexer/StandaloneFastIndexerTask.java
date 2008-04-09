@@ -34,6 +34,7 @@ public class StandaloneFastIndexerTask extends StandaloneIndexerTask {
 		super(indexer, added, changed, removed, true);
 	}
 
+	@Override
 	protected ICodeReaderFactory createReaderFactory() {
 		return new StandaloneIndexerFallbackReaderFactory();
 	}

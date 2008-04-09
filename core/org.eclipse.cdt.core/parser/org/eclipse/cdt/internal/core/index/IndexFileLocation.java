@@ -48,6 +48,7 @@ public class IndexFileLocation implements IIndexFileLocation {
 	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof IIndexFileLocation) {
 			return uri.equals(((IIndexFileLocation)obj).getURI());
@@ -59,10 +60,12 @@ public class IndexFileLocation implements IIndexFileLocation {
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return uri.hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		if (fullPath == null) {
 			return uri.toString();

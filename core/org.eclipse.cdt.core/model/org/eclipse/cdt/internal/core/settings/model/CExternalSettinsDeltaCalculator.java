@@ -118,6 +118,7 @@ class CExternalSettinsDeltaCalculator {
 			fSetting = setting;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -128,6 +129,7 @@ class CExternalSettinsDeltaCalculator {
 			ExtSettingMapKey other = (ExtSettingMapKey)obj;
 			return settingsMatch(fSetting, other.fSetting);
 		}
+		@Override
 		public int hashCode() {
 			return code(fSetting.getCompatibleLanguageIds())
 				+ code(fSetting.getCompatibleContentTypeIds())

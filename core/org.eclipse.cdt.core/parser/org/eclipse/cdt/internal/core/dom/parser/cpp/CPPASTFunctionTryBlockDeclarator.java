@@ -48,7 +48,8 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
 
     private ICPPASTCatchHandler [] catchHandlers = null;
     private int catchHandlersPos=-1;
-    protected boolean postAccept( ASTVisitor action ){
+    @Override
+	protected boolean postAccept( ASTVisitor action ){
         if( !super.postAccept( action ) ) return false;
         
         ICPPASTCatchHandler [] handlers = getCatchHandlers();

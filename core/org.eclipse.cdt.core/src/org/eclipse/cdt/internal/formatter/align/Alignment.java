@@ -372,6 +372,7 @@ public class Alignment {
 		// default implementation
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(10);
 		buffer

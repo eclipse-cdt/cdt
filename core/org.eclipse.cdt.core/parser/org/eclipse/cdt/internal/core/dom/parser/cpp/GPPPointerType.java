@@ -47,7 +47,8 @@ public class GPPPointerType extends CPPPointerType implements IGPPPointerType {
         this.isRestrict = isRestrict;
     }
     
-    public IType stripQualifiers(){
+    @Override
+	public IType stripQualifiers(){
     	GPPPointerType result = (GPPPointerType) super.stripQualifiers();
 		
 		if( isRestrict ){
@@ -69,7 +70,8 @@ public class GPPPointerType extends CPPPointerType implements IGPPPointerType {
         
     }
     
-    public boolean isSameType( IType o ){
+    @Override
+	public boolean isSameType( IType o ){
     	if (o==this) {
     		return true;
     	}

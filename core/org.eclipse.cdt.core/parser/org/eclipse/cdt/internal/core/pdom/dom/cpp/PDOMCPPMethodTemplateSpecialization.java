@@ -44,10 +44,12 @@ class PDOMCPPMethodTemplateSpecialization extends
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE_SPECIALIZATION;
 	}
@@ -92,6 +94,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return 0;
 	}
 	
+	@Override
 	public boolean isExternC() {
 		return false;
 	}

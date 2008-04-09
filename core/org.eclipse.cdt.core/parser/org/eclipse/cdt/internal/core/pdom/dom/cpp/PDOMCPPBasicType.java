@@ -83,10 +83,12 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		return flags;
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPBASICTYPE;
 	}
@@ -159,6 +161,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		}
 	}
 
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();
@@ -167,6 +170,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

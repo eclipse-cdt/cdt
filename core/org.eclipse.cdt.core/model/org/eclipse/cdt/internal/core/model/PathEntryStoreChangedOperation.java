@@ -26,11 +26,13 @@ public class PathEntryStoreChangedOperation extends CModelOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
 
+	@Override
 	protected void executeOperation() throws CModelException {
 		PathEntryManager manager = PathEntryManager.getDefault();
 		ICProject cproject = (ICProject)getElementToProcess();

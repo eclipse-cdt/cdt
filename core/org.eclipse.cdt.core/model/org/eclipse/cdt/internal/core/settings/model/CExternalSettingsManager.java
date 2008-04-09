@@ -106,6 +106,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return fContainerId;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -124,10 +125,12 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return fFactoryId.equals(other.fFactoryId);
 		}
 
+		@Override
 		public int hashCode() {
 			return fFactoryId.hashCode() + fContainerId.hashCode();
 		}
 
+		@Override
 		public String toString() {
 			return fFactoryId.toString() + " : " + fContainerId.toString(); //$NON-NLS-1$
 		}
@@ -183,6 +186,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	static class NullContainer extends CExternalSettingsContainer {
 		static final NullContainer INSTANCE = new NullContainer();
 		
+		@Override
 		public CExternalSetting[] getExternalSettings() {
 			return new CExternalSetting[0];
 		}
@@ -191,9 +195,11 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private static class NullFactory extends CExternalSettingContainerFactory {
 		static NullFactory INSTANCE = new NullFactory();
 		
+		@Override
 		public void addListener(ICExternalSettingsListener listener) {
 		}
 
+		@Override
 		public CExternalSettingsContainer createContainer(String id,
 				IProject project, ICConfigurationDescription cfgDes) throws CoreException {
 			return NullContainer.INSTANCE;
@@ -203,12 +209,15 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return null;
 		}
 
+		@Override
 		public void removeListener(ICExternalSettingsListener listener) {
 		}
 
+		@Override
 		public void shutdown() {
 		}
 
+		@Override
 		public void startup() {
 		}
 	}

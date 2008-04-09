@@ -42,6 +42,7 @@ public class ElementCache extends OverflowingLRUCache {
 	 * <p>NOTE: this triggers an external removal of this element
 	 * by closing the element.
 	 */
+	@Override
 	protected boolean close(LRUCacheEntry entry) {
 		IOpenable element = (IOpenable) entry._fKey;
 		try {
@@ -57,6 +58,7 @@ public class ElementCache extends OverflowingLRUCache {
 		/**
 		 * Returns a new instance of the reciever.
 		 */
+		@Override
 		protected LRUCache newInstance(int size, int overflow) {
 			return new ElementCache(size, overflow);
 		}

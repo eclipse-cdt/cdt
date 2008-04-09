@@ -61,6 +61,7 @@ public class VariableDeclaration extends SourceManipulation implements IVariable
 		return (VariableInfo) getElementInfo();
 	}
 	
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new VariableInfo(this);
 	}

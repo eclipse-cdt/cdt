@@ -63,10 +63,12 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		return name;
 	}
 
+	@Override
 	public String getRawSignature() {
 		return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclSpecifiers) {
 			switch (action.visit(this)) {

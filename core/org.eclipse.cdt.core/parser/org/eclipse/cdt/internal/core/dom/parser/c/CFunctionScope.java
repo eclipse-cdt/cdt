@@ -73,7 +73,8 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
             shouldVisitStatements = true;
         }
         
-        public int visit( IASTStatement statement ) {
+        @Override
+		public int visit( IASTStatement statement ) {
             if( statement instanceof IASTLabelStatement ){
                labels = (IASTLabelStatement[]) ArrayUtil.append( IASTLabelStatement.class, labels, statement );
             }

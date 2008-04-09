@@ -37,10 +37,12 @@ public class PathEntryContainerUpdatesOperation extends CModelOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	@Override
 	protected void executeOperation() throws CModelException {
 		PathEntryManager pathEntryManager = PathEntryManager.getDefault();
 		ArrayList list = new ArrayList(events.length);

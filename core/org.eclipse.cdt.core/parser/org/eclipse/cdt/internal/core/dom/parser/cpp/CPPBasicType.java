@@ -105,7 +105,8 @@ public class CPPBasicType implements ICPPBasicType {
 		return ( qualifierBits & IS_LONG ) != 0;
 	}
 
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();
@@ -130,6 +131,7 @@ public class CPPBasicType implements ICPPBasicType {
 		return qualifierBits;
 	}
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

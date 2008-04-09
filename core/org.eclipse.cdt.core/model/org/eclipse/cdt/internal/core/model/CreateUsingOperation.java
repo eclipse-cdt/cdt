@@ -48,6 +48,7 @@ public class CreateUsingOperation extends CreateElementInTUOperation {
 	/**
 	 * @see CreateElementInCUOperation#generateResultHandle
 	 */
+	@Override
 	protected ICElement generateResultHandle() {
 		return getTranslationUnit().getUsing(fUsingName);
 	}
@@ -55,6 +56,7 @@ public class CreateUsingOperation extends CreateElementInTUOperation {
 	/**
 	 * @see CreateElementInCUOperation#getMainTaskName
 	 */
+	@Override
 	public String getMainTaskName(){
 		return "operation.createUsingProgress"; //$NON-NLS-1$
 	}
@@ -65,6 +67,7 @@ public class CreateUsingOperation extends CreateElementInTUOperation {
 	 * </ul>
 	 *  if no using
 	 */
+	@Override
 	protected void initializeDefaultPosition() {
 		try {
 			ITranslationUnit cu = getTranslationUnit();
@@ -80,6 +83,7 @@ public class CreateUsingOperation extends CreateElementInTUOperation {
 	/*
 	 * TODO: Use the ASTRewrite once it is available.
 	 */
+	@Override
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		StringBuffer sb = new StringBuffer();
 		sb.append("using "); //$NON-NLS-1$;

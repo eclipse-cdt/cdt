@@ -22,6 +22,7 @@ public class OptimizedReplaceEdit {
 		this.replacement = replacement;
 	}
 	
+	@Override
 	public String toString() {
 		return "(" + this.offset + ", length " + this.length + " :>" + this.replacement + "<"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 	}

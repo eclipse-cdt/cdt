@@ -52,10 +52,12 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 		return getBit(getInt(record + FLAGS), PDOMCAnnotation.VOLATILE_OFFSET); 
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		if(type instanceof ICPPFunctionType) {
 			if(super.isSameType(type)) {
@@ -68,10 +70,12 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 		return false;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_FUNCTION_TYPE;
 	}
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

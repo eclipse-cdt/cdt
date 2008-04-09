@@ -149,6 +149,7 @@ public class SOM {
 			checksum = memory.getInt();
 		}
 		
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("FILE HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -335,6 +336,7 @@ public class SOM {
 					symbol_type == STORAGE);
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SYMBOL TABLE ENTRY").append(NL); //$NON-NLS-1$
@@ -498,6 +500,7 @@ public class SOM {
 		return string_table;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		try {

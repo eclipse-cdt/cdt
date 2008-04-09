@@ -35,6 +35,7 @@ public final class CIncludePathEntry extends ACPathEntry implements ICIncludePat
 		return INCLUDE_PATH;
 	}
 
+	@Override
 	public final boolean isFile() {
 		return false;
 	}

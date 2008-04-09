@@ -24,8 +24,6 @@ import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
-import org.eclipse.core.internal.events.BuildManager;
-import org.eclipse.core.internal.localstore.IsSynchronizedVisitor;
 import org.eclipse.core.variables.IStringVariable;
 
 /**
@@ -164,6 +162,7 @@ public class CdtVariableManager implements ICdtVariableManager {
 		int type = getContextType(cfg);
 		IVariableContextInfo info = getMacroContextInfo(type,cfg);
 		IVariableSubstitutor subst = new CoreVariableSubstitutor(info,null,""){ //$NON-NLS-1$
+			@Override
 			protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException {
 				if(macro instanceof EclipseVariablesVariableSupplier.EclipseVarMacro)
 					return new ResolvedMacro(macro.getName(),""); //$NON-NLS-1$

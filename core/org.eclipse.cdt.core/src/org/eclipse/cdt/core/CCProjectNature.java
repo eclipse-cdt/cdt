@@ -33,7 +33,8 @@ public class CCProjectNature extends CProjectNature {
 	 * if not throw a CoreException. Does NOT add a default builder
      * @see IProjectNature#configure
      */
-    public void configure() throws CoreException {
+    @Override
+	public void configure() throws CoreException {
     	if (!getProject().hasNature(CProjectNature.C_NATURE_ID)){
     		IStatus status = new Status(IStatus.ERROR, 
     									CCorePlugin.PLUGIN_ID, 

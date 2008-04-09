@@ -79,6 +79,7 @@ public class CopyElementsOperation extends MultiOperation {
 	 * Returns the <code>String</code> to use as the main task name
 	 * for progress monitoring.
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.copyElementProgress"); //$NON-NLS-1$
 	}
@@ -153,6 +154,7 @@ public class CopyElementsOperation extends MultiOperation {
 	 * @exception CModelException if the operation is unable to
 	 * be completed
 	 */
+	@Override
 	protected void processElement(ICElement element) throws CModelException {
 		CModelOperation op = getNestedOperation(element);
 		if (op == null) {
@@ -215,6 +217,7 @@ public class CopyElementsOperation extends MultiOperation {
 	 *		does not match the number of elements that were supplied.
 	 * </ul>
 	 */
+	@Override
 	protected ICModelStatus verify() {
 		ICModelStatus status = super.verify();
 		if (!status.isOK()) {
@@ -249,6 +252,7 @@ public class CopyElementsOperation extends MultiOperation {
 
 	 * </ul>
 	 */
+	@Override
 	protected void verify(ICElement element) throws CModelException {
 		if (element == null || !element.exists())
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);

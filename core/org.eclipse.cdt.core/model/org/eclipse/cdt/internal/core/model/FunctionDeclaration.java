@@ -103,6 +103,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		return new String[] {};
 	}
 
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new FunctionInfo(this);
 	}
@@ -111,6 +112,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		return (FunctionInfo) getElementInfo();
 	}
 	
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof IFunctionDeclaration) {
 			return equals(this, (IFunctionDeclaration) other);

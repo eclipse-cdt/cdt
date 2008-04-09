@@ -83,6 +83,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		throw new CompositingNotImplementedError("Compositing feature not implemented"); //$NON-NLS-1$
 	}
 	
+	@Override
 	public String toString() {
 		return rbinding.toString();
 	}
@@ -95,6 +96,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return rbinding != null ? rbinding.getLocalToFile() : null;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -106,6 +108,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return super.equals(obj);
 	}
 
+	@Override
 	public int hashCode() {
 		return rbinding.hashCode();
 	}

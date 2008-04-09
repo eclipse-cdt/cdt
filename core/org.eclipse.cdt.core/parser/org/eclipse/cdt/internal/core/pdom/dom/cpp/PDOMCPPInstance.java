@@ -88,6 +88,7 @@ abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements
 		}
 	}
 	
+	@Override
 	public boolean matchesArguments(IType[] arguments) {
 		IType [] args = getArguments();
 		if( args.length == arguments.length ){

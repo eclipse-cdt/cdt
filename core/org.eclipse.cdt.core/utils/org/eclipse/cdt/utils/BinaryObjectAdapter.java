@@ -160,6 +160,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		return getPath().lastSegment().toString();
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}

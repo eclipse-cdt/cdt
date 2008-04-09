@@ -83,6 +83,7 @@ public abstract class APathEntry extends PathEntry {
 		return this.fullCharExclusionPatterns;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof APathEntry) {
 			APathEntry otherEntry = (APathEntry)obj;
@@ -130,6 +131,7 @@ public abstract class APathEntry extends PathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());

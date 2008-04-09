@@ -87,6 +87,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 				this.event = event;
 			}
 			
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (event.getSource() instanceof IWorkspace && event.getDelta() != null) {
 					removeKeys(event.getDelta().getAffectedChildren());
@@ -132,6 +133,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 		cache = new CodeReaderLRUCache(size * MB_TO_KB_FACTOR);
 	}
 	
+	@Override
 	protected void finalize() throws Throwable {
 		flush();
 		super.finalize();
@@ -238,6 +240,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 		}
 		
 		// must be overloaded, required to remove entries from the cache
+		@Override
 		protected boolean close(LRUCacheEntry entry) {
 			Object obj = remove(entry._fKey);
 			
@@ -247,6 +250,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 			return false;
 		}
 
+		@Override
 		protected LRUCache newInstance(int size, int overflow) {
 			return null;
 		}

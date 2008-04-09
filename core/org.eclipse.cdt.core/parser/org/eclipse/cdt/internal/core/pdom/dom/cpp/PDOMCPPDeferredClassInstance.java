@@ -61,10 +61,12 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_DEFERRED_CLASS_INSTANCE;
 	}
@@ -158,5 +160,6 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	public IBinding[] getFriends() throws DOMException { fail(); return null; }
 	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
 	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
+	@Override
 	public Object clone() {fail();return null;}
 }

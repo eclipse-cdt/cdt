@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.model;
 
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -63,6 +62,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 		super(new ICElement[] {element}, force);
 	}
 	
+	@Override
 	public ISchedulingRule getSchedulingRule() {
 		IResource resource = getElementToProcess().getResource();
 		IWorkspace workspace = resource.getWorkspace();
@@ -75,6 +75,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#executeOperation()
 	 */
+	@Override
 	protected void executeOperation() throws CModelException {
 		try {
 			beginTask(CoreModelMessages.getString("workingCopy.commit"), 2); //$NON-NLS-1$
@@ -171,6 +172,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 	 *  </ul>
 	 */
 
+	@Override
 	public ICModelStatus verify() {
 		
 		IWorkingCopy wc = (IWorkingCopy) getElementToProcess();

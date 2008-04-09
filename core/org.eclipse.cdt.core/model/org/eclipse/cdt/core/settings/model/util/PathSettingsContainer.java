@@ -627,6 +627,7 @@ public final class PathSettingsContainer {
 		fDirectParentContainer = parent;
 	}
 
+	@Override
 	public String toString() {
 		return contributeToString(new StringBuffer(), 0).toString();
 	}

@@ -69,7 +69,8 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 		return CVisitor.getContainingScope( declarator.getParent() );
 	}
 
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();

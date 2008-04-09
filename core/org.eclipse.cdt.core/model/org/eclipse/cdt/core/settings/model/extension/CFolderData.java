@@ -18,6 +18,7 @@ public abstract class CFolderData extends CResourceData {
 		
 	}
 
+	@Override
 	public final int getType(){
 		return ICSettingBase.SETTING_FOLDER;
 	}

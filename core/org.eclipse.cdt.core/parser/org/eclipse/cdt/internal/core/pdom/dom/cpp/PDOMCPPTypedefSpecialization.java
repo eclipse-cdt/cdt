@@ -57,10 +57,12 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_TYPEDEF_SPECIALIZATION;
 	}
@@ -103,7 +105,8 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
     /* (non-Javadoc)
      * @see java.lang.Object#clone()
      */
-    public Object clone() {
+    @Override
+	public Object clone() {
 		return new CPPTypedefClone(this);
     }
 }

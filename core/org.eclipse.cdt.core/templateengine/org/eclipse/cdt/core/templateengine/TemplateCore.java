@@ -183,6 +183,7 @@ public class TemplateCore {
 		return processHandler;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return getLabel();
@@ -244,6 +245,7 @@ public class TemplateCore {
 			this.template = template;
 		}
 		
+		@Override
 		public String put(K key, String value) {
 			value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), value);
 			String v = super.put(key, value);
@@ -251,6 +253,7 @@ public class TemplateCore {
 			return v;
 		}
 
+		@Override
 		public void putAll(Map<? extends K, ? extends String> map) {
 			for(K key : map.keySet()) {
 				String value = map.get(key);
@@ -260,6 +263,7 @@ public class TemplateCore {
 			template.setDirty();
 		}
 
+		@Override
 		public String remove(Object key) {
 			String v = super.remove(key);
 			template.setDirty();

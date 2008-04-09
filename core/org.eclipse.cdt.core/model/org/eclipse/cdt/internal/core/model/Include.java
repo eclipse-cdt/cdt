@@ -93,6 +93,7 @@ public class Include extends SourceManipulation implements IInclude {
 	/*
 	 * @see org.eclipse.cdt.internal.core.model.CElement#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof IInclude && equals(this, (IInclude) other)) {
 			if (other instanceof Include) {

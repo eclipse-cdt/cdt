@@ -74,10 +74,12 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		return true;
 	}
 
+	@Override
 	public void setBuilderCWD(IPath path) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void setErrorParserIDs(String[] ids) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -86,10 +88,12 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void setOutputDirectories(ICOutputEntry[] entries) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public IEnvironmentContributor getBuildEnvironmentContributor() {
 		return fCfgCache.getConfigurationData().getBuildData().getBuildEnvironmentContributor();
 	}
@@ -102,6 +106,7 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		return fResolvedOutputEntries;
 	}
 	
+	@Override
 	public ICOutputEntry[] getOutputDirectories() {
 		initOutputEntries();
 		return (ICOutputEntry[])fProjOutputEntries.clone();

@@ -48,6 +48,7 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IMethodDeclaration) {
 			return MethodDeclaration.equals(this, (IMethodDeclaration) obj);

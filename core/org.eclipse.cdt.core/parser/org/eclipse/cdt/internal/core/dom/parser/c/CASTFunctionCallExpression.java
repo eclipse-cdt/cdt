@@ -60,7 +60,8 @@ public class CASTFunctionCallExpression extends CASTNode implements
         return parameter;
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

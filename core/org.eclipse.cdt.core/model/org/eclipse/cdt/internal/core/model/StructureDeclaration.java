@@ -53,6 +53,7 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 		return (StructureInfo) getElementInfo();
 	}
 
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new StructureInfo(this);
 	}

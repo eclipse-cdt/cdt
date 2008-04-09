@@ -225,6 +225,7 @@ public class LanguageManager {
 	/** 
 	 * @deprecated use getRegisteredContentTypes() instead.
 	 */
+	@Deprecated
 	public ArrayList/*<String>*/ getAllContentTypes() {
 		ArrayList/*<String>*/ allTypes = new ArrayList();
 		allTypes.add(CCorePlugin.CONTENT_TYPE_ASMSOURCE);

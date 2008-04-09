@@ -107,6 +107,7 @@ public class CModelException extends CoreException {
 	 * Returns a printable representation of this exception suitable for debugging
 	 * purposes only.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer= new StringBuffer();
 		buffer.append("C Model Exception: "); //$NON-NLS-1$

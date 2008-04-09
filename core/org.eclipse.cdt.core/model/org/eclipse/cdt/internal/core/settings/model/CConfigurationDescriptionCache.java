@@ -176,20 +176,24 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 	
+	@Override
 	public CFileData copyFileData(IPath path, CFileData base, boolean clone) {
 		return new CFileDescriptionCache(base, this);
 	}
 
+	@Override
 	protected CFileData copyFileData(IPath path, CFolderData base,
 			CLanguageData langData) {
 		//should never be here
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public CFolderData copyFolderData(IPath path, CFolderData base, boolean clone) {
 		return new CFolderDescriptionCache(base, this);
 	}
 
+	@Override
 	protected CBuildData copyBuildData(CBuildData data, boolean clone) {
 		return new CBuildSettingCache(data, this);
 	}
@@ -235,26 +239,32 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		throw new CoreException(new DescriptionStatus(SettingsModelMessages.getString("CConfigurationDescriptionCache.0"))); //$NON-NLS-1$
 	}
 
+	@Override
 	public CFileData createFileData(IPath path, CFileData base) throws CoreException{
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public CFileData createFileData(IPath path, CFolderData base, CLanguageData baseLangData) throws CoreException{
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public CFolderData createFolderData(IPath path, CFolderData base) throws CoreException{
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void removeResourceData(CResourceData data)throws CoreException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void setDescription(String description) throws WriteAccessException{
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void setName(String name) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -303,6 +313,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public boolean isModified() {
 		return false;
 	}
@@ -342,6 +353,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return (ICTargetPlatformSetting)getTargetPlatformData();
 	}
 
+	@Override
 	protected CTargetPlatformData copyTargetPlatformData(CTargetPlatformData base, boolean clone) {
 		return new CTargetPlatformSettingCache(base, this);
 	}
@@ -358,6 +370,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICSourceEntry[] getSourceEntries() {
 		initSourceEntries();
 		return (ICSourceEntry[])fProjSourceEntries.clone();
@@ -374,6 +387,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return isPreferenceConfiguration() ? null : getProjectDescription().getProject();
 	}
 
+	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -426,6 +440,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fSpecSettings.getSettionProperty(name);
 	}
 
+	@Override
 	public ICdtVariablesContributor getBuildVariablesContributor() {
 		return fData.getBuildVariablesContributor();
 	}
@@ -467,6 +482,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return CProjectDescriptionManager.getLanguageSettingForFile(this, path, ignoreExcludeStatus);
 	}
 
+	@Override
 	protected CResourceData[] filterRcDatasToCopy(CConfigurationData base) {
 		if(!isPreferenceConfiguration())
 			CProjectDescriptionManager.removeNonCustomSettings(getProjectDescription().getProject(), base);

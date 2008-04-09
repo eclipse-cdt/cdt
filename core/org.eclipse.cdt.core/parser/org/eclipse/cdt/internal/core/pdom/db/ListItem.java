@@ -45,6 +45,7 @@ public class ListItem {
 		return record;
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;

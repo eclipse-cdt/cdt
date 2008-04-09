@@ -68,7 +68,8 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
         isShort = value;
     }
 
-    public boolean accept(ASTVisitor action) {
+    @Override
+	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

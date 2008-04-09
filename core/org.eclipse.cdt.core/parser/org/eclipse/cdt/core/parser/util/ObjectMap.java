@@ -24,9 +24,12 @@ import java.util.List;
  */
 public class ObjectMap extends ObjectTable<Object> {
     public static final ObjectMap EMPTY_MAP = new ObjectMap(0) {
-        public Object clone() { return this; }
-        public List<Object> toList() { return Collections.emptyList(); }
-        public Object put(Object key, Object value) { throw new UnsupportedOperationException(); }
+        @Override
+		public Object clone() { return this; }
+        @Override
+		public List<Object> toList() { return Collections.emptyList(); }
+        @Override
+		public Object put(Object key, Object value) { throw new UnsupportedOperationException(); }
     };
     
 	private Object[] valueTable;
@@ -36,6 +39,7 @@ public class ObjectMap extends ObjectTable<Object> {
 		valueTable = new Object[capacity()];
 	}
 
+	@Override
 	public Object clone() {
 	    ObjectMap newMap = (ObjectMap) super.clone();
 	    newMap.valueTable = new Object[capacity()];
@@ -43,6 +47,7 @@ public class ObjectMap extends ObjectTable<Object> {
 	    return newMap;
 	}
 	
+	@Override
 	final public void clear() {
 	    super.clear();
 	    for(int i = 0; i < valueTable.length; i++) {
@@ -50,6 +55,7 @@ public class ObjectMap extends ObjectTable<Object> {
 	    }
 	}
 	
+	@Override
 	protected void resize(int size) {
 		Object[] oldValueTable = valueTable;
 		valueTable = new Object[size];
@@ -91,6 +97,7 @@ public class ObjectMap extends ObjectTable<Object> {
 		return value;
 	}
 	
+	@Override
 	final protected void removeEntry(int i) {
 		// Remove the entry from the valueTable, shifting everything over if necessary
 		if (i < currEntry)
@@ -138,6 +145,7 @@ public class ObjectMap extends ObjectTable<Object> {
 	    return vals;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("{"); //$NON-NLS-1$
 		for (int i = 0; i < size(); i++) {

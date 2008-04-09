@@ -21,6 +21,7 @@ public class ProjectEntry extends PathEntry implements IProjectEntry {
 		super(IPathEntry.CDT_PROJECT, path, isExported);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IProjectEntry) {
 			IProjectEntry otherEntry = (IProjectEntry)obj;

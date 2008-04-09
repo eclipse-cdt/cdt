@@ -56,6 +56,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.settings.model.MultiItemsHolder#getItems()
 	 */
+	@Override
 	public Object[] getItems() {
 		return fCfgs;
 	}

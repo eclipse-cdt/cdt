@@ -234,7 +234,8 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 		return (definition != null ) ? ((IASTCompositeTypeSpecifier)definition.getParent()).getScope() : null;
 	}
 	
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();

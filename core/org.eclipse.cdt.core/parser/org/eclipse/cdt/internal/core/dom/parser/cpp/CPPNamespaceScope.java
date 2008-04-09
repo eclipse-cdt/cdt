@@ -54,7 +54,8 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
-    public IName getScopeName() {
+    @Override
+	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if( node instanceof ICPPASTNamespaceDefinition ){
             return ((ICPPASTNamespaceDefinition)node).getName();

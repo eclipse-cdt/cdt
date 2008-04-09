@@ -102,7 +102,8 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
 		}
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclarators ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

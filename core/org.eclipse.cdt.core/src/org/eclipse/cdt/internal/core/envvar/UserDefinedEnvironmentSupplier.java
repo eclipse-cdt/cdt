@@ -71,6 +71,7 @@ public class UserDefinedEnvironmentSupplier extends
 			return fVar; 
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -103,6 +104,7 @@ public class UserDefinedEnvironmentSupplier extends
 			return true;
 		}
 
+		@Override
 		public int hashCode() {
 			int code = fCode;
 			if(code == 0){
@@ -160,6 +162,7 @@ public class UserDefinedEnvironmentSupplier extends
 		return env;
 	}
 	
+	@Override
 	protected ISerializeInfo getSerializeInfo(Object context){
 		ISerializeInfo serializeInfo = null;
 		

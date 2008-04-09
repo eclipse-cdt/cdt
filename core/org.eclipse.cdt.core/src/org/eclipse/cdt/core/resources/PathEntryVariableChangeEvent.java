@@ -72,6 +72,7 @@ public class PathEntryVariableChangeEvent extends EventObject {
 	/**
 	 * Return a string representation of this object.
 	 */
+	@Override
 	public String toString() {
 		String[] typeStrings = {"VARIABLE_CHANGED", "VARIABLE_CREATED", "VARIABLE_DELETED"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		StringBuffer sb = new StringBuffer(getClass().getName());

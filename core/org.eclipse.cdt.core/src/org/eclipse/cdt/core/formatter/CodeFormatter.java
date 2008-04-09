@@ -48,6 +48,7 @@ public abstract class CodeFormatter {
 	 * Kind used to format a compilation unit.
 	 * @deprecated Use #K_TRANSLATION_UNIT
 	 */
+	@Deprecated
 	public static final int K_COMPILATION_UNIT = 0x08;
 	/**
 	 * Kind used to format a translation unit.

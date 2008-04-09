@@ -173,6 +173,7 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IGnuToolFactory.class)) {
 			if (toolFactory == null) {

@@ -65,6 +65,7 @@ public class StandaloneFastIndexer extends StandaloneIndexer{
 	/**
 	 * Create a delegate standalone indexing task
 	 */
+	@Override
 	protected StandaloneIndexerTask createTask(List added, List changed, List removed) {
 		return new StandaloneFastIndexerTask(this, added, changed, removed);
 	}

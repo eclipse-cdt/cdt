@@ -37,6 +37,7 @@ public class TypeNumber {
 		return fileno;
 	} 
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof TypeNumber) {
 			TypeNumber tn = (TypeNumber)obj;
@@ -48,6 +49,7 @@ public class TypeNumber {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fileno*10 + typeno;
 	}

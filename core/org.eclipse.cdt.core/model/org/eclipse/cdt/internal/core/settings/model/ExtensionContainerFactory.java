@@ -40,6 +40,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 	private static class NullProvider extends CExternalSettingProvider {
 		private static final NullProvider INSTANCE = new NullProvider();
 		
+		@Override
 		public CExternalSetting[] getSettings(IProject project, ICConfigurationDescription cfg) {
 			return new CExternalSetting[0];
 		}
@@ -53,6 +54,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 			fSettings = (CExternalSetting[])settings.clone();
 		}
 		
+		@Override
 		public CExternalSetting[] getExternalSettings() {
 			return (CExternalSetting[])fSettings.clone();
 		}
@@ -169,6 +171,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 		return getInstance();
 	}
 
+	@Override
 	public CExternalSettingsContainer createContainer(String id,
 			IProject project, ICConfigurationDescription cfgDes) throws CoreException {
 		CExtensionSettingProviderDescriptor dr = (CExtensionSettingProviderDescriptor)getProviderDescriptorMap().get(id);

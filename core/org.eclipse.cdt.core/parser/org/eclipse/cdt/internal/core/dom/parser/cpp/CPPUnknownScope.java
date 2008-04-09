@@ -172,6 +172,7 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
 	/* (non-Javadoc)
 	 * For debug purposes only
 	 */
+	@Override
 	public String toString() {
 		return scopeName.toString();
 	}

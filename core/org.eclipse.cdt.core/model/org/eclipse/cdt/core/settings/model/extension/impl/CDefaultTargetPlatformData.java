@@ -52,12 +52,14 @@ public class CDefaultTargetPlatformData extends CTargetPlatformData {
 		}
 	}
 
+	@Override
 	public String[] getBinaryParserIds() {
 		if(fBinaryParserIds != null)
 			return (String[])fBinaryParserIds.clone();
 		return new String[0];
 	}
 
+	@Override
 	public void setBinaryParserIds(String[] ids) {
 		if(Arrays.equals(ids, fBinaryParserIds))
 			return;
@@ -70,14 +72,17 @@ public class CDefaultTargetPlatformData extends CTargetPlatformData {
 		setModified(true);
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getId() != null;
 	}

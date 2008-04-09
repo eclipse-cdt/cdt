@@ -36,6 +36,7 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_TEMPLATE;
 	}

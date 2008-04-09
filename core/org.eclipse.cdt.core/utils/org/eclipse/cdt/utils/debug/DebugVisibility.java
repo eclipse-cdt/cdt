@@ -34,6 +34,7 @@ public final class DebugVisibility {
 		this.id = id;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DebugVisibility) {
 			DebugVisibility kind = (DebugVisibility)obj;

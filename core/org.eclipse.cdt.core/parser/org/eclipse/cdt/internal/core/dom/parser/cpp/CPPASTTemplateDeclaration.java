@@ -74,7 +74,8 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
 
     private ICPPASTTemplateParameter [] parameters = null;
     private int parametersPos=-1;
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclarations ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

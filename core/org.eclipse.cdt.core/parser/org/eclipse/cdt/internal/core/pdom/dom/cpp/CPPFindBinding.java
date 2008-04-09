@@ -35,6 +35,7 @@ public class CPPFindBinding extends FindBinding {
 		public CPPBindingBTreeComparator(PDOM pdom) {
 			super(pdom);
 		}
+		@Override
 		public int compare(int record1, int record2) throws CoreException {
 			int cmp = super.compare(record1, record2);
 			if(cmp==0) {
@@ -59,6 +60,7 @@ public class CPPFindBinding extends FindBinding {
 			fSigMemento= memento;
 		}
 		
+		@Override
 		public int compare(int record) throws CoreException {
 			int cmp= super.compare(record);
 			if (cmp == 0) {

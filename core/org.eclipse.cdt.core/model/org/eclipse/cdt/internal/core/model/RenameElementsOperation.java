@@ -35,18 +35,21 @@ public class RenameElementsOperation extends MoveElementsOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.renameElementProgress"); //$NON-NLS-1$
 	}
 	/**
 	 * @see CopyElementsOperation#isRename()
 	 */
+	@Override
 	protected boolean isRename() {
 		return true;
 	}
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected ICModelStatus verify() {
 		ICModelStatus status = super.verify();
 		if (! status.isOK())
@@ -58,6 +61,7 @@ public class RenameElementsOperation extends MoveElementsOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected void verify(ICElement element) throws CModelException {
 		int elementType = element.getElementType();
 		

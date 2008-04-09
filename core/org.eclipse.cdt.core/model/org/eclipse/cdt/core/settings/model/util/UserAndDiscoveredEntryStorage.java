@@ -22,6 +22,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 		super(kind);
 	}
 
+	@Override
 	protected SettingsSet createEmptySettings(){
 		SettingsSet settings = new SettingsSet(2);
 		SettingLevel levels[] = settings.getLevels();
@@ -41,6 +42,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 		return settings;
 	}
 	
+	@Override
 	protected void obtainEntriesFromLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
 		case 0:
@@ -56,6 +58,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 		}
 	}
 
+	@Override
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
 		case 0:

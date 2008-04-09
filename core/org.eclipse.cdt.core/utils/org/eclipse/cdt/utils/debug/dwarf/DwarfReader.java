@@ -58,6 +58,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 	// Override parent.
 	// 
+	@Override
 	public void init(Elf exe) throws IOException {
 		Elf.ELFhdr header = exe.getELFhdr();
 		isLE = header.e_ident[Elf.ELFhdr.EI_DATA] == Elf.ELFhdr.ELFDATA2LSB;
@@ -436,6 +437,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	}
 
 	// Override parent: only handle TAG_Compile_Unit.
+	@Override
 	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List list) {
 		int tag = (int) entry.tag;
 		switch (tag) {
@@ -450,6 +452,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	// Override parent.
 	// Just get the file name of the CU.
 	// Argument "requestor" is ignored.
+	@Override
 	void processCompileUnit(IDebugEntryRequestor requestor, List list) {
 		
 		String cuName, cuCompDir;

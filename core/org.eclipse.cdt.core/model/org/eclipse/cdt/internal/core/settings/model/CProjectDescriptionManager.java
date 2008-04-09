@@ -336,6 +336,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private Job createPostStartupJob() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		Job rcJob = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.0")){ //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try{
 					startSaveParticipant();
@@ -766,6 +767,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		
 		if(scheduleRule){
 			Job job = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.12")){ //$NON-NLS-1$
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						runAtomic(runnable, monitor);

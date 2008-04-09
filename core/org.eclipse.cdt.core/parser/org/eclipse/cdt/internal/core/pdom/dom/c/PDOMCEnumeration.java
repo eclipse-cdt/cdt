@@ -47,10 +47,12 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CENUMERATION;
 	}
@@ -116,6 +118,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 		return false;
 	}
 
+	@Override
 	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}

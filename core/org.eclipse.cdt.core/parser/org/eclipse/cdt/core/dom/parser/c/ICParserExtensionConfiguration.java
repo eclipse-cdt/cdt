@@ -86,6 +86,7 @@ public interface ICParserExtensionConfiguration {
 	 *         enabled
 	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
 	 */
+	@Deprecated
 	public boolean supportGCCOtherBuiltinSymbols();
 
 	/**

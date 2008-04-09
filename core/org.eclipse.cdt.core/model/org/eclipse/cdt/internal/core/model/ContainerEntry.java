@@ -20,6 +20,7 @@ public class ContainerEntry extends PathEntry implements IContainerEntry {
 		super(IPathEntry.CDT_CONTAINER, path, isExported);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IContainerEntry) {
 			IContainerEntry container = (IContainerEntry)obj;

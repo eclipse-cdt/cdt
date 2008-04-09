@@ -66,6 +66,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		super(pdom, record);
 	}
 	
+	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICompositeType) {
 			ICompositeType ct= (ICompositeType) newBinding;
@@ -82,6 +83,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		}
 	}
 
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).accept(visitor);
@@ -91,10 +93,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).addMember(member);
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CSTRUCTURE;
 	}
 	
+	@Override
 	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}
@@ -220,14 +224,17 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		return false;
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		addMember(member);
 	}
 	
+	@Override
 	public boolean mayHaveChildren() {
 		return true;
 	}
@@ -240,10 +247,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		fail(); return null;
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		fail(); return null;
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		fail(); return null;
 	}

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.envvar;
 
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
-import org.eclipse.core.runtime.Platform;
 
 
 
@@ -72,6 +71,7 @@ public class EnvirinmentVariable implements IEnvironmentVariable, Cloneable {
 			return fDelimiter;
 	}
 	
+	@Override
 	public Object clone(){
 		try {
 			return super.clone();

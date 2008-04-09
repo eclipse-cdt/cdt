@@ -29,10 +29,12 @@ public class CompositeQualifierType extends CompositeTypeContainer implements IQ
 		return ((IQualifierType)type).isVolatile();
 	}
 
+	@Override
 	public boolean isSameType(IType other) {		
 		return ((IQualifierType)type).isSameType(other);
 	}
 	
+	@Override
 	public Object clone() {
 		return new QualifierTypeClone(this);
 	}

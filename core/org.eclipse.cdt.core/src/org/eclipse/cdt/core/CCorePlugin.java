@@ -294,6 +294,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * @see Plugin#shutdown
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			pdomManager.shutdown();
@@ -327,6 +328,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * @see Plugin#startup
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
@@ -521,10 +523,13 @@ public class CCorePlugin extends Plugin {
 		}
 		return new IConsole() { // return a null console
 			private ConsoleOutputStream nullStream = new ConsoleOutputStream() {
-			    public void write(byte[] b) throws IOException {
+			    @Override
+				public void write(byte[] b) throws IOException {
 			    }			    
+				@Override
 				public void write(byte[] b, int off, int len) throws IOException {
 				}					
+				@Override
 				public void write(int c) throws IOException {
 				}
 			};
@@ -570,6 +575,7 @@ public class CCorePlugin extends Plugin {
 	 * @throws CoreException
 	 * @deprecated - use getBinaryParserExtensions(IProject project)
 	 */
+	@Deprecated
 	public IBinaryParser[] getBinaryParser(IProject project) throws CoreException {
 		IBinaryParser parsers[] = null;
 		if (project != null) {
@@ -635,6 +641,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * @deprecated use getIndexManager().
 	 */
+	@Deprecated
 	public static IPDOMManager getPDOMManager() {
 		return getDefault().pdomManager;
 	}
@@ -653,6 +660,7 @@ public class CCorePlugin extends Plugin {
 	 * @throws CoreException
 	 * @deprecated use getCProjetDescription(IProject project, boolean create)
 	 */
+	@Deprecated
 	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {
 		return fNewCProjectDescriptionManager.getDescriptorManager().getDescriptor(project);
 	}

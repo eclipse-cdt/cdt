@@ -52,6 +52,7 @@ public class Namespace extends SourceManipulation implements INamespace{
 	/*
 	 * @see org.eclipse.cdt.internal.core.model.CElement#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof INamespace && equals(this, (INamespace) other)) {
 			if (other instanceof Namespace) {

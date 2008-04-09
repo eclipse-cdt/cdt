@@ -26,6 +26,7 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		super(added, changed, removed, indexer, false);
 	}
 
+	@Override
 	protected ICodeReaderFactory createReaderFactory() {
 		return SavedCodeReaderFactory.getInstance();
 	}

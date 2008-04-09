@@ -85,6 +85,7 @@ public class FieldInfo extends SourceManipulationInfo {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.SourceManipulationInfo#hasSameContentsAs(SourceManipulationInfo)
 	 */
+	@Override
 	public boolean hasSameContentsAs( SourceManipulationInfo info){
 		
 		return( super.hasSameContentsAs(info)

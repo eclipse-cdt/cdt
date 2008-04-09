@@ -45,6 +45,7 @@ public class PDOMIndexerJob extends Job {
 		setPriority(Job.LONG);
 	}
 
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		final long start= System.currentTimeMillis();
 		fMonitor = monitor;
@@ -53,12 +54,15 @@ public class PDOMIndexerJob extends Job {
 		Job monitorJob= startMonitorJob(monitor);
 		try {
 			IProgressMonitor npm= new NullProgressMonitor() {
+				@Override
 				public boolean isCanceled() {
 					return fMonitor.isCanceled();
 				}
+				@Override
 				public void setCanceled(boolean cancelled) {
 					fMonitor.setCanceled(cancelled);
 				}
+				@Override
 				public void subTask(String name) {
 					sMonitorDetail= name;
 				}
@@ -145,6 +149,7 @@ public class PDOMIndexerJob extends Job {
 		
 	private Job startMonitorJob(final IProgressMonitor targetMonitor) {
 		Job monitorJob= new Job(CCorePlugin.getResourceString("PDOMIndexerJob.updateMonitorJob")) {  //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor m) {
 				int currentTick= 0;
 				while(!m.isCanceled() && !targetMonitor.isCanceled()) {
@@ -182,6 +187,7 @@ public class PDOMIndexerJob extends Job {
 		}
 	}
 	
+	@Override
 	public boolean belongsTo(Object family) {
 		return family == pdomManager;
 	}

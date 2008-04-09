@@ -119,7 +119,8 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 		return base.getName();
 	}
 
-    public Object clone(){
+    @Override
+	public Object clone(){
         ICPPBase t = null;
    		try {
             t = (ICPPBase) super.clone();

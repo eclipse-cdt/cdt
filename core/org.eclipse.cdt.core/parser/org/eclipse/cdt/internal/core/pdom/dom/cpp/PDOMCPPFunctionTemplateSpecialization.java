@@ -59,10 +59,12 @@ class PDOMCPPFunctionTemplateSpecialization extends
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_FUNCTION_TEMPLATE_SPECIALIZATION;
 	}
@@ -127,6 +129,7 @@ class PDOMCPPFunctionTemplateSpecialization extends
 		return CPPTemplates.instantiateTemplate(this, arguments, getArgumentMap());
 	}
 
+	@Override
 	public void addChild(PDOMNode child) throws CoreException {
 		addMember(child);
 	}
@@ -141,6 +144,7 @@ class PDOMCPPFunctionTemplateSpecialization extends
 		}
 	}
 	
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());

@@ -29,6 +29,7 @@ public abstract class CompositeType implements IType, IIndexType {
 		return type.isSameType(other);
 	}
 	
+	@Override
 	public Object clone() {
 		fail(); return null; 
 	}

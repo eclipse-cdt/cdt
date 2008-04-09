@@ -58,7 +58,8 @@ public class CPPASTEnumerator extends CPPASTNode implements IASTEnumerator, IAST
         return value;
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitEnumerators ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

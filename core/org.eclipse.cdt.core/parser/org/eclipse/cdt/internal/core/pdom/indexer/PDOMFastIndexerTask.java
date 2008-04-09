@@ -24,6 +24,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 		super(added, changed, removed, indexer, true);
 	}
 
+	@Override
 	protected ICodeReaderFactory createReaderFactory() {
 		return null;
 	}

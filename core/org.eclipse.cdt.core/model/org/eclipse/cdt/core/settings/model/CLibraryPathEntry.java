@@ -32,6 +32,7 @@ public final class CLibraryPathEntry extends ACPathEntry implements
 		return LIBRARY_PATH;
 	}
 
+	@Override
 	public final boolean isFile() {
 		return false;
 	}

@@ -40,10 +40,12 @@ class PDOMCPPDeferredFunctionInstance extends PDOMCPPFunctionInstance
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_DEFERRED_FUNCTION_INSTANCE;
 	}

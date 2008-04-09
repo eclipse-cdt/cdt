@@ -32,6 +32,7 @@ public final class CMacroFileEntry extends ACPathEntry implements
 		return MACRO_FILE;
 	}
 	
+	@Override
 	public final boolean isFile() {
 		return true;
 	}

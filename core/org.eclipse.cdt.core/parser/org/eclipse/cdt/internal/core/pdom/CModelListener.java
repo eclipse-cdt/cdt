@@ -40,6 +40,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 
 	private PDOMManager fManager;
 	private LinkedHashMap fLRUs= new LinkedHashMap(UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
+		@Override
 		protected boolean removeEldestEntry(Map.Entry eldest) {
 			return size() > UPDATE_LR_CHANGED_FILES_COUNT;
 		}

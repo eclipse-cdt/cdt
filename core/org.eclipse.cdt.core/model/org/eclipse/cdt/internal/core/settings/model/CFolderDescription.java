@@ -61,6 +61,7 @@ public class CFolderDescription extends CDataProxyContainer implements
 		return (CFolderData)getData(write);
 	}
 
+	@Override
 	protected IProxyProvider createChildProxyProvider() {
 		ICDataScope scope = new ICDataScope(){
 
@@ -119,6 +120,7 @@ public class CFolderDescription extends CDataProxyContainer implements
 		return fRcHolder;
 	}
 
+	@Override
 	void setData(CDataObject data) {
 		super.setData(data);
 		IPath cachedPath = getCachedPath();

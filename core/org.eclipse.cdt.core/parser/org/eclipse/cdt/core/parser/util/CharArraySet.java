@@ -23,11 +23,16 @@ import java.util.List;
 public class CharArraySet extends CharTable {
 	
     public static final CharArraySet EMPTY_SET = new CharArraySet( 0 ){
-        public Object clone()               { return this; }
-        public List toList()                { return Collections.EMPTY_LIST; }
-        public void put( char[] key )       { throw new UnsupportedOperationException(); }
-        public void addAll( List list )     { throw new UnsupportedOperationException(); }
-        public void addAll( CharArraySet set ) { throw new UnsupportedOperationException(); }
+        @Override
+		public Object clone()               { return this; }
+        @Override
+		public List toList()                { return Collections.EMPTY_LIST; }
+        @Override
+		public void put( char[] key )       { throw new UnsupportedOperationException(); }
+        @Override
+		public void addAll( List list )     { throw new UnsupportedOperationException(); }
+        @Override
+		public void addAll( CharArraySet set ) { throw new UnsupportedOperationException(); }
     };
 
 	public CharArraySet(int initialSize) {
@@ -66,6 +71,7 @@ public class CharArraySet extends CharTable {
 		return true;
 	}
 
+	@Override
 	final public void clear(){
 	    for( int i = 0; i < keyTable.length; i++ ){
 	        keyTable[i] = null;

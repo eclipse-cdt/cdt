@@ -75,10 +75,12 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 		}
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexBindingConstants.POINTER_TYPE;
 	}
@@ -139,15 +141,18 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 		throw new PDOMNotImplementedError();
 	}
 
+	@Override
 	public Object clone() {
 		return new PointerTypeClone(this);
 	}
 	
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getType(), record);
 		super.delete(linkage);
 	}
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

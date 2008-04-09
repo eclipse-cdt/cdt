@@ -32,6 +32,7 @@ class CompositeCTypedef extends CompositeCBinding implements ITypedef, IIndexTyp
 		return ((ITypedef)rbinding).isSameType(type);
 	}
 
+	@Override
 	public Object clone() {
 		fail(); return null;
 	}

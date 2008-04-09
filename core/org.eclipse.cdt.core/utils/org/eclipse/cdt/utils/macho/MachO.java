@@ -399,7 +399,8 @@ public class MachO {
         public int header_addr;		/* library's header address */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -418,7 +419,8 @@ public class MachO {
         public int compatibility_version;	/* library's compatibility vers number*/
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -434,7 +436,8 @@ public class MachO {
         public int umbrella; /* the umbrella framework name */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -446,7 +449,8 @@ public class MachO {
         public int client;   /* the client name */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -458,7 +462,8 @@ public class MachO {
         public int sub_umbrella;     /* the sub_umbrella framework name */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -470,7 +475,8 @@ public class MachO {
         public int sub_library;      /* the sub_library name */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -484,7 +490,8 @@ public class MachO {
 	    public int linked_modules;   /* bit vector of linked modules */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -496,7 +503,8 @@ public class MachO {
 	    public int name;             /* dynamic linker's path name */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -602,7 +610,8 @@ public class MachO {
         public int header_addr;      /* files virtual address */
         public String lc_str_name = null;
 		
-        public String toString() {
+        @Override
+		public String toString() {
 			if ( lc_str_name == null ) {
 					return EMPTY_STRING;
 			}
@@ -747,6 +756,7 @@ public class MachO {
 			return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
 		}
 
+		@Override
 		public String toString() {
 			if (n_strx == 0 || symtab == null) {
 				return EMPTY_STRING;
@@ -927,6 +937,7 @@ public class MachO {
 			return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			Line line = (Line)obj;
 			return (line.lineno == lineno && line.address == address);
@@ -1116,6 +1127,7 @@ public class MachO {
 	/**
 	 * Make sure we do not leak the fds.
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		try {
 			dispose();

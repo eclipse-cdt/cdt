@@ -116,6 +116,7 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 		}
 	}
 
+	@Override
 	public void clear() {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -124,6 +125,7 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 		fIsDirty = true;
 	}
 
+	@Override
 	protected XmlStorageElement createChild(Element element,
 			boolean alowReferencingParent, String[] attributeFilters,
 			String[] childFilters) {
@@ -133,6 +135,7 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 		return new InternalXmlStorageElement(element, this, alowReferencingParent, attributeFilters, childFilters, fIsReadOnly);
 	}
 
+	@Override
 	public ICStorageElement createChild(String name,
 			boolean alowReferencingParent, String[] attributeFilters,
 			String[] childFilters) {
@@ -144,6 +147,7 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 				childFilters);
 	}
 
+	@Override
 	public ICStorageElement createChild(String name) {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -152,25 +156,30 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 		return super.createChild(name);
 	}
 
+	@Override
 	public void removeAttribute(String name) {
 		fIsDirty = true;
 		super.removeAttribute(name);
 	}
 
+	@Override
 	public void setAttribute(String name, String value) {
 		fIsDirty = true;
 		super.setAttribute(name, value);
 	}
 
+	@Override
 	public void setValue(String value) {
 		fIsDirty = true;
 		super.setValue(value);
 	}
 
+	@Override
 	protected void removed() {
 		super.removed();
 	}
 
+	@Override
 	public ICStorageElement importChild(ICStorageElement el)
 			throws UnsupportedOperationException {
 		if(fIsReadOnly)
@@ -179,6 +188,7 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 		return super.importChild(el);
 	}
 
+	@Override
 	public void removeChild(ICStorageElement el) {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();

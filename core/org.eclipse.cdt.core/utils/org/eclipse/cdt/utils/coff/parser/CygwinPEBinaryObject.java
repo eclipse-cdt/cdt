@@ -161,6 +161,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @throws IOException
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws IOException {
 		InputStream stream = null;
 		Objdump objdump = getObjdump();
@@ -178,6 +179,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		return stream;
 	}
 
+	@Override
 	protected void loadSymbols(PE pe) throws IOException {
 		symbolLoadingAddr2line = getAddr2line(false);
 		symbolLoadingCPPFilt = getCPPFilt();
@@ -270,6 +272,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#addSymbols(org.eclipse.cdt.utils.coff.Coff.Symbol[],
 	 *      byte[], java.util.List)
 	 */
+	@Override
 	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List list) {
 		for (int i = 0; i < peSyms.length; i++) {
 			if (peSyms[i].isFunction() || peSyms[i].isPointer() || peSyms[i].isArray()) {
@@ -330,6 +333,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {
 			return getAddr2line(false);

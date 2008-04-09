@@ -25,6 +25,7 @@ public class CompositeArrayType extends CompositeTypeContainer implements IArray
 		fail(); return null;
 	}
 	
+	@Override
 	public Object clone() {
 		return new ArrayTypeClone(this);
 	}

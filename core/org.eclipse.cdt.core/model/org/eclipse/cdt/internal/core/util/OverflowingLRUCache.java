@@ -93,6 +93,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 *
 	 * @return New copy of this object.
 	 */
+	@Override
 	public Object clone() {
 		
 		OverflowingLRUCache newCache = (OverflowingLRUCache)newInstance(fSpaceLimit, fOverflow);
@@ -168,6 +169,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 *
 	 * @param space Amount of space to free up
 	 */
+	@Override
 	protected boolean makeSpace(int space) {
 	
 		int limit = fSpaceLimit;
@@ -244,6 +246,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 				fClass = aClass;
 				fCount = 1;
 			}
+			@Override
 			public String toString() {
 				return "Class: " + fClass + " has " + fCount + " entries."; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 			}
@@ -271,6 +274,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * @param shuffle indicates whether we are just shuffling the queue 
 	 * (i.e., the entry table is left alone).
 	 */
+	@Override
 	protected void privateRemoveEntry (LRUCacheEntry entry, boolean shuffle) {
 		privateRemoveEntry(entry, shuffle, true);
 	}
@@ -328,6 +332,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * @param value Value of object to add.
 	 * @return added value.
 	 */
+	@Override
 	public Object put(Object key, Object value) {
 		/* attempt to rid ourselves of the overflow, if there is any */
 		if (fOverflow > 0)
@@ -393,6 +398,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 *
 	 * @param limit Number of units of cache space
 	 */
+	@Override
 	public void setSpaceLimit(int limit) {
 		if (limit < fSpaceLimit) {
 			makeSpace(fSpaceLimit - limit);
@@ -412,6 +418,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * Returns a String that represents the value of this object.  This method
 	 * is for debugging purposes only.
 	 */
+	@Override
 	public String toString() {
 		return 
 			"OverflowingLRUCache " + this.fillingRatio() + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$
@@ -423,6 +430,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 *
 	 * <p>This method will do nothing if timestamps have been disabled.
 	 */
+	@Override
 	protected void updateTimestamp(LRUCacheEntry entry) {
 		if (fTimestampsOn) {
 			entry._fTimestamp = fTimestampCounter++;

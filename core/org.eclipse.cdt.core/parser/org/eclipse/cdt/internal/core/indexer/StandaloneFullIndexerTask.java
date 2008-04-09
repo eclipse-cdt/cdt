@@ -35,6 +35,7 @@ public class StandaloneFullIndexerTask extends StandaloneIndexerTask {
 		super(indexer, added, changed, removed, false);
 	}
 
+	@Override
 	protected ICodeReaderFactory createReaderFactory() {
 		return ((StandaloneFullIndexer)fIndexer).getCodeReaderFactory();
 	}

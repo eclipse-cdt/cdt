@@ -51,10 +51,12 @@ implements ICPPPointerToMemberType, IIndexType {
 		db.putInt(record + TYPE, typeRec);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_POINTER_TO_MEMBER_TYPE;
 	}
@@ -72,6 +74,7 @@ implements ICPPPointerToMemberType, IIndexType {
 		return null;
 	}
 	
+	@Override
 	public Object clone() {
 		return new PDOMCPPPointerToMemberTypeClone(this);
 	}
@@ -83,11 +86,13 @@ implements ICPPPointerToMemberType, IIndexType {
 		public ICPPClassType getMemberOfClass() {
 			return ((ICPPPointerToMemberType)delegate).getMemberOfClass();
 		}
+		@Override
 		public Object clone() {
 			return new PDOMCPPPointerToMemberTypeClone(this);
 		}
 	}
 	
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getMemberOfClass(), record);
 		super.delete(linkage);

@@ -62,6 +62,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
 		 */
+		@Override
 		public String getStringValue() throws CdtVariableException {
 //			if(!fIsDefined)
 //				throw new BuildMacroException(BuildMacroException.TYPE_MACROS_UNDEFINED,fName); 
@@ -73,6 +74,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringListValue()
 		 */
+		@Override
 		public String[] getStringListValue() throws CdtVariableException {
 //			if(!fIsDefined)
 //				throw new BuildMacroException(BuildMacroException.TYPE_MACROS_UNDEFINED,fName);

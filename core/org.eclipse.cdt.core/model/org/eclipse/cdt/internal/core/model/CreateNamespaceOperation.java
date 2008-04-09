@@ -41,6 +41,7 @@ public class CreateNamespaceOperation extends CreateElementInTUOperation {
 	/**
 	 * @see CreateElementInCUOperation#generateResultHandle
 	 */
+	@Override
 	protected ICElement generateResultHandle() {
 		return getTranslationUnit().getNamespace(fNamespace);
 	}
@@ -48,6 +49,7 @@ public class CreateNamespaceOperation extends CreateElementInTUOperation {
 	/**
 	 * @see CreateElementInCUOperation#getMainTaskName
 	 */
+	@Override
 	public String getMainTaskName(){
 		return "operation.createNamespaceProgress"; //$NON-NLS-1$
 	}
@@ -57,6 +59,7 @@ public class CreateNamespaceOperation extends CreateElementInTUOperation {
 	 * <li> after the last namespace
 	 * </ul>
 	 */
+	@Override
 	protected void initializeDefaultPosition() {
 		try {
 			ITranslationUnit cu = getTranslationUnit();
@@ -72,6 +75,7 @@ public class CreateNamespaceOperation extends CreateElementInTUOperation {
 	/*
 	 * TODO: Use the ASTRewrite once it is available.
 	 */
+	@Override
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		StringBuffer sb = new StringBuffer();
 		sb.append("namespace "); //$NON-NLS-1$;

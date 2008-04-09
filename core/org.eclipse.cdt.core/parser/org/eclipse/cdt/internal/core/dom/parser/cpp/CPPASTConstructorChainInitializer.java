@@ -60,7 +60,8 @@ public class CPPASTConstructorChainInitializer extends CPPASTNode implements
 		}
     }
 
-    public boolean accept(ASTVisitor action) {
+    @Override
+	public boolean accept(ASTVisitor action) {
         if (name != null)
             if (!name.accept(action))
                 return false;

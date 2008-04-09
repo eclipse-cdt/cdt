@@ -53,6 +53,7 @@ public class AllTypesCache {
 			
 			IIndexBinding[] all =
 				index.findBindings(Pattern.compile(".*"), false, new IndexFilter() { //$NON-NLS-1$
+					@Override
 					public boolean acceptBinding(IBinding binding) {
 						return IndexModelUtil.bindingHasCElementType(binding, kinds);
 					}},

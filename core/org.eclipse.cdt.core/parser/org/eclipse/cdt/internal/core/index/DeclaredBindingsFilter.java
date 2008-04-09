@@ -38,10 +38,12 @@ public class DeclaredBindingsFilter extends IndexFilter {
 		fAcceptSpecializations= acceptSpecializations;
 	}
 	
+	@Override
 	public boolean acceptLinkage(ILinkage linkage) {
 		return fLinkageID == -1 || fLinkageID == linkage.getLinkageID();
 	}
 
+	@Override
 	public boolean acceptBinding(IBinding binding) throws CoreException {
 		if (binding instanceof IIndexFragmentBinding) {
 			return  ((IIndexFragmentBinding) binding).hasDeclaration()

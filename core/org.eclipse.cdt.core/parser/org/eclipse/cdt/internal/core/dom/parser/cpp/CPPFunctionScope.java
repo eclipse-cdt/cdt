@@ -55,6 +55,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
+	@Override
 	public void addBinding(IBinding binding) {
 	    //3.3.4 only labels have function scope
 	    if (!(binding instanceof ILabel))
@@ -76,6 +77,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
+	@Override
 	public IBinding[] find(String name) throws DOMException {
 	    char[] n = name.toCharArray();
 	    List<IBinding> bindings = new ArrayList<IBinding>();
@@ -95,6 +97,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    return bindings.toArray(new IBinding[bindings.size()]);
 	}
 	
+	@Override
 	public IScope getParent() throws DOMException {
 	    //we can't just resolve the function and get its parent scope, since there are cases where that 
 	    //could loop since resolving functions requires resolving their parameter types
@@ -137,7 +140,8 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
-    public IName getScopeName() {
+    @Override
+	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if (node instanceof ICPPASTFunctionDeclarator) {
             return ((ICPPASTFunctionDeclarator)node).getName();
@@ -145,6 +149,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
         return null;
     }
 	
+	@Override
 	public void flushCache() {
 		labels.clear();
 		super.flushCache();

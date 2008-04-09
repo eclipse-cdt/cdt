@@ -36,6 +36,7 @@ final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		return INSTANCE.rwAnyNode(variable, 0);
 	}
 	
+	@Override
 	protected int rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent= node.getParent();
 		if (parent instanceof ICASTFieldDesignator) {
@@ -44,6 +45,7 @@ final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		return super.rwAnyNode(node, indirection);
 	}
 
+	@Override
 	protected int rwInExpression(IASTNode node, IASTExpression expr, int indirection) {
 		if (expr instanceof ICASTTypeIdInitializerExpression) {
 			return 0;
@@ -51,6 +53,7 @@ final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		return super.rwInExpression(node, expr, indirection);
 	}
 
+	@Override
 	protected int rwInInitializerExpression(int indirection, IASTNode parent) {
 		if (indirection == 0) {
 			return READ;
@@ -58,6 +61,7 @@ final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		return super.rwInInitializerExpression(indirection, parent);
 	}
 
+	@Override
 	protected int rwArgumentForFunctionCall(IASTFunctionCallExpression func, int parameterIdx,int indirection) {
 		if (indirection == 0) {
 			return READ;
@@ -65,6 +69,7 @@ final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		return super.rwArgumentForFunctionCall(func, parameterIdx, indirection);
 	}
 
+	@Override
 	protected int rwArgumentForFunctionCall(IASTNode node, IASTExpressionList exprList,	IASTFunctionCallExpression funcCall, int indirection) {
 		if (indirection == 0) {
 			return READ;
@@ -72,6 +77,7 @@ final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		return super.rwArgumentForFunctionCall(node, exprList, funcCall, indirection);
 	}
 
+	@Override
 	protected int rwAssignmentToType(IType type, int indirection) {
 		if (indirection == 0) {
 			return READ;

@@ -40,6 +40,7 @@ abstract class CompositeCPPBinding extends CompositeIndexBinding implements ICPP
 		return result;
 	}
 
+	@Override
 	public String[] getQualifiedName() {
 		try {
 			return ((ICPPBinding)rbinding).getQualifiedName();

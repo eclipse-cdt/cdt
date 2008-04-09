@@ -49,6 +49,7 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 		return isSystemInclude;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IIncludeEntry) {
 			IIncludeEntry otherEntry = (IIncludeEntry) obj;
@@ -116,6 +117,7 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());

@@ -58,6 +58,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	/**
 	 * @see CreateElementInCUOperation#generateResultHandle
 	 */
+	@Override
 	protected ICElement generateResultHandle() {
 		return getTranslationUnit().getInclude(fIncludeName);
 	}
@@ -65,6 +66,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	/**
 	 * @see CreateElementInCUOperation#getMainTaskName
 	 */
+	@Override
 	public String getMainTaskName(){
 		return "operation.createIncludeProgress"; //$NON-NLS-1$
 	}
@@ -75,6 +77,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	 * </ul>
 	 *  if no include
 	 */
+	@Override
 	protected void initializeDefaultPosition() {
 		try {
 			ITranslationUnit cu = getTranslationUnit();
@@ -96,6 +99,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	 * @see ICModelStatus
 	 * @see CNamingConventions
 	 */
+	@Override
 	public ICModelStatus verify() {
 		ICModelStatus status = super.verify();
 		if (!status.isOK()) {
@@ -111,6 +115,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	/*
 	 * TODO: Use the ASTRewrite once it is available.
 	 */
+	@Override
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		StringBuffer sb = new StringBuffer();
 		sb.append("#include "); //$NON-NLS-1$;

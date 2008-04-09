@@ -116,6 +116,7 @@ public class CShiftData implements ICElementDelta {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		return ("CShiftData: offset=" + offset + ", size=" + size + ", lines=" + lines);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}

@@ -85,6 +85,7 @@ public abstract class ACPathEntry extends ACSettingEntry
 		return checkFlags(VALUE_WORKSPACE_PATH);
 	}
 
+	@Override
 	protected String contentsToString() {
 		return fName;
 	}

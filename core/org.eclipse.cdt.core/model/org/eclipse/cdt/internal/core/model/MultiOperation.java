@@ -99,6 +99,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 * If multiple errors occured, the corresponding <code>CModelStatus</code> is a
 	 * multi-status. Otherwise, it is a simple one.
 	 */
+	@Override
 	protected void executeOperation() throws CModelException {
 		try {
 			processElements();

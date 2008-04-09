@@ -117,6 +117,7 @@ public class XCoff32 {
 			return !((f_flags & F_LNNO) == F_LNNO);
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("FILE HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -202,6 +203,7 @@ public class XCoff32 {
 			o_debugger = memory.getInt();
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -366,6 +368,7 @@ public class XCoff32 {
 //			return lines;
 //		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SECTION HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -539,6 +542,7 @@ public class XCoff32 {
 					!getShortName().equals(SectionHeader._DATA));
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SYMBOL TABLE ENTRY").append(NL); //$NON-NLS-1$
@@ -719,6 +723,7 @@ public class XCoff32 {
 		}
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		try {

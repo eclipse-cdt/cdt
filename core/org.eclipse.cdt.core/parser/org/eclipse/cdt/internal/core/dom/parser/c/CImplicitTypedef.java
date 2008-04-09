@@ -38,28 +38,32 @@ public class CImplicitTypedef extends CTypedef implements ITypedef, ICInternalBi
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
      */
-    public IType getType() {
+    @Override
+	public IType getType() {
         return type;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return String.valueOf(name);
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return name;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return scope;
     }
     
@@ -100,14 +104,17 @@ public class CImplicitTypedef extends CTypedef implements ITypedef, ICInternalBi
      * returns null
      * @return
      */
-    public IASTNode getPhysicalNode() {
+    @Override
+	public IASTNode getPhysicalNode() {
         return null;
     }
 
+	@Override
 	public IASTNode[] getDeclarations() {
 		return IASTNode.EMPTY_NODE_ARRAY;
 	}
 
+	@Override
 	public IASTNode getDefinition() {
 		return null;
 	}

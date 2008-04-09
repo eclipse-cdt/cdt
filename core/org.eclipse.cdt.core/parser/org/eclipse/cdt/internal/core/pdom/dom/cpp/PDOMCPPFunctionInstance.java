@@ -97,10 +97,12 @@ class PDOMCPPFunctionInstance extends PDOMCPPInstance implements ICPPFunction {
 		super(pdom, bindingRecord);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_FUNCTION_INSTANCE;
 	}
@@ -189,6 +191,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPInstance implements ICPPFunction {
 		return false;
 	}
 	
+	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp= super.pdomCompareTo(other);
 		return cmp==0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;

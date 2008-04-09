@@ -43,7 +43,8 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
         return typeId;
     }
     
-    public void setOperand(IASTExpression expression) {
+    @Override
+	public void setOperand(IASTExpression expression) {
         super.setOperand(expression);
         // this needs to be overridden because CPPASTUnaryExpression sets
         // propertyInParent to ICPPASTUnaryExpression.OPERAND, we want 
@@ -54,7 +55,8 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
 		}
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

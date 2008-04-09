@@ -102,6 +102,7 @@ public class Addr32 implements IAddress {
 		return address == ZERO.address;
 	}
 
+	@Override
 	public String toString() {
 		return toString(10);
 	}
@@ -110,6 +111,7 @@ public class Addr32 implements IAddress {
 		return Long.toString(address, radix);
 	}
 
+	@Override
 	public boolean equals(Object x) {
 		if (x == this)
 			return true;
@@ -118,6 +120,7 @@ public class Addr32 implements IAddress {
 		return this.address == ((Addr32)x).address;
 	}
 
+	@Override
 	public int hashCode() {
 		return (int)(address ^ (address >> 32));
 	}

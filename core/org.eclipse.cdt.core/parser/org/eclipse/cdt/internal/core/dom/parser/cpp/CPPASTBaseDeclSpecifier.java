@@ -82,7 +82,8 @@ public abstract class CPPASTBaseDeclSpecifier extends CPPASTNode implements ICPP
         this.explicit = value;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
     	return ASTSignatureUtil.getSignature(this);
     }
 }

@@ -36,6 +36,7 @@ public final class DebugParameterKind {
 		this.id = id;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DebugParameterKind) {
 			DebugParameterKind kind = (DebugParameterKind)obj;

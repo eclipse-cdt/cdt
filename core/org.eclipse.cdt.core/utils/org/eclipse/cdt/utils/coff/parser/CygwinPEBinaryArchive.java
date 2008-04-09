@@ -34,6 +34,7 @@ public class CygwinPEBinaryArchive extends PEBinaryArchive {
 	 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryArchive#addArchiveMembers(org.eclipse.cdt.utils.AR.ARHeader[],
 	 *      java.util.ArrayList)
 	 */
+	@Override
 	protected void addArchiveMembers(ARHeader[] headers, ArrayList children2) {
 		for (int i = 0; i < headers.length; i++) {
 			IBinaryObject bin = new CygwinPEBinaryObject(getBinaryParser(), getPath(), headers[i]);

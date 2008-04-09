@@ -77,10 +77,12 @@ public class FileStorage extends PlatformObject implements IStorage {
 	/**
 	 * @see IStorage#isReadOnly()
 	 */
+	@Override
 	public String toString() {
 		return path.toOSString();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

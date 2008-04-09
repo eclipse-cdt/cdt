@@ -45,12 +45,14 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 			fSupportedKinds = kinds;
 		}
 
+		@Override
 		protected ICLanguageSettingEntry[] getAllDiscoveredEntries(int kind) {
 			return UserAndDiscoveredEntryConfigurationDataProvider.this.getAllDiscoveredEntries(this, kind);
 		}
 	}
 	
 	protected class DataFactory extends CDataFacroty {
+		@Override
 		public CLanguageData createLanguageData(CConfigurationData cfg,
 				CResourceData rcBase, CLanguageData base, String id, boolean clone) {
 			if(id == null)
@@ -58,6 +60,7 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 			return new LanguageData(id, base);
 		}
 
+		@Override
 		public CLanguageData createLanguageData(CConfigurationData cfg,
 				CResourceData rcBase, String id, String name, String languageId,
 				int supportedKinds, String[] rcTypes, boolean isContentTypes) {
@@ -68,10 +71,12 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 		}		
 	}
 	
+	@Override
 	protected CDataSerializer getDataSerializer() {
 		return UserAndDiscoveredEntryDataSerializer.getDefault();
 	}
 
+	@Override
 	protected CDataFacroty getDataFactory() {
 		if(fDataFactory == null){
 			fDataFactory = new DataFactory();

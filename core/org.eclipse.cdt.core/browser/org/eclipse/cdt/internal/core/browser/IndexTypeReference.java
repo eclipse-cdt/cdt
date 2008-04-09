@@ -93,6 +93,7 @@ public class IndexTypeReference extends TypeReference {
 	/*
 	 * @see org.eclipse.cdt.core.browser.ITypeReference#getCElements()
 	 */
+	@Override
 	public ICElement[] getCElements() {
 		if (fCElement != null) {
 			return new ICElement[] { fCElement };

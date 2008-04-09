@@ -187,6 +187,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICMultiItemsHolder#getItems()
 	 */
+	@Override
 	public Object[] getItems() {
 		return fRess;
 	}

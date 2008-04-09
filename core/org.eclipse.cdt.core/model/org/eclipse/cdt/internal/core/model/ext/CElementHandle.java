@@ -66,6 +66,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		fRegion= new Region(0,0);
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ICElement) {
 			return CElement.equals(this, (ICElement) obj);
@@ -73,6 +74,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return CElement.hashCode(this);
 	}

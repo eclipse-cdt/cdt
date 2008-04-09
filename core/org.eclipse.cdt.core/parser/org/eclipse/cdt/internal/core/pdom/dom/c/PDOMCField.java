@@ -35,10 +35,12 @@ class PDOMCField extends PDOMCVariable implements IField {
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CFIELD;
 	}
@@ -49,16 +51,19 @@ class PDOMCField extends PDOMCVariable implements IField {
 		return false;
 	}
 
+	@Override
 	public boolean isExtern() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;
 	}
 
+	@Override
 	public boolean isAuto() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;

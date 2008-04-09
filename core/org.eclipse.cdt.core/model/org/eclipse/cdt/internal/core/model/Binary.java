@@ -198,6 +198,7 @@ public class Binary extends Openable implements IBinary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IBinaryObject.class.equals(adapter)) {
 			return getBinaryObject();
@@ -213,6 +214,7 @@ public class Binary extends Openable implements IBinary {
 		return fBinType;
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		long modification = getModificationStamp();
 		boolean changed = modification != fLastModification;
@@ -241,17 +243,20 @@ public class Binary extends Openable implements IBinary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
-	 public CElementInfo createElementInfo() {
+	 @Override
+	public CElementInfo createElementInfo() {
 		return new BinaryInfo(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
 		throws CModelException {
 		return computeChildren(info, underlyingResource);
@@ -421,6 +426,7 @@ public class Binary extends Openable implements IBinary {
 	 * overridden from default as we do not need to create our children to provider a buffer since the buffer just contains
 	 * IBinaryOject contents which is not model specific.
 	 */
+	@Override
 	public IBuffer getBuffer() throws CModelException {
 		if (hasBuffer()) {
 			IBuffer buffer = getBufferManager().getBuffer(this);
@@ -436,6 +442,7 @@ public class Binary extends Openable implements IBinary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#openBuffer(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 
 		// create buffer -  translation units only use default buffer factory
@@ -480,6 +487,7 @@ public class Binary extends Openable implements IBinary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#hasBuffer()
 	 */
+	@Override
 	protected boolean hasBuffer() {
 		return true;
 	}
@@ -487,6 +495,7 @@ public class Binary extends Openable implements IBinary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#exists()
 	 */
+	@Override
 	public boolean exists() {
 		IResource res = getResource();
 		if (res != null)
@@ -496,6 +505,7 @@ public class Binary extends Openable implements IBinary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
 	 */
+	@Override
 	protected void closing(Object info) throws CModelException {
 		ICProject cproject = getCProject();
 		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(cproject);

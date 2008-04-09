@@ -39,6 +39,7 @@ public interface IScannerExtensionConfiguration {
 	 * @deprecated empty macros are taken as they are. It is the task of configuration to provide the correct values.
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=215789
 	 */
+	@Deprecated
 	public boolean initializeMacroValuesTo1();
 
 	/**

@@ -1447,6 +1447,7 @@ public class Scribe {
 		needSpace= false;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer stringBuffer= new StringBuffer();
 		stringBuffer.append("(page width = " + pageWidth + ") - (tabChar = ");//$NON-NLS-1$//$NON-NLS-2$

@@ -66,6 +66,7 @@ public class Dwarf {
 		short version;
 		int abbreviationOffset;
 		byte addressSize;
+		@Override
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
 			sb.append("Length: " + length).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -100,6 +101,7 @@ public class Dwarf {
 			name = n;
 			form = f;
 		}
+		@Override
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
 			sb.append("name: " + Long.toHexString(name)); //$NON-NLS-1$
@@ -115,6 +117,7 @@ public class Dwarf {
 			attribute = a;
 			value = o;
 		}
+		@Override
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
 			sb.append(attribute.toString()).append(' ');

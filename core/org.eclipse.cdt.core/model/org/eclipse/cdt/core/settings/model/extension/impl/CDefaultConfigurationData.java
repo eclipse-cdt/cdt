@@ -153,6 +153,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return fFactory.createBuildData(this, data, null, data != null ? data.getName() : null, clone);
 	}
 
+	@Override
 	public CFolderData createFolderData(IPath path, CFolderData base) throws CoreException{
 		CFolderData data = copyFolderData(path, base, false);
 		addRcData(data);
@@ -162,6 +163,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return data;
 	}
 
+	@Override
 	public CFileData createFileData(IPath path, CFileData base) throws CoreException{
 		CFileData data = copyFileData(path, base, false);
 		addRcData(data);
@@ -171,6 +173,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return data;
 	}
 
+	@Override
 	public CFileData createFileData(IPath path, CFolderData base, CLanguageData langData) throws CoreException{
 		CFileData data = copyFileData(path, base, langData);
 		addRcData(data);
@@ -180,10 +183,12 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return data;
 	}
 
+	@Override
 	public String getDescription() {
 		return fDescription;
 	}
 	
+	@Override
 	public void setDescription(String description) {
 		if(CDataUtil.objectsEqual(description, fDescription))
 			return;
@@ -192,10 +197,12 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		setModified(true);
 	}
 
+	@Override
 	public CResourceData[] getResourceDatas() {
 		return (CResourceData[])fResourceDataMap.values().toArray(new CResourceData[fResourceDataMap.size()]);
 	}
 
+	@Override
 	public CFolderData getRootFolderData() {
 		return fRootFolderData;
 	}
@@ -207,6 +214,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return fRootFolderData;
 	}
 
+	@Override
 	public void removeResourceData(CResourceData data) throws CoreException {
 		if(data == getResourceData(data.getPath())){
 			IPath path = standardizePath(data.getPath());
@@ -221,10 +229,12 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return (CResourceData)fResourceDataMap.get(path);
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public void setName(String name) {
 		if(CDataUtil.objectsEqual(name, fName))
 			return;
@@ -232,22 +242,27 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		setModified(true);
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getId() != null;
 	}
 
+	@Override
 	public CTargetPlatformData getTargetPlatformData() {
 		return fTargetPlatformData;
 	}
 
+	@Override
 	public ICSourceEntry[] getSourceEntries() {
 		return fSourceEntries != null ? (ICSourceEntry[])fSourceEntries.clone() : null;
 	}
 
+	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) {
 		if(Arrays.equals(entries, fSourceEntries))
 			return;
@@ -256,6 +271,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		setModified(true);
 	}
 
+	@Override
 	public CBuildData getBuildData() {
 		return fBuildData;
 	}
@@ -283,6 +299,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return fBuildData;
 	}
 
+	@Override
 	public ICdtVariablesContributor getBuildVariablesContributor() {
 		// TODO Auto-generated method stub
 		return null;
@@ -312,6 +329,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		}
 	}
 
+	@Override
 	public CConfigurationStatus getStatus() {
 		return fStatus;
 	}

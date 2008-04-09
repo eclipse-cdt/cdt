@@ -426,6 +426,7 @@ public class Buffer implements IBuffer {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Owner: " + ((CElement)this.owner).toString()); //$NON-NLS-1$

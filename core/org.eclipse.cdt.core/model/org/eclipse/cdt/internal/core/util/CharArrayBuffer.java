@@ -218,6 +218,7 @@ public class CharArrayBuffer {
 	 * Returns the contents of the buffer as a String, or <code>null</code> if
 	 * the buffer is empty.
 	 */
+	@Override
 	public String toString() {
 		char[] contents = getContents();
 		return (contents != null) ? new String(contents) : null;

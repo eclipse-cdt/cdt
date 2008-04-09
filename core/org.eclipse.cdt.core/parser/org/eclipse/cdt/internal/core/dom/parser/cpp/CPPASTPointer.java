@@ -38,7 +38,8 @@ public class CPPASTPointer extends CPPASTNode implements IASTPointer {
         isVolatile = value;
     }
 
-    public boolean accept(ASTVisitor action) {
+    @Override
+	public boolean accept(ASTVisitor action) {
         return true;
     }
 }

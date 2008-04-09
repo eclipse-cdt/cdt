@@ -29,6 +29,7 @@ public abstract class Parent extends CElement {
 	 * Adds a child to the current element.
 	 * Implementations override this method to support children
 	 */
+	@Override
 	public void addChild(ICElement member) throws CModelException {
 		getElementInfo().addChild(member);
 	}

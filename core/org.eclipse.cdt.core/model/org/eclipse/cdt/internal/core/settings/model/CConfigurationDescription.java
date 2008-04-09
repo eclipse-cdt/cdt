@@ -157,6 +157,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 //		return fCfgCache;
 //	}
 	
+	@Override
 	public String getId() {
 		String id = super.getId();
 		if(id == null){
@@ -169,6 +170,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		String name = super.getName();
 		if(name == null){
@@ -246,6 +248,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		return null;
 	}
 
+	@Override
 	protected IProxyProvider createChildProxyProvider() {
 		ICDataScope scope = new ICDataScope(){
 
@@ -636,6 +639,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		return fIsPreference;
 	}
 	
+	@Override
 	protected boolean containsWritableData(){
 		if(super.containsWritableData())
 			return true;

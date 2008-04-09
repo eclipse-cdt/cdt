@@ -44,7 +44,8 @@ public class CPPASTInitializerExpression extends CPPASTNode implements
 		}
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitInitializers ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

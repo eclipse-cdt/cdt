@@ -69,6 +69,7 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireClosedChangedEvent(IProject)
 	 */
+	@Override
 	public void close() {
 		super.close();
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, getProject(), PathEntryStoreChangedEvent.STORE_CLOSED);
@@ -79,6 +80,7 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 		}
 	}
 
+	@Override
 	public IProject getProject() {
 		return super.getProject();
 	}
@@ -103,6 +105,7 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 		notifyListeners(event);
 	}
 	
+	@Override
 	protected Object createDefaultProvider(ICConfigurationDescription cfgDes,
 			boolean newStile) {
 		if(newStile){
@@ -111,28 +114,33 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 		return new DefaultPathEntryStore(getProject());
 	}
 
+	@Override
 	protected void deinitializeProvider(Object o) {
 		IPathEntryStore store = (IPathEntryStore)o;
 		store.removePathEntryStoreListener(this);
 		store.close();
 	}
 
+	@Override
 	protected void initializeProvider(Object o) {
 		IPathEntryStore store = (IPathEntryStore)o;
 		fStore = store;
 		store.addPathEntryStoreListener(this);
 	}
 
+	@Override
 	protected boolean isValidProvider(Object o) {
 		return o instanceof IPathEntryStore;
 	}
 
+	@Override
 	protected void postProcessProviderChange(Object newProvider,
 			Object oldProvider) {
 //		if(oldProvider != null)
 			fireContentChangedEvent(getProject());
 	}
 
+	@Override
 	protected boolean doHandleEvent(CProjectDescriptionEvent event) {
 		IPathEntryStore oldStore = fStore;
 		boolean result = super.doHandleEvent(event); 

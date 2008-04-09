@@ -170,6 +170,7 @@ public class PDOMASTAdapter {
 			fDelegate= delegate;
 		}
 
+		@Override
 		public Object clone() {
 			throw new PDOMNotImplementedError();
 		}
@@ -213,6 +214,7 @@ public class PDOMASTAdapter {
 			fDelegate= delegate;
 		}
 
+		@Override
 		public Object clone() {
 			throw new PDOMNotImplementedError();
 		}
@@ -268,6 +270,7 @@ public class PDOMASTAdapter {
 			fDelegate= delegate;
 		}
 		
+		@Override
 		public Object clone() {
 			throw new PDOMNotImplementedError();
 		}

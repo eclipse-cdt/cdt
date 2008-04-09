@@ -45,10 +45,12 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	@Override
 	protected void executeOperation() throws CModelException {
 		if (isCanceled()) {
 			return;

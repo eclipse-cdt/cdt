@@ -22,6 +22,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 		super(parent, name, ICElement.C_ENUMERATION);		
 	}
 
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new EnumerationInfo(this);
 	}

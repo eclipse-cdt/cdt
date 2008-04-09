@@ -67,10 +67,12 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_METHOD_SPECIALIZATION;
 	}
@@ -87,11 +89,13 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
+	@Override
 	public boolean isExtern() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 	
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
@@ -107,10 +111,12 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION));
 	}
 	
+	@Override
 	public boolean isConst() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.CONST_OFFSET + CV_OFFSET);
 	}
 
+	@Override
 	public boolean isVolatile() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}

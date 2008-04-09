@@ -24,6 +24,7 @@ public class GNUElfBinaryArchive extends ElfBinaryArchive {
 		super(parser, p);
 	}
 	
+	@Override
 	protected IBinaryObject[] createArchiveMembers(ARHeader[] headers) {
 		IBinaryObject[] result= new IBinaryObject[headers.length];
 		for (int i = 0; i < headers.length; i++) {

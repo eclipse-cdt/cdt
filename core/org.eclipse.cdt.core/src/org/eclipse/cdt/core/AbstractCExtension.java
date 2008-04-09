@@ -20,10 +20,12 @@ public abstract class AbstractCExtension extends InternalCExtension implements I
 	 *	
 	 * @return the project
 	 */
+	@Override
 	public final IProject getProject() {
 		return super.getProject();
 	}
 	
+	@Override
 	public final ICExtensionReference getExtensionReference() {
 		return super.getExtensionReference();
 	}

@@ -23,69 +23,79 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#allowRestrictPointerOperators()
      */
-    public boolean allowRestrictPointerOperators() {
+    @Override
+	public boolean allowRestrictPointerOperators() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportTypeofUnaryExpressions()
      */
-    public boolean supportTypeofUnaryExpressions() {
+    @Override
+	public boolean supportTypeofUnaryExpressions() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportAlignOfUnaryExpression()
      */
-    public boolean supportAlignOfUnaryExpression() {
+    @Override
+	public boolean supportAlignOfUnaryExpression() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportExtendedTemplateSyntax()
      */
-    public boolean supportExtendedTemplateSyntax() {
+    @Override
+	public boolean supportExtendedTemplateSyntax() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportMinAndMaxOperators()
      */
-    public boolean supportMinAndMaxOperators() {
+    @Override
+	public boolean supportMinAndMaxOperators() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportStatementsInExpressions()
      */
-    public boolean supportStatementsInExpressions() {
+    @Override
+	public boolean supportStatementsInExpressions() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportComplexNumbers()
      */
-    public boolean supportComplexNumbers() {
+    @Override
+	public boolean supportComplexNumbers() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportRestrictKeyword()
      */
-    public boolean supportRestrictKeyword() {
+    @Override
+	public boolean supportRestrictKeyword() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportLongLongs()
      */
-    public boolean supportLongLongs() {
+    @Override
+	public boolean supportLongLongs() {
         return true;
     }
 
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportKnRC()
 	 */
+	@Override
 	public boolean supportKnRC() {
 		return false;
 	}
@@ -93,6 +103,7 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportAttributeSpecifiers()
 	 */
+	@Override
 	public boolean supportAttributeSpecifiers() {
 		return true;
 	}
@@ -100,6 +111,7 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportDeclspecSpecifiers()
 	 */
+	@Override
 	public boolean supportDeclspecSpecifiers() {
 		return true;
 	}
@@ -107,6 +119,7 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#getBuiltinBindingsProvider()
 	 */
+	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.CPP);
 	}

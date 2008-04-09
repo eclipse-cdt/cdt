@@ -20,6 +20,7 @@ public class EntryContentsKey {
 		fEntry = entry;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if(this == obj)
 			return true;
@@ -29,6 +30,7 @@ public class EntryContentsKey {
 		return fEntry.equalsByContents(((EntryContentsKey)obj).fEntry);
 	}
 
+	@Override
 	public int hashCode() {
 		return ((ACSettingEntry)fEntry).codeForContentsKey();
 	}

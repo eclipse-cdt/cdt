@@ -56,10 +56,12 @@ public class ContentTypeProcessor extends CModelOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	@Override
 	protected void executeOperation() throws CModelException {
 		for (int i = 0; i < fEvents.length; ++i) {
 			IContentType contentType = fEvents[i].getContentType();

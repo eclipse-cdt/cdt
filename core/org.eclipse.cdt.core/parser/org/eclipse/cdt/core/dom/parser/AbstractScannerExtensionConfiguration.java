@@ -47,6 +47,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	/**
 	 * @deprecated see {@link IScannerExtensionConfiguration#initializeMacroValuesTo1()}
 	 */
+	@Deprecated
 	public boolean initializeMacroValuesTo1() {
 		return false;
 	}

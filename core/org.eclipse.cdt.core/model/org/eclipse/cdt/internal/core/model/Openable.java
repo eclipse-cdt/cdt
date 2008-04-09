@@ -46,6 +46,7 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		resource = res;
 	}
 
+	@Override
 	public IResource getResource()  {
 		return resource;
 	}
@@ -95,6 +96,7 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	/**
 	 * This element is being closed.  Do any necessary cleanup.
 	 */
+	@Override
 	protected void closing(Object info) throws CModelException {
 		closeBuffer();
 	}
@@ -240,6 +242,7 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
 
 		if (CModelManager.VERBOSE){

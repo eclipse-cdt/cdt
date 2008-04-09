@@ -84,10 +84,12 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		getMethodInfo().setFriend(isFriend);
 	}
 
+	@Override
 	public boolean isConst(){
 		return isConst;
 	}
 
+	@Override
 	public void setConst(boolean isConst) throws CModelException{
 		this.isConst = isConst;
 	}
@@ -100,6 +102,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		getMethodInfo().setVisibility(visibility);
 	}
 	
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new MethodInfo(this);
 	}
@@ -108,6 +111,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		return (MethodInfo) getElementInfo();
 	}
 	
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof IMethodDeclaration) {
 			return equals(this, (IMethodDeclaration) other);

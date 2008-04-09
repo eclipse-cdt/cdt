@@ -27,6 +27,7 @@ public class CygwinPEParser extends PEParser {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
 	 */
+	@Override
 	public String getFormat() {
 		return "Cygwin PE"; //$NON-NLS-1$
 	}
@@ -36,6 +37,7 @@ public class CygwinPEParser extends PEParser {
 	 * 
 	 * @see org.eclipse.cdt.utils.coff.parser.PEParser#createBinaryArchive(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
 		return new CygwinPEBinaryArchive(this, path);
 	}
@@ -43,6 +45,7 @@ public class CygwinPEParser extends PEParser {
 	 * @param path
 	 * @return
 	 */
+	@Override
 	protected IBinaryExecutable createBinaryExecutable(IPath path) {
 		return new CygwinPEBinaryExecutable(this, path, IBinaryFile.EXECUTABLE);
 	}
@@ -51,6 +54,7 @@ public class CygwinPEParser extends PEParser {
 	 * @param path
 	 * @return
 	 */
+	@Override
 	protected IBinaryObject createBinaryCore(IPath path) {
 		return new CygwinPEBinaryObject(this, path, IBinaryFile.CORE);
 	}
@@ -59,6 +63,7 @@ public class CygwinPEParser extends PEParser {
 	 * @param path
 	 * @return
 	 */
+	@Override
 	protected IBinaryObject createBinaryObject(IPath path) {
 		return new CygwinPEBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
@@ -67,6 +72,7 @@ public class CygwinPEParser extends PEParser {
 	 * @param path
 	 * @return
 	 */
+	@Override
 	protected IBinaryShared createBinaryShared(IPath path) {
 		return new CygwinPEBinaryShared(this, path);
 	}
@@ -81,6 +87,7 @@ public class CygwinPEParser extends PEParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ICygwinToolsFactroy.class)) {
 			if (toolFactory == null) {

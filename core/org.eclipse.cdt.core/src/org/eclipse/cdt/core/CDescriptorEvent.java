@@ -46,6 +46,7 @@ public class CDescriptorEvent extends EventObject {
 		return fType & ~FLAGS_MASK;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		switch (getType()) {

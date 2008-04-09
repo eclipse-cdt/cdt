@@ -42,7 +42,8 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements
         return expressions;
     }
 
-    protected IASTNode[] getNodes() {
+    @Override
+	protected IASTNode[] getNodes() {
         return getExpressions();
     }
 

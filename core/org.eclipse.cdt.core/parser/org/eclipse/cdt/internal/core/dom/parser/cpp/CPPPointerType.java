@@ -105,7 +105,8 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 		return isVolatile;
 	}
 	
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();
@@ -115,6 +116,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
         return t;
     }
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

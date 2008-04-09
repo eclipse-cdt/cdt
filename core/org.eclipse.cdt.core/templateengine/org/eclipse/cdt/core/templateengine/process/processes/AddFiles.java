@@ -38,6 +38,7 @@ public class AddFiles extends ProcessRunner {
 	/**
 	 * This method Adds the list of Files to the corresponding Project.
 	 */
+	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);

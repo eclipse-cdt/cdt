@@ -28,6 +28,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 		super(id, base);
 	}
 
+	@Override
 	protected void copySettingsFrom(CLanguageData data) {
 		super.copySettingsFrom(data);
 		
@@ -62,28 +63,34 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 			fLangData = lData;
 		}
 
+		@Override
 		protected ICLanguageSettingEntry[] getDiscoveredEntries(
 				Set disabledNameSet) {
 			return fLangData.getDiscoveredEntries(getKind(), disabledNameSet);
 		}
 
+		@Override
 		protected ICLanguageSettingEntry[] getUserEntries() {
 			return fLangData.getUserEntries(getKind());
 		}
 
+		@Override
 		protected void setDisabledDiscoveredNames(Set disabledNameSet) {
 			fLangData.setDisabledDiscoveredNames(getKind(), disabledNameSet);
 		}
 
+		@Override
 		protected void setUserEntries(ICLanguageSettingEntry[] entries) {
 			fLangData.setUserEntries(getKind(), entries);
 		}
 
+		@Override
 		protected boolean canDisableDiscoveredEntries() {
 			return fLangData.canDisableDiscoveredEntries(getKind());
 		}
 	}
 	
+	@Override
 	protected AbstractEntryStorage getStorage(int kind) {
 		return new UserAndDiscoveredEntryLanguageDataEntryStorage(kind, this);
 	}
@@ -146,6 +153,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 		return true;
 	}
 
+	@Override
 	protected ICLanguageSettingEntry[] getEntriesToCopy(int kind,
 			CLanguageData data) {
 		return ((UserAndDiscoveredEntryLanguageData)data).getEntriesFromStore(kind);

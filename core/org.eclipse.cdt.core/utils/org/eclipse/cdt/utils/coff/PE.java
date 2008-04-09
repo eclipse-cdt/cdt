@@ -156,6 +156,7 @@ public class PE {
 			memory.getBytes(dos_message);
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("DOS STUB VALUES").append(NL); //$NON-NLS-1$
@@ -263,6 +264,7 @@ public class PE {
 			}
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("NT OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -300,6 +302,7 @@ public class PE {
 			size = s;
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("rva = ").append(rva).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -332,6 +335,7 @@ public class PE {
 			thunk = memory.getInt();
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("rva = ").append(rva); //$NON-NLS-1$
@@ -570,6 +574,7 @@ public class PE {
 		}
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
 		try {
 			dispose();
@@ -677,6 +682,7 @@ public class PE {
 		return stringTable;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		if (exeHeader != null) {

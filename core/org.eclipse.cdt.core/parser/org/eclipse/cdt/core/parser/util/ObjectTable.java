@@ -32,6 +32,7 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 		keyTable= (T[]) new Object[capacity()];
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Object clone(){
 	    ObjectTable<T> newTable = (ObjectTable<T>) super.clone();
@@ -59,12 +60,14 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 	    return keyTable[i];
 	}
 	
+	@Override
 	public void clear(){
 		super.clear();
 	    for( int i = 0; i < keyTable.length; i++ )
 	        keyTable[i] = null;
 	}
 	
+	@Override
 	protected final int hash( int pos ){
 	    return hash(keyTable[pos]);
 	}
@@ -73,6 +76,7 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 	    return obj.hashCode() & ((capacity() * 2) - 1);
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void resize(int size) {
 		Object[] oldKeyTable = keyTable;

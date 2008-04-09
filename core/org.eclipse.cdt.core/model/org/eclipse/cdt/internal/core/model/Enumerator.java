@@ -21,6 +21,7 @@ public class Enumerator extends SourceManipulation implements IEnumerator{
 		super(parent, name, ICElement.C_ENUMERATOR);
 	}
 	
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
 	}

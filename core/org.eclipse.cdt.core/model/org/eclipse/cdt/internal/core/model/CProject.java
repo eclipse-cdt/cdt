@@ -130,6 +130,7 @@ public class CProject extends Openable implements ICProject {
 	 *
 	 * @see CElement#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 	
 		if (this == o)
@@ -142,11 +143,13 @@ public class CProject extends Openable implements ICProject {
 		return getProject().equals(other.getProject());
 	}
 
+	@Override
 	protected CElementInfo createElementInfo() {
 		return new CProjectInfo(this);
 	}
 
 	// CHECKPOINT: CProjects will return the hash code of their underlying IProject
+	@Override
 	public int hashCode() {
 		return getProject().hashCode();
 	}
@@ -574,6 +577,7 @@ public class CProject extends Openable implements ICProject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm,
 			Map newElements, IResource underlyingResource)
 			throws CModelException {
@@ -701,6 +705,7 @@ public class CProject extends Openable implements ICProject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#exists()
 	 */
+	@Override
 	public boolean exists() {
 		if (!isCProject()) {
 			return false;
@@ -718,6 +723,7 @@ public class CProject extends Openable implements ICProject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
 	 */
+	@Override
 	protected void closing(Object info) throws CModelException {
 		if (info instanceof CProjectInfo) {
 			CProjectInfo pinfo = (CProjectInfo)info;

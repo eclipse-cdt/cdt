@@ -368,6 +368,7 @@ private void removed(ICElement element) {
 private void removeElementInfo(ICElement element) {
 	this.infos.remove(element);
 }
+@Override
 public String toString() {
 	StringBuffer buffer = new StringBuffer();
 	buffer.append("Built delta:\n"); //$NON-NLS-1$

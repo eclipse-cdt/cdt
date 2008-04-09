@@ -33,6 +33,7 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.deleteResourceProgress"); //$NON-NLS-1$
 	}
@@ -41,6 +42,7 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	 * @see MultiOperation. This method delegate to <code>deleteResource</code> or
 	 * <code>deletePackageFragment</code> depending on the type of <code>element</code>.
 	 */
+	@Override
 	protected void processElement(ICElement element) throws CModelException {
 		deleteResource(element.getResource(), fForce);
 	}
@@ -48,6 +50,7 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected void verify(ICElement element) throws CModelException {
 		if (element == null || !element.exists())
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);

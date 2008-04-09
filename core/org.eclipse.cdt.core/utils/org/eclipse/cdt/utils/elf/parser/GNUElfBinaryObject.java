@@ -122,6 +122,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 * @throws IOException
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws IOException {
 		InputStream stream = null;
 		Objdump objdump = getObjdump();
@@ -144,6 +145,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#loadSymbols(org.eclipse.cdt.utils.elf.ElfHelper)
 	 */
+	@Override
 	protected void loadSymbols(ElfHelper helper) throws IOException {
 		symbolLoadingAddr2line = getAddr2line(false);
 		symbolLoadingCPPFilt = getCPPFilt();
@@ -164,6 +166,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#addSymbols(org.eclipse.cdt.utils.elf.Elf.Symbol[],
 	 *      int, java.util.List)
 	 */
+	@Override
 	protected void addSymbols(Elf.Symbol[] array, int type, List list) {
 		for (int i = 0; i < array.length; i++) {
 			String name = array[i].toString();
@@ -203,6 +206,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {
 			return getAddr2line(false);

@@ -53,7 +53,8 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
     	}
     }
     
-    protected boolean postAccept( ASTVisitor action ){
+    @Override
+	protected boolean postAccept( ASTVisitor action ){
         IASTArrayModifier [] mods = getArrayModifiers();
         for ( int i = 0; i < mods.length; i++ ) {
             if( !mods[i].accept( action ) ) return false;

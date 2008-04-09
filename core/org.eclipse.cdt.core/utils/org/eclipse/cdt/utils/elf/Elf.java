@@ -340,6 +340,7 @@ public class Elf {
 			return data;
 		}
 
+		@Override
 		public String toString() {
 			try {
 				if (section_strtab == null) {
@@ -453,6 +454,7 @@ public class Elf {
 			return this.st_value.compareTo( ((Symbol)obj).st_value);
 		}
 
+		@Override
 		public String toString() {
 			if (name == null) {
 				try {
@@ -602,6 +604,7 @@ public class Elf {
 			this.section = section;
 		}
 
+		@Override
 		public String toString() {
 			if (name == null) {
 				switch ((int)d_tag) {
@@ -948,6 +951,7 @@ public class Elf {
 	/**
 	 * Make sure we do not leak the fds.
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		try {
 			dispose();

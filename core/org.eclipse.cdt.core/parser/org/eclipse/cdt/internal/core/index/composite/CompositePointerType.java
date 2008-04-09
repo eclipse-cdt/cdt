@@ -29,10 +29,12 @@ public class CompositePointerType extends CompositeTypeContainer implements IPoi
 		return ((IPointerType)type).isVolatile();
 	}
 	
+	@Override
 	public boolean isSameType(IType other) {
 		return ((IPointerType)type).isSameType(other);
 	}
 	
+	@Override
 	public Object clone() {
 		return new PointerTypeClone(this);
 	}

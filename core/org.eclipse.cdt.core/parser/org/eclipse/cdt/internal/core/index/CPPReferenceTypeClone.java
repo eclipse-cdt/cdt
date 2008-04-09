@@ -52,6 +52,7 @@ public class CPPReferenceTypeClone implements ICPPReferenceType, ITypeContainer,
 	public void setType(IType type) {
 		this.type = type;
 	}
+	@Override
 	public Object clone() {
 		return new CPPReferenceTypeClone(this);
 	}

@@ -27,6 +27,7 @@ public class OutputEntry extends APathEntry implements IOutputEntry {
 		super(CDT_OUTPUT, null, null, path, exclusionPatterns, isExported);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IOutputEntry) {
 			IOutputEntry otherEntry = (IOutputEntry) obj;

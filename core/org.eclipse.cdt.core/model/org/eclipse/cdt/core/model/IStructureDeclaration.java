@@ -41,5 +41,6 @@ public interface IStructureDeclaration extends IDeclaration {
 	 * Return "class", "struct", "union"
 	 * @deprecated use isUnion(), isClass(), isStruct()
 	 */
+	@Deprecated
 	String getTypeName() throws CModelException;
 }

@@ -25,6 +25,7 @@ implements ICPPFunction, ICPPSpecialization {
 		super(cf, ft);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		try {

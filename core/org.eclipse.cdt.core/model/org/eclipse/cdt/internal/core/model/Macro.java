@@ -28,6 +28,7 @@ public class Macro extends SourceManipulation implements IMacro {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
 	}

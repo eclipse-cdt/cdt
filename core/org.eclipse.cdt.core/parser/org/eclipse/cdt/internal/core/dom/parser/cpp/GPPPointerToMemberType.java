@@ -37,7 +37,8 @@ public class GPPPointerToMemberType extends CPPPointerToMemberType implements
         this.isRestrict = operator.isRestrict();
     }
 
-    public IType stripQualifiers(){
+    @Override
+	public IType stripQualifiers(){
 		GPPPointerToMemberType result = (GPPPointerToMemberType) super.stripQualifiers();
 		
 		if( isRestrict ){
@@ -57,7 +58,8 @@ public class GPPPointerToMemberType extends CPPPointerToMemberType implements
         return isRestrict;
     }
 
-    public boolean isSameType( IType o ){
+    @Override
+	public boolean isSameType( IType o ){
     	if (o==this) {
     		return true;
     	}

@@ -18,6 +18,7 @@ public class VCErrorParser extends AbstractErrorParser {
 	
 	private static final ErrorPattern[] patterns = {
 		new ErrorPattern("(.+?)(\\(([0-9]+)\\))? : (fatal error|error|warning) (.*)", 1, 3, 5, 0, 0) {
+			@Override
 			public int getSeverity(Matcher matcher) {
 				return "warning".equals(matcher.group(4))
 					? IMarkerGenerator.SEVERITY_WARNING

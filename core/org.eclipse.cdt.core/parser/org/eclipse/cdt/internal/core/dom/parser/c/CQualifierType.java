@@ -125,7 +125,8 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 	    type = t;
 	}
 	
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();

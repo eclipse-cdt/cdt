@@ -28,12 +28,14 @@ public class MoveElementsOperation extends CopyElementsOperation {
 	 * Returns the <code>String</code> to use as the main task name
 	 * for progress monitoring.
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.moveElementProgress"); //$NON-NLS-1$
 	}
 	/**
 	 * @see CopyElementsOperation#isMove()
 	 */
+	@Override
 	protected boolean isMove() {
 		return true;
 	}

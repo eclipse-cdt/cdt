@@ -71,6 +71,7 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 	 * @param children2
 	 * @deprecated use {@link ElfBinaryArchive#createArchiveMembers(ARHeader[])} 
 	 */
+	@Deprecated
 	protected void addArchiveMembers(ARHeader[] headers, ArrayList children) {
 		IBinaryObject[] bobjs= createArchiveMembers(headers);
 		children.addAll(Arrays.asList(bobjs));

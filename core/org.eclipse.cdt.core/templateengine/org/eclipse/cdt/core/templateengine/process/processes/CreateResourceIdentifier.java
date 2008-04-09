@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class CreateResourceIdentifier extends ProcessRunner {
 
+	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String valueName = args[0].getSimpleValue();
 		String appName = args[1].getSimpleValue();

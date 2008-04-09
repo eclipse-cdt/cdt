@@ -22,6 +22,7 @@ public abstract class CConfigurationData extends CDataObject {
 	protected CConfigurationData() {
 	}
 
+	@Override
 	public final int getType(){
 		return SETTING_CONFIGURATION;
 	}

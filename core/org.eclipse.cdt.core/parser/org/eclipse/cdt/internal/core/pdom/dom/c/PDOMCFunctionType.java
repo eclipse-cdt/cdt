@@ -78,6 +78,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		}
 	}
 
+	@Override
 	public void delete(final PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getReturnType(), record);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
@@ -95,10 +96,12 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		super.delete(linkage);
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CFUNCTIONTYPE;
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
@@ -182,6 +185,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		}
 	}
 
+	@Override
 	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}

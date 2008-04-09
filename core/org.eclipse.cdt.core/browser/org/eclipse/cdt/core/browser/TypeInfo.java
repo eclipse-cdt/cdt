@@ -207,6 +207,7 @@ public class TypeInfo implements ITypeInfo
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		return fQualifiedName.toString();
 	}
@@ -225,6 +226,7 @@ public class TypeInfo implements ITypeInfo
 		return false;
 	}
 	
+	@Override
 	public int hashCode() {
 		int hashCode = fQualifiedName.hashCode() + fElementType;
 		ICProject project = getEnclosingProject();
@@ -233,6 +235,7 @@ public class TypeInfo implements ITypeInfo
 		return hashCode;
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;

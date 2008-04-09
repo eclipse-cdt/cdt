@@ -71,7 +71,8 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		return parameterDeclarations;
 	}
 
-    protected boolean postAccept( ASTVisitor action ){
+    @Override
+	protected boolean postAccept( ASTVisitor action ){
         IASTName [] ns = getParameterNames();
         for ( int i = 0; i < ns.length; i++ ) {
             if( !ns[i].accept( action ) ) return false;
@@ -105,6 +106,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		return null;
 	}
 	
+	@Override
 	public int getRoleForName(IASTName name) {
 		IASTName [] n = getParameterNames();
 		for( int i = 0; i < n.length; ++i )

@@ -135,10 +135,12 @@ public class PathEntryConfigurationDataProvider extends
 			fSupportedKinds = kinds;
 		}
 
+		@Override
 		protected EntryStore createStore() {
 			return fStore;
 		}
 
+		@Override
 		protected EntryStore createStore(CLanguageData data) {
 			return fStore;
 		}
@@ -147,6 +149,7 @@ public class PathEntryConfigurationDataProvider extends
 	
 	private static class PathEntryDataFactory extends CDataFacroty {
 
+		@Override
 		public CConfigurationData createConfigurationdata(String id,
 				String name, CConfigurationData base, boolean clone) {
 			if(clone){
@@ -158,6 +161,7 @@ public class PathEntryConfigurationDataProvider extends
 			return new CfgData(id, name, base, clone);
 		}
 
+		@Override
 		public CFileData createFileData(CConfigurationData cfg,
 				CResourceData base, CLanguageData base2, 
 				String id, boolean clone,
@@ -170,6 +174,7 @@ public class PathEntryConfigurationDataProvider extends
 					base2, cfg,	this);
 		}
 
+		@Override
 		public CFolderData createFolderData(CConfigurationData cfg,
 				CFolderData base, String id, boolean clone, IPath path) {
 			if(id == null)
@@ -177,6 +182,7 @@ public class PathEntryConfigurationDataProvider extends
 			return new PathEntryFolderData(id, path, (PathEntryFolderData)base, cfg, this, clone);
 		}
 
+		@Override
 		public CLanguageData createLanguageData(CConfigurationData cfg,
 				CResourceData rcBase, CLanguageData base, String id, boolean clone) {
 			if(id == null)
@@ -189,6 +195,7 @@ public class PathEntryConfigurationDataProvider extends
 			return new PathEntryLanguageData(id, base, store);
 		}
 
+		@Override
 		public CLanguageData createLanguageData(CConfigurationData cfg,
 				CResourceData rcBase, String id, String name, String languageId, int supportedEntryKinds, String[] rcTypes,
 				boolean isContentTypes) {
@@ -228,6 +235,7 @@ public class PathEntryConfigurationDataProvider extends
 		return data instanceof CfgData;
 	}
 	
+	@Override
 	public CConfigurationData applyConfiguration(
 			ICConfigurationDescription des,
 			ICConfigurationDescription baseDescription,
@@ -277,6 +285,7 @@ public class PathEntryConfigurationDataProvider extends
 		
 	}
 
+	@Override
 	public CConfigurationData createConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
@@ -347,18 +356,21 @@ public class PathEntryConfigurationDataProvider extends
 		return ids;
 	}
 
+	@Override
 	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
 			IProgressMonitor monitor)
 			throws CoreException {
 		return createData(des, null, false, true);
 	}
 
+	@Override
 	public void removeConfiguration(ICConfigurationDescription des,
 			CConfigurationData data,
 			IProgressMonitor monitor) {
 		//do nothing for now
 	}
 
+	@Override
 	public void dataCached(ICConfigurationDescription cfgDes,
 			CConfigurationData data, IProgressMonitor monitor) {
 		fFactory.setModified(data, false);

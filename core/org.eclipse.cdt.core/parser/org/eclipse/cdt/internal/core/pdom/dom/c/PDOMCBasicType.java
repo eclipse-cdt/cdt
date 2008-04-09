@@ -74,10 +74,12 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 		}
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CBASICTYPE;
 	}
@@ -133,6 +135,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 		}
 	}
 
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();

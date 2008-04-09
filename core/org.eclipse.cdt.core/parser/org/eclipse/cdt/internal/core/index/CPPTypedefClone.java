@@ -77,6 +77,7 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 	public boolean isGloballyQualified() throws DOMException {
 		return ((ICPPBinding)delegate).isGloballyQualified();
 	}
+	@Override
 	public Object clone() {
 		return new CPPTypedefClone(this);
 	}

@@ -40,6 +40,7 @@ public class DebugSym implements Comparable {
 		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Type:").append(type).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -48,6 +48,7 @@ public class CPPASTConversionName extends CPPASTName implements ICPPASTConversio
 		}
 	}
 	
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitNames) {
 			switch (action.visit(this)) {

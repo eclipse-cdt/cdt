@@ -69,6 +69,7 @@ public class LocalProjectScope implements IScopeContext {
 		return new InstanceScope().getNode(qualifier + QUALIFIER_EXT + fContext);
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -80,6 +81,7 @@ public class LocalProjectScope implements IScopeContext {
 		return fContext.equals(other.fContext);
 	}
 
+	@Override
 	public int hashCode() {
 		return fContext.hashCode();
 	}

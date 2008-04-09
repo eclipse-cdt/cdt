@@ -134,6 +134,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * Returns the first parent of the element that is an instance of
 	 * IOpenable.
 	 */
+	@Override
 	public IOpenable getOpenableParent() {
 		ICElement current = getParent();
 		while (current != null){
@@ -162,14 +163,17 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ICElement
 	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return getParent().getUnderlyingResource();
 	}
 
+	@Override
 	public IResource getResource() {
 		return null;
 	}
 	
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
 	}
@@ -186,6 +190,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/*
 	 * @see CElement#generateInfos
 	 */
+	@Override
 	protected void generateInfos(Object info, Map newElements, IProgressMonitor pm) throws CModelException {
 		Openable openableParent = (Openable)getOpenableParent();
 		if (openableParent == null) {
@@ -226,6 +231,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/*
 	 * @see CElement
 	 */
+	@Override
 	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
 			case CEM_SOURCEELEMENT:

@@ -96,6 +96,7 @@ public class Coff {
 			return !((f_flags & F_LNNO) == F_LNNO);
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("FILE HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -146,6 +147,7 @@ public class Coff {
 			data_start = memory.getInt();
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -274,6 +276,7 @@ public class Coff {
 			return lines;
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SECTION HEADER VALUES").append(NL); //$NON-NLS-1$
@@ -328,6 +331,7 @@ public class Coff {
 			r_type = memory.getUnsignedShort();
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("RELOC VALUES").append(NL); //$NON-NLS-1$
@@ -356,6 +360,7 @@ public class Coff {
 			l_lnno = memory.getUnsignedShort();
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			if (l_lnno == 0) {
@@ -453,6 +458,7 @@ public class Coff {
 			return (n_type & N_TMASK) == (DT_ARY << N_BTSHFT);
 		}
 
+		@Override
 		public String toString() {
 			return getName();
 		}
@@ -510,6 +516,7 @@ public class Coff {
 		return string_table;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		try {

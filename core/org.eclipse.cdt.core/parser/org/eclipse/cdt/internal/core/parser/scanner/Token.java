@@ -74,6 +74,7 @@ public class Token implements IToken, Cloneable {
 		return TokenUtil.getImage(getType());
 	}
 
+	@Override
 	public String toString() {
 		return getImage();
 	}
@@ -86,6 +87,7 @@ public class Token implements IToken, Cloneable {
 		return new String(getCharImage());
 	}
 
+	@Override
 	final public Object clone() {
 		try {
 			return super.clone();

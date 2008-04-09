@@ -375,7 +375,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
-    public IName getScopeName() {
+    @Override
+	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if (node instanceof ICPPASTCompositeTypeSpecifier) {
             return ((ICPPASTCompositeTypeSpecifier)node).getName();

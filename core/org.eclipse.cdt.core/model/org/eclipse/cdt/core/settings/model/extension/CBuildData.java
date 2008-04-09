@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.core.runtime.IPath;
 
 public abstract class CBuildData extends CDataObject {
+	@Override
 	public final int getType() {
 		return ICSettingBase.SETTING_BUILD;
 	}

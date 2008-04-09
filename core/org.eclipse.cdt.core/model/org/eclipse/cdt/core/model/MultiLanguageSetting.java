@@ -196,6 +196,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 		return true;
 	}
 
+	@Override
 	public Object[] getItems() {
 		return items;
 	}

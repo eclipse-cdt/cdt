@@ -23,34 +23,39 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
     /*
      * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportStatementsInExpressions()
      */
-    public boolean supportStatementsInExpressions() {
+    @Override
+	public boolean supportStatementsInExpressions() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportGCCStyleDesignators()
      */
-    public boolean supportGCCStyleDesignators() {
+    @Override
+	public boolean supportGCCStyleDesignators() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportTypeofUnaryExpressions()
      */
-    public boolean supportTypeofUnaryExpressions() {
+    @Override
+	public boolean supportTypeofUnaryExpressions() {
         return true;
     }
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportAlignOfUnaryExpression()
      */
-    public boolean supportAlignOfUnaryExpression() {
+    @Override
+	public boolean supportAlignOfUnaryExpression() {
         return true;
     }
 
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportKnRC()
 	 */
+	@Override
 	public boolean supportKnRC() {
 		return true;
 	}
@@ -58,6 +63,7 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportAttributeSpecifiers()
 	 */
+	@Override
 	public boolean supportAttributeSpecifiers() {
 		return true;
 	}
@@ -65,6 +71,7 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportDeclspecSpecifiers()
 	 */
+	@Override
 	public boolean supportDeclspecSpecifiers() {		
 		return true;
 	}
@@ -72,6 +79,7 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#getBuiltinSymbolProvider()
 	 */
+	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.C);
 	}

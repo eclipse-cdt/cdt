@@ -24,6 +24,7 @@ public class DebugType {
 	protected DebugType() {
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		if (this instanceof DebugArrayType) {

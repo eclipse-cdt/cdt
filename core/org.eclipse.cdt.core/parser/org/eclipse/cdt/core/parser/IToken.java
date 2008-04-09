@@ -93,16 +93,20 @@ public interface IToken {
 	static public final int tDIV = 52;
 	
 	/** @deprecated use {@link #tAND} */
+	@Deprecated
 	static public final int t_and = 54;
 	/** @deprecated use {@link #tAMPERASSIGN} */
+	@Deprecated
 	static public final int t_and_eq = 55;
 
 	static public final int t_asm = 56;
 	static public final int t_auto = 57;
 
 	/** @deprecated use {@link #tAMPER} */
+	@Deprecated
 	static public final int t_bitand = 58;
 	/** @deprecated use {@link #tBITOR} */
+	@Deprecated
 	static public final int t_bitor = 59;
 
 	static public final int t_bool = 60;
@@ -113,8 +117,10 @@ public interface IToken {
 	static public final int t_class = 65;
 	
 	/** @deprecated use {@link #tBITCOMPLEMENT} */
+	@Deprecated
 	static public final int tCOMPL= tBITCOMPLEMENT;
 	/** @deprecated use {@link #tBITCOMPLEMENT} */
+	@Deprecated
 	static public final int t_compl = 66;
 
 	static public final int t_const = 67;
@@ -144,15 +150,19 @@ public interface IToken {
 	static public final int t_new = 92;
 
 	/** @deprecated use {@link #tNOT} */
+	@Deprecated
 	static public final int t_not = 93;
 	/** @deprecated use {@link #tNOTEQUAL} */	
+	@Deprecated
 	static public final int t_not_eq = 94;
 
 	static public final int t_operator = 95;
 	
 	/** @deprecated use {@link #tOR} */
+	@Deprecated
 	static public final int t_or = 96;
 	/** @deprecated use {@link #tBITORASSIGN} */
+	@Deprecated
 	static public final int t_or_eq = 97;
 
 	static public final int t_private = 98;
@@ -186,8 +196,10 @@ public interface IToken {
 	static public final int t_while = 126;
 	
 	/** @deprecated use {@link #tXOR} */
+	@Deprecated
 	static public final int t_xor = 127;
 	/** @deprecated use {@link #tXORASSIGN} */
+	@Deprecated
 	static public final int t_xor_eq = 128;
 	
 	static public final int tFLOATINGPT = 129;
@@ -201,6 +213,7 @@ public interface IToken {
 	static public final int t_restrict = 137;
 	
 	/** @deprecated don't use it */
+	@Deprecated
 	static public final int tMACROEXP = 138;
 	
 	static public final int tPOUND= 	  138;
@@ -209,8 +222,10 @@ public interface IToken {
 	static public final int tEOC = 141; // End of Completion
 	
 	/** @deprecated don't use it */
+	@Deprecated
 	static public final int tCOMMENT = 142;
 	/** @deprecated don't use it */
+	@Deprecated
 	static public final int tBLOCKCOMMENT = 143;
 	static public final int tEND_OF_INPUT= 144;
 	

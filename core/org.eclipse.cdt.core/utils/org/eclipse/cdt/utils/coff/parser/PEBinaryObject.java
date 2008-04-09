@@ -51,6 +51,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
+	@Override
 	public String getName() {
 		if (header != null) {
 			return header.getObjectName();
@@ -61,6 +62,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws IOException {
 		if (getPath() != null && header != null) {
 			return new ByteArrayInputStream(header.getObjectData());
@@ -71,6 +73,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getSymbols()
 	 */
+	@Override
 	public ISymbol[] getSymbols() {
 		if (hasChanged() || symbols == null) {
 			try {
@@ -87,6 +90,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	 * 
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
+	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		if (hasChanged() || info == null) {
 			try {
@@ -98,6 +102,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		return info;
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(PE.class)) {
 			try {
@@ -187,6 +192,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */
+	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {
 			addressFactory = new Addr32Factory();

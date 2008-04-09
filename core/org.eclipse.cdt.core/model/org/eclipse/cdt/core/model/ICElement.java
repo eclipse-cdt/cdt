@@ -240,47 +240,55 @@ public interface ICElement extends IAdaptable {
 	 * Modifier indicating a class constructor
 	 * @deprecated use {@link IMethodDeclaration#isConstructor()}
 	 */
+	@Deprecated
 	static final int C_CLASS_CTOR = 0x100;
 	
 	/**
 	 * Modifier indicating a class destructor
 	 * @deprecated use {@link IMethodDeclaration#isDestructor()}
 	 */
+	@Deprecated
 	static final int C_CLASS_DTOR = 0x200;
 		
 	/**
 	 * Modifier indicating a static storage attribute
 	 * @deprecated use {@link IDeclaration#isStatic()}
 	 */
+	@Deprecated
 	static final int C_STORAGE_STATIC = 0x400;
 	
 	/**
 	 * Modifier indicating an extern storage attribute
 	 * @deprecated not used anymore
 	 */
+	@Deprecated
 	static final int C_STORAGE_EXTERN = 0x800;
 
 	/**
 	 * Modifier indicating a private class
 	 * @deprecated use {@link IMember#getVisibility()}
 	 */
+	@Deprecated
 	static final int CPP_PRIVATE = 0x1000;
 
 	/**
 	 * Modifier indicating a public class
 	 * @deprecated use {@link IMember#getVisibility()}
 	 */
+	@Deprecated
 	static final int CPP_PUBLIC = 0x2000;
 
 	/**
 	 * Modifier indicating a protected class
 	 * @deprecated use {@link IMember#getVisibility()}
 	 */
+	@Deprecated
 	static final int CPP_PROTECTED = 0x4000;
 	/**
 	 * Modifier indicating a friend class
 	 * @deprecated use {@link IMethodDeclaration#isFriend()}
 	 */
+	@Deprecated
 	static final int CPP_FRIEND = 0x8000;
 
 	/**

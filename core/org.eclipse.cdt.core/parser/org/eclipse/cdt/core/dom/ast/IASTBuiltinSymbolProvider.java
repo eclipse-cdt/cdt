@@ -19,6 +19,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @deprecated Use {@link org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider} instead
  */
+@Deprecated
 public interface IASTBuiltinSymbolProvider {
 	
 	/**

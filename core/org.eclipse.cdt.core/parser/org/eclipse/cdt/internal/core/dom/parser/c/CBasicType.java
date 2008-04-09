@@ -135,7 +135,8 @@ public class CBasicType implements ICBasicType {
 				&& cObj.isImaginary() == this.isImaginary());
 	}
 	
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();

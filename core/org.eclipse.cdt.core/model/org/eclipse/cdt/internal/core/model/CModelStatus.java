@@ -152,6 +152,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see IStatus
 	 */
+	@Override
 	public IStatus[] getChildren() {
 		return fChildren;
 	}
@@ -166,6 +167,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * Returns the message that is relevant to the code of this status.
 	 */
+	@Override
 	public String getMessage() {
 		Throwable exception = getException();
 		if (isMultiStatus()) {
@@ -314,6 +316,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see IStatus
 	 */
+	@Override
 	public int getSeverity() {
 		if (fChildren == fgEmptyChildren)
 			return super.getSeverity();
@@ -354,6 +357,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see IStatus
 	 */
+	@Override
 	public boolean isMultiStatus() {
 		return fChildren != fgEmptyChildren;
 	}
@@ -361,6 +365,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see ICModelStatus
 	 */
+	@Override
 	public boolean isOK() {
 		return getCode() == OK;
 	}
@@ -368,6 +373,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see IStatus#matches
 	 */
+	@Override
 	public boolean matches(int mask) {
 		if (!isMultiStatus()) {
 			return matches(this, mask);
@@ -417,6 +423,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Returns a printable representation of this exception for debugging
 	 * purposes.
 	 */
+	@Override
 	public String toString() {
 		if (this == VERIFIED_OK) {
 			return "CModelStatus[OK]"; //$NON-NLS-1$

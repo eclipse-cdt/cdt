@@ -75,6 +75,7 @@ public final class CLibraryFileEntry extends ACPathEntry implements
 		return LIBRARY_FILE;
 	}
 
+	@Override
 	public final boolean isFile() {
 		return true;
 	}
@@ -91,6 +92,7 @@ public final class CLibraryFileEntry extends ACPathEntry implements
 		return fSourceAttachmentRootPath;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if(other == this)
 			return true;
@@ -101,6 +103,7 @@ public final class CLibraryFileEntry extends ACPathEntry implements
 		return sourceAttachmentSettingsEqual((CLibraryFileEntry)other);
 	}
 
+	@Override
 	public boolean equalsByContents(ICSettingEntry entry) {
 		if(entry == this)
 			return true;
@@ -121,6 +124,7 @@ public final class CLibraryFileEntry extends ACPathEntry implements
 		return true;
 	}
 	
+	@Override
 	protected String contentsToString() {
 		String result = super.contentsToString();
 		

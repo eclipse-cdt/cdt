@@ -70,10 +70,12 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements
 		super(pdom, bindingRecord);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE;
 	}
@@ -111,20 +113,24 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}
 	
+	@Override
 	public boolean isExtern() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 	
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
+	@Override
 	public boolean isAuto() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;

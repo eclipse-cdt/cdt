@@ -87,6 +87,7 @@ public class LRUCache implements Cloneable {
 		/**
 		 * Returns a String that represents the value of this object.
 		 */
+		@Override
 		public String toString() {
 
 			return "LRUCacheEntry [" + _fKey + "-->" + _fValue + "]"; //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
@@ -151,6 +152,7 @@ public class LRUCache implements Cloneable {
 	 *
 	 * @return New copy of object.
 	 */
+	@Override
 	public Object clone() {
 		
 		LRUCache newCache = newInstance(fSpaceLimit);
@@ -455,6 +457,7 @@ public class LRUCache implements Cloneable {
  * Returns a String that represents the value of this object.  This method
  * is for debugging purposes only.
  */
+@Override
 public String toString() {
 	return 
 		"LRUCache " + (fCurrentSpace * 100.0 / fSpaceLimit) + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$

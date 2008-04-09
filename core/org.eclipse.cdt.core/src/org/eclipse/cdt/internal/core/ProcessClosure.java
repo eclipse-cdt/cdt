@@ -44,6 +44,7 @@ public class ProcessClosure {
 			lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void run() {
 			try {
 				try {

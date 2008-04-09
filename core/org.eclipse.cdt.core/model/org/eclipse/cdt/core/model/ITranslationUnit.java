@@ -425,6 +425,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @deprecated this is currently only used by the core tests. It should
 	 * be removed from the interface.
 	 */
+	@Deprecated
 	Map parse();
 
 	/**

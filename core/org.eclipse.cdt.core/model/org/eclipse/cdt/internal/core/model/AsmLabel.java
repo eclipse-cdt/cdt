@@ -48,6 +48,7 @@ public class AsmLabel extends SourceManipulation implements IAsmLabel, IParent {
 	/*
 	 * @see org.eclipse.cdt.internal.core.model.CElement#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof AsmLabel) {
 			return equals(this, (AsmLabel) o);

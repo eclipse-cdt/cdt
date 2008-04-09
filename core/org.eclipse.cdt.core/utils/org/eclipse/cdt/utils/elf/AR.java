@@ -28,6 +28,7 @@ import org.eclipse.cdt.utils.ERandomAccessFile;
  *  @deprecated use org.eclipse.cdt.utils.AR
  *  @see ARHeader
  */
+@Deprecated
 public class AR {
 
 	protected String filename;
@@ -45,6 +46,7 @@ public class AR {
 		}
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
 		try {
 			dispose();

@@ -32,7 +32,8 @@ public class WorkingCopyCodeReaderFactory extends
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
      */
-    public int getUniqueIdentifier() {
+    @Override
+	public int getUniqueIdentifier() {
         return CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE;
     }
     

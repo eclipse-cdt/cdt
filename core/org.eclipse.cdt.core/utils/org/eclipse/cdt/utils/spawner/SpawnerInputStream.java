@@ -32,6 +32,7 @@ class SpawnerInputStream extends InputStream {
 	 *
 	 * @exception IOException on error.
 	 */
+	@Override
 	public int read() throws IOException {
 		byte b[] = new byte[1];
 		if (1 != read(b, 0, 1))
@@ -42,6 +43,7 @@ class SpawnerInputStream extends InputStream {
 	/**
 	 * @see InputStream#read(byte[], int, int)
 	 */
+	@Override
 	public int read(byte[] buf, int off, int len) throws IOException {
 		if (buf == null) {
 			throw new NullPointerException();
@@ -69,6 +71,7 @@ class SpawnerInputStream extends InputStream {
 	 * Close the Reader
 	 * @exception IOException on error.
 	 */
+	@Override
 	public void close() throws IOException {
 		if (fd == -1)
 			return;
@@ -78,6 +81,7 @@ class SpawnerInputStream extends InputStream {
 		fd = -1;
 	}
 
+	@Override
 	public int available() throws IOException {
 		try {
 			return available0(fd);

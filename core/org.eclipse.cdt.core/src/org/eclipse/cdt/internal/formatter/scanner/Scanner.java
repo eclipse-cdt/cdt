@@ -34,6 +34,7 @@ public class Scanner extends SimpleScanner {
 	/*
 	 * @see org.eclipse.cdt.internal.formatter.scanner.SimpleScanner#init(java.io.Reader, java.lang.String)
 	 */
+	@Override
 	protected void init(Reader reader, String filename) {
 		// not allowed
 		throw new UnsupportedOperationException();
@@ -170,6 +171,7 @@ public class Scanner extends SimpleScanner {
 	/**
 	 * For debugging purposes.
 	 */
+	@Override
 	public String toString() {
 		if (this.startPosition == this.source.length)
 			return "EOF\n\n" + new String(this.source); //$NON-NLS-1$

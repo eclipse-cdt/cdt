@@ -50,10 +50,12 @@ public class BinaryRunner {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
 		 */
+		@Override
 		public boolean isReadOnly() {
 			return true;
 		}
 
+		@Override
 		protected void executeOperation() throws CModelException {
 			ICProject cproj = (ICProject)getElementsToProcess()[0];
 			IParent[] containers = new IParent[2];
@@ -94,6 +96,7 @@ public class BinaryRunner {
 		String taskName = CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread"); //$NON-NLS-1$
 		taskName += " (" + cproject.getElementName() + ")";  //$NON-NLS-1$//$NON-NLS-2$
 		Job job= new Job(taskName) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status = Status.OK_STATUS;
 				try {

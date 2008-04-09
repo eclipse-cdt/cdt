@@ -34,7 +34,8 @@ public class Token {
         text = i;
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
         return "Token type=" + type + "  image =" + text + " offset=" + offset; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 

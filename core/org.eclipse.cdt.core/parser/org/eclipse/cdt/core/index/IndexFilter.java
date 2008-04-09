@@ -44,6 +44,7 @@ abstract public class IndexFilter {
 	 */
 	public static IndexFilter getFilter(final int linkageID) {
 		return new IndexFilter() {
+			@Override
 			public boolean acceptLinkage(ILinkage linkage) {
 				return linkageID == linkage.getLinkageID();
 			}

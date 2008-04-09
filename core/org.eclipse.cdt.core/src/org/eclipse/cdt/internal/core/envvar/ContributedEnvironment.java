@@ -32,6 +32,7 @@ public class ContributedEnvironment implements IContributedEnvironment{
 			fBaseInfo = info;
 		}
 
+		@Override
 		public ICoreEnvironmentVariableSupplier[] getSuppliers() {
 			if(fSuppliers == null){
 				ICoreEnvironmentVariableSupplier[] suppliers = fBaseInfo.getSuppliers();
@@ -56,6 +57,7 @@ public class ContributedEnvironment implements IContributedEnvironment{
 			return fSuppliers;
 		}
 
+		@Override
 		public IEnvironmentContextInfo getNext() {
 			IEnvironmentContextInfo baseNext = fBaseInfo.getNext();
 			if(baseNext != null)

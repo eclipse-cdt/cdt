@@ -71,6 +71,7 @@ public class CDefaultFileData extends CFileData {
 	}
 
 
+	@Override
 	public IPath getPath() {
 		return fPath;
 	}
@@ -86,10 +87,12 @@ public class CDefaultFileData extends CFileData {
 //		fIsExcluded = excluded;
 //	}
 
+	@Override
 	public void setPath(IPath path) {
 		fPath = path;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -98,14 +101,17 @@ public class CDefaultFileData extends CFileData {
 		fName = name;
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getId() != null;
 	}
 
+	@Override
 	public CLanguageData getLanguageData() {
 		return fLanguageData;
 	}
@@ -124,6 +130,7 @@ public class CDefaultFileData extends CFileData {
 			fFactory.setModified(fLanguageData, false);
 	}
 
+	@Override
 	public boolean hasCustomSettings() {
 		return false;
 	}

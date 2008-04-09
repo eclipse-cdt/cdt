@@ -35,6 +35,7 @@ final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		return INSTANCE.rwAnyNode(variable, 0);
 	}
 	
+	@Override
 	protected int rwInUnaryExpression(IASTNode node, IASTUnaryExpression expr, int indirection) {
 		switch (expr.getOperator()) {
 		case ICPPASTUnaryExpression.op_typeid:
@@ -43,6 +44,7 @@ final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		return super.rwInUnaryExpression(node, expr, indirection);
 	}
 
+	@Override
 	protected int rwAssignmentToType(IType type, int indirection) {
 		if (indirection == 0) {
 			if (!(type instanceof ICPPReferenceType)) {

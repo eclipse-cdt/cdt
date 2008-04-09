@@ -50,6 +50,7 @@ final public class Lexer {
 		public boolean fSupportMinAndMax= true;
 		public boolean fCreateImageLocations= true;
 		
+		@Override
 		public Object clone() {
 			try {
 				return super.clone();

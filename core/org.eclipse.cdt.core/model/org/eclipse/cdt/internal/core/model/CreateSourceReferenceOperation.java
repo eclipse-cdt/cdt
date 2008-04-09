@@ -50,6 +50,7 @@ public class CreateSourceReferenceOperation extends CreateElementInTUOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CreateElementInTUOperation#generateElement(org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
+	@Override
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		return fSource;
 	}
@@ -57,6 +58,7 @@ public class CreateSourceReferenceOperation extends CreateElementInTUOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CreateElementInTUOperation#generateResultHandle()
 	 */
+	@Override
 	protected ICElement generateResultHandle() {
 		IParent parent = (IParent)getParentElement();
 		try {
@@ -78,6 +80,7 @@ public class CreateSourceReferenceOperation extends CreateElementInTUOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CreateElementInTUOperation#getMainTaskName()
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return "operation.createsourceReference"; //$NON-NLS-1$
 	}

@@ -61,6 +61,7 @@ public class ElementChangedEvent extends EventObject {
 	 * @since 2.0
 	 * @deprecated - no longer used, such deltas are now notified during POST_CHANGE
 	 */
+	@Deprecated
 	public static final int PRE_AUTO_BUILD = 2;
 	/**
 	 * Event type constant (bit mask) indicating an after-the-fact 

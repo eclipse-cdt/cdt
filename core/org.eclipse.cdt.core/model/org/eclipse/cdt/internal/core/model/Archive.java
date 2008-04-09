@@ -52,10 +52,12 @@ public class Archive extends Openable implements IArchive {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	@Override
 	public CElementInfo createElementInfo() {
 		return new ArchiveInfo(this);
 	}
@@ -64,6 +66,7 @@ public class Archive extends Openable implements IArchive {
 		return (ArchiveInfo)getElementInfo();
 	}
 
+	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
 		throws CModelException {
 		return computeChildren(info, underlyingResource);
@@ -87,6 +90,7 @@ public class Archive extends Openable implements IArchive {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IBinaryArchive.class.equals(adapter)) {
 			return getBinaryArchive();
@@ -101,6 +105,7 @@ public class Archive extends Openable implements IArchive {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#exists()
 	 */
+	@Override
 	public boolean exists() {
 		IResource res = getResource();
 		if (res != null)
@@ -111,6 +116,7 @@ public class Archive extends Openable implements IArchive {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
 	 */
+	@Override
 	protected void closing(Object info) throws CModelException {
 		ICProject cproject = getCProject();
 		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(cproject);

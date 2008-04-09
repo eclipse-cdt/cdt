@@ -35,6 +35,7 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 		copyDataFrom(base, true);
 	}
 	
+	@Override
 	protected CLanguageData copyLanguageData(CLanguageData data, boolean clone) {
 		return new CLanguageSettingCache(data, this);
 	}
@@ -47,11 +48,13 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 		return exclude == isExcluded();
 	}
 
+	@Override
 	public void setName(String name) throws WriteAccessException{
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
 
+	@Override
 	public void setPath(IPath path) throws WriteAccessException{
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -87,10 +90,12 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 		return getRcDesHolder().getParentFolderDescription();
 	}
 
+	@Override
 	public IPath getPath() {
 		return ResourceDescriptionHolder.normalizePath(super.getPath());
 	}
 
+	@Override
 	public boolean hasCustomSettings() {
 		return true;
 	}

@@ -65,6 +65,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		super(pdom, C_LINKAGE_NAME, C_LINKAGE_NAME.toCharArray()); 
 	}
 
+	@Override
 	public int getNodeType() {
 		return LINKAGE;
 	}
@@ -77,6 +78,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return C_LINKAGE_ID;
 	}
 
+	@Override
 	public PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding != null) {
@@ -142,6 +144,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return false;
 	}
 
+	@Override
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		if (name == null)
 			return null;
@@ -162,6 +165,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return addBinding(binding, name);
 	}
 
+	@Override
 	public int getBindingType(IBinding binding) {
 		if (binding instanceof IField)
 			// This needs to be before variable
@@ -259,6 +263,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return null;
 	}
 
+	@Override
 	public final PDOMBinding doAdaptBinding(final IBinding binding) throws CoreException {
 		PDOMNode parent = getAdaptedParent(binding);
 		if (parent == this) {
@@ -272,6 +277,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("hiding")
 	public PDOMNode getNode(int record) throws CoreException {
 		if (record == 0)
@@ -303,6 +309,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return super.getNode(record);
 	}
 
+	@Override
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if(type instanceof IProblemBinding)
 			return null;
@@ -318,6 +325,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return super.addType(parent, type); 
 	}
 	
+	@Override
 	public IBTreeComparator getIndexComparator() {
 		return new FindBinding.DefaultBindingBTreeComparator(getPDOM());
 	}

@@ -52,7 +52,8 @@ public class CPPASTTypeIdExpression extends CPPASTNode implements ICPPASTTypeIdE
         return typeId;
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

@@ -73,6 +73,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		// handle all kinds of resources
 		if (IResource.class.isAssignableFrom(adapter)) {
@@ -260,6 +261,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	/**
 	 * Tests if an element has the same name, type and an equal parent.
 	 */
+	@Override
 	public boolean equals (Object o) {
 		if (this == o)
 			return true;
@@ -304,6 +306,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return info;
 	}
 
+	@Override
 	public String toString() {
 		return getElementName();
 	}
@@ -488,6 +491,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 */
 	// CHECKPOINT: making not equal objects seem equal
 	// What elements should override this?
+	@Override
 	public int hashCode() {
 		return hashCode(this);
 	}

@@ -33,6 +33,7 @@ public class CompositeFunctionType extends CompositeType implements IFunctionTyp
 		return cf.getCompositeType((IIndexType)((IFunctionType)type).getReturnType());
 	}
 
+	@Override
 	public boolean isSameType(IType other) {
 		return type.isSameType(other);
 	}

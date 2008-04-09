@@ -213,6 +213,7 @@ public class TypeReference implements ITypeReference {
 		return path;
 	}
 	
+	@Override
 	public String toString() {
 		IPath path = getLocation();
 		if (path != null) {
@@ -224,10 +225,12 @@ public class TypeReference implements ITypeReference {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;

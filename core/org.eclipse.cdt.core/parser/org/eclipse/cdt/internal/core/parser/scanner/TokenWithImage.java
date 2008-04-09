@@ -18,6 +18,7 @@ public class TokenWithImage extends Token {
 		fImage= image;
 	}
 
+	@Override
 	public char[] getCharImage() {
 		return fImage; 
 	}

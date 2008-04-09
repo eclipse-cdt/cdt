@@ -25,6 +25,7 @@ public class CharArrayIntMap extends CharTable {
 		this.undefined = undefined;
 	}
 
+	@Override
 	protected void resize(int size) {
 		int[] oldValueTable = valueTable;
 		valueTable = new int[size];
@@ -32,11 +33,13 @@ public class CharArrayIntMap extends CharTable {
 		super.resize(size);
 	}
 	
+	@Override
 	public void clear() {
 		super.clear();
 		for( int i = 0; i < capacity(); i++ )
 			valueTable[i] = undefined;
 	}
+	@Override
 	public Object clone(){
 	    CharArrayIntMap newMap = (CharArrayIntMap) super.clone();
 	    newMap.valueTable = new int[ capacity() ];

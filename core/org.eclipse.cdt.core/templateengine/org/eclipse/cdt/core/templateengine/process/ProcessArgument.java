@@ -374,6 +374,7 @@ public class ProcessArgument {
 	 *  (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer b = new StringBuffer(name);
 		b.append(":"); //$NON-NLS-1$

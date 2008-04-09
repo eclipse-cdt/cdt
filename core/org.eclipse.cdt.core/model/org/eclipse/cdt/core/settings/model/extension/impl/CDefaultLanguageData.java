@@ -105,22 +105,27 @@ public class CDefaultLanguageData extends CLanguageData {
 		return new EntryStore(true);
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getId() != null;
 	}
 
+	@Override
 	public String getLanguageId() {
 		return fLanguageId;
 	}
 
+	@Override
 	public void setLanguageId(String id) {
 		if(CDataUtil.objectsEqual(id, fLanguageId))
 			return;
@@ -169,22 +174,26 @@ public class CDefaultLanguageData extends CLanguageData {
 	}
 */
 
+	@Override
 	public String[] getSourceContentTypeIds() {
 		if(fSourceContentTypeIds != null)
 			return fSourceContentTypeIds;
 		return EMPTY_STRING_ARRAY;
 	}
 
+	@Override
 	public String[] getSourceExtensions() {
 		if(fSourceExts != null)
 			return fSourceExts;
 		return EMPTY_STRING_ARRAY;
 	}
 
+	@Override
 	public int getSupportedEntryKinds() {
 		return fSupportedKinds;
 	}
 
+	@Override
 	public void setEntries(int kind, ICLanguageSettingEntry entries[]) {
 		entries = processStoredEntries(entries, OP_SET);
 		fStore.storeEntries(kind, entries);
@@ -192,10 +201,12 @@ public class CDefaultLanguageData extends CLanguageData {
 		setModified(true);
 	}
 
+	@Override
 	public ICLanguageSettingEntry[] getEntries(int kind) {
 		return fStore.getEntries(kind);
 	}
 
+	@Override
 	public void setSourceContentTypeIds(String[] ids) {
 		if(Arrays.equals(ids, fSourceContentTypeIds))
 			return;
@@ -206,6 +217,7 @@ public class CDefaultLanguageData extends CLanguageData {
 		setModified(true);
 	}
 
+	@Override
 	public void setSourceExtensions(String[] exts) {
 		if(Arrays.equals(exts, fSourceExts))
 			return;

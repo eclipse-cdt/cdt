@@ -47,6 +47,7 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	/**
 	 * @see CreateElementInCUOperation#getMainTaskName
 	 */
+	@Override
 	public String getMainTaskName(){
 		return "operation.createFieldProgress"; //$NON-NLS-1$
 	}
@@ -56,6 +57,7 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	 * declaration, or as the first member in the type if there are no
 	 * field declarations.
 	 */
+	@Override
 	protected void initializeDefaultPosition() {
 		IStructure parentElement = getStructure();
 		try {
@@ -75,6 +77,7 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	/**
 	 * @see CreateElementInCUOperation#generateResultHandle
 	 */
+	@Override
 	protected ICElement generateResultHandle() {
 		return getStructure().getField(fName);
 	}
@@ -82,6 +85,7 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	/**
 	 * @see CreateTypeMemberOperation#verifyNameCollision
 	 */
+	@Override
 	protected ICModelStatus verifyNameCollision() {
 		return super.verifyNameCollision();
 	}
@@ -89,6 +93,7 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CreateElementInTUOperation#generateElement(org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
+	@Override
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		StringBuffer sb = new StringBuffer();
 		sb.append(fReturnType).append(' ');

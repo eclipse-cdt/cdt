@@ -73,10 +73,12 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_INSTANCE;
 	}
@@ -171,6 +173,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	public IBinding[] getFriends() throws DOMException { fail(); return null; }
 	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
 	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
+	@Override
 	public Object clone() {fail();return null;}
 
 	public ICPPClassType getClassType() {
@@ -220,6 +223,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		return CPPSemantics.findBindings( this, name, false );
 	}
 	
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 			throws DOMException {
 		try {			
@@ -241,6 +245,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		return null;
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
@@ -269,6 +274,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		return this;
 	}
 
+	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		addMember(member);
 	}
@@ -278,6 +284,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		list.addMember(member);
 	}
 
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());

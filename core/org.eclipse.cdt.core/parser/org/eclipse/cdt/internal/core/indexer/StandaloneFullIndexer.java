@@ -80,6 +80,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	/**
 	 * Creates a delegate standalone indexing task
 	 */
+	@Override
 	protected StandaloneIndexerTask createTask(List added, List changed, List removed) {
 		return new StandaloneFullIndexerTask(this, added, changed, removed);
 	}

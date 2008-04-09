@@ -39,6 +39,7 @@ public abstract class ImageLocationInfo {
 			fEndOffset= endOffset;
 		}
 		
+		@Override
 		public IASTImageLocation createLocation(LocationMap lm, ImageLocationInfo upto) {
 			IASTPreprocessorMacroDefinition md= lm.getMacroDefinition(fMacro);
 			IASTFileLocation expansionLoc= md.getExpansionLocation();
@@ -50,6 +51,7 @@ public abstract class ImageLocationInfo {
 			return null;
 		}
 
+		@Override
 		public boolean canConcatenate(ImageLocationInfo info) {
 			if (info instanceof MacroImageLocationInfo) {
 				MacroImageLocationInfo mli= (MacroImageLocationInfo) info;
@@ -68,6 +70,7 @@ public abstract class ImageLocationInfo {
 			fSequenceNumber= sequenceNumber;
 			fSequenceEndNumber= sequenceEndNumber;
 		}
+		@Override
 		public IASTImageLocation createLocation(LocationMap lm, ImageLocationInfo upto) {
 			int sequenceEnd= ((ParameterImageLocationInfo) upto).fSequenceEndNumber;
 			IASTFileLocation loc= lm.getMappedFileLocation(fSequenceNumber, sequenceEnd-fSequenceNumber);
@@ -78,6 +81,7 @@ public abstract class ImageLocationInfo {
 			return null;
 		}
 		
+		@Override
 		public boolean canConcatenate(ImageLocationInfo info) {
 			if (info instanceof ParameterImageLocationInfo) {
 				ParameterImageLocationInfo pli= (ParameterImageLocationInfo) info;

@@ -39,6 +39,7 @@ public class BuildSystemVariableSupplier extends CoreMacroSupplierBase {
 			fContextData = contextData;
 		}
 
+		@Override
 		public IVariableContextInfo getMacroContextInfo(int contextType,Object contextData){
 			IVariableContextInfo startInfo = getStartInfo();
 			if(contextType == fContextType &&
@@ -97,6 +98,7 @@ public class BuildSystemVariableSupplier extends CoreMacroSupplierBase {
 		}
 	}
 
+	@Override
 	protected ICdtVariable getMacro(String name, int type, Object data) {
 		ICConfigurationDescription des = (ICConfigurationDescription)data;
 		ICdtVariablesContributor cr = des.getBuildVariablesContributor();
@@ -105,6 +107,7 @@ public class BuildSystemVariableSupplier extends CoreMacroSupplierBase {
 		return null;
 	}
 
+	@Override
 	protected ICdtVariable[] getMacros(int type, Object data) {
 		ICConfigurationDescription des = (ICConfigurationDescription)data;
 		ICdtVariablesContributor cr = des.getBuildVariablesContributor();

@@ -79,6 +79,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	/**
 	 * Return indexer's progress information.
 	 */
+	@Override
 	final public IndexerProgress getProgressInformation() {
 		return super.getProgressInformation();
 	}
@@ -100,6 +101,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		return getIndexer().getIndexAllFiles();
 	}
 
+	@Override
 	final protected AbstractLanguage[] getLanguages(String filename) {
 		ILanguage l = fIndexer.getLanguageMapper().getLanguage(filename);
 		if (l instanceof AbstractLanguage) {
@@ -108,6 +110,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		return new AbstractLanguage[0];
 	}
 	
+	@Override
 	protected final IWritableIndex createIndex() {
 		return fIndexer.getIndex();
 	}

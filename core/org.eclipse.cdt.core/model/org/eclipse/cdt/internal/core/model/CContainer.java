@@ -159,11 +159,13 @@ public class CContainer extends Openable implements ICContainer {
 		return (IContainer) getResource();
 	}
 
+	@Override
 	protected CElementInfo createElementInfo() {
 		return new CContainerInfo(this);
 	}
 
 	// CHECKPOINT: folders will return the hash code of their path
+	@Override
 	public int hashCode() {
 		return getPath().hashCode();
 	}
@@ -171,6 +173,7 @@ public class CContainer extends Openable implements ICContainer {
 	/**
 	 * @see Openable
 	 */
+	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
 			throws CModelException {
 		boolean validInfo = false;

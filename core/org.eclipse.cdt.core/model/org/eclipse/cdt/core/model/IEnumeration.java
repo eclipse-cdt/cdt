@@ -21,5 +21,6 @@ public interface IEnumeration extends IParent, IDeclaration {
 	 * @throws CModelException 
 	 * @deprecated
 	 */
+	@Deprecated
 	String getTypeName() throws CModelException;
 }

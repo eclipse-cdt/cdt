@@ -39,6 +39,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Binary#getModificationStamp()
 	 */
+	@Override
 	protected long getModificationStamp() {
 		File f = getPath().toFile();
 		if (f != null) {
@@ -50,6 +51,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return null;
 	}
@@ -57,6 +59,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#exists()
 	 */
+	@Override
 	public boolean exists() {
 		File f = getPath().toFile();
 		if (f != null) {
@@ -68,6 +71,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return entry.getFullLibraryPath();
 	}

@@ -112,6 +112,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
 	 */
+	@Override
 	public ICdtVariable getMacro(String macroName, int contextType, Object contextData) {
 		if(macroName == null || "".equals(macroName))  //$NON-NLS-1$
 			return null;
@@ -125,6 +126,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacros(int, java.lang.Object)
 	 */
+	@Override
 	public ICdtVariable[] getMacros(int contextType, Object contextData) {
 		StorableCdtVariables macros = getStorableMacros(contextType,contextData);
 		if(macros != null)
@@ -289,6 +291,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			return fVar; 
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -331,6 +334,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			return true;
 		}
 
+		@Override
 		public int hashCode() {
 			int code = 51;
 			

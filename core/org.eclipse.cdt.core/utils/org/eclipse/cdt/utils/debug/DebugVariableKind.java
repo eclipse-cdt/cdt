@@ -38,6 +38,7 @@ public final class DebugVariableKind {
 		this.id = id;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DebugVariableKind) {
 			DebugVariableKind kind = (DebugVariableKind)obj;

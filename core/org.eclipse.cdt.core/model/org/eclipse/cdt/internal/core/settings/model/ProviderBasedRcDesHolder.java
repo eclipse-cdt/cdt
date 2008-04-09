@@ -22,31 +22,37 @@ public class ProviderBasedRcDesHolder extends ResourceDescriptionHolder {
 		fProvider = provider;
 	}
 
+	@Override
 	public ICResourceDescription getResourceDescription(IPath path, boolean exactPath){
 		fProvider.cacheValues();
 		return super.getResourceDescription(path, exactPath);
 	}
 
+	@Override
 	public void addResourceDescription(IPath path, ICResourceDescription des){
 		fProvider.cacheValues();
 		super.addResourceDescription(path, des);
 	}
 	
+	@Override
 	public ICResourceDescription[] getResourceDescriptions(final int kind){
 		fProvider.cacheValues();
 		return super.getResourceDescriptions(kind);
 	}
 
+	@Override
 	public ICResourceDescription getCurrentResourceDescription() {
 		fProvider.cacheValues();
 		return super.getCurrentResourceDescription();
 	}
 
+	@Override
 	public ICResourceDescription[] getResourceDescriptions() {
 		fProvider.cacheValues();
 		return super.getResourceDescriptions();
 	}
 
+	@Override
 	public ICResourceDescription[] getDirectChildren() {
 		fProvider.cacheValues();
 		return super.getDirectChildren();

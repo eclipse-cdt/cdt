@@ -47,5 +47,6 @@ ICPPClassType, IIndexType, ICPPTemplateInstance, ICPPSpecialization {
 	public IBinding getSpecializedBinding() { return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
 	public IType[] getArguments() {	return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding); }
 	public ICPPTemplateDefinition getTemplateDefinition() {	return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding); }
+	@Override
 	public ICPPBase[] getBases() throws DOMException { return CPPTemplates.getBases(this); }
 }

@@ -39,6 +39,7 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 		return macroFilePath;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IMacroFileEntry) {
 			IMacroFileEntry otherEntry = (IMacroFileEntry) obj;
@@ -107,6 +108,7 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());

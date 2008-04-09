@@ -50,5 +50,6 @@ class CompositeCStructure extends CompositeCBinding implements IIndexBinding, IC
 		return ((ICompositeType)rbinding).isSameType(type);
 	}
 
+	@Override
 	public Object clone() {fail(); return null;}
 }

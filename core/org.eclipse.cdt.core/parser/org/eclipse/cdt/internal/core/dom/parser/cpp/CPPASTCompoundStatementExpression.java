@@ -43,7 +43,8 @@ public class CPPASTCompoundStatementExpression extends CPPASTNode implements IGN
 		}
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

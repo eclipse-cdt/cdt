@@ -21,6 +21,7 @@ public abstract class CLanguageData extends CDataObject {
 
 //	public abstract CDataObject getChildById(String id);
 
+	@Override
 	public final int getType() {
 		return SETTING_LANGUAGE;
 	}

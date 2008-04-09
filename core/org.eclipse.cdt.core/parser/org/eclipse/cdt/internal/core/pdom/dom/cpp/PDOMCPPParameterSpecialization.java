@@ -78,10 +78,12 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		super(pdom, record);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_PARAMETER_SPECIALIZATION;
 	}

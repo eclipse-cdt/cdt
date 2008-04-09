@@ -49,6 +49,7 @@ public abstract class CPPInstance extends CPPSpecialization implements ICPPTempl
 	/* (non-Javadoc)
 	 * For debug purposes only
 	 */
+	@Override
 	public String toString() {
 		return getName() + " <" + ASTTypeUtil.getTypeListString(arguments) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

@@ -41,10 +41,12 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements
 		super(pdom, bindingRecord);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_INSTANCE;
 	}

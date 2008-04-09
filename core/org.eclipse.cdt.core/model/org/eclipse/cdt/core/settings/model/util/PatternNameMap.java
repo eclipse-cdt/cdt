@@ -45,6 +45,7 @@ public class PatternNameMap {
 			return fCharArray;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -55,10 +56,12 @@ public class PatternNameMap {
 			return fString.equals(((StringCharArray)obj).fString);
 		}
 
+		@Override
 		public int hashCode() {
 			return fString.hashCode();
 		}
 
+		@Override
 		public String toString() {
 			return fString;
 		}
@@ -109,18 +112,22 @@ public class PatternNameMap {
 			}
 		}
 
+		@Override
 		public Iterator iterator() {
 			return fChildrenMap != null ? (Iterator)new Iter(fChildrenMap.entrySet().iterator()) : (Iterator)new EmptyIterator();
 		}
 
+		@Override
 		public int size() {
 			return PatternNameMap.this.size();
 		}
 		
+		@Override
 		public void clear(){
 			PatternNameMap.this.clear();
 		}
 		
+		@Override
 		public boolean contains(Object o){
 			return fChildrenMap != null ? fChildrenMap.containsValue(o) : false;
 		}

@@ -25,6 +25,7 @@ public class GNUElfParser extends ElfParser {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
 	 */
+	@Override
 	public String getFormat() {
 		return "GNU ELF"; //$NON-NLS-1$
 	}
@@ -32,6 +33,7 @@ public class GNUElfParser extends ElfParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryCore(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
 		return new GNUElfBinaryObject(this, path, IBinaryFile.CORE);
 	}
@@ -39,6 +41,7 @@ public class GNUElfParser extends ElfParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryExecutable(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	protected IBinaryExecutable createBinaryExecutable(IPath path) throws IOException {
 		return new GNUElfBinaryExecutable(this, path);
 	}
@@ -46,6 +49,7 @@ public class GNUElfParser extends ElfParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryObject(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	protected IBinaryObject createBinaryObject(IPath path) throws IOException {
 		return new GNUElfBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
@@ -53,6 +57,7 @@ public class GNUElfParser extends ElfParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryShared(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	protected IBinaryShared createBinaryShared(IPath path) throws IOException {
 		return new GNUElfBinaryShared(this, path);
 	}
@@ -61,6 +66,7 @@ public class GNUElfParser extends ElfParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryArchive(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
 		return new GNUElfBinaryArchive(this, path);
 	}
@@ -75,6 +81,7 @@ public class GNUElfParser extends ElfParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IGnuToolFactory.class)) {
 			if (toolFactory == null) {

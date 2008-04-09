@@ -33,10 +33,12 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR;
 	}
 	
+	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		return 0;
 	}

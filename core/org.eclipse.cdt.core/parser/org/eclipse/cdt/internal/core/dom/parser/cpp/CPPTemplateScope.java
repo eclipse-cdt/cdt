@@ -61,11 +61,13 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
 	 */
+	@Override
 	public IName getScopeName() {
 		ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) getPhysicalNode();
 		return CPPTemplates.getTemplateName(template);
 	}
 
+	@Override
 	public IScope getParent() {
 	    ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) getPhysicalNode();
 	    IASTName name = CPPTemplates.getTemplateName(templateDecl);

@@ -92,6 +92,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 	/**
 	 * @see CElement#getHandleMemento()
 	 */
+	@Override
 	protected char getHandleMementoDelimiter() {
 		return CElement.CEM_SOURCEROOT;
 	}

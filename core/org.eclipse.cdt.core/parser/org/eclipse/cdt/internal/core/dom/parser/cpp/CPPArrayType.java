@@ -63,7 +63,8 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
     	return false;
     }
     
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();

@@ -135,6 +135,7 @@ public interface ICPPParserExtensionConfiguration {
 	 *         enabled
 	 * @deprecated use {@link #getBuiltinSymbolProvider(IScope)} instead.
 	 */
+	@Deprecated
 	public boolean supportGCCOtherBuiltinSymbols();
 
 	/**

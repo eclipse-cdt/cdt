@@ -99,7 +99,8 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
 		}
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclarators ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

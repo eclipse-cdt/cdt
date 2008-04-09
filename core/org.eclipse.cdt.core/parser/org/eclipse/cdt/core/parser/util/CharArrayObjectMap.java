@@ -21,9 +21,12 @@ import java.util.List;
  */
 public class CharArrayObjectMap extends CharTable {
     public static final CharArrayObjectMap EMPTY_MAP = new CharArrayObjectMap( 0 ){
-        public Object clone()                         { return this; }
-        public List toList()                		  { return Collections.EMPTY_LIST; }
-        public Object put( char[] key, int start, int length, Object value ) 
+        @Override
+		public Object clone()                         { return this; }
+        @Override
+		public List toList()                		  { return Collections.EMPTY_LIST; }
+        @Override
+		public Object put( char[] key, int start, int length, Object value ) 
         { throw new UnsupportedOperationException(); }
     };
 
@@ -79,6 +82,7 @@ public class CharArrayObjectMap extends CharTable {
 		return value;
 	}
 	
+	@Override
 	public Object clone(){
         CharArrayObjectMap newTable = (CharArrayObjectMap) super.clone();
         newTable.valueTable = new Object[ capacity() ];
@@ -87,6 +91,7 @@ public class CharArrayObjectMap extends CharTable {
 	    return newTable;
 	}
 	
+	@Override
 	protected void resize(int size) {
 		Object[] oldValueTable = valueTable;
 		valueTable = new Object[size];
@@ -94,13 +99,15 @@ public class CharArrayObjectMap extends CharTable {
 		super.resize(size);
 	}
     
+	@Override
 	public void clear() {
 		super.clear();
 		for( int i = 0; i < capacity(); i++ )
 			valueTable[i] = null;
 	}
 
-    protected int partition( Comparator c, int p, int r ){
+    @Override
+	protected int partition( Comparator c, int p, int r ){
         char[] x = keyTable[ p ];
         Object temp = null;
         int i = p;

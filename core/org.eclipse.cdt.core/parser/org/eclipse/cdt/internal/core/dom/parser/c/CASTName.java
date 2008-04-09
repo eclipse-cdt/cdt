@@ -79,7 +79,8 @@ public class CASTName extends CASTNode implements IASTName, IASTCompletionContex
     }
 
 
-    public String toString() {
+    @Override
+	public String toString() {
         if (name == EMPTY_CHAR_ARRAY)
             return EMPTY_STRING;
         return new String(name);
@@ -89,7 +90,8 @@ public class CASTName extends CASTNode implements IASTName, IASTCompletionContex
         return name;
     }
 
-    public boolean accept(ASTVisitor action) {
+    @Override
+	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitNames) {
             switch (action.visit(this)) {
             case ASTVisitor.PROCESS_ABORT:

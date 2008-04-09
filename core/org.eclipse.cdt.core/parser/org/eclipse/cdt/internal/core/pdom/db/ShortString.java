@@ -85,6 +85,7 @@ public class ShortString implements IString {
 		return new String(getChars());
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -156,6 +157,7 @@ public class ShortString implements IString {
 	/**
 	 * Compatible with {@link String#hashCode()}
 	 */
+	@Override
 	public int hashCode() {
 		int h = hash;
 		if (h == 0) {

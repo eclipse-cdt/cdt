@@ -39,6 +39,7 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 		this.factory = factory;
 		this.problemRequestor = problemRequestor;
 	}
+	@Override
 	protected void executeOperation() throws CModelException {
 		ITranslationUnit tu = getTranslationUnit();
 
@@ -79,6 +80,7 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 	/**
 	 * @see JavaModelOperation#isReadOnly
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}

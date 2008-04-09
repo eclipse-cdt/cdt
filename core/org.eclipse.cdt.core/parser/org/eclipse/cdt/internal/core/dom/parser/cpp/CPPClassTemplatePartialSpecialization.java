@@ -59,6 +59,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 		return (ICPPClassTemplate) id.getTemplateName().resolveBinding();
 	}
 
+	@Override
 	public IBinding instantiate( IType [] args ){
 		ICPPSpecialization instance = getInstance( args );
 		if( instance != null ){

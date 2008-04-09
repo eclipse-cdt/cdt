@@ -72,10 +72,12 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 		}
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CPARAMETER;
 	}
@@ -135,6 +137,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 		return null;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		try {
 			return super.getNameCharArray();
@@ -178,6 +181,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 		return getNodeType();
 	}
 	
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getType(), record);
 		PDOMCParameter next= getNextParameter();

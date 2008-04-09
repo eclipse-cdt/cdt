@@ -74,6 +74,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
+	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		// we don't use this method
 		// overload to do nothing
@@ -83,6 +84,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws IOException {
 		if (getPath() != null && header != null) {
 			return new ByteArrayInputStream(header.getObjectData());
@@ -105,6 +107,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
 	 */
+	@Override
 	public String getName() {
 		if (header != null) {
 			return header.getObjectName();
@@ -115,6 +118,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */
+	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {
 			addressFactory = new Addr32Factory();
@@ -284,6 +288,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 	}
 	
+	@Override
 	public String getCPU() {
 		MachO.Attribute attribute = internalGetAttributes();
 		if (attribute != null) {
@@ -292,6 +297,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean hasDebug() {
 		MachO.Attribute attribute = internalGetAttributes();
 		if (attribute != null) {
@@ -300,6 +306,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return false;
 	}
 
+	@Override
 	public boolean isLittleEndian() {
 		MachO.Attribute attribute = internalGetAttributes();
 		if (attribute != null) {
@@ -308,6 +315,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return false;
 	}
 
+	@Override
 	public long getBSS() {
 		MachOHelper.Sizes size = internalGetSizes();
 		if (size != null) {
@@ -316,6 +324,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return 0;
 	}
 
+	@Override
 	public long getData() {
 		MachOHelper.Sizes size = internalGetSizes();
 		if (size != null) {
@@ -324,6 +333,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return 0;
 	}
 
+	@Override
 	public long getText() {
 		MachOHelper.Sizes size = internalGetSizes();
 		if (size != null) {
@@ -332,6 +342,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return 0;
 	}
 
+	@Override
 	public ISymbol[] getSymbols() {
 		ISymbol[] syms = internalGetSymbols();
 		if (syms != null) {
@@ -340,12 +351,14 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return NO_SYMBOLS;
 	}
 
+	@Override
 	public ISymbol getSymbol(IAddress addr) {
 		//TODO should this be cached?
 		// fall back to super implementation for now
 		return super.getSymbol(addr);
 	}
 	
+	@Override
 	public String[] getNeededSharedLibs() {
 		String[] libs = internalGetNeeded();
 		if (libs != null) {
@@ -354,6 +367,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return NO_NEEDED;
 	}
 
+	@Override
 	public String getSoName() {
 		String name = internalGetSoName();
 		if (name != null) {
@@ -362,6 +376,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		IPath path = getPath();
 		if (path != null) {
@@ -380,6 +395,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(MachO.class)) {
 			try {

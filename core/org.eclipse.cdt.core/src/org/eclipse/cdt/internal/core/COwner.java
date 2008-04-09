@@ -50,6 +50,7 @@ public class COwner implements ICOwnerInfo {
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
@@ -60,6 +61,7 @@ public class COwner implements ICOwnerInfo {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return getID().hashCode();
 	}

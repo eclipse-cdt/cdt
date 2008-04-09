@@ -112,7 +112,8 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
         return CVisitor.getContainingScope( definition != null ? definition : declarations[0].getParent() );
     }
 
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();

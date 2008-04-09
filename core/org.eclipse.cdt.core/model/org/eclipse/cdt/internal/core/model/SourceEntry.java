@@ -25,6 +25,7 @@ public class SourceEntry extends APathEntry implements ISourceEntry {
 		super(IPathEntry.CDT_SOURCE, null, null, sourcePath, exclusionPatterns, false);
 	}
 
+	@Override
 	public boolean equals (Object obj) {
 		if (obj instanceof ISourceEntry) {
 			ISourceEntry otherEntry = (ISourceEntry)obj;

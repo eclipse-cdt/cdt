@@ -38,6 +38,7 @@ public class RenameResourceElementsOperation extends MoveResourceElementsOperati
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.renameResourceProgress"); //$NON-NLS-1$
 	}
@@ -45,6 +46,7 @@ public class RenameResourceElementsOperation extends MoveResourceElementsOperati
 	/**
 	 * @see CopyResourceElementsOperation#isRename()
 	 */
+	@Override
 	protected boolean isRename() {
 		return true;
 	}
@@ -52,6 +54,7 @@ public class RenameResourceElementsOperation extends MoveResourceElementsOperati
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected void verify(ICElement element) throws CModelException {
 		super.verify(element);
 		verifyRenaming(element);

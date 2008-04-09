@@ -30,6 +30,7 @@ class PDOMGPPBasicType extends PDOMCPPBasicType implements IGPPBasicType, IIndex
 		super(pdom, parent, type, encodeGPPFlags(type));
 	}
 		
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.GPPBASICTYPE;
 	}

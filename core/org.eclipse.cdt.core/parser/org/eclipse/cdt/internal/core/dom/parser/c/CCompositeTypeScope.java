@@ -42,7 +42,8 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public IBinding[] find( String name ) {
+    @Override
+	public IBinding[] find( String name ) {
         CollectNamesAction action = new CollectNamesAction( name.toCharArray() );
         getPhysicalNode().accept( action );
         

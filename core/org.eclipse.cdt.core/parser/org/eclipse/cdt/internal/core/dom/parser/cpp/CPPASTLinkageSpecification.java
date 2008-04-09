@@ -55,7 +55,8 @@ public class CPPASTLinkageSpecification extends CPPASTNode implements
 
     private IASTDeclaration [] declarations = new IASTDeclaration[4];
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclarations ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

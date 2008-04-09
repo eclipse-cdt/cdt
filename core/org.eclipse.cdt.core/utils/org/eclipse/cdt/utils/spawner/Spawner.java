@@ -113,6 +113,7 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#getInputStream ();
 	 **/
+	@Override
 	public InputStream getInputStream() {
 		if(null == in)
 			in = new SpawnerInputStream(fChannels[1]);
@@ -122,6 +123,7 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#getOutputStream ();
 	 **/
+	@Override
 	public OutputStream getOutputStream() {
 		if(null == out)
 			out = new SpawnerOutputStream(fChannels[0]);
@@ -131,6 +133,7 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#getErrorStream ();
 	 **/
+	@Override
 	public InputStream getErrorStream() {
 		if(null == err)
 			err = new SpawnerInputStream(fChannels[2]);
@@ -140,6 +143,7 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#waitFor ();
 	 **/
+	@Override
 	public synchronized int waitFor() throws InterruptedException {
 		while (!isDone) {
 			wait();
@@ -160,6 +164,7 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#exitValue ();
 	 **/
+	@Override
 	public synchronized int exitValue() {
 		if (!isDone) {
 			throw new IllegalThreadStateException("Process not Terminated"); //$NON-NLS-1$
@@ -170,6 +175,7 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#destroy ();
 	 **/
+	@Override
 	public synchronized void destroy() {
 		// Sends the TERM
 		terminate();
@@ -261,6 +267,7 @@ public class Spawner extends Process {
 			/* (non-Javadoc)
 			 * @see org.eclipse.cdt.utils.spawner.Spawner.Reaper#execute(java.lang.String[], java.lang.String[], java.lang.String, int[])
 			 */
+			@Override
 			int execute(String[] cmd, String[] env, String dir, int[] channels) throws IOException {
 				return exec2(cmd, env, dir, channels, slaveName, masterFD);
 			}
@@ -355,6 +362,7 @@ public class Spawner extends Process {
 			return exec0(cmdarray, envp, dir, channels);
 		}
 
+		@Override
 		public void run() {
 			try {
 				pid = execute(fCmdarray, fEnvp, fDirpath, fChannels);

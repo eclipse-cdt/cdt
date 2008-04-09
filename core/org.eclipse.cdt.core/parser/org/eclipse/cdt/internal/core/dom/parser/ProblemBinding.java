@@ -123,7 +123,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         return getASTNode();
     }
 
-    public Object clone(){
+    @Override
+	public Object clone(){
     	//don't clone problems
         return this;
     }

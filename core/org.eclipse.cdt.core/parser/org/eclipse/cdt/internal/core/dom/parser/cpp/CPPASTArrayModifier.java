@@ -42,7 +42,8 @@ public class CPPASTArrayModifier extends CPPASTNode implements IASTArrayModifier
 		}
     }
 
-    public boolean accept(ASTVisitor action) {
+    @Override
+	public boolean accept(ASTVisitor action) {
         if (exp != null)
             if (!exp.accept(action))
                 return false;

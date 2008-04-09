@@ -84,10 +84,12 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_SPECIALIZATION;
 	}
@@ -258,6 +260,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return false;
 	}
 	
+	@Override
 	public Object clone() {fail();return null;}
 
 	public ICPPClassType getClassType() {
@@ -307,6 +310,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return CPPSemantics.findBindings( this, name, false );
 	}
 	
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 			throws DOMException {
 		if (!(this instanceof ICPPTemplateDefinition) && 
@@ -364,6 +368,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return this;
 	}
 
+	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		addMember(member);
 	}
@@ -373,12 +378,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		list.addMember(member);
 	}
 
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
 	}
 	
+	@Override
 	public String toString() {
 		String result= super.toString();
 		ObjectMap map= getArgumentMap();
@@ -387,6 +394,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return result;
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		if (!(this instanceof ICPPTemplateDefinition)

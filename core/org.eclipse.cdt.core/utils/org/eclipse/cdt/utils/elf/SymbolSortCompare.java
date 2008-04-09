@@ -16,6 +16,7 @@ import java.util.Comparator;
 /**
  * @deprecated This class is slated for removal, it is not used by the CDT classes
  */
+@Deprecated
 public class SymbolSortCompare implements Comparator {
 	public int compare( Object o1, Object o2 ) {
         String s1 = o1.toString();

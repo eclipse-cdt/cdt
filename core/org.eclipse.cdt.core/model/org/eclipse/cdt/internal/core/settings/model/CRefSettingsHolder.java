@@ -53,6 +53,7 @@ public class CRefSettingsHolder extends CExternalSettingsHolder {
 		fIsReconsiled = s;
 	}
 
+	@Override
 	public void serialize(ICStorageElement el) {
 		super.serialize(el);
 		el.setAttribute(ATTR_FACTORY_ID, fContainerRef.getFactoryId());

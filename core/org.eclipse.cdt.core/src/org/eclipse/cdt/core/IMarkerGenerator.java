@@ -25,6 +25,7 @@ public interface IMarkerGenerator {
 	 * callback from Output Parser
 	 * @deprecated Use 	public void addMarker(org.eclipse.cdt.core.ProblemMarkerInfo problem) instead.
 	 */
+	@Deprecated
 	void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar);
 	void addMarker(ProblemMarkerInfo problemMarkerInfo);
 }

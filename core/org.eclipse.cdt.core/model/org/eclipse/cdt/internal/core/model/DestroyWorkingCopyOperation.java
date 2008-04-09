@@ -29,6 +29,7 @@ public class DestroyWorkingCopyOperation extends CModelOperation {
 	 * @exception CModelException if setting the source
 	 * 	of the original translation unit fails
 	 */
+	@Override
 	protected void executeOperation() throws CModelException {
 
 		WorkingCopy workingCopy = getWorkingCopy();
@@ -72,6 +73,7 @@ public class DestroyWorkingCopyOperation extends CModelOperation {
 	/**
 	 * @see CModelOperation#isReadOnly
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}

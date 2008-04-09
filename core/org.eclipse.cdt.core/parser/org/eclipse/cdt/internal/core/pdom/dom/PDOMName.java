@@ -195,6 +195,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 
+	@Override
 	public String toString() {
 		try {
 			Database db = pdom.getDB();

@@ -35,6 +35,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		fSetDescription = description;
 	}
 	
+	@Override
 	protected void executeOperation() throws CModelException {
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
 		ICProject cProject = (ICProject)getElementToProcess();
@@ -150,6 +151,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		return false;
 	}
 	
+	@Override
 	public boolean isReadOnly() {
 		return false;
 	}

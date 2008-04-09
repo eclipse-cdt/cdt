@@ -144,6 +144,7 @@ class CElementInfo {
 		fIsStructureKnown = newIsStructureKnown;
 	}
 
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();

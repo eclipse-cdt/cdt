@@ -64,6 +64,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 			fSettingsMap = new HashMap(base.fSettingsMap);
 	}
 
+	@Override
 	public CExternalSetting[] getExternalSettings(){
 		if(fSettingsMap != null)
 			return (CExternalSetting[])fSettingsMap.values().toArray(new CExternalSetting[fSettingsMap.size()]);

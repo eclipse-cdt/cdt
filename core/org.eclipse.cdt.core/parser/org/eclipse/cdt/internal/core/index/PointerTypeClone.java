@@ -60,6 +60,7 @@ public class PointerTypeClone implements IPointerType, ITypeContainer, IIndexTyp
 	public void setType(IType type) {
 		this.type = type;
 	}
+	@Override
 	public Object clone() {
 		return new PointerTypeClone(this);
 	}

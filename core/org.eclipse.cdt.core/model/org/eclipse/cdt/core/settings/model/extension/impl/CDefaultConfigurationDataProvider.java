@@ -23,6 +23,7 @@ public class CDefaultConfigurationDataProvider extends
 		CConfigurationDataProvider {
 	private static final String DEFAULT_STORAGE_ID = "defaultConfigurationDataProvider";  //$NON-NLS-1$
 	
+	@Override
 	public CConfigurationData applyConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
@@ -35,6 +36,7 @@ public class CDefaultConfigurationDataProvider extends
 		return base;
 	}
 
+	@Override
 	public CConfigurationData createConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
@@ -45,6 +47,7 @@ public class CDefaultConfigurationDataProvider extends
 		return factory.createConfigurationdata(des.getId(), des.getName(), base, clone);
 	}
 
+	@Override
 	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
 			IProgressMonitor monitor)
 			throws CoreException {
@@ -65,6 +68,7 @@ public class CDefaultConfigurationDataProvider extends
 		return null;
 	}
 
+	@Override
 	public void removeConfiguration(ICConfigurationDescription des,
 			CConfigurationData data,
 			IProgressMonitor monitor) {

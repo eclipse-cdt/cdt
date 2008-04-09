@@ -43,6 +43,7 @@ public class AR {
 		}
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
 		try {
 			dispose();

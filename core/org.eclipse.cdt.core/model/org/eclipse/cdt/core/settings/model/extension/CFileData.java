@@ -18,6 +18,7 @@ public abstract class CFileData extends CResourceData {
 		
 	}
 
+	@Override
 	public final int getType(){
 		return ICSettingBase.SETTING_FILE;
 	}

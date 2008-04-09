@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Path;
 public class MakeErrorParser extends AbstractErrorParser {
 	private static final ErrorPattern[] patterns = {
 		new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				int level;
 				try {
@@ -42,12 +43,14 @@ public class MakeErrorParser extends AbstractErrorParser {
 			}
 		},
 		new ErrorPattern("make\\[.*\\]: Leaving directory", 0, 0) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				eoParser.popDirectory();
 				return true;
 			}
 		},
 		new ErrorPattern("(make: \\*\\*\\* \\[.*\\] Error .*)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
 				super.recordError(matcher, eoParser);
 				return true;
@@ -55,6 +58,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//make [foo] Error NN
 		new ErrorPattern("(make.*\\[.*\\] Error [-]{0,1}\\d*.*)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
 				super.recordError(matcher, eoParser);
 				return true;
@@ -72,6 +76,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 //		},
 		//missing separator. Stop.
 		new ErrorPattern("(make.*missing separator.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
 				super.recordError(matcher, eoParser);
 				return true;
@@ -79,6 +84,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//missing separator (did you mean TAB instead of 8 spaces?\\). Stop.
 		new ErrorPattern("(make.*missing separator \\(did you mean TAB instead of 8 spaces?\\).\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
 				super.recordError(matcher, eoParser);
 				return true;
@@ -86,6 +92,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//commands commence before first target. Stop.
 		new ErrorPattern("(make.*commands commence before first target.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
 				super.recordError(matcher, eoParser);
 				return true;
@@ -93,6 +100,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//commands commence before first target. Stop.
 		new ErrorPattern("(make.*commands commence before first target.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -100,6 +108,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//missing rule before commands. Stop.
 		new ErrorPattern("(make.*missing rule before commands.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -107,6 +116,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//missing rule before commands. Stop.
 		new ErrorPattern("(make.*missing rule before commands.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -114,6 +124,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//No rule to make target `xxx'.
 		new ErrorPattern("(make.*No rule to make target `.*'.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -121,6 +132,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//No rule to make target `xxx', needed by `yyy'.
 		new ErrorPattern("(make.*No rule to make target `.*', needed by `.*'.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -128,6 +140,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//No targets specified and no makefile found. Stop.
 		new ErrorPattern("(make.*No targets specified and no makefile found.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -135,6 +148,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//No targets. Stop.
 		new ErrorPattern("(make.*No targets.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -142,6 +156,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//Makefile `xxx' was not found.
 		new ErrorPattern("(make.*Makefile `.*' was not found.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -149,6 +164,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//Included makefile `xxx' was not found.
 		new ErrorPattern("(make.*Included makefile `.*' was not found.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -156,6 +172,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//warning: overriding commands for target `xxx'
 		new ErrorPattern("(make.*warning: overriding commands for target `.*')", 1, IMarkerGenerator.SEVERITY_WARNING) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return false;
@@ -163,6 +180,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//warning: ignoring old commands for target `xxx'
 		new ErrorPattern("(make.*warning: ignoring old commands for target `.*')", 1, IMarkerGenerator.SEVERITY_WARNING) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return false;
@@ -170,6 +188,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//Circular .+ <- .+ dependency dropped.
 		new ErrorPattern("(make.*Circular .+ <- .+ dependency dropped.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -177,6 +196,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//Recursive variable `xxx' references itself (eventually). Stop.		
 		new ErrorPattern("(make.*Recursive variable `.*' references itself \\(eventually\\).\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -184,6 +204,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//Unterminated variable reference. Stop.		
 		new ErrorPattern("(make.*[uU]nterminated variable reference.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -191,6 +212,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//insufficient arguments to function `.*'. Stop.
 		new ErrorPattern("(make.*insufficient arguments to function `.*'.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -198,6 +220,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//missing target pattern. Stop.
 		new ErrorPattern("(make.*missing target pattern.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -205,6 +228,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//multiple target patterns. Stop.
 		new ErrorPattern("(make.*multiple target patterns.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -212,6 +236,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//target pattern contains no `%'. Stop.
 		new ErrorPattern("(make.*target pattern contains no `%'.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -219,6 +244,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//mixed implicit and static pattern rules. Stop.
 		new ErrorPattern("(make.*mixed implicit and static pattern rules.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -226,6 +252,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//mixed implicit and static pattern rules. Stop.
 		new ErrorPattern("(make.*mixed implicit and static pattern rules.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;
@@ -233,6 +260,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//warning: -jN forced in submake: disabling jobserver mode.
 		new ErrorPattern("(make.*warning: -jN forced in submake: disabling jobserver mode.)", 1, IMarkerGenerator.SEVERITY_WARNING) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return false;
@@ -240,6 +268,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//warning: jobserver unavailable: using -j1. Add `+' to parent make rule.
 		new ErrorPattern("(make.*warning: jobserver unavailable: using -j1. Add `+' to parent make rule.)", 1, IMarkerGenerator.SEVERITY_WARNING) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return false;
@@ -247,6 +276,7 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		//target `abc' doesn't match the target pattern
 		new ErrorPattern("(make.*target `.*' doesn't match the target pattern)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				super.recordError(matcher, eoParser);
 				return true;

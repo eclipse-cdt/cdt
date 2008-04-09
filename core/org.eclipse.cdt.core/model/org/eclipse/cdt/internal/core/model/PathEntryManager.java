@@ -991,6 +991,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			 * 
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
@@ -1426,6 +1427,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				 * 
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {

@@ -44,10 +44,12 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CENUMERATOR;
 	}

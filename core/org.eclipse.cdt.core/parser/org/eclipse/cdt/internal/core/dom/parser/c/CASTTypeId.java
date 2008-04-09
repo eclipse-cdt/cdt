@@ -57,7 +57,8 @@ public class CASTTypeId extends CASTNode implements IASTTypeId {
 
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitTypeIds ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

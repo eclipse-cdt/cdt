@@ -40,6 +40,7 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 	 * @exception CModelException if setting the source
 	 * 	of the original compilation unit fails
 	 */
+	@Override
 	protected void executeOperation() throws CModelException {
 		if (fMonitor != null){
 			if (fMonitor.isCanceled())
@@ -86,10 +87,12 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 	/**
 	 * @see CModelOperation#isReadOnly
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	@Override
 	protected ICModelStatus verify() {
 		ICModelStatus status = super.verify();
 		if (!status.isOK()) {

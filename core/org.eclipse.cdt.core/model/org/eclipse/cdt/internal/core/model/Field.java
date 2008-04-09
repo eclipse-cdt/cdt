@@ -30,34 +30,42 @@ public class Field extends VariableDeclaration implements IField {
 		getFieldInfo().setMutable(mutable);
 	}
 
+	@Override
 	public String getTypeName() throws CModelException {
 		return getFieldInfo().getTypeName();
 	}
 
+	@Override
 	public void setTypeName(String type) throws CModelException {
 		getFieldInfo().setTypeName(type);
 	}
 
+	@Override
 	public boolean isConst() throws CModelException {
 		return getFieldInfo().isConst();
 	}
 
+	@Override
 	public void setConst(boolean isConst) throws CModelException {
 		getFieldInfo().setConst(isConst);
 	}
 
+	@Override
 	public boolean isVolatile() throws CModelException {
 		return getFieldInfo().isVolatile();
 	}
 
+	@Override
 	public void setVolatile(boolean isVolatile) throws CModelException {
 		getFieldInfo().setVolatile(isVolatile);
 	}
 
+	@Override
 	public boolean isStatic() throws CModelException {
 		return getFieldInfo().isStatic();
 	}
 
+	@Override
 	public void setStatic(boolean isStatic) throws CModelException {
 		getFieldInfo().setStatic(isStatic);
 	}
@@ -74,6 +82,7 @@ public class Field extends VariableDeclaration implements IField {
 		return (FieldInfo) getElementInfo();
 	}
 
+	@Override
 	protected CElementInfo createElementInfo () {
 		return new FieldInfo(this);
 	}

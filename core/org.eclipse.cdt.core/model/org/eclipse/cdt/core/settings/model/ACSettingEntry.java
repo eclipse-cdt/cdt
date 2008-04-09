@@ -49,6 +49,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		return checkFlags(RESOLVED);
 	}
 	
+	@Override
 	public boolean equals(Object other){
 		if(other == this)
 			return true;
@@ -70,6 +71,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		return true;
 	}
 	
+	@Override
 	public int hashCode(){
 		return getKind() + fFlags + fName.hashCode(); 
 	}
@@ -116,6 +118,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		return codeForNameKey();
 	}
 	
+	@Override
 	public final String toString(){
 		StringBuffer buf = new StringBuffer();
 		buf.append('[').append(LanguageSettingEntriesSerializer.kindToString(getKind())).append(']').append(' ');

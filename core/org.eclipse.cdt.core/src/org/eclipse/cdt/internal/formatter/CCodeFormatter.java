@@ -59,6 +59,7 @@ public class CCodeFormatter extends CodeFormatter {
 		this(null, options);
 	}
 
+	@Override
 	public String createIndentationString(final int indentationLevel) {
 		if (indentationLevel < 0) {
 			throw new IllegalArgumentException();
@@ -100,6 +101,7 @@ public class CCodeFormatter extends CodeFormatter {
 		return buffer.toString();
 	}
 
+	@Override
 	public void setOptions(Map options) {
 		if (options != null) {
 			this.options= options;
@@ -113,6 +115,7 @@ public class CCodeFormatter extends CodeFormatter {
 	/*
 	 * @see org.eclipse.cdt.core.formatter.CodeFormatter#format(int, java.lang.String, int, int, int, java.lang.String)
 	 */
+	@Override
 	public TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator) {
 		TextEdit edit= null;
 		ITranslationUnit tu= (ITranslationUnit)options.get(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT);

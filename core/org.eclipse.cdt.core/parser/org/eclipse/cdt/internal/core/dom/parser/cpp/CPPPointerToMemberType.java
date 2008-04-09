@@ -41,6 +41,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements
 		this.operator = operator;
 	}
 
+	@Override
 	public boolean isSameType( IType o ){
 	    if( o == this )
             return true;

@@ -22,6 +22,7 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 			fValue = "";	//$NON-NLS-1$
 	}
 
+	@Override
 	public String getValue() {
 		return fValue;
 	}
@@ -30,16 +31,19 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 		return MACRO;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if(!super.equals(other))
 			return false;
 		return fValue.equals(((CMacroEntry)other).fValue);
 	}
 
+	@Override
 	public int hashCode() {
 		return super.hashCode() + fValue.hashCode();
 	}
 
+	@Override
 	public boolean equalsByContents(ICSettingEntry entry) {
 		if(!super.equalsByContents(entry))
 			return false;
@@ -47,6 +51,7 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 		return fValue.equals(((CMacroEntry)entry).fValue);
 	}
 
+	@Override
 	protected String contentsToString() {
 		return new StringBuffer().append(fName).append('=').append(fValue).toString();
 	}

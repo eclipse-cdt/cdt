@@ -50,6 +50,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.deleteElementProgress"); //$NON-NLS-1$
 	}
@@ -88,6 +89,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	 * Deletes this element from its compilation unit.
 	 * @see MultiOperation
 	 */
+	@Override
 	protected void processElement(ICElement element) throws CModelException {
 		ITranslationUnit tu = (ITranslationUnit) element;
 	
@@ -117,6 +119,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	/**
 	 * @deprecated marked deprecated, future to use ASTRewrite
 	 */
+	@Deprecated
 	private void replaceElementInBuffer(IBuffer buffer, ICElement elementToRemove, String cuName) throws CModelException {
 		if (elementToRemove instanceof ISourceReference) {
 			ISourceRange range = ((ISourceReference)elementToRemove).getSourceRange();
@@ -152,6 +155,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	 * This method first group the elements by <code>ICompilationUnit</code>,
 	 * and then processes the <code>ICompilationUnit</code>.
 	 */
+	@Override
 	protected void processElements() throws CModelException {
 		groupElements();
 		super.processElements();
@@ -159,6 +163,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected void verify(ICElement element) throws CModelException {
 		ICElement[] children = ((IRegion) fChildrenToRemove.get(element)).getElements();
 		for (int i = 0; i < children.length; i++) {

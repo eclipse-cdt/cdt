@@ -76,7 +76,8 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
         longlong = value;
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

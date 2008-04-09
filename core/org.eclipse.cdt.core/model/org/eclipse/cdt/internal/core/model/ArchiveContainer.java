@@ -37,6 +37,7 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 		return a;
 	}
 
+	@Override
 	public CElementInfo createElementInfo() {
 		return new ArchiveContainerInfo(this);
 	}
@@ -44,6 +45,7 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
 		throws CModelException {
 		// this will bootstrap/start the runner for the project.

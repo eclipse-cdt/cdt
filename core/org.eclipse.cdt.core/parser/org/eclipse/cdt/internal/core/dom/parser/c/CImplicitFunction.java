@@ -43,7 +43,8 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
      * (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
      */
-    public IParameter[] getParameters() {
+    @Override
+	public IParameter[] getParameters() {
         return parms;
     }
     
@@ -51,7 +52,8 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
      * (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
-    public IFunctionType getType() {
+    @Override
+	public IFunctionType getType() {
         return type;
     }
     
@@ -59,7 +61,8 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
      * (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
      */
-    public boolean takesVarArgs() {
+    @Override
+	public boolean takesVarArgs() {
         return takesVarArgs;
     }
     
@@ -67,7 +70,8 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
      * (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return String.valueOf(name);
     }
     
@@ -75,7 +79,8 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
      * (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return name;
     }
     
@@ -83,7 +88,8 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
      * (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return scope;
     }
     

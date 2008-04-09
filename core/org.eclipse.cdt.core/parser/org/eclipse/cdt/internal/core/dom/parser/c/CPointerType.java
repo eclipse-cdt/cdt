@@ -87,7 +87,8 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 		return (qualifiers & IS_VOLATILE) != 0;
 	}
 		
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();

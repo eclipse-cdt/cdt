@@ -103,6 +103,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	/**
 	 * Only allow cancelling if this operation is not nested.
 	 */
+	@Override
 	protected void checkCanceled() {
 		if (!fNested) {
 			super.checkCanceled();
@@ -135,6 +136,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 *
 	 * @exception CModelException if the operation is unable to complete
 	 */
+	@Override
 	protected void executeOperation() throws CModelException {
 		beginTask(getMainTaskName(), getMainAmountOfWork());
 		CElementDelta delta = newCElementDelta();
@@ -225,6 +227,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	/**
 	 * Returns the elements created by this operation.
 	 */
+	@Override
 	public ICElement[] getResultElements() {
 		return fResultElements;
 	}
@@ -306,6 +309,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 * @see ICModelStatus
 	 * @see CNamingConventions
 	 */
+	@Override
 	public ICModelStatus verify() {
 		if (getParentElement() == null) {
 			return new CModelStatus(ICModelStatusConstants.NO_ELEMENTS_TO_PROCESS);

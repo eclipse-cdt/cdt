@@ -38,6 +38,7 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return null;
 	}
@@ -45,6 +46,7 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
 	 */
+	@Override
 	protected CElementInfo createElementInfo() {
 		return new CElementInfo(this);
 	}
@@ -52,6 +54,7 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return entry.getFullLibraryPath();
 	}
@@ -66,6 +69,7 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
 	}
 

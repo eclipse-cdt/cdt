@@ -53,6 +53,7 @@ public class PathEntry implements IPathEntry {
 		return isExported;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IPathEntry) {
 			IPathEntry otherEntry = (IPathEntry)obj;
@@ -130,6 +131,7 @@ public class PathEntry implements IPathEntry {
 	/**
 	 * Returns a printable representation of this classpath entry.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		if (path != null && !path.isEmpty()) {

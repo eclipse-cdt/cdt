@@ -283,6 +283,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		return (val.getSeverity() != IStatus.ERROR);
 	}
 
+	@Override
 	public int hashCode() {
 		if (fHashCode == 0) {
 		    fHashCode = HASH_INIT;
@@ -293,6 +294,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		return fHashCode;
 	}
 
+	@Override
 	public String toString() {
 		return getFullyQualifiedName();
 	}
@@ -345,6 +347,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
         return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;

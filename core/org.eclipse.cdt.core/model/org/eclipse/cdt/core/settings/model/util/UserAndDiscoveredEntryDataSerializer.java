@@ -32,6 +32,7 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 		return fInstance;
 	}
 
+	@Override
 	public void loadEntries(CLanguageData data, ICStorageElement el) {
 		UserAndDiscoveredEntryLanguageData lData = (UserAndDiscoveredEntryLanguageData)data;
 
@@ -86,6 +87,7 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 		}
 	}
 
+	@Override
 	public void storeEntries(CLanguageData data, ICStorageElement el) {
 		UserAndDiscoveredEntryLanguageData lData = (UserAndDiscoveredEntryLanguageData)data;
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();

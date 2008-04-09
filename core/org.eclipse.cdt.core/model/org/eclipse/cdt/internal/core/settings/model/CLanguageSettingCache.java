@@ -43,6 +43,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		copySettingsFrom(base);
 	}
 
+	@Override
 	protected void copySettingsFrom(CLanguageData data) {
 		super.copySettingsFrom(data);
 		fContainsDiscoveredScannerInfo = data.containsDiscoveredScannerInfo();
@@ -76,6 +77,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 	}
 
 	
+	@Override
 	public String[] getSourceExtensions() {
 		if(fCachedExtensions == null ){
 			String[] typeIds = getSourceContentTypeIds();
@@ -127,6 +129,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 	}
 	
 
+	@Override
 	public void setLanguageId(String id) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -139,6 +142,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void setEntries(int kind, ICLanguageSettingEntry[] entries) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -163,6 +167,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		return true;
 	}
 
+	@Override
 	protected ICLanguageSettingEntry[] processStoredEntries(
 			ICLanguageSettingEntry[] entries, int op) {
 		if(entries.length != 0){
@@ -177,6 +182,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		return entries;
 	}
 
+	@Override
 	public boolean containsDiscoveredScannerInfo() {
 		return fContainsDiscoveredScannerInfo;
 	}

@@ -46,7 +46,8 @@ public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implement
 		return typeOfExpression;
 	}
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.visit( this ) ){
 		    case ASTVisitor.PROCESS_ABORT : return false;

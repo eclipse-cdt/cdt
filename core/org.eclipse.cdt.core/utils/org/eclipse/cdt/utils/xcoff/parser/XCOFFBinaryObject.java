@@ -70,6 +70,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
+	@Override
 	public ISymbol[] getSymbols() {
 		if (hasChanged() || symbols == null) {
 			try {
@@ -86,6 +87,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	 * 
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
+	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		if (hasChanged() || info == null) {
 			try {
@@ -101,6 +103,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
+	@Override
 	public String getName() {
 		if (header != null) {
 			return header.getObjectName();
@@ -112,6 +115,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	 * @throws IOException
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws IOException {
 		InputStream stream = null;
 		if (getPath() != null && header != null) {
@@ -302,6 +306,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {
 			return getAddr2line();
@@ -314,6 +319,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */
+	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {
 			addressFactory = new Addr32Factory();

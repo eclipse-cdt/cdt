@@ -46,7 +46,8 @@ public class CASTPointer extends CASTNode implements ICASTPointer {
         isVolatile = value;
     }
 
-    public boolean accept(ASTVisitor visitor) {
+    @Override
+	public boolean accept(ASTVisitor visitor) {
         return true;
     }
 

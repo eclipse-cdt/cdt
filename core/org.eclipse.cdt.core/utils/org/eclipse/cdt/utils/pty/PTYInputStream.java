@@ -34,6 +34,7 @@ class PTYInputStream extends InputStream {
 	 *
 	 * @exception IOException on error.
 	 */
+	@Override
 	public int read() throws IOException {
 		byte b[] = new byte[1];
 		if (1 != read(b, 0, 1))
@@ -44,6 +45,7 @@ class PTYInputStream extends InputStream {
 	/**
 	 * @see InputStream#read(byte[], int, int)
 	 */
+	@Override
 	public int read(byte[] buf, int off, int len) throws IOException {
 		if (buf == null) {
 			throw new NullPointerException();
@@ -68,6 +70,7 @@ class PTYInputStream extends InputStream {
 	 * Close the Reader
 	 * @exception IOException on error.
 	 */
+	@Override
 	public void close() throws IOException {
 		if (master.getFD() == -1)
 			return;

@@ -58,6 +58,7 @@ public class ConditionalProcessGroup {
 		Operator(String id) {
 			this.id = id;
 		}
+		@Override
 		public boolean equals(Object arg0) {
 			if(arg0 instanceof Operator) {
 				return id.equals(((Operator)arg0).id);

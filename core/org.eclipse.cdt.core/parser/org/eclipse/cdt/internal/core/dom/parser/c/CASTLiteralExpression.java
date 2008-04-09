@@ -45,11 +45,13 @@ public class CASTLiteralExpression extends CASTNode implements IASTLiteralExpres
         this.value = value;
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
         return value;
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

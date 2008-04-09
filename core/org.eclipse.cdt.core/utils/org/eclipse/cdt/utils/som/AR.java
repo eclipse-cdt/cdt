@@ -205,6 +205,7 @@ public class AR {
 		}
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
 		try {
 			dispose();
@@ -318,6 +319,7 @@ public class AR {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		if (lstHeader != null) {

@@ -184,17 +184,21 @@ public class GeneratePDOMApplication implements IApplication {
 				public IndexingStreamProgressMonitor(PrintStream writer) {
 					super(writer);
 				}
+				@Override
 				protected boolean shouldOutput() {
 					return taskName!=null && taskName.equals(CCorePlugin.getResourceString("pdom.indexer.task")); //$NON-NLS-1$
 				}
 			}
+			@Override
 			public IProgressMonitor createMonitor(Job job) {
 				return new IndexingStreamProgressMonitor(System.out);
 			}
+			@Override
 			public IProgressMonitor createMonitor(Job job,
 					IProgressMonitor group, int ticks) {
 				return new NullProgressMonitor();
 			}
+			@Override
 			public IProgressMonitor createProgressGroup() {
 				return new NullProgressMonitor();
 			}

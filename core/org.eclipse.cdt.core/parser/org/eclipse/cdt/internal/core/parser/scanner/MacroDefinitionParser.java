@@ -55,6 +55,7 @@ public class MacroDefinitionParser {
 			return fIndex;
 		}
 		
+		@Override
 		public String toString() {
 			return "[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$
 		}

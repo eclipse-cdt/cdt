@@ -64,10 +64,12 @@ public class CDefaultFolderData extends CFolderData {
 		return fFactory.createLanguageData(fCfg, this, base, null, clone);
 	}
 	
+	@Override
 	public CLanguageData[] getLanguageDatas() {
 		return (CLanguageData[])fLanguageDatas.toArray(new CLanguageData[fLanguageDatas.size()]);
 	}
 
+	@Override
 	public IPath getPath() {
 		return fPath;
 	}
@@ -84,6 +86,7 @@ public class CDefaultFolderData extends CFolderData {
 //		setModified(true);
 //	}
 
+	@Override
 	public void setPath(IPath path) {
 		if(CDataUtil.objectsEqual(path, fPath))
 			return;
@@ -92,14 +95,17 @@ public class CDefaultFolderData extends CFolderData {
 		setModified(true);
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getId() != null;
 	}
@@ -114,6 +120,7 @@ public class CDefaultFolderData extends CFolderData {
 //		return fFactory.createLanguageData(fCfg, this, null, null, languageId, extensions, false);
 //	}
 	
+	@Override
 	public CLanguageData createLanguageDataForContentTypes(String languageId,
 			String[] typesIds) {
 		throw new UnsupportedOperationException();
@@ -125,6 +132,7 @@ public class CDefaultFolderData extends CFolderData {
 //		return data;
 	}
 
+	@Override
 	public CLanguageData createLanguageDataForExtensions(String languageId,
 			String[] extensions) {
 		throw new UnsupportedOperationException();
@@ -161,6 +169,7 @@ public class CDefaultFolderData extends CFolderData {
 
 	}
 
+	@Override
 	public boolean hasCustomSettings() {
 		return false;
 	}

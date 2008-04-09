@@ -54,6 +54,7 @@ public class CFileDescription extends CDataProxyContainer implements
 		data.setPath(path);
 	}
 	
+	@Override
 	void setData(CDataObject data) {
 		super.setData(data);
 		IPath cachedPath = getCachedPath();
@@ -90,6 +91,7 @@ public class CFileDescription extends CDataProxyContainer implements
 		return (CFileData)getData(write);
 	}
 
+	@Override
 	protected IProxyProvider createChildProxyProvider() {
 		ICDataScope scope = new ICDataScope(){
 

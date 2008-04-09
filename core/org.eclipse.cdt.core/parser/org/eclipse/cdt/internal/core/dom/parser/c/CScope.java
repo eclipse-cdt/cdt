@@ -65,19 +65,23 @@ public class CScope implements ICScope, IASTInternalScope {
 	
 	private static final IndexFilter[] INDEX_FILTERS = {
 		new IndexFilter() {	// namespace type tag
+			@Override
 			public boolean acceptBinding(IBinding binding) throws CoreException {
 				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding) &&
 					(binding instanceof ICompositeType || binding instanceof IEnumeration);
 			}
+			@Override
 			public boolean acceptLinkage(ILinkage linkage) {
 				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
 			}
 		},
 		new IndexFilter() { // namespace type other
+			@Override
 			public boolean acceptBinding(IBinding binding) throws CoreException {
 				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding) &&
 					!(binding instanceof ICompositeType || binding instanceof IEnumeration);
 			}
+			@Override
 			public boolean acceptLinkage(ILinkage linkage) {
 				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
 			}
@@ -109,7 +113,8 @@ public class CScope implements ICScope, IASTInternalScope {
             name = n;
             shouldVisitNames = true;
         }
-        public int visit( IASTName n ){
+        @Override
+		public int visit( IASTName n ){
             ASTNodeProperty prop = n.getPropertyInParent();
             if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
                 prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
@@ -121,7 +126,8 @@ public class CScope implements ICScope, IASTInternalScope {
             
             return PROCESS_CONTINUE; 
         }
-        public int visit( IASTStatement statement ){
+        @Override
+		public int visit( IASTStatement statement ){
             if( statement instanceof IASTDeclarationStatement )
                 return PROCESS_CONTINUE;
             return PROCESS_SKIP;

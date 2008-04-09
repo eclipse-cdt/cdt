@@ -28,6 +28,7 @@ public class CharTable extends HashTable {
 		keyTable = new char[capacity()][];
 	}
 	
+	@Override
 	protected void resize(int size) {
 		char[][] oldKeyTable = keyTable;
 		keyTable = new char[size][];
@@ -35,12 +36,14 @@ public class CharTable extends HashTable {
 		super.resize(size);
 	}
 	
+	@Override
 	public void clear() {
 		super.clear();
 		for( int i = 0; i < capacity(); i++ )
 			keyTable[i] = null;
 	}
 	
+	@Override
 	public Object clone(){
 	    CharTable newTable = (CharTable) super.clone();
         
@@ -55,6 +58,7 @@ public class CharTable extends HashTable {
 		return CharArrayUtils.hash(source, start, length) & ((keyTable.length * 2) - 1);
 	}
 	
+	@Override
 	protected final int hash( int pos ){
 	    return hash(keyTable[pos], 0, keyTable[pos].length);
 	}

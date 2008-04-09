@@ -40,7 +40,8 @@ public class CExternalFunction extends CFunction implements IFunction, ICExterna
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
-    public IFunctionType getType() {
+    @Override
+	public IFunctionType getType() {
     	IFunctionType t = super.getType();
     	if( t == null ) {
     		type = new CPPFunctionType( CPPSemantics.VOID_TYPE, IType.EMPTY_TYPE_ARRAY );
@@ -48,35 +49,40 @@ public class CExternalFunction extends CFunction implements IFunction, ICExterna
         return type;
     }
     
-    protected IASTTranslationUnit getTranslationUnit() {
+    @Override
+	protected IASTTranslationUnit getTranslationUnit() {
 		return tu;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return name.toString();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return name.toCharArray();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return tu.getScope();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
      */
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         return true;
     }
 }

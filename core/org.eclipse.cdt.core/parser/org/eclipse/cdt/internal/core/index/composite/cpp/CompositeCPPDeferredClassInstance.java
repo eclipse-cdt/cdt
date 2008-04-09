@@ -36,6 +36,7 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return (ICPPTemplateDefinition) cf.getCompositeBinding((IIndexFragmentBinding)preresult);
 	}
 	
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}

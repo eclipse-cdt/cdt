@@ -27,6 +27,7 @@ public class CompositeTypeContainer extends CompositeType implements ITypeContai
 		return cf.getCompositeType((IIndexType)((ITypeContainer)type).getType());
 	}
 
+	@Override
 	public String toString() {
 		try {
 			return ASTTypeUtil.getType(getType());

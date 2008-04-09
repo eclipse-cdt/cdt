@@ -19,7 +19,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 public class CPPASTReferenceOperator extends CPPASTNode implements
         ICPPASTReferenceOperator {
     
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         return true;
     }
     

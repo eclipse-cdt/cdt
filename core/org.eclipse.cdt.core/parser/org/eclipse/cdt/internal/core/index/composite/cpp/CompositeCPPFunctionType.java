@@ -29,6 +29,7 @@ public class CompositeCPPFunctionType extends CompositeFunctionType implements I
 		return ((ICPPFunctionType)type).isVolatile();
 	}
 	
+	@Override
 	public Object clone() {
 		fail(); return null;
 	}

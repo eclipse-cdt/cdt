@@ -70,6 +70,7 @@ abstract class PreprocessorMacro implements IMacroBinding {
 		return FunctionStyleMacro.NO_VAARGS;
 	}
 
+	@Override
 	public String toString() {
 		char[][] p= getParameterList();
 		if (p == null) {
@@ -142,6 +143,7 @@ class ObjectStyleMacro extends PreprocessorMacro {
 		return result;
 	}
 	
+	@Override
 	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions, MacroExpander expander) {
 		if (fExpansionTokens == null) {
 			fExpansionTokens= new TokenList();
@@ -182,6 +184,7 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 		fHasVarArgs= hasVarArgs;
 	}
 	
+	@Override
 	public char[][] getParameterList() {
 		final int length = fParamList.length;
 		if (fHasVarArgs == NO_VAARGS || length==0) {
@@ -204,6 +207,7 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 		return result;
 	}
 
+	@Override
 	public char[][] getParameterPlaceholderList() {
 		return fParamList;
 	}
@@ -247,10 +251,12 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	/**
 	 * Returns one of {@link #NO_VAARGS}, {@link #VAARGS} or {@link #NAMED_VAARGS}.
 	 */
+	@Override
 	public int hasVarArgs() {
 		return fHasVarArgs;
 	}
 		
+	@Override
 	public boolean isFunctionStyle() {
 		return true;
 	}
@@ -266,6 +272,7 @@ abstract class DynamicMacro extends PreprocessorMacro {
 	}
 	public abstract Token execute(MacroExpander expander);
 
+	@Override
 	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions, MacroExpander expander) {
 		TokenList result= new TokenList();
 		result.append(execute(expander));
@@ -288,6 +295,7 @@ final class DateMacro extends DynamicMacro {
 		super(name);
 	}
 
+	@Override
 	public Token execute(MacroExpander expander) {
 		return new TokenWithImage(IToken.tSTRING, null, 0, 0, createDate());
     }
@@ -317,6 +325,7 @@ final class FileMacro extends DynamicMacro {
 		super(name);
 	}
 
+	@Override
 	public Token execute(MacroExpander expander) {
         StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
         buffer.append(expander.getCurrentFilename());
@@ -333,6 +342,7 @@ final class LineMacro extends DynamicMacro {
 	LineMacro(char[] name) {
 		super(name);
 	}
+	@Override
 	public Token execute(MacroExpander expander) {
     	int lineNumber= expander.getCurrentLineNumber();
         return new TokenWithImage(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
@@ -347,6 +357,7 @@ final class TimeMacro extends DynamicMacro {
 		super(name);
 	}
 
+	@Override
 	public Token execute(MacroExpander expander) {
 		return new TokenWithImage(IToken.tSTRING, null, 0, 0, createDate());
 	}

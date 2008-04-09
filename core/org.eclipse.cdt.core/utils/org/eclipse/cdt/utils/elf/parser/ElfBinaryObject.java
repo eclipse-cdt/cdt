@@ -53,6 +53,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
+	@Override
 	public String getName() {
 		if (header != null) {
 			return header.getObjectName();
@@ -63,6 +64,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws IOException {
 		if (getPath() != null && header != null) {
 			return new ByteArrayInputStream(header.getObjectData());
@@ -73,6 +75,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
+	@Override
 	public ISymbol[] getSymbols() {
 		// Call the hasChanged first, to initialize the timestamp
 		if (hasChanged() || symbols == null) {
@@ -88,6 +91,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
+	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		// Call the hasChanged first, to initialize the timestamp
 		if (hasChanged() || info == null) {
@@ -177,6 +181,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(Elf.class)) {
 			try {
@@ -197,6 +202,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */
+	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {
 			try {

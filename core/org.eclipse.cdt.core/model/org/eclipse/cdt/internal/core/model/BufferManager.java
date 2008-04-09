@@ -52,6 +52,7 @@ public class BufferManager implements IBufferFactory {
 		 * <p>NOTE: this triggers an external removal of this buffer
 		 * by closing the buffer.
 		 */
+		@Override
 		protected boolean close(LRUCacheEntry entry) {
 			IBuffer buffer= (IBuffer) entry._fValue;
 			if (buffer.hasUnsavedChanges()) {
@@ -63,6 +64,7 @@ public class BufferManager implements IBufferFactory {
 		/**
 		 * Returns a new instance of the reciever.
 		 */
+		@Override
 		protected LRUCache newInstance(int size, int overflow) {
 			return new BufferCache(size, overflow);
 		}

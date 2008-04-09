@@ -291,6 +291,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	}
 	
 
+	@Override
 	protected IResourceMoveHandler createResourceMoveHandler(
 			IResourceChangeEvent event) {
 		return new RcMoveHandler();
@@ -326,6 +327,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	public void rollback(ISaveContext context) {
 	}
 
+	@Override
 	protected void doHahdleResourceMove(IResourceChangeEvent event,
 			IResourceMoveHandler handler) {
 		switch(event.getType()){

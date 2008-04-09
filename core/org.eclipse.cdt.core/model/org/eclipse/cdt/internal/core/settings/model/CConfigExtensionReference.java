@@ -45,6 +45,7 @@ public class CConfigExtensionReference implements ICConfigExtensionReference {
 		return fCfgSettings.getInfo(this);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
@@ -58,6 +59,7 @@ public class CConfigExtensionReference implements ICConfigExtensionReference {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return fExtPoint.hashCode() + fId.hashCode();
 	}

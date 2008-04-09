@@ -80,7 +80,8 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
 		return ((ICPPASTFunctionDeclarator)declarator).getFunctionScope();
 	}
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclarations ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

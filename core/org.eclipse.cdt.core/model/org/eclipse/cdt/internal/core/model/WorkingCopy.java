@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -141,6 +140,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.ICElement#exists()
 	 */
+	@Override
 	public boolean exists() {
 		// working copy always exists in the model until it is detroyed
 		return this.useCount != 0;
@@ -149,6 +149,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * Answers custom buffer factory
 	 */
+	@Override
 	public IBufferFactory getBufferFactory(){
 
 		return this.bufferFactory;
@@ -159,6 +160,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 *
 	 * @see Object#equals
 	 */
+	@Override
 	public boolean equals(Object o) {
 		return this == o; 
 	}
@@ -232,6 +234,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getSharedWorkingCopy(IProgressMonitor, IBufferFactory)
 	 */
+	@Override
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory)
 		throws CModelException{
 			return this;		
@@ -239,6 +242,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy()
 	 */	
+	@Override
 	public IWorkingCopy getWorkingCopy() {
 		return this;
 	}
@@ -246,6 +250,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see IWorkingCopy
 	 */
+	@Override
 	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory){
 		return this;
 	}
@@ -271,6 +276,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isWorkingCopy()
 	 */
+	@Override
 	public boolean isWorkingCopy() {
 		return true;
 	}
@@ -283,6 +289,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * something other than navigation 	or if this is a working copy being
 	 * opened after it has been destroyed.
 	 */
+	@Override
 	public void open(IProgressMonitor monitor) throws CModelException {
 		if (this.useCount == 0) { // was destroyed
 			throw newNotPresentException();
@@ -299,6 +306,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/*
 	 * @see org.eclipse.cdt.internal.core.model.TranslationUnit#openBuffer(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 
 		if (this.useCount == 0) throw newNotPresentException();
@@ -373,6 +381,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.ICFile#save(IProgressMonitor, boolean)
 	 */
+	@Override
 	public void save(IProgressMonitor pm, boolean force) throws CModelException {
 		if (isReadOnly()) {
 			throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));

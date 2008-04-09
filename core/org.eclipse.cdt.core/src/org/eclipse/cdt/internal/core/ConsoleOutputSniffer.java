@@ -41,7 +41,8 @@ public class ConsoleOutputSniffer {
 		/* (non-Javadoc)
     	 * @see java.io.OutputStream#write(int)
     	 */
-    	public void write(int b) throws IOException {
+    	@Override
+		public void write(int b) throws IOException {
     		currentLine.append((char) b);
     		checkLine(false);
 
@@ -54,7 +55,8 @@ public class ConsoleOutputSniffer {
     	/* (non-Javadoc)
     	 * @see java.io.OutputStream#write(byte[], int, int)
     	 */
-    	public void write(byte[] b, int off, int len) throws IOException {
+    	@Override
+		public void write(byte[] b, int off, int len) throws IOException {
     		if (b == null) {
     			throw new NullPointerException();
     		} else if (off != 0 || (len < 0) || (len > b.length)) {
@@ -73,7 +75,8 @@ public class ConsoleOutputSniffer {
     	/* (non-Javadoc)
     	 * @see java.io.OutputStream#close()
     	 */
-    	public void close() throws IOException {
+    	@Override
+		public void close() throws IOException {
     		checkLine(true);
     		closeConsoleOutputStream();
     	}
@@ -81,7 +84,8 @@ public class ConsoleOutputSniffer {
     	/* (non-Javadoc)
     	 * @see java.io.OutputStream#flush()
     	 */
-    	public void flush() throws IOException {
+    	@Override
+		public void flush() throws IOException {
     		if (outputStream != null) {
     			outputStream.flush();
     		}

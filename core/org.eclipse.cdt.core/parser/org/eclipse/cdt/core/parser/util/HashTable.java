@@ -47,6 +47,7 @@ public class HashTable implements Cloneable{
 		}
 	}
 	
+	@Override
 	public Object clone() {
 	    HashTable newTable = null;
         try {

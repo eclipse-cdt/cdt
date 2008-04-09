@@ -40,6 +40,7 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding imple
 		return (ICPPBinding) cf.getCompositeBinding(preresult);
 	}
 	
+	@Override
 	public Object clone() {
 		fail(); return null; 
 	}

@@ -62,6 +62,7 @@ public class XCoffSymbol extends Symbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.Symbol#getLineNumber(long)
 	 */
+	@Override
 	public int getLineNumber(long offset) {
 		int line = -1;
 		Addr2line addr2line = ((XCOFFBinaryObject)binary).getAddr2line(true);

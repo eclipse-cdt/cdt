@@ -47,7 +47,8 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
 		}
     }
 
-    protected boolean postAccept( ASTVisitor action ){
+    @Override
+	protected boolean postAccept( ASTVisitor action ){
         if( bitField != null ) if( !bitField.accept( action ) ) return false;
         
         IASTInitializer initializer = getInitializer();

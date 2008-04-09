@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
 public class ConfigBasedEntriesContainerInitializer extends
 		PathEntryContainerInitializer {
 
+	@Override
 	public void initialize(IPath containerPath, ICProject project)
 			throws CoreException {
 		ConfigBasedPathEntryContainer container = ConfigBasedPathEntryStore.createContainer(project.getProject());

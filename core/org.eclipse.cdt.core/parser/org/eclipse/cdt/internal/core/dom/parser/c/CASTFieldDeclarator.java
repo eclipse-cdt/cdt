@@ -48,7 +48,8 @@ public class CASTFieldDeclarator extends CASTDeclarator implements
 		}
     }
 
-    protected boolean postAccept( ASTVisitor action ){
+    @Override
+	protected boolean postAccept( ASTVisitor action ){
         if( bitFieldSize != null ) if( !bitFieldSize.accept( action ) ) return false;
         
         IASTInitializer initializer = getInitializer();

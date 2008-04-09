@@ -79,10 +79,12 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
 	}
@@ -144,6 +146,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		}
 	}
 	
+	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp = super.pdomCompareTo(other);
 		if(cmp==0) {
@@ -163,6 +166,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		return cmp;
 	}
 
+	@Override
 	public IBinding instantiate(IType[] args) {
 		ICPPSpecialization instance = getInstance( args );
 		if( instance != null ){
@@ -235,6 +239,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		return null;
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);

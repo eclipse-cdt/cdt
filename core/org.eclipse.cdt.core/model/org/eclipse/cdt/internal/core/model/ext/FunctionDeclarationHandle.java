@@ -40,6 +40,7 @@ public class FunctionDeclarationHandle extends CElementHandle implements org.ecl
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IFunctionDeclaration) {
 			return FunctionDeclaration.equals(this, (IFunctionDeclaration) obj);

@@ -56,6 +56,7 @@ public class BuildSustemEnvironmentSupplier implements
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariable(java.lang.String, java.lang.Object, boolean)
 		 */
+		@Override
 		public IEnvironmentVariable getVariable(String variableName,
 				ICConfigurationDescription cfg, boolean resolveMacros) {
 			if((variableName = getValidName(variableName)) == null)
@@ -63,6 +64,7 @@ public class BuildSustemEnvironmentSupplier implements
 			return super.getVariable(variableName,cfg,resolveMacros);
 		}
 
+		@Override
 		public IEnvironmentVariable[] getVariables(ICConfigurationDescription cfg, boolean resolveMacros) {
 			return filterVariables(super.getVariables(cfg,resolveMacros));
 		}
@@ -70,6 +72,7 @@ public class BuildSustemEnvironmentSupplier implements
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider#getContextInfo(java.lang.Object)
 		 */
+		@Override
 		public IEnvironmentContextInfo getContextInfo(Object level){
 			IEnvironmentContextInfo startInfo = getStartInfo();
 			if(level == fStartLevel)
@@ -101,6 +104,7 @@ public class BuildSustemEnvironmentSupplier implements
 			return fStartInfo;
 		}
 		
+		@Override
 		public IVariableSubstitutor getVariableSubstitutor(IVariableContextInfo info, String inexistentMacroValue, String listDelimiter){
 			return super.getVariableSubstitutor(getSubstitutorMacroContextInfo(info),inexistentMacroValue,listDelimiter);
 		}
@@ -127,11 +131,13 @@ public class BuildSustemEnvironmentSupplier implements
 				final IVariableContextInfo info = getMacroContextInfoForContext(fStartLevel);
 				if(info != null){
 					fStartMacroContextInfo = new DefaultVariableContextInfo(fStartType,fStartData){
+						@Override
 						protected ICdtVariableSupplier[] getSuppliers(int type, Object data){
 							ICdtVariableSupplier suppliers[] = info.getSuppliers();
 							return filterValidMacroSuppliers(suppliers);
 						}
 						
+						@Override
 						public IVariableContextInfo getNext() {
 							return info.getNext();
 						}

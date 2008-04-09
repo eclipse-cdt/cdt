@@ -57,6 +57,7 @@ public class ArrayTypeClone implements IIndexType, IArrayType, ITypeContainer {
 	public void setType(IType type) {
 		this.type = type;
 	}
+	@Override
 	public Object clone() {
 		return new ArrayTypeClone(this);
 	}

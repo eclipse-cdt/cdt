@@ -22,19 +22,23 @@ public class SystemBuildConsole implements IConsole {
 	
 	public SystemBuildConsole() {
 		out = new ConsoleOutputStream() {
+			@Override
 			public synchronized void write(byte[] b, int off, int len) throws java.io.IOException {
 				System.out.write(b, off, len);
 			}
 			
+			@Override
 			public synchronized void write(int c) throws java.io.IOException {
 				System.out.write(c);
 			}
 		};
 		err =  new ConsoleOutputStream() {
+			@Override
 			public synchronized void write(byte[] b, int off, int len) throws java.io.IOException {
 				System.err.write(b, off, len);
 			}
 			
+			@Override
 			public synchronized void write(int c) throws java.io.IOException {
 				System.err.write(c);
 			}

@@ -87,6 +87,7 @@ public class Exe {
 			e_noverlay = memory.getShort();
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 
@@ -153,6 +154,7 @@ public class Exe {
 		return ehdr;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(rfile).append(NL);

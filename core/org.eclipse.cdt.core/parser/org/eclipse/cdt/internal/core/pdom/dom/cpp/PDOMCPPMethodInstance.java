@@ -42,10 +42,12 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
 		super(pdom, bindingRecord);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_METHOD_INSTANCE;
 	}
@@ -54,6 +56,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
 		return ((ICPPMethod)getTemplateDefinition()).isDestructor();
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}

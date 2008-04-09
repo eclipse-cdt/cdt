@@ -124,6 +124,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		//should not occur
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}

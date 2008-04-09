@@ -162,7 +162,8 @@ public class CodeReader {
 		return !CharArrayUtils.equals( filename, NOFILE );
 	}
     
-    public String toString() {
+    @Override
+	public String toString() {
 		return getPath();
     }
 	

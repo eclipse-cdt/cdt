@@ -42,7 +42,8 @@ public class CPPASTPointerToMember extends CPPASTPointer implements
         return n;
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( n != null ) if( !n.accept( action ) ) return false;
         return true;
     }

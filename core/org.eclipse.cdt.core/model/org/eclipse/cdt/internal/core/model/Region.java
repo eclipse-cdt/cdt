@@ -145,6 +145,7 @@ public class Region implements IRegion {
 	/**
 	 * Returns a printable representation of this region.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		ICElement[] roots = getElements();

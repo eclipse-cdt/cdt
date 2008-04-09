@@ -80,10 +80,12 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexBindingConstants.QUALIFIER_TYPE;
 	}
@@ -153,15 +155,18 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		throw new PDOMNotImplementedError();
 	}
 
+	@Override
 	public Object clone() {
 		return new QualifierTypeClone(this);
 	}
 	
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getType(), record);
 		super.delete(linkage);
 	}
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

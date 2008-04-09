@@ -28,6 +28,7 @@ public class SpawnerOutputStream extends OutputStream {
 	/**
 	 * @see OutputStream#write(byte[], int, int)
 	 */
+	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
 		if (b == null) {
 			throw new NullPointerException();
@@ -50,6 +51,7 @@ public class SpawnerOutputStream extends OutputStream {
 	 *
 	 * @exception IOException on error.
 	 */
+	@Override
 	public void write(int b) throws IOException {
 		byte[] buf = new byte[1];
 		buf[0] = (byte) b;
@@ -60,6 +62,7 @@ public class SpawnerOutputStream extends OutputStream {
 	 * Close the Reader
 	 * @exception IOException on error.
 	 */
+	@Override
 	public void close() throws IOException {
 		if (fd == -1)
 			return;

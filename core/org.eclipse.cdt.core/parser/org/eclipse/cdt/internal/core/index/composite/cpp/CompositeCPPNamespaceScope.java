@@ -75,6 +75,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return cf.getCompositeBinding(rbinding);
 	}
 	
+	@Override
 	public IIndexName getScopeName() {
 		for(int i=0; i<namespaces.length; i++) {
 			if(namespaces[i] instanceof IIndexScope) {

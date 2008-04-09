@@ -73,6 +73,7 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 		getChildrenProxyProvider().cacheValues();
 	}
 	
+	@Override
 	protected void setRescan(boolean rescan){
 		if(isRescan() == rescan)
 			return;
@@ -84,6 +85,7 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 		}
 	}
 	
+	@Override
 	void setData(CDataObject data) {
 		super.setData(data);
 		setRescanChildren();

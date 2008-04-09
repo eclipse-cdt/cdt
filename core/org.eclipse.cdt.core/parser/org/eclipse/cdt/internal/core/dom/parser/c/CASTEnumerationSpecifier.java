@@ -64,11 +64,13 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
         return name;
     }
 
-    public String getRawSignature() {
+    @Override
+	public String getRawSignature() {
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
     }
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

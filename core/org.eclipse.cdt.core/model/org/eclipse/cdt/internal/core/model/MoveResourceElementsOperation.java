@@ -35,6 +35,7 @@ public class MoveResourceElementsOperation extends CopyResourceElementsOperation
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.moveResourceProgress"); //$NON-NLS-1$
 	}
@@ -42,6 +43,7 @@ public class MoveResourceElementsOperation extends CopyResourceElementsOperation
 	/**
 	 * @see CopyResourceElementsOperation#isMove()
 	 */
+	@Override
 	protected boolean isMove() {
 		return true;
 	}

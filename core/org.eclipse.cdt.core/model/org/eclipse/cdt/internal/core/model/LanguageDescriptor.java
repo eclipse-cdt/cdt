@@ -84,6 +84,7 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 		return ids;
 	}
 	
+	@Override
 	public String getId(){
 		if(fId == null)
 			fId = getConfigurationElement().getNamespaceIdentifier() + NAMESPACE_SEPARATOR + super.getId();

@@ -128,6 +128,7 @@ public class OperatorTokenDuple implements ITokenDuple {
 		return token.extractNameFromTemplateId();
 	}
 
+	@Override
 	public String toString() {
 		return token.toString();
 	}

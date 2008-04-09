@@ -32,13 +32,15 @@ public class ConsoleOutputStream extends OutputStream {
 		return buf;
 	}
 
+	@Override
 	public synchronized void write(int c) throws IOException {
 		byte ascii[] = new byte[1];
 		ascii[0] = (byte) c;
 		fBuffer.append(new String(ascii));
 	}
 	    
-    public synchronized void write(byte[] b, int off, int len) throws IOException {
+    @Override
+	public synchronized void write(byte[] b, int off, int len) throws IOException {
         fBuffer.append(new String(b, off, len));
     }
 }

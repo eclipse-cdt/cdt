@@ -53,6 +53,7 @@ public class SomSymbol extends Symbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getLineNumber(long)
 	 */
+	@Override
 	public int getLineNumber(long offset) {
 		int line = -1;
 		Addr2line addr2line = ((SOMBinaryObject)binary).getAddr2line(true);

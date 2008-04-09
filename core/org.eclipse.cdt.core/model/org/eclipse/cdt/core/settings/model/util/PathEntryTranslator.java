@@ -134,6 +134,7 @@ public class PathEntryTranslator {
 			fCfg = cfg;
 		}
 
+		@Override
 		protected ResolvedMacro resolveMacro(ICdtVariable macro)
 				throws CdtVariableException {
 			if(!CdtVarPathEntryVariableManager.isPathEntryVariable(macro, fCfg, fMngr))

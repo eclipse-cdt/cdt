@@ -35,5 +35,6 @@ class CompositeCEnumeration extends CompositeCBinding implements IIndexBinding, 
 		return ((IEnumeration)rbinding).isSameType(type);
 	}
 
+	@Override
 	public Object clone() {fail(); return null;}
 }

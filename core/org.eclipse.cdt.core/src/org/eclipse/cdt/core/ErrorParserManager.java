@@ -410,6 +410,7 @@ public class ErrorParserManager extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#close()
 	 */
+	@Override
 	public void close() throws IOException {
 		if (nOpens > 0 && --nOpens == 0) {
 			checkLine(true);
@@ -423,6 +424,7 @@ public class ErrorParserManager extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#flush()
 	 */
+	@Override
 	public void flush() throws IOException {
 		if (outputStream != null)
 			outputStream.flush();
@@ -431,6 +433,7 @@ public class ErrorParserManager extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#write(int)
 	 */
+	@Override
 	public synchronized void write(int b) throws IOException {
 		currentLine.append((char) b);
 		checkLine(false);
@@ -438,6 +441,7 @@ public class ErrorParserManager extends OutputStream {
 			outputStream.write(b);
 	}
 
+	@Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
 		if (b == null) {
 			throw new NullPointerException();

@@ -20,7 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 public class CASTDefaultStatement extends CASTNode implements
         IASTDefaultStatement {
 
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitStatements ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

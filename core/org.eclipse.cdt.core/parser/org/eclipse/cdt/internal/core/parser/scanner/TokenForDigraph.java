@@ -19,6 +19,7 @@ public class TokenForDigraph extends Token {
 		super(kind, source, offset, endOffset);
 	}
 
+	@Override
 	public char[] getCharImage() {
 		return TokenUtil.getDigraphImage(getType());
 	}

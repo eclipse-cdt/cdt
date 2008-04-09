@@ -136,7 +136,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
         return false;
     }
 
-    public boolean isInline() throws DOMException {
+    @Override
+	public boolean isInline() throws DOMException {
         IASTDeclaration decl = getPrimaryDeclaration();
         if( decl instanceof ICPPASTTemplateDeclaration && ((ICPPASTTemplateDeclaration)decl).getDeclaration() instanceof IASTFunctionDefinition )
             return true;

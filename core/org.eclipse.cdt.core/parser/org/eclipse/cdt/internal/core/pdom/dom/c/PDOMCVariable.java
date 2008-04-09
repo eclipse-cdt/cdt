@@ -63,6 +63,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		}
 	}
 	
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
 			IVariable var= (IVariable) newBinding;
@@ -89,10 +90,12 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CVARIABLE;
 	}
@@ -123,6 +126,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
 	}
 
+	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
 			return CVariableReadWriteFlags.getReadWriteFlags(name);

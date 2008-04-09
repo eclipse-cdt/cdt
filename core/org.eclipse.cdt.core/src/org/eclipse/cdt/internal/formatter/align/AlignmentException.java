@@ -36,6 +36,7 @@ public class AlignmentException extends RuntimeException {
 		this.relativeDepth = relativeDepth;
 	}
 	
+	@Override
 	public String toString(){
 		StringBuffer buffer = new StringBuffer(10);
 		switch(this.reason){

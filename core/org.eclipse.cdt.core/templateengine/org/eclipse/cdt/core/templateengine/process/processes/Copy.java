@@ -33,6 +33,7 @@ public class Copy extends ProcessRunner {
 	/**
 	 * This method  Copies a File to the Project.
 	 */
+	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		ProcessArgument[][] files = args[0].getComplexArrayValue();
 		for(int i=0; i<files.length; i++) {

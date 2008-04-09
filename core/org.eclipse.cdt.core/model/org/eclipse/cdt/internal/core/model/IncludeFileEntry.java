@@ -40,6 +40,7 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 		return includeFilePath;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IIncludeFileEntry) {
 			IIncludeFileEntry otherEntry = (IIncludeFileEntry) obj;
@@ -104,6 +105,7 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());

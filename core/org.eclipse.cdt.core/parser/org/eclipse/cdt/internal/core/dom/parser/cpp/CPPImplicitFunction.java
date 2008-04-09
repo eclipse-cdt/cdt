@@ -48,11 +48,13 @@ public class CPPImplicitFunction extends CPPFunction implements ICPPFunction, IC
 		this.takesVarArgs=takesVarArgs;
 	}
 
-    public IParameter [] getParameters() {
+    @Override
+	public IParameter [] getParameters() {
         return parms;
     }
     
-    public IFunctionType getType() {
+    @Override
+	public IFunctionType getType() {
         if( functionType == null ){
             ICPPASTFunctionDeclarator primary = getPrimaryDeclaration();
             
@@ -75,31 +77,36 @@ public class CPPImplicitFunction extends CPPFunction implements ICPPFunction, IC
         return null;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return String.valueOf( name );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return name;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return scope;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
      */
-    public IScope getFunctionScope() {
+    @Override
+	public IScope getFunctionScope() {
         return null;
     }
     
-    public IBinding resolveParameter( IASTParameterDeclaration param ){
+    @Override
+	public IBinding resolveParameter( IASTParameterDeclaration param ){
         IASTName aName = param.getDeclarator().getName();
         IParameter binding = (IParameter) aName.getBinding();
         if( binding != null )
@@ -134,7 +141,8 @@ public class CPPImplicitFunction extends CPPFunction implements ICPPFunction, IC
         return binding;
     }
    
-    protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
+    @Override
+	protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
         if( parms != null ){
             IASTParameterDeclaration [] nps = fdtor.getParameters();
             if( nps.length != parms.length )
@@ -149,7 +157,8 @@ public class CPPImplicitFunction extends CPPFunction implements ICPPFunction, IC
         }
     }
 
-    public boolean takesVarArgs() {
+    @Override
+	public boolean takesVarArgs() {
         return takesVarArgs;
     }
 }

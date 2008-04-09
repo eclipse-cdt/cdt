@@ -62,10 +62,12 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 		}
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_REFERENCE_TYPE;
 	}
@@ -103,15 +105,18 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 		throw new PDOMNotImplementedError();
 	}
 
+	@Override
 	public Object clone() {
 		return new CPPReferenceTypeClone(this);
 	}
 	
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getType(), record);
 		super.delete(linkage);
 	}
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

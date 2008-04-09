@@ -131,6 +131,7 @@ public class TemplateInfo {
 	/**
 	 * Checks whether two TemplateInfo object are equal. 
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof TemplateInfo) {
 			TemplateInfo info = (TemplateInfo) obj;
@@ -146,6 +147,7 @@ public class TemplateInfo {
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return projectTypeId.hashCode() | templatePath.hashCode() | pluginId.hashCode();
 	}

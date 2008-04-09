@@ -83,6 +83,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected String getMainTaskName() {
 		return CoreModelMessages.getString("operation.copyResourceProgress"); //$NON-NLS-1$
 	}
@@ -189,6 +190,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 * <code>processPackageFragmentResource</code>, depending on the type of
 	 * <code>element</code>.
 	 */
+	@Override
 	protected void processElement(ICElement element) throws CModelException {
 		ICElement dest = getDestinationParent(element);
 		if (element.getElementType() <= ICElement.C_UNIT) {
@@ -204,6 +206,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 * Overridden to allow special processing of <code>CElementDelta</code>s
 	 * and <code>fResultElements</code>.
 	 */
+	@Override
 	protected void processElements() throws CModelException {
 		fCreatedElements = new ArrayList(fElementsToProcess.length);
 		try {
@@ -225,6 +228,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 *              does not match the number of elements that were supplied.
 	 * </ul>
 	 */
+	@Override
 	protected ICModelStatus verify() {
 		ICModelStatus status = super.verify();
 		if (!status.isOK()) {
@@ -240,6 +244,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	/**
 	 * @see MultiOperation
 	 */
+	@Override
 	protected void verify(ICElement element) throws CModelException {
 		if (element == null || !element.exists())
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);

@@ -193,6 +193,7 @@ public class KindBasedStore implements Cloneable {
 		}
 	}
 
+	@Override
 	public Object clone() {
 		try {
 			KindBasedStore clone = (KindBasedStore)super.clone();

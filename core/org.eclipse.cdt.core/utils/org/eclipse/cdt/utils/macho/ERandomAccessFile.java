@@ -69,13 +69,15 @@ public class ERandomAccessFile extends RandomAccessFile {
         super.seek( offset );
     }
 
-    public long getFilePointer() throws IOException {
+    @Override
+	public long getFilePointer() throws IOException {
         long ptr = super.getFilePointer();
         ptr = ptr - ptr_offset;
         return ptr;
     }
 
-    public void seek( long pos ) throws IOException {
+    @Override
+	public void seek( long pos ) throws IOException {
         long real_pos = pos + ptr_offset;
         super.seek( real_pos );
     }

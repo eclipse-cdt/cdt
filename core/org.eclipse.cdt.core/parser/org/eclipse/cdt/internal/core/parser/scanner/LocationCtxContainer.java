@@ -65,10 +65,12 @@ class LocationCtxContainer extends LocationCtx {
 		return result;
 	}
 
+	@Override
 	public final int getSequenceLength() {
 		return fSource.length + fChildSequenceLength;
 	}
 	
+	@Override
 	public final int getSequenceNumberForOffset(int offset, boolean checkChildren) {
 		int result= fSequenceNumber + fChildSequenceLength + offset;
 		if (checkChildren && fChildren != null) {
@@ -121,6 +123,7 @@ class LocationCtxContainer extends LocationCtx {
 		return super.findMappedFileLocation(sequenceNumber, length);
 	}
 
+	@Override
 	public boolean collectLocations(int sequenceNumber, final int length, ArrayList<IASTNodeLocation> locations) {
 		final int endSequenceNumber= sequenceNumber+length;
 		if (fChildren != null) {

@@ -97,6 +97,7 @@ public class Addr64 implements IAddress {
 		return this.address.compareTo(((Addr64)other).address);
 	}
 
+	@Override
 	public boolean equals(Object x) {
 		if (x == this)
 			return true;
@@ -105,10 +106,12 @@ public class Addr64 implements IAddress {
 		return this.address.equals(((Addr64)x).address);
 	}
 
+	@Override
 	public int hashCode() {
 		return address.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return toString(10);
 	}

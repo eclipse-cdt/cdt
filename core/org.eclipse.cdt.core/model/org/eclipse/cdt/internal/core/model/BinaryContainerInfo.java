@@ -28,6 +28,7 @@ public class BinaryContainerInfo extends OpenableInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElementInfo#addChild(org.eclipse.cdt.core.model.ICElement)
 	 */
+	@Override
 	protected void addChild(ICElement child) {
 		if (!includesChild(child)) {
 			super.addChild(child);

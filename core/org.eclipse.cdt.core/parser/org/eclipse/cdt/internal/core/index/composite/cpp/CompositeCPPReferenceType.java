@@ -22,7 +22,8 @@ class CompositeCPPReferenceType extends CompositeTypeContainer implements ICPPRe
 		super((ITypeContainer) referenceType, cf);
 	}
 
-   	public Object clone() {
+   	@Override
+	public Object clone() {
    		return new CPPReferenceTypeClone(this);
    	}
 }

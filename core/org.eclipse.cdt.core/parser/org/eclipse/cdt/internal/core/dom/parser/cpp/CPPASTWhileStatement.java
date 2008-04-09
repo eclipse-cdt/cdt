@@ -79,6 +79,7 @@ public class CPPASTWhileStatement extends CPPASTNode implements
 		}
 	}
 
+	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitStatements ){
 		    switch( action.visit( this ) ){

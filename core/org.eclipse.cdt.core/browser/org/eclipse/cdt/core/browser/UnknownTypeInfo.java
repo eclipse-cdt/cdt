@@ -25,10 +25,12 @@ public class UnknownTypeInfo extends TypeInfo {
 		super(0, typeName);
 	}
 	
+	@Override
 	public boolean isUndefinedType() {
 		return true;
 	}
 
+	@Override
 	public boolean canSubstituteFor(ITypeInfo info) {
 		int compareType = info.getCElementType();
 		if (fElementType == 0 || compareType == 0 || fElementType == compareType) {

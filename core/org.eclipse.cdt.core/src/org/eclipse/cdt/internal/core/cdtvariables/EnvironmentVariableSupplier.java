@@ -57,6 +57,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 		}
 		
 		
+		@Override
 		public int getValueType() {
 			if(fVariable != null){
 				loadValue(fVariable);
@@ -67,6 +68,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 			return super.getValueType();
 		}
 
+		@Override
 		public String getStringValue() throws CdtVariableException {
 			if(fVariable != null){
 				loadValue(fVariable);
@@ -77,6 +79,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 			return super.getStringValue();
 		}
 
+		@Override
 		public String[] getStringListValue() throws CdtVariableException {
 			if(fVariable != null){
 				loadValue(fVariable);
@@ -111,6 +114,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
 	 */
+	@Override
 	public ICdtVariable getMacro(String macroName, int contextType,
 			Object contextData) {
 		if(macroName == null || "".equals(macroName))	//$NON-NLS-1$
@@ -143,6 +147,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacros(int, java.lang.Object)
 	 */
+	@Override
 	public ICdtVariable[] getMacros(int contextType, Object contextData) {
 		IEnvironmentVariable vars[] = null;
 

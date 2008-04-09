@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -172,7 +173,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 *   (key type: <code>String</code>; value type: <code>String</code>)
 	 * @see CCorePlugin#getDefaultOptions
 	 */
-	Map getOptions(boolean inheritCCoreOptions);
+	Map<String,String> getOptions(boolean inheritCCoreOptions);
 
 	/**
 	 * Helper method for setting one option value only. Equivalent to <code>Map options = this.getOptions(false); map.put(optionName, optionValue); this.setOptions(map)</code>
@@ -198,7 +199,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 *   or <code>null</code> to flush all custom options (clients will automatically get the global CCorePlugin options).
 	 * @see CCorePlugin#getDefaultOptions
 	 */
-	void setOptions(Map newOptions);
+	void setOptions(Map<String, String> newOptions);
 
 	/**
 	 * Returns the list of entries for the project. This corresponds to the exact set

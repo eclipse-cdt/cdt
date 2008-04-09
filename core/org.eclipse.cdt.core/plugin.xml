@@ -38,10 +38,10 @@
    <extension-point id="CodeFormatter" name="%CodeFormatter.name" schema="schema/CodeFormatter.exsd"/>
    <extension-point id="CIndexer" name="%CIndexer.name" schema="schema/CIndexer.exsd"/>
    <extension-point id="language" name="%language.name" schema="schema/language.exsd"/>
-   <extension-point id="CConfigurationDataProvider" name="CConfigurationData provider" schema="schema/CConfigurationDataProvider.exsd"/>
-   <extension-point id="projectConverter" name="project converter" schema="schema/projectConverter.exsd"/>
-   <extension-point id="CIndex" name="CIndex" schema="schema/CIndex.exsd"/>
-   <extension-point id="externalSettingsProvider" name="External Settings provider" schema="schema/externalSettingsProvider.exsd"/>
+   <extension-point id="CConfigurationDataProvider" name="%CConfigurationDataProvider.name" schema="schema/CConfigurationDataProvider.exsd"/>
+   <extension-point id="projectConverter" name="%projectConverter.name" schema="schema/projectConverter.exsd"/>
+   <extension-point id="CIndex" name="%CIndex.name" schema="schema/CIndex.exsd"/>
+   <extension-point id="externalSettingsProvider" name="%externalSettingsProvider.name" schema="schema/externalSettingsProvider.exsd"/>
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
 <!-- =================================================================================== -->
@@ -220,7 +220,7 @@
    </extension>
    <extension
          id="GeneratePDOM"
-         name="GeneratePDOM"
+         name="%GeneratePDOMApplication.name"
          point="org.eclipse.core.runtime.applications">
       <application
             visible="true">
@@ -496,7 +496,7 @@
    </extension>
    <extension
          id="defaultConfigDataProvider"
-         name="Default Provider"
+         name="%defaultProvider.name"
          point="org.eclipse.cdt.core.CConfigurationDataProvider">
          <provider
          	class="org.eclipse.cdt.internal.core.settings.model.PathEntryConfigurationDataProvider"
@@ -527,10 +527,10 @@
 <!-- =================================================================================== -->
 <!-- Template engine extension points	 -->
 <!-- =================================================================================== -->
-   <extension-point id="templates" name="Templates Extension point" 
+   <extension-point id="templates" name="%templatesExtensionPoint.name" 
                     schema="schema/templates.exsd"/>
-   <extension-point id="templateProcessTypes" name="Process Types Extension point" schema="schema/templateProcessTypes.exsd"/>
-   <extension-point id="templateAssociations" name="Template Associations" schema="schema/templateAssociations.exsd"/>
+   <extension-point id="templateProcessTypes" name="%templateProcessTypes.name" schema="schema/templateProcessTypes.exsd"/>
+   <extension-point id="templateAssociations" name="%templateAssociations.name" schema="schema/templateAssociations.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">

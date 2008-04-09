@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
+
 /**
  * Common base class for refactoring actions
  * @since 5.0
@@ -52,7 +54,11 @@ public abstract class RefactoringAction extends Action {
 	
     @Override
 	public final void run() {
-        if (fEditor != null) {
+    	EclipseObjects.getActivePage().saveAllEditors(true);
+    	if(EclipseObjects.getActivePage().getDirtyEditors().length != 0) {
+    		return;
+    	}
+    	if (fEditor != null) {
             ISelectionProvider provider= fEditor.getSelectionProvider();
             if (provider != null) {
                 ISelection s= provider.getSelection();

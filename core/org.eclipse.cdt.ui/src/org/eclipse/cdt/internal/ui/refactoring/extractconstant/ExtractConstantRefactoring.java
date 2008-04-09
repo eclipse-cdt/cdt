@@ -80,11 +80,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	private final NameNVisibilityInformation info;
 	
 	public ExtractConstantRefactoring(IFile file, ISelection selection, NameNVisibilityInformation info){
-		this(file, selection, info, false);
-	}
-	
-	public ExtractConstantRefactoring(IFile file, ISelection selection, NameNVisibilityInformation info, boolean runHeadless){
-		super(file,selection, runHeadless);
+		super(file,selection);
 		this.info = info;
 		name = Messages.ExtractConstantRefactoring_ExtractConst; 
 	}

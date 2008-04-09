@@ -285,7 +285,7 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 		Display display = Display.getCurrent();
 				
 	  // Prevent infinite looping by introducing a threshold for wait 
-      int WaitThreshold = 600; //default. sleep(100ms) for 600 times  		
+      int WaitThreshold = 50; //default. sleep(100ms) for 600 times  		
       if ( wait > 0 )
         WaitThreshold = wait*10; // 1 second means 10 sleep(100ms)
       else if ( wait == -1 ) // force a diagnostic

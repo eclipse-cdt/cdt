@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ * Noriaki Takatsu (IBM)  - [226237] [dstore] Move the place where the ServerLogger instance is made
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -60,19 +61,6 @@ public class EnvironmentMiner extends Miner
 	
     public void extendSchema(DataElement schemaRoot) 
     { 
-    	if (_dataStore.getClient() != null)
-    	{
-    	    ServerLogger logger = new ServerLogger(UniversalServerUtilities.getUserPreferencesDirectory(_dataStore));
-    		_dataStore.getClient().setLogger(logger);
-    	}
-    	else
-    	{
-    		Client client = new Client();
-			_dataStore.setClient(client);
-		     ServerLogger logger = new ServerLogger(UniversalServerUtilities.getUserPreferencesDirectory(_dataStore));
-    		client.setLogger(logger);
-    	}
-    	
 		DataElement envVar = _dataStore.createObjectDescriptor(schemaRoot, "Environment Variable"); //$NON-NLS-1$
 		_dataStore.createReference(envVar, _dataStore.createRelationDescriptor(schemaRoot,"Parent Environment")); //$NON-NLS-1$
 	 	DataElement containerObjectD = _dataStore.findObjectDescriptor("Container Object"); //$NON-NLS-1$

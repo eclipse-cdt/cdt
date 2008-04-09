@@ -19,6 +19,7 @@
  * Jacob Garcowski    (IBM)   [225175] [dstore] error handling change for Client
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * Noriaki Takatsu  (IBM) - [226074] process for getStatus() API
+ * Noriaki Takatsu  (IBM) - [226237] [dstore] Move the place where the ServerLogger instance is made
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -43,6 +44,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.ISSLProperties;
+import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.internal.core.server.ServerAttributes;
 import org.eclipse.dstore.internal.core.server.ServerCommandHandler;
 import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
@@ -390,6 +392,14 @@ public class ConnectionEstablisher
 
 		_updateHandler.setDataStore(_dataStore);
 		_commandHandler.setDataStore(_dataStore);
+		
+		if (SystemServiceManager.getInstance().getSystemService() == null)
+		{
+			Client client = new Client();
+			_dataStore.setClient(client);
+		     ServerLogger logger = new ServerLogger(_dataStore.getUserPreferencesDirectory());
+    		client.setLogger(logger);
+		}
 
 		_receivers = new ArrayList();
 		_continue = true;

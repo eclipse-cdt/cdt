@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [187860] review for adding foreign lang support
  ********************************************************************************/
@@ -48,7 +48,7 @@ import com.ibm.icu.lang.UCharacter.UnicodeBlock;
 import com.ibm.icu.util.ULocale;
 
 /**
- * Instances of this class may be used to supply mnemonics to the 
+ * Instances of this class may be used to supply mnemonics to the
  * text for controls.
  * There are preferences which can be set by products to control how
  * these mnemonics are generated and applied.
@@ -59,7 +59,7 @@ import com.ibm.icu.util.ULocale;
  * is added to the end of the label (but prior to any punctuation or accelerators)
  * and is of the form (X).
  * <p>
- * The org.eclipse.rse.ui/MNEMONICS_POLICY preference establishes the 
+ * The org.eclipse.rse.ui/MNEMONICS_POLICY preference establishes the
  * desire to generated embedded mnemonics using letters that already
  * exist in the text of the controls and/or to generate appended mnemonics
  * if an embedded mnemonic cannot be found or is not desired.
@@ -68,8 +68,8 @@ import com.ibm.icu.util.ULocale;
  * See {@link #POLICY_DEFAULT} for the default policy value.
  * A policy value of 0 will disable the generation of all mnemonics.
  * <p>
- * The org.eclipse.rse.ui/APPEND_MNEMONICS_PATTERN preference is used to 
- * further qualify the appending behavior by the current locale. If the 
+ * The org.eclipse.rse.ui/APPEND_MNEMONICS_PATTERN preference is used to
+ * further qualify the appending behavior by the current locale. If the
  * current locale name matches this pattern then appending can be performed.
  * See {@link #APPEND_MNEMONICS_PATTERN_DEFAULT} for the default pattern.
  * <p>
@@ -77,15 +77,15 @@ import com.ibm.icu.util.ULocale;
  * least used mnemonic when finding a duplicate.
  */
 public class Mnemonics {
-	
+
 	/**
 	 * An option bit mask - value 1.
-	 * If on, specifies whether or not to insert mnemonic indications into 
+	 * If on, specifies whether or not to insert mnemonic indications into
 	 * the current text of a label.
 	 * If off, all other options are ignored.
 	 */
 	public static final int EMBED_MNEMONICS = 1;
-	
+
 	/**
 	 * An option bit mask - value 2.
 	 * If on, specifies to generate mnemonics of the form (X) at the end of labels for
@@ -93,10 +93,10 @@ public class Mnemonics {
 	 * If off, then only characters from the label will be used as mnemonics.
 	 */
 	public static final int APPEND_MNEMONICS = 2;
-	
+
 	/**
-	 * The simple name of the preference that holds the pattern  to be used for matching 
-	 * against the locale to determine if APPEND_MNEMONICS option applies. 
+	 * The simple name of the preference that holds the pattern  to be used for matching
+	 * against the locale to determine if APPEND_MNEMONICS option applies.
 	 */
 	public static final String APPEND_MNEMONICS_PATTERN_PREFERENCE = "APPEND_MNEMONICS_PATTERN"; //$NON-NLS-1$
 
@@ -106,7 +106,7 @@ public class Mnemonics {
 	 * The default pattern matches Chinese, Japanese, and Korean.
 	 */
 	public static final String APPEND_MNEMONICS_PATTERN_DEFAULT = "zh.*|ja.*|ko.*"; //$NON-NLS-1$
-	
+
 	/**
 	 * The simple name of the preference that determines the policy to be  used when applying mnemonics to menus and composites.
 	 */
@@ -114,11 +114,11 @@ public class Mnemonics {
 
 	/**
 	 * The default mnemonics policy. If no policy is specified in a call to generate
-	 * mnemonics this policy will be used. Can be overridden by the 
+	 * mnemonics this policy will be used. Can be overridden by the
 	 * org.eclipse.rse.ui/MNEMONICS_POLICY preference.
 	 */
 	public static final int POLICY_DEFAULT = EMBED_MNEMONICS | APPEND_MNEMONICS;
-	
+
 	private static final char MNEMONIC_CHAR = '&';
 
 	/*
@@ -126,14 +126,14 @@ public class Mnemonics {
 	 */
 	private static final String LC_GREEK = "el"; //$NON-NLS-1$
 	private static final String LC_RUSSIAN = "ru"; //$NON-NLS-1$
-	
+
 	/*
 	 * Known valid mnemonic candidates
 	 */
 	private static final String GREEK_MNEMONICS = "\u0391\u0392\u0393\u0394\u0395\u0396\u0397\u0398\u0399\u039a\u039b\u039c\u039d\u039e\u039f\u03a0\u03a1\u03a3\u03a4\u03a5\u03a6\u03a7\u03a8\u03a9"; //$NON-NLS-1$
 	private static final String RUSSIAN_MNEMONICS = "\u0410\u0411\u0412\u0413\u0414\u0145\u0401\u0416\u0417\u0418\u0419\u041a\u041b\u041c\u041d\u041e\u041f\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042a\u042b\u042c\u042d\u042e\u042f"; //$NON-NLS-1$
 	private static final String LATIN_MNEMONICS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //$NON-NLS-1$
-	
+
 	private final static Pattern TRANSPARENT_ENDING_PATTERN = Pattern.compile("(\\s|\\.\\.\\.|>|<|:|\uff0e\uff0e\uff0e|\uff1e|\uff1c|\uff1a|\\t.*)+$"); //$NON-NLS-1$
 	private boolean applyMnemonicsToPrecedingLabels = true;
 
@@ -195,7 +195,7 @@ public class Mnemonics {
 		}
 		return text;
 	}
-	
+
 	/**
 	 * Finds the point at which to insert a mnemonic of the form (&X).
 	 * Checks for transparent endings.
@@ -214,16 +214,19 @@ public class Mnemonics {
 	public void clear() {
 		usedCharacters.clear();
 	}
-	
+
 	/**
 	 * Resets the list of used mnemonic characters to those in the string.
-	 * @param usedMnemonics
+	 * 
+	 * @param usedMnemonics A String listing the characters to mark used as
+	 *            mnemonics. Each character will be considered in a case
+	 *            insensitive manner.
 	 */
 	public void clear(String usedMnemonics) {
 		clear();
 		makeUsed(usedMnemonics);
 	}
-	
+
 	/**
 	 * Sets a mnemonic in the given string and returns the result.
 	 * Functions according to the default policy as specified in
@@ -241,7 +244,7 @@ public class Mnemonics {
 		String result = setUniqueMnemonic(label, flags, localePattern, false);
 		return result;
 	}
-	
+
 	/**
 	 * Given a string, this starts at the first character and iterates until
 	 * it finds a character not already used as a mnemonic.
@@ -261,7 +264,7 @@ public class Mnemonics {
 		if (flags == 0 || label == null || label.trim().length() == 0 || label.equals("?")) { //$NON-NLS-1$
 			return label;
 		}
-		StringBuffer buffer = new StringBuffer(label); 
+		StringBuffer buffer = new StringBuffer(label);
 		char mn = getMnemonic(label);
 		if (mn == ' ' && ((flags & EMBED_MNEMONICS) > 0)) { // no mnemonic exists, try embedding
 			int p = findUniqueMnemonic(label);
@@ -287,7 +290,7 @@ public class Mnemonics {
 			}
 		}
 		if (mn == ' ' && ((flags & APPEND_MNEMONICS) > 0)) { // no mnemonic exists, try appending a mnemonic
-			String localeName = ULocale.getDefault().getName(); 
+			String localeName = ULocale.getDefault().getName();
 			if (localeName.matches(localePattern)) {
 				String candidates = getCandidates();
 				int p = findUniqueMnemonic(candidates);
@@ -311,27 +314,27 @@ public class Mnemonics {
 	public boolean isUniqueMnemonic(char ch) {
 		return timesUsed(ch) == 0;
 	}
-	
+
 	private Preferences getPreferences() {
 		return RSEUIPlugin.getDefault().getPluginPreferences();
 	}
-	
+
 	private String getLocalePattern() {
 		return getPreferences().getString(APPEND_MNEMONICS_PATTERN_PREFERENCE);
 	}
-	
+
 	private int getPolicy() {
 		return getPreferences().getInt(POLICY_PREFERENCE);
 	}
-	
+
 	private boolean isEmbedding() {
 		return (getPolicy() & EMBED_MNEMONICS) > 0;
 	}
-	
+
 	private boolean isAppending() {
 		return (getPolicy() & APPEND_MNEMONICS) > 0;
 	}
-	
+
 	/**
 	 * @return a string of acceptable mnemonic candidates for the language
 	 * of the current locale.
@@ -366,13 +369,13 @@ public class Mnemonics {
 		}
 		return uniqueIndex;
 	}
-	
+
 	private boolean isAcceptable(char ch) {
 		UnicodeBlock block = UnicodeBlock.of(ch);
 		boolean result = (isAcceptable(block) && UCharacter.isLetter(ch)); // the character is a letter
 		return result;
 	}
-	
+
 	private boolean isAcceptable(UnicodeBlock block) {
 		if (block == UnicodeBlock.BASIC_LATIN) return true;
 		if (block == UnicodeBlock.LATIN_1_SUPPLEMENT) return true;
@@ -386,7 +389,7 @@ public class Mnemonics {
 		if (block == UnicodeBlock.ARABIC) return true;
 		return false;
 	}
-	
+
 	/**
 	 * Returns the number of times a given character is used as a mnemonic in this
 	 * context.
@@ -402,7 +405,7 @@ public class Mnemonics {
 		}
 		return result;
 	}
-	
+
 	private void makeUsed(char ch) {
 		// TODO if we are guaranteed java 1.5 we can use Character.valueOf(ch)
 		if (ch != ' ') {
@@ -410,7 +413,7 @@ public class Mnemonics {
 			makeUsed(new Character(Character.toUpperCase(ch)));
 		}
 	}
-	
+
 	private void makeUsed(Character ch) {
 		Integer count = (Integer) usedCharacters.get(ch);
 		if (count == null) {
@@ -418,13 +421,13 @@ public class Mnemonics {
 		}
 		usedCharacters.put(ch, count);
 	}
-	
+
 	private void makeUsed(String s) {
 		for (int i = 0; i < s.length(); i++) {
 			makeUsed(s.charAt(i));
 		}
 	}
-	
+
 	/**
 	 * Returns a string with the mnemonics for a given array of strings.
 	 * @param strings the array of strings.
@@ -524,7 +527,7 @@ public class Mnemonics {
 			processMenuItems(appendingItems, APPEND_MNEMONICS, localePattern);
 		}
 	}
-	
+
 	private void processMenuItems(Collection collection, int flags, String localePattern) {
 		for (Iterator z = collection.iterator(); z.hasNext();) {
 			MenuItem menuItem = (MenuItem) z.next();
@@ -539,13 +542,13 @@ public class Mnemonics {
 			}
 		}
 	}
-	
+
 	/**
-	 * Given a Composite, this method walks all the children recursively and 
-	 * and sets the mnemonics uniquely for each child control where a 
+	 * Given a Composite, this method walks all the children recursively and
+	 * and sets the mnemonics uniquely for each child control where a
 	 * mnemonic makes sense (eg, buttons).
-	 * The letter/digit chosen for the mnemonic is unique for this Composite, 
-	 * so you should call this on as high a level of a composite as possible 
+	 * The letter/digit chosen for the mnemonic is unique for this Composite,
+	 * so you should call this on as high a level of a composite as possible
 	 * per window.
 	 * Call this after populating your controls.
 	 * @param parent the parent control to examine.
@@ -553,17 +556,17 @@ public class Mnemonics {
 	public void setMnemonics(Composite parent) {
 		setMnemonics(parent, new HashSet());
 	}
-	
+
 	/**
-	 * Given a Composite, this method walks all the children recursively and 
-	 * and sets the mnemonics uniquely for each child control where a 
+	 * Given a Composite, this method walks all the children recursively and
+	 * and sets the mnemonics uniquely for each child control where a
 	 * mnemonic makes sense (for example, buttons).
-	 * The letter/digit chosen for the mnemonic is unique for this Composite, 
-	 * so you should call this on as high a level of a composite as possible 
+	 * The letter/digit chosen for the mnemonic is unique for this Composite,
+	 * so you should call this on as high a level of a composite as possible
 	 * per window.
 	 * Call this after populating your controls.
 	 * @param parent the parent control to examine.
-	 * @param ignoredControls the set of controls in which to not set mnemonics. 
+	 * @param ignoredControls the set of controls in which to not set mnemonics.
 	 * If the controls are composites, their children are also not examined.
 	 */
 	public void setMnemonics(Composite parent, Set ignoredControls) {
@@ -573,7 +576,7 @@ public class Mnemonics {
 			parent.layout(true);
 		}
 	}
-	
+
 	private boolean setCompositeMnemonics(Composite parent, Set ignoredControls) {
 		Control children[] = parent.getChildren();
 		Control currentChild = null;
@@ -608,7 +611,7 @@ public class Mnemonics {
 		}
 		return mustLayout;
 	}
-	
+
 	private void gatherCompositeMnemonics(Composite parent) {
 		Control children[] = parent.getChildren();
 		Control currentChild = null;
@@ -632,8 +635,8 @@ public class Mnemonics {
 			}
 		}
 	}
-	
-	/** 
+
+	/**
 	 * Set if the mnemonics are for a preference page
 	 * Preference pages already have a few buttons with mnemonics set by Eclipse
 	 * We have to make sure we do not use the ones they use
@@ -647,7 +650,7 @@ public class Mnemonics {
 		return this;
 	}
 
-	/** 
+	/**
 	 * Set if the mnemonics are for a wizard page
 	 * Wizard pages already have a few buttons with mnemonics set by Eclipse
 	 * We have to make sure we do not use the ones they use

@@ -77,26 +77,14 @@ public abstract class CRefactoring extends Refactoring {
 	private IIndex fIndex;
 	public static final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 
-	public CRefactoring(IFile file, ISelection selection, boolean runHeadless) {
+	public CRefactoring(IFile file, ISelection selection) {
 		this.file = file;
 		this.selection = selection;
 		this.initStatus=new RefactoringStatus();
 
-		if(!runHeadless) {
-			IWorkbenchPage activePage = EclipseObjects.getActivePage();
-
-			if(!activePage.saveAllEditors(true)){
-				initStatus.addError("EDITOR_NOT_SAVE");  //$NON-NLS-1$
-			}
-		}
 		if(selection == null){
 			initStatus.addError(Messages.HSRRefactoring_SelectionNotValid);  
 		}
-
-	}
-	
-	public CRefactoring(IFile file, ISelection selection) {
-		this(file, selection, false);
 	}
 	
 	private class ProblemFinder extends ASTVisitor{

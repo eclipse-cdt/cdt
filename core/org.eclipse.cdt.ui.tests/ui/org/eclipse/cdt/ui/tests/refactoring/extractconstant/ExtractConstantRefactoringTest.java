@@ -41,7 +41,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTest {
 	protected void runTest() throws Throwable {
 		IFile refFile = project.getFile(fileName);
 		NameNVisibilityInformation info = new NameNVisibilityInformation();
-		ExtractConstantRefactoring refactoring = new ExtractConstantRefactoring( refFile, selection, info, true);
+		ExtractConstantRefactoring refactoring = new ExtractConstantRefactoring( refFile, selection, info);
 		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 		assertConditionsOk(checkInitialConditions);
 		info.setName("theAnswer"); //$NON-NLS-1$

@@ -4465,4 +4465,13 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
+	
+	// void test() {
+    //    ({1;}) != 0;
+	// }
+	public void testCompoundStatementExpression_Bug226274() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}		
 }

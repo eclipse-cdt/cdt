@@ -290,11 +290,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         parsePassed = false;
     }
 
-    /**
-     * /* (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IParser#cancel()
-     */
     public synchronized void cancel() {
         isCancelled = true;
     }
@@ -325,10 +320,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * @param bt
+     * @deprecated 
      */
-    protected void throwBacktrack(BacktrackException bt)
-            throws BacktrackException {
+    @Deprecated
+	protected void throwBacktrack(BacktrackException bt) throws BacktrackException {
         throw bt;
     }
 
@@ -345,19 +340,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-    /**
-     * @param syntax_error
-     * @param offset
-     * @param length
-     * @return
-     */
-    protected abstract IASTProblem createProblem(int signal, int offset,
-            int length);
+    protected abstract IASTProblem createProblem(int signal, int offset, int length);
 
-    /**
-     * @param string
-     * @param e
-     */
     protected void logThrowable(String methodName, Throwable e) {
         if (e != null) {
         	if (log.isTracing()) {
@@ -547,21 +531,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-    /**
-     * @return
-     */
     protected abstract IASTProblemStatement createProblemStatement();
 
-    /**
-     * @return
-     */
     protected abstract IASTCompoundStatement createCompoundStatement();
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTExpression compoundStatementExpression() throws EndOfFileException, BacktrackException {
         int startingOffset = consume().getOffset(); // tLPAREN always
         IASTCompoundStatement compoundStatement = null;
@@ -585,22 +558,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return resultExpression;
     }
 
-    /**
-     * @return
-     */
     protected abstract IGNUASTCompoundStatementExpression createCompoundStatementExpression();
 
     protected IASTExpression expression() throws BacktrackException, EndOfFileException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
-
-        if (la.getType() == IToken.tLPAREN && LT(2) == IToken.tLBRACE
-                && supportStatementsInExpressions) {
-            IASTExpression resultExpression = compoundStatementExpression();
-            if (resultExpression != null)
-                return resultExpression;
-        }
-
         IASTExpression assignmentExpression = assignmentExpression();
         if (LT(1) != IToken.tCOMMA)
             return assignmentExpression;
@@ -620,9 +582,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return expressionList;
     }
 
-    /**
-     * @return
-     */
     protected abstract IASTExpressionList createExpressionList();
 
     protected abstract IASTExpression assignmentExpression()
@@ -657,19 +616,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return buildBinaryExpression(kind, lhs, rhs, calculateEndOffset(rhs));
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression constantExpression() throws BacktrackException,
             EndOfFileException {
         return conditionalExpression();
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression logicalOrExpression() throws BacktrackException,
             EndOfFileException {
         IASTExpression firstExpression = logicalAndExpression();
@@ -683,10 +634,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return firstExpression;
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression logicalAndExpression() throws BacktrackException,
             EndOfFileException {
         IASTExpression firstExpression = inclusiveOrExpression();
@@ -700,10 +647,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return firstExpression;
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression inclusiveOrExpression() throws BacktrackException,
             EndOfFileException {
         IASTExpression firstExpression = exclusiveOrExpression();
@@ -717,10 +660,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return firstExpression;
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression exclusiveOrExpression() throws BacktrackException,
             EndOfFileException {
         IASTExpression firstExpression = andExpression();
@@ -734,10 +673,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return firstExpression;
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression andExpression() throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = equalityExpression();
         while (LT(1) == IToken.tAMPER) {
@@ -750,10 +685,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return firstExpression;
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression equalityExpression() throws EndOfFileException,
             BacktrackException {
         IASTExpression firstExpression = relationalExpression();
@@ -787,15 +718,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-    /**
-     * @return
-     */
     protected abstract IASTBinaryExpression createBinaryExpression();
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression shiftExpression() throws BacktrackException,
             EndOfFileException {
         IASTExpression firstExpression = additiveExpression();
@@ -817,10 +741,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression additiveExpression() throws BacktrackException,
             EndOfFileException {
         IASTExpression firstExpression = multiplicativeExpression();
@@ -842,11 +762,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    /**
-     * @param expression
-     * @return
-     * @throws BacktrackException
-     */
     protected IASTExpression conditionalExpression() throws BacktrackException,
             EndOfFileException {
         IASTExpression firstExpression = logicalOrExpression();
@@ -878,20 +793,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return firstExpression;
     }
 
-    /**
-     * @return
-     */
     protected abstract IASTConditionalExpression createConditionalExpression();
 
-    /**
-     * @param operator
-     * @param operand
-     * @param offset
-     *            TODO
-     * @param lastOffset
-     *            TODO
-     * @return
-     */
     protected IASTExpression buildUnaryExpression(int operator,
             IASTExpression operand, int offset, int lastOffset) {
         IASTUnaryExpression result = createUnaryExpression();
@@ -901,16 +804,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-    /**
-     * @return
-     */
     protected abstract IASTUnaryExpression createUnaryExpression();
 
-    /**
-     * @return
-     * @throws BacktrackException
-     * @throws EndOfFileException
-     */
     protected IASTExpression unaryAlignofExpression()
             throws EndOfFileException, BacktrackException {
         int offset = consume().getOffset(); // t___alignof__
@@ -1031,12 +926,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             throws EndOfFileException, BacktrackException;
 
     /**
-     * @param flags
-     *            input flags that are used to make our decision
-     * @throws FoundDeclaratorException 
-     * @throws
-     * @throws EndOfFileException
-     *             we could encounter EOF while looking ahead
+     * @param flags input flags that are used to make our decision
+     * @throws FoundDeclaratorException encountered EOF while looking ahead
      */
     protected void lookAheadForDeclarator(Flags flags) throws FoundDeclaratorException {
         if (flags.typeId)
@@ -1216,14 +1107,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * enumerator-definition enumerator-definition: enumerator enumerator =
      * constant-expression enumerator: identifier
      * 
-     * @param owner
-     *            IParserCallback object that represents the declaration that
-     *            owns this type specifier.
-     * @throws BacktrackException
-     *             request a backtrack
+     * @throws BacktrackException request a backtrack
      */
-    protected IASTEnumerationSpecifier enumSpecifier()
-            throws BacktrackException, EndOfFileException {
+    protected IASTEnumerationSpecifier enumSpecifier() throws BacktrackException, EndOfFileException {
         IToken mark = mark();
         IASTName name = null;
         int startOffset = consume().getOffset(); // t_enum
@@ -1307,30 +1193,20 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return null;
     }
 
-    protected abstract IASTStatement statement() throws EndOfFileException,
-            BacktrackException;
-
+    protected abstract IASTStatement statement() throws EndOfFileException, BacktrackException;
 
     protected abstract IASTEnumerator createEnumerator();
 
-
     protected abstract IASTEnumerationSpecifier createEnumerationSpecifier();
-
 
     protected abstract IASTName createName();
 
-
     protected abstract IASTName createName(IToken token);
 
-    /**
-     * @throws BacktrackException
-     */
-    protected IASTExpression condition() throws BacktrackException,
-            EndOfFileException {
+    protected IASTExpression condition() throws BacktrackException, EndOfFileException {
         IASTExpression cond = expression();
         return cond;
     }
-
 
     public boolean encounteredError() {
         return !parsePassed;
@@ -1383,12 +1259,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             EndOfFileException;
 
 
-
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTDeclaration asmDeclaration() throws EndOfFileException,
             BacktrackException {
         IToken first = consume(); // t_asm
@@ -1434,13 +1304,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return t;
 	}
 
-    /**
-     * @param offset
-     * @param assembly
-     * @param lastOffset
-     *            TODO
-     * @return
-     */
     protected IASTASMDeclaration buildASMDirective(int offset, String assembly,
             int lastOffset) {
         IASTASMDeclaration result = createASMDirective();
@@ -1483,7 +1346,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IToken mark = mark();
         IASTExpressionStatement expressionStatement = null;
         IToken lastTokenOfExpression = null;
-        BacktrackException savedBt = null;
         try {
             IASTExpression expression = expression();
             if (LT(1) == IToken.tEOC)
@@ -1506,24 +1368,22 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             ds.setDeclaration(d);
             ((ASTNode) ds).setOffsetAndLength(((ASTNode) d).getOffset(), ((ASTNode) d).getLength());
         } catch (BacktrackException b) {
-            savedBt = b;
             backup(mark);
+            if (expressionStatement == null) {
+            	throw b;
+            }
         }
 
-        // if not ambiguous then return the appropriate node
-        if (expressionStatement == null && ds != null) {
-            return ds;
+        if (expressionStatement == null) {
+        	return ds;
         }
-        if (expressionStatement != null && ds == null) {
+        if (ds == null) {
             while (true) {
                 if (consume() == lastTokenOfExpression)
                     break;
             }
             return expressionStatement;
         }
-        if (expressionStatement == null && ds == null)
-            throwBacktrack(savedBt);
-        
         
         // At this point we know we have an ambiguity.
         // Attempt to resolve some ambiguities that are easy to detect.
@@ -1623,11 +1483,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     protected abstract IASTAmbiguousStatement createAmbiguousStatement();
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseLabelStatement() throws EndOfFileException,
             BacktrackException {
         IToken labelName = consume(); // tIDENTIFIER
@@ -1644,11 +1499,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return label_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseNullStatement() throws EndOfFileException,
             BacktrackException {
         IToken t = consume(); // tSEMI
@@ -1658,11 +1508,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return null_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseGotoStatement() throws EndOfFileException,
             BacktrackException {
         int startOffset = consume().getOffset(); // t_goto
@@ -1676,11 +1521,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return goto_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseBreakStatement() throws EndOfFileException,
             BacktrackException {
         int startOffset = consume().getOffset(); // t_break
@@ -1691,11 +1531,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return break_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseContinueStatement() throws EndOfFileException,
             BacktrackException {
         int startOffset = consume().getOffset(); // t_continue
@@ -1706,11 +1541,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return continue_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseReturnStatement() throws EndOfFileException,
             BacktrackException {
         int startOffset;
@@ -1754,13 +1584,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return return_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
-    protected IASTStatement parseDoStatement() throws EndOfFileException,
-            BacktrackException {
+    protected IASTStatement parseDoStatement() throws EndOfFileException, BacktrackException {
         int startOffset;
         startOffset = consume().getOffset(); // t_do
         IASTStatement do_body = statement();
@@ -1803,11 +1627,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return do_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseWhileStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
@@ -1861,26 +1680,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    /**
-     * @return
-     */
     protected abstract IASTProblemExpression createProblemExpression();
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseCompoundStatement() throws EndOfFileException, BacktrackException {
         IASTCompoundStatement compound = compoundStatement();
         return compound;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseDefaultStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset(); // t_default
         int lastOffset = consume(IToken.tCOLON).getEndOffset();
@@ -1890,11 +1696,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return df;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseCaseStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset(); // t_case
         IASTExpression case_exp = constantExpression();
@@ -2105,7 +1906,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	            											consume();
 	            											break whileLoop2;
 	            										default:
-	            											throwBacktrack(be);
+	            											throw be;
             										}
             									}
             								}

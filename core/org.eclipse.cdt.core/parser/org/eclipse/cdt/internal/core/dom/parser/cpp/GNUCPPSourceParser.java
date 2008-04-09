@@ -391,6 +391,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     IToken l = LA(1);
                     backup(mark);
                     throwBacktrack(first.getOffset(), l.getEndOffset() - first.getOffset());
+                    break;
                 case IToken.tIDENTIFIER:
                 case IToken.tCOMPLETION:
                 case IToken.tEOC:
@@ -541,8 +542,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * Parse a Pointer Operator. ptrOperator : "*" (cvQualifier)* | "&" | ::?
      * nestedNameSpecifier "*" (cvQualifier)*
      * 
-     * @param owner
-     *            Declarator that this pointer operator corresponds to.
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -640,9 +639,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         po = newPo;
                     }
                 }
-                if (po != null)
-                    collection.add(po);
-
+                collection.add(po);
                 continue;
             }
 
@@ -651,37 +648,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * @param isRestrict
-     * @return
-     */
     protected ICPPASTPointerToMember createPointerToMember(boolean gnu) {
         if (gnu)
             return new GPPASTPointerToMember();
         return new CPPASTPointerToMember();
     }
 
-    /**
-     * @param isRestrict
-     * @return
-     */
     protected IASTPointerOperator createPointer(boolean gnu) {
         if (gnu)
             return new GPPASTPointer();
         return new CPPASTPointer();
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTReferenceOperator createReferenceOperator() {
         return new CPPASTReferenceOperator();
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     @Override
 	protected IASTExpression assignmentExpression() throws EndOfFileException,
             BacktrackException {
@@ -689,12 +671,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return throwExpression();
         }
 
-        if (LT(1) == IToken.tLPAREN && LT(2) == IToken.tLBRACE
-                && supportStatementsInExpressions) {
-            IASTExpression resultExpression = compoundStatementExpression();
-            if (resultExpression != null)
-                return resultExpression;
-        }
+//        if (LT(1) == IToken.tLPAREN && LT(2) == IToken.tLBRACE
+//                && supportStatementsInExpressions) {
+//            IASTExpression resultExpression = compoundStatementExpression();
+//            if (resultExpression != null)
+//                return resultExpression;
+//        }
 
         IASTExpression conditionalExpression = conditionalExpression();
         // if the condition not taken, try assignment operators
@@ -746,10 +728,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return conditionalExpression;
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression throwExpression() throws EndOfFileException,
             BacktrackException {
         IToken throwToken = consume();
@@ -764,11 +742,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 throwExpression, throwToken.getOffset(), o); // fix for 95225
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
-    @Override
+    @SuppressWarnings("fallthrough")
+	@Override
 	protected IASTExpression relationalExpression() throws BacktrackException, EndOfFileException {
 
         IASTExpression firstExpression = shiftExpression();
@@ -779,6 +754,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         && templateIdScopes.peek() == IToken.tLT) {
                     return firstExpression;
                 }
+                // fall through
             case IToken.tLT:
             case IToken.tLTEQUAL:
             case IToken.tGTEQUAL:
@@ -837,10 +813,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     @Override
 	protected IASTExpression multiplicativeExpression() throws BacktrackException, EndOfFileException {
         IASTExpression firstExpression = pmExpression();
@@ -873,10 +845,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression pmExpression() throws EndOfFileException, BacktrackException {
 
         IASTExpression firstExpression = castExpression();
@@ -910,11 +878,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     @Override
 	protected IASTExpression castExpression() throws EndOfFileException, BacktrackException {
-// 		TO DO: we need proper symbol checkint to ensure type name
     	if (LT(1) == IToken.tLPAREN) {
-    		IToken la = LA(1);
-    		int startingOffset = la.getOffset();
-    		IToken mark = mark();
+    		final IToken mark = mark();
+    		final int startingOffset = mark.getOffset();
     		consume();
     		
             final int initialSize= templateIdScopes.size();
@@ -922,38 +888,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     			templateIdScopes.push(IToken.tLPAREN);
     		
     		try {
-    			IASTTypeId typeId = null;
-    			IToken startCastExpression=null;
-
-    			// If this isn't a type name, then we shouldn't be here
     			if (!avoidCastExpressionByHeuristics()) {
-    				typeId = typeId(false);
-    			}
-    			if (typeId != null && LT(1) == IToken.tRPAREN) {
-    				consume();
-    				startCastExpression=mark();
-    				if (initialSize > 0) {
-    					templateIdScopes.pop();
-    				}
-    				try {
-    					IASTExpression castExpression = castExpression();
-
-    					mark = null; // clean up mark so that we can garbage collect
-    					return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
-    							typeId, castExpression, startingOffset,
-    							calculateEndOffset(castExpression));
-    				} catch (BacktrackException b) {
+    				IASTTypeId typeId = typeId(false);
+    				if (typeId != null && LT(1) == IToken.tRPAREN) {
+    					consume();
+    					if (initialSize > 0) {
+    						templateIdScopes.pop();
+    					}
     					try {
-    						// try a compoundStatementExpression
-    						backup(startCastExpression);
-    						if (LT(1) == IToken.tLPAREN) {
-    							IASTExpression castExpression = compoundStatementExpression();
-    							mark = null; // clean up mark so that we can garbage collect
-    							return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
-    									typeId, castExpression, startingOffset,
-    									calculateEndOffset(castExpression));
-    						}
-    					} catch (BacktrackException bte2) {}
+    						IASTExpression castExpression = castExpression();
+    						return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
+    								typeId, castExpression, startingOffset,
+    								calculateEndOffset(castExpression));
+    					} catch (BacktrackException b) {
+    					}
     				}
     			}
     			backup(mark);
@@ -965,12 +913,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		}
     	}
     	return unaryExpression();
+    }
 
-}
-
-    /**
-     * @throws BacktrackException
-     */
     @Override
 	protected IASTTypeId typeId(boolean forNewExpression) throws EndOfFileException {
     	if (!canBeTypeSpecifier()) {
@@ -1046,10 +990,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTTypeId();
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression deleteExpression() throws EndOfFileException,
             BacktrackException {
         int startingOffset = LA(1).getOffset();
@@ -1079,17 +1019,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return deleteExpression;
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTDeleteExpression createDeleteExpression() {
         return new CPPASTDeleteExpression();
     }
 
     /**
-     * Pazse a new-expression.
+     * Parse a new-expression.
      * 
-     * @param expression
      * @throws BacktrackException
      *             newexpression: ::? new newplacement? newtypeid
      *             newinitializer? ::? new newplacement? ( typeid )
@@ -1186,13 +1122,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         if (typeId != null) {
                             lastOffset = calculateEndOffset(typeId);
                             break master_new_loop;
-                        } else {
-                            // Hmmm, so it wasn't typeId after all... Then it is
-                            // CASE: new (typeid-looking-as-placement)
-                            backup(loopMark);
-                            placementParseFailure = true;
-                            continue master_new_loop;
                         }
+						// Hmmm, so it wasn't typeId after all... Then it is
+						// CASE: new (typeid-looking-as-placement)
+						backup(loopMark);
+						placementParseFailure = true;
+						continue master_new_loop;
                     }
                 } else {
                     // Tricky cases: first expression in () is parsed as a
@@ -1324,17 +1259,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTNewExpression createNewExpression() {
         return new CPPASTNewExpression();
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     @Override
 	protected IASTExpression unaryExpression() throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
@@ -1384,10 +1312,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression postfixExpression() throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = null;
         boolean isTemplate = false;
@@ -1697,17 +1621,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTSimpleTypeConstructorExpression createSimpleTypeConstructorExpression() {
         return new CPPASTSimpleTypeConstructorExpression();
     }
 
-    /**
-     * @param expression
-     * @throws BacktrackException
-     */
     protected IASTExpression primaryExpression() throws EndOfFileException,
             BacktrackException {
         IToken t = null;
@@ -1767,6 +1684,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
         case IToken.tLPAREN:
+        	if (supportStatementsInExpressions && LT(2) == IToken.tLBRACE) {
+        		return compoundStatementExpression();
+        	}
             t = consume();
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.push(IToken.tLPAREN);
@@ -1811,16 +1731,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTLiteralExpression createLiteralExpression() {
         return new CPPASTLiteralExpression();
     }
 
-    /**
-     * @return
-     */
     @Override
 	protected IASTIdExpression createIdExpression() {
         return new CPPASTIdExpression();
@@ -1954,10 +1868,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * unqualified-id ; using :: unqualified-id ; using-directive: using
      * namespace ::? nested-name-specifier? namespace-name ;
      * 
-     * @param container
-     *            Callback object representing the scope these definitions fall
-     *            into.
-     * @return TODO
      * @throws BacktrackException
      *             request for a backtrack
      */
@@ -2034,10 +1944,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * linkageSpecification : extern "string literal" declaration | extern
      * "string literal" { declaration-seq }
      * 
-     * @param container
-     *            Callback object representing the scope these definitions fall
-     *            into.
-     * @return TODO
      * @throws BacktrackException
      *             request for a backtrack
      */
@@ -2088,9 +1994,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return linkage;
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTLinkageSpecification createLinkageSpecification() {
         return new CPPASTLinkageSpecification();
     }
@@ -2102,10 +2005,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * declaration explicit-instantiation: template declaration
      * explicit-specialization: template <>declaration
      * 
-     * @param container
-     *            Callback object representing the scope these definitions fall
-     *            into.
-     * @return TODO
      * @throws BacktrackException
      *             request for a backtrack
      */
@@ -2244,9 +2143,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * template-argument template-argument: assignment-expression type-id
      * id-expression
      * 
-     * @param templateDeclaration
-     *            Callback's templateDeclaration which serves as a scope to this
-     *            list.
      * @throws BacktrackException
      *             request for a backtrack
      */
@@ -2355,9 +2251,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * namespaceDefinition - usingDirective into usingDeclaration -
      * explicitInstantiation and explicitSpecialization into templateDeclaration
      * 
-     * @param container
-     *            IParserCallback object which serves as the owner scope for
-     *            this declaration.
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -2376,13 +2269,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_extern:
             if (LT(2) == IToken.tSTRING)
                 return linkageSpecification();
-        default:
-            if (supportExtendedTemplateSyntax
-                    && (LT(1) == IToken.t_static || LT(1) == IToken.t_inline || LT(1) == IToken.t_extern)
-                    && LT(2) == IToken.t_template)
+        	if (supportExtendedTemplateSyntax && LT(2) == IToken.t_template)
                 return templateDeclaration();
-            return simpleDeclarationStrategyUnion();
+            break;
+        case IToken.t_static:
+        case IToken.t_inline:
+        	if (supportExtendedTemplateSyntax && LT(2) == IToken.t_template)
+                return templateDeclaration();
+        	break;
         }
+        
+        return simpleDeclarationStrategyUnion();
     }
     
     
@@ -2395,10 +2292,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             try {
                 after = LA(1);
             } catch (EndOfFileException eof) {
-                after = null;
             }
         } catch (BacktrackException bt) {
-            d1 = null;
         }
         if (d1 != null) {
             if( templateCount != 0 )
@@ -2437,9 +2332,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 return d1;
             }
         } catch (BacktrackException be) {
-            d2 = null;
             if (d1 == null)
-                throwBacktrack(be);
+				throw be;
         }
 
         if (d2 == null && d1 != null) {
@@ -2466,10 +2360,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * namespace-definition: namespace identifier { namespace-body } | namespace {
      * namespace-body } namespace-body: declaration-seq?
      * 
-     * @param container
-     *            IParserCallback object which serves as the owner scope for
-     *            this declaration.
-     * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -2608,10 +2498,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    /**
-     * @param duple
-     * @return
-     */
     protected ICPPASTTemplateId createTemplateID(ITokenDuple duple) {
         ICPPASTTemplateId result = new CPPASTTemplateId();
         ((ASTNode) result).setOffsetAndLength(duple.getStartOffset(), duple
@@ -2708,13 +2594,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * append functionDefinition stuff to end of this rule To do: - work in
      * functionTryBlock
      * 
-     * @param container
-     *            IParserCallback object which serves as the owner scope for
-     *            this declaration.
-     * @param tryConstructor
-     *            true == take strategy1 (constructor ) : false == take strategy
-     *            2 ( pointer to function)
-     * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -2878,9 +2757,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * meminitializerlist meminitializer: meminitializerid | ( expressionlist? )
      * meminitializerid: ::? nestednamespecifier? classname identifier
      * 
-     * @param declarator
-     *            IParserCallback object that represents the declarator
-     *            (constructor) that owns this initializer
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -2936,9 +2812,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTConstructorChainInitializer createConstructorChainInitializer() {
         return new CPPASTConstructorChainInitializer();
     }
@@ -2946,10 +2819,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * This routine parses a parameter declaration
      * 
-     * @param containerObject
-     *            The IParserCallback object representing the
-     *            parameterDeclarationClause owning the parm.
-     * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -3394,9 +3263,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * Parse an elaborated type specifier.
      * 
-     * @param decl
-     *            Declaration which owns the elaborated type
-     * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -3447,11 +3313,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * Parses the initDeclarator construct of the ANSI C++ spec. initDeclarator :
      * declarator ("=" initializerClause | "(" expressionList ")")?
      * 
-     * @param constructInitializers
-     *            TODO
-     * @param owner
-     *            IParserCallback object that represents the owner declaration
-     *            object.
      * @return declarator that this parsing produced.
      * @throws BacktrackException
      *             request a backtrack
@@ -3571,10 +3432,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * parameterDeclarationClause ")" (oldKRParameterDeclaration)* declaratorId :
      * name
      * 
-     * @param forNewTypeId
-     *            TODO
-     * @param container
-     *            IParserCallback object that represents the owner declaration.
      * @return declarator that this parsing produced.
      * @throws BacktrackException
      *             request a backtrack
@@ -3987,10 +3844,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * Parse a class/struct/union definition. classSpecifier : classKey name
      * (baseClause)? "{" (memberSpecification)* "}"
      * 
-     * @param owner
-     *            IParserCallback object that represents the declaration that
-     *            owns this classSpecifier
-     * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
@@ -4129,7 +3982,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * virtual? ::? nestednamespecifier? classname accessspecifier: private |
      * protected | public
      * 
-     * @param classSpecOwner
      * @throws BacktrackException
      */
     protected void baseSpecifier(ICPPASTCompositeTypeSpecifier astClassSpec)
@@ -4214,16 +4066,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 baseSpec.setVisibility(visibility);
                 baseSpec.setName(name);
                 astClassSpec.addBaseSpecifier(baseSpec);
-            // fall through
+                break baseSpecifierLoop;
             default:
                 break baseSpecifierLoop;
             }
         }
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTBaseSpecifier createBaseSpecifier() {
         return new CPPASTBaseSpecifier();
     }
@@ -4290,9 +4139,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * @return
-     */
     protected ICPPASTCatchHandler createCatchHandler() {
         return new CPPASTCatchHandler();
     }
@@ -4650,11 +4496,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseTryStatement() throws EndOfFileException, BacktrackException {
         int startO = consume().getOffset();
         IASTStatement tryBlock = compoundStatement();
@@ -4735,10 +4576,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-    /**
-     * @param expectSemi TODO
-     * @return
-     */
     protected IASTNode cppStyleCondition(int expectToken) throws BacktrackException, EndOfFileException {
         IToken mark = mark();
         try {
@@ -4754,7 +4591,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 return simpleDeclaration(SimpleDeclarationStrategy.TRY_VARIABLE, true);
             } catch (BacktrackException b) {
                 failParse();
-                throwBacktrack(b);
+                throw b;
             }
         }
         return null;
@@ -4778,11 +4615,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTAmbiguousStatement();
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseIfStatement() throws EndOfFileException, BacktrackException {
         ICPPASTIfStatement result = null;
         ICPPASTIfStatement if_statement = null;
@@ -4862,8 +4694,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     if_statement.setElseClause(new_if_statement);
                     ((ASTNode) if_statement).setLength(calculateEndOffset(new_if_statement) - ((ASTNode) if_statement).getOffset());
                 } else {
-                    if (result == null && if_statement != null)
-                        result = if_statement;
                     if (result == null)
                         result = new_if_statement;
                     if_statement = new_if_statement;
@@ -4932,11 +4762,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 calculateEndOffset(castExpression));
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseSwitchStatement() throws EndOfFileException, BacktrackException {
         int startOffset;
         startOffset = consume().getOffset();
@@ -4972,11 +4797,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return switch_statement;
     }
 
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
     protected IASTStatement parseForStatement() throws EndOfFileException, BacktrackException {
         int startOffset;
         startOffset = consume().getOffset();

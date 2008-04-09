@@ -28,13 +28,14 @@ Export-Package: org.eclipse.rse.files.ui,
  org.eclipse.rse.files.ui.resources,
  org.eclipse.rse.files.ui.widgets,
  org.eclipse.rse.internal.files.ui;x-internal:=true,
- org.eclipse.rse.internal.files.ui.actions;x-internal:=true, 
+ org.eclipse.rse.internal.files.ui.actions;x-internal:=true,
+ org.eclipse.rse.internal.files.ui.dialogs;x-internal:=true,
  org.eclipse.rse.internal.files.ui.propertypages;x-internal:=true,
  org.eclipse.rse.internal.files.ui.resources;x-internal:=true,
  org.eclipse.rse.internal.files.ui.search;x-internal:=true,
  org.eclipse.rse.internal.files.ui.view;x-internal:=true,
- org.eclipse.rse.internal.files.ui.wizards;x-internal:=true,
- org.eclipse.rse.internal.files.ui.dialogs;x-internal:=true
+ org.eclipse.rse.internal.files.ui.widgets;x-internal:=true,
+ org.eclipse.rse.internal.files.ui.wizards;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Import-Package: com.ibm.icu.text

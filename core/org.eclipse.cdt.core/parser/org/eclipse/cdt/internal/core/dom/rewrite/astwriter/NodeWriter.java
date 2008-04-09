@@ -16,6 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+/**
+ * 
+ * Base class for node writers. This class contains methods and string constants
+ * used by multiple node writers.
+ * 
+ * @author Emanuel Graf IFS
+ * 
+ */
 public class NodeWriter {
 
 	protected Scribe scribe;

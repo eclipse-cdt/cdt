@@ -35,9 +35,16 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+
 /**
- * @author Emanuel Graf
- *
+ * 
+ * Generates source code of declarator nodes. The actual string operations are delegated
+ * to the <code>Scribe</code> class.
+ * 
+ * @see Scribe
+ * @see IASTDeclarator
+ * @author Emanuel Graf IFS
+ * 
  */
 public class DeclaratorWriter extends NodeWriter {
 

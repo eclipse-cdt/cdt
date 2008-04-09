@@ -41,8 +41,27 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * @author Guido Zgraggen IFS
+ * The NodeCommenter contains all the logic that is needed for the ASTCommentVisitor to assign the comments
+ * to the suitable node. Together with the ASTCommenterVisitor it fills all the comments with the correspondent
+ * node into the NodeCommentMap.
  * 
+ * Following, a little explanation of the assignment logic. It is only a loose illustration a detailed description 
+ * would include a combined explanation of ASTCommenterVisitor and NodeCommenter.<br>
+ * To understand the logic we define the three types of comments:<br>
+ * leading comments - Comments before a statement, declaration, or definition.<br>
+ * trailing comments - Comments right after the AST node on the same line.<br>
+ * freestanding comments - Comments before a closing brace such as they occur in 
+ * namespace-, class- and method-definitions or at the end of a file.<br>
+ * 
+ * The first comment is fetched and the position of it is compared to the position of the actual node. If 
+ * the position of the comment is smaller than the comment is added to the node as leading. If it is behind the node
+ * but on the same line it is added as trailing. If one of these possibilities match the next comment is fetched for
+ * the same check. If it doesn't match the same procedure is done for all the child nodes. After checking the sub nodes
+ * the actual node is checked again if the comment is trailing. Then there is also the possibility that this comment is 
+ * freestanding. This is the case when the comment is not added to any child node but the position is smaller den
+ * the end position of the node. 
+ * 
+ * @author Guido Zgraggen IFS
  */
 public class NodeCommenter {
 
@@ -130,31 +149,29 @@ public class NodeCommenter {
 			if(OffsetHelper.getNodeOffset(com) < OffsetHelper.getNodeEndPoint(node) + 2) {
 				return true;
 			}
-			else {
-				IPath path = new Path(node.getContainingFilename());
-				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+			IPath path = new Path(node.getContainingFilename());
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+			
+			//XXX HSR Guido: Possible Performance Issue (File access)
+			try {
+				InputStream is = file.getContents();
 				
-				//XXX HSR Guido: Possible Performance Issue (File access)
-				try {
-					InputStream is = file.getContents();
-					
-					int length = OffsetHelper.getNodeOffset(com)-OffsetHelper.getNodeEndPoint(node);
-					byte[] b = new byte[length];
+				int length = OffsetHelper.getNodeOffset(com)-OffsetHelper.getNodeEndPoint(node);
+				byte[] b = new byte[length];
 
-					is.skip(OffsetHelper.getNodeEndPoint(node));
-					is.read(b, 0, length);
+				is.skip(OffsetHelper.getNodeEndPoint(node));
+				is.read(b, 0, length);
 
-					for(byte bb : b) {
-						if(!Character.isWhitespace(bb)) {
-							is.close();
-							return false;
-						}		
-					}
-					is.close();
-					return true;
-				} catch (Exception e) {
-					return false;
-				}						
+				for(byte bb : b) {
+					if(!Character.isWhitespace(bb)) {
+						is.close();
+						return false;
+					}		
+				}
+				is.close();
+				return true;
+			} catch (Exception e) {
+				return false;
 			}
 		}
 			

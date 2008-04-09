@@ -16,8 +16,11 @@ import java.util.Vector;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 
 /**
- * @author Guido Zgraggen IFS
+ * The CommentHandler is initialized with all the comment which should be processed.
+ * During the process of comment assignment this comment collection is work through one
+ * after another until no more comments are left.
  * 
+ * @author Guido Zgraggen IFS
  */
 public class CommentHandler {
 

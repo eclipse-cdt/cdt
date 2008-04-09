@@ -32,8 +32,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 
 /**
- * @author Guido Zgraggen IFS
+ * A visitor for the comments. Calls the NodeCommenter to assign the comments.
  * 
+ * @see org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommenter 
+ *   
+ * @author Guido Zgraggen IFS 
  */
 public class ASTCommenterVisitor extends CPPASTVisitor {
 	

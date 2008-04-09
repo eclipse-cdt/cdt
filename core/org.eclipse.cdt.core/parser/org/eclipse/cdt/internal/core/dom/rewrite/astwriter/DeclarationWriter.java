@@ -38,9 +38,16 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+
 /**
- * @author Emanuel Graf
- *
+ * 
+ * Generates source code of declaration nodes. The actual string operations are delegated
+ * to the <code>Scribe</code> class.
+ * 
+ * @see Scribe
+ * @see IASTDeclaration
+ * @author Emanuel Graf IFS
+ * 
  */
 public class DeclarationWriter extends NodeWriter{
 	

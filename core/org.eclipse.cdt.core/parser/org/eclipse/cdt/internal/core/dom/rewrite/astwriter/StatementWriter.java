@@ -45,6 +45,16 @@ import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.core.resources.IFile;
 
+/**
+ * 
+ * Generates source code of statement nodes. The actual string operations are delegated
+ * to the <code>Scribe</code> class.
+ * 
+ * @see Scribe
+ * @see IASTStatement
+ * @author Emanuel Graf IFS
+ * 
+ */
 public class StatementWriter extends NodeWriter{
 
 	private static final String DEFAULT = "default:"; //$NON-NLS-1$

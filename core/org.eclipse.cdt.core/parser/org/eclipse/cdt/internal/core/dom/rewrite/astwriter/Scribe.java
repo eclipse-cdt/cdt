@@ -11,6 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+/**
+ * 
+ * This class is responsible for the string concatination and the management of
+ * the indentations.
+ * 
+ * @since 5.0
+ * @author Emanuel Graf IFS
+ * 
+ */
 public class Scribe {
 	
 	

@@ -30,6 +30,17 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+/**
+ * 
+ * Visits all nodes, prints leading comments and handles macro expansions. The
+ * source code generation is delegated to severals <code>NodeWriters</code>.
+ * 
+ * @see NodeWriter
+ * @see MacroExpansionHandler
+ * 
+ * @author Emanuel Graf IFS
+ * 
+ */
 public class ASTWriterVisitor extends CPPASTVisitor {
 	
 	protected Scribe scribe = new Scribe();

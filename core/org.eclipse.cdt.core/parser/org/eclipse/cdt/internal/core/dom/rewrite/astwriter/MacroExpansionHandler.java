@@ -16,6 +16,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
+/**
+ * 
+ * Recognizes nodes that are the result of an macro expansion and replaces them 
+ * with a suitable macro call.
+ * @author Emanuel Graf IFS
+ *
+ */
 public class MacroExpansionHandler {
 	
 	private int lastMacroExpOffset;
@@ -61,13 +68,12 @@ public class MacroExpansionHandler {
 	
 				if (macroNode.asFileLocation().getNodeOffset() == lastMacroExpOffset) {
 					return true;
-				} else {
-					if (write) {
-						lastMacroExpOffset = macroNode.asFileLocation().getNodeOffset();
-						scribe.print(node.getRawSignature());
-					}
-					return true;
 				}
+				if (write) {
+					lastMacroExpOffset = macroNode.asFileLocation().getNodeOffset();
+					scribe.print(node.getRawSignature());
+				}
+				return true;
 
 			}
 		}

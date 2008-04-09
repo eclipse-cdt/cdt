@@ -23,9 +23,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+
 /**
- * @author Emanuel Graf
- *
+ * 
+ * Generates source code of initializer nodes. The actual string operations are delegated
+ * to the <code>Scribe</code> class.
+ * 
+ * @see Scribe
+ * @see IASTInitializer
+ * @author Emanuel Graf IFS
+ * 
  */
 public class InitializerWriter extends NodeWriter{
 

@@ -41,9 +41,16 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+
 /**
- * @author Emanuel Graf
- *
+ * 
+ * Generates source code of expression nodes. The actual string operations are delegated
+ * to the <code>Scribe</code> class.
+ * 
+ * @see Scribe
+ * @see IASTExpression
+ * @author Emanuel Graf IFS
+ * 
  */
 public class ExpressionWriter extends NodeWriter{
 	
@@ -243,23 +250,22 @@ public class ExpressionWriter extends NodeWriter{
 			default:
 				return false;
 			}
-		}else {
-			if (unExp instanceof ICPPASTUnaryExpression) {
-				switch (unaryExpressionType) {
-				case ICPPASTUnaryExpression.op_throw:
-				case ICPPASTUnaryExpression.op_typeid:
-					return true;
-				default:
-					return false;
-				}
-			}else if (unExp instanceof IGNUASTUnaryExpression) {
-				switch (unaryExpressionType) {
-				case IGNUASTUnaryExpression.op_alignOf:
-				case IGNUASTUnaryExpression.op_typeof:
-					return true;
-				default:
-					return false;
-				}
+		}
+		if (unExp instanceof ICPPASTUnaryExpression) {
+			switch (unaryExpressionType) {
+			case ICPPASTUnaryExpression.op_throw:
+			case ICPPASTUnaryExpression.op_typeid:
+				return true;
+			default:
+				return false;
+			}
+		}else if (unExp instanceof IGNUASTUnaryExpression) {
+			switch (unaryExpressionType) {
+			case IGNUASTUnaryExpression.op_alignOf:
+			case IGNUASTUnaryExpression.op_typeof:
+				return true;
+			default:
+				return false;
 			}
 		}
 		return false;
@@ -278,17 +284,16 @@ public class ExpressionWriter extends NodeWriter{
 			default:
 				return false;
 			}
-		}else {
-			if (unExp instanceof ICPPASTUnaryExpression) {
-				return unaryExpressionType == ICPPASTUnaryExpression.op_typeid;
-			}else if (unExp instanceof IGNUASTUnaryExpression) {
-				switch (unaryExpressionType) {
-				case IGNUASTUnaryExpression.op_alignOf:
-				case IGNUASTUnaryExpression.op_typeof:
-					return true;
-				default:
-					return false;
-				}
+		}
+		if (unExp instanceof ICPPASTUnaryExpression) {
+			return unaryExpressionType == ICPPASTUnaryExpression.op_typeid;
+		}else if (unExp instanceof IGNUASTUnaryExpression) {
+			switch (unaryExpressionType) {
+			case IGNUASTUnaryExpression.op_alignOf:
+			case IGNUASTUnaryExpression.op_typeof:
+				return true;
+			default:
+				return false;
 			}
 		}
 		return false;
@@ -322,27 +327,26 @@ public class ExpressionWriter extends NodeWriter{
 				System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
 				throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
 			}
-		}else {
-			if (unExp instanceof ICPPASTUnaryExpression) {
-				switch (unaryExpressionType) {
-				case ICPPASTUnaryExpression.op_throw:
-					return THROW;
-				case ICPPASTUnaryExpression.op_typeid:
-					return TYPEID_OP;
-				default:
-					System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-					throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-				}
-			}else if (unExp instanceof IGNUASTUnaryExpression) {
-				switch (unaryExpressionType) {
-				case IGNUASTUnaryExpression.op_alignOf:
-					return ALIGNOF_OP;
-				case IGNUASTUnaryExpression.op_typeof:
-					return TYPEOF_OP;
-				default:
-					System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-					throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-				}
+		}
+		if (unExp instanceof ICPPASTUnaryExpression) {
+			switch (unaryExpressionType) {
+			case ICPPASTUnaryExpression.op_throw:
+				return THROW;
+			case ICPPASTUnaryExpression.op_typeid:
+				return TYPEID_OP;
+			default:
+				System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
+				throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
+			}
+		}else if (unExp instanceof IGNUASTUnaryExpression) {
+			switch (unaryExpressionType) {
+			case IGNUASTUnaryExpression.op_alignOf:
+				return ALIGNOF_OP;
+			case IGNUASTUnaryExpression.op_typeof:
+				return TYPEOF_OP;
+			default:
+				System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
+				throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
 			}
 		}
 		System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
@@ -363,24 +367,23 @@ public class ExpressionWriter extends NodeWriter{
 				System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
 			throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
 			}
-		}else {
-			if (unExp instanceof ICPPASTUnaryExpression) {
-				switch (unaryExpressionType) {
-				case ICPPASTUnaryExpression.op_typeid:
-					return CLOSING_BRACKET_OP;
-				default:
-					System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-				throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-				}
-			}else if (unExp instanceof IGNUASTUnaryExpression) {
-				switch (unaryExpressionType) {
-				case IGNUASTUnaryExpression.op_alignOf:
-				case IGNUASTUnaryExpression.op_typeof:
-					return CLOSING_BRACKET_OP;
-				default:
-					System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-				throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-				}
+		}
+		if (unExp instanceof ICPPASTUnaryExpression) {
+			switch (unaryExpressionType) {
+			case ICPPASTUnaryExpression.op_typeid:
+				return CLOSING_BRACKET_OP;
+			default:
+				System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
+			}
+		}else if (unExp instanceof IGNUASTUnaryExpression) {
+			switch (unaryExpressionType) {
+			case IGNUASTUnaryExpression.op_alignOf:
+			case IGNUASTUnaryExpression.op_typeof:
+				return CLOSING_BRACKET_OP;
+			default:
+				System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
 			}
 		}
 		System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$

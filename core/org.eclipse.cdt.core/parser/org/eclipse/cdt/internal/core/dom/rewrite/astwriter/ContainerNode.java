@@ -20,9 +20,15 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
+
 /**
- * @author Emanuel Graf
- *
+ * 
+ * This class serves as a container to pass several nodes to the
+ * <code>ASTWriter</code>. This container is used if source code for several sibling nodes but 
+ * for their common parent node should be generated. 
+ * 
+ * @author Emanuel Graf IFS
+ * 
  */
 public class ContainerNode extends ASTNode {
 	

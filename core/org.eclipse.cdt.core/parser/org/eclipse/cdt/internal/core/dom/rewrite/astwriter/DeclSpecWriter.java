@@ -35,9 +35,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+
 /**
- * @author Emanuel Graf
- *
+ * 
+ * Generates source code of declaration specifier nodes. The actual string operations are delegated
+ * to the <code>Scribe</code> class.
+ * 
+ * @see Scribe
+ * @see IASTDeclSpecifier
+ * @author Emanuel Graf IFS
+ * 
  */
 public class DeclSpecWriter extends NodeWriter {
 	private static final String MUTABLE = "mutable "; //$NON-NLS-1$
@@ -76,16 +83,15 @@ public class DeclSpecWriter extends NodeWriter {
 		int type = simpDeclSpec.getType();
 		if(type <= IASTSimpleDeclSpecifier.t_last) {
 			return getASTSimpleDecSpecifier(type);
-		}else {
-			switch (type) {
-			case ICPPASTSimpleDeclSpecifier.t_bool:
-				return CPP_BOOL;
-			case ICPPASTSimpleDeclSpecifier.t_wchar_t:
-				return WCHAR_T;
-			default:
-				System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
-				throw new IllegalArgumentException("Unknow Specifiertype: " + type); //$NON-NLS-1$
-			}
+		}
+		switch (type) {
+		case ICPPASTSimpleDeclSpecifier.t_bool:
+			return CPP_BOOL;
+		case ICPPASTSimpleDeclSpecifier.t_wchar_t:
+			return WCHAR_T;
+		default:
+			System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unknow Specifiertype: " + type); //$NON-NLS-1$
 		}
 	}
 	
@@ -93,14 +99,13 @@ public class DeclSpecWriter extends NodeWriter {
 		int type = simpDeclSpec.getType();
 		if(type <= IASTSimpleDeclSpecifier.t_last) {
 			return getASTSimpleDecSpecifier(type);
-		}else {
-			switch (type) {
-			case ICASTSimpleDeclSpecifier.t_Bool:
-				return _BOOL;
-			default:
-				System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
-				throw new IllegalArgumentException("Unknow Specifiertype: " + type); //$NON-NLS-1$
-			}
+		}
+		switch (type) {
+		case ICASTSimpleDeclSpecifier.t_Bool:
+			return _BOOL;
+		default:
+			System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unknow Specifiertype: " + type); //$NON-NLS-1$
 		}
 	}
 

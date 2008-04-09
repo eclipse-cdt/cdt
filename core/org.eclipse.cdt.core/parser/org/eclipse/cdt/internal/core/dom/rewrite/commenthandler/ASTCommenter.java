@@ -22,11 +22,25 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * @author Guido Zgraggen IFS
- *
+ * This is the startpoint of the whole comment handling  process. The creation of the 
+ * NodeCommentMap is based on the IASTTranslationUnit. From this TranslationUnit the comments 
+ * are extracted and skipped if they belong not to the same workspace. An ASTCommenterVisitor 
+ * is initialized with this collection of comments. And the visit process can start. 
+ * 
+ * @see org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommenter
+ * @see org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap
+ *  
+ * @author Guido Zgraggen IFS 
  */
 public class ASTCommenter {
 	
+	/**
+	 * Creates a NodeCommentMap for the given TranslationUnit. This is the only way
+	 * to get a NodeCommentMap which contains all the comments mapped against nodes.
+	 * 
+	 * @param transUnit TranslationUnit
+	 * @return NodeCommentMap
+	 */
 	public static NodeCommentMap getCommentedNodeMap(IASTTranslationUnit transUnit){
 		if(transUnit== null) {
 			return new NodeCommentMap();

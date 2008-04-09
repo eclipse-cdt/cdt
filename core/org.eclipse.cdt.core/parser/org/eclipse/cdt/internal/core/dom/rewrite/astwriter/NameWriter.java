@@ -21,9 +21,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
+
 /**
- * @author Emanuel Graf
- *
+ * 
+ * Generates source code of name nodes. The actual string operations are delegated
+ * to the <code>Scribe</code> class.
+ * 
+ * @see Scribe
+ * @see IASTName
+ * @author Emanuel Graf IFS
+ * 
  */
 public class NameWriter extends NodeWriter {
 
@@ -97,15 +104,13 @@ public class NameWriter extends NodeWriter {
 			ICPPASTTemplateId tempId, int i) {
 		if(i <= 0){
 			return false;
-		}else{
-			if (qname.getNames()[i-1] instanceof ICPPASTTemplateId) {
-				return true;
-			}else{
-				IBinding binding = qname.getNames()[i-1].resolveBinding();
-				if (binding instanceof CPPTemplateTypeParameter) {
-					return true;
-				}
-			}
+		}
+		if (qname.getNames()[i-1] instanceof ICPPASTTemplateId) {
+			return true;
+		}
+		IBinding binding = qname.getNames()[i-1].resolveBinding();
+		if (binding instanceof CPPTemplateTypeParameter) {
+			return true;
 		}
 		return isDependentName(qname, tempId, i-1);
 	}

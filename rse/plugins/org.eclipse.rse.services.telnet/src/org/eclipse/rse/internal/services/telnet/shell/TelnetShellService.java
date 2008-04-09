@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalShellService.
  * Sheldon D'souza (Celunite) - Adapted from SshShellService.
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
@@ -21,46 +22,32 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.telnet.ITelnetService;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
 import org.eclipse.rse.internal.services.telnet.TelnetServiceResources;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.shells.AbstractShellService;
 import org.eclipse.rse.services.shells.IHostShell;
-import org.eclipse.rse.services.shells.IShellService;
 
-public class TelnetShellService implements ITelnetService, IShellService {
+public class TelnetShellService extends AbstractShellService implements ITelnetService {
 
-	
 	private ITelnetSessionProvider fTelnetSessionProvider;
-	
+
 	public TelnetShellService( ITelnetSessionProvider sessionProvider) {
 		this.fTelnetSessionProvider = sessionProvider;
 	}
-	
+
 	public String[] getHostEnvironment() {
 		return new String[0];
 	}
 
 	public IHostShell launchShell(String initialWorkingDirectory,
-			String[] environment, IProgressMonitor monitor) {
-		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return launchShell(initialWorkingDirectory, defaultEncoding, environment, monitor);
-	}
-
-	public IHostShell launchShell(String initialWorkingDirectory,
 			String encoding, String[] environment,
 			IProgressMonitor monitor) {
-		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, TelnetHostShell.SHELL_INVOCATION, encoding, environment); 
+		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, TelnetHostShell.SHELL_INVOCATION, encoding, environment);
 		return hostShell;
-	}
-
-	public IHostShell runCommand(String initialWorkingDirectory,
-			String command, String[] environment, IProgressMonitor monitor) {
-		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return runCommand(initialWorkingDirectory, command, defaultEncoding, environment, monitor);
 	}
 
 	public IHostShell runCommand(String initialWorkingDirectory,
 			String command, String encoding, String[] environment,
 			IProgressMonitor monitor) {
-		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, TelnetHostShell.SHELL_INVOCATION, encoding, environment); 
+		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, TelnetHostShell.SHELL_INVOCATION, encoding, environment);
 		return hostShell;
 	}
 
@@ -68,23 +55,8 @@ public class TelnetShellService implements ITelnetService, IShellService {
 		return TelnetServiceResources.TelnetShellService_Description;
 	}
 
-	public SystemMessage getMessage(String messageID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String getName() {
 		return TelnetServiceResources.TelnetShellService_Name;
-	}
-
-	public void initService(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void uninitService(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

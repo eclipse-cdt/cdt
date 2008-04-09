@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Radoslav Gerganov - derived from SftpFileService and LocalFileService
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -41,11 +42,11 @@ import org.eclipse.tm.rapi.RapiFindData;
 public class WinCEFileService extends AbstractFileService implements IWinCEService {
 
   IRapiSessionProvider sessionProvider;
-  
+
   public WinCEFileService(IRapiSessionProvider sessionProvider) {
     this.sessionProvider = sessionProvider;
   }
-  
+
   String concat(String parentDir, String fileName) {
     String result = parentDir;
     if (!result.endsWith("\\")) { //$NON-NLS-1$
@@ -54,7 +55,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     result += fileName;
     return result;
   }
-  
+
   protected IHostFile[] internalFetch(String parentPath, String fileFilter,
       int fileType, IProgressMonitor monitor) throws SystemMessageException {
     if (fileFilter == null) {
@@ -71,7 +72,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     try {
       IRapiSession session = sessionProvider.getSession();
       RapiFindData[] foundFiles = session.findAllFiles(concat(parentPath,"*"),  //$NON-NLS-1$
-            Rapi.FAF_NAME | Rapi.FAF_ATTRIBUTES | Rapi.FAF_LASTWRITE_TIME | 
+            Rapi.FAF_NAME | Rapi.FAF_ATTRIBUTES | Rapi.FAF_LASTWRITE_TIME |
             Rapi.FAF_SIZE_HIGH | Rapi.FAF_SIZE_LOW);
       for (int i = 0 ; i < foundFiles.length ; i++) {
         String fileName = foundFiles[i].fileName;
@@ -104,11 +105,11 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     }
     return (attr & Rapi.FILE_ATTRIBUTE_DIRECTORY) != 0;
   }
-  
+
   private boolean exist(IRapiSession session, String fileName) {
     return session.getFileAttributes(fileName) != -1;
   }
-  
+
   public boolean copy(String srcParent, String srcName, String tgtParent,
       String tgtName, IProgressMonitor monitor) throws SystemMessageException {
     String srcFullPath = concat(srcParent, srcName);
@@ -158,7 +159,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     String fullPath = concat(remoteParent, fileName);
     IRapiSession session = sessionProvider.getSession();
     try {
-      int handle = session.createFile(fullPath, Rapi.GENERIC_WRITE, Rapi.FILE_SHARE_READ, 
+      int handle = session.createFile(fullPath, Rapi.GENERIC_WRITE, Rapi.FILE_SHARE_READ,
           Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
       session.closeHandle(handle);
       RapiFindData findData = new RapiFindData();
@@ -203,14 +204,14 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       }
     } catch (RapiException e) {
       //FIXME error handling
-      throw new RemoteFileException(e.getMessage());      
+      throw new RemoteFileException(e.getMessage());
     }
     return true;
   }
 
   public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding,
       IProgressMonitor monitor) throws SystemMessageException {
-    
+
     if (!localFile.exists()) {
       File localParentFile = localFile.getParentFile();
       if (!localParentFile.exists()) {
@@ -222,7 +223,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     int handle = Rapi.INVALID_HANDLE_VALUE;
     BufferedOutputStream bos = null;
     try {
-      handle = session.createFile(fullPath, Rapi.GENERIC_READ, 
+      handle = session.createFile(fullPath, Rapi.GENERIC_READ,
           Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
       bos = new BufferedOutputStream(new FileOutputStream(localFile));
       // don't increase the buffer size! the native functions sometimes fail with large buffers, 4K always work
@@ -288,14 +289,14 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     return false;
   }
 
-  public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, 
+  public boolean move(String srcParent, String srcName, String tgtParent, String tgtName,
       IProgressMonitor monitor) throws SystemMessageException {
     boolean ok = copy(srcParent, srcName, tgtParent, tgtName, monitor);
     ok = ok && delete(srcParent, srcName, monitor);
     return ok;
   }
 
-  public boolean rename(String remoteParent, String oldName, String newName, 
+  public boolean rename(String remoteParent, String oldName, String newName,
       IProgressMonitor monitor) throws SystemMessageException {
     String oldFullPath = concat(remoteParent, oldName);
     String newFullPath = concat(remoteParent, newName);
@@ -309,7 +310,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     return true;
   }
 
-  public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, 
+  public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile,
       IProgressMonitor monitor) throws SystemMessageException {
     boolean retVal = rename(remoteParent, oldName, newName, monitor);
     String newFullPath = concat(remoteParent, newName);
@@ -332,7 +333,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     String fullPath = concat(remoteParent, remoteFile);
     int handle = Rapi.INVALID_HANDLE_VALUE;
     try {
-      handle = session.createFile(fullPath, Rapi.GENERIC_WRITE, 
+      handle = session.createFile(fullPath, Rapi.GENERIC_WRITE,
           Rapi.FILE_SHARE_READ, Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
       // don't increase the buffer size! the native functions sometimes fail with large buffers, 4K always work
       byte[] buffer = new byte[4 * 1024];
@@ -366,7 +367,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     return true;
   }
 
-  public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, 
+  public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary,
       String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException {
     FileInputStream fis = null;
     try {
@@ -384,7 +385,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     String fullPath = concat(remoteParent, remoteFile);
     IRapiSession session = sessionProvider.getSession();
     try {
-      int handle = session.createFile(fullPath, Rapi.GENERIC_READ, 
+      int handle = session.createFile(fullPath, Rapi.GENERIC_READ,
           Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
       return new BufferedInputStream(new WinCEInputStream(session, handle));
     } catch (RapiException e) {
@@ -404,7 +405,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       } else {
         cd = Rapi.OPEN_EXISTING;
       }
-      int handle = session.createFile(fullPath, Rapi.GENERIC_WRITE, 
+      int handle = session.createFile(fullPath, Rapi.GENERIC_WRITE,
           Rapi.FILE_SHARE_READ, cd, Rapi.FILE_ATTRIBUTE_NORMAL);
       return new BufferedOutputStream(new WinCEOutputStream(session, handle));
     } catch (RapiException e) {
@@ -421,22 +422,16 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     return Messages.WinCEFileService_1;
   }
 
-  public void initService(IProgressMonitor monitor) {
-  }
-
-  public void uninitService(IProgressMonitor monitor) {
-  }
-
   private static class WinCEInputStream extends InputStream {
 
     private int handle;
     private IRapiSession session;
-    
+
     public WinCEInputStream(IRapiSession session, int handle) {
       this.handle = handle;
       this.session = session;
     }
-    
+
     public int read() throws IOException {
       byte[] b = new byte[1];
       try {
@@ -462,19 +457,19 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         throw new IOException(e.getMessage());
       }
     }
-    
+
   }
-  
+
   private static class WinCEOutputStream extends OutputStream {
 
     private int handle;
     private IRapiSession session;
-    
+
     public WinCEOutputStream(IRapiSession session, int handle) {
       this.session = session;
       this.handle = handle;
     }
-    
+
     public void write(int b) throws IOException {
       try {
         session.writeFile(handle, new byte[] {(byte)b});
@@ -490,7 +485,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         throw new IOException(e.getMessage());
       }
     }
-    
+
     public void close() throws IOException {
       try {
         session.closeHandle(handle);

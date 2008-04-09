@@ -7,12 +7,12 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.services.search;
@@ -24,18 +24,18 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 
 
 /**
  * A remote search result set represents a page in the Remote Search view.
  * A search result set contains multiple search configurations and their results.
- * This allows it to contain results from multiple connections, filters, and folders 
+ * This allows it to contain results from multiple connections, filters, and folders
  * (from different systems).
  */
-public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable 
+public class HostSearchResultSet extends PlatformObject implements IHostSearchResultSet, IAdaptable
 {
-	
+
 	protected Vector configurations;
 	protected String name;
 
@@ -106,48 +106,48 @@ public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable
 	 * @see org.eclipse.rse.services.search.IHostSearchResultSet#getAllResults()
 	 */
 	public Object[] getAllResults() {
-		
+
 		List list = new ArrayList();
-		
+
 		Iterator iter = getSearchConfigurations();
-		
-		while (iter.hasNext()) 
+
+		while (iter.hasNext())
 		{
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
-			
-			list.addAll(Arrays.asList(config.getResults()));	 
+
+			list.addAll(Arrays.asList(config.getResults()));
 		}
-		
+
 		return list.toArray();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.search.IHostSearchResultSet#removeAllResults()
 	 */
 	public void removeAllResults() {
 
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
 			config.removeResults();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.search.IHostSearchResultSet#getNumOfResults()
 	 */
 	public int getNumOfResults() {
-		
+
 		int resultSize = 0;
-		
+
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
 			resultSize += config.getResultsSize();
 		}
-		
+
 		return resultSize;
 	}
 
@@ -155,13 +155,13 @@ public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable
 	 * @see org.eclipse.rse.services.search.IHostSearchResultSet#cancel()
 	 */
 	public void cancel() {
-		
+
 		// cancel each config that is running
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
-			
+
 			if (config.getStatus() == IHostSearchConstants.RUNNING) {
 				config.cancel();
 			}
@@ -173,60 +173,60 @@ public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable
 	 */
 	public void removeResult(Object result) {
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
 			config.removeResult(result);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.search.IHostSearchResultSet#removeAndAddResult(java.lang.Object, java.lang.Object)
 	 */
 	public void removeAndAddResult(Object oldResult, Object newResult) {
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
 			config.removeAndAddResult(oldResult, newResult);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.search.IHostSearchResultSet#dispose()
 	 */
 	public void dispose() {
-		
+
 		// first cancel all configs that are still running
 		cancel();
-		
+
 		// now dispose each configuration
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
 			config.dispose();
 		}
-		
+
 		// remove all the configurations
 		configurations.removeAllElements();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.search.IHostSearchResultSet#isCancelled()
 	 */
 	public boolean isCancelled() {
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
-			
+
 			// if a config is not cancelled, the search is not cancelled
 			if (config.getStatus() != IHostSearchConstants.CANCELED) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -235,16 +235,16 @@ public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable
 	 */
 	public boolean isFinished() {
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
-			
+
 			// if a config is not finished, the search is not finished
 			if (config.getStatus() != IHostSearchConstants.FINISHED) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -253,16 +253,16 @@ public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable
 	 */
 	public boolean isRunning() {
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
-			
+
 			// if a config is running, the search is running
 			if (config.getStatus() == IHostSearchConstants.RUNNING) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -271,23 +271,17 @@ public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable
 	 */
 	public boolean isDisconnected() {
 		Iterator iter = getSearchConfigurations();
-		
+
 		while (iter.hasNext()) {
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
-			
+
 			// if a config is not disconnected, the search is not disconnected
 			if (config.getStatus() != IHostSearchConstants.DISCONNECTED) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return Platform.getAdapterManager().getAdapter(this, adapter);
-	}
+
 }

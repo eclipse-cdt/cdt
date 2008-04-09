@@ -1,15 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 MontaVista Software, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2006, 2008 MontaVista Software, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
- * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere 
+ * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -36,7 +37,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShell
 
 /**
  * class to fetch remote linux target's process info
- * 
+ *
  */
 public class LinuxShellProcessService extends AbstractProcessService {
 
@@ -54,7 +55,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
 
     /**
      * constructor
-     * 
+     *
      * @param host the connection to work on
      */
     public LinuxShellProcessService(final IHost host) {
@@ -167,11 +168,11 @@ public class LinuxShellProcessService extends AbstractProcessService {
         } catch (IOException e) {
             Activator.log(e);
         }
-        
+
         // Wait for remote process to exit.
         WaiterJob waiter = new WaiterJob(p);
         waiter.schedule();
-        
+
         return (IHostProcess[]) hostProcessList
                 .toArray(new IHostProcess[hostProcessList.size()]);
     }
@@ -185,12 +186,10 @@ public class LinuxShellProcessService extends AbstractProcessService {
     }
 
     public void initService(final IProgressMonitor monitor) {
+    	super.initService(monitor);
         linuxProcessHelper = new LinuxProcessHelper();
         // initialize username /uid hashmap before getting any process
         linuxProcessHelper.populateUsernames(host);
-    }
-
-    public void uninitService(final IProgressMonitor monitor) {
     }
 
     private boolean progressWorked(final IProgressMonitor monitor,
@@ -207,7 +206,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
      * Returns a list of the signal types supported by the 'kill' command on
      * this system. Signal Types will be used in the Kill dialog for user to
      * choose which signal they want to use for killing a process.
-     * 
+     *
      * @return a list of the signal types or null if there are none or there is
      *         an error in executing the kill command.
      */
@@ -253,7 +252,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
         } catch (IOException e) {
             Activator.log(e);
         }
-        
+
         // Wait for remote process to exit.
         WaiterJob waiter = new WaiterJob(p);
         waiter.schedule();

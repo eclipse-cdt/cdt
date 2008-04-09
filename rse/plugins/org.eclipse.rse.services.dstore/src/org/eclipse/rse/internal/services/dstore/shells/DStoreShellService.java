@@ -7,15 +7,16 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout
- * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup 
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -41,24 +42,24 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	protected String[] _envVars;
 	protected DataElement _envMinerElement;
 	protected DataElement _envMinerStatus;
-	
+
 	public DStoreShellService(IDataStoreProvider dataStoreProvider)
 	{
 		super(dataStoreProvider);
 	}
-	
-	
+
+
 	public String getName()
 	{
 		return ServiceResources.DStore_Shell_Service_Label;
 	}
-	
+
 	public String getDescription()
 	{
 		return ServiceResources.DStore_Shell_Service_Description;
 	}
-	
-	
+
+
 	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor)
 	{
 		if (!isInitialized())
@@ -120,7 +121,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		}
 		return _envVars;
 	}
-	
+
 	protected String getMinerId()
 	{
 		return IUniversalDataStoreConstants.UNIVERSAL_COMMAND_MINER_ID;
@@ -130,8 +131,8 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	{
 		return IUniversalDataStoreConstants.UNIVERSAL_ENVIRONMENT_MINER_ID;
 	}
-	
-	
+
+
 	public boolean isInitialized()
 	{
 		if (_initializeStatus != null)
@@ -141,7 +142,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		}
 		return false;
 	}
-	
+
 	protected void waitForInitialize(IProgressMonitor monitor)
 	{
 		if (_envMinerStatus!= null)
@@ -158,7 +159,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 				{
 					monitor.setCanceled(true);
 				}
-				
+
 				//InterruptedException is used to report user cancellation, so no need to log
 				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}
@@ -166,28 +167,28 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		}
 		super.waitForInitialize(monitor);
 	}
-	
+
 	public void uninitService(IProgressMonitor monitor)
 	{
-		super.uninitService(monitor);
 		_envMinerElement = null;
-		_envMinerStatus = null;		
+		_envMinerStatus = null;
+		super.uninitService(monitor);
 	}
-	
+
 	protected void initMiner(IProgressMonitor monitor)
 	{
 		// init env miner first
 
 			if (getServerVersion() >= 8)
 			{
-				String minerId = getEnvSystemMinerId();		
+				String minerId = getEnvSystemMinerId();
 				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId); //$NON-NLS-1$
 				monitor.beginTask(message, IProgressMonitor.UNKNOWN);
 				DataStore ds = getDataStore();
 				if (_envMinerElement == null || _envMinerElement.getDataStore() != ds)
-				{	
+				{
 					if (ds != null && _envMinerStatus == null)
-					{				
+					{
 						_envMinerStatus = ds.activateMiner(minerId);
 						/*
 						DStoreStatusMonitor smon = getStatusMonitor(ds);
@@ -199,15 +200,15 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 						{
 							e.printStackTrace();
 						}
-						
+
 						getMinerElement(getEnvSystemMinerId());
 						*/
-						
-						
-					}			
+
+
+					}
 				}
 				super.initMiner(monitor);
-			}	
+			}
 	}
-	
+
 }

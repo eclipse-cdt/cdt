@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * David McKnight   (IBM)        - [220241] JJ: IRemoteFileSubSystem.list() on the Local file subsystem does not return correct results
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1543,15 +1544,6 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 		}
 		return (rc == 0);
-	}
-
-	public void initService(IProgressMonitor monitor)
-	{
-
-	}
-
-	public void uninitService(IProgressMonitor monitor)
-	{
 	}
 
 	public boolean isCaseSensitive()

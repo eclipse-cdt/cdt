@@ -1,0 +1,32 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Martin Oberhuber (Wind River)">
+   <meta name="Copyright" content="Copyright (c) 2008 Wind River Systems, Inc. and others.">
+   <meta name="License" content="Made available under the terms of the Eclipse Public License v1.0.">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Application programming interface for the RSE Services Layer.
+<h2>
+Package Specification</h2>
+<p>
+The RSE Services layer provides interfaces and basic utility classes
+for remote operations. There is no restriction whatsoever about the
+kind of those operations, and actually there isn't even a need for
+remote systems to be involved. The Services defined here provide
+basic functionality for RSE to operate on.
+</p><p>
+The RSE Services layer is designed to have only minimal dependency into
+Eclipse core APIs, such that Services can eventually be re-used in
+environments outside Eclipse. This can be done today by providing a library
+with mock objects for the few Eclipse interfaces that Services currently use:
+<code>IAdaptable</code>, <code>IProgressMonitor</code>,
+<code>IStatus</code>, <code>NLS</code>, <code>PlatformObject</code>
+and few others related to the Eclipse Extension Registry, which are only
+used in the Activator and can thus be replaced easily by a different 
+mechanisms for providing extensions.
+</p>
+</body>
+</html>

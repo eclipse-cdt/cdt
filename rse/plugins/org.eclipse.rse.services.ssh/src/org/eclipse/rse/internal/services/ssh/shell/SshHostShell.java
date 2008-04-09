@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,16 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalHostShell.
  * David McKnight   (IBM)        - [191599] Use the remote encoding specified in the host property page
  * David McKnight   (IBM)        - [196301] Check that the remote encoding isn't null before using it
  * Martin Oberhuber (Wind River) - [204744] Honor encoding in SSH command input field
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.shell;
@@ -53,7 +54,7 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 	private SshShellOutputReader fStdoutHandler;
 	private SshShellOutputReader fStderrHandler;
 	private SshShellWriterThread fShellWriter;
-	
+
 	public SshHostShell(ISshSessionProvider sessionProvider, String initialWorkingDirectory, String commandToRun, String encoding, String[] environment) {
 		try {
 			fSessionProvider = sessionProvider;
@@ -66,7 +67,7 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    //if(commandToRun!=null && !commandToRun.equals(SHELL_INVOCATION) & (fChannel instanceof ChannelShell)) {
 		    //	((ChannelShell)fChannel).setPty(false);
 		    //}
-		    
+
 		    //Try to set the user environment. On most sshd configurations, this will
 		    //not work since in sshd_config, PermitUserEnvironment and AcceptEnv
 		    //settings are disabled. Still, it's worth a try.
@@ -91,6 +92,9 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    }
 		    else
 		    {
+		    	// default encoding - same as
+				// System.getProperty("file.encoding")
+				// TODO should try to determine remote encoding if possible
 		    	fStdoutHandler = new SshShellOutputReader(this, new BufferedReader(new InputStreamReader(fChannel.getInputStream())), false);
 		    }
 			fStderrHandler = new SshShellOutputReader(this, null,true);
@@ -106,10 +110,10 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 				fShellWriter = new SshShellWriterThread(outputWriter);
 			}
 		    fChannel.connect();
-		    if (initialWorkingDirectory!=null && initialWorkingDirectory.length()>0 
+		    if (initialWorkingDirectory!=null && initialWorkingDirectory.length()>0
 		    	&& !initialWorkingDirectory.equals(".") //$NON-NLS-1$
 		    	&& !initialWorkingDirectory.equals("Command Shell") //$NON-NLS-1$ //FIXME workaround for bug 153047
-		    ) { 
+		    ) {
 			    writeToShell("cd "+PathUtility.enQuoteUnix(initialWorkingDirectory)); //$NON-NLS-1$
 		    } else if (SHELL_INVOCATION.equals(commandToRun)) {
 		    	writeToShell(getPromptCommand());
@@ -135,9 +139,9 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 	}
 
 	/**
-	 * Connect to remote system and launch Threads for the
-	 * shell as needed.
-	 * @param monitor
+	 * Connect to remote system and launch Threads for the shell as needed.
+	 * 
+	 * @param monitor progress monitor for long-running operation
 	 */
 	protected void start(IProgressMonitor monitor)
 	{
@@ -162,11 +166,11 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 	}
 
 	private static final Pattern cdCommands = Pattern.compile("\\A\\s*(cd|chdir|ls)\\b"); //$NON-NLS-1$
-	
+
 	public String getPromptCommand() {
 		return "echo $PWD'>'"; //$NON-NLS-1$
 	}
-	
+
 	public void writeToShell(String command) {
 		if (isActive()) {
 			if ("#break".equals(command)) { //$NON-NLS-1$

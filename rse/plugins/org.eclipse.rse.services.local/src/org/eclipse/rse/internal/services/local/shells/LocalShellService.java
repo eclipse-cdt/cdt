@@ -1,17 +1,18 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
@@ -25,33 +26,26 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.local.ILocalService;
 import org.eclipse.rse.internal.services.local.LocalServiceResources;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.shells.AbstractShellService;
 import org.eclipse.rse.services.shells.IHostShell;
-import org.eclipse.rse.services.shells.IShellService;
 
-public class LocalShellService implements IShellService, ILocalService
+public class LocalShellService extends AbstractShellService implements ILocalService
 {
 	private static final String SHELL_INVOCATION = ">"; //$NON-NLS-1$
 	private String[] _envVars;
-	
+
 	public LocalShellService()
 	{
 	}
-	
+
 	public String getName()
 	{
 		return LocalServiceResources.Local_Shell_Service_Name;
 	}
-	
+
 	public String getDescription()
 	{
 		return LocalServiceResources.Local_Shell_Service_Description;
-	}
-	
-	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor)
-	{
-		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return launchShell(initialWorkingDirectory, defaultEncoding, environment, monitor);
 	}
 
 	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor)
@@ -61,12 +55,6 @@ public class LocalShellService implements IShellService, ILocalService
 		return hostShell;
 	}
 
-	public IHostShell runCommand(String initialWorkingDirectory, String command, String[] environment, IProgressMonitor monitor)
-	{
-		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return runCommand(initialWorkingDirectory, command, defaultEncoding, environment, monitor);
-	}
-	
 	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor)
 	{
 		LocalHostShell hostShell = new LocalHostShell(initialWorkingDirectory,command, encoding, environment);
@@ -81,7 +69,7 @@ public class LocalShellService implements IShellService, ILocalService
 			List envVars = new ArrayList();
 
 			String[] envCommand = new String[3];
-			//If we're on windows, change the envCommand. 
+			//If we're on windows, change the envCommand.
 			if (System.getProperty("os.name").toLowerCase().startsWith("win")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				envCommand[0] = "cmd"; //$NON-NLS-1$
@@ -132,17 +120,4 @@ public class LocalShellService implements IShellService, ILocalService
 		return _envVars;
 	}
 
-	public void initService(IProgressMonitor monitor)
-	{
-		
-	}
-	
-	public void uninitService(IProgressMonitor monitor)
-	{
-		
-	}
-	public SystemMessage getMessage(String messageID)
-	{
-		return null;
-	}
 }

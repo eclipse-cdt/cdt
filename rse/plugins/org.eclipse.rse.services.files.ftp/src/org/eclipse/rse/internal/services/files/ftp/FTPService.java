@@ -72,6 +72,7 @@
  * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Javier Montalvo Orus (Symbian) - [212382] additional "initCommands" slot for ftpListingParsers extension point
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1380,14 +1381,6 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		}
 
 		return hasSucceeded;
-	}
-
-	public void initService(IProgressMonitor monitor)
-	{
-	}
-
-	public void uninitService(IProgressMonitor monitor)
-	{
 	}
 
 	public boolean isCaseSensitive()

@@ -1,20 +1,21 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
- * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
+ * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout
  * David McKnight   (IBM)        - [159092] For to use correct process miner id
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.processes;
@@ -37,10 +38,9 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 import org.eclipse.rse.services.processes.AbstractProcessService;
-import org.eclipse.rse.services.processes.IProcessService;
 
-
-public class DStoreProcessService extends AbstractProcessService implements IProcessService
+public class DStoreProcessService extends AbstractProcessService
+// TODO implements IDStoreService ?
 {
 	protected IDataStoreProvider _provider;
 	protected DataElement _minerElement = null;
@@ -48,23 +48,23 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	protected DataElement _procMinerStatus;
 	protected String[] _statusTypes;
 	protected String _userName;
-	
+
 	public DStoreProcessService(IDataStoreProvider provider)
 	{
 		_provider = provider;
 	}
-	
+
 	public String getName()
 	{
 		return ServiceResources.DStore_Process_Service_Label;
 	}
-	
+
 	public String getDescription()
 	{
 		return ServiceResources.DStore_Process_Service_Description;
 	}
-	
-	public IHostProcess[] listAllProcesses(IHostProcessFilter filter, IProgressMonitor monitor) throws SystemMessageException 
+
+	public IHostProcess[] listAllProcesses(IHostProcessFilter filter, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (!isInitialized())
 		{
@@ -74,12 +74,12 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 
 		DataStore ds = getDataStore();
 		DataElement universaltemp = getMinerElement();
-	
+
 		// create filter descriptor
 		DataElement deObj;
 		deObj = ds.find(universaltemp, DE.A_NAME, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_ROOT, 1);
 		if (deObj == null) deObj = ds.createObject(universaltemp, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_FILTER, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_ROOT, "", "", false); //$NON-NLS-1$ //$NON-NLS-2$
-		deObj.setAttribute(DE.A_SOURCE, filter.toString());		
+		deObj.setAttribute(DE.A_SOURCE, filter.toString());
 
 		// query
 		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), IUniversalProcessDataStoreConstants.C_PROCESS_FILTER_QUERY_ALL);
@@ -102,13 +102,13 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			if (nested != null)
 			{
 				Object[] results = nested.toArray();
-	
+
 				String message = status.getAttribute(DE.A_VALUE);
 				if (!message.equals(ISystemProcessRemoteConstants.PROCESS_MINER_SUCCESS))
 				{
 					throw new SystemMessageException(getMessage("RSEPG1301")); //$NON-NLS-1$
 				}
-						
+
 				// convert objects to remote files
 				String userName = getRemoteUserName();
 				if (userName != null && filter.getUsername().equals("${user.id}")) //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 
 		return processes;
 	}
-	
+
 	/**
 	 * Helper method to convert DataElement objects to IRemoteClientProcess objects.
 	 */
@@ -131,7 +131,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	{
 		if (objs == null)
 			return null;
-				
+
 		ArrayList list = new ArrayList(objs.length);
 
 		for (int idx = 0; idx < objs.length; idx++)
@@ -141,9 +141,9 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			{
 				if (processFilter == null || processFilter.allows(de.getValue()))
 				{
-					DStoreHostProcess newProcess = new DStoreHostProcess(de);				
+					DStoreHostProcess newProcess = new DStoreHostProcess(de);
 					list.add(newProcess);
-				}	
+				}
 			}
 		}
 
@@ -156,7 +156,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 
 		return processes;
 	}
-	
+
 	/**
 	 * Helper method to return the DataStore object needed by comm layer.
 	 */
@@ -164,18 +164,18 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	{
 		return _provider.getDataStore();
 	}
-	
+
 	protected DataElement getMinerElement()
 	{
 
 	    if (_minerElement == null || _minerElement.getDataStore() != getDataStore())
 	    {
 	        _minerElement = getDataStore()
-				.findMinerInformation(IUniversalDataStoreConstants.UNIVERSAL_PROCESS_MINER_ID); 
+				.findMinerInformation(IUniversalDataStoreConstants.UNIVERSAL_PROCESS_MINER_ID);
 	    }
 	    return _minerElement;
 	}
-	
+
 	public DStoreStatusMonitor getStatusMonitor(DataStore dataStore)
 	{
 		if (_statusMonitor == null || _statusMonitor.getDataStore() != dataStore)
@@ -185,31 +185,31 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		return _statusMonitor;
 	}
 
-	public boolean kill(long PID, String signal, IProgressMonitor monitor) throws SystemMessageException 
+	public boolean kill(long PID, String signal, IProgressMonitor monitor) throws SystemMessageException
 	{
 		try
 		{
 			DataStore ds = getDataStore();
-		
+
 			// run kill command on host
 			DStoreHostProcess process = (DStoreHostProcess) getProcess(PID, monitor);
-			
+
 			// if there is no process, simply return true
 			if (process == null) {
 				return true;
 			}
-			
+
 			DataElement deObj = (DataElement) process.getObject();
 			DataElement killCmd = ds.localDescriptorQuery(deObj.getDescriptor(), IUniversalProcessDataStoreConstants.C_PROCESS_KILL);
 			deObj.setAttribute(DE.A_SOURCE, signal);
-			
+
 			if (killCmd != null)
 			{
 				DataElement status = ds.command(killCmd, deObj, true);
-	
+
 			    DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
 				smon.waitForUpdate(status);
-				
+
 				// get results
 				String message = status.getAttribute(DE.A_VALUE);
 				if (message.equals(ISystemProcessRemoteConstants.PROCESS_MINER_SUCCESS)) return true;
@@ -229,10 +229,10 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		{
 			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
 		}
-		return false;	
+		return false;
 	}
-	
-	public String[] getSignalTypes() 
+
+	public String[] getSignalTypes()
 	{
 		if (_statusTypes != null)
 		{
@@ -244,7 +244,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		}
 		return _statusTypes;
 	}
-	
+
 	/**
 	 * Returns a list of the types of signals that can be sent to
 	 * a process on the remote system.
@@ -266,7 +266,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			return null;
 		}
 	}
-	
+
 	protected DataElement getSignalTypesMinerElement()
 	{
 		return getDataStore().find(_minerElement, DE.A_NAME, "universal.killinfo"); //$NON-NLS-1$
@@ -274,17 +274,19 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 
 	public void initService(IProgressMonitor monitor)
 	{
+		super.initService(monitor);
 		initMiner(monitor);
 	}
-	
+
 	public void uninitService(IProgressMonitor monitor)
 	{
 		_minerElement = null;
 		_procMinerStatus = null;
 		_minerElement = null;
 		_statusMonitor = null;
+		super.uninitService(monitor);
 	}
-	
+
 	public boolean isInitialized()
 	{
 		if (_procMinerStatus != null)
@@ -294,7 +296,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		}
 		return false;
 	}
-	
+
 	protected void waitForInitialize(IProgressMonitor monitor)
 	{
 		if (_procMinerStatus!= null)
@@ -311,14 +313,14 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				{
 					monitor.setCanceled(true);
 				}
-				
+
 				//InterruptedException is used to report user cancellation, so no need to log
 				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}
 			getMinerElement();
 		}
 	}
-	
+
 
 
 	protected void initMiner(IProgressMonitor monitor)
@@ -328,30 +330,30 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		{
 			if (getServerVersion() >= 8)
 			{
-				String minerId = getMinerId();		
+				String minerId = getMinerId();
 				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId); //$NON-NLS-1$
 				monitor.beginTask(message, IProgressMonitor.UNKNOWN);
 				DataStore ds = getDataStore();
 				if (_minerElement == null || _minerElement.getDataStore() != ds)
-				{	
+				{
 					if (ds != null && _procMinerStatus == null)
-					{			
-						_procMinerStatus = ds.activateMiner(minerId);					
-						
-					}			
+					{
+						_procMinerStatus = ds.activateMiner(minerId);
+
+					}
 				}
 			}
 		}
 		monitor.done();
 	}
-	
+
 	/**
 	 * Get the username used to connect to the remote machine
 	 */
 	public String getRemoteUserName()
 	{
 		if (_userName == null)
-		{		
+		{
 			DataStore ds = getDataStore();
 
 			DataElement encodingElement = ds.createObject(null, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_TEMP, ""); //$NON-NLS-1$
@@ -364,29 +366,29 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				monitor.waitForUpdate(status);
 			}
 			catch (Exception e)
-			{				
+			{
 			}
 
 			_userName = encodingElement.getValue();
 		}
 		return _userName;
 	}
-	
+
 	protected String getMinerId()
 	{
 		return IUniversalDataStoreConstants.UNIVERSAL_PROCESS_MINER_ID;
 	}
-	
+
 	public int getServerVersion()
 	{
 		return getDataStore().getServerVersion();
 	}
-	
+
 	public int getServerMinor()
 	{
 		return getDataStore().getServerMinor();
 	}
-	
+
 	protected String getProcessMinerId()
 	{
 		return IUniversalDataStoreConstants.UNIVERSAL_PROCESS_MINER_ID;

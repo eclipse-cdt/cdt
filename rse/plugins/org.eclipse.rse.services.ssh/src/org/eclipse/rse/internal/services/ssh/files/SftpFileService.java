@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [224799] Fix JSch encoding problems with Arabic filenames
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -1068,6 +1069,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 
 	public void initService(IProgressMonitor monitor) {
 		Activator.trace("SftpFileService.initService"); //$NON-NLS-1$
+		super.initService(monitor);
 		try
 		{
 			connect();
@@ -1080,6 +1082,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	public void uninitService(IProgressMonitor monitor) {
 		Activator.trace("SftpFileService.uninitService"); //$NON-NLS-1$
 		disconnect();
+		super.uninitService(monitor);
 	}
 
 	public boolean isCaseSensitive() {

@@ -7,16 +7,17 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
- * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout  
+ * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout
  * David McKnight   (IBM)        - [207095] check for null datastore
  * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore;
@@ -31,23 +32,24 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
+import org.eclipse.rse.services.AbstractService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 
-public abstract class AbstractDStoreService implements IDStoreService
+public abstract class AbstractDStoreService extends AbstractService implements IDStoreService
 {
 	protected IDataStoreProvider _dataStoreProvider;
 	protected DataElement _minerElement;
 	protected DStoreStatusMonitor _statusMonitor;
 	protected Map _cmdDescriptorMap;
 	protected DataElement _initializeStatus;
-	
+
 	public AbstractDStoreService(IDataStoreProvider dataStoreProvider)
 	{
 		_dataStoreProvider = dataStoreProvider;
 		_cmdDescriptorMap = new HashMap();
 	}
-	
+
 	public DStoreStatusMonitor getStatusMonitor(DataStore dataStore)
 	{
 		if (_statusMonitor == null || _statusMonitor.getDataStore() != dataStore)
@@ -56,12 +58,12 @@ public abstract class AbstractDStoreService implements IDStoreService
 		}
 		return _statusMonitor;
 	}
-	
+
 	public DataStore getDataStore()
 	{
 		return _dataStoreProvider.getDataStore();
 	}
-	
+
 	protected DataElement getMinerElement()
 	{
 		if (_minerElement == null || _minerElement.getDataStore() != getDataStore())
@@ -70,20 +72,20 @@ public abstract class AbstractDStoreService implements IDStoreService
 		}
 		return _minerElement;
 	}
-	
+
 	protected DataElement getMinerElement(String id)
-	{	    
+	{
 		DataStore ds = getDataStore();
 		if (ds != null)
 		{
-			return ds.findMinerInformation(id);	        
+			return ds.findMinerInformation(id);
 		}
 		else
 		{
 			return null;
 		}
 	}
-	 
+
 	protected DataElement[] dsQueryCommand(DataElement subject, String command, IProgressMonitor monitor)
 	{
 		return dsQueryCommand(subject, null, command, monitor);
@@ -103,7 +105,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		DataElement queryCmd = getCommandDescriptor(subject, command);
 		DataStore ds = getDataStore();
 		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
-		
+
 		if (queryCmd != null && ds != null)
 		{
 			// check if there already is an active command for this query
@@ -119,7 +121,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 			try
 			{
 				smonitor.waitForUpdate(status, monitor);
-				
+
 				int resultSize = subject.getNestedSize();
 
 				checkHostJVM();
@@ -131,26 +133,26 @@ public abstract class AbstractDStoreService implements IDStoreService
 				}
 			}
 			catch (InterruptedException e)
-			{	
+			{
 				// cancel monitor if it's still not canceled
 				if (monitor != null && !monitor.isCanceled())
 				{
 					monitor.setCanceled(true);
 				}
-				
+
 				//InterruptedException is used to report user cancellation, so no need to log
 				//This should be reviewed (use OperationCanceledException) with bug #190750
-			}			
+			}
 		}
 
 		return new DataElement[0];
 	}
-	
+
 	protected List dsQueryCommandMulti(DataElement[] subjects, String[] commands, IProgressMonitor monitor)
 	{
 		return dsQueryCommandMulti(subjects, null, commands, monitor);
 	}
-	
+
 	/**
 	 * Query multiple subjects in one shot
 	 * @param subjects the subjects to query
@@ -162,20 +164,20 @@ public abstract class AbstractDStoreService implements IDStoreService
 	protected List dsQueryCommandMulti(DataElement[] subjects, ArrayList[] argses, String[] commands, IProgressMonitor monitor)
 	{
 		List statuses = new ArrayList();
-		DataStore ds = getDataStore();	
+		DataStore ds = getDataStore();
 		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
-		
-	
+
+
 		for (int i = 0; i < subjects.length && !monitor.isCanceled(); i++)
 		{
 			DataElement subject = subjects[i];
-			
+
 			DataElement queryCmd = getCommandDescriptor(subject, commands[i]);
 			if (queryCmd != null && ds != null)
-			{					
+			{
 				// check if there already is an active command for this query
 				DataElement status = smonitor.getCommandStatus(queryCmd, subject);
-				
+
 				if (status == null){
 					if (argses != null){
 						status = ds.command(queryCmd, argses[i], subject, true);
@@ -184,65 +186,65 @@ public abstract class AbstractDStoreService implements IDStoreService
 						status = ds.command(queryCmd, subject, true);
 					}
 				}
-				statuses.add(status);				
+				statuses.add(status);
 			}
 		}
 
 		List consolidatedResults = new ArrayList();
-		
+
 		// wait for each command to complete
 		for (int i = 0; i < statuses.size() && !monitor.isCanceled(); i++)
 		{
 		    DataElement status = (DataElement)statuses.get(i);
 		    DataElement deObj = subjects[i];
-		    
+
 		    try
 		    {
-		    	smonitor.waitForUpdate(status, monitor);		 		    
-		    	
+		    	smonitor.waitForUpdate(status, monitor);
+
 			    if (!monitor.isCanceled() && smonitor.determineStatusDone(status))
 			    {
 			    	List nested = deObj.getNestedData();
 			    	if (nested != null)
 			    	{
 			    		consolidatedResults.add(nested.toArray(new DataElement[nested.size()]));
-			    	}			    	
+			    	}
 			    }
 			}
 		    catch (InterruptedException e)
-		    {				
+		    {
 		    	// cancel monitor if it's still not canceled
 		    	if (monitor != null && !monitor.isCanceled())
 		    	{
 		    		monitor.setCanceled(true);
 		    	}
-			
+
 			//InterruptedException is used to report user cancellation, so no need to log
 			//This should be reviewed (use OperationCanceledException) with bug #190750
-		    }	
+		    }
 		}
-		
+
 		return consolidatedResults;
 	}
-	
-	
-	
 
-	
-	
+
+
+
+
+
 	protected DataElement dsStatusCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
 		DataStore ds = getDataStore();
 		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
 
 		DataElement queryCmd = getCommandDescriptor(subject, command);
-	
+
 		if (queryCmd != null && ds != null)
 		{
 			// check if there already is an active command for this query
 			DataElement status = smonitor.getCommandStatus(queryCmd, subject);
-			
-			if (status == null){ 
+
+			if (status == null){
 				status = ds.command(queryCmd, args, subject, true);
 			}
 			try
@@ -250,35 +252,35 @@ public abstract class AbstractDStoreService implements IDStoreService
 				smonitor.waitForUpdate(status, monitor);
 			}
 			catch (InterruptedException e)
-			{				
+			{
 				// cancel monitor if it's still not canceled
 				if (monitor != null && !monitor.isCanceled())
 				{
 					monitor.setCanceled(true);
 				}
-				
+
 				//InterruptedException is used to report user cancellation, so no need to log
 				//This should be reviewed (use OperationCanceledException) with bug #190750
-			}	
+			}
 			return status;
 		}
 		return null;
 	}
-	
-	
+
+
 	protected DataElement dsStatusCommand(DataElement subject, String command, IProgressMonitor monitor)
 	{
 		DataStore ds = getDataStore();
 		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
 
-		DataElement queryCmd = getCommandDescriptor(subject, command);	
-		
+		DataElement queryCmd = getCommandDescriptor(subject, command);
+
 		if (queryCmd != null && ds != null)
-		{			
+		{
 			// check if there already is an active command for this query
 			DataElement status = smonitor.getCommandStatus(queryCmd, subject);
-			
-			if (status == null){ 
+
+			if (status == null){
 				status = ds.command(queryCmd, subject, true);
 			}
 			try
@@ -286,13 +288,13 @@ public abstract class AbstractDStoreService implements IDStoreService
 				smonitor.waitForUpdate(status, monitor);
 			}
 			catch (InterruptedException e)
-			{				
+			{
 				// cancel monitor if it's still not canceled
 				if (monitor != null && !monitor.isCanceled())
 				{
 					monitor.setCanceled(true);
 				}
-				
+
 				//InterruptedException is used to report user cancellation, so no need to log
 				//This should be reviewed (use OperationCanceledException) with bug #190750
 
@@ -301,7 +303,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		}
 		return null;
 	}
-	
+
 	protected DataElement getCommandDescriptor(DataElement subject, String command)
 	{
 		DataStore ds = getDataStore();
@@ -316,7 +318,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		}
 		return cmd;
 	}
-	
+
 	public int getServerVersion()
 	{
 		DataStore ds = getDataStore();
@@ -324,7 +326,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 			return ds.getServerVersion();
 		return 0;
 	}
-	
+
 	public int getServerMinor()
 	{
 		DataStore ds = getDataStore();
@@ -332,25 +334,25 @@ public abstract class AbstractDStoreService implements IDStoreService
 			return ds.getServerMinor();
 		return 0;
 	}
-	
+
 	protected void checkHostJVM()
 	{
 		/*
 		DataElement status = getDataStore().queryHostJVM();
 		String source = status.getSource();
 		String[] tokens = source.split(",");
-		
+
 		long freeMem = Long.parseLong(tokens[0]);
 		long totalMem = Long.parseLong(tokens[1]);
 
 		int numElements = Integer.parseInt(tokens[3]);
-		
+
 		System.out.println("Host JVM Stats:");
 		System.out.println("\tfreeMem="+freeMem);
 		System.out.println("\ttotalMem="+totalMem);
-	
+
 		System.out.println("\tnumber of elements="+numElements);
-		
+
 		String[] lastCreated = tokens[4].split(";");
 		System.out.println("\tlast created:");
 		for (int i = 0; i < lastCreated.length; i++)
@@ -359,7 +361,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		}
 		*/
 	}
-	
+
 	public boolean isInitialized()
 	{
 		if (_initializeStatus != null)
@@ -373,7 +375,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		}
 		return false;
 	}
-	
+
 	protected void waitForInitialize(IProgressMonitor monitor)
 	{
 		if (_initializeStatus != null)
@@ -393,27 +395,29 @@ public abstract class AbstractDStoreService implements IDStoreService
 					{
 						monitor.setCanceled(true);
 					}
-				
+
 					//InterruptedException is used to report user cancellation, so no need to log
 					//This should be reviewed (use OperationCanceledException) with bug #190750
 				}
-			
+
 				getMinerElement();
 			}
 		}
 	}
-	
+
 	public void initService(IProgressMonitor monitor)
 	{
+		super.initService(monitor);
 		initMiner(monitor);
 	}
-	
+
 	public void uninitService(IProgressMonitor monitor)
 	{
 		_initializeStatus = null;
 		_cmdDescriptorMap.clear();
 		_minerElement = null;
 		_statusMonitor = null;
+		super.uninitService(monitor);
 	}
 
 	protected void initMiner(IProgressMonitor monitor)
@@ -428,9 +432,9 @@ public abstract class AbstractDStoreService implements IDStoreService
 				monitor.beginTask(message, IProgressMonitor.UNKNOWN);
 				DataStore ds = getDataStore();
 				if (_minerElement == null || _minerElement.getDataStore() != ds)
-				{	
+				{
 					if (ds != null && _initializeStatus == null)
-					{				
+					{
 						_initializeStatus = ds.activateMiner(minerId);
 						/*
 						DStoreStatusMonitor smon = getStatusMonitor(ds);
@@ -442,16 +446,16 @@ public abstract class AbstractDStoreService implements IDStoreService
 						{
 							e.printStackTrace();
 						}
-						
+
 						getMinerElement();
 						*/
-					}			
+					}
 				}
 			}
 		}
 		monitor.done();
 	}
-	
+
 	protected abstract String getMinerId();
 
 }

@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
@@ -24,6 +24,7 @@
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -36,15 +37,16 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.rse.services.AbstractService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 
-public abstract class AbstractFileService implements IFileService
+public abstract class AbstractFileService extends AbstractService implements IFileService
 {
-	
+
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
-	
-	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor) 
+
+	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor)
 								throws SystemMessageException
 	{
 		List results = new ArrayList();
@@ -55,12 +57,12 @@ public abstract class AbstractFileService implements IFileService
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
 
-	public IHostFile[] list(String remoteParent, String fileFilter, 
+	public IHostFile[] list(String remoteParent, String fileFilter,
 			int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return internalFetch(remoteParent, fileFilter, fileType, monitor);
 	}
-	
+
 	public IHostFile[] listMultiple(String[] remoteParents,
 			String[] fileFilters, int fileTypes[], IProgressMonitor monitor)
 			throws SystemMessageException {
@@ -74,7 +76,7 @@ public abstract class AbstractFileService implements IFileService
 				files.add(result[j]);
 			}
 		}
-		
+
 		return (IHostFile[])files.toArray(new IHostFile[files.size()]);
 	}
 
@@ -91,10 +93,10 @@ public abstract class AbstractFileService implements IFileService
 				files.add(result[j]);
 			}
 		}
-		
+
 		return (IHostFile[])files.toArray(new IHostFile[files.size()]);
 	}
-	
+
 	protected boolean isRightType(int fileType, IHostFile node)
 	{
 		switch (fileType)
@@ -104,12 +106,12 @@ public abstract class AbstractFileService implements IFileService
 		case IFileService.FILE_TYPE_FILES:
 			if (node.isFile())
 			{
-				return true;			
+				return true;
 			}
 			else
 			{
 				return false;
-			}				
+			}
 		case IFileService.FILE_TYPE_FOLDERS:
 			if (node.isDirectory())
 			{
@@ -121,7 +123,7 @@ public abstract class AbstractFileService implements IFileService
 			}
 			default:
 				return true;
-		} 
+		}
 	}
 
 
@@ -140,7 +142,7 @@ public abstract class AbstractFileService implements IFileService
 	 */
 	public boolean downloadMultiple(String[] remoteParents, String[] remoteFiles,
 			File[] localFiles, boolean[] isBinaries, String[] hostEncodings,
-			IProgressMonitor monitor) throws SystemMessageException 
+			IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean result = true;
 		for (int i = 0; i < remoteParents.length && result == true; i++)
@@ -161,7 +163,7 @@ public abstract class AbstractFileService implements IFileService
 	public boolean uploadMultiple(File[] localFiles, String[] remoteParents,
 			String[] remoteFiles, boolean[] isBinaries, String[] srcEncodings,
 			String[] hostEncodings, IProgressMonitor monitor)
-			throws SystemMessageException 
+			throws SystemMessageException
 	{
 		boolean result = true;
 		for (int i = 0; i < localFiles.length && result == true; i++)
@@ -169,7 +171,7 @@ public abstract class AbstractFileService implements IFileService
 			File localFile = localFiles[i];
 			String remoteParent = remoteParents[i];
 			String remoteFile = remoteFiles[i];
-			
+
 			boolean isBinary = isBinaries[i];
 			String srcEncoding = srcEncodings[i];
 			String hostEncoding = hostEncodings[i];
@@ -177,7 +179,7 @@ public abstract class AbstractFileService implements IFileService
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the local platform encoding by default. Subclasses should override to return the actual remote encoding.
 	 * @see org.eclipse.rse.services.files.IFileService#getEncoding(org.eclipse.core.runtime.IProgressMonitor)
@@ -196,15 +198,18 @@ public abstract class AbstractFileService implements IFileService
 	}
 
 	/**
-	 * Gets the output stream to write/append to a remote file.
-	 * The default implementation returns <code>null</code>.
-	 * Clients can override to return an output stream to the file.
-	 * @deprecated
+	 * Gets the output stream to write/append to a remote file. The default
+	 * implementation returns <code>null</code>. Clients can override to
+	 * return an output stream to the file.
+	 * 
+	 * @deprecated use
+	 *             {@link #getOutputStream(String, String, int, IProgressMonitor)}
+	 *             instead
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
-	
+
 	/**
 	 * Gets the output stream to write/append to a remote file.
 	 * The default implementation returns <code>null</code>.
@@ -219,7 +224,7 @@ public abstract class AbstractFileService implements IFileService
 		}
 		return null;
 	}
-	
+
 	/**
 	 * The default implementation returns false.  Clients should override this method if they make use
 	 * of IFileServiceCodePageConverter to do conversion during download and upload.

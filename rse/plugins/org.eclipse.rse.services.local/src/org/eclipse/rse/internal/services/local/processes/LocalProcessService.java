@@ -7,13 +7,14 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Kevin Doyle (IBM) - [199871] LocalProcessService needs to implement getMessage()
+ * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.processes;
@@ -32,30 +33,29 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.handlers.ProcessHandler;
 import org.eclipse.rse.services.clientserver.processes.handlers.ProcessHandlerManager;
 import org.eclipse.rse.services.processes.AbstractProcessService;
-import org.eclipse.rse.services.processes.IProcessService;
 
-public class LocalProcessService extends AbstractProcessService implements ILocalService, IProcessService 
-{	
+public class LocalProcessService extends AbstractProcessService implements ILocalService
+{
 	protected String[] _statusTypes;
 	protected ProcessHandler handler;
-	
+
 	public LocalProcessService()
 	{
 		handler = ProcessHandlerManager.getInstance().getNewProcessHandler();
 	}
-	
-	
+
+
 	public String getName()
 	{
 		return LocalServiceResources.Local_Process_Service_Name;
 	}
-	
+
 	public String getDescription()
 	{
 		return LocalServiceResources.Local_Process_Service_Description;
 	}
-	
-	public IHostProcess[] listAllProcesses(IHostProcessFilter filter, IProgressMonitor monitor) throws SystemMessageException 
+
+	public IHostProcess[] listAllProcesses(IHostProcessFilter filter, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IHostProcess[] processes = null;
 
@@ -72,18 +72,18 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 		return processes;
 	}
 
-	public boolean kill(long PID, String signal, IProgressMonitor monitor) throws SystemMessageException 
+	public boolean kill(long PID, String signal, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IHostProcess process = null;
 		try
 		{
 			process = getProcess(PID, monitor);
-			
+
 			// if there is no process, simply return true
 			if (process == null) {
 				return true;
 			}
-			
+
 			handler.kill(process, signal);
 			return true;
 		}
@@ -97,14 +97,14 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 			if (process != null) name += process.getName();
 			String pid = ""; //$NON-NLS-1$
 			if (process != null) pid += process.getPid();
-			
+
 			SystemMessage msg = getMessage("RSEPG1300"); //$NON-NLS-1$
 			msg.makeSubstitution(name + " (" + pid + ")", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new SystemMessageException(msg);
 		}
 	}
 
-	public String[] getSignalTypes() 
+	public String[] getSignalTypes()
 	{
 		if (_statusTypes != null)
 		{
@@ -116,7 +116,7 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 		}
 		return _statusTypes;
 	}
-	
+
 	/**
 	 * Returns a list of the signal types supported by the 'kill' command on this system
 	 * @return a list of the signal types or null if there are none or there is an error in
@@ -150,15 +150,6 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 			//SystemPlugin.logError("LocalProcessSubSystemImpl.getSignalTypes() 'kill -l' command failed.", e);
 			return null;
 		}
-	}
-
-	public void initService(IProgressMonitor monitor)
-	{
-		
-	}
-	
-	public void uninitService(IProgressMonitor monitor)
-	{
 	}
 
 }

@@ -79,4 +79,4 @@ feature@org.eclipse.cdt.core.lrparser.feature=@cdtTag@,:pserver:anonymous@dev.ec
 
 ! CDT Utilities
 plugin@org.eclipse.cdt.util=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/util/org.eclipse.cdt.util
-feature@org.eclipse.cdt.util.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/util/org.eclipse.cdt.util-feature
+feature@org.eclipse.cdt.util=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/util/org.eclipse.cdt.util-feature

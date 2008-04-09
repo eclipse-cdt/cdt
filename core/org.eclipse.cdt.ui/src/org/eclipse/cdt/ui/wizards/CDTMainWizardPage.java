@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -320,7 +321,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				if (wd.getParentId() == null) {
 					wd.setPath(wd.getId());
 					TreeItem ti = new TreeItem(tree, SWT.NONE);
-					ti.setText(wd.getName());
+					ti.setText(TextProcessor.process(wd.getName()));
 					ti.setData(wd.getHandler());
 					ti.setData(DESC, wd);
 					ti.setImage(calcImage(wd));

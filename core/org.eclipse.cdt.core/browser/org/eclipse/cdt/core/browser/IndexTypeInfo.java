@@ -120,7 +120,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	/**
 	 * Creates a type info object suitable for a macro.
 	 * @param index a non-null index in which to locate references
-	 * @param binding
+	 * @param macro a macro to create a type info for 
 	 * @since 4.0.1
 	 */
 	public static IndexTypeInfo create(IIndex index, IIndexMacro macro) {
@@ -149,14 +149,14 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	}
 	
 	/**
-	 * @deprecated, use {@link #create(IIndex, IBinding)}.
+	 * @deprecated, use {@link #create(IIndex, IIndexBinding)}.
 	 */
 	public IndexTypeInfo(String[] fqn, int elementType, IIndex index) {
 		this(fqn, null, elementType, index, null, null, null);
 	}
 
 	/**
-	 * @deprecated, use {@link #create(IIndex, IBinding)}.
+	 * @deprecated, use {@link #create(IIndex, IIndexBinding)}.
 	 */
 	public IndexTypeInfo(String[] fqn, int elementType, String[] params, String returnType, IIndex index) {
 		this(fqn, null, elementType, index, params, returnType, null);

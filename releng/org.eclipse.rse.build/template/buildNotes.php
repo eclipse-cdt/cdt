@@ -26,18 +26,25 @@
 <li>TM @buildId@ <b>requires Eclipse 3.3 later for the SSH component</b>.
   Other components may work with earlier Eclipse versions, but these have not been tested.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
-  Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
+  Discovery needs EMF, and the RemoteCDT integration needs CDT.<br>
+  <b>Building</b> the RSE SSH service requires <b>Eclipse 3.4M6</b> or later for the fix
+  of <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224799">bug 224799</a>;
+  the fix also requires 3.4M6 at runtime, but the code contains a backward 
+  compatibility fallback to also run on Eclipse 3.3 if that particular fix
+  is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
 <li>API: Several <b>SystemMessages and Shared Resource Strings</b> have been moved
   from RSEUIPlugin to non-UI
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
 <li>A new downloadable package is now available for the RSE User Actions framework
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187395">187395</a>].</li>
-<li>A new downloadable package is now available for Windows CE connectivity
+<li>A new downloadable package is now available for Windows CE connectivity. Thanks
+  to Radoslav Gerganov for contributing this new functionality
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=214887">214887</a>].</li>
 <li>The optional terminal input line is now resizeable
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196447">196447</a>].</li>
-<li>Tgz and tar.gz files are now supported by the DSore and Local archive handlers
+<li>Tgz and tar.gz files are now supported by the DSore and Local archive handlers.
+  Thanks to Johnson Ma for contributing this new functionality
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=195402">195402</a>].</li>
 <li>API: RSE Early Startup and initialization behavior was improved. New API was added
   for clients to register initialization handlers, or to query when initialization is
@@ -52,8 +59,8 @@
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211067">211067</a>]
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
 </ul></li>
-<li>At least 46 bugs were fixed: Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-04-07&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B345%5D">
+<li>At least 81 bugs were fixed: Use 
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-04-11&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B3457%5D">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M5-200802181400/">
@@ -256,6 +263,9 @@ We'll strive to fix these as soon as possible.
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - maj - [efs] Eclipse hangs on startup of a Workspace with a large efs-shared file system on a slow connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197027">bug 197027</a> - maj - [persistence] Can lose data if close Eclipse before saving profile completes</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=219934">bug 219934</a> - maj - [regression][dnd] Cannot Copy & Paste / Drag&Drop remote to Resource Navigator</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj -   	[persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

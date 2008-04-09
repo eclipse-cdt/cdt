@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.cdt.util_feature"
+      id="org.eclipse.cdt.util"
       label="%featureName"
       version="5.0.0.qualifier"
       provider-name="%providerName"

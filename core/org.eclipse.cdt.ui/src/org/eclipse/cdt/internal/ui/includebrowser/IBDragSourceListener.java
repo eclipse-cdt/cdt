@@ -42,7 +42,7 @@ public class IBDragSourceListener implements DragSourceListener {
         fSelectedNodes.clear();
         if (event.doit) {
             IStructuredSelection sel= (IStructuredSelection) fTreeViewer.getSelection();
-            for (Iterator iter = sel.iterator(); iter.hasNext();) {
+            for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
                 Object element = iter.next();
                 if (element instanceof IBNode) {
                     fSelectedNodes.add((IBNode) element);

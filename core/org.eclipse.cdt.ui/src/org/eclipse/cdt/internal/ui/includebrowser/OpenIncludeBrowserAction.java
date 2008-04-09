@@ -83,6 +83,7 @@ public class OpenIncludeBrowserAction extends SelectionDispatchAction {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object getAdapter(Object object, Class desiredClass) {
 		if (desiredClass.isInstance(object)) {
 			return object;

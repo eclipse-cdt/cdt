@@ -83,7 +83,7 @@ public class IBDropTargetListener implements DropTargetListener {
 	private ITranslationUnit checkLocalSelection() {
 		ISelection sel= LocalSelectionTransfer.getTransfer().getSelection();
 		if (sel instanceof IStructuredSelection) {
-			for (Iterator iter = ((IStructuredSelection)sel).iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ((IStructuredSelection)sel).iterator(); iter.hasNext();) {
 				Object element = iter.next();
 				if (element instanceof ITranslationUnit) {
 					return (ITranslationUnit) element;

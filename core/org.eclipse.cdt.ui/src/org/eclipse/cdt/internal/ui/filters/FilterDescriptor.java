@@ -17,14 +17,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ViewerFilter;
+
+import org.eclipse.cdt.ui.CUIPlugin;
 
 
 /**
@@ -33,7 +34,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * 
  * since 2.0
  */
-public class FilterDescriptor implements Comparable {
+public class FilterDescriptor implements Comparable<FilterDescriptor> {
 
 	private static String PATTERN_FILTER_ID_PREFIX= "_patternFilterId_"; //$NON-NLS-1$
 
@@ -82,13 +83,13 @@ public class FilterDescriptor implements Comparable {
 	 */
 	public static FilterDescriptor[] getFilterDescriptors(String targetId) {
 		FilterDescriptor[] filterDescs= FilterDescriptor.getFilterDescriptors();
-		List result= new ArrayList(filterDescs.length);
+		List<FilterDescriptor> result= new ArrayList<FilterDescriptor>(filterDescs.length);
 		for (int i= 0; i < filterDescs.length; i++) {
 			String tid= filterDescs[i].getTargetId();
 			if (tid == null || tid.equals(targetId))
 				result.add(filterDescs[i]);
 		}
-		return (FilterDescriptor[])result.toArray(new FilterDescriptor[result.size()]);
+		return result.toArray(new FilterDescriptor[result.size()]);
 	}
 	
 	/**
@@ -140,10 +141,9 @@ public class FilterDescriptor implements Comparable {
 			String targetId= getTargetId();
 			if (targetId == null)
 				return PATTERN_FILTER_ID_PREFIX + getPattern();
-			else
-				return targetId + PATTERN_FILTER_ID_PREFIX + getPattern();
-		} else
-			return fElement.getAttribute(ID_ATTRIBUTE);
+			return targetId + PATTERN_FILTER_ID_PREFIX + getPattern();
+		}
+		return fElement.getAttribute(ID_ATTRIBUTE);
 	}
 	
 	/**
@@ -229,11 +229,8 @@ public class FilterDescriptor implements Comparable {
 	/* 
 	 * Implements a method from IComparable 
 	 */ 
-	public int compareTo(Object o) {
-		if (o instanceof FilterDescriptor)
-			return Collator.getInstance().compare(getName(), ((FilterDescriptor)o).getName());
-		else
-			return Integer.MIN_VALUE;
+	public int compareTo(FilterDescriptor o) {
+		return Collator.getInstance().compare(getName(), (o).getName());
 	}
 
 	//---- initialization ---------------------------------------------------
@@ -242,8 +239,8 @@ public class FilterDescriptor implements Comparable {
 	 * Creates the filter descriptors.
 	 */
 	private static FilterDescriptor[] createFilterDescriptors(IConfigurationElement[] elements) {
-		List result= new ArrayList(5);
-		Set descIds= new HashSet(5);
+		List<FilterDescriptor> result= new ArrayList<FilterDescriptor>(5);
+		Set<String> descIds= new HashSet<String>(5);
 		for (int i= 0; i < elements.length; i++) {
 			final IConfigurationElement element= elements[i];
 			if (FILTER_TAG.equals(element.getName())) {
@@ -262,6 +259,6 @@ public class FilterDescriptor implements Comparable {
 			}
 		}
 		Collections.sort(result);
-		return (FilterDescriptor[])result.toArray(new FilterDescriptor[result.size()]);
+		return result.toArray(new FilterDescriptor[result.size()]);
 	}
 }

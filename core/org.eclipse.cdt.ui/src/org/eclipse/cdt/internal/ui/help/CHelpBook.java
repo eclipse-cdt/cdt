@@ -118,8 +118,8 @@ public class CHelpBook implements ICHelpBook {
 			   if (++b > bs[i]) { // no overflow
 				   bs[i] = b;
 				   break;
-			   } else
-				   i--;
+			   }
+			   i--;
 			}
 			SortedMap<String, CHelpEntry> sm = (i>-1) ?
 				entries.subMap(pr1, new String(bs)) :
@@ -133,8 +133,8 @@ public class CHelpBook implements ICHelpBook {
 				for (IFunctionSummary fs : he.getFunctionSummary())
 					out.add(fs);
 			return out;
-		} else
-			return null;
+		}
+		return null;
 	}
 
 	public ICHelpResourceDescriptor getHelpResources(

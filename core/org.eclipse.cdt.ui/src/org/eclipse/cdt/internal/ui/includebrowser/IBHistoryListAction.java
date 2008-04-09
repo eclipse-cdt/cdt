@@ -121,7 +121,7 @@ public class IBHistoryListAction extends Action {
 		
 		private void doSelectionChanged() {
 			StatusInfo status= new StatusInfo();
-			List selected= fHistoryList.getSelectedElements();
+			List<?> selected= fHistoryList.getSelectedElements();
 			if (selected.size() != 1) {
 				status.setError(""); //$NON-NLS-1$
 				fResult= null;

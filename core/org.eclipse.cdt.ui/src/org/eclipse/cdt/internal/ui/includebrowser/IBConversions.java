@@ -31,7 +31,7 @@ public class IBConversions {
     public static IBNode selectionToNode(ISelection sel) {
         if (sel instanceof IStructuredSelection) {
             IStructuredSelection ssel= (IStructuredSelection) sel;
-            for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+            for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
                 Object o= iter.next();
                 if (o instanceof IBNode) {
                     IBNode node = (IBNode) o;
@@ -45,7 +45,7 @@ public class IBConversions {
     public static ITranslationUnit selectionToTU(ISelection sel) {
         if (sel instanceof IStructuredSelection) {
             IStructuredSelection ssel= (IStructuredSelection) sel;
-            for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+            for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
                 ITranslationUnit tu= objectToTU(iter.next());
                 if (tu != null) {
                     return tu;
@@ -59,7 +59,7 @@ public class IBConversions {
         if (sel instanceof IStructuredSelection) {
             IStructuredSelection ssel= (IStructuredSelection) sel;
             ArrayList<ITranslationUnit> tus= new ArrayList<ITranslationUnit>();
-            for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+            for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
             	Object obj= iter.next();
             	if (obj instanceof IBNode) {
             		ITranslationUnit tu= ((IBNode) obj).getRepresentedTranslationUnit();

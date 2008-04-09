@@ -118,8 +118,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				IndexNode node= (IndexNode)element;
 				return node.fHasDeclarationInProject;
 			}
-			else
-				return true;
+			return true;
 		}
 		public static boolean hasDeclarationInProject(IPDOMNode element) {
 			if (element instanceof PDOMBinding) {

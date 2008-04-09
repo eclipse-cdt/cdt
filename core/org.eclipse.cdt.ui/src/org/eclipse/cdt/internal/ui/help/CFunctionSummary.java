@@ -109,8 +109,7 @@ public class CFunctionSummary implements IFunctionSummary {
 		public String toString() {
 			if (std) 
 				return "#include <" + iname + ">";   //$NON-NLS-1$ //$NON-NLS-2$
-			else
-				return "#include \"" + iname + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+			return "#include \"" + iname + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		}		
 	}
 	@Override

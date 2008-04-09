@@ -19,6 +19,18 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,24 +44,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SelectionDialog;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 public class CustomFiltersDialog extends SelectionDialog {
 
@@ -66,7 +65,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	Button fEnableUserDefinedPatterns;
 	Text fUserDefinedPatterns;
 
-	Stack fFilterDescriptorChangeHistory;
+	Stack<Object> fFilterDescriptorChangeHistory;
 
 	
 	/**
@@ -92,7 +91,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fEnabledFilterIds= enabledFilterIds;
 
 		fBuiltInFilters= FilterDescriptor.getFilterDescriptors(fViewId);
-		fFilterDescriptorChangeHistory= new Stack();
+		fFilterDescriptorChangeHistory= new Stack<Object>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -181,7 +180,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fCheckBoxList.setInput(fBuiltInFilters);
 		setInitialSelections(getEnabledFilterDescriptors());
 		
-		List initialSelection= getInitialElementSelections();
+		List<?> initialSelection= getInitialElementSelections();
 		if (initialSelection != null && !initialSelection.isEmpty())
 			checkInitialSelections();
 
@@ -262,7 +261,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	}
 
 	private void checkInitialSelections() {
-		Iterator itemsToCheck= getInitialElementSelections().iterator();
+		Iterator<?> itemsToCheck= getInitialElementSelections().iterator();
 		while (itemsToCheck.hasNext())
 			fCheckBoxList.setChecked(itemsToCheck.next(),true);
 	}
@@ -270,7 +269,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	@Override
 	protected void okPressed() {
 		if (fBuiltInFilters != null) {
-			ArrayList result= new ArrayList();
+			ArrayList<FilterDescriptor> result= new ArrayList<FilterDescriptor>();
 			for (int i= 0; i < fBuiltInFilters.length; ++i) {
 				if (fCheckBoxList.getChecked(fBuiltInFilters[i]))
 					result.add(fBuiltInFilters[i]);
@@ -291,14 +290,14 @@ public class CustomFiltersDialog extends SelectionDialog {
 				public String getText(Object element) {
 					if (element instanceof FilterDescriptor)
 						return ((FilterDescriptor)element).getName();
-					else
-						return null;
+					return null;
 				}
 			};
 	}
 
 	// ---------- result handling ----------
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void setResult(List newResult) {
 		super.setResult(newResult);
@@ -324,10 +323,10 @@ public class CustomFiltersDialog extends SelectionDialog {
 	 */
 	public String[] getEnabledFilterIds() {
 		Object[] result= getResult();
-		Set enabledIds= new HashSet(result.length);
+		Set<String> enabledIds= new HashSet<String>(result.length);
 		for (int i= 0; i < result.length; i++)
 			enabledIds.add(((FilterDescriptor)result[i]).getId());
-		return (String[]) enabledIds.toArray(new String[enabledIds.size()]);
+		return enabledIds.toArray(new String[enabledIds.size()]);
 	}
 
 	/**
@@ -341,20 +340,20 @@ public class CustomFiltersDialog extends SelectionDialog {
 	 * @return a stack with the filter descriptor check history
 	 * @since 3.0
 	 */
-	public Stack getFilterDescriptorChangeHistory() {
+	public Stack<Object> getFilterDescriptorChangeHistory() {
 		return fFilterDescriptorChangeHistory;
 	}
 
 	private FilterDescriptor[] getEnabledFilterDescriptors() {
 		FilterDescriptor[] filterDescs= fBuiltInFilters;
-		List result= new ArrayList(filterDescs.length);
-		List enabledFilterIds= Arrays.asList(fEnabledFilterIds);
+		List<FilterDescriptor> result= new ArrayList<FilterDescriptor>(filterDescs.length);
+		List<String> enabledFilterIds= Arrays.asList(fEnabledFilterIds);
 		for (int i= 0; i < filterDescs.length; i++) {
 			String id= filterDescs[i].getId();
 			if (enabledFilterIds.contains(id))
 				result.add(filterDescs[i]);
 		}
-		return (FilterDescriptor[])result.toArray(new FilterDescriptor[result.size()]);
+		return result.toArray(new FilterDescriptor[result.size()]);
 	}
 
 

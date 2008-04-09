@@ -74,5 +74,9 @@ feature@org.eclipse.cdt.xlc.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvs
 
 ! LR parser
 plugin@org.eclipse.cdt.core.lrparser=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser
-plugin@net.sourceforge.lpg.lpgjavaruntime,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20080209163815/bundles/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200711021030.jar
+plugin@net.sourceforge.lpg.lpgjavaruntime,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20080326131619/bundles/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200803061910.jar
 feature@org.eclipse.cdt.core.lrparser.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.feature
+
+! CDT Utilities
+plugin@org.eclipse.cdt.util=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/util/org.eclipse.cdt.util
+feature@org.eclipse.cdt.util.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/util/org.eclipse.cdt.util-feature

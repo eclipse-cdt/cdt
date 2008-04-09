@@ -55,8 +55,6 @@ import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.internal.ui.RSEUIInitJob;
-import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SystemViewAdapterFactory;
@@ -88,7 +86,6 @@ public class RSEUIPlugin extends SystemBasePlugin
     private Vector viewSuppliers = new Vector();
     private SystemViewAdapterFactory svaf; // for fastpath access
     private SystemTeamViewResourceAdapterFactory svraf; // for fastpath
-	private SystemShowPreferencesPageAction[] showPrefPageActions = null;
 	private boolean loggingSystemMessageLine = false;
 	    		
 	/**
@@ -606,32 +603,6 @@ public class RSEUIPlugin extends SystemBasePlugin
     	return RSECorePlugin.isTheSystemRegistryActive();
     }
 
-	/**
-	 * Return an array of action objects to show for the "Preferences..."
-	 * submenu of the RSE System View.
-	 * For contributing a fastpath action to jump to your preferences page,
-	 * from the local pulldown menu of the Remote Systems view.
-	 * This may return null if no such actions are registered.
-	 * @deprecated will be moved to using command/hander extension point
-	 */
-	public SystemShowPreferencesPageAction[] getShowPreferencePageActions()
-	{
-		if (showPrefPageActions == null)
-		{
-			//add our own preferences page action hardcoded
-			SystemShowPreferencesPageAction action = new SystemShowPreferencesPageAction();
-			action.setPreferencePageID("org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"); //$NON-NLS-1$
-			//action.setPreferencePageCategory(preferencePageCategory)
-			//action.setImageDescriptor(id);
-			action.setText(SystemResources.ACTION_SHOW_PREFERENCEPAGE_LABEL);				
-			action.setToolTipText(SystemResources.ACTION_SHOW_PREFERENCEPAGE_TOOLTIP);				
-			action.setHelp("org.eclipse.rse.ui.aprefrse"); //$NON-NLS-1$				
-			showPrefPageActions = new SystemShowPreferencesPageAction[1];
-			showPrefPageActions[0] = action;
-		}
-		return showPrefPageActions;
-	}
-	
 	/**
 	 * @return The URL to the message file DTD. Null if it is not found.
 	 */

@@ -13,9 +13,9 @@
 #include <WinSock2.h>
 #include <rapi2.h>
 
-#include "org_eclipse_tm_rapi_OS.h"
+#include "org_eclipse_tm_rapi_Rapi.h"
 
-#define RAPI_NATIVE(func) Java_org_eclipse_tm_rapi_OS_##func
+#define RAPI_NATIVE(func) Java_org_eclipse_tm_rapi_Rapi_##func
 
 JNIEXPORT jint JNICALL RAPI_NATIVE(CoInitializeEx)
   (JNIEnv *env, jclass that, jint arg0, jint arg1)

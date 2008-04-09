@@ -33,8 +33,8 @@ public abstract class IRapiDesktop extends IUnknown {
    */
   public synchronized static IRapiDesktop getInstance() throws RapiException {
     int[] rapiDesktop = new int[1];
-    int rc = OS.CreateRapiDesktop(rapiDesktop);
-    if (rc != OS.NOERROR) {
+    int rc = Rapi.CreateRapiDesktop(rapiDesktop);
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("CreateRapiDesktop failed", rc); //$NON-NLS-1$
     }
     return new RapiDesktop(rapiDesktop[0]);

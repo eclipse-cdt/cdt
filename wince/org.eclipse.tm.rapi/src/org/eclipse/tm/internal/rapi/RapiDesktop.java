@@ -12,7 +12,7 @@ package org.eclipse.tm.internal.rapi;
 
 import org.eclipse.tm.rapi.IRapiDesktop;
 import org.eclipse.tm.rapi.IRapiEnumDevices;
-import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.Rapi;
 import org.eclipse.tm.rapi.RapiException;
 
 /**
@@ -29,7 +29,7 @@ public class RapiDesktop extends IRapiDesktop {
   public IRapiEnumDevices enumDevices() throws RapiException {
     int[] ppIEnum = new int[1];
     int rc = EnumDevices(addr, ppIEnum);
-    if (rc != OS.NOERROR) {
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("EnumDevices failed", rc); //$NON-NLS-1$
     }
     return new RapiEnumDevices(ppIEnum[0]);

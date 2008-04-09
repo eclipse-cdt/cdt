@@ -11,7 +11,7 @@
 package org.eclipse.tm.internal.rapi;
 
 import org.eclipse.tm.rapi.IRapiSession;
-import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.Rapi;
 import org.eclipse.tm.rapi.ProcessInformation;
 import org.eclipse.tm.rapi.RapiException;
 import org.eclipse.tm.rapi.RapiFindData;
@@ -40,14 +40,14 @@ public class RapiSession extends IRapiSession {
   
   public void init() throws RapiException {
     int rc = CeRapiInit(addr);
-    if (rc != OS.NOERROR) {
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("CeRapiInit failed", rc); //$NON-NLS-1$
     }
   }
   
   public void uninit() throws RapiException {
     int rc = CeRapiUninit(addr);
-    if (rc != OS.NOERROR) {
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("CeRapiUninit failed", rc); //$NON-NLS-1$
     }    
   }
@@ -57,7 +57,7 @@ public class RapiSession extends IRapiSession {
     
     int handle = CeCreateFile(addr, fileName, desiredAccess, shareMode, 
         creationDisposition, flagsAndAttributes);
-    if (handle == OS.INVALID_HANDLE_VALUE) {
+    if (handle == Rapi.INVALID_HANDLE_VALUE) {
       throw new RapiException("CeCreateFile failed", getError()); //$NON-NLS-1$
     } 
     return handle; 
@@ -163,7 +163,7 @@ public class RapiSession extends IRapiSession {
 
   public int findFirstFile(String fileName, RapiFindData findData) throws RapiException {
     int handle = CeFindFirstFile(addr, fileName, findData);
-    if (handle == OS.INVALID_HANDLE_VALUE) {
+    if (handle == Rapi.INVALID_HANDLE_VALUE) {
       throw new RapiException("CeFindFirstFile failed", getError()); //$NON-NLS-1$
     }
     return handle;
@@ -197,7 +197,7 @@ public class RapiSession extends IRapiSession {
       findDataArr[i] = new RapiFindData();
     }
     int hRes = CeFindAllFilesEx(addr, count, dataArr[0], findDataArr);
-    if (hRes != OS.NOERROR) {
+    if (hRes != Rapi.NOERROR) {
       throw new RapiException("CeFindAllFilesEx failed", hRes); //$NON-NLS-1$
     }
     return findDataArr;
@@ -225,7 +225,7 @@ public class RapiSession extends IRapiSession {
     if (!res) {
       throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
-    return (crTime[0] / 10000) - OS.TIME_DIFF;
+    return (crTime[0] / 10000) - Rapi.TIME_DIFF;
   }
 
   public long getFileLastAccessTime(int handle) throws RapiException {
@@ -236,7 +236,7 @@ public class RapiSession extends IRapiSession {
     if (!res) {
       throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
-    return (laTime[0] / 10000) - OS.TIME_DIFF;
+    return (laTime[0] / 10000) - Rapi.TIME_DIFF;
   }
 
   public long getFileLastWriteTime(int handle) throws RapiException {
@@ -247,7 +247,7 @@ public class RapiSession extends IRapiSession {
     if (!res) {
       throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
-    return (lwTime[0] / 10000) - OS.TIME_DIFF;
+    return (lwTime[0] / 10000) - Rapi.TIME_DIFF;
   }
   
   public void setFileAttributes(String fileName, int fileAttributes) throws RapiException {
@@ -261,7 +261,7 @@ public class RapiSession extends IRapiSession {
     if (lastWriteTime < 0) {
       throw new IllegalArgumentException("Time cannot be negative"); //$NON-NLS-1$
     }
-    long[] lwTime = new long[] {(lastWriteTime + OS.TIME_DIFF) * 10000};
+    long[] lwTime = new long[] {(lastWriteTime + Rapi.TIME_DIFF) * 10000};
     boolean res = CeSetFileTime(addr, handle, null, null, lwTime);
     if (!res) {
       throw new RapiException("CeSetFileTime failed", getError()); //$NON-NLS-1$

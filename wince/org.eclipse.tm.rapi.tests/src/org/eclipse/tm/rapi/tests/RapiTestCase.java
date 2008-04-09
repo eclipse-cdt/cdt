@@ -14,7 +14,7 @@ import org.eclipse.tm.rapi.IRapiDesktop;
 import org.eclipse.tm.rapi.IRapiDevice;
 import org.eclipse.tm.rapi.IRapiEnumDevices;
 import org.eclipse.tm.rapi.IRapiSession;
-import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.Rapi;
 
 import junit.framework.TestCase;
 
@@ -31,7 +31,7 @@ public class RapiTestCase extends TestCase {
     enumDevices = null;
     device = null;
     session = null;
-    OS.CoInitializeEx(0, OS.COINIT_MULTITHREADED);
+    Rapi.CoInitializeEx(0, Rapi.COINIT_MULTITHREADED);
   }
 
   protected void tearDown() throws Exception {
@@ -48,7 +48,7 @@ public class RapiTestCase extends TestCase {
     if (session != null) {
       session.release();
     }
-    OS.CoUninitialize();
+    Rapi.CoUninitialize();
   }
 
 }

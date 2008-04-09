@@ -30,7 +30,7 @@ public abstract class IUnknown {
    * Releases the underlying <code>IUnknown<code> object.
    */
   public void release() {
-    OS.ReleaseIUnknown(addr);
+    Rapi.ReleaseIUnknown(addr);
   }
   
 }

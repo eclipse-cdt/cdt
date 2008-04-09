@@ -12,7 +12,7 @@ package org.eclipse.tm.internal.rapi;
 
 import org.eclipse.tm.rapi.IRapiDevice;
 import org.eclipse.tm.rapi.IRapiSession;
-import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.Rapi;
 import org.eclipse.tm.rapi.RapiConnectionInfo;
 import org.eclipse.tm.rapi.RapiDeviceInfo;
 import org.eclipse.tm.rapi.RapiException;
@@ -31,7 +31,7 @@ public class RapiDevice extends IRapiDevice {
   public IRapiSession createSession() throws RapiException {
     int[] ppISession = new int[1];
     int rc = CreateSession(addr, ppISession);
-    if (rc != OS.NOERROR) {
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("CreateSession failed", rc); //$NON-NLS-1$
     }
     return new RapiSession(ppISession[0]);
@@ -40,7 +40,7 @@ public class RapiDevice extends IRapiDevice {
   public RapiConnectionInfo getConnectionInfo() throws RapiException {
     RapiConnectionInfo connInfo = new RapiConnectionInfo();
     int rc = GetConnectionInfo(addr, connInfo);
-    if (rc != OS.NOERROR) {
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("GetConnectionInfo failed", rc);       //$NON-NLS-1$
     }
     return connInfo;
@@ -49,7 +49,7 @@ public class RapiDevice extends IRapiDevice {
   public RapiDeviceInfo getDeviceInfo() throws RapiException {
     RapiDeviceInfo devInfo = new RapiDeviceInfo();
     int rc = GetDeviceInfo(addr, devInfo);
-    if (rc != OS.NOERROR) {
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("GetDeviceInfo failed", rc); //$NON-NLS-1$
     }
     return devInfo;
@@ -58,7 +58,7 @@ public class RapiDevice extends IRapiDevice {
   public boolean isConnected() throws RapiException {
     int[] status = new int[1];
     int rc = GetConnectStat(addr, status);
-    if (rc != OS.NOERROR) {
+    if (rc != Rapi.NOERROR) {
       throw new RapiException("GetConnectStat failed", rc); //$NON-NLS-1$
     }
     return status[0] == 1;

@@ -28,14 +28,14 @@ public class RapiFindData {
   public String fileName;
   
   public Date getCreationTime() {
-    return new Date((creationTime / 10000) - OS.TIME_DIFF);
+    return new Date((creationTime / 10000) - Rapi.TIME_DIFF);
   }
 
   public Date getLastAccessTime() {
-    return new Date((lastAccessTime / 10000) - OS.TIME_DIFF);
+    return new Date((lastAccessTime / 10000) - Rapi.TIME_DIFF);
   }
 
   public Date getLastWriteTime() {
-    return new Date((lastWriteTime / 10000) - OS.TIME_DIFF);
+    return new Date((lastWriteTime / 10000) - Rapi.TIME_DIFF);
   }
 }

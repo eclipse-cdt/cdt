@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="jrapi"
 	ProjectGUID="{7A9CC697-2EEB-40B9-B540-7FFC195B3D4F}"
 	RootNamespace="jrapi"
@@ -181,7 +181,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\native\OS.cpp"
+				RelativePath="..\native\Rapi.cpp"
 				>
 			</File>
 			<File
@@ -223,7 +223,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\native\org_eclipse_tm_rapi_OS.h"
+				RelativePath="..\native\org_eclipse_tm_rapi_Rapi.h"
 				>
 			</File>
 		</Filter>

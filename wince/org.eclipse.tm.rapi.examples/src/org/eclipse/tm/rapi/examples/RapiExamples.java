@@ -14,7 +14,7 @@ import org.eclipse.tm.rapi.IRapiDesktop;
 import org.eclipse.tm.rapi.IRapiDevice;
 import org.eclipse.tm.rapi.IRapiEnumDevices;
 import org.eclipse.tm.rapi.IRapiSession;
-import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.Rapi;
 import org.eclipse.tm.rapi.ProcessInformation;
 import org.eclipse.tm.rapi.RapiConnectionInfo;
 import org.eclipse.tm.rapi.RapiDeviceInfo;
@@ -37,7 +37,7 @@ public class RapiExamples {
 	 * Initialize the underlying natives.
 	 */
 	public void initRapi() {
-		OS.CoInitializeEx(0, OS.COINIT_MULTITHREADED);
+	  Rapi.CoInitializeEx(0, Rapi.COINIT_MULTITHREADED);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class RapiExamples {
 		if (session != null) {
 			session.release();
 		}
-		OS.CoUninitialize();
+		Rapi.CoUninitialize();
 	}
 
 	/**
@@ -87,8 +87,8 @@ public class RapiExamples {
 	 */
 	public void createFile(String fileName) throws RapiException {
 		System.out.println(">>> createFile()");
-		int handle = session.createFile(fileName, OS.GENERIC_WRITE,
-				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		int handle = session.createFile(fileName, Rapi.GENERIC_WRITE,
+		    Rapi.FILE_SHARE_READ, Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
 		byte[] content = "Hello world!".getBytes();
 		session.writeFile(handle, content);
 		session.closeHandle(handle);
@@ -99,8 +99,8 @@ public class RapiExamples {
 	 */
 	public void readFile(String fileName) throws RapiException {
 		System.out.println(">>> readFile()");
-		int handle = session.createFile(fileName, OS.GENERIC_READ,
-				OS.FILE_SHARE_READ, OS.OPEN_EXISTING, OS.FILE_ATTRIBUTE_NORMAL);
+		int handle = session.createFile(fileName, Rapi.GENERIC_READ,
+		    Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
 		byte[] buf = new byte[256];
 		int br = session.readFile(handle, buf);
 		System.out.println("readFile: " + new String(buf, 0, br));
@@ -113,7 +113,7 @@ public class RapiExamples {
 	 * describes a directory.
 	 */
 	boolean isDirectory(RapiFindData findData) {
-		return (findData.fileAttributes & OS.FILE_ATTRIBUTE_DIRECTORY) != 0;
+		return (findData.fileAttributes & Rapi.FILE_ATTRIBUTE_DIRECTORY) != 0;
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class RapiExamples {
 	public void listFiles2(String dir) throws RapiException {
 		System.out.println(">>> listFiles2()");
 		RapiFindData[] fdArr = session.findAllFiles(dir + "*",
-				OS.FAF_ATTRIBUTES | OS.FAF_NAME | OS.FAF_SIZE_LOW);
+		    Rapi.FAF_ATTRIBUTES | Rapi.FAF_NAME | Rapi.FAF_SIZE_LOW);
 		for (int i = 0 ; i < fdArr.length ; i++) {
 			printFindData(fdArr[i], 0);
 		}
@@ -165,8 +165,8 @@ public class RapiExamples {
 	 */
 	public void statFile(String fileName) throws RapiException {
 		System.out.println(">>> statFile()");
-		int handle = session.createFile(fileName, OS.GENERIC_READ,
-				OS.FILE_SHARE_READ, OS.OPEN_EXISTING, OS.FILE_ATTRIBUTE_NORMAL);
+		int handle = session.createFile(fileName, Rapi.GENERIC_READ,
+		    Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
 		int fileAttributes = session.getFileAttributes(fileName);
 		System.out.println("fileAttributes: " + fileAttributes);
 		long fileSize = session.getFileSize(handle);
@@ -182,7 +182,7 @@ public class RapiExamples {
 	 */
 	void printDeviceTree(String dir, int indent) throws RapiException {
 		RapiFindData[] fdArr = session.findAllFiles(dir + "*",
-				OS.FAF_ATTRIBUTES | OS.FAF_NAME | OS.FAF_SIZE_LOW);
+		    Rapi.FAF_ATTRIBUTES | Rapi.FAF_NAME | Rapi.FAF_SIZE_LOW);
 		if (fdArr == null) {
 			return;
 		}

@@ -19,7 +19,7 @@ import org.eclipse.tm.rapi.IRapiDesktop;
 import org.eclipse.tm.rapi.IRapiDevice;
 import org.eclipse.tm.rapi.IRapiEnumDevices;
 import org.eclipse.tm.rapi.IRapiSession;
-import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.Rapi;
 import org.eclipse.tm.rapi.RapiException;
 
 
@@ -39,7 +39,7 @@ public class WinCEConnectorService extends BasicConnectorService implements IRap
   
   protected void internalConnect(IProgressMonitor monitor) throws Exception {
     fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
-    OS.CoInitializeEx(0, OS.COINIT_MULTITHREADED);
+    Rapi.CoInitializeEx(0, Rapi.COINIT_MULTITHREADED);
     desktop = IRapiDesktop.getInstance();
     enumDevices = desktop.enumDevices();
     device = enumDevices.next();

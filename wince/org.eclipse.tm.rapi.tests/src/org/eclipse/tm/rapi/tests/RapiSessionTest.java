@@ -12,7 +12,7 @@ package org.eclipse.tm.rapi.tests;
 
 import org.eclipse.tm.rapi.IRapiDesktop;
 import org.eclipse.tm.rapi.IRapiSession;
-import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.Rapi;
 import org.eclipse.tm.rapi.RapiException;
 import org.eclipse.tm.rapi.RapiFindData;
 
@@ -61,7 +61,7 @@ public class RapiSessionTest extends RapiTestCase {
 		if (attr == -1) {
 			return false;
 		}
-		return (attr & OS.FILE_ATTRIBUTE_DIRECTORY) != 0;
+		return (attr & Rapi.FILE_ATTRIBUTE_DIRECTORY) != 0;
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class RapiSessionTest extends RapiTestCase {
 		if (attr == -1) {
 			return false;
 		}
-		return (attr & OS.FILE_ATTRIBUTE_DIRECTORY) == 0;
+		return (attr & Rapi.FILE_ATTRIBUTE_DIRECTORY) == 0;
 	}
 
 	/**
@@ -88,22 +88,22 @@ public class RapiSessionTest extends RapiTestCase {
 		}
 
 		// write the test file at once
-		int handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE,
-				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		int handle = session.createFile(TEST_FILE_NAME, Rapi.GENERIC_WRITE,
+		    Rapi.FILE_SHARE_READ, Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
 		session.writeFile(handle, content);
 		session.closeHandle(handle);
 
 		// try to read the whole file
-		handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_READ,
-				OS.FILE_SHARE_READ, OS.OPEN_EXISTING, OS.FILE_ATTRIBUTE_NORMAL);
+		handle = session.createFile(TEST_FILE_NAME, Rapi.GENERIC_READ,
+		    Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
 		byte[] contentRead = new byte[TEST_FILE_SIZE];
 		int br = session.readFile(handle, contentRead);
 		session.closeHandle(handle);
 		assertTrue("Different file content", arraysEqual(content, contentRead, br));
 
 		// write the test file by chunks
-		handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE,
-				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		handle = session.createFile(TEST_FILE_NAME, Rapi.GENERIC_WRITE,
+		    Rapi.FILE_SHARE_READ, Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
 		int off = 0;
 		for (int i = 0 ; i < TEST_FILE_SIZE / CHUNK_SIZE ; i++) {
 			session.writeFile(handle, content, off, CHUNK_SIZE);
@@ -112,8 +112,8 @@ public class RapiSessionTest extends RapiTestCase {
 		session.closeHandle(handle);
 
 		// read the test file by chunks
-		handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_READ,
-				OS.FILE_SHARE_READ, OS.OPEN_EXISTING, OS.FILE_ATTRIBUTE_NORMAL);
+		handle = session.createFile(TEST_FILE_NAME, Rapi.GENERIC_READ,
+				Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
 		byte[] contentRead2 = new byte[TEST_FILE_SIZE];
 		off = 0;
 		int bytesToRead = TEST_FILE_SIZE;
@@ -150,8 +150,8 @@ public class RapiSessionTest extends RapiTestCase {
 	 * Utility method for creating files.
 	 */
 	void createFile(IRapiSession session, String fileName) throws RapiException {
-		int handle = session.createFile(fileName, OS.GENERIC_WRITE, 
-				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		int handle = session.createFile(fileName, Rapi.GENERIC_WRITE, 
+				Rapi.FILE_SHARE_READ, Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
 		session.writeFile(handle, "spam".getBytes());
 		session.closeHandle(handle);    
 	}
@@ -222,7 +222,7 @@ public class RapiSessionTest extends RapiTestCase {
 	public void testFindAllFiles() throws RapiException {
 		createInitSession();
 		createTempFiles();
-		RapiFindData[] faf = session.findAllFiles(TEST_FILE_NAME + "?", OS.FAF_NAME);
+		RapiFindData[] faf = session.findAllFiles(TEST_FILE_NAME + "?", Rapi.FAF_NAME);
 		int filesFound = faf.length;
 		assertTrue("Found " + filesFound + " , expected " + TEMP_FILES_COUNT,
 				filesFound == TEMP_FILES_COUNT);
@@ -240,15 +240,15 @@ public class RapiSessionTest extends RapiTestCase {
 		// create test file
 		createFile(session, TEST_FILE_NAME);
 
-		session.setFileAttributes(TEST_FILE_NAME, OS.FILE_ATTRIBUTE_READONLY);
+		session.setFileAttributes(TEST_FILE_NAME, Rapi.FILE_ATTRIBUTE_READONLY);
 		int attr = session.getFileAttributes(TEST_FILE_NAME);
 		assertTrue("Wrong file attributes, expected FILE_ATTRIBUTE_READONLY", 
-				(attr & OS.FILE_ATTRIBUTE_READONLY) != 0);
+				(attr & Rapi.FILE_ATTRIBUTE_READONLY) != 0);
 
-		session.setFileAttributes(TEST_FILE_NAME, OS.FILE_ATTRIBUTE_ARCHIVE);
+		session.setFileAttributes(TEST_FILE_NAME, Rapi.FILE_ATTRIBUTE_ARCHIVE);
 		attr = session.getFileAttributes(TEST_FILE_NAME);
 		assertTrue("Wrong file attributes, expected FILE_ATTRIBUTE_ARCHIVE", 
-				(attr & OS.FILE_ATTRIBUTE_ARCHIVE) != 0);
+				(attr & Rapi.FILE_ATTRIBUTE_ARCHIVE) != 0);
 
 		//clean up
 		session.deleteFile(TEST_FILE_NAME);
@@ -260,8 +260,8 @@ public class RapiSessionTest extends RapiTestCase {
 	public void testGetFileSize() throws RapiException {
 		createInitSession();
 		// create test file
-		int handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE, 
-				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		int handle = session.createFile(TEST_FILE_NAME, Rapi.GENERIC_WRITE, 
+				Rapi.FILE_SHARE_READ, Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
 		session.writeFile(handle, "spam".getBytes());
 		assertTrue("Wrong file size, expected size 4 bytes", 4 == session.getFileSize(handle));
 		session.closeHandle(handle);
@@ -279,14 +279,14 @@ public class RapiSessionTest extends RapiTestCase {
 		long d = System.currentTimeMillis() + 3600000;
 
 		// create file and set last access time to d
-		int handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE, 
-				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		int handle = session.createFile(TEST_FILE_NAME, Rapi.GENERIC_WRITE, 
+				Rapi.FILE_SHARE_READ, Rapi.CREATE_ALWAYS, Rapi.FILE_ATTRIBUTE_NORMAL);
 		session.writeFile(handle, "spam".getBytes());
 		session.setFileLastWriteTime(handle, d);
 		session.closeHandle(handle);
 		// get file last write time and compare to d
-		handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_READ, 
-				OS.FILE_SHARE_READ, OS.OPEN_EXISTING, OS.FILE_ATTRIBUTE_NORMAL);
+		handle = session.createFile(TEST_FILE_NAME, Rapi.GENERIC_READ, 
+				Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
 		long lwTime = session.getFileLastWriteTime(handle);
 		// the precision of setLastWriteTime should be about 1-2sec
 		assertTrue("Too big difference for lastWriteTime, expected: " + d 

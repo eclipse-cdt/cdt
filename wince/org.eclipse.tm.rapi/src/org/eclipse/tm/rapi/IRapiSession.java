@@ -245,9 +245,9 @@ public abstract class IRapiSession extends IUnknown {
    * Sets the attributes of the specified file on the remote device.
    * @param fileName the target file
    * @param fileAttributes the new attributes; this parameter is combination of the
-   * following values: {@link OS#FILE_ATTRIBUTE_ARCHIVE}, {@link OS#FILE_ATTRIBUTE_HIDDEN},
-   * {@link OS#FILE_ATTRIBUTE_NORMAL}, {@link OS#FILE_ATTRIBUTE_READONLY},
-   * {@link OS#FILE_ATTRIBUTE_SYSTEM}, {@link OS#FILE_ATTRIBUTE_TEMPORARY}
+   * following values: {@link Rapi#FILE_ATTRIBUTE_ARCHIVE}, {@link Rapi#FILE_ATTRIBUTE_HIDDEN},
+   * {@link Rapi#FILE_ATTRIBUTE_NORMAL}, {@link Rapi#FILE_ATTRIBUTE_READONLY},
+   * {@link Rapi#FILE_ATTRIBUTE_SYSTEM}, {@link Rapi#FILE_ATTRIBUTE_TEMPORARY}
    * @throws RapiException if an error occurs.
    */
   public abstract void setFileAttributes(String fileName, int fileAttributes) throws RapiException;

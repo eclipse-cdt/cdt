@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
 
 
 /**
@@ -57,8 +58,7 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	
 	@Override
 	public IParser getParser() {
-		//return new UPCParser();
-		return null;
+		return new UPCParser();
 	}
 
 	/**

@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.parser.upc.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AutomatedIntegrationSuite extends TestSuite {
+public class UPCParserTestSuite extends TestSuite {
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite();

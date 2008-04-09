@@ -19,7 +19,8 @@ public class UPCC99DOMLocationMacroTests extends C99DOMLocationMacroTests {
 	public UPCC99DOMLocationMacroTests() {
 	}
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
     	return UPCLanguage.getDefault();
     }
 }

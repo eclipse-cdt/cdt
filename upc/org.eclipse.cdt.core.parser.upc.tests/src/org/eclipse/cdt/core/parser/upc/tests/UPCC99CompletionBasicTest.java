@@ -18,7 +18,8 @@ public class UPCC99CompletionBasicTest extends C99CompletionBasicTest {
 
 	public UPCC99CompletionBasicTest() { }
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return C99Language.getDefault();
 	}
 

@@ -20,6 +20,7 @@ public class UPCC99DigraphTrigraphTests extends C99DigraphTrigraphTests {
 	public UPCC99DigraphTrigraphTests() { }
 	public UPCC99DigraphTrigraphTests(String name) { super(name); }
 
+	@Override
 	protected BaseExtensibleLanguage getLanguage() {
 		return UPCLanguage.getDefault();
 	}

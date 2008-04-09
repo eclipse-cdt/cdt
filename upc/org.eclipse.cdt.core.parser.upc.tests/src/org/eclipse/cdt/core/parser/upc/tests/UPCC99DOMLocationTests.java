@@ -23,7 +23,8 @@ public class UPCC99DOMLocationTests extends C99DOMLocationTests {
 		super(name);
 	}
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 	    return UPCLanguage.getDefault();
 	}
 }

@@ -16,7 +16,8 @@ import org.eclipse.cdt.core.lrparser.tests.c99.C99UtilTests;
 
 public class UPCC99UtilTests extends C99UtilTests {
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 

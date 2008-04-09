@@ -42,7 +42,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
-import org.eclipse.cdt.internal.core.parser.ParserException;
+
 
 public class UPCLanguageExtensionTests extends TestCase {
 
@@ -62,12 +62,12 @@ public class UPCLanguageExtensionTests extends TestCase {
 	// test the AST is correct
 	// test that binding resolution works
 	
-	private IASTTranslationUnit parseAndCheckBindings(String code) throws ParserException {
+	private IASTTranslationUnit parseAndCheckBindings(String code) {
 		return ParseHelper.parse(code, getLanguage(), true, true, 0 );
 	}
 	
 	
-	private IASTTranslationUnit parse(String code) throws ParserException {
+	private IASTTranslationUnit parse(String code) {
 		return ParseHelper.parse(code, getLanguage(), true, false, 0 );
 	}
 	
@@ -135,6 +135,7 @@ public class UPCLanguageExtensionTests extends TestCase {
 		assertEquals(IUPCASTDeclSpecifier.rt_unspecified, declspec_c.getReferenceType());
 		assertEquals(IUPCASTDeclSpecifier.sh_shared_constant_expression, declspec_c.getSharedQualifier());
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_c.getType());
+		@SuppressWarnings("unused")
 		IASTLiteralExpression literalExpr = (IASTLiteralExpression) declspec_c.getBlockSizeExpression();
 		declarators = decl_c.getDeclarators();
 		assertNotNull(declarators);
@@ -167,11 +168,11 @@ public class UPCLanguageExtensionTests extends TestCase {
 		
 		IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) declarations[4];
 		IUPCASTSimpleDeclSpecifier declspec_x = (IUPCASTSimpleDeclSpecifier) decl_x.getDeclSpecifier();
-		assertEquals(IUPCASTSimpleDeclSpecifier.rt_relaxed, declspec_x.getReferenceType());
+		assertEquals(IUPCASTDeclSpecifier.rt_relaxed, declspec_x.getReferenceType());
 		
 		IASTSimpleDeclaration decl_y = (IASTSimpleDeclaration) declarations[5];
 		IUPCASTSimpleDeclSpecifier declspec_y = (IUPCASTSimpleDeclSpecifier) decl_y.getDeclSpecifier();
-		assertEquals(IUPCASTSimpleDeclSpecifier.rt_strict, declspec_y.getReferenceType());
+		assertEquals(IUPCASTDeclSpecifier.rt_strict, declspec_y.getReferenceType());
 		
 		
 		IVariable binding_a = (IVariable) name_a.resolveBinding();
@@ -489,6 +490,7 @@ public class UPCLanguageExtensionTests extends TestCase {
 		
 		
 		
+		@SuppressWarnings("unused")
 		IASTTypeIdExpression idexpr = (IASTTypeIdExpression)((IASTExpressionStatement)body[0]).getExpression();
 		
 		IASTUnaryExpression cexpr = (IASTUnaryExpression)((IASTExpressionStatement)body[1]).getExpression();

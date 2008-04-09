@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
  * 
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction")
 public class UPCLanguage extends BaseExtensibleLanguage {
 	
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.parser.upc"; //$NON-NLS-1$ 
@@ -60,6 +61,9 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return null;
 	}
 
+	/**
+	 * @param tu Not used, default model builder used. 
+	 */
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
 		return null;
 	}
@@ -96,7 +100,6 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	/**
 	 * Gets the translation unit object and sets the index and the location resolver. 
 	 */
-	@SuppressWarnings("restriction")
 	@Override
 	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
 		IASTTranslationUnit tu = C99ASTNodeFactory.DEFAULT_INSTANCE.newTranslationUnit();

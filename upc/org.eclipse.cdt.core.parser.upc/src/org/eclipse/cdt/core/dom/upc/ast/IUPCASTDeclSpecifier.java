@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 public interface IUPCASTDeclSpecifier extends ICASTDeclSpecifier {
 
 	public static final ASTNodeProperty BLOCK_SIZE_EXPRESSION = new ASTNodeProperty(
-		"IUPCASTDeclSpecifier.BLOCK_SIZE_EXPRESSION - IUPCASTDeclSpecifier block size expression"); //$NON-NLS-1
+		"IUPCASTDeclSpecifier.BLOCK_SIZE_EXPRESSION - IUPCASTDeclSpecifier block size expression"); //$NON-NLS-1$
 
 	
 	public static final int rt_unspecified = 0;

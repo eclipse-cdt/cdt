@@ -16,7 +16,8 @@ import org.eclipse.cdt.core.lrparser.tests.c99.C99DOMPreprocessorInformationTest
 
 public class UPCC99DOMPreprocessorInformationTest extends C99DOMPreprocessorInformationTest {
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
     	return UPCLanguage.getDefault();
     }
 

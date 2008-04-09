@@ -19,7 +19,8 @@ public class UPCC99KnRTests extends C99KnRTests {
 	public UPCC99KnRTests() {
 	}
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 

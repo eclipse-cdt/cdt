@@ -20,7 +20,8 @@ public class UPCC99SelectionParseTest extends C99SelectionParseTest {
 	public UPCC99SelectionParseTest(String name) { super(name); }
 
 	
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 }

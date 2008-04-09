@@ -19,15 +19,12 @@ public class UPCC99DOMLocationInclusionTests extends C99DOMLocationInclusionTest
 	public UPCC99DOMLocationInclusionTests() {
 	}
 
-	public UPCC99DOMLocationInclusionTests(String name, Class className) {
-		super(name, className);
-	}
-
 	public UPCC99DOMLocationInclusionTests(String name) {
 		super(name);
 	}
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 }

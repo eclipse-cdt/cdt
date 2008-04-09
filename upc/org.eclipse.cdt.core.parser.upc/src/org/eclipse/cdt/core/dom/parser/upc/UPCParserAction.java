@@ -17,8 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
@@ -26,7 +24,6 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
 
 
@@ -60,32 +57,6 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 */
 	public void consumeKeywordExpression(int keywordKind) {
 		IUPCASTKeywordExpression expr = nodeFactory.newKeywordExpression(keywordKind);
-		setOffsetAndLength(expr);
-		astStack.push(expr);
-	}
-	
-	
-	/**
-	 * unary_expression ::= 'upc_localsizeof' unary_expression
-     *                    | 'upc_blocksizeof' unary_expression
-     *                    | 'upc_elemsizeof'  unary_expression
-	 */
-	public void consumeExpressionUpcSizeofOperator(int sizeofOp) {
-		IASTExpression operand = (IASTExpression) astStack.pop();
-		IUPCASTUnaryExpression expr = nodeFactory.newUnaryExpression(sizeofOp, operand);
-		setOffsetAndLength(expr);
-		astStack.push(expr);
-	}
-	
-	
-	/**
-	 * unary_expression ::= 'upc_localsizeof' '(' type_name ')'
-     *                    | 'upc_blocksizeof' '(' type_name ')'
-     *                    | 'upc_elemsizeof'  '(' type_name ')'
-	 */
-	public void consumeExpressionUpcSizeofTypeName(int sizeofOp) {
-		IASTTypeId typeId = (IASTTypeId) astStack.pop();
-		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(sizeofOp, typeId);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
 	}

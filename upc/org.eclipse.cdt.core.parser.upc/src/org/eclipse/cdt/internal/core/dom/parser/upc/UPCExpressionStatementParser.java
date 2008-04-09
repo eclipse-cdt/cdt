@@ -32,9 +32,10 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 
-public class UPCParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
+@SuppressWarnings("all")
+public class UPCExpressionStatementParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
-    private static ParseTable prs = new UPCParserprs();
+    private static ParseTable prs = new UPCExpressionStatementParserprs();
     private BacktrackingParser btParser;
 
     public BacktrackingParser getParser() { return btParser; }
@@ -69,13 +70,13 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
         return (ErrorToken) (err instanceof ErrorToken ? err : null);
     }
 
-    public UPCParser(LexStream lexStream)
+    public UPCExpressionStatementParser(LexStream lexStream)
     {
         super(lexStream);
 
         try
         {
-            super.remapTerminalSymbols(orderedTerminalSymbols(), UPCParserprs.EOFT_SYMBOL);
+            super.remapTerminalSymbols(orderedTerminalSymbols(), UPCExpressionStatementParserprs.EOFT_SYMBOL);
         }
         catch(NullExportedSymbolsException e) {
         }
@@ -88,7 +89,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);               
+                System.out.println("    " + UPCExpressionStatementParsersym.orderedTerminalSymbols[id.intValue()]);               
             }
             System.out.println();                        
         }
@@ -96,13 +97,13 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
         {
             throw new Error(new UndefinedEofSymbolException
                                 ("The Lexer does not implement the Eof symbol " +
-                                 UPCParsersym.orderedTerminalSymbols[UPCParserprs.EOFT_SYMBOL]));
+                                 UPCExpressionStatementParsersym.orderedTerminalSymbols[UPCExpressionStatementParserprs.EOFT_SYMBOL]));
         } 
     }
 
-    public String[] orderedTerminalSymbols() { return UPCParsersym.orderedTerminalSymbols; }
-    public String getTokenKindName(int kind) { return UPCParsersym.orderedTerminalSymbols[kind]; }
-    public int getEOFTokenKind() { return UPCParserprs.EOFT_SYMBOL; }
+    public String[] orderedTerminalSymbols() { return UPCExpressionStatementParsersym.orderedTerminalSymbols; }
+    public String getTokenKindName(int kind) { return UPCExpressionStatementParsersym.orderedTerminalSymbols[kind]; }
+    public int getEOFTokenKind() { return UPCExpressionStatementParserprs.EOFT_SYMBOL; }
     public PrsStream getParseStream() { return (PrsStream) this; }
     
     //
@@ -147,11 +148,11 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
         catch (NotBacktrackParseTableException e)
         {
             throw new Error(new NotBacktrackParseTableException
-                                ("Regenerate UPCParserprs.java with -BACKTRACK option"));
+                                ("Regenerate UPCExpressionStatementParserprs.java with -BACKTRACK option"));
         }
         catch (BadParseSymFileException e)
         {
-            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- UPCParsersym.java"));
+            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- UPCExpressionStatementParsersym.java"));
         }
 
         try
@@ -171,7 +172,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
 
 private  UPCParserAction  action;
 
-public UPCParser() {  // constructor
+public UPCExpressionStatementParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu) {
@@ -213,11 +214,11 @@ public IASTNode getSecondaryParseResult() {
 }
 
 public String[] getOrderedTerminalSymbols() {
-	return UPCParsersym.orderedTerminalSymbols;
+	return UPCExpressionStatementParsersym.orderedTerminalSymbols;
 }
 
 public String getName() {
-	return "UPCParser"; //$NON-NLS-1$
+	return "UPCExpressionStatementParser"; //$NON-NLS-1$
 }
 
 
@@ -231,11 +232,11 @@ public void setTokens(List<IToken> tokens) {
 		token.setKind(tokenMap.mapKind(token.getKind()));
 		addToken(token);
 	}
-	addToken(new Token(null, 0, 0, UPCParsersym.TK_EOF_TOKEN));
+	addToken(new Token(null, 0, 0, UPCExpressionStatementParsersym.TK_EOF_TOKEN));
 }
 
-public UPCParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(UPCParsersym.orderedTerminalSymbols, mapFrom);
+public UPCExpressionStatementParser(String[] mapFrom) {  // constructor
+	tokenMap = new TokenMap(UPCExpressionStatementParsersym.orderedTerminalSymbols, mapFrom);
 }	
 
 
@@ -1254,285 +1255,291 @@ public UPCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 307:  literal ::= MYTHREAD
+            // Rule 308:  expression_parser_start ::= ERROR_TOKEN
             //
-            case 307: { action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_mythread);            break;
+            case 308: { action.   consumeExpressionProblem();             break;
             }  
   
             //
-            // Rule 308:  literal ::= THREADS
+            // Rule 309:  literal ::= MYTHREAD
             //
-            case 308: { action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_threads);            break;
+            case 309: { action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_mythread);            break;
             }  
   
             //
-            // Rule 309:  literal ::= UPC_MAX_BLOCKSIZE
+            // Rule 310:  literal ::= THREADS
             //
-            case 309: { action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_upc_max_block_size);            break;
+            case 310: { action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_threads);            break;
             }  
   
             //
-            // Rule 310:  unary_expression ::= upc_localsizeof unary_expression
+            // Rule 311:  literal ::= UPC_MAX_BLOCKSIZE
             //
-            case 310: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_localsizeof);            break;
+            case 311: { action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_upc_max_block_size);            break;
             }  
   
             //
-            // Rule 311:  unary_expression ::= upc_localsizeof ( type_name )
+            // Rule 312:  unary_expression ::= upc_localsizeof unary_expression
             //
-            case 311: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_localsizeof);            break;
+            case 312: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_localsizeof);            break;
             }  
   
             //
-            // Rule 312:  unary_expression ::= upc_blocksizeof unary_expression
+            // Rule 313:  unary_expression ::= upc_localsizeof ( type_name )
             //
-            case 312: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_blocksizeof);            break;
+            case 313: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_localsizeof);            break;
             }  
   
             //
-            // Rule 313:  unary_expression ::= upc_blocksizeof ( type_name )
+            // Rule 314:  unary_expression ::= upc_blocksizeof unary_expression
             //
-            case 313: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_blocksizeof);            break;
+            case 314: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_blocksizeof);            break;
             }  
   
             //
-            // Rule 314:  unary_expression ::= upc_elemsizeof unary_expression
+            // Rule 315:  unary_expression ::= upc_blocksizeof ( type_name )
             //
-            case 314: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_elemsizeof);            break;
+            case 315: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_blocksizeof);            break;
             }  
   
             //
-            // Rule 315:  unary_expression ::= upc_elemsizeof ( type_name )
+            // Rule 316:  unary_expression ::= upc_elemsizeof unary_expression
             //
-            case 315: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_elemsizeof);            break;
+            case 316: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_elemsizeof);            break;
             }  
   
             //
-            // Rule 319:  shared_type_qualifier ::= shared
+            // Rule 317:  unary_expression ::= upc_elemsizeof ( type_name )
             //
-            case 319: { action.   consumeToken();             break;
+            case 317: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_elemsizeof);            break;
             }  
   
             //
-            // Rule 320:  reference_type_qualifier ::= relaxed
-            //
-            case 320: { action.   consumeToken();             break;
-            }  
-  
-            //
-            // Rule 321:  reference_type_qualifier ::= strict
+            // Rule 321:  shared_type_qualifier ::= shared
             //
             case 321: { action.   consumeToken();             break;
             }  
   
             //
-            // Rule 322:  layout_qualifier ::= [ constant_expression ]
+            // Rule 322:  reference_type_qualifier ::= relaxed
             //
-            case 322: { action.   consumeLayoutQualifier(true, false);             break;
+            case 322: { action.   consumeToken();             break;
             }  
   
             //
-            // Rule 323:  layout_qualifier ::= [ * ]
+            // Rule 323:  reference_type_qualifier ::= strict
             //
-            case 323: { action.   consumeLayoutQualifier(false, true);             break;
+            case 323: { action.   consumeToken();             break;
             }  
   
             //
-            // Rule 324:  layout_qualifier ::= [ ]
+            // Rule 324:  layout_qualifier ::= [ constant_expression ]
             //
-            case 324: { action.   consumeLayoutQualifier(false, false);             break;
+            case 324: { action.   consumeLayoutQualifier(true, false);             break;
             }  
   
             //
-            // Rule 326:  synchronization_statement ::= upc_notify expression ;
+            // Rule 325:  layout_qualifier ::= [ * ]
             //
-            case 326: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, true);            break;
+            case 325: { action.   consumeLayoutQualifier(false, true);             break;
             }  
   
             //
-            // Rule 327:  synchronization_statement ::= upc_notify ;
+            // Rule 326:  layout_qualifier ::= [ ]
             //
-            case 327: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, false);            break;
+            case 326: { action.   consumeLayoutQualifier(false, false);             break;
             }  
   
             //
-            // Rule 328:  synchronization_statement ::= upc_wait expression ;
+            // Rule 328:  synchronization_statement ::= upc_notify expression ;
             //
-            case 328: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, true);            break;
+            case 328: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, true);            break;
             }  
   
             //
-            // Rule 329:  synchronization_statement ::= upc_wait ;
+            // Rule 329:  synchronization_statement ::= upc_notify ;
             //
-            case 329: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, false);            break;
+            case 329: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, false);            break;
             }  
   
             //
-            // Rule 330:  synchronization_statement ::= upc_barrier expression ;
+            // Rule 330:  synchronization_statement ::= upc_wait expression ;
             //
-            case 330: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, true);            break;
+            case 330: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, true);            break;
             }  
   
             //
-            // Rule 331:  synchronization_statement ::= upc_barrier ;
+            // Rule 331:  synchronization_statement ::= upc_wait ;
             //
-            case 331: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, false);            break;
+            case 331: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, false);            break;
             }  
   
             //
-            // Rule 332:  synchronization_statement ::= upc_fence ;
+            // Rule 332:  synchronization_statement ::= upc_barrier expression ;
             //
-            case 332: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_fence, false);            break;
+            case 332: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, true);            break;
             }  
   
             //
-            // Rule 333:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; affinity ) statement
+            // Rule 333:  synchronization_statement ::= upc_barrier ;
             //
-            case 333: { action.   consumeStatementUPCForallLoop(true, true, true, true);            break;
+            case 333: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, false);            break;
             }  
   
             //
-            // Rule 334:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; ) statement
+            // Rule 334:  synchronization_statement ::= upc_fence ;
             //
-            case 334: { action.   consumeStatementUPCForallLoop(true, true, true, false);            break;
+            case 334: { action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_fence, false);            break;
             }  
   
             //
-            // Rule 335:  iteration_statement ::= upc_forall ( expression ; expression ; ; affinity ) statement
+            // Rule 335:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; affinity ) statement
             //
-            case 335: { action.   consumeStatementUPCForallLoop(true, true, false, true);            break;
+            case 335: { action.   consumeStatementUPCForallLoop(true, true, true, true);            break;
             }  
   
             //
-            // Rule 336:  iteration_statement ::= upc_forall ( expression ; expression ; ; ) statement
+            // Rule 336:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; ) statement
             //
-            case 336: { action.   consumeStatementUPCForallLoop(true, true, false, false);            break;
+            case 336: { action.   consumeStatementUPCForallLoop(true, true, true, false);            break;
             }  
   
             //
-            // Rule 337:  iteration_statement ::= upc_forall ( expression ; ; expression ; affinity ) statement
+            // Rule 337:  iteration_statement ::= upc_forall ( expression ; expression ; ; affinity ) statement
             //
-            case 337: { action.   consumeStatementUPCForallLoop(true, false, true, true);            break;
+            case 337: { action.   consumeStatementUPCForallLoop(true, true, false, true);            break;
             }  
   
             //
-            // Rule 338:  iteration_statement ::= upc_forall ( expression ; ; expression ; ) statement
+            // Rule 338:  iteration_statement ::= upc_forall ( expression ; expression ; ; ) statement
             //
-            case 338: { action.   consumeStatementUPCForallLoop(true, false, true, false);            break;
+            case 338: { action.   consumeStatementUPCForallLoop(true, true, false, false);            break;
             }  
   
             //
-            // Rule 339:  iteration_statement ::= upc_forall ( expression ; ; ; affinity ) statement
+            // Rule 339:  iteration_statement ::= upc_forall ( expression ; ; expression ; affinity ) statement
             //
-            case 339: { action.   consumeStatementUPCForallLoop(true, false, false, true);            break;
+            case 339: { action.   consumeStatementUPCForallLoop(true, false, true, true);            break;
             }  
   
             //
-            // Rule 340:  iteration_statement ::= upc_forall ( expression ; ; ; ) statement
+            // Rule 340:  iteration_statement ::= upc_forall ( expression ; ; expression ; ) statement
             //
-            case 340: { action.   consumeStatementUPCForallLoop(true, false, false, false);            break;
+            case 340: { action.   consumeStatementUPCForallLoop(true, false, true, false);            break;
             }  
   
             //
-            // Rule 341:  iteration_statement ::= upc_forall ( ; expression ; expression ; affinity ) statement
+            // Rule 341:  iteration_statement ::= upc_forall ( expression ; ; ; affinity ) statement
             //
-            case 341: { action.   consumeStatementUPCForallLoop(false, true, true, true);            break;
+            case 341: { action.   consumeStatementUPCForallLoop(true, false, false, true);            break;
             }  
   
             //
-            // Rule 342:  iteration_statement ::= upc_forall ( ; expression ; expression ; ) statement
+            // Rule 342:  iteration_statement ::= upc_forall ( expression ; ; ; ) statement
             //
-            case 342: { action.   consumeStatementUPCForallLoop(false, true, true, false);            break;
+            case 342: { action.   consumeStatementUPCForallLoop(true, false, false, false);            break;
             }  
   
             //
-            // Rule 343:  iteration_statement ::= upc_forall ( ; expression ; ; affinity ) statement
+            // Rule 343:  iteration_statement ::= upc_forall ( ; expression ; expression ; affinity ) statement
             //
-            case 343: { action.   consumeStatementUPCForallLoop(false, true, false, true);            break;
+            case 343: { action.   consumeStatementUPCForallLoop(false, true, true, true);            break;
             }  
   
             //
-            // Rule 344:  iteration_statement ::= upc_forall ( ; expression ; ; ) statement
+            // Rule 344:  iteration_statement ::= upc_forall ( ; expression ; expression ; ) statement
             //
-            case 344: { action.   consumeStatementUPCForallLoop(false, true, false, false);            break;
+            case 344: { action.   consumeStatementUPCForallLoop(false, true, true, false);            break;
             }  
   
             //
-            // Rule 345:  iteration_statement ::= upc_forall ( ; ; expression ; affinity ) statement
+            // Rule 345:  iteration_statement ::= upc_forall ( ; expression ; ; affinity ) statement
             //
-            case 345: { action.   consumeStatementUPCForallLoop(false, false, true, true);            break;
+            case 345: { action.   consumeStatementUPCForallLoop(false, true, false, true);            break;
             }  
   
             //
-            // Rule 346:  iteration_statement ::= upc_forall ( ; ; expression ; ) statement
+            // Rule 346:  iteration_statement ::= upc_forall ( ; expression ; ; ) statement
             //
-            case 346: { action.   consumeStatementUPCForallLoop(false, false, true, false);            break;
+            case 346: { action.   consumeStatementUPCForallLoop(false, true, false, false);            break;
             }  
   
             //
-            // Rule 347:  iteration_statement ::= upc_forall ( ; ; ; affinity ) statement
+            // Rule 347:  iteration_statement ::= upc_forall ( ; ; expression ; affinity ) statement
             //
-            case 347: { action.   consumeStatementUPCForallLoop(false, false, false, true);            break;
+            case 347: { action.   consumeStatementUPCForallLoop(false, false, true, true);            break;
             }  
   
             //
-            // Rule 348:  iteration_statement ::= upc_forall ( ; ; ; ) statement
+            // Rule 348:  iteration_statement ::= upc_forall ( ; ; expression ; ) statement
             //
-            case 348: { action.   consumeStatementUPCForallLoop(false, false, false, false);            break;
+            case 348: { action.   consumeStatementUPCForallLoop(false, false, true, false);            break;
             }  
   
             //
-            // Rule 349:  iteration_statement ::= upc_forall ( declaration expression ; expression ; affinity ) statement
+            // Rule 349:  iteration_statement ::= upc_forall ( ; ; ; affinity ) statement
             //
-            case 349: { action.   consumeStatementUPCForallLoop(true, true, true, true);            break;
+            case 349: { action.   consumeStatementUPCForallLoop(false, false, false, true);            break;
             }  
   
             //
-            // Rule 350:  iteration_statement ::= upc_forall ( declaration expression ; expression ; ) statement
+            // Rule 350:  iteration_statement ::= upc_forall ( ; ; ; ) statement
             //
-            case 350: { action.   consumeStatementUPCForallLoop(true, true, true, false);            break;
+            case 350: { action.   consumeStatementUPCForallLoop(false, false, false, false);            break;
             }  
   
             //
-            // Rule 351:  iteration_statement ::= upc_forall ( declaration expression ; ; affinity ) statement
+            // Rule 351:  iteration_statement ::= upc_forall ( declaration expression ; expression ; affinity ) statement
             //
-            case 351: { action.   consumeStatementUPCForallLoop(true, true, false, true);            break;
+            case 351: { action.   consumeStatementUPCForallLoop(true, true, true, true);            break;
             }  
   
             //
-            // Rule 352:  iteration_statement ::= upc_forall ( declaration expression ; ; ) statement
+            // Rule 352:  iteration_statement ::= upc_forall ( declaration expression ; expression ; ) statement
             //
-            case 352: { action.   consumeStatementUPCForallLoop(true, true, false, false);            break;
+            case 352: { action.   consumeStatementUPCForallLoop(true, true, true, false);            break;
             }  
   
             //
-            // Rule 353:  iteration_statement ::= upc_forall ( declaration ; expression ; affinity ) statement
+            // Rule 353:  iteration_statement ::= upc_forall ( declaration expression ; ; affinity ) statement
             //
-            case 353: { action.   consumeStatementUPCForallLoop(true, false, true, true);            break;
+            case 353: { action.   consumeStatementUPCForallLoop(true, true, false, true);            break;
             }  
   
             //
-            // Rule 354:  iteration_statement ::= upc_forall ( declaration ; expression ; ) statement
+            // Rule 354:  iteration_statement ::= upc_forall ( declaration expression ; ; ) statement
             //
-            case 354: { action.   consumeStatementUPCForallLoop(true, false, true, false);            break;
+            case 354: { action.   consumeStatementUPCForallLoop(true, true, false, false);            break;
             }  
   
             //
-            // Rule 355:  iteration_statement ::= upc_forall ( declaration ; ; affinity ) statement
+            // Rule 355:  iteration_statement ::= upc_forall ( declaration ; expression ; affinity ) statement
             //
-            case 355: { action.   consumeStatementUPCForallLoop(true, false, false, true);            break;
+            case 355: { action.   consumeStatementUPCForallLoop(true, false, true, true);            break;
             }  
   
             //
-            // Rule 356:  iteration_statement ::= upc_forall ( declaration ; ; ) statement
+            // Rule 356:  iteration_statement ::= upc_forall ( declaration ; expression ; ) statement
             //
-            case 356: { action.   consumeStatementUPCForallLoop(true, false, false, false);            break;
+            case 356: { action.   consumeStatementUPCForallLoop(true, false, true, false);            break;
             }  
   
             //
-            // Rule 358:  affinity ::= continue
+            // Rule 357:  iteration_statement ::= upc_forall ( declaration ; ; affinity ) statement
             //
-            case 358: { action.   consumeToken();             break;
+            case 357: { action.   consumeStatementUPCForallLoop(true, false, false, true);            break;
+            }  
+  
+            //
+            // Rule 358:  iteration_statement ::= upc_forall ( declaration ; ; ) statement
+            //
+            case 358: { action.   consumeStatementUPCForallLoop(true, false, false, false);            break;
+            }  
+  
+            //
+            // Rule 360:  affinity ::= continue
+            //
+            case 360: { action.   consumeToken();             break;
             }  
 
     

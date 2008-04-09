@@ -29,7 +29,8 @@ public class UPCC99Tests extends C99Tests {
 		super(name);
 	}
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 	

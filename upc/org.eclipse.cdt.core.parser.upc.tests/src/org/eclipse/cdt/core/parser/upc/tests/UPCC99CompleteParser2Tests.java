@@ -16,7 +16,8 @@ import org.eclipse.cdt.core.lrparser.tests.c99.C99CompleteParser2Tests;
 
 public class UPCC99CompleteParser2Tests extends C99CompleteParser2Tests {
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 

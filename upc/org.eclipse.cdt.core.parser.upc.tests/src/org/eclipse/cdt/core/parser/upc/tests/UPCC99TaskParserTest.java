@@ -16,7 +16,8 @@ import org.eclipse.cdt.core.lrparser.tests.c99.C99TaskParserTest;
 
 public class UPCC99TaskParserTest extends C99TaskParserTest {
 
-	protected BaseExtensibleLanguage getLanguage() {
+	@Override
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 

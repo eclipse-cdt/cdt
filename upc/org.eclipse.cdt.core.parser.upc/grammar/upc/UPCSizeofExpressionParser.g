@@ -15,10 +15,16 @@
 
 
 $Import
-	C99Parser.g
+	C99SizeofExpressionParser.g
 $End
 
 $Import
-	UPCGrammarExtensions.g
-$End 
+    UPCGrammarExtensions.g
+$DropRules
 
+unary_expression
+    ::= 'upc_localsizeof' '(' type_name ')'
+      | 'upc_blocksizeof' '(' type_name ')'
+      | 'upc_elemsizeof'  '(' type_name ')'
+          
+$End

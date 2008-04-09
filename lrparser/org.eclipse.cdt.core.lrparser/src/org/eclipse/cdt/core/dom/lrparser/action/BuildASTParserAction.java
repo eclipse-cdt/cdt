@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -1442,7 +1443,7 @@ public abstract class BuildASTParserAction {
 
 	
 	private void consumeProblem(IASTProblemHolder problemHolder) {
-		IASTProblem problem = nodeFactory.newProblem(IASTProblem.SYNTAX_ERROR, new char[0], true);
+		IASTProblem problem = nodeFactory.newProblem(IProblem.SYNTAX_ERROR, new char[0], true);
 		problemHolder.setProblem(problem);		
 		setOffsetAndLength(problem);
 		setOffsetAndLength((ASTNode)problemHolder);

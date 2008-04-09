@@ -15,6 +15,7 @@ import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
@@ -84,26 +85,26 @@ class DeclSpec {
 		if(type != null)
 			return type;
 		if(tokenKindMap.isEmpty()) // there are no type tokens, so it must be implicit int
-			return new C99BasicType(ICBasicType.t_int);
+			return new C99BasicType(IBasicType.t_int);
 		
 		C99BasicType basicType = new C99BasicType();
 		
 		for(int kind : tokenKindMap.keySet()) {
 			switch(kind) {
 				case TK_void:
-					basicType.setType(ICBasicType.t_void);
+					basicType.setType(IBasicType.t_void);
 					break;
 				case TK_char:
-					basicType.setType(ICBasicType.t_char);
+					basicType.setType(IBasicType.t_char);
 					break;
 				case TK_int:
-					basicType.setType(ICBasicType.t_int);
+					basicType.setType(IBasicType.t_int);
 					break;
 				case TK_float:
-					basicType.setType(ICBasicType.t_float);
+					basicType.setType(IBasicType.t_float);
 					break;
 				case TK_double:
-					basicType.setType(ICBasicType.t_double);
+					basicType.setType(IBasicType.t_double);
 					break;
 				case TK_long:
 					boolean isLongLong = count(TK_long) > 1;
@@ -137,8 +138,7 @@ class DeclSpec {
 		
 		if(isConst || isRestrict || isVolatile)
 			return new C99QualifierType(basicType, isConst, isVolatile, isRestrict);
-		else
-			return basicType;
+		return basicType;
 	}
 
 

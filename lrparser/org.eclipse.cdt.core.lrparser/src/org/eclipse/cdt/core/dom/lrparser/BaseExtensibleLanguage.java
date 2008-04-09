@@ -82,6 +82,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	protected abstract ParserLanguage getParserLanguageForPreprocessor();
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPDOMLinkageFactory.class)
@@ -117,7 +118,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		ParserLanguage pl = getParserLanguageForPreprocessor();
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
-		preprocessor.setComputeImageLocations((options & AbstractLanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
+		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
 		IParser parser = getParser();
 		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
@@ -143,6 +144,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	}
 
 	
+	@SuppressWarnings("nls")
 	public IASTCompletionNode getCompletionNode(CodeReader reader,
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
 			IIndex index, IParserLogService log, int offset) throws CoreException {

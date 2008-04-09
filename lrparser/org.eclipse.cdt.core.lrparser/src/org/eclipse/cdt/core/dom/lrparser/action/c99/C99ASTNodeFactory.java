@@ -210,6 +210,9 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTTypeIdInitializerExpression(typeId, list);
 	}
 	
+	/**
+	 * @param operator  
+	 */
 	public IASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
 		return new CASTCastExpression(typeId, operand);
 	}

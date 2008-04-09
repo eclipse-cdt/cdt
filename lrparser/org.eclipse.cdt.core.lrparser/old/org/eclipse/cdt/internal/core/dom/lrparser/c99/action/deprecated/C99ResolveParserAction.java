@@ -191,7 +191,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		
 		undoStack.add(new IUndoAction() {
 			public void undo() {
-				if(DEBUG) DebugUtil.printMethodTrace("undo");
 				
 				bindingScopeStack.removeLast();
 				symbolTable = symbolTableScopeStack.removeLast();
@@ -1030,7 +1029,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 	
 
-	public IBinding consumeEnumerator(boolean hasInitializer) {
+	public IBinding consumeEnumerator() {
 		if(DEBUG) DebugUtil.printMethodTrace();
 		
 		IToken token = parser.getLeftIToken();
@@ -1206,7 +1205,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 	}
 	
 	
-	
+	@SuppressWarnings("nls")
 	public void consumeExpressionConstant(int kind) {
 		if(DEBUG) DebugUtil.printMethodTrace();
 		
@@ -1407,7 +1406,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 	}
 
 
-	public void consumeExpressionUnaryOperator(int operator) {
+	public void consumeExpressionUnaryOperator() {
 		if(DEBUG) DebugUtil.printMethodTrace();
 		
 		// TODO: this is lazy, need to check the actual rules for types and operators

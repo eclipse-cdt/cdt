@@ -161,6 +161,7 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	public static class DeclaredAction<ACT, RULE_DATA> extends Action<ACT, RULE_DATA> {
 		protected boolean hasUndo = false;
 		@Override
+		@SuppressWarnings("unused") 
 		public boolean doTrial(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			return true;
 		}
@@ -172,6 +173,7 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	 */	
 	static final class NullAction<ACT, RULE_DATA> extends Action<ACT, RULE_DATA> {
 		@Override
+		@SuppressWarnings("unused") 
 		public void doFinal(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			// do nothing
 		}
@@ -180,16 +182,19 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 
 	static final class BadAction<ACT, RULE_DATA> extends Action<ACT, RULE_DATA> {
 		@Override
+		@SuppressWarnings("unused") 
 		public void doFinal(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			throw new Error(new BadActionException());
 		}
 
 		@Override
+		@SuppressWarnings("unused") 
 		public boolean doTrial(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			throw new Error(new BadActionException());
 		}
 
 		@Override
+		@SuppressWarnings("unused") 
 		public void doUndo(ITrialUndoActionProvider<RULE_DATA> provider, ACT action) {
 			throw new Error(new BadActionException());
 		}

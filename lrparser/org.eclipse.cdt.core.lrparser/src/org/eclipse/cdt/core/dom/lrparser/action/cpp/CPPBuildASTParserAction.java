@@ -104,6 +104,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
  * 
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction")
 public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	
@@ -394,7 +395,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 
 	
-	@SuppressWarnings("restriction")
+
 	private static OverloadableOperator getOverloadableOperator(List<IToken> tokens) {
 		if(tokens.size() == 1) {
 			// TODO this is a hack that I did to save time
@@ -486,7 +487,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      *       | '::' operator_function_id
      *       | '::' template_id
   	 */
-  	@SuppressWarnings("restriction")
+
 	public void consumeGlobalQualifiedId() {
   		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 
@@ -735,7 +736,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * 
 	 * @param names List of name nodes in reverse order
 	 */
-	@SuppressWarnings("restriction")
 	private IASTName createQualifiedName(LinkedList<IASTName> names, int startOffset, int endOffset, boolean startsWithColonColon, boolean endsWithColonColon) {
 		if(!endsWithColonColon && !startsWithColonColon && names.size() == 1) 
 			return names.getFirst(); // its actually an unqualified name

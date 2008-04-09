@@ -760,7 +760,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
     	IASTCompoundStatement  body = (IASTCompoundStatement) astStack.pop();
     	
-    	IASTDeclaration[] declarations = (IASTDeclaration[]) astStack.topScope().toArray(new IASTDeclaration[0]);
+    	IASTDeclaration[] declarations = astStack.topScope().toArray(new IASTDeclaration[0]);
     	astStack.closeScope();
     	
     	ICASTKnRFunctionDeclarator decl = (ICASTKnRFunctionDeclarator) astStack.pop();

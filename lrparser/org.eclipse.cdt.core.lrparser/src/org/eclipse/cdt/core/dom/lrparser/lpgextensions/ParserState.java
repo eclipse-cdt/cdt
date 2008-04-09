@@ -48,6 +48,7 @@ class ParserState {
 	/**
 	 * Trial actions that have been executed but not yet committed.
 	 */
+	@SuppressWarnings("unchecked")
 	public LinkedList pendingCommits;
 
 	public ConfigurationStack configurationStack;

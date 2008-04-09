@@ -92,7 +92,7 @@ public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 	}
 
 	@Deprecated
-	public String getValue(char[] arg0) {
+	public String getValue(@SuppressWarnings("unused") char[] arg0) {
 		return toString();
 	}
 
@@ -100,7 +100,7 @@ public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 		this.adjunctIndex = adjunctIndex;
 	}
 
-	public void setEndOffset(int arg0) {
+	public void setEndOffset(@SuppressWarnings("unused") int arg0) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -108,7 +108,7 @@ public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 		this.kind = kind;
 	}
 
-	public void setStartOffset(int arg0) {
+	public void setStartOffset(@SuppressWarnings("unused") int arg0) {
 		throw new UnsupportedOperationException();
 
 	}

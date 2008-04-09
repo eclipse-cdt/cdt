@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
  * 
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction")
 public class ISOCPPLanguage extends BaseExtensibleLanguage {
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.lrparser"; //$NON-NLS-1$ 
@@ -57,7 +58,7 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 		return TOKEN_MAP;
 	}
 
-	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
+	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
 		return null;
 	}
 
@@ -93,7 +94,6 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	/**
 	 * Gets the translation unit object and sets the index and the location resolver. 
 	 */
-	@SuppressWarnings("restriction")
 	@Override
 	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
 		IASTTranslationUnit tu = CPPASTNodeFactory.DEFAULT_INSTANCE.newTranslationUnit();

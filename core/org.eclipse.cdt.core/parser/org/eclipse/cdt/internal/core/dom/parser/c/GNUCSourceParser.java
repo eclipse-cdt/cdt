@@ -1256,13 +1256,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 try {
                         lookAheadForDeclarator(flags);
                     } catch (FoundDeclaratorException e) {
-                        ICASTSimpleDeclSpecifier declSpec = null;
-                        if (typeofExpression != null) {
-                            declSpec = createGCCSimpleTypeSpecifier();
-                            ((IGCCASTSimpleDeclSpecifier) declSpec).setTypeofExpression(typeofExpression);
-                        } else {
-                            declSpec = createSimpleTypeSpecifier();
-                        }
+                        ICASTSimpleDeclSpecifier declSpec= createSimpleTypeSpecifier();
                         
                         declSpec.setConst(isConst);
                         declSpec.setRestrict(isRestrict);
@@ -1276,12 +1270,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                         declSpec.setUnsigned(isUnsigned);
                         declSpec.setSigned(isSigned);
                         declSpec.setShort(isShort);
-                        if( typeofExpression != null && last == null ){
-                            ((ASTNode)declSpec).setOffsetAndLength( (ASTNode)typeofExpression );
-                        } else {
-                            ((ASTNode) declSpec).setOffsetAndLength(startingOffset,
-                                    (last != null) ? last.getEndOffset() - startingOffset : 0);
-                        }
+                        ((ASTNode) declSpec).setOffsetAndLength(startingOffset,
+                        		(last != null) ? last.getEndOffset() - startingOffset : 0);
                         e.declSpec = declSpec;
                         throw e;
                     }
@@ -1385,7 +1375,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             declSpec.setInline(isInline);
             declSpec.setStorageClass(storageClass);
 
-            ((ASTNode) declSpec).setOffsetAndLength(startingOffset, last.getEndOffset() - startingOffset);
+            if (last != null) {
+                ((ASTNode) declSpec).setOffsetAndLength(startingOffset, last.getEndOffset() - startingOffset);
+            }
             IASTName name = createName(identifier);
             declSpec.setName(name);
             return declSpec;
@@ -1462,6 +1454,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             break;
         default:
             throwBacktrack(mark.getOffset(), mark.getLength());
+        	return null; // line never reached, hint for the parser.
         }
 
         // if __attribute__ or __declspec occurs after struct/union/class and before the identifier
@@ -1636,13 +1629,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                             switch (LT(1)) {
                             case IToken.tCOMMA:
                                 last = consume();
-                                seenParameter = false;
+                                parmNames[i] = createName(identifier());
+                                seenParameter = true;
+                                break;
                             case IToken.tIDENTIFIER:
                                 if (seenParameter)
                                     throwBacktrack(startingOffset, last.getEndOffset() - startingOffset);
 
                                 parmNames[i] = createName(identifier());
-
                                 seenParameter = true;
                                 break;
                             case IToken.tRPAREN:
@@ -1694,8 +1688,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                                     parmDeclarations[i] = declaration;
                                 } else {
                                     parmDeclarations[i] = createKnRCProblemDeclaration(
-                                            ((ASTNode) declaration).getLength(),
-                                            ((ASTNode) declaration).getOffset());
+                                            ((ASTNode) decl).getLength(),
+                                            ((ASTNode) decl).getOffset());
                                 }
                             } catch (BacktrackException b) {
                                 parmDeclarations[i] = createKnRCProblemDeclaration(

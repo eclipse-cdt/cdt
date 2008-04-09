@@ -1141,6 +1141,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 } else {
                     IToken la = LA(1);
                     throwBacktrack(la.getOffset(), la.getLength());
+                    return null; // line is never reached, hint for the parser
                 }
                 IASTExpression initialValue = null;
                 if (LT(1) == IToken.tASSIGN) {

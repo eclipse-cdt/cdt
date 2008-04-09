@@ -1414,7 +1414,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             switch (n.length) {
             case 0:
                 throwBacktrack(LA(1));
-                break;
+                return null; // line is never reached, hint for the parser
             case 1:
                 if (n[0] instanceof IASTTypeId) {
                     firstExpression = buildTypeIdExpression(
@@ -1424,6 +1424,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     firstExpression = buildUnaryExpression(
                             ICPPASTUnaryExpression.op_typeid,
                             (IASTExpression) n[0], so, lastOffset);
+                } else {
+                	throwBacktrack(LA(1));
+                	return null; // line is never reached, hint for the parser
                 }
                 break;
             case 2:
@@ -1439,6 +1442,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 ((ASTNode) ambExpr).setOffsetAndLength((ASTNode) e2);
                 firstExpression = ambExpr;
                 break;
+            
+            default:
+            	assert false;
+            	throwBacktrack(LA(1));
+            	return null; // line is never reached, hint for the parser
             }
 
             break;
@@ -3056,21 +3064,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 catch( FoundDeclaratorException fde )
                 {
                     ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;
-                    if (isLongLong || typeofExpression != null) {
+                    if (isLongLong) {
                         simpleDeclSpec = createGPPSimpleDeclSpecifier();
                         ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec).setLongLong(isLongLong);
-                        if (typeofExpression != null) {
-                            ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec).setTypeofExpression(typeofExpression);
-                        }
                     } else
                         simpleDeclSpec = createSimpleDeclSpecifier();
 
-                    if( last == null && typeofExpression != null ){
-                        ((ASTNode) simpleDeclSpec).setOffsetAndLength((ASTNode) typeofExpression);
-                    } else {
-                        int l = last != null ? last.getEndOffset() - firstToken.getOffset() : 0;
-                        ((ASTNode) simpleDeclSpec).setOffsetAndLength(firstToken.getOffset(), l);
-                    }
+                    int l = last != null ? last.getEndOffset() - firstToken.getOffset() : 0;
+                    ((ASTNode) simpleDeclSpec).setOffsetAndLength(firstToken.getOffset(), l);
+
                     simpleDeclSpec.setConst(isConst);
                     simpleDeclSpec.setVolatile(isVolatile);
                     if (simpleDeclSpec instanceof IGPPASTDeclSpecifier)
@@ -3203,7 +3205,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             nameSpec.setStorageClass(storageClass);
             nameSpec.setVirtual(isVirtual);
             nameSpec.setExplicit(isExplicit);
-            ((ASTNode) nameSpec).setOffsetAndLength(startOffset, last.getEndOffset() - startOffset);
+            if (last != null) {
+            	((ASTNode) nameSpec).setOffsetAndLength(startOffset, last.getEndOffset() - startOffset);
+            }
+            else {
+            	((ASTNode) nameSpec).setOffsetAndLength(startOffset, duple.getLastToken().getEndOffset() - startOffset);            	
+            }
             return nameSpec;
         }
         ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;
@@ -3830,7 +3837,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 backup(mark);
                 throwBacktrack(mark.getOffset(), endOffset - mark.getOffset());
             }
-            int endOffset = (mark != null) ? mark.getEndOffset() : 0;
+            int endOffset= mark.getEndOffset();
             backup(mark);
             throwBacktrack(mark.getOffset(), endOffset - mark.getOffset());
 
@@ -3869,6 +3876,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             break;
         default:
             throwBacktrack(mark.getOffset(), mark.getLength());
+        	return null; // line is never reached, hint for the parser
         }
 
         IASTName name = null;

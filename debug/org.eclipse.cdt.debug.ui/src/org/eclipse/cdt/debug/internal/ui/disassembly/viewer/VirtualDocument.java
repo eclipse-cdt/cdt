@@ -64,6 +64,10 @@ public class VirtualDocument extends Document {
         fCurrentOffset = offset;
     }
 
+    public Object getElementAtLine( int line ) {
+        return getContentProvider().getElementAtLine( line );
+    }
+
     public void updateContent( int lineCount, int offset, boolean revealInput ) {
     }
 

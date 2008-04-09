@@ -30,20 +30,25 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor;
+import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.VirtualDocument;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.disassembly.IElementToggleBreakpointAdapter;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -151,6 +156,26 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				}
 			}
 		}
+		else if ( part instanceof DisassemblyEditor && selection instanceof ITextSelection ) {
+            DisassemblyEditor editor = (DisassemblyEditor)part;
+            int lineNumber = ((ITextSelection)selection).getStartLine();
+            if ( lineNumber != -1 ) {
+                IEditorInput input = editor.getEditorInput();
+                if ( input != null ) {
+                    VirtualDocument document = (VirtualDocument)editor.getDocumentProvider().getDocument( input );
+                    if ( document != null ) {
+                        IPresentationContext presentationContext = document.getPresentationContext();
+                        Object element = document.getElementAtLine( lineNumber );
+                        if ( element != null ) {
+                            IElementToggleBreakpointAdapter adapter = getToggleBreakpointAdapter( element );
+                            if ( adapter != null ) {
+                                adapter.toggleLineBreakpoints( presentationContext, element );
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		else {
 			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}
@@ -168,6 +193,26 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				return false;
 			}			
 		}
+		else if ( part instanceof DisassemblyEditor && selection instanceof ITextSelection ) {
+            DisassemblyEditor editor = (DisassemblyEditor)part;
+            int lineNumber = ((ITextSelection)selection).getStartLine();
+            if ( lineNumber != -1 ) {
+                IEditorInput input = editor.getEditorInput();
+                if ( input != null ) {
+                    VirtualDocument document = (VirtualDocument)editor.getDocumentProvider().getDocument( input );
+                    if ( document != null ) {
+                        IPresentationContext presentationContext = document.getPresentationContext();
+                        Object element = document.getElementAtLine( lineNumber );
+                        if ( element != null ) {
+                            IElementToggleBreakpointAdapter adapter = getToggleBreakpointAdapter( element );
+                            if ( adapter != null ) {
+                                return adapter.canToggleLineBreakpoints( presentationContext, element );
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		return ( selection instanceof ITextSelection );
 	}
 
@@ -479,4 +524,16 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		}
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
+
+    private IElementToggleBreakpointAdapter getToggleBreakpointAdapter( Object element ) {
+        IElementToggleBreakpointAdapter adapter = null;
+        if ( element instanceof IElementToggleBreakpointAdapter ) {
+            adapter = (IElementToggleBreakpointAdapter)element;
+        }
+        else if ( element instanceof IAdaptable ) {
+            IAdaptable adaptable = (IAdaptable)element;
+            adapter = (IElementToggleBreakpointAdapter)adaptable.getAdapter( IElementToggleBreakpointAdapter.class );
+        }
+        return adapter;
+    }
 }

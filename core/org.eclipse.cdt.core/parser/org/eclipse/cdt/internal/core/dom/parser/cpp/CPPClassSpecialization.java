@@ -48,7 +48,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  *
  */
 public class CPPClassSpecialization extends CPPSpecialization implements
-		ICPPClassType, ICPPInternalBinding {
+		ICPPClassType {
 
 	private IScope specScope;
 	
@@ -157,9 +157,13 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
 	 */
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		CPPClassSpecializationScope scope = (CPPClassSpecializationScope) getCompositeScope();
-		if (scope.isFullyCached())
-			return scope.getDeclaredMethods();
+		IScope scope= getCompositeScope();
+		if (scope instanceof CPPClassSpecializationScope) {
+			CPPClassSpecializationScope sscope= (CPPClassSpecializationScope) scope;
+			if (sscope.isFullyCached())
+				return sscope.getDeclaredMethods();
+		}
+		
 		IBinding binding = null;
 		ICPPMethod [] result = null;
 

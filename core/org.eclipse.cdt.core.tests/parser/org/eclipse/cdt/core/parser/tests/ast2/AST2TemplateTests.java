@@ -2256,7 +2256,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    	bar(ca);
 	//    }
     public void testBug214646() throws Exception {
-    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
     	
     	IBinding b0= bh.assertNonProblem("foo(a)", 3);
     	IBinding b1= bh.assertNonProblem("bar(ca)", 3);
@@ -2292,7 +2292,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    	foo(d);
 	//    }
     public void testUserDefinedConversions_224364() throws Exception {
-    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
     	ICPPFunction fn= bh.assertNonProblem("foo(d)", 3, ICPPFunction.class);
     }
     
@@ -2312,7 +2312,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    	foo(d);
 	//    }
     public void testUserDefinedConversions_224364_2() throws Exception {
-    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
     	ICPPFunction fn= bh.assertNonProblem("foo(d)", 3, ICPPFunction.class);
     }
     
@@ -2335,7 +2335,31 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//    Z z= foo(*new E<Z>());
     public void testUserDefinedConversions_224364_3() throws Exception {
-    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
     	ICPPFunction fn= bh.assertNonProblem("foo(*new", 3, ICPPFunction.class);
+    }
+    
+	//    class X {}; class B {};
+	//    template<typename T>
+	//    class C {
+	//    	public:
+	//    		T t;
+	//          operator T() {return t;}
+	//    };
+	//    template<>
+	//    class C<X> {
+	//    	public:
+	//    		X t;
+	//          operator B() {B b; return b;}
+	//    };
+	//    void foo(B b) {}
+	//
+	//    void refs() {
+	//    	C<X> cx;
+	//    	foo(cx);
+	//    }
+    public void testUserDefinedConversions_226231() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+    	ICPPFunction fn= bh.assertNonProblem("foo(cx", 3, ICPPFunction.class);
     }
 }

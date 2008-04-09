@@ -35,8 +35,8 @@ public class ExceptionTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int parameter) throw (float){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int parameter) throw (int, float){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int parameter) throw (/*Test*/float) /*Test2*/{\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int parameter) throw (int, /*Test*/float) /*Test2*/{\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 	

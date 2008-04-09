@@ -33,6 +33,8 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.core.resources.IFile;
@@ -56,6 +58,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 	private CompositeChange change;
 
 	private final ASTModificationStore modificationStore;
+	private NodeCommentMap commentMap;
 
 	{
 		shouldVisitExpressions = true;
@@ -97,6 +100,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 			throws ProblemRuntimeException {
 		change = new CompositeChange(Messages.ChangeGenerator_compositeChange);
 		initParentModList();
+		commentMap = ASTCommenter.getCommentedNodeMap(rootNode.getTranslationUnit());
 		rootNode.accept(pathProvider);
 		for (IFile currentFile : changes.keySet()) {
 
@@ -161,12 +165,13 @@ public class ChangeGenerator extends CPPASTVisitor {
 		String indent = getIndent(synthNode);
 		ASTWriter synthWriter = new ASTWriter(indent);
 		synthWriter.setModificationStore(modificationStore);
-		String synthSource = synthWriter.write(synthNode);
+		
+		String synthSource = synthWriter.write(synthNode, fileScope, commentMap);
+
 		reformatSynthCode(synthNode, synthSource); /*XXX resultat wird nicht verwendet?*/
 
-
 		int newOffset = synthNode.getFileLocation().getNodeOffset()
-				+ synthNode.getFileLocation().getNodeLength();
+		+ synthNode.getFileLocation().getNodeLength();
 		sourceOffsets.put(synthNode.getFileLocation().getFileName(), Integer.valueOf(newOffset));
 
 	}
@@ -177,11 +182,11 @@ public class ChangeGenerator extends CPPASTVisitor {
 
 		for (ASTModification modification : modificationParent.get(synthTU)) {
 			IASTFileLocation targetLocation = modification.getTargetNode()
-					.getFileLocation();
+			.getFileLocation();
 			String currentFile = targetLocation.getFileName();
 			IPath implPath = new Path(currentFile);
 			IFile relevantFile = ResourcesPlugin.getWorkspace().getRoot()
-					.getFileForLocation(implPath);
+			.getFileForLocation(implPath);
 			MultiTextEdit edit;
 			if (changes.containsKey(relevantFile)) {
 				edit = changes.get(relevantFile);
@@ -189,8 +194,8 @@ public class ChangeGenerator extends CPPASTVisitor {
 				edit = new MultiTextEdit();
 				changes.put(relevantFile, edit);
 			}
+			String newNodeCode = synthWriter.write(modification.getNewNode(), null, commentMap);
 
-			String newNodeCode = synthWriter.write(modification.getNewNode());
 			switch (modification.getKind()) {
 			case REPLACE:
 				edit.addChild(new ReplaceEdit(targetLocation.getNodeOffset(),
@@ -555,9 +560,8 @@ public class ChangeGenerator extends CPPASTVisitor {
 					: synthCode.length());
 			if (replacementStart < replacementEnd) {
 				return synthCode.substring(replacementStart, replacementEnd);
-			} else {
-				return ""; //$NON-NLS-1$
 			}
+			return ""; //$NON-NLS-1$
 		}
 	}
 

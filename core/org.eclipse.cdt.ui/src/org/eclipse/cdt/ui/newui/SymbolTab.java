@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -73,20 +71,15 @@ public class SymbolTab extends AbstractLangsListTab {
 	public void update() {
 		if (lang != null) {
 			int x = table.getSelectionIndex();
-			if (x == -1) x = 0;
-			incs = getIncs();
-			ArrayList<ICLanguageSettingEntry> lst = new ArrayList<ICLanguageSettingEntry>();
-			if (incs != null) {
-				Iterator it = incs.iterator();
-				while (it.hasNext()) {
-					ICLanguageSettingEntry ent = (ICLanguageSettingEntry)it.next();
-					if (!(ent.isBuiltIn() && (!showBIButton.getSelection()))) lst.add(ent);
-				}
-				Collections.sort(lst, CDTListComparator.getInstance());
-			}
-			tv.setInput(lst.toArray(new Object[lst.size()]));
-			if (table.getItemCount() > x) table.select(x);
-			else if (table.getItemCount() > 0) table.select(0);
+			if (x == -1) 
+				x = 0;
+			shownEntries = getIncs();
+			Collections.sort(shownEntries, CDTListComparator.getInstance());
+			tv.setInput(shownEntries.toArray(new Object[shownEntries.size()]));
+			if (table.getItemCount() > x)
+				table.select(x);
+			else if (table.getItemCount() > 0) 
+				table.select(0);
 		}		
 		updateLbs(lb1, lb2);
 		updateButtons();

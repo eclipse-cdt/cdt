@@ -83,7 +83,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected TableColumn columnToFit = null; 
 	
 	protected ICLanguageSetting lang;
-	protected LinkedList<ICLanguageSettingEntry> incs;
+	protected LinkedList<ICLanguageSettingEntry> shownEntries;
 	protected ArrayList<ICSettingEntry> exported; 
 	protected SashForm sashForm;
 	protected ICLanguageSetting [] ls; // all languages known
@@ -221,9 +221,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		boolean canExport = index != -1;
 		boolean canEdit = canExport && ids.length == 1;
 		boolean canDelete = canExport;
+		ICLanguageSettingEntry ent = null;
 		if (canExport) {
-			ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index).getData());
-			if (ent.isBuiltIn() || ent.isReadOnly()) canEdit = false;
+			ent = (ICLanguageSettingEntry)(table.getItem(index).getData());
+			if (ent.isReadOnly()) canEdit = false;
 			if (ent.isReadOnly()) canDelete = false;
 			if (exported.contains(ent))
 				buttonSetText(3, UIMessages.getString("AbstractLangsListTab.4")); //$NON-NLS-1$
@@ -232,10 +233,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		} else {
 			buttonSetText(3, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
 		}
-    	boolean canMoveUp = canEdit && index > 0;
-    	boolean canMoveDown = canEdit && (index < table.getItemCount() - 1); 
+    	boolean canMoveUp = canEdit && index > 0 && !ent.isBuiltIn();
+    	boolean canMoveDown = canEdit && (index < table.getItemCount() - 1) && !ent.isBuiltIn(); 
     	if (canMoveDown && showBIButton.getSelection()) {
-    		ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index+1).getData());
+    		ent = (ICLanguageSettingEntry)(table.getItem(index+1).getData());
     		if (ent.isBuiltIn()) canMoveDown = false; // cannot exchange with built in
     	}
     	buttonSetEnabled(0, canAdd); // add
@@ -306,8 +307,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (x == -1) x = 0; 
 			else x += shift; // used only for UP/DOWN 
 			
-			incs = getIncs(); 
-			tv.setInput(incs.toArray(new Object[incs.size()]));
+			shownEntries = getIncs(); 
+			tv.setInput(shownEntries.toArray(new Object[shownEntries.size()]));
 			if (table.getItemCount() > x) table.select(x);
 			else if (table.getItemCount() > 0) table.select(0);
 		}		
@@ -395,29 +396,48 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 				addToAll(ent);
 			} else {
 				if (isWModifyMode() && (lang instanceof MultiLanguageSetting)) {
-					performMulti(ent, false);
+					performMulti(ent, null);
 				} else {
-					incs.add(ent);
-					setSettingEntries(getKind(), incs, toAllLang);
+					changeIt(ent, null);
 				}
 			}
 			update();
 		}
 	}
 
-	private void performMulti(ICLanguageSettingEntry ent, boolean delete) {
+	private void changeIt(ICLanguageSettingEntry add, ICLanguageSettingEntry[] del) {
+		List<ICLanguageSettingEntry> ls = getSettingEntriesList(getKind());
+		if (del != null) {
+			for (ICLanguageSettingEntry d : del) {
+				for (ICLanguageSettingEntry e : ls) {
+					if (d.getName().equals(e.getName())) {
+						ls.remove(e);
+						break;
+					}
+				}
+			}
+		}
+		if (add != null)
+			ls.add(add);
+		setSettingEntries(getKind(), ls, toAllLang);
+	}
+	
+	private void performMulti(ICLanguageSettingEntry ent, ICLanguageSettingEntry del) {
 		MultiLanguageSetting ms = (MultiLanguageSetting)lang;
 		ICLanguageSetting[] ls = (ICLanguageSetting[])ms.getItems();
 		ICLanguageSettingEntry[][] es = ms.getSettingEntriesM(getKind());
 		for (int i=0; i<ls.length; i++) {
 			List<ICLanguageSettingEntry> entries = 
 				new ArrayList<ICLanguageSettingEntry>(Arrays.asList(es[i]));
-			for (ICLanguageSettingEntry e : entries) 
-				if (e.getName().equals(ent.getName())) {
-					entries.remove(e);
-					break;
+			if (del != null) {
+				for (ICLanguageSettingEntry e : entries) { 
+					if (e.getName().equals(del.getName())) {
+						entries.remove(e);
+						break;
+					}
 				}
-			if (!delete)
+			}
+			if (ent != null)
 				entries.add(ent);
 			ls[i].setSettingEntries(getKind(), entries);
 		}
@@ -428,14 +448,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSettingEntry old = (ICLanguageSettingEntry)(table.getItem(n).getData());
 		if (old.isReadOnly()) return;
 		ICLanguageSettingEntry ent = doEdit(old);
+		toAllLang = false;
 		if (ent != null) {
 			if (isWModifyMode() && (lang instanceof MultiLanguageSetting)) {
-				performMulti(ent, false);
+				performMulti(ent, old);
 			} else {
-				int toModify = incs.indexOf(old);
-				incs.remove(toModify);
-				incs.add(toModify, ent);
-				setSettingEntries(getKind(), incs, false);
+				ICLanguageSettingEntry[] del = null;  
+				if (! ent.getName().equals(old.getName()))
+					del = new ICLanguageSettingEntry[] {old};
+				changeIt(ent, del);
 			}
 			update();
 		}
@@ -447,15 +468,16 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		if (isWModifyMode() && (lang instanceof MultiLanguageSetting)) {
 			for (int x=ids.length-1; x>=0; x--) {
 				ICLanguageSettingEntry old = (ICLanguageSettingEntry)(table.getItem(ids[x]).getData());
-					performMulti(old, true);
+					performMulti(null, old);
 			}
 		} else {
+			ICLanguageSettingEntry[] del = new ICLanguageSettingEntry[ids.length];
 			for (int x=ids.length-1; x>=0; x--) {
 				ICLanguageSettingEntry old = (ICLanguageSettingEntry)(table.getItem(ids[x]).getData());
-				if (old.isReadOnly()) continue;
-				incs.remove(old);
+//				if (old.isReadOnly()) continue;
+				del[x] = old;
 			}
-			setSettingEntries(getKind(), incs, false);
+			changeIt(null, del);
 		}
 		update();
 		
@@ -497,16 +519,17 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		case 5: // move up	
 		case 6: // move down
 			old = (ICLanguageSettingEntry)(table.getItem(n).getData());
-			int x = incs.indexOf(old);
+			int x = shownEntries.indexOf(old);
 			if (x < 0) break;
 			if (i == 6) x++; // "down" simply means "up underlying item"
-			old = incs.get(x);
-			ICLanguageSettingEntry old2 = incs.get(x - 1);
-			incs.remove(x);
-			incs.remove(x - 1);
-			incs.add(x - 1, old);
-			incs.add(x, old2);
-			setSettingEntries(getKind(), incs, false);
+			old = shownEntries.get(x);
+			ICLanguageSettingEntry old2 = shownEntries.get(x - 1);
+			shownEntries.remove(x);
+			shownEntries.remove(x - 1);
+			shownEntries.add(x - 1, old);
+			shownEntries.add(x, old2);
+			
+			setSettingEntries(getKind(), shownEntries, false);
 			update(i == 5 ? -1 : 1);			
 			break;			
 		default:

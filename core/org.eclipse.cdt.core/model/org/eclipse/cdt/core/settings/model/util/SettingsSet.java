@@ -13,13 +13,14 @@ package org.eclipse.cdt.core.settings.model.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICMacroEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class SettingsSet {
 	public static final int READ_ONLY = 1;
@@ -31,12 +32,12 @@ public class SettingsSet {
 		private int fFlagsToClear;
 		private boolean fIsReadOnly;
 		private boolean fIsOverrideSupported;
-		private LinkedHashMap fEntries;
-		HashSet fOverrideSet;
+		private LinkedHashMap<EntryNameKey, EntryInfo> fEntries;
+		HashSet<String> fOverrideSet;
 		private Object fContext;
 		
 		private SettingLevel(){
-			fEntries = new LinkedHashMap();
+			fEntries = new LinkedHashMap<EntryNameKey, EntryInfo>();
 		}
 		
 		public boolean isReadOnly(){
@@ -79,10 +80,11 @@ public class SettingsSet {
 			return (baseFlags | fFlagsToSet) & (~fFlagsToClear);
 		}
 		
-		public Set getOverrideSet(){
+		@SuppressWarnings("unchecked")
+		public Set<String> getOverrideSet(){
 			if(fOverrideSet != null)
-				return (HashSet)fOverrideSet.clone();
-			return new HashSet();
+				return (HashSet<String>)fOverrideSet.clone();
+			return new HashSet<String>();
 		}
 
 		public void addEntries(ICLanguageSettingEntry entries[]){
@@ -93,11 +95,9 @@ public class SettingsSet {
 			}
 		}
 
-		public void addEntries(List list){
-			int size = list.size();
-			for(int i = 0; i < size; i++){
-				addEntry((ICLanguageSettingEntry)list.get(i));
-			}
+		public void addEntries(List<ICLanguageSettingEntry> list){
+			for(ICLanguageSettingEntry se : list)
+				addEntry(se);
 		}
 		
 		public void addEntry(ICLanguageSettingEntry entry){
@@ -107,23 +107,23 @@ public class SettingsSet {
 		public void addEntry(ICLanguageSettingEntry entry, Object customInfo){
 			entry = CDataUtil.createEntry(entry, fFlagsToSet, fFlagsToClear);
 			EntryInfo info = new EntryInfo(entry, customInfo);
-			fEntries.put(info.getNameKey(), info);
+			fEntries.put(info.getContentsKey(), info);
 		}
 		
 		public void addOverrideName(String name){
 			if(fOverrideSet == null)
-				fOverrideSet = new HashSet();
+				fOverrideSet = new HashSet<String>();
 			
 			fOverrideSet.add(name);
 		}
 		
-		public void addOverrideNameSet(Set set){
+		public void addOverrideNameSet(Set<String> set){
 			if(set == null)
 				return;
 			if(fOverrideSet != null){
 				fOverrideSet.addAll(set);
 			} else if(set.size() != 0){
-				fOverrideSet = new HashSet(set);
+				fOverrideSet = new HashSet<String>(set);
 			}
 		}
 
@@ -142,33 +142,33 @@ public class SettingsSet {
 			fOverrideSet = null;
 		}
 		
-		public Map clearAndGetMap(){
-			Map map = fEntries;
-			fEntries = new LinkedHashMap();
+		public Map<EntryNameKey, EntryInfo> clearAndGetMap(){
+			Map<EntryNameKey, EntryInfo> map = fEntries;
+			fEntries = new LinkedHashMap<EntryNameKey, EntryInfo>();
 			fOverrideSet = null;
 			return map;
 		}
 		
 		public EntryInfo[] getInfos(){
-			return (EntryInfo[])fEntries.values().toArray(new EntryInfo[fEntries.size()]);
+			return fEntries.values().toArray(new EntryInfo[fEntries.size()]);
 		}
 		
 		public ICLanguageSettingEntry[] getEntries(){
-			List list = getEntriesList(false);
-			return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
+			List<ICLanguageSettingEntry> list = getEntriesList(false);
+			return list.toArray(new ICLanguageSettingEntry[list.size()]);
 		}
 
 		public ICLanguageSettingEntry[] getEntries(boolean includeOverridden){
-			List list = getEntriesList(includeOverridden);
-			return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
+			List<ICLanguageSettingEntry> list = getEntriesList(includeOverridden);
+			return list.toArray(new ICLanguageSettingEntry[list.size()]);
 		}
 
-		public List getEntriesList(boolean includeOverridden){
-			List list = new ArrayList();
+		public List<ICLanguageSettingEntry> getEntriesList(boolean includeOverridden){
+			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 			EntryInfo infos[] = getInfos();
-			for(int i = 0; i < infos.length; i++){
-				if(includeOverridden || !infos[i].isOverridden())
-					list.add(infos[i].getEntry());
+			for(EntryInfo info : infos){
+				if(includeOverridden || !info.isOverridden())
+					list.add(info.getEntry());
 			}
 			
 			return list;
@@ -194,7 +194,7 @@ public class SettingsSet {
 			fCustomInfo = customInfo;
 		}
 
-		public EntryNameKey getNameKey(){
+		public EntryNameKey getContentsKey(){
 			if(fNameKey == null){
 				fNameKey = new EntryNameKey(fEntry);
 			}
@@ -230,7 +230,7 @@ public class SettingsSet {
 	}
 	
 	public void adjustOverrideState(){
-		Set set = new HashSet();
+		Set<String> set = new HashSet<String>();
 		SettingLevel level;
 		for(int i = 0; i < fLevels.length; i++){
 			level = fLevels[i];
@@ -240,11 +240,8 @@ public class SettingsSet {
 		}
 	}
 	
-	private void adjustOverrideState(SettingLevel level, Set overridenSet){
-		EntryInfo[] infos = level.getInfos();
-		EntryInfo info;
-		for(int i = 0; i < infos.length; i++){
-			info = infos[i];
+	private void adjustOverrideState(SettingLevel level, Set<String> overridenSet){
+		for(EntryInfo info : level.getInfos()){
 			if(overridenSet.add(info.getEntry().getName())){
 				info.makeOverridden(false);
 			} else {
@@ -259,23 +256,18 @@ public class SettingsSet {
 
 	public ICLanguageSettingEntry[] getEntries(int types){
 		adjustOverrideState();
-		List entries = new ArrayList();
-		for(int i = 0; i < fLevels.length; i++){
-			if(isCompatible(fLevels[i], types))
-				getEntries(fLevels[i], entries);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		for(SettingLevel sl : fLevels){
+			if(isCompatible(sl, types))
+				getEntries(sl, entries);
 		}
-
-		return (ICLanguageSettingEntry[])entries.toArray(new ICLanguageSettingEntry[entries.size()]);
+		return entries.toArray(new ICLanguageSettingEntry[entries.size()]);
 	}
 	
-	private void getEntries(SettingLevel level, List list){
-		EntryInfo[] infos = level.getInfos();
-		EntryInfo info;
-		for(int i = 0; i < infos.length; i++){
-			info = infos[i];
+	private void getEntries(SettingLevel level, List<ICLanguageSettingEntry> list){
+		for(EntryInfo info : level.getInfos())
 			if(!info.isOverridden())
 				list.add(info.getEntry());
-		}
 	}
 	
 	private boolean isCompatible(SettingLevel level, int types){
@@ -305,33 +297,31 @@ public class SettingsSet {
 		return -1;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void applyEntries(ICLanguageSettingEntry[] entries){
-		HashMap map = getEntryLevelMap(WRITABLE | READ_ONLY);
-		Map mapCopy = (HashMap)map.clone();
-		
-		Map[] clearedInfos = new Map[fLevels.length];
+		HashMap<EntryNameKey, Object[]> map = getEntryLevelMap(WRITABLE | READ_ONLY);
+		Map<EntryNameKey, Object[]> mapCopy = (HashMap<EntryNameKey, Object[]>)map.clone();
+		Map<EntryNameKey, EntryInfo>[] clearedInfos = new Map [fLevels.length];
 		
 		for(int i = 0; i < fLevels.length; i++){
-			if(!fLevels[i].isReadOnly()){
+			if(!fLevels[i].isReadOnly())
 				clearedInfos[i] = fLevels[i].clearAndGetMap();
-			}
 		}
 
 		Integer levelInteger;
 		int levelNum;
-		EntryNameKey key;
 		ICLanguageSettingEntry entry;
 		int writableLevel = getWritableLevelNum();
 		SettingLevel level;
 		
 		for(int i = 0; i < entries.length; i++){
 			entry = entries[i];
-			key = new EntryNameKey(entry);
+			EntryNameKey key = new EntryNameKey(entry);
 			Object[] o = (Object[])map.get(key);
 
-			if(o != null){
+			if(o != null && valueMatches(entry, o[1])){
 				mapCopy.remove(key);
-				levelInteger = (Integer)o[0]; 
+				levelInteger = (Integer)o[0];
 			} else {
 				levelInteger = null;
 			}
@@ -340,7 +330,7 @@ public class SettingsSet {
 			if(levelNum >= 0){
 				level = fLevels[levelNum];
 				if(!level.isReadOnly()){
-					Map clearedInfo = clearedInfos[levelNum];
+					Map<EntryNameKey, EntryInfo> clearedInfo = clearedInfos[levelNum];
 					Object customInfo = null;
 					if(clearedInfo != null){
 						EntryInfo info = (EntryInfo)clearedInfo.get(key);
@@ -356,10 +346,12 @@ public class SettingsSet {
 		if(overrideLevel >= 0){
 			level = fLevels[overrideLevel];
 			if(level.isOverrideSupported() && !mapCopy.isEmpty()){
-				String str;
-				for(Iterator iter = mapCopy.keySet().iterator(); iter.hasNext();){
-					str = ((EntryNameKey)iter.next()).getEntry().getName();
-					if(str != null)
+				for(EntryNameKey enk : mapCopy.keySet()){
+					ICSettingEntry e = enk.getEntry();
+					if ((e.getFlags() & ICSettingEntry.BUILTIN) == 0)
+						continue;
+					String str = e.getName();
+					if(str != null) 
 						level.addOverrideName(str);
 				}
 			}
@@ -367,26 +359,38 @@ public class SettingsSet {
 		adjustOverrideState();
 	}
 	
-	public HashMap getEntryLevelMap(int types){
-		HashMap map = new HashMap();
+	public HashMap<EntryNameKey, Object[]> getEntryLevelMap(int types){
+		HashMap<EntryNameKey, Object[]> map = new HashMap<EntryNameKey, Object[]>();
 		for(int i = 0; i < fLevels.length; i++){
 			if(isCompatible(fLevels[i], types))
 				addLevelInfoToMap(fLevels[i], i, map);
 		}
-
 		return map;
-		
 	}
 	
-	private void addLevelInfoToMap(SettingLevel level, int l, Map map){
-		EntryInfo infos[] = level.getInfos();
-		EntryInfo info;
-		EntryNameKey key;
-		for(int i = 0; i < infos.length; i++){
-			info = infos[i];
-			key = info.getNameKey(); 
+	private void addLevelInfoToMap(SettingLevel level, int l, Map<EntryNameKey, Object[]> map){
+		for(EntryInfo info : level.getInfos()){
+			EntryNameKey key = info.getContentsKey(); 
 			if(!map.containsKey(key))
 				map.put(key, new Object[]{new Integer(l), info.getEntry()});
 		}
 	}
+	
+	private static boolean valueMatches(ICLanguageSettingEntry e, Object o) {
+		if (!(e instanceof ICMacroEntry))
+			return true; // ignore values for other entries
+		if (!(o instanceof ICMacroEntry))
+			return false; // cannot compare different entries
+		String s1 = e.getValue();
+		String s2 = ((ICMacroEntry)o).getValue();
+		if (s1 == null && s2 == null)
+			return true;
+		if (s1 != null)
+			return s1.equals(s2);
+		else	
+			return s2.equals(s1);
+	}
+
+	
+
 }

@@ -104,7 +104,7 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
         Object disassemblyContext = ((DisassemblyEditorInput)element).getDisassemblyContext();
         if ( fDocumentInfos.get( disassemblyContext ) == null ) {
             IDocumentPresentation presentation = createDocumentPresentation( disassemblyContext );
-            IAnnotationModel annotationModel = createAnnotationModel();
+            AnnotationModel annotationModel = createAnnotationModel();
             VirtualDocument document = createDocument( disassemblyContext, presentation, annotationModel );
             fDocumentInfos.put( disassemblyContext, new DocumentInfo( document, annotationModel, presentation ) );
         }
@@ -206,11 +206,11 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
         return ( info != null ) ? info.getPresentation() : null;
     }
 
-    private IAnnotationModel createAnnotationModel() {
+    private AnnotationModel createAnnotationModel() {
         return new AnnotationModel();
     }
 
-    private VirtualDocument createDocument( Object disassemblyContext, IDocumentPresentation presentationContext, IAnnotationModel annotationModel ) {
+    private VirtualDocument createDocument( Object disassemblyContext, IDocumentPresentation presentationContext, AnnotationModel annotationModel ) {
         return new VirtualDocument( annotationModel, presentationContext, disassemblyContext );
     }
 

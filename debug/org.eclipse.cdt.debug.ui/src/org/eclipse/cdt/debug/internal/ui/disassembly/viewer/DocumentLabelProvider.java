@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.debug.internal.ui.disassembly.viewer;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelProvider;

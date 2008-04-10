@@ -27,6 +27,7 @@ public class GCCKeywords {
 	public static final char [] cp__ATTRIBUTE__ = __ATTRIBUTE__.toCharArray();
 	public static final char [] cp__DECLSPEC = __DECLSPEC.toCharArray();
 
+	public static final char [] cp__ATTRIBUTE = "__attribute".toCharArray(); //$NON-NLS-1$
 	public static final char [] cp__ASM__= "__asm__".toCharArray(); //$NON-NLS-1$
 	public static final char [] cp__CONST__= "__const__".toCharArray(); //$NON-NLS-1$
 	public static final char [] cp__CONST= "__const".toCharArray(); //$NON-NLS-1$

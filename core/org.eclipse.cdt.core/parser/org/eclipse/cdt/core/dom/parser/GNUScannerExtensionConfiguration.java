@@ -44,6 +44,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 	public static void addAdditionalGNUKeywords(CharArrayIntMap target) {
 		target.put(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
 		target.put(GCCKeywords.cp__ASM__, IToken.t_asm); 
+		target.put(GCCKeywords.cp__ATTRIBUTE, IGCCToken.t__attribute__ );
 		target.put(GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
 		target.put(GCCKeywords.cp__CONST, IToken.t_const); 
 		target.put(GCCKeywords.cp__CONST__, IToken.t_const); 

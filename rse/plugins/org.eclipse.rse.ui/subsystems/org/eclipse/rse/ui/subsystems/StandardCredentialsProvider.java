@@ -1,16 +1,17 @@
 /********************************************************************************
  * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
@@ -108,7 +109,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	}
 
 	/**
-	 * A runnable that will prompt for a new password. Typically used when 
+	 * A runnable that will prompt for a new password. Typically used when
 	 * a password has expired.
 	 */
 	private class PromptForNewPassword implements Runnable {
@@ -147,8 +148,8 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	private boolean acquiring = false;
 
 	/**
-	 * Creates a standard credentials provider for a connector service. 
-	 * @param connectorService the connector service associated with this 
+	 * Creates a standard credentials provider for a connector service.
+	 * @param connectorService the connector service associated with this
 	 * provider.
 	 * @see IConnectorService
 	 */
@@ -376,7 +377,15 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 
 	private ISystemValidator getUserIdValidator() {
 		ISubSystemConfiguration subsystemConfiguration = getPrimarySubSystem().getSubSystemConfiguration();
-		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) Platform.getAdapterManager().getAdapter(subsystemConfiguration, ISubSystemConfigurationAdapter.class);
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) subsystemConfiguration.getAdapter(ISubSystemConfigurationAdapter.class);
+		// TODO This typically runs in the UI thread. It should probably be
+		// moved into the promptForCredentials() method which typically runs in
+		// a Job, or even into {@link SubSystem#promptForPassword()}. See
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=218304
+		if (adapter == null) {
+			Platform.getAdapterManager().loadAdapter(subsystemConfiguration, ISubSystemConfigurationAdapter.class.getName());
+			adapter = (ISubSystemConfigurationAdapter) subsystemConfiguration.getAdapter(ISubSystemConfigurationAdapter.class);
+		}
 		ISystemValidator validator = adapter.getUserIdValidator(subsystemConfiguration);
 		return validator;
 	}

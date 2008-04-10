@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.navigator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -111,6 +112,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 	}
 
 	protected void makeActions() {
+		final SameShellProvider shellProvider= new SameShellProvider(shell);
 		clipboard = new Clipboard(shell.getDisplay());
 
 		pasteAction = new PasteAction(shell, clipboard);
@@ -128,7 +130,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
  
-		deleteAction = new DeleteResourceAction(shell);
+		deleteAction = new DeleteResourceAction(shellProvider);
 		deleteAction.setDisabledImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images

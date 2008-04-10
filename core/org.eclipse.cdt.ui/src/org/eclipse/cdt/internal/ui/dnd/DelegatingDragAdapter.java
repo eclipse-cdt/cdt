@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.dnd;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -52,8 +51,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 		List<Transfer> transfers= new ArrayList<Transfer>(fPossibleListeners.length);
 		fActiveListeners= new ArrayList<TransferDragSourceListener>(fPossibleListeners.length);
 		
-		for (int i= 0; i < fPossibleListeners.length; i++) {
-			TransferDragSourceListener listener= fPossibleListeners[i];
+		for (TransferDragSourceListener listener : fPossibleListeners) {
 			event.doit= saveDoit;
 			listener.dragStart(event);
 			if (event.doit) {
@@ -74,8 +72,9 @@ public class DelegatingDragAdapter implements DragSourceListener {
 	 */
 	public void dragSetData(DragSourceEvent event) {
 		fFinishListener= getListener(event.dataType);
-		if (fFinishListener != null)
+		if (fFinishListener != null) {
 			fFinishListener.dragSetData(event);
+		}
 	}
 	
 	/* non Java-doc
@@ -89,8 +88,9 @@ public class DelegatingDragAdapter implements DragSourceListener {
 				// If the user presses Escape then we get a dragFinished without
 				// getting a dragSetData before.
 				fFinishListener= getListener(event.dataType);
-				if (fFinishListener != null)
+				if (fFinishListener != null) {
 					fFinishListener.dragFinished(event);
+				}
 			}
 		} finally{
 			fFinishListener= null;
@@ -102,11 +102,9 @@ public class DelegatingDragAdapter implements DragSourceListener {
 		if (type == null)
 			return null;
 			
-		for (Iterator iter= fActiveListeners.iterator(); iter.hasNext();) {
-			TransferDragSourceListener listener= (TransferDragSourceListener)iter.next();
-			if (listener.getTransfer().isSupportedType(type)) {
+		for (TransferDragSourceListener listener : fActiveListeners) {
+			if (listener.getTransfer().isSupportedType(type))
 				return listener;
-			}
 		}
 		return null;
 	}	

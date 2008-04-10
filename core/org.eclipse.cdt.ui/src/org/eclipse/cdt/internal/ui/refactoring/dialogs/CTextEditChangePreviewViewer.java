@@ -245,9 +245,8 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 				CTextFileChange editChange= (CTextFileChange)change;
 				setInput(editChange, editChange.getCurrentContent(new NullProgressMonitor()), editChange.getPreviewContent(new NullProgressMonitor()), editChange.getTextType());
 				return;
-			} else {
-				viewer.setInput(null);
 			}
+			viewer.setInput(null);
 		} catch (CoreException e) {
 			viewer.setInput(null);
 		}

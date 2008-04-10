@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
@@ -52,7 +51,7 @@ import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 /*
  * The page for setting the editor options.
  */
-public class CEditorPreferencePage extends AbstractPreferencePage implements IWorkbenchPreferencePage {
+public class CEditorPreferencePage extends AbstractPreferencePage {
 
 	protected final String[][] fAppearanceColorListModel = new String[][] {
 			{PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBracketColor, CEditor.MATCHING_BRACKETS_COLOR, null },
@@ -120,8 +119,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		if (control instanceof Composite) {
 			Composite composite = (Composite) control;
 			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++)
-				setEnabled(children[i], enable);
+			for (Control element : children)
+				setEnabled(element, enable);
 		}
 	}
 
@@ -302,8 +301,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		initializeFields();
 		initializeDefaultColors();
 
-		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
-			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
+		for (String[] element : fAppearanceColorListModel) {
+			fAppearanceColorList.add(element[0]);
 		}
 		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
 			public void run() {

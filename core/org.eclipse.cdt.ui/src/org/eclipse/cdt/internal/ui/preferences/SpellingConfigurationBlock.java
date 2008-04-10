@@ -13,20 +13,21 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -42,16 +43,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -123,13 +117,11 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	 *                   The list of locales
 	 * @return Array of locale codes for the list
 	 */
-	protected static String[] getDictionaryCodes(final Set locales) {
+	protected static String[] getDictionaryCodes(final Set<Locale> locales) {
 		int index= 0;
-		Locale locale= null;
 
 		final String[] codes= new String[locales.size() + 1];
-		for (final Iterator iterator= locales.iterator(); iterator.hasNext();) {
-			locale= (Locale)iterator.next();
+		for (Locale locale : locales) {
 			codes[index++]= locale.toString();
 		}
 		codes[index++]= PREF_VALUE_NO_LOCALE;
@@ -142,14 +134,11 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	 * @param locales    The list of locales
 	 * @return Array of display labels for the list
 	 */
-	protected static String[] getDictionaryLabels(final Set locales) {
+	protected static String[] getDictionaryLabels(final Set<Locale> locales) {
 		int index= 0;
-		Locale locale= null;
 
 		final String[] labels= new String[locales.size() + 1];
-		for (final Iterator iterator= locales.iterator(); iterator.hasNext();) {
-
-			locale= (Locale)iterator.next();
+		for (Locale locale : locales) {
 			labels[index++]= locale.getDisplayName();
 		}
 		labels[index++]= PreferencesMessages.SpellingPreferencePage_dictionary_none;
@@ -214,10 +203,10 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 			try {
 				final int value= Integer.parseInt(number);
 				if (value < 0) {
-					status.setError(PreferencesMessages.bind(PreferencesMessages.SpellingPreferencePage_invalid_threshold, number)); 
+					status.setError(NLS.bind(PreferencesMessages.SpellingPreferencePage_invalid_threshold, number)); 
 				}
 			} catch (NumberFormatException exception) {
-				status.setError(PreferencesMessages.bind(PreferencesMessages.SpellingPreferencePage_invalid_threshold, number)); 
+				status.setError(NLS.bind(PreferencesMessages.SpellingPreferencePage_invalid_threshold, number)); 
 			}
 		}
 		return status;
@@ -354,7 +343,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 		slave= addCheckBox(user, label, PREF_SPELLING_IGNORE_STRING_LITERALS, trueFalse, 0);
 		allControls.add(slave);
 		
-		final Set locales= SpellCheckEngine.getLocalesWithInstalledDictionaries();
+		final Set<Locale> locales= SpellCheckEngine.getLocalesWithInstalledDictionaries();
 		boolean hasPlaformDictionaries= locales.size() > 0;
 		
 		final Group engine= new Group(composite, SWT.NONE);
@@ -518,8 +507,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	private static Key[] getAllKeys() {
 		if (SUPPORT_CONTENT_ASSIST_PROPOSALS)
 			return new Key[] { PREF_SPELLING_USER_DICTIONARY, PREF_SPELLING_USER_DICTIONARY_ENCODING, PREF_SPELLING_IGNORE_DIGITS, PREF_SPELLING_IGNORE_MIXED, PREF_SPELLING_IGNORE_SENTENCE, PREF_SPELLING_IGNORE_UPPER, PREF_SPELLING_IGNORE_URLS, PREF_SPELLING_IGNORE_NON_LETTERS, PREF_SPELLING_IGNORE_SINGLE_LETTERS, PREF_SPELLING_LOCALE, PREF_SPELLING_PROPOSAL_THRESHOLD, PREF_SPELLING_PROBLEMS_THRESHOLD, PREF_SPELLING_ENABLE_CONTENTASSIST, PREF_SPELLING_IGNORE_STRING_LITERALS };
-		else
-			return new Key[] { PREF_SPELLING_USER_DICTIONARY, PREF_SPELLING_USER_DICTIONARY_ENCODING, PREF_SPELLING_IGNORE_DIGITS, PREF_SPELLING_IGNORE_MIXED, PREF_SPELLING_IGNORE_SENTENCE, PREF_SPELLING_IGNORE_UPPER, PREF_SPELLING_IGNORE_URLS, PREF_SPELLING_IGNORE_NON_LETTERS, PREF_SPELLING_IGNORE_SINGLE_LETTERS, PREF_SPELLING_LOCALE, PREF_SPELLING_PROPOSAL_THRESHOLD, PREF_SPELLING_PROBLEMS_THRESHOLD, PREF_SPELLING_IGNORE_STRING_LITERALS };
+		return new Key[] { PREF_SPELLING_USER_DICTIONARY, PREF_SPELLING_USER_DICTIONARY_ENCODING, PREF_SPELLING_IGNORE_DIGITS, PREF_SPELLING_IGNORE_MIXED, PREF_SPELLING_IGNORE_SENTENCE, PREF_SPELLING_IGNORE_UPPER, PREF_SPELLING_IGNORE_URLS, PREF_SPELLING_IGNORE_NON_LETTERS, PREF_SPELLING_IGNORE_SINGLE_LETTERS, PREF_SPELLING_LOCALE, PREF_SPELLING_PROPOSAL_THRESHOLD, PREF_SPELLING_PROBLEMS_THRESHOLD, PREF_SPELLING_IGNORE_STRING_LITERALS };
 	}
 
 	/*

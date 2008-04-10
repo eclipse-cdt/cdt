@@ -272,6 +272,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
 	 */
+	@SuppressWarnings("unchecked")
 	public void getPipelinedChildren(Object parent, Set currentChildren) { 
 		customizeCElements(getChildren(parent), currentChildren);
 	}
@@ -279,6 +280,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
 	 */
+	@SuppressWarnings("unchecked")
 	public void getPipelinedElements(Object input, Set currentElements) {
 		// only replace plain resource elements with custom elements
 		// and avoid duplicating elements already customized
@@ -286,10 +288,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		customizeCElements(getElements(input), currentElements);
 	}
 
-	private void customizeCElements(Object[] cChildren, Set proposedChildren) {
-		List elementList= Arrays.asList(cChildren);
-		for (Iterator iter= proposedChildren.iterator(); iter.hasNext();) {
-			Object element= iter.next();
+	private void customizeCElements(Object[] cChildren, Set<Object> proposedChildren) {
+		List<Object> elementList= Arrays.asList(cChildren);
+		for (Object element : proposedChildren) {
 			IResource resource= null;
 			if (element instanceof IResource) {
 				resource= (IResource)element;
@@ -303,8 +304,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 				}
 			}
 		}
-		for (int i= 0; i < cChildren.length; i++) {
-			Object element= cChildren[i];
+		for (Object element : cChildren) {
 			if (element instanceof ICElement) {
 				ICElement cElement= (ICElement)element;
 				IResource resource= cElement.getResource();
@@ -343,7 +343,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			}
 		} else if (parent instanceof IWorkspaceRoot) {
 			// ignore adds of C projects (we are issuing a refresh)
-			for (Iterator iterator = addModification.getChildren().iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = addModification.getChildren().iterator(); iterator.hasNext();) {
 				Object child= iterator.next();
 				if (child instanceof IProject) {
 					if (CoreModel.hasCNature((IProject)child)) {
@@ -360,14 +360,18 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRefresh(org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
 	public boolean interceptRefresh(PipelinedViewerUpdate refreshSynchronization) {
-		return convertToCElements(refreshSynchronization.getRefreshTargets());
+		@SuppressWarnings("unchecked") 
+		final Set<Object> refreshTargets = refreshSynchronization.getRefreshTargets();
+		return convertToCElements(refreshTargets);
 	}
 
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRemove(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
 	public PipelinedShapeModification interceptRemove(PipelinedShapeModification removeModification) {
-		convertToCElements(removeModification.getChildren());
+		@SuppressWarnings("unchecked")
+		final Set<Object> children = removeModification.getChildren();
+		convertToCElements(children);
 		return removeModification;
 	}
 
@@ -375,7 +379,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptUpdate(org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
 	public boolean interceptUpdate(PipelinedViewerUpdate updateSynchronization) {
-		return convertToCElements(updateSynchronization.getRefreshTargets());
+		@SuppressWarnings("unchecked")
+		final Set<Object> refreshTargets = updateSynchronization.getRefreshTargets();
+		return convertToCElements(refreshTargets);
 	}
 
 	/**
@@ -399,7 +405,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 					if( !(element instanceof ICModel) && !(element instanceof ICProject) ) {
 						modification.setParent(element);
 					}
-					return convertToCElements(modification.getChildren());
+					@SuppressWarnings("unchecked")
+					final Set<Object> children = modification.getChildren();
+					return convertToCElements(children);
 				}
 			}
 		}
@@ -414,10 +422,10 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 *            refreshed in the viewer.
 	 * @return <code>true</code> if the input set was modified
 	 */
-	private boolean convertToCElements(Set currentChildren) {
-		LinkedHashSet convertedChildren= new LinkedHashSet();
+	private boolean convertToCElements(Set<Object> currentChildren) {
+		LinkedHashSet<ICElement> convertedChildren= new LinkedHashSet<ICElement>();
 		ICElement newChild;
-		for (Iterator iter= currentChildren.iterator(); iter.hasNext();) {
+		for (Iterator<Object> iter= currentChildren.iterator(); iter.hasNext();) {
 			Object child= iter.next();
 			// do not convert IProject
 			if (child instanceof IFile || child instanceof IFolder) {

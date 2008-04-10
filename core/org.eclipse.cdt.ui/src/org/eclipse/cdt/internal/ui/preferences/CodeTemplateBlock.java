@@ -90,7 +90,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		}
 		
 		public void selectionChanged(TreeListDialogField field) {
-			List selected= field.getSelectedElements();
+			List<Object> selected= field.getSelectedElements();
 			field.enableButton(IDX_ADD, canAdd(selected));
 			field.enableButton(IDX_EDIT, canEdit(selected));
 			field.enableButton(IDX_REMOVE, canRemove(selected));
@@ -100,7 +100,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		}
 
 		public void doubleClicked(TreeListDialogField field) {
-			List selected= field.getSelectedElements();
+			List<Object> selected= field.getSelectedElements();
 			if (canEdit(selected)) {
 				doButtonPressed(IDX_EDIT, selected);
 			}
@@ -451,8 +451,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	protected TemplatePersistenceData[] getCodeTemplatesOfCategory(boolean isComment) {
 		ArrayList<TemplatePersistenceData> res=  new ArrayList<TemplatePersistenceData>();
 		TemplatePersistenceData[] templates= fTemplateStore.getTemplateData();
-		for (int i= 0; i < templates.length; i++) {
-			TemplatePersistenceData curr= templates[i];
+		for (TemplatePersistenceData curr : templates) {
 			boolean isUserAdded= curr.getId() == null;
 			boolean isFileTemplate= FileTemplateContextType.isFileTemplateContextType(curr.getTemplate().getContextTypeId());
 			if (!isUserAdded && !isFileTemplate && isComment == curr.getTemplate().getName().endsWith(CodeTemplateContextType.COMMENT_SUFFIX)) {
@@ -469,8 +468,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	protected TemplatePersistenceData[] getTemplatesOfContextType(String contextTypeId) {
 		ArrayList<TemplatePersistenceData> res=  new ArrayList<TemplatePersistenceData>();
 		TemplatePersistenceData[] templates= fTemplateStore.getTemplateData();
-		for (int i= 0; i < templates.length; i++) {
-			TemplatePersistenceData curr= templates[i];
+		for (TemplatePersistenceData curr : templates) {
 			if (contextTypeId.equals(curr.getTemplate().getContextTypeId())) {
 				res.add(curr);
 			}
@@ -481,7 +479,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	protected ContextTypeRegistry getFileTemplateContextRegistry() {
 		if (fFileTemplateContextTypes == null) {
 			fFileTemplateContextTypes= new ContextTypeRegistry();
-			Iterator contextTypesIter= CUIPlugin.getDefault().getCodeTemplateContextRegistry().contextTypes();
+			Iterator<?> contextTypesIter= CUIPlugin.getDefault().getCodeTemplateContextRegistry().contextTypes();
 			while(contextTypesIter.hasNext()) {
 				TemplateContextType contextType= (TemplateContextType)contextTypesIter.next();
 				final String contextTypeId= contextType.getId();
@@ -495,7 +493,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 	
 	protected TemplateContextType[] getFileTemplateContextTypes() {
-		Iterator iter= getFileTemplateContextRegistry().contextTypes();
+		Iterator<?> iter= getFileTemplateContextRegistry().contextTypes();
 		ArrayList<TemplateContextType> result= new ArrayList<TemplateContextType>();
 		while (iter.hasNext()) {
 			TemplateContextType contextType= (TemplateContextType)iter.next();
@@ -506,7 +504,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		return result.toArray(new TemplateContextType[0]);
 	}
 
-	protected static boolean canAdd(List selected) {
+	protected static boolean canAdd(List<Object> selected) {
 		if (selected.size() == 1) {
 			Object element= selected.get(0);
 			if (element instanceof TemplateContextType || element == FILE_NODE) {
@@ -522,11 +520,11 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		return false;
 	}	
 	
-	protected static boolean canEdit(List selected) {
+	protected static boolean canEdit(List<Object> selected) {
 		return selected.size() == 1 && (selected.get(0) instanceof TemplatePersistenceData);
 	}	
 	
-	protected static boolean canRemove(List selected) {
+	protected static boolean canRemove(List<Object> selected) {
 		if (selected.size() == 1 && (selected.get(0) instanceof TemplatePersistenceData)) {
 			TemplatePersistenceData data= (TemplatePersistenceData)selected.get(0);
 			return data.isUserAdded();
@@ -534,7 +532,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		return false;
 	}
 	
-	protected void updateSourceViewerInput(List selection) {
+	protected void updateSourceViewerInput(List<Object> selection) {
 		if (fPatternViewer == null || fPatternViewer.getTextWidget().isDisposed()) {
 			return;
 		}
@@ -550,7 +548,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		}		
 	}
 
-	protected void doButtonPressed(int buttonIndex, List selected) {
+	protected void doButtonPressed(int buttonIndex, List<Object> selected) {
 		switch (buttonIndex) {
 		case IDX_EDIT:
 			edit((TemplatePersistenceData) selected.get(0), false);
@@ -643,8 +641,8 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				InputStream input= new BufferedInputStream(new FileInputStream(file));
 				try {
 					TemplatePersistenceData[] datas= reader.read(input, null);
-					for (int i= 0; i < datas.length; i++) {
-						updateTemplate(datas[i]);
+					for (TemplatePersistenceData data : datas) {
+						updateTemplate(data);
 					}
 				} finally {
 					try {
@@ -670,22 +668,22 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		TemplatePersistenceData[] datas= fTemplateStore.getTemplateData();
 		if (dataId != null) {
 			// predefined
-			for (int i= 0; i < datas.length; i++) {
-				String id= datas[i].getId();
+			for (TemplatePersistenceData data2 : datas) {
+				String id= data2.getId();
 				if (id != null && id.equals(dataId)) {
-					datas[i].setTemplate(data.getTemplate());
+					data2.setTemplate(data.getTemplate());
 					return;
 				}
 			}
 		} else {
 			// user added
 			String dataName= data.getTemplate().getName();
-			for (int i= 0; i < datas.length; i++) {
-				if (datas[i].getId() == null) {
-					String name= datas[i].getTemplate().getName();
-					String contextTypeId= datas[i].getTemplate().getContextTypeId();
+			for (TemplatePersistenceData data2 : datas) {
+				if (data2.getId() == null) {
+					String name= data2.getTemplate().getName();
+					String contextTypeId= data2.getTemplate().getContextTypeId();
 					if (name != null && name.equals(dataName) && contextTypeId.equals(data.getTemplate().getContextTypeId())) {
-						datas[i].setTemplate(data.getTemplate());
+						data2.setTemplate(data.getTemplate());
 						return;
 					}
 				}
@@ -699,7 +697,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		export(fTemplateStore.getTemplateData());	
 	}
 	
-	private void export(List selected) {
+	private void export(List<Object> selected) {
 		Set<Object> datas= new HashSet<Object>();
 		for (int i= 0; i < selected.size(); i++) {
 			Object curr= selected.get(i);
@@ -710,8 +708,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				datas.addAll(Arrays.asList(cat));
 			} else if (curr == FILE_NODE) {
 				TemplateContextType[] types= getFileTemplateContextTypes();
-				for (int j = 0; j < types.length; j++) {
-					TemplateContextType contextType = types[j];
+				for (TemplateContextType contextType : types) {
 					TemplatePersistenceData[] cat= getTemplatesOfContextType(contextType);
 					datas.addAll(Arrays.asList(cat));
 				}
@@ -793,8 +790,8 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		
 		if (fProject != null) {
 			TemplatePersistenceData[] templateData= fTemplateStore.getTemplateData();
-			for (int i= 0; i < templateData.length; i++) {
-				fTemplateStore.setProjectSpecific(templateData[i].getId(), enabled);
+			for (TemplatePersistenceData element : templateData) {
+				fTemplateStore.setProjectSpecific(element.getId(), enabled);
 			}
 		}
 		try {

@@ -12,11 +12,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import java.text.MessageFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -44,9 +43,7 @@ public class IdentifierHelper {
 			if(isKeyword(identifier)){
 				return new IdentifierResult(IdentifierResult.KEYWORD, MessageFormat.format(Messages.IdentifierHelper_isKeyword, new Object[] {identifier})); 
 			}
-			else{
-				return new IdentifierResult(IdentifierResult.VALID, MessageFormat.format(Messages.IdentifierHelper_isValid, new Object[] {identifier})); 
-			}
+			return new IdentifierResult(IdentifierResult.VALID, MessageFormat.format(Messages.IdentifierHelper_isValid, new Object[] {identifier}));
 		} else if(isLeadingADigit(identifier)){
 			return new IdentifierResult(IdentifierResult.DIGIT_FIRST, MessageFormat.format(Messages.IdentifierHelper_leadingDigit, new Object[] {identifier})); 
 		} else if(identifier.length() == 0){

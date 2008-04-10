@@ -63,7 +63,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	private Composite fParentComposite;
 	
 	private IProject fProject; // project or null
-	private Map fData; // page data
+	private Map <?,?> fData; // page data
 	
 	public static final String DATA_NO_LINK= "PropertyAndPreferencePage.nolink"; //$NON-NLS-1$
 	
@@ -191,17 +191,16 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	 * @param link the link
 	 */
 	final void doLinkActivated(Link link) {
-		Map data= new HashMap();
+		Map<String, Boolean> data= new HashMap<String, Boolean>();
 		data.put(DATA_NO_LINK, Boolean.TRUE);
 		
 		if (isProjectPreferencePage()) {
 			openWorkspacePreferences(data);
 		} else {
-			HashSet projectsWithSpecifics= new HashSet();
+			HashSet<ICProject> projectsWithSpecifics= new HashSet<ICProject>();
 			try {
 				ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
-				for (int i= 0; i < projects.length; i++) {
-					ICProject curr= projects[i];
+				for (ICProject curr : projects) {
 					if (hasProjectSpecificOptions(curr.getProject())) {
 						projectsWithSpecifics.add(curr);
 					}
@@ -334,7 +333,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
-			fData= (Map) data;
+			fData= (Map<?,?>) data;
 		}
 		if (fChangeWorkspaceSettings != null) {
 			if (!offerLink()) {
@@ -344,8 +343,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		}
  	}
 	
-	protected Map getData() {
+	protected Map<?,?> getData() {
 		return fData;
 	}
-	
 }

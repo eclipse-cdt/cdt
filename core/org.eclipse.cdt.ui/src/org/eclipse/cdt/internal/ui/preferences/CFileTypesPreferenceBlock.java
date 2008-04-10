@@ -67,8 +67,8 @@ public class CFileTypesPreferenceBlock {
 	private static final int 	COL_DESCRIPTION	= 1;
 	private static final int 	COL_STATUS	= 2;
 	
-	private ArrayList	fAddAssoc;
-	private ArrayList	fRemoveAssoc;
+	private ArrayList<CFileTypeAssociation>	fAddAssoc;
+	private ArrayList<CFileTypeAssociation>	fRemoveAssoc;
 	private boolean		fDirty = false;
 	private IProject	fInput;
 	private IContentType[] fContentTypes;
@@ -175,8 +175,8 @@ public class CFileTypesPreferenceBlock {
 	}
 
 	public CFileTypesPreferenceBlock(IProject input) {
-		fAddAssoc = new ArrayList();
-		fRemoveAssoc = new ArrayList();
+		fAddAssoc = new ArrayList<CFileTypeAssociation>();
+		fRemoveAssoc = new ArrayList<CFileTypeAssociation>();
 		fInput = input;
 		setDirty(false);
 	}
@@ -318,8 +318,8 @@ public class CFileTypesPreferenceBlock {
 		boolean changed = fDirty;
 		
 		if (fDirty) {
-			CFileTypeAssociation[] add = (CFileTypeAssociation[]) fAddAssoc.toArray(new CFileTypeAssociation[fAddAssoc.size()]);
-			CFileTypeAssociation[] rem = (CFileTypeAssociation[]) fRemoveAssoc.toArray(new CFileTypeAssociation[fRemoveAssoc.size()]);
+			CFileTypeAssociation[] add = fAddAssoc.toArray(new CFileTypeAssociation[fAddAssoc.size()]);
+			CFileTypeAssociation[] rem = fRemoveAssoc.toArray(new CFileTypeAssociation[fRemoveAssoc.size()]);
 			
 			changed = add.length > 0 || rem.length > 0;
 			adjustAssociations(add, rem);
@@ -333,7 +333,7 @@ public class CFileTypesPreferenceBlock {
 	}
 	
 	private CFileTypeAssociation[] getCFileTypeAssociations() {
-		ArrayList list = new ArrayList();
+		ArrayList<CFileTypeAssociation> list = new ArrayList<CFileTypeAssociation>();
 		if (fInput == null) {
 			fillWithUserDefinedCFileTypeAssociations(list);
 			fillWithPredefinedCFileTypeAssociations(list);
@@ -411,33 +411,32 @@ public class CFileTypesPreferenceBlock {
 		return fContentTypes;
 	}
 
-	private void fillWithUserDefinedCFileTypeAssociations(ArrayList list) {
+	private void fillWithUserDefinedCFileTypeAssociations(ArrayList<CFileTypeAssociation> list) {
 		IContentType[] ctypes = getRegistedContentTypes();
 		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_EXTENSION_SPEC, list);
 		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_NAME_SPEC, list);
 	}
 
-	private void fillWithPredefinedCFileTypeAssociations(ArrayList list) {
+	private void fillWithPredefinedCFileTypeAssociations(ArrayList<CFileTypeAssociation> list) {
 		IContentType[] ctypes = getRegistedContentTypes();
 		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC, list);
 		fillWithCFileTypeAssociations(ctypes, null, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC, list);
 	}
 
-	private void fillWithProjectCFileTypeAssociations(ArrayList list, IProject project) {
+	private void fillWithProjectCFileTypeAssociations(ArrayList<CFileTypeAssociation> list, IProject project) {
 		IContentType[] ctypes = getRegistedContentTypes();
 		IScopeContext context = new ProjectScope(project);
 		fillWithCFileTypeAssociations(ctypes, context, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_EXTENSION_SPEC, list);
 		fillWithCFileTypeAssociations(ctypes, context, IContentType.IGNORE_PRE_DEFINED | IContentType.FILE_NAME_SPEC, list);
 	}
 
-	private void fillWithCFileTypeAssociations(IContentType[] ctypes, IScopeContext context, int type, ArrayList list) {
-		for (int i = 0; i < ctypes.length; i++) {
+	private void fillWithCFileTypeAssociations(IContentType[] ctypes, IScopeContext context, int type, ArrayList<CFileTypeAssociation> list) {
+		for (IContentType ctype : ctypes) {
 			try {
-				IContentType ctype = ctypes[i];
 				IContentTypeSettings setting = ctype.getSettings(context);
 				String[] specs = setting.getFileSpecs(type);
-				for (int j = 0; j < specs.length; j++) {
-					CFileTypeAssociation assoc = new CFileTypeAssociation(specs[j], type, ctype);
+				for (String spec : specs) {
+					CFileTypeAssociation assoc = new CFileTypeAssociation(spec, type, ctype);
 					list.add(assoc);
 				}
 			} catch (CoreException e) {
@@ -461,9 +460,9 @@ public class CFileTypesPreferenceBlock {
 			fBtnRemove.setEnabled(false);
 		} else {
 			boolean enabled = true;
-			List elements = sel.toList();
-			for (Iterator i = elements.iterator(); i.hasNext();) {
-				CFileTypeAssociation assoc = (CFileTypeAssociation) i.next();
+			List<?> elements = sel.toList();
+			for (Object element : elements) {
+				CFileTypeAssociation assoc = (CFileTypeAssociation) element;
 				if (assoc.isPredefined())
 					enabled = false;
 			}
@@ -516,8 +515,7 @@ public class CFileTypesPreferenceBlock {
 		}
 		String newSpec= assoc.getSpec();
 		String[] specs= settings.getFileSpecs(assoc.getFileSpecType());
-		for (int i = 0; i < specs.length; i++) {
-			String spec = specs[i];
+		for (String spec : specs) {
 			if (spec.equalsIgnoreCase(newSpec)) {
 				reportDuplicateAssociation(assoc);
 				return false;
@@ -527,9 +525,8 @@ public class CFileTypesPreferenceBlock {
 		return true;
 	}	
 	
-	private boolean containsIgnoreCaseOfSpec(Collection collection, CFileTypeAssociation assoc) {
-		for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
-			CFileTypeAssociation existing = (CFileTypeAssociation) iter.next();
+	private boolean containsIgnoreCaseOfSpec(Collection<CFileTypeAssociation> collection, CFileTypeAssociation assoc) {
+		for (CFileTypeAssociation existing : collection) {
 			if (assoc.equalsIgnoreCaseOfSpec(existing)) {
 				return true;
 			}
@@ -547,7 +544,7 @@ public class CFileTypesPreferenceBlock {
 	final protected void handleRemove() {
 		IStructuredSelection sel = getSelection();
 		if ((null != sel) && (!sel.isEmpty())) {
-			for (Iterator iter = sel.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 				CFileTypeAssociation assoc = (CFileTypeAssociation) iter.next();
 				handleRemove(assoc);
 				fAssocViewer.remove(assoc);

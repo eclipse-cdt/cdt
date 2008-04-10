@@ -130,8 +130,7 @@ public class CRefactory {
     public String[] getCCppPatterns() {
         IContentType[] cts= Platform.getContentTypeManager().getAllContentTypes();
         HashSet<String> all= new HashSet<String>();
-        for (int i= 0; i < cts.length; i++) {
-            IContentType type= cts[i];
+        for (IContentType type : cts) {
             boolean useit= false;
             while (!useit && type != null) {
                 String id= type.getId();
@@ -152,9 +151,9 @@ public class CRefactory {
             }
         }
         String[] result= new String[all.size()];
-        Iterator it= all.iterator();
+        Iterator<String> it= all.iterator();
         for (int i= 0; i < result.length; i++) {
-            result[i]= "*." + (String) it.next(); //$NON-NLS-1$
+            result[i]= "*." + it.next(); //$NON-NLS-1$
         }
         return result;
     }

@@ -15,18 +15,8 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.core.resources.IProject;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -34,7 +24,13 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -106,16 +102,15 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 					name = Messages.format(PreferencesMessages.TodoTaskConfigurationBlock_tasks_default, name); 
 				}
 				return name;
-			} else {
-				if (TASK_PRIORITY_HIGH.equals(task.priority)) {
-					return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_high_priority; 
-				} else if (TASK_PRIORITY_NORMAL.equals(task.priority)) {
-					return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_normal_priority; 
-				} else if (TASK_PRIORITY_LOW.equals(task.priority)) {
-					return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_low_priority; 
-				}
-				return ""; //$NON-NLS-1$
-			}	
+			}
+			if (TASK_PRIORITY_HIGH.equals(task.priority)) {
+				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_high_priority; 
+			} else if (TASK_PRIORITY_NORMAL.equals(task.priority)) {
+				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_normal_priority; 
+			} else if (TASK_PRIORITY_LOW.equals(task.priority)) {
+				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_low_priority; 
+			}
+			return ""; //$NON-NLS-1$	
 		}
 
 		/* (non-Javadoc)
@@ -130,6 +125,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	}
 	
 	private static class TodoTaskSorter extends ViewerComparator {
+		@SuppressWarnings("unchecked")
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getComparator().compare(((TodoTask) e1).name, ((TodoTask) e2).name);
@@ -142,7 +138,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	private static final int IDX_DEFAULT = 4;
 	
 	private IStatus fTaskTagsStatus;
-	private ListDialogField fTodoTasksList;
+	private ListDialogField<TodoTask> fTodoTasksList;
 	private SelectionButtonDialogField fCaseSensitiveCheckBox;
 
 
@@ -157,7 +153,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			null,
 			PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_setdefault_button, 
 		};
-		fTodoTasksList = new ListDialogField(adapter, buttons, new TodoTaskLabelProvider());
+		fTodoTasksList = new ListDialogField<TodoTask>(adapter, buttons, new TodoTaskLabelProvider());
 		fTodoTasksList.setDialogFieldListener(adapter);
 		fTodoTasksList.setRemoveButtonIndex(IDX_REMOVE);
 		
@@ -194,7 +190,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	}
 	
 	private void setToDefaultTask(TodoTask task) {
-		List elements = fTodoTasksList.getElements();
+		List<TodoTask> elements = fTodoTasksList.getElements();
 		elements.remove(task);
 		elements.add(0, task);
 		fTodoTasksList.setElements(elements);
@@ -207,26 +203,26 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		};	
 	}	
 	
-	public class TaskTagAdapter implements IListAdapter, IDialogFieldListener {
-		private boolean canEdit(List selectedElements) {
+	public class TaskTagAdapter implements IListAdapter<TodoTask>, IDialogFieldListener {
+		private boolean canEdit(List<TodoTask> selectedElements) {
 			return selectedElements.size() == 1;
 		}
 		
-		private boolean canSetToDefault(List selectedElements) {
-			return selectedElements.size() == 1 && !isDefaultTask((TodoTask) selectedElements.get(0));
+		private boolean canSetToDefault(List<TodoTask> selectedElements) {
+			return selectedElements.size() == 1 && !isDefaultTask(selectedElements.get(0));
 		}
 
-		public void customButtonPressed(ListDialogField field, int index) {
+		public void customButtonPressed(ListDialogField<TodoTask> field, int index) {
 			doTodoButtonPressed(index);
 		}
 
-		public void selectionChanged(ListDialogField field) {
-			List selectedElements = field.getSelectedElements();
+		public void selectionChanged(ListDialogField<TodoTask> field) {
+			List<TodoTask> selectedElements = field.getSelectedElements();
 			field.enableButton(IDX_EDIT, canEdit(selectedElements));
 			field.enableButton(IDX_DEFAULT, canSetToDefault(selectedElements));
 		}
 			
-		public void doubleClicked(ListDialogField field) {
+		public void doubleClicked(ListDialogField<TodoTask> field) {
 			if (canEdit(field.getSelectedElements())) {
 				doTodoButtonPressed(IDX_EDIT);
 			}
@@ -300,13 +296,13 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		if (field == fTodoTasksList) {
 			StringBuffer tags = new StringBuffer();
 			StringBuffer prios = new StringBuffer();
-			List list = fTodoTasksList.getElements();
+			List<TodoTask> list = fTodoTasksList.getElements();
 			for (int i = 0; i < list.size(); i++) {
 				if (i > 0) {
 					tags.append(',');
 					prios.append(',');
 				}
-				TodoTask elem = (TodoTask) list.get(i);
+				TodoTask elem = list.get(i);
 				tags.append(elem.name);
 				prios.append(elem.priority);
 			}
@@ -332,7 +328,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		String currPrios = getValue(PREF_TODO_TASK_PRIORITIES);
 		String[] tags = getTokens(currTags, ","); //$NON-NLS-1$
 		String[] prios = getTokens(currPrios, ","); //$NON-NLS-1$
-		ArrayList elements = new ArrayList(tags.length);
+		ArrayList<TodoTask> elements = new ArrayList<TodoTask>(tags.length);
 		for (int i = 0; i < tags.length; i++) {
 			TodoTask task = new TodoTask();
 			task.name = tags[i].trim();
@@ -348,7 +344,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	private void doTodoButtonPressed(int index) {
 		TodoTask edited = null;
 		if (index != IDX_ADD) {
-			edited = (TodoTask) fTodoTasksList.getSelectedElements().get(0);
+			edited = fTodoTasksList.getSelectedElements().get(0);
 		}
 		if (index == IDX_ADD || index == IDX_EDIT) {
 			TodoTaskInputDialog dialog = new TodoTaskInputDialog(getShell(), edited, fTodoTasksList.getElements());

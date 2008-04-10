@@ -37,6 +37,7 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CElementSorter;
@@ -48,7 +49,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	// the visual selection widget group
 	private TableViewer fTableViewer;
-	private Set fProjectsWithSpecifics;
+	private Set<ICProject> fProjectsWithSpecifics;
 
 	// sizing constants
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 250;
@@ -58,7 +59,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	private ViewerFilter fFilter;
 
-	public ProjectSelectionDialog(Shell parentShell, Set projectsWithSpecifics) {
+	public ProjectSelectionDialog(Shell parentShell, Set<ICProject> projectsWithSpecifics) {
 		super(parentShell);
 		setTitle(PreferencesMessages.ProjectSelectionDialog_title);  
 		setMessage(PreferencesMessages.ProjectSelectionDialog_desciption); 

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -38,8 +37,7 @@ public class CRenameMacroProcessor extends CRenameGlobalProcessor {
     @Override
 	protected void analyzeTextMatches(ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, 
             RefactoringStatus status) {
-        for (Iterator iter = matches.iterator(); iter.hasNext();) {
-            CRefactoringMatch m = (CRefactoringMatch) iter.next();
+        for (CRefactoringMatch m : matches) {
             if ((m.getLocation() & CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE) != 0) {
                 m.setASTInformation(CRefactoringMatch.AST_REFERENCE);
             }

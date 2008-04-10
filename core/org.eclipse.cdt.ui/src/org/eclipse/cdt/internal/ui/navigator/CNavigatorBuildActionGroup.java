@@ -80,7 +80,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 		boolean hasBuilder= true; // false if any project is closed or does
 		// not have builder
 
-		Iterator resources= selection.iterator();
+		Iterator<?> resources= selection.iterator();
 		while (resources.hasNext() && (!hasOpenProjects || !hasClosedProjects || hasBuilder || isProjectSelection)) {
 			Object next= resources.next();
 			IProject project= null;

@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -21,6 +19,10 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Combo;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
  * A class which encapsulates several utility functions
@@ -40,16 +42,14 @@ public class ProposalFilterPreferencesUtil {
 	 * to fill into the Combo)
 	 */
 	public static String[] getProposalFilterNames() {
-		ArrayList names = new ArrayList();
+		ArrayList<String> names = new ArrayList<String>();
 		try {
 			IExtensionPoint point = Platform.getExtensionRegistry()
 					.getExtensionPoint(CUIPlugin.PLUGIN_ID, "ProposalFilter"); //$NON-NLS-1$
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IExtension extension = extensions[i];
-					IConfigurationElement[] elements = extension
-							.getConfigurationElements();
+				for (IExtension extension : extensions) {
+					IConfigurationElement[] elements = extension.getConfigurationElements();
 					for (int j = 0; j < elements.length; ++j) {
 						IConfigurationElement element = elements[j];
 						if ("ProposalFilter".equals(element.getName())) { //$NON-NLS-1$
@@ -65,8 +65,7 @@ public class ProposalFilterPreferencesUtil {
 			// No action required since we will at least be using the fail-safe default filter
 			CUIPlugin.log(e);
 		}
-		String[] filterNames = (String[]) names
-				.toArray(new String[names.size()]);
+		String[] filterNames = names.toArray(new String[names.size()]);
 		return filterNames;
 	}
 
@@ -82,8 +81,7 @@ public class ProposalFilterPreferencesUtil {
 		StringBuffer filterNames = new StringBuffer("0;"); //$NON-NLS-1$
 		filterNames.append(PreferencesMessages.ProposalFilterPreferencesUtil_defaultFilterName);
 		String[] names = getProposalFilterNames();
-		for (int i = 0; i < names.length; i++) {
-			String name = names[i];
+		for (String name : names) {
 			filterNames.append(";"); //$NON-NLS-1$
 			filterNames.append(name);
 		}
@@ -104,9 +102,7 @@ public class ProposalFilterPreferencesUtil {
 			try {
 				IExtension[] extensions = point.getExtensions();
 				if (extensions.length >= 1) {
-					for (int i = 0; i < extensions.length; i++) {
-						IExtension extension = extensions[i];
-
+					for (IExtension extension : extensions) {
 						IConfigurationElement[] elements = extension
 								.getConfigurationElements();
 
@@ -153,9 +149,9 @@ public class ProposalFilterPreferencesUtil {
 		int selectionIndex = combo.getSelectionIndex();
 		text.append(selectionIndex);
 		String[] entries = combo.getItems();
-		for (int i = 0; i < entries.length; i++) {
+		for (String entrie : entries) {
 			text.append(";"); //$NON-NLS-1$
-			String entry = entries[i].replaceAll(";", ","); //$NON-NLS-1$ //$NON-NLS-2$
+			String entry = entrie.replaceAll(";", ","); //$NON-NLS-1$ //$NON-NLS-2$
 			text.append(entry);
 		}
 		return text.toString();

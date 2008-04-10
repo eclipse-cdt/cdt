@@ -61,9 +61,8 @@ public class MethodContext {
 		IASTNode parent = declarationName.getParent().getParent();
 		if (parent instanceof IASTSimpleDeclaration) {
 			return (IASTSimpleDeclaration) parent;
-		} else {
-			return null; 
 		}
+		return null;
 	}
 	
 	public ICPPASTVisiblityLabel getMethodDeclarationASTVisibility(){
@@ -101,9 +100,8 @@ public class MethodContext {
 		ICPPInternalBinding subclassBind = getICPPInternalBinding(contextOfSameOrSubclass);
 		if(isSameClass(bind1,subclassBind)){
 			return true;
-		} else {
-			return isSubclass(bind1,subclassBind);
 		}
+		return isSubclass(bind1,subclassBind);
 	}
 	
 	private static boolean isSubclass(ICPPInternalBinding bind1, ICPPInternalBinding subclassBind) {
@@ -148,12 +146,10 @@ public class MethodContext {
 				if (bind1 instanceof ICPPInternalBinding) {
 					ICPPInternalBinding bind1int = (ICPPInternalBinding) bind1;
 					return bind1int.getDefinition().equals(bind2.getDefinition());
-				} else {
-					return false;
 				}
-			} else {
 				return false;
 			}
+			return false;
 		} catch (DOMException e) {
 			return false;
 		}	
@@ -173,9 +169,8 @@ public class MethodContext {
 			
 			if( node1.equals(node2) ){
 				return bind1.getDefinition().equals(bind2.getDefinition());
-			} else {
-				return false;
 			}
+			return false;
 		} catch (DOMException e) {
 			return false;
 		}	

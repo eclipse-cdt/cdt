@@ -81,15 +81,13 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 	private static class RefreshOperation extends WorkspaceModifyOperation {
 		private final Set<IResource> roots;
 
-		public RefreshOperation(List resources) {
+		public RefreshOperation(List<IResource> resources) {
 			super();
 
 			roots = new HashSet<IResource>(resources.size());
 
-			for (Iterator iterator = resources.iterator(); iterator.hasNext();) {
-				IResource resource = (IResource) iterator.next();
+			for (IResource resource : resources) {
 				IResource parent = resource.getParent();
-
 				roots.add(parent != null ? parent : resource);
 			}
 		}
@@ -100,9 +98,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 				monitor.beginTask(CUIMessages.getString("FileTransferDragAdapter.refreshing"), roots.size()); //$NON-NLS-1$
 				MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, CUIMessages.getString("FileTransferDragAdapter.problem"), null); //$NON-NLS-1$
 
-				for (Iterator iterator = roots.iterator(); iterator.hasNext();) {
-					IResource resource = (IResource) iterator.next();
-
+				for (IResource resource : roots) {
 					try {
 						resource.refreshLocal(
 							IResource.DEPTH_ONE,
@@ -120,7 +116,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		}
 	}
 
-	private List getResources() {
+	private List<IResource> getResources() {
 		List<IResource> result = Collections.emptyList();
 		ISelection selection = provider.getSelection();
 
@@ -129,7 +125,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 
 			result = new ArrayList<IResource>(structured.size());
 
-			for (Iterator iterator = structured.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = structured.iterator(); iterator.hasNext();) {
 				Object object = iterator.next();
 				IResource resource = null;
 
@@ -147,13 +143,12 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		return result;
 	}
 
-	private static String[] getResourceLocations(List resources) {
+	private static String[] getResourceLocations(List<IResource> resources) {
 		if (!resources.isEmpty()) {
 			int count = resources.size();
 			List<String> locations = new ArrayList<String>(count);
 			
-			for (Iterator iterator = resources.iterator(); iterator.hasNext();) {
-				IResource resource = (IResource) iterator.next();
+			for (IResource resource : resources) {
 				IPath location = resource.getLocation();
 				
 				if (location != null) {

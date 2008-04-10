@@ -15,14 +15,12 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.StatusDialog;
-
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -50,14 +48,14 @@ public class TodoTaskInputDialog extends StatusDialog {
 	private StringDialogField fNameDialogField;
 	private ComboDialogField fPriorityDialogField;
 	
-	private List fExistingNames;
+	private List<String> fExistingNames;
 		
-	public TodoTaskInputDialog(Shell parent, TodoTask task, List existingEntries) {
+	public TodoTaskInputDialog(Shell parent, TodoTask task, List<TodoTask> existingEntries) {
 		super(parent);
 		
-		fExistingNames = new ArrayList(existingEntries.size());
+		fExistingNames = new ArrayList<String>(existingEntries.size());
 		for (int i = 0; i < existingEntries.size(); i++) {
-			TodoTask curr = (TodoTask) existingEntries.get(i);
+			TodoTask curr = existingEntries.get(i);
 			if (!curr.equals(task)) {
 				fExistingNames.add(curr.name);
 			}

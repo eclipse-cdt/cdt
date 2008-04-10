@@ -36,18 +36,18 @@ import org.eclipse.cdt.ui.CUIPlugin;
  */
 public class WorkInProgressPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private List fCheckBoxes;
-	private List fRadioButtons;
-	private List fTextControls;
+	private List<Button> fCheckBoxes;
+	private List<Button> fRadioButtons;
+	private List<Text> fTextControls;
 	
 	/**
 	 * creates a new preference page.
 	 */
 	public WorkInProgressPreferencePage() {
 		setPreferenceStore(getPreferenceStore());
-		fRadioButtons= new ArrayList();
-		fCheckBoxes= new ArrayList();
-		fTextControls= new ArrayList();
+		fRadioButtons= new ArrayList<Button>();
+		fCheckBoxes= new ArrayList<Button>();
+		fTextControls= new ArrayList<Text>();
 	}
 
 	Button addCheckBox(Composite parent, String label, String key) { 
@@ -120,17 +120,17 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	protected void performDefaults() {
 		IPreferenceStore store= getPreferenceStore();
 		for (int i= 0; i < fCheckBoxes.size(); i++) {
-			Button button= (Button) fCheckBoxes.get(i);
+			Button button= fCheckBoxes.get(i);
 			String key= (String) button.getData();
 			button.setSelection(store.getDefaultBoolean(key));
 		}
 		for (int i= 0; i < fRadioButtons.size(); i++) {
-			Button button= (Button) fRadioButtons.get(i);
+			Button button= fRadioButtons.get(i);
 			String[] info= (String[]) button.getData();
 			button.setSelection(info[1].equals(store.getDefaultString(info[0])));
 		}
 		for (int i= 0; i < fTextControls.size(); i++) {
-			Text text= (Text) fTextControls.get(i);
+			Text text= fTextControls.get(i);
 			String key= (String) text.getData();
 			text.setText(store.getDefaultString(key));
 		}
@@ -145,19 +145,19 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	public boolean performOk() {
 		IPreferenceStore store= getPreferenceStore();
 		for (int i= 0; i < fCheckBoxes.size(); i++) {
-			Button button= (Button) fCheckBoxes.get(i);
+			Button button= fCheckBoxes.get(i);
 			String key= (String) button.getData();
 			store.setValue(key, button.getSelection());
 		}
 		for (int i= 0; i < fRadioButtons.size(); i++) {
-			Button button= (Button) fRadioButtons.get(i);
+			Button button= fRadioButtons.get(i);
 			if (button.getSelection()) {
 				String[] info= (String[]) button.getData();
 				store.setValue(info[0], info[1]);
 			}
 		}
 		for (int i= 0; i < fTextControls.size(); i++) {
-			Text text= (Text) fTextControls.get(i);
+			Text text= fTextControls.get(i);
 			String key= (String) text.getData();
 			store.setValue(key, text.getText());
 		}

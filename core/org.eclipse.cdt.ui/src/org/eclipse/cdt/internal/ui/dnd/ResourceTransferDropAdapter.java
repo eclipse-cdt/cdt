@@ -137,7 +137,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 		.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			for (Iterator i = ssel.iterator(); i.hasNext();) {
+			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
 				Object o = i.next();
 				if (o instanceof IResource) {
 					selectedResources.add((IResource) o);

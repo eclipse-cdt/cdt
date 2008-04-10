@@ -179,8 +179,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 				IResource[] selectedResources= getSelectedResources();
 				if (selectedResources.length > 0) {
-					for (int iRes = 0; iRes < selectedResources.length; iRes++) {
-						IResource res = selectedResources[iRes];
+					for (IResource res : selectedResources) {
 						if(res instanceof IProject) {
 							// drop of projects not supported on other IResources
 							// "Path for project must have only one segment."
@@ -362,10 +361,9 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 		if (!(selection instanceof IStructuredSelection)) {
 			return null;
 		}
-		List elements = ((IStructuredSelection)selection).toList();
+		List<?> elements = ((IStructuredSelection)selection).toList();
 		List<Object> resources= new ArrayList<Object>(elements.size());
-		for (Iterator iter= elements.iterator(); iter.hasNext();) {
-			Object element= iter.next();
+		for (Object element : elements) {
 			if (element instanceof ITranslationUnit) {
 				continue;
 			}
@@ -394,11 +392,12 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			ICElement parent = elements[0];
 			for (int i = 0; i < elements.length; ++i) {
 				ICElement p = elements[i].getParent();
-				if (parent == null && p!= null) {
+				if (parent == null) {
+					if (p!= null) 
+						return false;
+				} 
+				else if (!parent.equals(p))
 					return false;
-				} else if (!parent.equals(p)){
-					return false;
-				}
 			}
 		}
 		return true;
@@ -438,7 +437,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	private IResource[] getSelectedResources(IStructuredSelection selection) {
 		ArrayList<Object> selectedResources = new ArrayList<Object>();
 
-		for (Iterator i = selection.iterator(); i.hasNext();) {
+		for (Iterator<?> i = selection.iterator(); i.hasNext();) {
 			Object o = i.next();
 			if (o instanceof IResource) {
 				selectedResources.add(o);

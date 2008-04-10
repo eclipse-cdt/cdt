@@ -93,7 +93,7 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 	 * Set of variable names currently in use. Used when warning the user that
 	 * the currently selected name is already in use by another variable.
 	 */
-	private Set namesInUse;
+	private Set<String> namesInUse;
 	
 	/**
 	 * The current validation status. Its value can be one of the following:<ul>
@@ -149,7 +149,7 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 	 * 	this dialog. <code>IResource.FILE</code> or <code>IResource.FOLDER</code>
 	 * @param namesInUse a set of variable names currently in use 
 	 */
-	public PathEntryVariableDialog(Shell parentShell, int type, int variableType, Set namesInUse) {
+	public PathEntryVariableDialog(Shell parentShell, int type, int variableType, Set<String> namesInUse) {
 		super(parentShell);
 		this.type = type;
 		this.newVariable = type == NEW_VARIABLE;

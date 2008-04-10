@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
@@ -42,7 +43,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 	@Override
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		ArrayList overlayKeys = new ArrayList();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));

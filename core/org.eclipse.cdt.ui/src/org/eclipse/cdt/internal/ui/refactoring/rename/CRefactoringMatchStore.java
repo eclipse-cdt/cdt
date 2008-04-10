@@ -95,17 +95,17 @@ public class CRefactoringMatchStore {
     }
 
     public CRefactoringMatch findMatch(IPath path, int nodeOffset) {
-        Map map= fPathToMatches.get(path);
+        Map<CRefactoringMatch, CRefactoringMatch> map= fPathToMatches.get(path);
         if (map != null) {
-            return (CRefactoringMatch) map.get(new CRefactoringMatch(null, nodeOffset, 0, 0));
+            return map.get(new CRefactoringMatch(null, nodeOffset, 0, 0));
         }
         return null;
     }
 
     public void removePath(IPath path) {
-        Map map= fPathToMatches.remove(path);
+        Map<CRefactoringMatch, CRefactoringMatch> map= fPathToMatches.remove(path);
         if (map != null && !map.isEmpty()) {
-            IFile file= ((CRefactoringMatch) map.values().iterator().next()).getFile();
+            IFile file= (map.values().iterator().next()).getFile();
             fFileToPathMap.remove(file);
         }
     }

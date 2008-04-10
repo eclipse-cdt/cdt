@@ -45,11 +45,10 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#setDragData(org.eclipse.swt.dnd.DragSourceEvent, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	@Override
-	public boolean setDragData(DragSourceEvent event,
-			IStructuredSelection selection) {
+	public boolean setDragData(DragSourceEvent event, IStructuredSelection selection) {
 		if (selection != null) {
 			boolean applicable= false;
-			for (Iterator iter= (selection).iterator(); iter.hasNext();) {
+			for (Iterator<?> iter= (selection).iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				if (element instanceof ICElement) {
 					if (element instanceof ITranslationUnit) {
@@ -68,5 +67,4 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 		}
 		return false;
 	}
-
 }

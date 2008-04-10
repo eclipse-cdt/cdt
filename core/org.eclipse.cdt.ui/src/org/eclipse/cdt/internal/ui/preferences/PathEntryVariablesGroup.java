@@ -14,15 +14,12 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
-import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -52,6 +49,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class PathEntryVariablesGroup {
 	
@@ -93,10 +95,10 @@ public class PathEntryVariablesGroup {
 	protected Listener selectionListener;
 	
 	// temporary collection for keeping currently defined variables
-	private SortedMap tempPathVariables;
+	private SortedMap<String, IPath> tempPathVariables;
 	
 	// set of removed variables' names
-	private Set removedVariableNames;
+	private Set<String> removedVariableNames;
 	
 	// reference to the workspace's path variable manager
 	private IPathEntryVariableManager pathEntryVariableManager;
@@ -124,8 +126,8 @@ public class PathEntryVariablesGroup {
 		this.multiSelect = multiSelect;
 		this.variableType = variableType;
 		pathEntryVariableManager = CCorePlugin.getDefault().getPathEntryVariableManager();
-		removedVariableNames = new HashSet();
-		tempPathVariables = new TreeMap();
+		removedVariableNames = new HashSet<String>();
+		tempPathVariables = new TreeMap<String, IPath>();
 		// initialize internal model
 		initTemporaryState();
 	}
@@ -252,7 +254,7 @@ public class PathEntryVariablesGroup {
 		TableItem item = variableTable.getItem(variableTable
 				.getSelectionIndex());
 		String variableName = (String) item.getData();
-		IPath variableValue = (IPath) tempPathVariables.get(variableName);
+		IPath variableValue = tempPathVariables.get(variableName);
 		
 		// constructs a dialog for editing the variable's current name and value
 		PathEntryVariableDialog dialog = new PathEntryVariableDialog(shell,
@@ -312,7 +314,7 @@ public class PathEntryVariablesGroup {
 			String name = (String) items[i].getData();
 			selection[i] = new PathEntryVariableElement();
 			selection[i].name = name;
-			selection[i].path = (IPath)tempPathVariables.get(name);
+			selection[i].path = tempPathVariables.get(name);
 		}
 		return selection;
 	}
@@ -394,8 +396,8 @@ public class PathEntryVariablesGroup {
 		String[] varNames = pathEntryVariableManager.getVariableNames();
 		
 		tempPathVariables.clear();
-		for (int i = 0; i < varNames.length; i++) {
-			IPath value = pathEntryVariableManager.getValue(varNames[i]);
+		for (String varName : varNames) {
+			IPath value = pathEntryVariableManager.getValue(varName);
 			
 			// the value may not exist any more
 			if (value != null) {
@@ -403,7 +405,7 @@ public class PathEntryVariablesGroup {
 				if ((isFile && (variableType & IResource.FILE) != 0)
 						|| (isFile == false && (variableType & IResource.FOLDER) != 0)) {
 					
-					tempPathVariables.put(varNames[i], value);
+					tempPathVariables.put(varName, value);
 				}
 			}
 		}
@@ -434,10 +436,9 @@ public class PathEntryVariablesGroup {
 	private void updateVariableTable(String selectedVarName) {
 		variableTable.removeAll();
 		int selectedVarIndex = 0;
-		for (Iterator varNames = tempPathVariables.keySet().iterator(); varNames.hasNext();) {
+		for (String varName : tempPathVariables.keySet()) {
 			TableItem item = new TableItem(variableTable, SWT.NONE);
-			String varName = (String) varNames.next();
-			IPath value = (IPath) tempPathVariables.get(varName);
+			IPath value = tempPathVariables.get(varName);
 			File file = value.toFile();
 			
 			item.setText(varName + " - " + value.toOSString()); //$NON-NLS-1$ 
@@ -466,18 +467,16 @@ public class PathEntryVariablesGroup {
 	public boolean performOk() {
 		try {
 			// first process removed variables  
-			for (Iterator removed = removedVariableNames.iterator(); removed.hasNext();) {
-				String removedVariableName = (String) removed.next();
+			for (String removedVariableName : removedVariableNames) {
 				// only removes variables that have not been added again
 				if (!tempPathVariables.containsKey(removedVariableName))
 					pathEntryVariableManager.setValue(removedVariableName, null);
 			}
 			
 			// then process the current collection of variables, adding/updating them
-			for (Iterator current = tempPathVariables.entrySet().iterator(); current.hasNext();) {
-				Map.Entry entry = (Map.Entry) current.next();
-				String variableName = (String) entry.getKey();
-				IPath variableValue = (IPath) entry.getValue();
+			for (Entry<String, IPath> entry : tempPathVariables.entrySet()) {
+				String variableName = entry.getKey();
+				IPath variableValue = entry.getValue();
 				pathEntryVariableManager.setValue(variableName, variableValue);
 			}
 			// re-initialize temporary state
@@ -497,8 +496,8 @@ public class PathEntryVariablesGroup {
 	protected void removeSelectedVariables() {
 		// remove each selected element
 		int[] selectedIndices = variableTable.getSelectionIndices();
-		for (int i = 0; i < selectedIndices.length; i++) {
-			TableItem selectedItem = variableTable.getItem(selectedIndices[i]);
+		for (int selectedIndice : selectedIndices) {
+			TableItem selectedItem = variableTable.getItem(selectedIndice);
 			String varName = (String) selectedItem.getData();
 			removedVariableNames.add(varName);
 			tempPathVariables.remove(varName);

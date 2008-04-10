@@ -403,9 +403,7 @@ public class ASTManager {
                 // todo check for const, restrict
                 return r1;
             }
-            else {
-                return FALSE;
-            }
+			return FALSE;
         }
         return r1;
     }
@@ -693,8 +691,7 @@ public class ASTManager {
             ICPPClassScope classScope = (ICPPClassScope) scope;
             ICPPClassType classType= classScope.getClassType();
             ICPPBase[] bases= classType.getBases();
-            for (int i = 0; i < bases.length; i++) {
-                ICPPBase base = bases[i];
+            for (ICPPBase base : bases) {
                 if( !(base.getBaseClass() instanceof ICPPClassType) )
                 	continue;
                 ICPPClassType baseType= (ICPPClassType) base.getBaseClass();
@@ -702,8 +699,7 @@ public class ASTManager {
                     IScope baseScope= baseType.getCompositeScope();
                     if (baseScope != null) {
                         IBinding[] alternates= baseScope.find(method.getName());
-                        for (int j = 0; j < alternates.length; j++) {
-                            IBinding binding = alternates[j];
+                        for (IBinding binding : alternates) {
                             if (binding instanceof CPPMethod) {
                                 CPPMethod alternateMethod = (CPPMethod) binding;
                                 if (hasSameSignature(method, alternateMethod)!=FALSE) {
@@ -773,8 +769,7 @@ public class ASTManager {
             if (count < result.length) {
                 IBinding[] copy= new IBinding[count];
                 int i=0;
-                for (int j = 0; j < result.length; j++) {
-                    IBinding b = result[j];
+                for (IBinding b : result) {
                     if (b != null) {
                         copy[i++]= b;
                     }
@@ -861,7 +856,7 @@ public class ASTManager {
             	} catch (CoreException e) {
             		status.addError(e.getMessage());
             	}
-            	if (tu != null && cacheit) {
+            	if (cacheit) {
             		fTranslationUnits.put(sourceFile, ast);
             	}
             }
@@ -869,11 +864,10 @@ public class ASTManager {
         return ast;
     }
 
-    public void analyzeTextMatches(IIndex index, ArrayList matches, IProgressMonitor monitor, 
+    public void analyzeTextMatches(IIndex index, ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, 
             RefactoringStatus status) {
         CRefactoringMatchStore store= new CRefactoringMatchStore();
-        for (Iterator iter = matches.iterator(); iter.hasNext();) {
-            CRefactoringMatch match = (CRefactoringMatch) iter.next();
+        for (CRefactoringMatch match : matches) {
             store.addMatch(match);
         }
         
@@ -897,9 +891,9 @@ public class ASTManager {
                     update= now+1000;
                 }
                 boolean doParse= false;
-                Collection fm= store.getMatchesForFile(file);
-                for (Iterator iterator = fm.iterator(); !doParse && iterator.hasNext();) {
-                    CRefactoringMatch match = (CRefactoringMatch) iterator.next();
+                Collection<CRefactoringMatch> fm= store.getMatchesForFile(file);
+                for (Iterator<CRefactoringMatch> iterator = fm.iterator(); !doParse && iterator.hasNext();) {
+                    CRefactoringMatch match = iterator.next();
                     switch (match.getLocation()) {
                     case CRefactory.OPTION_IN_COMMENT:
                     case CRefactory.OPTION_IN_INCLUDE_DIRECTIVE:
@@ -951,8 +945,7 @@ public class ASTManager {
         analyzeLanguageMatches(tu, store, paths, status);
         if (status.hasFatalError()) return;
 
-        for (Iterator<IPath> iter = paths.iterator(); iter.hasNext();) {
-            IPath path = iter.next();
+        for (IPath path : paths) {
             if (path != null) {
                 store.removePath(path);
             }
@@ -981,8 +974,7 @@ public class ASTManager {
             final RefactoringStatus status) {
         String lookfor= fArgument.getName();
         IASTPreprocessorMacroDefinition[] mdefs= tu.getMacroDefinitions();
-        for (int i = 0; i < mdefs.length; i++) {
-            IASTPreprocessorMacroDefinition mdef = mdefs[i];
+        for (IASTPreprocessorMacroDefinition mdef : mdefs) {
             IASTName macroName= mdef.getName();
             String macroNameStr= macroName.toString();
             if (fRenameTo.equals(macroNameStr)) {
@@ -997,8 +989,8 @@ public class ASTManager {
                 IBinding macroBinding= macroName.resolveBinding();
                 if (macroBinding != null) {
                     IASTName[] refs= tu.getReferences(macroBinding);
-                    for (int j = 0; j < refs.length; j++) {
-                        path= analyzeAstMatch(refs[j], store, false, status);
+                    for (IASTName ref : refs) {
+                        path= analyzeAstMatch(ref, store, false, status);
                         pathsVisited.add(path);
                     }
                 }
@@ -1019,10 +1011,9 @@ public class ASTManager {
                         IASTFileLocation floc= mdef.getNodeLocations()[0].asFileLocation();
                         int offset= floc.getNodeOffset();
                         int end= offset+ floc.getNodeLength();
-                        Collection matches= store.findMatchesInRange(
+                        Collection<CRefactoringMatch> matches= store.findMatchesInRange(
                                 new Path(floc.getFileName()), offset, end);
-                        for (Iterator iter = matches.iterator(); iter.hasNext();) {
-                            CRefactoringMatch match = (CRefactoringMatch) iter.next();
+                        for (CRefactoringMatch match : matches) {
                             match.setASTInformation(CRefactoringMatch.AST_REFERENCE_OTHER);
                         }
                     }
@@ -1081,15 +1072,13 @@ public class ASTManager {
             IASTFileLocation floc= loc.asFileLocation();
             if (floc != null) {
                 path= new Path(floc.getFileName());
-                if (path != null) {
-                    IBinding binding= name.resolveBinding();
-                    if (binding instanceof IProblemBinding) {
-                        handleProblemBinding(name.getTranslationUnit(), 
-                                (IProblemBinding) binding, status);
-                    }
-                    else if (binding != null) {
-                        fConflictingBinding.add(binding);
-                    }
+                IBinding binding= name.resolveBinding();
+                if (binding instanceof IProblemBinding) {
+                	handleProblemBinding(name.getTranslationUnit(), 
+                			(IProblemBinding) binding, status);
+                }
+                else if (binding != null) {
+                	fConflictingBinding.add(binding);
                 }
             }
         }
@@ -1130,8 +1119,7 @@ public class ASTManager {
             handleProblemBinding(name.getTranslationUnit(), (IProblemBinding) binding, status);
         }
         else {
-            for (int i = 0; i < fValidBindings.length; i++) {
-                IBinding renameBinding = fValidBindings[i];
+            for (IBinding renameBinding : fValidBindings) {
                 try {
                     int cmp0= isSameBinding(binding, renameBinding);
                     if (cmp0 != FALSE) {
@@ -1221,6 +1209,8 @@ public class ASTManager {
         case CRefactory.ARGUMENT_LOCAL_VAR:  
         case CRefactory.ARGUMENT_PARAMETER:
             isLocalVarPar= true;
+            isVarParEnumerator= true;
+            break;
         case CRefactory.ARGUMENT_FILE_LOCAL_VAR:    
         case CRefactory.ARGUMENT_GLOBAL_VAR:
         case CRefactory.ARGUMENT_FIELD:     
@@ -1396,11 +1386,10 @@ public class ASTManager {
                 	String space = "  \n"; //$NON-NLS-1$
                 	String formatted = message + space + message1 + space +  message2 + space +  message3;
                     RefactoringStatusEntry[] entries= status.getEntries();
-                    for (int j = 0; (conflict.getName() != null || msg != null || what != null) 
-                    	&& j<entries.length; j++) {
-                        RefactoringStatusEntry entry = entries[j];
+                    for (RefactoringStatusEntry entry : entries) {
                         if (formatted.equals(entry.getMessage())) {
                             formatted= null;
+                            break;
                         }
                     }
                     if (formatted != null) {
@@ -1423,10 +1412,9 @@ public class ASTManager {
         String name= fArgument.getName();
         IBinding[] newBindingsAboverOrEqual= null;
         IScope oldBindingsScope= null;
-        for (Iterator iter= fKnownBindings.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry= (Map.Entry) iter.next();
-            IBinding oldBinding= (IBinding) entry.getKey();
-            Integer value= (Integer) entry.getValue();
+        for (Map.Entry<IBinding, Integer> entry : fKnownBindings.entrySet()) {
+            IBinding oldBinding= entry.getKey();
+            Integer value= entry.getValue();
             if (value.intValue() == TRUE && oldBinding.getName().equals(name)) {
                 try {
                     oldBindingsScope = oldBinding.getScope();
@@ -1447,8 +1435,7 @@ public class ASTManager {
         }
         
         // check conflicting bindings for being from above or equal level.
-        for (Iterator<IBinding> iter = fConflictingBinding.iterator(); iter.hasNext();) {
-            IBinding conflictingBinding= iter.next();
+        for (IBinding conflictingBinding : fConflictingBinding) {
             if (conflictingBinding != null) {
                 boolean isAboveOrEqual= false;
                 for (int i = 0; !isAboveOrEqual && i<newBindingsAboverOrEqual.length; i++) {
@@ -1468,8 +1455,7 @@ public class ASTManager {
         }
 
         // find bindings on same level
-        for (int i = 0; i<newBindingsAboverOrEqual.length; i++) {
-            IBinding aboveBinding = newBindingsAboverOrEqual[i];
+        for (IBinding aboveBinding : newBindingsAboverOrEqual) {
             IScope aboveScope;
             try {
                 aboveScope = aboveBinding.getScope();

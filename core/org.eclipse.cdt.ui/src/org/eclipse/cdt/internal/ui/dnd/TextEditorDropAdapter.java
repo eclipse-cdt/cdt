@@ -67,22 +67,23 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	 * @see ITextEditorDropTargetListener
 	 */
 	public static class Factory implements IAdapterFactory {
-		private static final Class[] CLASSES= { ITextEditorDropTargetListener.class };
+		private static final Class<?>[] CLASSES= { ITextEditorDropTargetListener.class };
 
 		/*
 		 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
 		 *      java.lang.Class)
 		 */
+		@SuppressWarnings("unchecked")
 		public Object getAdapter(Object adaptableObject, Class adapterType) {
-			if (adaptableObject instanceof ITextEditor) {
+			if (adaptableObject instanceof ITextEditor)
 				return TextEditorDropAdapter.create((ITextEditor) adaptableObject);
-			}
 			return null;
 		}
 
 		/*
 		 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 		 */
+		@SuppressWarnings("unchecked")
 		public Class[] getAdapterList() {
 			return CLASSES;
 		}
@@ -323,13 +324,13 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	 * @param fileNames
 	 */
 	private void dropFiles(String[] fileNames) throws CoreException {
-		for (int i= 0; i < fileNames.length; i++) {
-			Path path= new Path(fileNames[i]);
+		for (String fileName : fileNames) {
+			Path path= new Path(fileName);
 			java.io.File file= path.toFile();
 			if (!file.isFile()) {
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin
 						.getPluginId(), 0, CUIMessages.getFormattedString(
-						"TextEditorDropAdapter.noFile", fileNames[i]), //$NON-NLS-1$
+						"TextEditorDropAdapter.noFile", fileName), //$NON-NLS-1$
 						null));
 			}
 			if (file.canRead()) {
@@ -337,7 +338,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin
 						.getPluginId(), 0, CUIMessages.getFormattedString(
-						"TextEditorDropAdapter.unreadableFile", fileNames[i]), //$NON-NLS-1$
+						"TextEditorDropAdapter.unreadableFile", fileName), //$NON-NLS-1$
 						null));
 			}
 		}
@@ -350,8 +351,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	 * @throws PartInitException
 	 */
 	private void dropMarkers(IMarker[] markers) throws PartInitException {
-		for (int i= 0; i < markers.length; i++) {
-			IMarker marker= markers[i];
+		for (IMarker marker : markers) {
 			IDE.openEditor(getPage(), marker);
 		}
 	}

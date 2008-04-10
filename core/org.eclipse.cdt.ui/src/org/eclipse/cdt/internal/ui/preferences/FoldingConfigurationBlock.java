@@ -46,6 +46,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
 
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
 import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
@@ -98,10 +99,10 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private Combo fProviderCombo;
 	protected Button fFoldingCheckbox;
 	private ComboViewer fProviderViewer;
-	protected Map fProviderDescriptors;
+	protected Map<String, CFoldingStructureProviderDescriptor> fProviderDescriptors;
 	private Composite fGroup;
-	private Map fProviderPreferences;
-	private Map fProviderControls;
+	private Map<String, ICFoldingPreferenceBlock> fProviderPreferences;
+	private Map<String, Control> fProviderControls;
 	private StackLayout fStackLayout;
 	
 
@@ -110,15 +111,15 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		fStore= store;
 		fStore.addKeys(createOverlayStoreKeys());
 		fProviderDescriptors= createListModel();
-		fProviderPreferences= new HashMap();
-		fProviderControls= new HashMap();
+		fProviderPreferences= new HashMap<String, ICFoldingPreferenceBlock>();
+		fProviderControls= new HashMap<String, Control>();
 	}
 
-	private Map createListModel() {
+	private Map<String, CFoldingStructureProviderDescriptor> createListModel() {
 		CFoldingStructureProviderRegistry reg= CUIPlugin.getDefault().getFoldingStructureProviderRegistry();
 		reg.reloadExtensions();
 		CFoldingStructureProviderDescriptor[] descs= reg.getFoldingProviderDescriptors();
-		Map map= new HashMap();
+		Map<String, CFoldingStructureProviderDescriptor> map= new HashMap<String, CFoldingStructureProviderDescriptor>();
 		for (int i= 0; i < descs.length; i++) {
 			map.put(descs[i].getId(), descs[i]);
 		}
@@ -127,7 +128,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_FOLDING_PROVIDER));
@@ -269,7 +270,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	void updateListDependencies() {
 		String id= fStore.getString(PreferenceConstants.EDITOR_FOLDING_PROVIDER);
-		CFoldingStructureProviderDescriptor desc= (CFoldingStructureProviderDescriptor) fProviderDescriptors.get(id);
+		CFoldingStructureProviderDescriptor desc= fProviderDescriptors.get(id);
 		ICFoldingPreferenceBlock prefs;
 		
 		if (desc == null) {
@@ -278,7 +279,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 			CUIPlugin.log(new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, null));
 			prefs= new ErrorPreferences(message);
 		} else {
-			prefs= (ICFoldingPreferenceBlock) fProviderPreferences.get(id);
+			prefs= fProviderPreferences.get(id);
 			if (prefs == null) {
 				try {
 					prefs= desc.createPreferences();
@@ -290,7 +291,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		}
 		
-		Control control= (Control) fProviderControls.get(id);
+		Control control= fProviderControls.get(id);
 		if (control == null) {
 			control= prefs.createControl(fGroup);
 			if (control == null) {
@@ -319,8 +320,8 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performOk()
 	 */
 	public void performOk() {
-		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ICFoldingPreferenceBlock prefs= (ICFoldingPreferenceBlock) it.next();
+		for (Iterator<ICFoldingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
+			ICFoldingPreferenceBlock prefs= it.next();
 			prefs.performOk();
 		}
 	}
@@ -330,8 +331,8 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	public void performDefaults() {
 		restoreFromPreferences();
-		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ICFoldingPreferenceBlock prefs= (ICFoldingPreferenceBlock) it.next();
+		for (Iterator<ICFoldingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
+			ICFoldingPreferenceBlock prefs= it.next();
 			prefs.performDefaults();
 		}
 	}
@@ -340,8 +341,8 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
 	 */
 	public void dispose() {
-		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ICFoldingPreferenceBlock prefs= (ICFoldingPreferenceBlock) it.next();
+		for (Iterator<ICFoldingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
+			ICFoldingPreferenceBlock prefs= it.next();
 			prefs.dispose();
 		}
 	}

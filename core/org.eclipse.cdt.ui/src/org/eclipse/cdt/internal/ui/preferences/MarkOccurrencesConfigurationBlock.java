@@ -35,6 +35,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
@@ -47,13 +48,13 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 	private OverlayPreferenceStore fStore;
 	
 	
-	private Map fCheckBoxes= new HashMap();
+	private Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
-			fStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
 	
@@ -62,7 +63,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 	 * 
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private ArrayList fMasterSlaveListeners= new ArrayList();
+	private ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
 	
 	private StatusInfo fStatus;
 
@@ -75,7 +76,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 	
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_MARK_OCCURRENCES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_STICKY_OCCURRENCES));
@@ -180,10 +181,10 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 
 	void initializeFields() {
 		
-		Iterator iter= fCheckBoxes.keySet().iterator();
+		Iterator<Object> iter= fCheckBoxes.keySet().iterator();
 		while (iter.hasNext()) {
 			Button b= (Button) iter.next();
-			String key= (String) fCheckBoxes.get(b);
+			String key= fCheckBoxes.get(b);
 			b.setSelection(fStore.getBoolean(key));
 		}
 		

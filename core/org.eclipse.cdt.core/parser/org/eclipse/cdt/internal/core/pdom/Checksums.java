@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -43,7 +42,7 @@ public class Checksums {
 	 * @throws NoSuchAlgorithmException 
 	 * @since 4.0
 	 */
-	public static MessageDigest getAlgorithm(Map persistedMap) throws NoSuchAlgorithmException {
+	public static MessageDigest getAlgorithm(Map<String, Object> persistedMap) throws NoSuchAlgorithmException {
 		Object obj= persistedMap.get(KEY_ALGORITHM);
 		String alg= obj instanceof String ? (String) obj : DEFAULT_ALGORITHM;
 		return MessageDigest.getInstance(alg); 
@@ -53,7 +52,7 @@ public class Checksums {
 	 * Stores the algorithm in a map.
 	 * @since 4.0
 	 */
-	public static void putAlgorithm(Map mapToPersist, MessageDigest md) {
+	public static void putAlgorithm(Map<String, Object> mapToPersist, MessageDigest md) {
 		mapToPersist.put(KEY_ALGORITHM, md.getAlgorithm());
 	}
 	
@@ -81,12 +80,11 @@ public class Checksums {
 	 * Retrieves a checksum for a file from the persisted map. May return <code>null</code>.
 	 * @since 4.0
 	 */
-	public static byte[] getChecksum(Map persistedMap, IFile file) {
+	public static byte[] getChecksum(Map<String, Object> persistedMap, IFile file) {
 		IPath prjRel= file.getProjectRelativePath();
 		Object checksum= persistedMap.get(prjRel.toString());
-		if (checksum instanceof byte[]) {
+		if (checksum instanceof byte[])
 			return (byte[]) checksum;
-		}
 		return null;
 	}
 
@@ -94,7 +92,7 @@ public class Checksums {
 	 * Stores a checksum in a map.
 	 * @since 4.0
 	 */
-	public static void putChecksum(Map mapToPersist, IFile file, byte[] checksum) {
+	public static void putChecksum(Map<String, Object> mapToPersist, IFile file, byte[] checksum) {
 		IPath prjRel= file.getProjectRelativePath();
 		mapToPersist.put(prjRel.toString(), checksum);
 	}
@@ -104,16 +102,15 @@ public class Checksums {
 	 * @throws OperationCanceledException
 	 * @since 4.0
 	 */
-	public static Map createChecksumMap(IFile[] tus, MessageDigest md, IProgressMonitor pm) 
+	public static Map<String, Object> createChecksumMap(IFile[] tus, MessageDigest md, IProgressMonitor pm) 
 			throws OperationCanceledException {
-		Map result= new HashMap();
+		Map<String, Object> result= new HashMap<String, Object>();
 		putAlgorithm(result, md);
 		pm.beginTask(Messages.Checksums_taskComputeChecksums, tus.length);
-		for (int i = 0; i < tus.length; i++) {
+		for (IFile file : tus) {
 			if (pm.isCanceled()) {
 				throw new OperationCanceledException();
 			}
-			IFile file = tus[i];
 			if (file != null) {
 				IPath location= file.getLocation();
 				if (location != null) {

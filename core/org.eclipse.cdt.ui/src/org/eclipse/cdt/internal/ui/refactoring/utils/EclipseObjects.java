@@ -70,8 +70,8 @@ public class EclipseObjects {
 	static public IEditorPart getEditorForFile(IFile file) {
 		IWorkbenchPage page = getActivePage();
 		IEditorReference[] editors = page.getEditorReferences();
-		for (int i = 0; i < editors.length; i++) {
-			IEditorPart editor = editors[i].getEditor(false);
+		for (IEditorReference editor2 : editors) {
+			IEditorPart editor = editor2.getEditor(false);
 			if (editor instanceof CEditor) {
 				CEditor edi = ((CEditor)editor);
 				IResource resource = edi.getInputCElement().getResource();
@@ -136,9 +136,8 @@ public class EclipseObjects {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			IFile file = getFile((IStructuredSelection)selection);
 			return file;
-		} else {
-			return EclipseObjects.getActiveFile();
 		}
+		return EclipseObjects.getActiveFile();
 	}
 
 	static private IFile getFile(IStructuredSelection selection) {

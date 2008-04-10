@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
+import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -48,7 +49,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 public class CFileTypesPropertyPage extends PropertyPage {
 
 	class FixCFileTypesPreferenceBlock extends CFileTypesPreferenceBlock {
-		ArrayList list = new ArrayList();
+		ArrayList<ContentTypeChangeEvent> list = new ArrayList<ContentTypeChangeEvent>();
 
 		public FixCFileTypesPreferenceBlock() {
 			super();
@@ -229,9 +230,8 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	void computeEvents(IProject project) {
 		IScopeContext projectScope = new ProjectScope(project);
 		IContentType[] ctypes = getRegistedContentTypes();
-		ArrayList list = new ArrayList(ctypes.length);
-		for (int i = 0; i < ctypes.length; i++) {
-			IContentType ctype = ctypes[i];
+		ArrayList<IContentType> list = new ArrayList<IContentType>(ctypes.length);
+		for (IContentType ctype : ctypes) {
 			try {
 				IContentTypeSettings projectSettings = ctype.getSettings(projectScope);
 				String[] projectSpecs = projectSettings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
@@ -252,7 +252,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		if (list.size() > 0) {
 			IContentTypeManager.ContentTypeChangeEvent[] events =  new IContentTypeManager.ContentTypeChangeEvent[list.size()];
 			for (int i = 0; i < list.size(); ++i) {
-				IContentType source = (IContentType)list.get(i);
+				IContentType source = list.get(i);
 				events[i] =  new IContentTypeManager.ContentTypeChangeEvent(source, projectScope);
 			}
 			CModelManager.getDefault().contentTypeChanged(events);

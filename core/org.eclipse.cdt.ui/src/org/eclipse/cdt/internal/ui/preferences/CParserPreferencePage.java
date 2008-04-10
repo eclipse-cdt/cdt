@@ -13,11 +13,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.parser.CodeReaderCache;
-import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,6 +27,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.CDOM;
+import org.eclipse.cdt.core.parser.CodeReaderCache;
+import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 
 /**
  * @author dsteffle
@@ -51,7 +54,7 @@ public class CParserPreferencePage extends PreferencePage implements
 	}
 
 	private OverlayPreferenceStore createOverlayStore() {
-		ArrayList overlayKeys = new ArrayList();		
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CodeReaderCache.CODE_READER_BUFFER));
 	
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];

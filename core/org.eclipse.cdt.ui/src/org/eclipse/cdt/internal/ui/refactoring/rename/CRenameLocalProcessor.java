@@ -74,8 +74,8 @@ public class CRenameLocalProcessor extends CRenameProcessorDelegate {
                 }
             }
             int[] range= result;
-            for (Iterator iter = matches.iterator(); iter.hasNext();) {
-                CRefactoringMatch m = (CRefactoringMatch) iter.next();
+            for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
+                CRefactoringMatch m = iter.next();
                 int off= m.getOffset();
                 if (off < range[0] || off > range[1]) {
                     iter.remove();

@@ -103,7 +103,7 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 
 			resources = new ArrayList<IResource>(structured.size());
 
-			for (Iterator iterator = structured.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = structured.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
 				IResource resource = null;
 				if (element instanceof IResource) {

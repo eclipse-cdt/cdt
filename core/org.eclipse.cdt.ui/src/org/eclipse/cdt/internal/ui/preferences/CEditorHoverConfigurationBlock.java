@@ -59,6 +59,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
@@ -171,7 +172,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 	
 		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER));
 		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
@@ -437,7 +438,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		String compiledTextHoverModifiers= fStore.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS);
 		
 		StringTokenizer tokenizer= new StringTokenizer(compiledTextHoverModifiers, CEditorTextHoverDescriptor.VALUE_SEPARATOR);
-		HashMap idToModifier= new HashMap(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifier= new HashMap<String, String>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id= tokenizer.nextToken();
@@ -448,7 +449,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		String compiledTextHoverModifierMasks= CUIPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS);
 
 		tokenizer= new StringTokenizer(compiledTextHoverModifierMasks, CEditorTextHoverDescriptor.VALUE_SEPARATOR);
-		HashMap idToModifierMask= new HashMap(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifierMask= new HashMap<String, String>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id= tokenizer.nextToken();
@@ -457,7 +458,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		}
 
 		for (int i= 0; i < fHoverConfigs.length; i++) {
-			String modifierString= (String)idToModifier.get(getContributedHovers()[i].getId());
+			String modifierString= idToModifier.get(getContributedHovers()[i].getId());
 			boolean enabled= true;
 			if (modifierString == null)
 				modifierString= CEditorTextHoverDescriptor.DISABLED_TAG;
@@ -476,7 +477,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 			if (fHoverConfigs[i].fStateMask == -1) {
 				try {
-					fHoverConfigs[i].fStateMask= Integer.parseInt((String)idToModifierMask.get(getContributedHovers()[i].getId()));
+					fHoverConfigs[i].fStateMask= Integer.parseInt(idToModifierMask.get(getContributedHovers()[i].getId()));
 				} catch (NumberFormatException ex) {
 					fHoverConfigs[i].fStateMask= -1;
 				}
@@ -531,7 +532,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 			fStatus= new StatusInfo();
 
 		int i= 0;
-		HashMap stateMasks= new HashMap(fHoverConfigs.length);
+		HashMap<Integer, String> stateMasks= new HashMap<Integer, String>(fHoverConfigs.length);
 		while (fStatus.isOK() && i < fHoverConfigs.length) {
 			if (fHoverConfigs[i].fIsEnabled) {
 				String label= getContributedHovers()[i].getLabel();
@@ -539,7 +540,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 				if (fHoverConfigs[i].fStateMask == -1)
 					fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_modifierIsNotValidForHover, new String[] {fHoverConfigs[i].fModifierString, label})); 
 				else if (stateMasks.containsKey(stateMask))
-					fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_duplicateModifier, new String[] {label, (String)stateMasks.get(stateMask)})); 
+					fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_duplicateModifier, new String[] {label, stateMasks.get(stateMask)})); 
 				else
 					stateMasks.put(stateMask, label);
 			}

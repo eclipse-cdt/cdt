@@ -17,7 +17,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -371,26 +370,26 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		
 		fColorManager= new CColorManager(false);
 		
-		for (int i= 0, n= fSyntaxColorListModel.length; i < n; i++)
+		for (String[] element : fSyntaxColorListModel)
 			fListModel.add(new HighlightingColorListItem (
-					fSyntaxColorListModel[i][0], 
-					fSyntaxColorListModel[i][1], 
-					fSyntaxColorListModel[i][1] + BOLD, 
-					fSyntaxColorListModel[i][1] + ITALIC, 
-					fSyntaxColorListModel[i][1] + STRIKETHROUGH, 
-					fSyntaxColorListModel[i][1] + UNDERLINE));
+					element[0], 
+					element[1], 
+					element[1] + BOLD, 
+					element[1] + ITALIC, 
+					element[1] + STRIKETHROUGH, 
+					element[1] + UNDERLINE));
 
 		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
-		for (int i= 0, n= semanticHighlightings.length; i < n; i++)
+		for (SemanticHighlighting semanticHighlighting : semanticHighlightings)
 			fListModel.add(
 					new SemanticHighlightingColorListItem(
-							semanticHighlightings[i].getDisplayName(), 
-							SemanticHighlightings.getColorPreferenceKey(semanticHighlightings[i]),
-							SemanticHighlightings.getBoldPreferenceKey(semanticHighlightings[i]),
-							SemanticHighlightings.getItalicPreferenceKey(semanticHighlightings[i]),
-							SemanticHighlightings.getStrikethroughPreferenceKey(semanticHighlightings[i]),
-							SemanticHighlightings.getUnderlinePreferenceKey(semanticHighlightings[i]),
-							SemanticHighlightings.getEnabledPreferenceKey(semanticHighlightings[i])
+							semanticHighlighting.getDisplayName(), 
+							SemanticHighlightings.getColorPreferenceKey(semanticHighlighting),
+							SemanticHighlightings.getBoldPreferenceKey(semanticHighlighting),
+							SemanticHighlightings.getItalicPreferenceKey(semanticHighlighting),
+							SemanticHighlightings.getStrikethroughPreferenceKey(semanticHighlighting),
+							SemanticHighlightings.getUnderlinePreferenceKey(semanticHighlighting),
+							SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting)
 					));
 		
 		store.addKeys(createOverlayStoreKeys());
@@ -613,8 +612,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, true);
 		gd.heightHint= convertHeightInCharsToPixels(9);
 		int maxWidth= 0;
-		for (Iterator it= fListModel.iterator(); it.hasNext();) {
-			HighlightingColorListItem item= (HighlightingColorListItem) it.next();
+		for (HighlightingColorListItem item : fListModel) {
 			maxWidth= Math.max(maxWidth, convertWidthInCharsToPixels(item.getDisplayName().length()));
 		}
 		ScrollBar vBar= ((Scrollable) fListViewer.getControl()).getVerticalBar();

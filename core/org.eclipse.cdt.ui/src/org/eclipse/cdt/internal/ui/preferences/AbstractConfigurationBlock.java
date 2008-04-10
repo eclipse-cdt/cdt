@@ -73,7 +73,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected final class SectionManager {
 		/** The preference setting for keeping no section open. */
 		private static final String __NONE= "__none"; //$NON-NLS-1$
-		private Set fSections= new HashSet();
+		private Set<ExpandableComposite> fSections= new HashSet<ExpandableComposite>();
 		private boolean fIsBeingManaged= false;
 		private ExpansionAdapter fListener= new ExpansionAdapter() {
 			@Override
@@ -85,8 +85,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 				if (e.getState()) {
 					try {
 						fIsBeingManaged= true;
-						for (Iterator iter= fSections.iterator(); iter.hasNext();) {
-							ExpandableComposite composite= (ExpandableComposite) iter.next();
+						for (ExpandableComposite composite : fSections) {
 							if (composite != source)
 								composite.setExpanded(false);
 						}
@@ -206,26 +205,26 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected static final int INDENT= 20;
 	private OverlayPreferenceStore fStore;
 	
-	private Map fCheckBoxes= new HashMap();
+	private Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
-			fStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
 	
 	
-	private Map fTextFields= new HashMap();
+	private Map<Object, String> fTextFields= new HashMap<Object, String>();
 	private ModifyListener fTextFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			Text text= (Text) e.widget;
-			fStore.setValue((String) fTextFields.get(text), text.getText());
+			fStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
 
-	private ArrayList fNumberFields= new ArrayList();
+	private ArrayList<Text> fNumberFields= new ArrayList<Text>();
 	private ModifyListener fNumberFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
@@ -238,7 +237,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	 * @see #createDependency(Button, Control)
 	 * @since 3.0
 	 */
-	private ArrayList fMasterSlaveListeners= new ArrayList();
+	private ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
 	
 	private StatusInfo fStatus;
 	private final PreferencePage fMainPage;
@@ -359,8 +358,8 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		SelectionListener listener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
-				for (int i= 0; i < slaves.length; i++) {
-					slaves[i].setEnabled(state);
+				for (Control slave : slaves) {
+					slave.setEnabled(state);
 				}
 			}
 
@@ -380,17 +379,17 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 
 	private void initializeFields() {
 		
-		Iterator iter= fCheckBoxes.keySet().iterator();
+		Iterator<Object> iter= fCheckBoxes.keySet().iterator();
 		while (iter.hasNext()) {
 			Button b= (Button) iter.next();
-			String key= (String) fCheckBoxes.get(b);
+			String key= fCheckBoxes.get(b);
 			b.setSelection(fStore.getBoolean(key));
 		}
 		
 		iter= fTextFields.keySet().iterator();
 		while (iter.hasNext()) {
 			Text t= (Text) iter.next();
-			String key= (String) fTextFields.get(t);
+			String key= fTextFields.get(t);
 			t.setText(fStore.getString(key));
 		}
 		
@@ -427,7 +426,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		String number= textControl.getText();
 		IStatus status= validatePositiveNumber(number);
 		if (!status.matches(IStatus.ERROR))
-			fStore.setValue((String) fTextFields.get(textControl), number);
+			fStore.setValue(fTextFields.get(textControl), number);
 		updateStatus(status);
 	}
 	
@@ -461,12 +460,11 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected Composite createSubsection(Composite parent, SectionManager manager, String label) {
 		if (manager != null) {
 			return manager.createSection(label);
-		} else {
-			Group group= new Group(parent, SWT.SHADOW_NONE);
-			group.setText(label);
-			GridData data= new GridData(SWT.FILL, SWT.CENTER, true, false);
-			group.setLayoutData(data);
-			return group;
 		}
+		Group group= new Group(parent, SWT.SHADOW_NONE);
+		group.setText(label);
+		GridData data= new GridData(SWT.FILL, SWT.CENTER, true, false);
+		group.setLayoutData(data);
+		return group;
 	}
 }

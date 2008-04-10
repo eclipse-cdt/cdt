@@ -274,8 +274,7 @@ public abstract class CRenameProcessorDelegate {
         IFile file= null;
         TextFileChange fileChange= null;
         MultiTextEdit fileEdit= null;
-        for (Iterator<CRefactoringMatch> iter = fMatches.iterator(); iter.hasNext();) {
-            CRefactoringMatch match= iter.next();
+        for (CRefactoringMatch match : fMatches) {
             switch(match.getAstInformation()) {
             case CRefactoringMatch.AST_REFERENCE_OTHER:
                 continue;
@@ -287,7 +286,7 @@ public abstract class CRenameProcessorDelegate {
             }
             if (match.getAstInformation() != CRefactoringMatch.AST_REFERENCE_OTHER) {
                 IFile mfile= match.getFile();
-                if (file==null || !file.equals(mfile)) {
+                if (file==null || !file.equals(mfile) || fileEdit == null || fileChange == null) {
                     file= mfile;
                     fileEdit= new MultiTextEdit();
                     fileChange = new CTextFileChange(file.getName(), file);

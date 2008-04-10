@@ -191,7 +191,7 @@ class EditTemplateDialog extends StatusDialog {
 //		String delim= new Document().getLegalLineDelimiters()[0];
 		
 		List<String[]> contexts= new ArrayList<String[]>();
-		for (Iterator it= registry.contextTypes(); it.hasNext();) {
+		for (Iterator<?> it= registry.contextTypes(); it.hasNext();) {
 			TemplateContextType type= (TemplateContextType) it.next();
 			// TODO cppdoc? doxygen?
 //			if (type.getId().equals("javadoc")) //$NON-NLS-1$
@@ -277,8 +277,8 @@ class EditTemplateDialog extends StatusDialog {
 				createLabel(composite, PreferencesMessages.EditTemplateDialog_contextType);
 				fContextCombo= new Combo(composite, SWT.READ_ONLY);
 				fContextCombo.setVisibleItemCount(10);
-				for (int i= 0; i < fContextTypes.length; i++) {
-					fContextCombo.add(fContextTypes[i][1]);
+				for (String[] contextType : fContextTypes) {
+					fContextCombo.add(contextType[1]);
 				}
 		
 				fContextCombo.addModifyListener(listener);
@@ -359,9 +359,9 @@ class EditTemplateDialog extends StatusDialog {
 	private String getContextId() {
 		if (fContextCombo != null && !fContextCombo.isDisposed()) {
 			String name= fContextCombo.getText();
-			for (int i= 0; i < fContextTypes.length; i++) {
-				if (name.equals(fContextTypes[i][1])) {
-					return fContextTypes[i][0];
+			for (String[] contextType : fContextTypes) {
+				if (name.equals(contextType[1])) {
+					return contextType[0];
 				}
 			}
 		}
@@ -475,8 +475,7 @@ class EditTemplateDialog extends StatusDialog {
 		int idx= getIndex(id);
 		if (idx != -1)
 			return fContextTypes[idx][2];
-		else
-			return ""; //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	private void initializeActions() {

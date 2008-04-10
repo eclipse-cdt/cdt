@@ -32,6 +32,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
+import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 
@@ -454,7 +455,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         	setErrorMessage(null);
         	setPageComplete(false);
         }
-        else if (!isValidIdentifier(txt)) {
+        else if (!CConventions.isValidIdentifier(txt)) {
         	setErrorMessage(NLS.bind(Messages.getString("CRenameRefactoringInputPage.errorInvalidIdentifier"), txt)); //$NON-NLS-1$
         	setPageComplete(false);
         }
@@ -464,77 +465,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         }
     }
 
-    private boolean isValidIdentifier(String txt) {
-    	if (txt.length() < 1) {
-    		return false;
-    	}
-    	char[] chars= txt.toCharArray();
-    	for (int i = 0; i < chars.length; i++) {
-			final char c = chars[i];
-			switch(c) {
-			case '?':
-				// check for trigraph for backslash
-				if (i+2 >= chars.length) {
-					return false;
-				}
-				if (chars[++i] != '?') {
-					return false;
-				}
-				if (chars[++i] != '/') {
-					return false;
-				}
-				// no break, continue with check for universal character name
-			case '\\': 
-				// check for universal character name
-				if (++i >= chars.length) {
-					return false;
-				}
-				int hexdigits= 0;
-				switch(chars[i]) {
-				case 'u':
-					hexdigits= 4;
-					break;
-				case 'U':
-					hexdigits= 8;
-					break;
-				default:
-					return false;
-				}
-				while (hexdigits > 0) {
-					if (++i >= chars.length) {
-						return false;
-					}
-					if (!isHexDigit(chars[i])) {
-						return false;
-					}
-					hexdigits--;
-				}
-				break;
-			case '_':
-				break;
-			default: 
-				if (i==0) {
-					if (!Character.isLetter(c)) {
-						return false;
-					}
-				}
-				else {
-					if (!Character.isLetterOrDigit(c)) {
-						return false;
-					}
-				}
-			}
-		}
-    	return true;
-    }
-    
-	private boolean isHexDigit(char c) {
-		return ( c >= '0' && c <= '9' )
-			|| ( c >= 'A' && c <= 'F' )
-			|| ( c >= 'a' && c <= 'f' );
-	}
-
-	protected void updateEnablement() {
+    protected void updateEnablement() {
         boolean enable= fEnableScopeOptions==-1 ||
         	(computeSelectedOptions() & fEnableScopeOptions) != 0;
         

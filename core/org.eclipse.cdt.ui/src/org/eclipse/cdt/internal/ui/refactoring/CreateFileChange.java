@@ -63,9 +63,8 @@ public class CreateFileChange extends Change {
 	public String getName() {
 		if(name == null) {
 			return NLS.bind(Messages.CreateFileChange_CreateFile, path.toOSString());  
-		}else {
-			return name;
 		}
+		return name;
 	}
 
 	@Override

@@ -61,50 +61,50 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	 * @see #createDependency(Button, String, Control)
 	 * @since 3.0
 	 */
-	private ArrayList fMasterSlaveListeners= new ArrayList();
+	private ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<SelectionListener>();
 
-	protected Map fTextFields = new HashMap();
+	protected Map<Object, String> fTextFields = new HashMap<Object, String>();
 	private ModifyListener fTextFieldListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			Text text = (Text) e.widget;
-			fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
+			fOverlayStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
 	
-	protected Map fComboBoxes = new HashMap();
+	protected Map<Object, String> fComboBoxes = new HashMap<Object, String>();
 	private ModifyListener fComboBoxListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			Combo combo = (Combo) e.widget;
 			String state = ProposalFilterPreferencesUtil.comboStateAsString(combo);
-			fOverlayStore.setValue((String) fComboBoxes.get(combo), state);
+			fOverlayStore.setValue(fComboBoxes.get(combo), state);
 		}
 	};
 	
 
-	protected Map fCheckBoxes = new HashMap();
+	protected Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
-			fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+			fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
 
-	protected ArrayList fNumberFields = new ArrayList();
+	protected ArrayList<Text> fNumberFields = new ArrayList<Text>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
 		}
 	};
 
-	protected Map fColorButtons = new HashMap();
+	protected Map<Object, String> fColorButtons = new HashMap<Object, String>();
 	private SelectionListener fColorButtonListener = new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 		public void widgetSelected(SelectionEvent e) {
 			ColorSelector editor = (ColorSelector) e.widget.getData();
-			PreferenceConverter.setValue(fOverlayStore, (String) fColorButtons.get(editor), editor.getColorValue());
+			PreferenceConverter.setValue(fOverlayStore, fColorButtons.get(editor), editor.getColorValue());
 		}
 	};
 
@@ -224,7 +224,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		String number = textControl.getText();
 		IStatus status = validatePositiveNumber(number);
 		if (!status.matches(IStatus.ERROR))
-			fOverlayStore.setValue((String) fTextFields.get(textControl), number);
+			fOverlayStore.setValue(fTextFields.get(textControl), number);
 		updateStatus(status);
 	}
 
@@ -247,7 +247,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	protected void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
 			for (int i = 0; i < fNumberFields.size(); i++) {
-				Text text = (Text) fNumberFields.get(i);
+				Text text = fNumberFields.get(i);
 				IStatus s = validatePositiveNumber(text.getText());
 				status = StatusUtil.getMoreSevere(s, status);
 			}
@@ -310,10 +310,10 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	
 	protected void initializeFields() {
 
-		Iterator e = fColorButtons.keySet().iterator();
+		Iterator<Object> e = fColorButtons.keySet().iterator();
 		while (e.hasNext()) {
 			ColorSelector c = (ColorSelector) e.next();
-			String key = (String) fColorButtons.get(c);
+			String key = fColorButtons.get(c);
 			RGB rgb = PreferenceConverter.getColor(fOverlayStore, key);
 			c.setColorValue(rgb);
 		}
@@ -321,21 +321,21 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		e = fCheckBoxes.keySet().iterator();
 		while (e.hasNext()) {
 			Button b = (Button) e.next();
-			String key = (String) fCheckBoxes.get(b);
+			String key = fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
 		}
 
 		e = fTextFields.keySet().iterator();
 		while (e.hasNext()) {
 			Text t = (Text) e.next();
-			String key = (String) fTextFields.get(t);
+			String key = fTextFields.get(t);
 			t.setText(fOverlayStore.getString(key));
 		}
 
 		e = fComboBoxes.keySet().iterator();
 		while (e.hasNext()) {
 			Combo c = (Combo) e.next();
-			String key = (String) fComboBoxes.get(c);
+			String key = fComboBoxes.get(c);
 			String state = fOverlayStore.getString(key);
 			// Interpret the state string as a Combo state description
 			ProposalFilterPreferencesUtil.restoreComboFromString(c, state);

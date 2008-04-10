@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -30,6 +29,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.cdt.core.model.CoreModel;
 
 public class CFileTypeDialog extends Dialog {
 	
@@ -112,9 +113,9 @@ public class CFileTypeDialog extends Dialog {
 	private void populateTypesCombo() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		String[]	ids = CoreModel.getRegistedContentTypeIds();
-		ArrayList list = new ArrayList(ids.length);
-		for (int i = 0; i < ids.length; i++) {
-			IContentType ctype = manager.getContentType(ids[i]);
+		ArrayList<IContentType> list = new ArrayList<IContentType>(ids.length);
+		for (String id : ids) {
+			IContentType ctype = manager.getContentType(id);
 			if (ctype != null) {
 				list.add(ctype);
 			}
@@ -124,8 +125,8 @@ public class CFileTypeDialog extends Dialog {
 		list.toArray(ctypes);
 		int	index = -1;
 
-		for (int i = 0; i < ctypes.length; i++) {
-			fComboType.add(ctypes[i].getName());
+		for (IContentType ctype : ctypes) {
+			fComboType.add(ctype.getName());
 		}
 		
 		fComboType.setData(ctypes);
@@ -152,9 +153,9 @@ public class CFileTypeDialog extends Dialog {
 		if (-1 != index) {
 			String			name	= fComboType.getItem(index);
 			IContentType[]	types	= (IContentType[]) fComboType.getData();
-			for (int i = 0; i < types.length; i++) {
-				if (name.equals(types[i].getName())) {
-					type = types[i];
+			for (IContentType type2 : types) {
+				if (name.equals(type2.getName())) {
+					type = type2;
 				}
 			}
 		}

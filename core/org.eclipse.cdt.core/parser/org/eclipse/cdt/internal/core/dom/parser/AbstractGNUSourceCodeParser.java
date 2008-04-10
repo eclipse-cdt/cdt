@@ -852,41 +852,31 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IASTTypeId d = null;
         IASTExpression unaryExpression = null;
 
-        IToken m = mark();
         int lastOffset = 0;
-        if (LT(1) == IToken.tLPAREN) {
-            if (LT(2) == IToken.tLBRACE) {
-                unaryExpression = compoundStatementExpression();
-                lastOffset = calculateEndOffset(unaryExpression);
-            } else {
-            	boolean needBack = false; 
-                try {
-                    consume(); // tLPAREN
-                    d = typeId(false);
-                    if (d == null)
-                    	needBack = true;
-                    else
-                    	lastOffset = consume(IToken.tRPAREN).getEndOffset();
-                } catch (BacktrackException bt) {
-                	needBack = true;
-                }
-                if (needBack) {
-                    backup(m);
-                    d = null;
-                    unaryExpression = unaryExpression();
-                    lastOffset = calculateEndOffset(unaryExpression);
-                }
-            }
+        // prefer unary expressions over type-expressions
+        if (LT(1) == IToken.tLPAREN && LT(2) != IToken.tLBRACE) {
+        	consume();
+            final IToken m = mark();
+        	try {
+        		unaryExpression= unaryExpression();
+        	}
+        	catch (BacktrackException e) {
+        		backup(m);
+            	d = typeId(false);
+            	if (d == null) 
+            		throw new BacktrackException();
+        	}
+        	lastOffset = consume(IToken.tRPAREN).getEndOffset();
         } else {
             unaryExpression = unaryExpression();
             lastOffset = calculateEndOffset(unaryExpression);
         }
-        if (d != null & unaryExpression == null)
-            return buildTypeIdExpression(IGNUASTTypeIdExpression.op_typeof, d,
-                    offset, lastOffset);
-        else if (unaryExpression != null && d == null)
-            return buildUnaryExpression(IGNUASTUnaryExpression.op_typeof,
-                    unaryExpression, offset, lastOffset);
+        if (d != null)
+            return buildTypeIdExpression(IGNUASTTypeIdExpression.op_typeof, d, offset, lastOffset);
+        
+        if (unaryExpression != null)
+            return buildUnaryExpression(IGNUASTUnaryExpression.op_typeof, unaryExpression, offset, lastOffset);
+        
         return null;
     }
 
@@ -2016,6 +2006,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	}
 	
 	protected boolean canBeTypeSpecifier() throws EndOfFileException {
+
 		switch (LT(1)) {
 		// simple type specifiers:
 		case IToken.tIDENTIFIER:
@@ -2050,12 +2041,16 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		case IToken.t_const:
         case IToken.t_volatile:
         case IToken.t_restrict:
-        	return true;
-        	
+
+        // gcc-special
+        case IGCCToken.t_typeof:
+
+        // content assist
         case IToken.tCOMPLETION:
         	return true;
+        	
+        default:
+        	return false;
 		}
-
-		return false;
 	}
 }

@@ -1234,7 +1234,7 @@ public class CVisitor {
 				}
 			}
 		}
-
+		
 	    boolean prefix = ( bits & PREFIX_LOOKUP ) != 0;
 	    @SuppressWarnings("unchecked")
 		Object binding =  prefix ? new ObjectSet( 2 ) : null;

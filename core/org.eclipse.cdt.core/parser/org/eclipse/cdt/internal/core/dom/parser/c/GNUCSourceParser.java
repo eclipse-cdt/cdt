@@ -1024,23 +1024,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 declSpecifier = declSpecifierSeq(false, true);
             } catch (FoundDeclaratorException  e) {
             	return null;
-//                backup(mark);
-//                throwBacktrack( e.currToken );
             }
             declarator = declarator();
         } catch (BacktrackException bt) {
         	return null;
-//            backup(mark);
-//            throwBacktrack(bt);
         }
         if (declarator == null || declarator.getName().toCharArray().length > 0) 
-        {
         	return null;
-//            backup(mark);
-//            throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
-//                    declarator)
-//                    - startingOffset);
-        }
 
         IASTTypeId result = createTypeId();
         ((ASTNode) result).setOffsetAndLength(startingOffset, figureEndOffset(

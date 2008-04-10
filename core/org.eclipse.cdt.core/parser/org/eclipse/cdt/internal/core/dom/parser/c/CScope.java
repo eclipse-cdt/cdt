@@ -32,12 +32,15 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -213,42 +216,54 @@ public class CScope implements ICScope, IASTInternalScope {
 	    int type = getNamespaceType( name );
 	    Object o = bindings[type].get( name.toCharArray() );
 	    
-	    if( o == null || name == o) {
-	    	IBinding result= null;
-	    	if(physicalNode instanceof IASTTranslationUnit) {
-	    		final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
-				IIndex index= tu.getIndex();
-	    		if(index!=null) {
-	    			try {
-	    				IBinding[] bindings= index.findBindings(name.toCharArray(), INDEX_FILTERS[type], new NullProgressMonitor());
-	    				if (fileSet != null) {
-	    					bindings= fileSet.filterFileLocalBindings(bindings);
-	    				}
-	    				result= processIndexResults(name, bindings);
-	    			} catch(CoreException ce) {
-	    				CCorePlugin.log(ce);
-	    			}
-	    		}
-	    	}
-	    	return result;
-	    }
-	        
-	    
 	    if( o instanceof IBinding )
 	        return (IBinding) o;
 	
-	    IASTName foundName= (IASTName) o;
-	    if( (resolve || foundName.getBinding() != null) && ( foundName != name ) ) {
-	    	if(!isTypeDefinition(name) || CVisitor.declaredBefore(foundName, name)) {
-	    		return foundName.resolveBinding();
+	    if (o != null && o != name) {
+	    	IASTName foundName= (IASTName) o;
+	    	if( (resolve || foundName.getBinding() != null) && ( foundName != name ) ) {
+	    		if(!isTypeDefinition(name) || CVisitor.declaredBefore(foundName, name)) {
+	    			return foundName.resolveBinding();
+	    		}
 	    	}
 	    }
-	
-	    return null;
+	    
+    	IBinding result= null;
+    	if(physicalNode instanceof IASTTranslationUnit) {
+    		final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
+			IIndex index= tu.getIndex();
+    		if(index!=null) {
+    			try {
+    				IBinding[] bindings= index.findBindings(name.toCharArray(), INDEX_FILTERS[type], new NullProgressMonitor());
+    				if (fileSet != null) {
+    					bindings= fileSet.filterFileLocalBindings(bindings);
+    				}
+    				result= processIndexResults(name, bindings);
+    			} catch(CoreException ce) {
+    				CCorePlugin.log(ce);
+    			}
+    		}
+    	}
+    	return result;
 	}
 
     private boolean isTypeDefinition(IASTName name) {
-    	return name.getPropertyInParent()==IASTNamedTypeSpecifier.NAME;
+    	if (name.getPropertyInParent()==IASTNamedTypeSpecifier.NAME) {
+    		return true;
+    	}
+    	IASTNode parent= name.getParent();
+    	while (parent != null) {
+    		if (parent instanceof IASTUnaryExpression) {
+    			if (((IASTUnaryExpression) parent).getOperator() == IGNUASTUnaryExpression.op_typeof)
+    				return true;
+    		}
+    		else if (parent instanceof IASTTypeIdExpression) {
+    			if (((IASTTypeIdExpression) parent).getOperator() == IASTTypeIdExpression.op_typeof)
+    				return true;
+    		}
+    		parent= parent.getParent();
+    	}
+    	return false;
     }
     
     /* (non-Javadoc)
@@ -259,17 +274,17 @@ public class CScope implements ICScope, IASTInternalScope {
         
         Object[] obj = null;
         
-        for (int i = 0; i < bindings.length; i++) {
+        for (CharArrayObjectMap binding : bindings) {
         	if (prefixLookup) {
-        		Object[] keys = bindings[i].keyArray();
-        		for (int j = 0; j < keys.length; j++) {
-        			char[] key = (char[]) keys[j];
+        		Object[] keys = binding.keyArray();
+        		for (Object key2 : keys) {
+        			char[] key = (char[]) key2;
         			if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
-        				obj = ArrayUtil.append(obj, bindings[i].get(key));
+        				obj = ArrayUtil.append(obj, binding.get(key));
         			}
         		}
         	} else {
-        		obj = ArrayUtil.append(obj, bindings[i].get(c));
+        		obj = ArrayUtil.append(obj, binding.get(c));
         	}
         }
 
@@ -294,12 +309,12 @@ public class CScope implements ICScope, IASTInternalScope {
        	obj = ArrayUtil.trim(Object.class, obj);
        	IBinding[] result = null;
         
-       	for (int i = 0; i < obj.length; i++) {
-            if( obj[i] instanceof IBinding )
-            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, obj[i]);
+       	for (Object element : obj) {
+            if( element instanceof IBinding )
+            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
 
-            if( (resolve || ((IASTName)obj[i]).getBinding() != null) && ( obj[i] != name ) )
-            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName)obj[i]).resolveBinding());
+            if( (resolve || ((IASTName)element).getBinding() != null) && ( element != name ) )
+            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName)element).resolveBinding());
        	}
 
         return (IBinding[]) ArrayUtil.trim(IBinding.class, result);

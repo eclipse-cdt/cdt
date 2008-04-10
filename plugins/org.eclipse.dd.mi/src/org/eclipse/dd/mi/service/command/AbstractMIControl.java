@@ -350,7 +350,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
     	if ( result != null ) {
     		MIInfo cmdResult = (MIInfo) result ;
     		MIOutput output =  cmdResult.getMIOutput();
-    		MIPlugin.debug(MIPlugin.getDebugTime() + " " + output + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+    		// Only print the result record and not the out-of-band records.
+    		// Out-of-band records have already been printed in processEvent()
+    		MIPlugin.debug(MIPlugin.getDebugTime() + " " + output.getMIResultRecord() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
     	}
     	else
     	{

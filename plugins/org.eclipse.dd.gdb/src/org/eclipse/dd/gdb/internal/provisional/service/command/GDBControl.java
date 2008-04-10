@@ -374,13 +374,19 @@ public class GDBControl extends AbstractMIControl {
                 protected IStatus run(IProgressMonitor monitor) {
                     List<String> commandList = new ArrayList<String>();
                     
+                    // The goal here is to keep options to an absolute minimum.
+                    // All configuration should be done in the launch sequence
+                    // to allow for easy overriding.
                     commandList.add(fGdbPath.toOSString());
                     commandList.add("--interpreter"); //$NON-NLS-1$
                     commandList.add("mi"); //$NON-NLS-1$
+                    // Don't read the gdbinit file here.  It is read explicitly in
+                    // the LaunchSequence to make it easier to customize.
+                    commandList.add("--nx"); //$NON-NLS-1$
                     
                     String[] commandLine = commandList.toArray(new String[commandList.size()]);
         
-                    try {
+                    try {                        
                         fProcess = ProcessFactory.getFactory().exec(commandLine);
                     } catch(IOException e) {
                         String message = MessageFormat.format("Error while launching command",   //$NON-NLS-1$

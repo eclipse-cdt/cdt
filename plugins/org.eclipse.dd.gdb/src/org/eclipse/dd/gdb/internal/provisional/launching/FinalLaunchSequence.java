@@ -32,6 +32,7 @@ import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
+import org.eclipse.dd.mi.service.command.commands.CLISource;
 import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.dd.mi.service.command.commands.MICommand;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
@@ -58,6 +59,38 @@ public class FinalLaunchSequence extends Sequence {
             tracker.dispose();
 
             requestMonitor.done();
+        }},
+    	/*
+    	 * Source the gdbinit file specified in the launch
+    	 */
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+        	try {
+        		final String gdbinitFile = fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, 
+        				                                                           IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
+        		if (gdbinitFile != null && gdbinitFile.length() > 0) {
+        			fCommandControl.queueCommand(
+        					new CLISource(fCommandControl.getControlDMContext(), gdbinitFile), 
+        					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+        						@Override
+        						protected void handleCompleted() {
+        							// If the gdbinitFile is the default, then it may not exist and we
+        							// should not consider this an error.
+        							// If it is not the default, then the user must have specified it and
+        							// we want to warn the user if we can't find it.
+        							if (!gdbinitFile.equals(IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT )) {
+        								requestMonitor.setStatus(getStatus());
+        							}
+        							requestMonitor.done();
+        						}
+        					});
+        		} else {
+        			requestMonitor.done();
+        		}
+        	} catch (CoreException e) {
+        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get gdbinit option", e)); //$NON-NLS-1$
+        		requestMonitor.done();
+        	}
         }},
     	/*
     	 * Specify the executable file to be debugged.

@@ -99,6 +99,7 @@ public interface IShellService extends IService
 	 *            ("") if not relevant. The remote command will launch in a
 	 *            directory of its own choice in that case (typically a user's
 	 *            home directory).
+	 * @param command initial command to send to the remote side.
 	 * @param encoding Stream encoding to use, or <code>null</code> to fall
 	 *            back to a default encoding. The Shell Service will make
 	 *            efforts to determine a proper default encoding on the remote

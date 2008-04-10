@@ -86,8 +86,8 @@ public final class Rapi {
 	 * value is platform dependent. On Win32 platforms this method is directly
 	 * mapped to <code>CoInitializeEx</code>.
 	 *
-	 * @param init on Win32 it is either {@link Rapi#COINIT_APARTMENTTHREADED}
-	 *            or {@link Rapi#COINIT_MULTITHREADED}
+	 * @param init on Win32 it is either {@link #COINIT_APARTMENTTHREADED} or
+	 *            {@link #COINIT_MULTITHREADED}
 	 * @return on Win32 this is the returned value from
 	 *         <code>CoInitializeEx</code>
 	 */
@@ -114,11 +114,13 @@ public final class Rapi {
   public static final native void CoUninitialize();
 
   /**
-   * Sets the first element of the specified array with the address of a newly
-   * instantiated <code>IRAPIDesktop</code> native interface.
-   * @param pIRAPIDesktop an array with one element
-   * @return {@link Rapi#NOERROR} if the function succeeds; otherwise an error code
-   */
+	 * Sets the first element of the specified array with the address of a newly
+	 * instantiated <code>IRAPIDesktop</code> native interface.
+	 * 
+	 * @param pIRAPIDesktop an array with one element
+	 * @return {@link #NOERROR} if the function succeeds; otherwise an error
+	 *         code
+	 */
   final static native int CreateRapiDesktop(int[] pIRAPIDesktop);
 
 

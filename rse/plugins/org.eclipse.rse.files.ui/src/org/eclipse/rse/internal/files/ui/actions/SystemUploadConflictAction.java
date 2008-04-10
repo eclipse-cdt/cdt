@@ -37,7 +37,7 @@ import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem.SystemMessageDialogRunnable;
 import org.eclipse.rse.files.ui.dialogs.ISaveAsDialog;
-import org.eclipse.rse.files.ui.dialogs.SaveAsDialogFactory;
+import org.eclipse.rse.files.ui.dialogs.FileDialogFactory;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
@@ -406,7 +406,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             if (e.getSource() == _browseButton)
             {
             	
-                ISaveAsDialog dlg = SaveAsDialogFactory.getSaveAsDialog(getShell());
+                ISaveAsDialog dlg = FileDialogFactory.makeSaveAsDialog(getShell());
                 dlg.setMultipleSelectionMode(false);
 
                 if (_remoteFile != null)

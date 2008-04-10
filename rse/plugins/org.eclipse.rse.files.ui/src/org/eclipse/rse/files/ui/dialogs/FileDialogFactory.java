@@ -16,14 +16,14 @@ import org.eclipse.swt.widgets.Shell;
  * @author xuanchen
  *
  */
-public class SaveAsDialogFactory {
+public class FileDialogFactory {
 	
-	public static ISaveAsDialog getSaveAsDialog(Shell shell, String title)
+	public static ISaveAsDialog makeSaveAsDialog(Shell shell, String title)
 	{
 		return new SaveAsDialog(shell, title);
 	}
 	
-	public static ISaveAsDialog getSaveAsDialog(Shell shell)
+	public static ISaveAsDialog makeSaveAsDialog(Shell shell)
 	{
 		return new SaveAsDialog(shell);
 	}	

@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Kevin Doyle (IBM) - [187736] Marked _objectInput stale when new resource created
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
@@ -19,6 +19,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -134,14 +135,14 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
  */
 public class SystemTableView
 	extends TableViewer
-	implements IMenuListener, 
+	implements IMenuListener,
 		ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget,
 		ISystemResourceChangeListener, ISystemRemoteChangeListener,
 		ISystemShellProvider, ISelectionChangedListener, ISelectionProvider
 {
 
 
-	// inner class to support cell editing	
+	// inner class to support cell editing
 	private ICellModifier cellModifier = new ICellModifier()
 	{
 		public Object getValue(Object element, String property)
@@ -183,14 +184,14 @@ public class SystemTableView
 
 	private class HeaderSelectionListener extends SelectionAdapter
 	{
-	
+
 	    public HeaderSelectionListener()
 	    {
 	        _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID);
 	        _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEDOWN_ID);
 	    }
-	  
-	    
+
+
 		/**
 		 * Handles the case of user selecting the
 		 * header area.
@@ -220,13 +221,13 @@ public class SystemTableView
 					{
 					    tcolumn.setImage(_upI);
 					}
-				} 
+				}
 				else
 				{
 					setSorter(new SystemTableViewSorter(column, SystemTableView.this, _columnManager));
 					tcolumn.setImage(_downI);
 				}
-				
+
 				// unset image of other columns
 				TableColumn[] allColumns = table.getColumns();
 				for (int i = 0; i < allColumns.length; i++)
@@ -264,9 +265,9 @@ public class SystemTableView
 	// Note the Edit menu actions are set in SystemViewPart. Here we use these
 	//   actions from our own popup menu actions.
 	private SystemCommonDeleteAction _deleteAction;
-	// for global delete menu item	
+	// for global delete menu item
 	private SystemCommonRenameAction _renameAction;
-	// for common rename menu item	
+	// for common rename menu item
 	private SystemCommonSelectAllAction _selectAllAction;
 	// for common Ctrl+A select-all
 
@@ -278,7 +279,7 @@ public class SystemTableView
 	protected boolean _selectionEnableDeleteAction;
 	protected boolean _selectionEnableRenameAction;
 
-	
+
 	protected boolean _selectionIsRemoteObject = true;
 	protected boolean _selectionFlagsUpdated = false;
 
@@ -286,38 +287,38 @@ public class SystemTableView
 
 	private int[] _lastWidths = null;
 	private int   _charWidth = 3;
-	
+
 	private boolean _showColumns = true;
 
 	 private  Image _upI;
 	 private  Image _downI;
 
 	protected boolean     menuListenerAdded = false;
-	
+
     private static final int LEFT_BUTTON = 1;
-    private int mouseButtonPressed = LEFT_BUTTON;   
+    private int mouseButtonPressed = LEFT_BUTTON;
 	/**
 	 * Constructor for the table view
-	 * 
+	 *
 	 */
 	public SystemTableView(Table table, ISystemMessageLine msgLine)
 	{
 		super(table);
 		_layout = new TableLayout();
 		_messageLine = msgLine;
-		
+
 		_columnManager = new SystemTableViewColumnManager(this);
 		_provider = getProvider();
 		_columnSelectionListener = new HeaderSelectionListener();
 
 		setContentProvider(_provider);
-		
-		setLabelProvider(new SystemDecoratingLabelProvider(_provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));	
+
+		setLabelProvider(new SystemDecoratingLabelProvider(_provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		//setLabelProvider(_provider);
 
 		_filter = new SystemTableViewFilter();
 		addFilter(_filter);
-		
+
 		_charWidth = table.getFont().getFontData()[0].getHeight() / 2;
 		computeLayout();
 
@@ -334,9 +335,9 @@ public class SystemTableView
 		sr.addSystemRemoteChangeListener(this);
 
 		initDragAndDrop();
-	
+
 		table.setVisible(false);
-		
+
 		// key listening for delete press
 		getControl().addKeyListener(new KeyAdapter()
 		{
@@ -345,19 +346,19 @@ public class SystemTableView
 				handleKeyPressed(e);
 			}
 		});
-		getControl().addMouseListener(new MouseAdapter() 
+		getControl().addMouseListener(new MouseAdapter()
 				{
-				   public void mouseDown(MouseEvent e) 
+				   public void mouseDown(MouseEvent e)
 				   {
-				   	    mouseButtonPressed =  e.button;   		  //d40615 	    
+				   	    mouseButtonPressed =  e.button;   		  //d40615
 				   }
-				});		
-		
-		
+				});
+
+
         _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_UP_ID);
         _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_DOWN_ID);
 	}
-	
+
 	protected SystemTableViewProvider getProvider()
 	{
 		if (_provider == null)
@@ -366,12 +367,12 @@ public class SystemTableView
 		}
 		return _provider;
 	}
-	
+
 	public void showColumns(boolean flag)
 	{
 		_showColumns = flag;
 	}
-	
+
 
 	public Layout getLayout()
 	{
@@ -441,7 +442,7 @@ public class SystemTableView
 	}
 
 	/**
-	 * Convenience method for retrieving the view adapter for an object 
+	 * Convenience method for retrieving the view adapter for an object
 	 */
 	protected ISystemViewElementAdapter getViewAdapter(Object obj)
 	{
@@ -452,7 +453,7 @@ public class SystemTableView
 	}
 
 	/**
-	 * Convenience method for retrieving the view adapter for an object's children 
+	 * Convenience method for retrieving the view adapter for an object's children
 	 */
 	public ISystemViewElementAdapter getAdapterForContents()
 	{
@@ -475,9 +476,9 @@ public class SystemTableView
 			Object[] children = provider.getChildren(object);
 			return getVisibleDescriptors(children);
 		}
-		
+
 	private IPropertyDescriptor[] getVisibleDescriptors(Object[] children)
-		{			
+		{
 			if (children != null && children.length > 0)
 			{
 				IAdaptable child = (IAdaptable) children[0];
@@ -491,14 +492,14 @@ public class SystemTableView
 	{
 	    return _columnManager;
 	}
-	
+
 	public IPropertyDescriptor getNameDescriptor(Object object)
 	{
 		SystemTableViewProvider provider = (SystemTableViewProvider) getContentProvider();
 		Object[] children = provider.getChildren(object);
 		return getNameDescriptor(children);
 	}
-	
+
 	private IPropertyDescriptor getNameDescriptor(Object[] children)
 		{
 			if (children != null && children.length > 0)
@@ -519,7 +520,7 @@ public class SystemTableView
 		Object[] children = provider.getChildren(_objectInput);
 		return getFormatsIn(children);
 	}
-	
+
 	private IPropertyDescriptor[] getCustomDescriptors(ISystemViewElementAdapter adapter)
 	{
 	    return _columnManager.getVisibleDescriptors(adapter);
@@ -538,7 +539,7 @@ public class SystemTableView
 			{
 				ISystemViewElementAdapter ad = (ISystemViewElementAdapter) adapter;
 				ad.setPropertySourceInput(child);
-				
+
 				IPropertyDescriptor[] descriptors = getCustomDescriptors(ad);
 				for (int i = 0; i < descriptors.length; i++)
 				{
@@ -547,9 +548,17 @@ public class SystemTableView
 					try
 					{
 						Object key = descriptor.getId();
-
 						Object propertyValue = ad.getPropertyValue(key, false);
-						results.add(propertyValue.getClass());
+						if (propertyValue != null) {
+							// FIXME Since we're only checking the FIRST element
+							// in the list of elements for its descriptor, we
+							// might get null here if the first element is
+							// invalid - although other elements might be valid.
+							// This issue is tracked in
+							// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193329#c5
+							// https://bugs.eclipse.org/bugs/show_bug.cgi?id=187571
+							results.add(propertyValue.getClass());
+						}
 					}
 					catch (Exception e)
 					{
@@ -561,7 +570,7 @@ public class SystemTableView
 		}
 
 		return results;
-	}		
+	}
 
 	public void computeLayout()
 	{
@@ -578,7 +587,7 @@ public class SystemTableView
 
 		return editor;
 	}
-	
+
 	private boolean sameDescriptors(IPropertyDescriptor[] descriptors1, IPropertyDescriptor[] descriptors2)
 	{
 		if (descriptors1 == null || descriptors2 == null)
@@ -603,7 +612,7 @@ public class SystemTableView
 	/**
 	 * Determines what columns should be shown in this view. The columns may change
 	 * anytime the view input changes.  The columns in the control are modified and
-	 * columns may be added or deleted as necessary to make it conform to the 
+	 * columns may be added or deleted as necessary to make it conform to the
 	 * new data.
 	 */
 	public void computeLayout(boolean force)
@@ -612,7 +621,7 @@ public class SystemTableView
 			return;
 		if (_objectInput == null)
 			return;
-			
+
 		SystemTableViewProvider provider = (SystemTableViewProvider) getContentProvider();
 		Object[] children = provider.getChildren(_objectInput);
 
@@ -621,17 +630,17 @@ public class SystemTableView
 		{
 			return;
 		}
-		
+
 		IPropertyDescriptor[] descriptors = getVisibleDescriptors(children);
 		IPropertyDescriptor nameDescriptor = getNameDescriptor(children);
-		
+
 		int n = descriptors.length; // number of columns we need (name column + other columns)
 		if (nameDescriptor != null)
 			n += 1;
 		if (n == 0)
 			return; // there is nothing to lay out!
 
-		
+
 		if (sameDescriptors(descriptors,_uniqueDescriptors) && !force)
 		{
 			setLastColumnWidths(getCurrentColumnWidths());
@@ -660,7 +669,7 @@ public class SystemTableView
 			int alignment = SWT.LEFT;
 			int weight = 100;
 			if (i == 0)
-			{ 
+			{
 				// this is the first column -- treat it special
 				//name = SystemPropertyResources.RESID_PROPERTY_NAME_LABEL;
 				name = SystemResources.RESID_RENAME_COLHDG_OLDNAME;
@@ -725,15 +734,15 @@ public class SystemTableView
 		    // find a default
 		    totalWidth = 500;
 		}
-		
+
 
 		int[] lastWidths = getLastColumnWidths();
 		if (numColumns > 1)
 		{
-			// check if previous widths can be used	
+			// check if previous widths can be used
 			if (lastWidths != null && lastWidths.length == numColumns)
 			{
-				
+
 				// use previously established widths
 				setCurrentColumnWidths(lastWidths);
 			}
@@ -749,7 +758,7 @@ public class SystemTableView
 					columns[0].setWidth(firstWidth);
 					for (int i = 1; i < numColumns; i++)
 					{
-						
+
 						columns[i].setWidth(averageWidth);
 					}
 					setLastColumnWidths(getCurrentColumnWidths());
@@ -758,23 +767,23 @@ public class SystemTableView
 			table.setHeaderVisible(true);
 		}
 		else
-		{ 
-			
-		    if (numColumns == 1) 
-		    {	
+		{
+
+		    if (numColumns == 1)
+		    {
 		    	int width = totalWidth;
 		    	if (lastWidths != null && lastWidths.length == 1)
 		    	{
 		    		width = (totalWidth > lastWidths[0]) ? totalWidth : lastWidths[0];
 		    	}
-		    	
-		    	
+
+
 		    	int maxWidth = provider.getMaxCharsInColumnZero() * _charWidth;
 		    	if (maxWidth > width)
 		    	{
 		    		width = maxWidth;
 		    	}
-		    	
+
 		        if (width > 0)
 		        {
 		            columns[0].setWidth(width);
@@ -826,27 +835,27 @@ public class SystemTableView
 
     /**
      * Initialize drag and drop support for this view.
-     * 
-     */  
-    protected void initDragAndDrop() 
+     *
+     */
+    protected void initDragAndDrop()
     {
         int ops = DND.DROP_COPY | DND.DROP_MOVE;
-        Transfer[] dragtransfers = new Transfer[]   
-            { PluginTransfer.getInstance(), 
+        Transfer[] dragtransfers = new Transfer[]
+            { PluginTransfer.getInstance(),
         		EditorInputTransfer.getInstance()
-            };  
-   
-        Transfer[] droptransfers = new Transfer[]   
-            { PluginTransfer.getInstance(), 
+            };
+
+        Transfer[] droptransfers = new Transfer[]
+            { PluginTransfer.getInstance(),
         		FileTransfer.getInstance(),
                 EditorInputTransfer.getInstance()
-             };  
-        
+             };
+
         addDragSupport(ops | DND.DROP_DEFAULT, dragtransfers, new SystemViewDataDragAdapter(this));
         addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
     }
 
-	/** 
+	/**
 	 * Used to asynchronously update the view whenever properties change.
 	 * @see org.eclipse.rse.core.events.ISystemResourceChangeListener#systemResourceChanged(org.eclipse.rse.core.events.ISystemResourceChangeEvent)
 	 */
@@ -868,7 +877,7 @@ public class SystemTableView
 		   	          if (child == ((ISystemFilterReference)_objectInput).getReferencedFilter())
 		   	          {
 			   	       	SystemTableViewProvider provider = (SystemTableViewProvider) getContentProvider();
-	
+
 						if (provider != null)
 						{
 							if (!madeChange)
@@ -876,7 +885,7 @@ public class SystemTableView
 								provider.flushCache();
 								madeChange = true;
 							}
-	
+
 							computeLayout();
 							try
 							{
@@ -889,7 +898,7 @@ public class SystemTableView
 						}
 
 		   	          }
-		   	      }		   	      
+		   	      }
 		   	    }
 		   	    break;
 			case ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE :
@@ -900,19 +909,19 @@ public class SystemTableView
 					{
 						Widget w = findItem(child);
 						if (w != null)
-						{					    
+						{
 							updateItem(w, child);
 						}
 					}
 					catch (Exception e)
 					{
-						
+
 					}
 				}
 				return;
 				//break;
-			 
-			case ISystemResourceChangeEvents.EVENT_DELETE:   	    	  
+
+			case ISystemResourceChangeEvents.EVENT_DELETE:
   	    	 case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
   	    	  	{
   	    	      if (child instanceof ISystemFilterReference)
@@ -921,11 +930,11 @@ public class SystemTableView
   	    	          if (w != null)
   	    	          {
   	    	              remove(child);
-  	    	          }	
+  	    	          }
 	   	    	  }
   	    	  	}
-  	    	      break;  
-			
+  	    	      break;
+
   	    	 case ISystemResourceChangeEvents.EVENT_ADD :
 			case ISystemResourceChangeEvents.EVENT_ADD_RELATIVE :
 				{
@@ -948,7 +957,7 @@ public class SystemTableView
 					}
 				}
 				break;
-				
+
 			case ISystemResourceChangeEvents.EVENT_REFRESH:
 			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				{
@@ -962,9 +971,9 @@ public class SystemTableView
 					{
 						Widget w = findItem(child);
 						if (w != null  && w.getData() != _objectInput)
-						{		
+						{
 							//child is the children of this table input.
-							//Need to refresh the whole view to handler 
+							//Need to refresh the whole view to handler
 							//And we need to make _objectInput to stale, otherwise deleted object
 							//could not be removed from the table.
 							if (_objectInput instanceof ISystemContainer)
@@ -978,7 +987,7 @@ public class SystemTableView
 					{
 						SystemBasePlugin.logError(e.getMessage());
 					}
-					
+
 				}
 				break;
 			default :
@@ -993,8 +1002,8 @@ public class SystemTableView
 			if (provider != null)
 			{
 				if (!madeChange)
-				{		
-					provider.flushCache();			
+				{
+					provider.flushCache();
 					madeChange = true;
 				}
 
@@ -1023,7 +1032,7 @@ public class SystemTableView
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 		List remoteResourceNames = null;
-		if (remoteResource instanceof List) { 
+		if (remoteResource instanceof List) {
 			remoteResourceNames = (List) remoteResource;
 			remoteResource = remoteResourceNames.get(0);
 		}
@@ -1040,7 +1049,7 @@ public class SystemTableView
 		    refresh();
 		    return;
 		}
-		
+
 		switch (eventType)
 		{
 			// --------------------------
@@ -1123,7 +1132,7 @@ public class SystemTableView
 													{
 														((ISystemContainer)_objectInput).markStale(true);
 													}
-													
+
 													provider.flushCache();
 													madeChange = true;
 
@@ -1200,10 +1209,10 @@ public class SystemTableView
 					{
 						provider.flushCache();
 					}
-				
+
 					refresh();
 				}
-				
+
 				}
 				break;
 				*/
@@ -1232,19 +1241,19 @@ public class SystemTableView
 
 	public void selectionChanged(SelectionChangedEvent event)
 	{
-	    IStructuredSelection sel = (IStructuredSelection)event.getSelection();		
+	    IStructuredSelection sel = (IStructuredSelection)event.getSelection();
 		Object firstSelection = sel.getFirstElement();
 		if (firstSelection == null)
 		  return;
-		
+
 		_selectionFlagsUpdated = false;
 		ISystemViewElementAdapter adapter = getViewAdapter(firstSelection);
 		if (adapter != null)
 		{
 		   displayMessage(adapter.getStatusLineText(firstSelection));
-		   if ((mouseButtonPressed == LEFT_BUTTON))   
-		      adapter.selectionChanged(firstSelection);	
-		}  
+		   if ((mouseButtonPressed == LEFT_BUTTON))
+		      adapter.selectionChanged(firstSelection);
+		}
 		else
 		  clearMessage();
 	}
@@ -1282,7 +1291,7 @@ public class SystemTableView
 	 * Everything below is basically stuff copied and pasted from SystemsView
 	 * -There needs to be cleaning up of the below code as some of this stuff
 	 * is broken for the table view
-	 * 
+	 *
 	 *
 	public void createStandardGroups(IMenuManager menu)
 	{
@@ -1315,7 +1324,7 @@ public class SystemTableView
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORGANIZE));
 		// rename,move,copy,delete,bookmark,refactoring
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORDER));
-		// move up, move down		
+		// move up, move down
 		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_GENERATE));
 		// getters/setters, etc. Typically in editor
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_SEARCH));
@@ -1346,7 +1355,7 @@ public class SystemTableView
 		if (_propertyDialogAction == null)
 		{
 			_propertyDialogAction = new PropertyDialogAction(new SameShellProvider(getShell()), this);
-			//propertyDialogAction.setToolTipText(" "); 
+			//propertyDialogAction.setToolTipText(" ");
 		}
 		_propertyDialogAction.selectionChanged(getSelection());
 		return _propertyDialogAction;
@@ -1447,7 +1456,7 @@ public class SystemTableView
 	}
 	/**
 	 * Required method from ISystemDeleteTarget
-	 * Decides whether to enable the delete menu item. 
+	 * Decides whether to enable the delete menu item.
 	 * Assumes scanSelections() has already been called
 	 */
 	public boolean canDelete()
@@ -1515,7 +1524,7 @@ public class SystemTableView
 		return ok;
 	}
 
-	
+
 	/**
 	 * Decides whether to even show the properties menu item.
 	 * Assumes scanSelections() has already been called
@@ -1523,7 +1532,7 @@ public class SystemTableView
 	protected boolean showProperties() {
 		return _selectionShowPropertiesAction;
 	}
-	
+
 	// ---------------------------
 	// ISYSTEMRENAMETARGET METHODS
 	// ---------------------------
@@ -1551,7 +1560,7 @@ public class SystemTableView
 			setUser(true);
 		}
 
-		public IStatus runInWorkspace(IProgressMonitor monitor) 
+		public IStatus runInWorkspace(IProgressMonitor monitor)
 		{
 			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			Object element = null;
@@ -1561,7 +1570,7 @@ public class SystemTableView
 			String oldName = null;
 			Vector fileNamesRenamed = new Vector();
 			boolean ok = true;
-			
+
 			try {
 				int steps = elements.length;
 			    monitor.beginTask(renameMessage, steps);
@@ -1571,21 +1580,21 @@ public class SystemTableView
 					adapter = (ISystemViewElementAdapter)elementAdapters[i];
 					remoteAdapter = getRemoteAdapter(element);
 					Object parentElement = getParentForContent(element);
-					if (remoteAdapter != null) 
+					if (remoteAdapter != null)
 					{
 						oldName = remoteAdapter.getName(element);
 						oldFullName = remoteAdapter.getAbsoluteName(element); // pre-rename
 						monitor.subTask(getRenamingMessage(oldName).getLevelOneText());
 					}
 					ok = adapter.doRename(null, element, newNames[i], monitor);
-					if (ok) 
+					if (ok)
 					{
 						fileNamesRenamed.add(oldName);
 						if (remoteAdapter != null)
 						{
 							// Don't think we need to do findItem and updateItem here.
 							sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, adapter.getSubSystem(element), new String[]{oldFullName}, this);
-							
+
 						}
 
 						else
@@ -1593,7 +1602,7 @@ public class SystemTableView
 					}
 					monitor.worked(1);
 				}
-			} 
+			}
 			catch (SystemMessageException exc) {
 				ok = false;
 				//If this operation is canceled, need to display a proper message to the user.
@@ -1620,7 +1629,7 @@ public class SystemTableView
 						exc);
 				ok = false;
 			}
-			
+
 			return Status.OK_STATUS;
 		}
 	}
@@ -1637,7 +1646,7 @@ public class SystemTableView
 	}
 	/**
 	 * Required method from ISystemRenameTarget
-	 * Decides whether to enable the rename menu item. 
+	 * Decides whether to enable the rename menu item.
 	 * Assumes scanSelections() has already been called
 	 */
 	public boolean canRename()
@@ -1648,32 +1657,32 @@ public class SystemTableView
 	}
 
 	// default implementation
-	// in default table, parent is input 
+	// in default table, parent is input
 	protected Object getParentForContent(Object element)
 	{
 		return _objectInput;
 	}
 
 	/**
-	 * Get the specific "Renaming %1..." 
+	 * Get the specific "Renaming %1..."
 	 */
     protected SystemMessage getRenamingMessage(String oldName)
     {
-    	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RENAMEGENERIC_PROGRESS); 
+    	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RENAMEGENERIC_PROGRESS);
 		msg.makeSubstitution(oldName);
 		return msg;
     }
-    
+
 	/**
 	* Required method from ISystemRenameTarget
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		
+
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
-		
-		
+
+
 		Object[] renameElements = new Object[newNames.length];
 		Object[] elementAdapters = new Object[newNames.length];
 		int i = 0;
@@ -1689,7 +1698,7 @@ public class SystemTableView
 		RenameJob renameJob = new RenameJob(newNames, renameElements, elementAdapters, renameMessageText);
 		renameJob.schedule();
 		return true;
-		
+
 	}
 
 	/**
@@ -1707,7 +1716,7 @@ public class SystemTableView
 			 ((ISystemViewElementAdapter) adapter).setViewer(this);
 		return adapter;
 	}
-	
+
 
 	/**
 	* Return true if select all should be enabled for the given object.
@@ -1720,9 +1729,9 @@ public class SystemTableView
 	}
 	/**
 	 * When this action is run via Edit->Select All or via Ctrl+A, perform the
-	 * select all action. For a tree view, this should select all the children 
+	 * select all action. For a tree view, this should select all the children
 	 * of the given selected object. You can use the passed in selected object
-	 * or ignore it and query the selected object yourself. 
+	 * or ignore it and query the selected object yourself.
 	 */
 	public void doSelectAll(IStructuredSelection selection)
 	{
@@ -1739,9 +1748,9 @@ public class SystemTableView
 	public void menuAboutToShow(IMenuManager manager)
 	{
 		SystemView.createStandardGroups(manager);
-	   	  
+
 		fillContextMenu(manager);
-		
+
 		  if (!menuListenerAdded)
 	   	    {
 	   	      if (manager instanceof MenuManager)
@@ -1794,7 +1803,7 @@ public class SystemTableView
 					menu.appendToGroup(ISystemContextMenuConstants.GROUP_REORGANIZE, getRenameAction());
 			}
 
-			// ADAPTER SPECIFIC ACTIONS   	      
+			// ADAPTER SPECIFIC ACTIONS
 			SystemMenuManager ourMenu = new SystemMenuManager(menu);
 
 			Iterator elements = selection.iterator();
@@ -1817,7 +1826,7 @@ public class SystemTableView
 						AbstractSystemViewAdapter aVA = (AbstractSystemViewAdapter)nextAdapter;
 						// add remote actions
 						aVA.addCommonRemoteActions(ourMenu, selection, shell, ISystemContextMenuConstants.GROUP_ADAPTERS);
-						
+
 						// add dynamic menu popups
 						aVA.addDynamicPopupMenuActions(ourMenu, selection, shell,  ISystemContextMenuConstants.GROUP_ADDITIONS);
 				}
@@ -1830,7 +1839,7 @@ public class SystemTableView
 				if ((items[idx] instanceof ActionContributionItem) && (((ActionContributionItem) items[idx]).getAction() instanceof ISystemAction))
 				{
 					ISystemAction item = (ISystemAction) (((ActionContributionItem) items[idx]).getAction());
-					//item.setShell(getShell());	      	   
+					//item.setShell(getShell());
 					//item.setSelection(selection);
 					//item.setViewer(this);
 					item.setInputs(getShell(), this, selection);
@@ -1839,8 +1848,8 @@ public class SystemTableView
 				{
 					SystemSubMenuManager item = (SystemSubMenuManager) items[idx];
 					//item.setShell(getShell());
-					//item.setSelection(selection); 	
-					//item.setViewer(this); 	
+					//item.setSelection(selection);
+					//item.setViewer(this);
 					item.setInputs(getShell(), this, selection);
 				}
 			}
@@ -1857,7 +1866,7 @@ public class SystemTableView
 			// PROPERTIES ACTION...
 			// This is supplied by the system, so we pretty much get it for free. It finds the
 			// registered propertyPages extension points registered for the selected object's class type.
-			//propertyDialogAction.selectionChanged(selection);		  
+			//propertyDialogAction.selectionChanged(selection);
 
 			if (showProperties())
 			{
@@ -1867,7 +1876,7 @@ public class SystemTableView
 					menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
 				}
 			}
-			
+
 			// OPEN IN NEW PERSPECTIVE ACTION... if (fromSystemViewPart && showOpenViewActions())
 			if (!_selectionIsRemoteObject)
 			{
@@ -1927,7 +1936,7 @@ public class SystemTableView
 
 			if (_selectionShowRenameAction)
 				_selectionShowRenameAction = adapter.showRename(element);
-			
+
 			if (_selectionShowPropertiesAction)
 				_selectionShowPropertiesAction = adapter.showProperties(element);
 
@@ -2004,7 +2013,7 @@ public class SystemTableView
 			*/
 		}
 	}
-	
+
 	/**
 	 * Display a message/status on the message/status line
 	 */
@@ -2022,5 +2031,5 @@ public class SystemTableView
 		  _messageLine.clearMessage();
 	}
 
-	
+
 }

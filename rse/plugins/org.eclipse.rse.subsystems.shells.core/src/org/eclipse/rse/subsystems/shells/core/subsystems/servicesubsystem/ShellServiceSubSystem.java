@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David McKnight (IBM) - [220524] internalSwitchServiceSubSystemConfiguration -> internalSwitchSubSystemConfiguration
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
@@ -240,6 +241,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 
 	public void initializeSubSystem(IProgressMonitor monitor)
 	{
+		super.initializeSubSystem(monitor);
 		getShellService().initService(monitor);
 	}
 
@@ -247,6 +249,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	{
 		cancelAllShells();
 		getShellService().uninitService(monitor);
+		super.uninitializeSubSystem(monitor);
 	}
 
 }

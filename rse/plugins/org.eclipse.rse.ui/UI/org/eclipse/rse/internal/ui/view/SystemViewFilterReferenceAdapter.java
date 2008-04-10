@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
  * Tobias Schwarz (Wind River) - [181394] Include Context in getAbsoluteName() for filter and pool references
@@ -19,12 +19,13 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
- * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Kevin Doyle (IBM) - [187707] Added separator between New Folder and New File in context menu
  * David McKnight   (IBM)        - [199566] Remove synchronzied from internalGetChildren
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [210563] error messages need to be shown if incurred during filter expansion
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -85,15 +86,15 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * Adapter for displaying SystemFilterReference objects in tree views.
  * These are children of SystemFilterPoolReference and SystemFilterReference objects
  */
-public class SystemViewFilterReferenceAdapter 
+public class SystemViewFilterReferenceAdapter
 	extends AbstractSystemViewAdapter
 {
-	//private static String translatedFilterString = null;	
+	//private static String translatedFilterString = null;
 	// -------------------
-	// property descriptors 
+	// property descriptors
 	// -------------------
 	private static PropertyDescriptor[] propertyDescriptorArray = null;
-	//private SystemComboBoxPropertyDescriptor filterStringsDescriptor, filtersDescriptor;	
+	//private SystemComboBoxPropertyDescriptor filterStringsDescriptor, filtersDescriptor;
 
 	/**
 	 * Returns any actions that should be contributed to the popup menu
@@ -113,26 +114,34 @@ public class SystemViewFilterReferenceAdapter
 		IHost currentConnection = currentSubSystem.getHost();
 		ssFactory.setConnection(currentConnection);
 		ssFactory.setCurrentSelection(selection.toArray());
-		  ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-			
-		IAction[] actions = adapter.getFilterActions(menu, selection, shell, menuGroup, ssFactory, filter);
-		if (actions != null)
-		{
-			for (int idx = 0; idx < actions.length; idx++)
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
+		if (adapter != null) {
+			// Lazy Loading: Specialized actions on filters are available only
+			// after the bundle that declares the ISubSystemConfigurationAdapter
+			// has been loaded, which typically is after connecting. We do not
+			// load the bundle here because this code is executed as part of
+			// showing a context menu. Subsystems who want their actions to be
+			// available earlier need to provide them by static plugin.xml
+			// markup or provision for more eager loading of their bundle, e.g.
+			// through Platform.getAdapterManager().loadAdapter() at the right
+			// time.
+			IAction[] actions = adapter.getFilterActions(menu, selection, shell, menuGroup, ssFactory, filter);
+			if (actions != null)
 			{
-				IAction action = actions[idx];
-				if (action instanceof SystemNewFilterAction)
-					menu.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, new Separator());
-				menu.add(menuGroup, action);
+				for (int idx = 0; idx < actions.length; idx++) {
+					IAction action = actions[idx];
+					if (action instanceof SystemNewFilterAction)
+						menu.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, new Separator());
+					menu.add(menuGroup, action);
+				}
 			}
-		}
-		actions = adapter.getFilterReferenceActions(menu, selection, shell, menuGroup, ssFactory, getFilterReference(selection.getFirstElement()));
-		if (actions != null)
-		{
-			for (int idx = 0; idx < actions.length; idx++)
+			actions = adapter.getFilterReferenceActions(menu, selection, shell, menuGroup, ssFactory, getFilterReference(selection.getFirstElement()));
+			if (actions != null)
 			{
-				IAction action = actions[idx];
-				menu.add(menuGroup, action);
+				for (int idx = 0; idx < actions.length; idx++) {
+					IAction action = actions[idx];
+					menu.add(menuGroup, action);
+				}
 			}
 		}
 	}
@@ -141,7 +150,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return SubSystemHelpers.getParentSubSystemConfiguration(filter);
 	}
-	
+
 	/**
 	 * <i>Overridden from parent.</i><br>
 	 * Returns the subsystem that contains this object.
@@ -153,7 +162,7 @@ public class SystemViewFilterReferenceAdapter
 		else
 			return null;
 	}
-	
+
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
@@ -165,9 +174,17 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilter filter = getFilter(element);
 		if (filter.getProvider() != null) // getProvider() returns the subsystem factory
 		{
-
 			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)filter.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
-			filterImage = adapter.getSystemFilterImage(filter);
+			if (adapter != null) {
+				// Lazy Loading: Customized Filter Images will be available only
+				// after the bundle that declares the
+				// ISubSystemConfigurationAdapter has been loaded. Until that
+				// time, a default filter image is used. Extenders who want to
+				// see their filter images right away need to provision for
+				// eager loading of their bundles at the right time (i.e. when
+				// expanding the Subsystem node).
+				filterImage = adapter.getSystemFilterImage(filter);
+			}
 		}
 		if (filterImage == null)
 			filterImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
@@ -178,7 +195,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return (ISystemFilterReference) element; // get referenced object
 	}
-	
+
 	private ISystemFilter getFilter(Object element)
 	{
 		return getFilterReference(element).getReferencedFilter(); // get master object
@@ -191,7 +208,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return getFilter(element).getName();
 	}
-	
+
 	/**
 	 * Return the name of this object, which may be different than the display text ({#link #getText(Object)}.
 	 * <p>
@@ -201,14 +218,14 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return getFilter(element).getName();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{
-		//TODO consider caching the absolute name in the FilterReference to avoid unnecessary String operations - the name won't ever change 
+		//TODO consider caching the absolute name in the FilterReference to avoid unnecessary String operations - the name won't ever change
 		ISystemFilterPoolReference filterPoolReference = getFilterReference(element).getParentSystemFilterReferencePool();
 		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(filterPoolReference);
 		String parentAbsoluteName = (adapter != null) ?	adapter.getAbsoluteName(filterPoolReference) : ""; //$NON-NLS-1$
@@ -268,17 +285,17 @@ public class SystemViewFilterReferenceAdapter
 		ISubSystem subsystem = element.getSubSystem();
 		ISubSystemConfiguration configuration = subsystem.getSubSystemConfiguration();
 		Object adapter = Platform.getAdapterManager().getAdapter(configuration, ISubSystemConfigurationAdapter.class);
-		
-		if (adapter instanceof ISubSystemConfigurationAdapter) 
+
+		if (adapter instanceof ISubSystemConfigurationAdapter)
 		{
 			children = ((ISubSystemConfigurationAdapter)adapter).applyViewFilters(element, children);
 		}
-		
+
 		return children;
 	}
 
 	/*
-	 * Returns the children of the specified element.  If a monitor is passed in then 
+	 * Returns the children of the specified element.  If a monitor is passed in then
 	 * the context is assumed to be modal and, as such, the modal version of ss.resolveFilterStrings
 	 * is called rather than the main thread version.
 	 */
@@ -299,7 +316,7 @@ public class SystemViewFilterReferenceAdapter
 			try
 			{
 				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
-					
+
 				ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
 				if (newFilter == null)
 				{
@@ -341,14 +358,14 @@ public class SystemViewFilterReferenceAdapter
 		else
 		{
 			/*
-			// show filter strings    	
+			// show filter strings
 			if (ssf.showFilterStrings())
 			{
 				 SystemFilterStringReference[] refFilterStrings = fRef.getSystemFilterStringReferences();
 				 if ((nestedFilterReferences == null) || (nestedFilterReferences.length == 0))
 				   return refFilterStrings;
 				 if ((refFilterStrings == null) || (refFilterStrings.length == 0))
-				   return nestedFilterReferences;    	   	
+				   return nestedFilterReferences;
 				 int nbrChildren = nestedFilterReferences.length + refFilterStrings.length;
 				 children = new Object[nbrChildren];
 				 int idx=0;
@@ -365,10 +382,10 @@ public class SystemViewFilterReferenceAdapter
 
 				try
 				{
-				
+
 					// hack to propogate type filters down from connection in select dialogs...
 					ISystemViewInputProvider inputProvider = getInput();
-					if ((inputProvider != null) && (inputProvider instanceof SystemSelectRemoteObjectAPIProviderImpl) && 
+					if ((inputProvider != null) && (inputProvider instanceof SystemSelectRemoteObjectAPIProviderImpl) &&
 					        (filterStrings != null) && (filterStrings.length > 0))
 					{
 						SystemSelectRemoteObjectAPIProviderImpl ip = (SystemSelectRemoteObjectAPIProviderImpl) inputProvider;
@@ -380,11 +397,11 @@ public class SystemViewFilterReferenceAdapter
 							filterStrings = adorned;
 						}
 					}
-					
+
 					boolean doQuery = true;
-					if (!referencedFilter.isTransient() && 
+					if (!referencedFilter.isTransient() &&
 							ssf.supportsFilterCaching() &&
-							!fRef.isStale() && 
+							!fRef.isStale() &&
 							fRef.hasContents(SystemChildrenContentsType.getInstance()))
 					{
 						doQuery = false;
@@ -409,7 +426,7 @@ public class SystemViewFilterReferenceAdapter
 					if (doQuery)
 					{
 					    Object[] allChildren = null;
-					    
+
 						if (monitor == null)
 						{
 						    allChildren = ss.resolveFilterStrings(filterStrings, new NullProgressMonitor());
@@ -418,7 +435,7 @@ public class SystemViewFilterReferenceAdapter
 						{
 						    allChildren = ss.resolveFilterStrings(filterStrings, monitor);
 						}
-						
+
 						if (allChildren == null)
 						{
 						 //   System.out.println("filter children == null!"); //$NON-NLS-1$
@@ -430,7 +447,7 @@ public class SystemViewFilterReferenceAdapter
 								// error to display
 								return allChildren; // nothing to sort or cache - just show the error
 							}
-							
+
 							if (nestedFilterReferences != null)
 							{
 								int nbrNestedFilters = nestedFilterReferences.length;
@@ -440,8 +457,8 @@ public class SystemViewFilterReferenceAdapter
 									children[idx] = nestedFilterReferences[idx];
 								for (int jdx = 0; jdx < allChildren.length; jdx++)
 									children[idx++] = allChildren[jdx];
-								
-					
+
+
 								if (!referencedFilter.isTransient() && ssf.supportsFilterCaching())
 								{
 									fRef.setContents(SystemChildrenContentsType.getInstance(), children);
@@ -449,7 +466,7 @@ public class SystemViewFilterReferenceAdapter
 							}
 						}
 					}
-				
+
 				}
 				catch (InterruptedException exc)
 				{
@@ -474,13 +491,13 @@ public class SystemViewFilterReferenceAdapter
 	 * That is, if the referenced filter has nested filters or filter strings.
 	 */
 	public boolean hasChildren(IAdaptable element)
-	{		
+	{
 		ISystemFilterReference fRef = getFilterReference(element);
 		ISystemFilter referencedFilter = fRef.getReferencedFilter();
-		
+
 		ISubSystemConfiguration factory = getSubSystemConfiguration(referencedFilter);
 		if (factory.supportsFilterChildren())
-		{		
+		{
 			int nbrNestedFilters = referencedFilter.getSystemFilterCount();
 			int nbrFilterStrings = referencedFilter.getFilterStringCount();
 			return (nbrNestedFilters > 0) || (nbrFilterStrings > 0);
@@ -521,7 +538,7 @@ public class SystemViewFilterReferenceAdapter
 	 *   <li>name="filterType". The value is tested against the non-translated filter type. Note all subsystems
 	 *       support different types of filters.
 	 *   <li>name="showChangeFilterStringsPropertyPage". The value is tested against the call to the subsystem factory method showChangeFilterStringsPropertyPage(SystemFilter).
-	 *       Compares against "true" (default) or "false". 
+	 *       Compares against "true" (default) or "false".
 	 * </ol>
 	 */
 	public boolean testAttribute(Object target, String name, String value)
@@ -542,7 +559,7 @@ public class SystemViewFilterReferenceAdapter
 			if (value.equals("true")) //$NON-NLS-1$
 				return ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());
 			else
-				return !ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());			 	
+				return !ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());
 		}
 		else
 			return super.testAttribute(target, name, value);
@@ -566,7 +583,7 @@ public class SystemViewFilterReferenceAdapter
 			// number filter strings
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILTERSTRINGS_COUNT, SystemViewResources.RESID_PROPERTY_FILTERSTRINGS_COUNT_LABEL, SystemViewResources.RESID_PROPERTY_FILTERSTRINGS_COUNT_TOOLTIP);
 			// Related connection
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_IS_CONNECTION_PRIVATE, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_IS_CONNECTIONPRIVATE_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_IS_CONNECTIONPRIVATE_TOOLTIP); 
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_IS_CONNECTION_PRIVATE, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_IS_CONNECTIONPRIVATE_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_IS_CONNECTIONPRIVATE_TOOLTIP);
 		}
 		return propertyDescriptorArray;
 	}
@@ -713,13 +730,13 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilter filter = getFilter(element);
 		return !filter.isPromptable();
 	}
-	
-	
+
+
 	/**
 	  * Don't show generic "Show in Table" if the factory asks not to
 	  */
 	public boolean showGenericShowInTableAction(Object element)
-	{	
+	{
 		ISystemFilter filter = getFilter(element);
 		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
 		return ssParentFactory.showGenericShowInTableOnFilter();
@@ -827,7 +844,7 @@ public class SystemViewFilterReferenceAdapter
 
 	// ------------------------------------------
 	// METHODS TO SUPPORT COMMON DRAG AND DROP FUNCTION...
-	// ------------------------------------------	
+	// ------------------------------------------
 	/**
 	 * drag support is handled directly for filter references, rather than delegated here.
 	 */
@@ -837,7 +854,7 @@ public class SystemViewFilterReferenceAdapter
 		if (fRef != null)
 		{
 			if (getSubSystemConfiguration(fRef.getReferencedFilter()).supportsFilterStringExport())
-			{	
+			{
 				return true;
 			}
 		}
@@ -860,11 +877,11 @@ public class SystemViewFilterReferenceAdapter
 		        {
 		        	return true;
 		        }
-		        
+
 		        if (!fRef.getReferencedFilter().isNonChangable())
-		        {		    
+		        {
 		            if (factory.supportsMultiStringFilters())
-		            {	
+		            {
 		                return true;
 		            }
 		        }
@@ -872,7 +889,7 @@ public class SystemViewFilterReferenceAdapter
 	    }
 		return false;
 	}
-	
+
 	public ISystemResourceSet doDrag(SystemRemoteResourceSet set, IProgressMonitor monitor)
 	{
 		return set;
@@ -909,13 +926,13 @@ public class SystemViewFilterReferenceAdapter
 			else if (from instanceof IAdaptable)
 			{
 				ISystemRemoteElementAdapter radapter = (ISystemRemoteElementAdapter) ((IAdaptable) from).getAdapter(ISystemRemoteElementAdapter.class);
-				
+
 				{
-				    
+
 				    String newFilterStr = radapter.getFilterStringFor(from);
 					if (newFilterStr != null)
 					{
-						filter.addFilterString(newFilterStr);					
+						filter.addFilterString(newFilterStr);
 						return fRef;
 					}
 				}
@@ -929,10 +946,10 @@ public class SystemViewFilterReferenceAdapter
 	 * compatable.
 	 */
 	public boolean validateDrop(Object src, Object target, boolean sameSystem)
-	{	    
+	{
 		if (!sameSystem)
 		{
-		    if (src instanceof IResource) 
+		    if (src instanceof IResource)
 		    {
 		        return true;
 		    }
@@ -964,7 +981,7 @@ public class SystemViewFilterReferenceAdapter
 						return true;
 					}
 				}
-				// check if src has a filter string	
+				// check if src has a filter string
 				else if (src instanceof IAdaptable)
 				{
 					ISystemRemoteElementAdapter adapter = (ISystemRemoteElementAdapter) ((IAdaptable) src).getAdapter(ISystemRemoteElementAdapter.class);
@@ -980,20 +997,20 @@ public class SystemViewFilterReferenceAdapter
 		}
 		return false;
 	}
-	
-	
+
+
 	/*
 	 * Return whether deferred queries are supported.
-	 * Defer to the subsystem configuration. 
+	 * Defer to the subsystem configuration.
 	 */
 	public boolean supportsDeferredQueries(ISubSystem subSys)
 	{
 	    return subSys.getSubSystemConfiguration().supportsDeferredQueries();
 	}
-	
+
 	/**
 	 * This is a local RSE artifact so returning false
-	 * 
+	 *
 	 * @param element the object to check
 	 * @return false since this is not remote
 	 */

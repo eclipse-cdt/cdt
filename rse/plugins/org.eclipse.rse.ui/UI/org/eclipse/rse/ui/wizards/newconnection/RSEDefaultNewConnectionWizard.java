@@ -1,26 +1,27 @@
 /********************************************************************************
  * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Uwe Stieber (Wind River) - [192202] Default RSE new connection wizard does not allow to query created host instance anymore
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -70,7 +72,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	private ISystemProfile privateProfile = null;
 	private IHost selectedContext = null;
 	private static String lastProfile = null;
-	private IHost createdHost = null; 
+	private IHost createdHost = null;
 
 	/**
 	 * Constructor.
@@ -90,7 +92,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 */
 	public void dispose() {
 		super.dispose();
-		
+
 		mainPage = null;
 		subsystemConfigurationSuppliedWizardPages = null;
 		ssfWizardPagesPerSystemType.clear();
@@ -115,7 +117,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			subsystemConfigurationSuppliedWizardPages = getAdditionalWizardPages(systemType);
 		}
 	}
-	
+
 	/**
 	 * Creates the wizard pages. This method is an override from the parent Wizard class.
 	 */
@@ -123,9 +125,9 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		try {
 			// reset the remembered created host instance
 			createdHost = null;
-			
+
 			mainPage = createMainPage(getSystemType());
-		
+
 			SystemConnectionForm form = mainPage.getSystemConnectionForm();
 			if (form != null) {
 				form.setCurrentlySelectedConnection(selectedContext);
@@ -137,10 +139,10 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				// there had been a default connection name explicitly set from outside.
 				if (defaultConnectionName != null) form.setConnectionName(defaultConnectionName);
 				else form.setConnectionName(""); //$NON-NLS-1$
-				
+
 				if (defaultHostName != null) form.setHostName(defaultHostName);
 			}
-			
+
 			if (mainPage != null && getSystemType() != null) mainPage.setSystemType(getSystemType());
 
 			updateDefaultSelectedProfile();
@@ -188,12 +190,12 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	/**
 	 * Calculates the default profile name to propose on the default new
 	 * connection wizard main page.
-	 * 
+	 *
 	 * <pre>
 	 * Expected order of default profile selection:
 	 *   1. If a connection is selected, the default profile is the one from the connection.
 	 *   2. If the wizard remembered the last profile and this last remembered profile is still
-	 *      available and active, the remembered last profile is the default profile. 
+	 *      available and active, the remembered last profile is the default profile.
 	 *   3. If the default private system profile is availabe and active, the default private system profile
 	 *      is the default profile.
 	 *   4. The first non-empty profile from the list of active profiles is the default profile.
@@ -207,7 +209,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 
 		List profileNames = activeProfileNames != null ? Arrays.asList(activeProfileNames) : new ArrayList();
 		mainPage.getSystemConnectionForm().setProfileNames(activeProfileNames);
-		
+
 		// 1. If a connection is selected, the default profile is the one from the connection.
 		String defaultProfileName = selectedContext != null ? selectedContext.getSystemProfileName() : null;
 		if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
@@ -222,7 +224,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				if (defaultPrivateProfile != null) defaultProfileName = defaultPrivateProfile.getName();
 				if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
 					// 4. The first non-empty profile from the list of active profiles is the default profile.
-					//    Note: The profile names get normalized within the constructor.  
+					//    Note: The profile names get normalized within the constructor.
 					if (profileNames.size() > 0) defaultProfileName = (String)profileNames.get(0);
 				}
 			}
@@ -236,9 +238,9 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			if (selectedContext == null || !defaultProfileName.equals(selectedContext.getSystemProfileName()))
 				lastProfile = defaultProfileName;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Set the currently selected context. Used to better default entry fields.
 	 */
@@ -376,17 +378,17 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	/**
 	 * Returns the create host instance once the user pressed finished. The created
 	 * host instance will be reset to <code>null</code> once the wizard got disposed.
-	 * 
+	 *
 	 * @return The created host instance or <code>null</code>.
 	 */
 	public IHost getCreatedHost() {
 		return createdHost;
 	}
-		
+
 	/**
 	 * Private method to get all the wizard pages from all the subsystem factories, given a
 	 * system type.
-	 * 
+	 *
 	 * @param systemType The system type to query the additional subsystem service pages for. Must be not <code>null</code>.
 	 */
 	private ISystemNewConnectionWizardPage[] getAdditionalWizardPages(IRSESystemType systemType) {
@@ -400,6 +402,14 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, true);
 			for (int idx = 0; idx < factories.length; idx++) {
 				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factories[idx].getAdapter(ISubSystemConfigurationAdapter.class);
+				if (adapter == null) {
+					// try to activate bundle - FIXME should perhaps be done
+					// earlier in the action that shows the wizard dialog?
+					// And, is it really necessary to get the wizard pages that
+					// early already?
+					Platform.getAdapterManager().loadAdapter(factories[idx], ISubSystemConfigurationAdapter.class.getName());
+					adapter = (ISubSystemConfigurationAdapter) factories[idx].getAdapter(ISubSystemConfigurationAdapter.class);
+				}
 
 				ISystemNewConnectionWizardPage[] pages = adapter.getNewConnectionWizardPages(factories[idx], this);
 				if (pages != null) {
@@ -418,7 +428,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	}
 
 	/**
-	 * Return true if there are additional pages. This decides whether to enable the Next button 
+	 * Return true if there are additional pages. This decides whether to enable the Next button
 	 *  on the main page
 	 */
 	protected boolean hasAdditionalPages() {

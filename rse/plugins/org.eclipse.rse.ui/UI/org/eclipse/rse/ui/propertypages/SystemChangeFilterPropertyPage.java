@@ -1,26 +1,28 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -32,30 +34,33 @@ import org.eclipse.rse.ui.filters.SystemChangeFilterPane;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.validators.ISystemValidator;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * This is the property page for changing filters. This page used to be the Change dialog.
- * The plugin.xml file registers this for objects of class org.eclipse.rse.internal.filters.SystemFilter or
- *   org.eclipse.rse.filters.SystemFilterReference.
+ * This is the property page for changing filters. This page used to be the
+ * Change dialog. The plugin.xml file registers this for objects of class
+ * org.eclipse.rse.internal.filters.SystemFilter or
+ * org.eclipse.rse.filters.SystemFilterReference.
  * <p>
- * If you have your own change filter dialog (versus configuring ours) you must configure this
- *  pane yourself by overriding {@link SubSystemConfiguration#customizeChangeFilterPropertyPage(SystemChangeFilterPropertyPage, ISystemFilter, Shell)}
- *  and configuring the pane as described in that method's javadoc.
+ * If you have your own change filter dialog (versus configuring ours) you must
+ * configure this pane yourself by overriding
+ * {@link SubSystemConfigurationAdapter#customizeChangeFilterPropertyPage(ISubSystemConfiguration, SystemChangeFilterPropertyPage, ISystemFilter, Shell)}
+ * and configuring the pane as described in that method's javadoc.
  */
 public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
        implements  ISystemPageCompleteListener, ISystemChangeFilterPaneEditPaneSupplier
 {
-	
+
 	protected String errorMessage;
     protected boolean initDone = false;
-    
-	protected SystemChangeFilterPane changeFilterPane;    
+
+	protected SystemChangeFilterPane changeFilterPane;
 	protected SystemFilterStringEditPane editPane;
-	    	
+
 	/**
 	 * Constructor for SystemFilterPropertyPage
 	 */
@@ -83,12 +88,12 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	 * provider itself (eg subsystem)
 	 * <p>
 	 * This is passed into the filter and filter string wizards and dialogs in case it is needed
-	 * for context. 
+	 * for context.
 	 */
 	public void setSystemFilterPoolReferenceManagerProvider(ISystemFilterPoolReferenceManagerProvider provider)
 	{
 		changeFilterPane.setSystemFilterPoolReferenceManagerProvider(provider);
-	}	
+	}
 	/**
 	 * <i>Configuration method</i><br>
 	 * Set the contextual system filter pool manager provider. Will be non-null if the
@@ -96,13 +101,13 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	 * provider itself (eg subsystemconfiguration)
 	 * <p>
 	 * This is passed into the filter and filter string wizards and dialogs in case it is needed
-	 * for context. 
+	 * for context.
 	 */
 	public void setSystemFilterPoolManagerProvider(ISystemFilterPoolManagerProvider provider)
 	{
 		changeFilterPane.setSystemFilterPoolManagerProvider(provider);
-	}	
-	
+	}
+
 	/**
 	 * <i>Configuration method</i><br>
 	 * Set the Parent Filter Pool prompt label and tooltip text.
@@ -129,7 +134,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		changeFilterPane.setListLabel(label, tip);
 	}
 	/**
-	 * Set the string to show as the first item in the list. 
+	 * Set the string to show as the first item in the list.
 	 * The default is "New filter string"
 	 */
 	public void setNewListItemText(String label)
@@ -152,7 +157,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	}
 	/**
 	 * <i>Configuration method</i><br>
-	 * Set the error message to use when the user is editing or creating a filter string, and the 
+	 * Set the error message to use when the user is editing or creating a filter string, and the
 	 *  Apply processing detects a duplicate filter string in the list.
 	 */
 	public void setDuplicateFilterStringErrorMessage(SystemMessage msg)
@@ -183,9 +188,9 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	{
 		changeFilterPane.setSupportsMultipleStrings(multi);
 	}
-		
+
 	// OVERRIDABLE METHODS...
-	
+
 	/**
 	 * Create the page's GUI contents.
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
@@ -196,46 +201,51 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		if (shell == null)
 		{
 			System.out.println("Damn, shell is still null!"); //$NON-NLS-1$
-			
+
 		}
 		changeFilterPane.setShell(shell);
-		
+
 		ISystemFilter selectedFilter = getFilter();
 		if (selectedFilter.isPromptable())
 		{
 			int nbrColumns = 1;
 			Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 			/*Label test =*/ SystemWidgetHelpers.createLabel(composite_prompts, SystemPropertyResources.RESID_TERM_NOTAPPLICABLE, nbrColumns, false);
-			return composite_prompts;			
+			return composite_prompts;
 		}
-		
+
 		if (getElement() instanceof ISystemFilterReference)
 		{
 			ISystemFilterReference filterRef = (ISystemFilterReference)getElement();
 			changeFilterPane.setSystemFilterPoolReferenceManagerProvider(filterRef.getProvider());
-		}			
-		changeFilterPane.setSystemFilterPoolManagerProvider(selectedFilter.getProvider());			
-		
+		}
+		changeFilterPane.setSystemFilterPoolManagerProvider(selectedFilter.getProvider());
+
 		ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(selectedFilter);
 		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
+		if (adapter == null) {
+			// lazy loading: load adapter if necessary
+			Platform.getAdapterManager().loadAdapter(ssf, ISubSystemConfigurationAdapter.class.getName());
+			adapter = (ISubSystemConfigurationAdapter) ssf.getAdapter(ISubSystemConfigurationAdapter.class);
+		}
 		adapter.customizeChangeFilterPropertyPage(ssf, this, selectedFilter, shell);
-		
+
 		changeFilterPane.setInputObject(getElement());
-		
+
 		/*
 		// ensure the page has no special buttons
-		noDefaultAndApplyButton();		
+		noDefaultAndApplyButton();
 
 		// Inner composite
-		int nbrColumns = 2; 
-		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);	
-		
+		int nbrColumns = 2;
+		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
+
 		Label test = SystemWidgetHelpers.createLabel(composite_prompts, "Testing", nbrColumns);
 
 
-	    if (!initDone)	
-	      doInitializeFields();		  
-		
+	    if (!initDone)
+	      doInitializeFields();
+
 		return composite_prompts;
 		*/
 		return changeFilterPane.createContents(parent);
@@ -243,9 +253,9 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	/**
 	 * Intercept of parent so we can reset the default button
 	 */
-	protected void contributeButtons(Composite parent) 
+	protected void contributeButtons(Composite parent)
 	{
-		super.contributeButtons(parent);		
+		super.contributeButtons(parent);
 		getShell().setDefaultButton(changeFilterPane.getApplyButton()); // defect 46129
 	}
 
@@ -255,7 +265,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	 * Return true if ok, false if there is an error.
 	 */
 	protected boolean verifyPageContents()
-	{	
+	{
 		return true;
 	}
 
@@ -270,7 +280,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		else
 		  return ((ISystemFilterReference)element).getReferencedFilter();
 	}
-	
+
 	/**
 	 * Called by parent when user presses OK
 	 */
@@ -298,16 +308,16 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		//super.setPageComplete(complete);
 		super.setValid(complete); // we'll see if this is the right thing to do
 	}
-	
+
 	/**
 	 * Return our edit pane. Overriding this is an alternative to calling setEditPane.
-	 * Method is declared in {@link ISystemChangeFilterPaneEditPaneSupplier}.  
+	 * Method is declared in {@link ISystemChangeFilterPaneEditPaneSupplier}.
 	 */
 	public SystemFilterStringEditPane getFilterStringEditPane(Shell shell)
 	{
 		// this method is called from SystemChangeFilterPane via callback
 		if (editPane == null)
 		  editPane = new SystemFilterStringEditPane(shell);
-		return editPane;		
-	}	
+		return editPane;
+	}
 }

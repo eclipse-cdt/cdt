@@ -1,17 +1,18 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package samples.subsystems;
@@ -35,7 +36,7 @@ public class DeveloperSubSystem extends SubSystem
 {
 	private TeamResource[] teams; // faked-out master list of teams
 	private Vector devVector = new Vector(); // faked-out master list of developers
-	private static int employeeId = 123456; // employee Id factory	
+	private static int employeeId = 123456; // employee Id factory
 
 	/**
 	 * @param host
@@ -45,23 +46,28 @@ public class DeveloperSubSystem extends SubSystem
 		super(host, connectorService);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see SubSystem#initializeSubSystem(IProgressMonitor)
 	 */
 	public void initializeSubSystem(IProgressMonitor monitor) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystem#uninitializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void uninitializeSubSystem(IProgressMonitor monitor) {
+		super.initializeSubSystem(monitor);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#getObjectWithAbsoluteName(java.lang.String)
+	 * @see ISubSystem#uninitializeSubSystem(IProgressMonitor)
 	 */
-	public Object getObjectWithAbsoluteName(String key) throws Exception
+	public void uninitializeSubSystem(IProgressMonitor monitor) {
+		super.uninitializeSubSystem(monitor);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see SubSystem#getObjectWithAbsoluteName(String, IProgressMonitor)
+	 */
+	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
 	{
 		// Functional opposite of getAbsoluteName(Object) in our resource adapters
 		if (key.startsWith("Team_")) //$NON-NLS-1$
@@ -78,10 +84,10 @@ public class DeveloperSubSystem extends SubSystem
 			DeveloperResource[] devrs = getAllDevelopers();
 			for (int idx=0; idx<devrs.length; idx++)
 			  if (devrs[idx].getId().equals(devrId))
-			    return devrs[idx];            	
+			    return devrs[idx];
 		}
 		// Not a remote object: fall back to return filter reference
-		return super.getObjectWithAbsoluteName(key); 
+		return super.getObjectWithAbsoluteName(key, monitor);
 	}
 
 	/**
@@ -93,15 +99,15 @@ public class DeveloperSubSystem extends SubSystem
 	 */
 	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
-                java.lang.InterruptedException                
+                java.lang.InterruptedException
 	{
 		int slashIdx = filterString.indexOf('/');
 		if (slashIdx < 0)
 		{
-			// Fake it out for now and return dummy list. 
+			// Fake it out for now and return dummy list.
 			// In reality, this would communicate with remote server-side code/data.
 			TeamResource[] allTeams = getAllTeams();
-			
+
 			// Now, subset master list, based on filter string...
 			NamePatternMatcher subsetter = new NamePatternMatcher(filterString);
 			Vector v = new Vector();
@@ -109,7 +115,7 @@ public class DeveloperSubSystem extends SubSystem
 			{
 				if (subsetter.matches(allTeams[idx].getName()))
 				  v.addElement(allTeams[idx]);
-			}		
+			}
 			TeamResource[] teams = new TeamResource[v.size()];
 			for (int idx=0; idx<v.size(); idx++)
 			   teams[idx] = (TeamResource)v.elementAt(idx);
@@ -134,11 +140,11 @@ public class DeveloperSubSystem extends SubSystem
 			    {
 			    	if (subsetter.matches(allDevrs[idx].getName()))
 			    	  v.addElement(allDevrs[idx]);
-			   	}		
+			   	}
 			   	DeveloperResource[] devrs = new DeveloperResource[v.size()];
 			   	for (int idx=0; idx<v.size(); idx++)
 			   	   devrs[idx] = (DeveloperResource)v.elementAt(idx);
-			   	return devrs;	
+			   	return devrs;
 			}
 		}
 		return null;
@@ -156,31 +162,31 @@ public class DeveloperSubSystem extends SubSystem
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
 	{
-		// typically we ignore the filter string as it is always "*" 
+		// typically we ignore the filter string as it is always "*"
 		//  until support is added for "quick filters" the user can specify/select
 		//  at the time they expand a remote resource.
-		
+
 		TeamResource team = (TeamResource)parent;
 		return team.getDevelopers();
 	}
 
-	// ------------------	
+	// ------------------
 	// Our own methods...
 	// ------------------
 	/**
-	 * Get the list of all teams. Normally this would involve a trip the server, but we 
-	 *  fake it out and return a hard-coded local list. 
+	 * Get the list of all teams. Normally this would involve a trip the server, but we
+	 *  fake it out and return a hard-coded local list.
 	 * @return array of all teams
 	 */
 	public TeamResource[] getAllTeams()
 	{
-		if (teams == null) 
+		if (teams == null)
 		  teams = createTeams("Team ", 4);
-		return teams;		
+		return teams;
 	}
 	/**
-	 * Get the list of all developers. Normally this would involve a trip the server, but we 
-	 *  fake it out and return a hard-coded local list. 
+	 * Get the list of all developers. Normally this would involve a trip the server, but we
+	 *  fake it out and return a hard-coded local list.
 	 * @return array of all developers
 	 */
 	public DeveloperResource[] getAllDevelopers()
@@ -188,7 +194,7 @@ public class DeveloperSubSystem extends SubSystem
 		DeveloperResource[] allDevrs = new DeveloperResource[devVector.size()];
 		for (int idx=0; idx<allDevrs.length; idx++)
 		  allDevrs[idx] = (DeveloperResource)devVector.elementAt(idx);
-		return allDevrs;		
+		return allDevrs;
 	}
 	/*
 	 * Create and return a dummy set of teams

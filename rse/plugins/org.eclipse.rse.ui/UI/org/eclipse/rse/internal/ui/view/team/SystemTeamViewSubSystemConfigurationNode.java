@@ -1,18 +1,19 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -23,13 +24,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapter;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 
 
 /**
  * This class represents a child node under category nodes, in the Team view.
- * It represents expandable subsystem factories such as "Files" or "iSeries Objects". 
+ * It represents expandable subsystem factories such as "Files" or "iSeries Objects".
  */
 public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 {
@@ -38,7 +42,7 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 	private ISubSystemConfiguration ssf;
 	private SystemTeamViewCategoryNode parentCategory;
 	private String name = null;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -57,11 +61,11 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 	 */
 	public Object getAdapter(Class adapterType)
 	{
-		return Platform.getAdapterManager().getAdapter(this, adapterType);	
-	}           
-	
+		return Platform.getAdapterManager().getAdapter(this, adapterType);
+	}
+
 	/**
-	 * Compare this node to another. 
+	 * Compare this node to another.
 	 */
 	public boolean equals(Object o)
 	{
@@ -78,7 +82,7 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 		else
 			return super.equals(o);
 	}
-	
+
 	/**
 	 * Return this node's image
 	 * @return the image to show in the tree, for this node
@@ -86,7 +90,21 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 	public ImageDescriptor getImageDescriptor()
 	{
 		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
-		return adapter.getImage(ssf);
+		if (adapter != null) {
+			return adapter.getImage(ssf);
+		} else {
+			// Fall back to using the Proxy -- see also
+			// SystemViewSubSystemAdapter.getImageDescriptor()
+			ISubSystemConfigurationProxy proxy = ssf.getSubSystemConfigurationProxy();
+			SubSystemConfigurationProxyAdapter proxyAdapter = (SubSystemConfigurationProxyAdapter) Platform.getAdapterManager().getAdapter(proxy,
+					SubSystemConfigurationProxyAdapter.class);
+			if (proxyAdapter != null) {
+				return proxyAdapter.getImageDescriptor();
+			} else {
+				SystemBasePlugin.logWarning("Unexpected error: SubSystemConfiguration has no adapter and no proxyAdapter: " + ssf.getId()); //$NON-NLS-1$
+				return null;
+			}
+		}
 	}
 
 	/**
@@ -116,9 +134,9 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 			buf.append(")"); //$NON-NLS-1$
 			name = buf.toString();
 		}
-		return name;	
+		return name;
 	}
-	
+
 	/**
 	 * Convert to string. We call getLabel()
 	 */

@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Tobias Schwarz (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -26,8 +27,8 @@ import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemNode;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemNodeContainer;
 
 /**
- * Simple test subsystem with branches and leafes.
- * Further childs can be added or removed via context menu actions.
+ * Simple test subsystem with branches and leaves. Further children can be added
+ * or removed via context menu actions.
  */
 public class TestSubSystem extends SubSystem implements ITestSubSystem {
 
@@ -35,8 +36,9 @@ public class TestSubSystem extends SubSystem implements ITestSubSystem {
 
 	/**
 	 * Constructor.
-	 * @param host
-	 * @param connectorService
+	 * 
+	 * @param host the host to connect
+	 * @param connectorService connector service to use
 	 */
 	public TestSubSystem(IHost host, IConnectorService connectorService) {
 		super(host, connectorService);
@@ -45,7 +47,8 @@ public class TestSubSystem extends SubSystem implements ITestSubSystem {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void initializeSubSystem(IProgressMonitor monitor) {		
+	public void initializeSubSystem(IProgressMonitor monitor) {
+		super.initializeSubSystem(monitor);
 		TestSubSystemContainerNode parent0 = new TestSubSystemContainerNode("0"); //$NON-NLS-1$
 		TestSubSystemContainerNode child0 = new TestSubSystemContainerNode("0:0"); //$NON-NLS-1$
 		parent0.addChildNode(child0);
@@ -63,19 +66,20 @@ public class TestSubSystem extends SubSystem implements ITestSubSystem {
 	 */
 	public void uninitializeSubSystem(IProgressMonitor monitor) {
 		fChildren.clear();
+		super.uninitializeSubSystem(monitor);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#getObjectWithAbsoluteName(java.lang.String)
 	 */
-	public Object getObjectWithAbsoluteName(String key) throws Exception {
+	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception {
 		ITestSubSystemNode[] childs = getChildNodes();
 		for (int i = 0; i < childs.length; i++) {
 			if (childs[i].getName().equalsIgnoreCase(key)) {
 				return childs[i];
 			}
 		}
-		return super.getObjectWithAbsoluteName(key);
+		return super.getObjectWithAbsoluteName(key, monitor);
 	}
 
 	/* (non-Javadoc)

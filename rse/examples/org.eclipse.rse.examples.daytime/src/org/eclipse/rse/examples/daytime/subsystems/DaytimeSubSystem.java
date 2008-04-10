@@ -1,15 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime.subsystems;
@@ -43,8 +44,8 @@ import org.eclipse.rse.ui.model.ISystemRegistryUI;
  */
 public class DaytimeSubSystem extends SubSystem {
 
-	private IDaytimeService fDaytimeService; 
-	
+	private IDaytimeService fDaytimeService;
+
 	public DaytimeSubSystem(IHost host, IConnectorService connectorService, IDaytimeService daytimeService) {
 		super(host, connectorService);
 		fDaytimeService = daytimeService;
@@ -52,8 +53,9 @@ public class DaytimeSubSystem extends SubSystem {
 
 	public void initializeSubSystem(IProgressMonitor monitor) {
 		//This is called after connect - expand the daytime node.
-		//May be called in worker thread.
-		//TODO find a more elegant solution for expanding the item, e.g. use implicit connect like filters 
+		// Always called in worker thread.
+		super.initializeSubSystem(monitor);
+		//TODO find a more elegant solution for expanding the item, e.g. use implicit connect like filters
         final ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistryUI();
         final SystemResourceChangeEvent event = new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
         //TODO bug 150919: postEvent() should not be necessary asynchronously
@@ -62,15 +64,15 @@ public class DaytimeSubSystem extends SubSystem {
         	public void run() { sr.postEvent(event); }
         });
 	}
-	
+
 	public boolean hasChildren() {
 		return isConnected();
 	}
-	
+
 	public IDaytimeService getDaytimeService() {
 		return fDaytimeService;
 	}
-	
+
 	public Object[] getChildren() {
 		if (isConnected()) {
 			try {
@@ -90,7 +92,7 @@ public class DaytimeSubSystem extends SubSystem {
 	}
 
 	public void uninitializeSubSystem(IProgressMonitor monitor) {
-		//nothing to do
+		super.uninitializeSubSystem(monitor);
 	}
 
 	public Class getServiceType() {
@@ -99,7 +101,7 @@ public class DaytimeSubSystem extends SubSystem {
 
 	public void switchServiceFactory(ISubSystemConfiguration factory) {
 		// not applicable here
-		
+
 	}
 
 }

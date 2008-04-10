@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,13 +13,12 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519] declaratively register rse.shells.ui. adapter factories
  * Martin Oberhuber (wind River) - [203105] Decouple recursive plugin activation of UI adapters
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.core;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -43,18 +42,6 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-
-		// make sure that required adapters factories are loaded 
-		//(will typically activate org.eclipse.rse.shells.ui)
-		//TODO Check that this does not fire up the UI if we want to be headless
-		//Decouple from the current Thread
-		new Thread("shells.ui adapter loader") { //$NON-NLS-1$
-			public void run() {
-				Platform.getAdapterManager().loadAdapter(new RemoteOutput(null,""), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}.start();
-		// Others (IRemoteError, ShellServiceSubSystemConfigurationAdapter 
-		// will be available automatically once the shells.ui plugin is loaded
 	}
 
 	/**

@@ -7,17 +7,18 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -30,6 +31,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -43,6 +45,7 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IRemoteSystemEnvVar;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.internal.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteSystemEnvVar;
@@ -50,6 +53,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -63,7 +67,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 {
 	private static String COMMAND_SHELLS_MEMENTO = "commandshells"; //$NON-NLS-1$
 	private static String ENVIRONMENT_VARS = "EnvironmentVariables"; //$NON-NLS-1$
-	
+
 	protected ArrayList _cmdShells;
 
 	protected IRemoteCommandShell _defaultShell;
@@ -74,6 +78,12 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	{
 		super(host, connectorService);
 		_cmdShells = new ArrayList();
+	}
+
+	public void initializeSubSystem(IProgressMonitor monitor) {
+		super.initializeSubSystem(monitor);
+		// load UI plugin for adapters right after successful connect
+		Platform.getAdapterManager().loadAdapter(new RemoteOutput(null, ""), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -87,7 +97,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * Long running list processing calls this method to check for a user-cancel
 	 * event. If user did cancel, an exception is thrown.
-	 * 
+	 *
 	 * @return true if caller wants to cancel
 	 */
 	public boolean checkForCancel(IProgressMonitor monitor)
@@ -95,7 +105,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		if ((monitor != null) && monitor.isCanceled())
 		{
 			String msgTxt = NLS.bind(ShellStrings.MSG_CONNECT_FAILED, getHostName());
-		
+
 			throw new OperationCanceledException(msgTxt);
 		}
 		return false;
@@ -207,7 +217,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected String[] getEnvVarsAsStringArray() {
 		IPropertySet environmentVariables = getEnvironmentVariables();
@@ -303,9 +313,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * Lists the possible commands for the given context
-	 * 
-	 * @param context
-	 *            the context for a command
+	 *
+	 * @param context the context for a command
 	 * @return the list of possible commands
 	 */
 	public ICandidateCommand[] getCandidateCommands(Object context)
@@ -362,7 +371,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * This default implementation just returns "=" (the only invalid character
 	 * is the = sign.) Subclasses can override this to provide a more
 	 * comprehensive list.
-	 * 
+	 *
 	 * @see org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem#getInvalidEnvironmentVariableNameCharacters()
 	 */
 	public String getInvalidEnvironmentVariableNameCharacters()
@@ -388,7 +397,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * Actually resolve an absolute filter string. This is called by the
 	 * run(IProgressMonitor monitor) method, which in turn is called by
 	 * resolveFilterString.
-	 * 
+	 *
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(String,IProgressMonitor)
 	 */
 	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
@@ -413,7 +422,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * Get the default running command shell for this command subsystem. If no
 	 * such shell exists or is running, a new one is launched.
-	 * 
+	 *
 	 * @return the default running command shell
 	 */
 	public IRemoteCommandShell getDefaultShell() throws Exception
@@ -432,7 +441,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * Get all command shells and transient commands that have been run or are
 	 * running for this command subsystem.
-	 * 
+	 *
 	 * @return the list of running command shells and commands
 	 */
 	public IRemoteCommandShell[] getShells()
@@ -447,7 +456,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * Determine whether the command subsystem can run a shell
-	 * 
+	 *
 	 * @return whether a shell can be run or not
 	 */
 	public boolean canRunShell()
@@ -457,7 +466,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * Determine whether the command subsystem can run a command
-	 * 
+	 *
 	 * @return whether a command can be run or not
 	 */
 	public boolean canRunCommand()
@@ -466,25 +475,13 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	}
 
 	/**
-	 * Return the object within the subsystem that corresponds to the 
-	 * specified unique ID.
-	 * For remote command, the key is determined by the command ID
-	 * and the ouput ID.
-	 * 
-	 * @param key the unique id of the remote object.
-	 *     Must not be <code>null</code>.
-	 * @return the remote object instance, or <code>null</code> if no 
-	 *     object is found with the given id.
-	 * @throws Exception in case an error occurs contacting the remote 
-	 *     system while retrieving the requested remote object.
-	 *     Extenders are encouraged to throw {@link SystemMessageException}
-	 *     in order to support good user feedback in case of errors.
-	 *     Since exceptions should only occur while retrieving new 
-	 *     remote objects during startup, clients are typically allowed 
-	 *     to ignore these exceptions and treat them as if the remote 
-	 *     object were simply not there.
+	 * Return the object within the subsystem that corresponds to the specified
+	 * unique ID. For remote command, the key is determined by the command ID
+	 * and the output ID.
+	 *
+	 * @see ISubSystem#getObjectWithAbsoluteName(String, IProgressMonitor)
 	 */
-	public Object getObjectWithAbsoluteName(String key) throws Exception
+	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
 	{
 		String cmdKey = key;
 		String outKey = null;
@@ -515,7 +512,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			return theCmd;
 		}
 		//fallback to return filter reference or similar
-		return super.getObjectWithAbsoluteName(key);
+		return super.getObjectWithAbsoluteName(key, monitor);
 	}
 
 	// called by subsystem on disconnect
@@ -585,7 +582,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	{
 		this.shell = shellWindow;
 		IRemoteCommandShell[] results = null;
-		
+
 		String shellStr = null;
 		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
 		if (set != null)
@@ -626,7 +623,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	public void cancelAllShells()
 	{
-	
+
 		for (int i = _cmdShells.size() - 1; i >= 0; i--)
 		{
 			IRemoteCommandShell cmdShell = (IRemoteCommandShell) _cmdShells.get(i);
@@ -650,7 +647,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		Display.getDefault().asyncExec(new Refresh(this));
 
 	}
-	
+
 	public class Refresh implements Runnable
 	{
 		private RemoteCmdSubSystem _ss;
@@ -659,7 +656,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			_ss = ss;
 		}
 
-		public void run() 
+		public void run()
 		{
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
@@ -677,14 +674,14 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			_cmdShell = cmdShell;
 		}
 
-		public void run() 
+		public void run()
 		{
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(_cmdShell, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, null));
 			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
 		}
 	}
-	
+
 
 	/**
 	 * @see ICommunicationsListener#isPassiveCommunicationsListener()
@@ -754,7 +751,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 		return environmentVariables;
 	}
-	
+
 	public IPropertySet createPropertySet(String name) {
 		IPropertySet result = null;
 		if (name.equals(ENVIRONMENT_VARS)) {
@@ -768,13 +765,15 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
-	 * @deprecated 
+	 *
+	 * @deprecated use
+	 *             {@link #runCommand(String, Object, boolean, IProgressMonitor)}
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception
 	{
 		return internalRunCommand(command, context, interpretOutput, null);
 	}
-	
+
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
 	 */
@@ -785,8 +784,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
-	 * 
-	 * @deprecated
+	 *
+	 * @deprecated use {@link #runShell(Object, IProgressMonitor)}
 	 */
 	public IRemoteCommandShell runShell(Object context) throws Exception
 	{
@@ -803,48 +802,49 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		Refresh refreshOnMain = new Refresh(this);
 		Display.getDefault().asyncExec(refreshOnMain);
-	
+
 		return cmdShell;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
 	 */
 	public IRemoteCommandShell runShell(Object context, IProgressMonitor monitor) throws Exception
 	{
 		IRemoteCommandShell cmdShell = internalRunShell(context, monitor);
-		
+
 		Refresh refreshOnMain = new Refresh(this);
 		Display.getDefault().asyncExec(refreshOnMain);
 
 		return cmdShell;
 	}
 
-	
-	
+
+
 	/**
 	 * Execute a remote command. This is only applicable if the subsystem
 	 * factory reports true for supportsCommands().
-	 * 
+	 *
 	 * @param command Command to be executed remotely.
-	 * @param context context of a command (i.e. working directory). <code>null</code> is
-	 *            valid and means to use the default context.
+	 * @param context context of a command (i.e. working directory).
+	 *            <code>null</code> is valid and means to use the default
+	 *            context.
 	 * @return Array of objects that are the result of running this command.
 	 *         Typically, these are messages logged by the command.
-	 *         
-	 * @deprecated
+	 *
+	 * @deprecated use {@link #runCommand(String, Object, IProgressMonitor)}
 	 */
 	public Object[] runCommand(String command, Object context) throws Exception
 	{
 		return runCommand(command,  context, true);
 	}
-	
+
 	/**
 	 * Execute a remote command. This is only applicable if the subsystem
 	 * factory reports true for supportsCommands().
-	 * 
+	 *
 	 * @param command Command to be executed remotely.
 	 * @param context context of a command (i.e. working directory). <code>null</code> is
 	 *            valid and means to use the default context.
@@ -856,8 +856,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		return runCommand(command, context,  true, monitor);
 	}
 
-	
-	
+
+
 	/**
 	 * Send a command as input to a running command shell.
 	 * @param input the command to invoke in the shell.
@@ -872,7 +872,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		if (ok)
 		{
 			internalSendCommandToShell(input, commandObject, monitor);
-		}		
+		}
 		else
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(),
 					"in SubSystemImpl.sendCommandToShell: isConnected() returning false!"); //$NON-NLS-1$
@@ -880,7 +880,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * Cancel a shell or running command.
-	 * 
+	 *
 	 * @param commandObject the shell or command to cancel.
 	 */
 	public void cancelShell(Object commandObject) throws Exception
@@ -914,7 +914,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 						"in SubSystemImpl.cancelShell: isConnected() returning false!"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Cancel a shell or running command.
 	 * @param commandObject the shell or command to cancel.
@@ -925,7 +925,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		boolean ok = true;
 		if (!isConnected())
 			ok = promptForPassword();
-		
+
 		if (ok)
 		{
 			internalCancelShell(commandObject, monitor);
@@ -940,7 +940,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * Remove and Cancel a shell or running command.
-	 * 
+	 *
 	 * @param commandObject the shell or command to cancel.
 	 */
 	public void removeShell(Object commandObject) throws Exception
@@ -988,14 +988,11 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		/**
 		 * Creates a new RunCommandJob
-		 * 
-		 * @param cmd
-		 *            The remote command to run
-		 * @param runContext
-		 *            The context in which to run the command
-		 * @param runInterpret
-		 *            Whether or not to interpret results of the command as RSE
-		 *            objects
+		 *
+		 * @param cmd The remote command to run
+		 * @param runContext The context in which to run the command
+		 * @param runInterpret Whether or not to interpret results of the
+		 *            command as RSE objects
 		 */
 		public RunCommandJob(String cmd, Object runContext, boolean runInterpret)
 		{
@@ -1032,9 +1029,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		/**
 		 * Creates a new RunShellJob
-		 * 
-		 * @param runContext
-		 *            the context within which the shell will be ran
+		 *
+		 * @param runContext the context within which the shell will be ran
 		 */
 		public RunShellJob(Object runContext)
 		{
@@ -1049,7 +1045,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			int totalWorkUnits = IProgressMonitor.UNKNOWN;
 
 			if (!implicitConnect(false, mon, msg, totalWorkUnits)){
-				
+
 				String msgTxt = NLS.bind(ShellStrings.MSG_CONNECT_FAILED, getHostName());
 				throw new Exception(msgTxt);
 			}
@@ -1069,9 +1065,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		/**
 		 * Constructs a new CancelShellJob
-		 * 
-		 * @param runContext
-		 *            The context for the cancelled shell
+		 *
+		 * @param runContext The context for the cancelled shell
 		 */
 		public CancelShellJob(Object runContext)
 		{
@@ -1107,11 +1102,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		/**
 		 * Constructs a new SendCommandToShellJob
-		 * 
-		 * @param cmd
-		 *            The command to send to the shell
-		 * @param runContext
-		 *            The context in which the command is to be run
+		 *
+		 * @param cmd The command to send to the shell
+		 * @param runContext The context in which the command is to be run
 		 */
 		public SendCommandToShellJob(String cmd, Object runContext)
 		{
@@ -1130,7 +1123,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 			if (!implicitConnect(false, mon, msg, totalWorkUnits)){
 				String msgTxt = NLS.bind(ShellStrings.MSG_CONNECT_FAILED, getHostName());
-				
+
 				throw new Exception(msgTxt);
 			}
 			internalSendCommandToShell(_cmd, _runContext, mon);
@@ -1147,9 +1140,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		/**
 		 * Constructs a new RemoveShellJob
-		 * 
-		 * @param runContext
-		 *            the context for the removed shell
+		 *
+		 * @param runContext the context for the removed shell
 		 */
 		public RemoveShellJob(Object runContext)
 		{

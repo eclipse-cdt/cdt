@@ -3,13 +3,13 @@
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - 141803: Fix cpu usage 100% while connecting
  * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -137,14 +138,12 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * <li>{@link #internalGetProperties(Object subject, String[] keys, IProgressMonitor monitor)}
  * <li>{@link #internalSetProperties(Object subject, String[] keys, String[] values, IProgressMonitor monitor)}
  * </ul>
- * 
+ *
  */
 
 public abstract class SubSystem extends RSEModelObject
 implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 {
-
-
 	protected static final String SUBSYSTEM_FILE_NAME = "subsystem"; //$NON-NLS-1$
 
 	//protected transient SubSystemConfiguration parentFactory = null;
@@ -182,10 +181,11 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 	protected IHost   _host;
 
-
 	protected String _name = null;
 	protected String _subsystemConfigurationId = null;
 	protected boolean _hidden = false;
+
+	private boolean _isInitialized = false;
 
 
 	/**
@@ -495,7 +495,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.rse.core.subsystems.ISubSystem#checkIsConnected(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void checkIsConnected(IProgressMonitor monitor) throws SystemMessageException
@@ -806,7 +806,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * when they do not find a reference for the key themselves.
 	 * </p>
 	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectResolver#getObjectWithAbsoluteName(String, IProgressMonitor)
-	 * 
+	 *
 	 * @param key the unique id of the remote object.
 	 *     Must not be <code>null</code>.
 	 * @param monitor the progress monitor
@@ -2007,13 +2007,23 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			return false;
 	}
 	/**
-	 * Return the children of this subsystem, to populate the GUI subtree of this subsystem.
-	 * By default, this method:
+	 * Return the children of this subsystem, to populate the GUI subtree of
+	 * this subsystem. By default, this method:
 	 * <ul>
-	 *   <li>Returns the filter pool references of this subsystem, if supportsFilters() is true for our factory.
-	 *   <li>If supportsFilters() is false from our factory, returns null
+	 * <li>Returns the filter pool references of this subsystem, if
+	 * supportsFilters() is true for our factory.
+	 * <li>If supportsFilters() is false from our factory, returns null
 	 * </ul>
 	 * So, be sure to override this method IF you do not support filters.
+	 *
+	 * Lazy Loading: Note that if your subsystem does not support connecting,
+	 * and you do not support filters, here is a good point to ensure that the
+	 * bundles which declare your UI adapters get loaded, since the default code
+	 * which overriders usually place in
+	 * {@link #initializeSubSystem(IProgressMonitor)} is not called in that
+	 * case. Similarly, if your subsystem declares custom images for filters or
+	 * filter pools, overriding the getChildren() call here to first load your
+	 * filter adapters and THEN super.getChildren() is a good idea.
 	 */
 	public Object[] getChildren()
 	{
@@ -2073,7 +2083,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 	/**
 	 * Resolve an <i>absolute</i> filter string.
-	 * 
+	 *
 	 * This is only applicable if the subsystem
 	 *  factory reports true for {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()},
 	 *  which is the default. Otherwise, {@link org.eclipse.rse.core.subsystems.SubSystem#getChildren()}
@@ -2112,6 +2122,10 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 		if (isConnected())
 		{
+			if (!supportsConnecting && !_isInitialized) {
+				// Lazy Loading: Load adapters (e.g. Local Subsystem)
+				initializeSubSystem(monitor);
+			}
 			Object[] results = internalResolveFilterString(filterString, monitor);
 			if (sortResults && (results!=null))
 				results = sortResolvedFilterStringObjects(results);
@@ -2149,6 +2163,10 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		}
 		if (isConnected())
 		{
+			if (!supportsConnecting && !_isInitialized) {
+				// Lazy Loading: Load adapters (e.g. Local Subsystem)
+				initializeSubSystem(monitor);
+			}
 			Object[] results = internalResolveFilterStrings(filterStrings, monitor);
 			if (sortResults && (results!=null))
 				results = sortResolvedFilterStringObjects(results);
@@ -2197,6 +2215,10 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	{
 		if (isConnected())
 		{
+			if (!supportsConnecting && !_isInitialized) {
+				// Lazy Loading: Load adapters (e.g. Local Subsystem)
+				initializeSubSystem(monitor);
+			}
 			Object[] results= internalResolveFilterString(parent, filterString, monitor);
 			if (sortResults && (results!=null))
 				results =  sortResolvedFilterStringObjects(results);
@@ -2226,7 +2248,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * @param key Identifies property to set
 	 * @param value Value to set property to
 	 * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
-	 * 
+	 *
 	 * @deprecated this shouldn't be used
 	 */
 	public Object setProperty(Object subject, String key, String value)
@@ -2242,7 +2264,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * @param subject Identifies which object to get the properties of
 	 * @param key Identifies property to get value of
 	 * @return String The value of the requested key.
-	 * 
+	 *
 	 * @deprecated this shouldn't be used
 	 */
 	public String getProperty(Object subject, String key)
@@ -2259,7 +2281,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * @param keys the array of propertie keys to set.
 	 * @param values the array of values to set. The value at a certain index corresponds to the property key at the same index.
 	 * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
-	 * 
+	 *
 	 * @deprecated this shouldn't be used
 	 */
 	public Object setProperties(Object subject, String[] keys, String[] values)
@@ -2269,25 +2291,36 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	}
 
 	/**
-	 * Initialize this subsystem instance after the corresponding {@link IConnectorService} connect method finishes.
-	 * This method should be overridden if any initialization for the subsystem needs
-	 * to occur at this time
-	 * <p> The default implementation currently does nothing, but overriding methods should call super.
-	 * @param monitor a monitor that can be used to show progress or provide cancellation.
+	 * Initialize this subsystem instance after the corresponding
+	 * {@link IConnectorService} connect method finishes. This method should be
+	 * overridden if any initialization for the subsystem needs to occur at this
+	 * time.
+	 * <p>
+	 * The default implementation currently does nothing, but overriding methods
+	 * should call super before doing any other work.
+	 *
+	 * @param monitor a progress monitor that can be used to show progress
+	 *            during long-running operation. Cancellation is typically not
+	 *            supported since it might leave the system in an inconsistent
+	 *            state.
 	 */
 	public void initializeSubSystem(IProgressMonitor monitor) {
+		_isInitialized = true;
 	}
 
 	/**
-	 * Uninitialize this subsystem just after disconnect.
-	 * The default implementation currently does nothing.
-	 * Overriding methods should call super.
-	 * @param monitor a progress monitor that can be used to show uninitialization progress can provide cancellation.
+	 * Uninitialize this subsystem just after disconnect. The default
+	 * implementation currently does nothing. Overriding methods should call
+	 * super after doing their own work.
+	 *
+	 * @param monitor a progress monitor that can be used to show progress
+	 *            during long-running operation. Cancellation is typically not
+	 *            supported since it might leave the system in an inconsistent
+	 *            state.
 	 */
 	public void uninitializeSubSystem(IProgressMonitor monitor) {
+		_isInitialized = false;
 	}
-
-
 
 	/*
 	 * Connect to a remote system with a monitor.
@@ -2441,7 +2474,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 *  displaying for you.
 	 * <p>
 	 * Override internalDisconnect if you want, but by default it calls getSystem().disconnect(IProgressMonitor).
-	 * 
+	 *
 	 */
 	public void disconnect() throws Exception
 	{
@@ -2454,7 +2487,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 *  displaying for you.
 	 * <p>
 	 * Override internalDisconnect if you want, but by default it calls getSystem().disconnect(IProgressMonitor).
-	 * 
+	 *
 	 * @param collapseTree collapse the tree in the system view
 	 */
 	public void disconnect(boolean collapseTree) throws Exception
@@ -2497,7 +2530,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * @param subject Identifies which object to get the properties of
 	 * @param keys the array of property keys.
 	 * @return the values for the given property keys.
-	 * 
+	 *
 	 * @deprecated this shouldn't be used
 	 */
 	public String[] getProperties(Object subject, String[] keys)
@@ -2511,7 +2544,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * Return the {@link org.eclipse.rse.core.subsystems.IConnectorService IConnectorService} object that represents the live connection for this system.
 	 * This must return an object that implements {@link IConnectorService}. A good starting point for that
 	 *  is the base class {@link AbstractConnectorService}.
-	 * 
+	 *
 	 *  The connector service gets passed in to the constructor for the subsystem so there's normally no reason
 	 *  to override this method.
 	 *
@@ -2523,7 +2556,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 	/**
 	 * Sets the {@link org.eclipse.rse.core.subsystems.IConnectorService IConnectorService} object that represents the live connection for this system.
-	 * 
+	 *
 	 * @param connectorService the connector service
 	 */
 	public void setConnectorService(IConnectorService connectorService)
@@ -2558,7 +2591,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	/**
 	 * Return the CacheManager for this subsystem.  This is the default implementation
 	 * which just returns null.
-	 * 
+	 *
 	 * @see #supportsCaching()
 	 */
 	public ICacheManager getCacheManager()
@@ -2577,7 +2610,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 *       - well, actually you can throw anything and we'll wrap it here in an InvocationTargetException
 	 *   <li>do not worry about calling monitor.done() ... caller will do that.
 	 * </ul>
-	 * 
+	 *
 	 */
 	private void internalConnect(IProgressMonitor monitor)
 	throws InvocationTargetException, OperationCanceledException

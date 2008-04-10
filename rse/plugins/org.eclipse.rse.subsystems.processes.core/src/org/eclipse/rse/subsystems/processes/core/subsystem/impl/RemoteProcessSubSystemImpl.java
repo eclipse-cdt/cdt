@@ -1,18 +1,19 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008s IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
@@ -20,6 +21,7 @@ package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
@@ -35,7 +37,7 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 
 /**
  * Default implementation of the IRemoteProcessSubSystem interface.
- * <p> 
+ * <p>
  * Some of the methods are simply convenience methods - these are
  * implemented here, whereas the real work takes place in the
  * ProcessServiceSubSystem.
@@ -44,12 +46,12 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		IRemoteProcessSubSystem, ICommunicationsListener
 {
-	
+
 	public RemoteProcessSubSystemImpl(IHost host, IConnectorService connectorService)
 	{
 		super(host, connectorService);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem#getParentRemoteProcessSubSystemConfiguration()
 	 */
@@ -65,7 +67,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	{
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ICommunicationsListener#communicationsStateChange(org.eclipse.rse.core.subsystems.CommunicationsEvent)
 	 */
@@ -75,9 +77,9 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		{
 			case CommunicationsEvent.BEFORE_CONNECT :
 				break;
-			case CommunicationsEvent.AFTER_DISCONNECT :	
+			case CommunicationsEvent.AFTER_DISCONNECT :
 				getConnectorService().removeCommunicationsListener(this);
-		
+
 				break;
 
 			case CommunicationsEvent.BEFORE_DISCONNECT :
@@ -87,23 +89,27 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 				break;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void initializeSubSystem(IProgressMonitor monitor)
 	{
-		getConnectorService().addCommunicationsListener(this);			
+		super.initializeSubSystem(monitor);
+		// load UI plugin for adapters right after successful connect
+		Platform.getAdapterManager().loadAdapter(new RemoteProcessImpl(null, null), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+		getConnectorService().addCommunicationsListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#uninitializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void uninitializeSubSystem(IProgressMonitor monitor)
 	{
-		getConnectorService().removeCommunicationsListener(this);			
+		getConnectorService().removeCommunicationsListener(this);
+		super.uninitializeSubSystem(monitor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem#getParentProcess(org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess)
 	 */
@@ -111,7 +117,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	{
 		return process.getParentRemoteProcess();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)
 	 */
@@ -122,7 +128,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		if (!isConnected()) {
 			return null;
 		}
-		
+
 		HostProcessFilterImpl rpf = new HostProcessFilterImpl(filterString);
 		IRemoteProcessContext context = new RemoteProcessContext(this, null, rpf);
 		IRemoteProcess[] ps = null;
@@ -134,9 +140,9 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		{
 			displayAsyncMsg(e);
 		}
-		return  ps;		
+		return  ps;
       }
-	
+
 	/**
 	 * At this point there is only one root process, the 'init' process with pid 1
 	 */
@@ -161,11 +167,12 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	{
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#getObjectWithAbsoluteName(java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see SubSystem#getObjectWithAbsoluteName(String, IProgressMonitor)
 	 */
-	public Object getObjectWithAbsoluteName(String key) throws Exception
+	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
 	{
 		try
 		{
@@ -174,7 +181,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		}
 		catch (NumberFormatException e)
 		{
-			return super.getObjectWithAbsoluteName(key);
+			return super.getObjectWithAbsoluteName(key, monitor);
 		}
 	}
 }

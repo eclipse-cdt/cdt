@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,13 +13,12 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
  * Martin Oberhuber (wind River) - [203105] Decouple recursive plugin activation of UI adapters
+ * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.core;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessImpl;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -41,18 +40,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception 
 	{
 		super.start(context);
-
-		// make sure that required adapters factories are loaded 
-		//(will typically activate org.eclipse.rse.processes.ui)
-		//TODO Check that this does not fire up the UI if we want to be headless
-		//Decouple from the current Thread
-		new Thread("processes.ui adapter loader") { //$NON-NLS-1$
-			public void run() {
-				Platform.getAdapterManager().loadAdapter(new RemoteProcessImpl(null,null), 
-				"org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
-			}
-		}.start();
-		//others will be loaded automatically when the processes.ui plugin is activated
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,6 +217,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 						}
 						else if ( sourceElement instanceof IStorage ) {
 							sourceHandle = ((IStorage)sourceElement).getFullPath().toOSString();
+						}
+						else if ( sourceElement instanceof ITranslationUnit ) {
+							sourceHandle = ((ITranslationUnit)sourceElement).getLocation().toOSString();
 						}
 						String bpSourceHandle = ((ICLineBreakpoint)breakpoint).getSourceHandle();
 						if ( sourceElement instanceof LocalFileStorage ) { // see bug #112008

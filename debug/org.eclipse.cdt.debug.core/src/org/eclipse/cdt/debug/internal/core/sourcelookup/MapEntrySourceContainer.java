@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2005 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,23 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
  
@@ -76,6 +84,29 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 				return list.toArray();
 
 			File file = path.toFile();
+
+			// The file is not already in the workspace so try to create an external translation unit for it.
+			ISourceLookupDirector director = getDirector();
+			if (director != null)
+			{
+				ILaunchConfiguration launchConfiguration = director.getLaunchConfiguration();
+				if (launchConfiguration != null)
+				{
+					String projectName = launchConfiguration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+					if (projectName.length() > 0) {
+						ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
+						if (project != null)
+						{
+							String id;
+							try {
+								id = CoreModel.getRegistedContentTypeId(project.getProject(), Path.fromOSString(file.getCanonicalPath()).lastSegment());
+								return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, file.toURI(), id) };
+							} catch (IOException e) { e.printStackTrace(); }
+						}
+					}									
+				}
+			}
+
 			if ( file.exists() && file.isFile() ) {
 				return new Object[] { new LocalFileStorage( file ) };
 			}

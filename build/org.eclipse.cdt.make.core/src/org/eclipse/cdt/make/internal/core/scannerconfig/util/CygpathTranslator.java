@@ -57,8 +57,8 @@ public class CygpathTranslator {
                 } catch (ClassCastException e) {
                 }
             }
-            // No CygPath specified in BinaryParser page or not supported. 
-            // Hoping that cygpath is on the path. 
+            // No CygPath specified in BinaryParser page or not supported.
+            // Hoping that cygpath is on the path.
             if (cygPath == null && Platform.getOS().equals(Platform.OS_WIN32)) {
             	if (new File(DEFAULT_CYGWIN_ROOT).exists()) {
                     cygPath = new CygPath(DEFAULT_CYGWIN_ROOT + "\\bin\\cygpath.exe"); //$NON-NLS-1$
@@ -74,7 +74,7 @@ public class CygpathTranslator {
             isAvailable = false;
             // Removing markers. if cygpath isn't in your path then you aren't using cygwin.
             // Then why are we calling this....
-//            scMarkerGenerator.addMarker(project, -1, 
+//            scMarkerGenerator.addMarker(project, -1,
 //                    MakeMessages.getString(CYGPATH_ERROR_MESSAGE),
 //                    IMarkerGenerator.SEVERITY_WARNING, null);
         }
@@ -84,12 +84,12 @@ public class CygpathTranslator {
      * @param sumIncludes
      * @return
      */
-    public static List translateIncludePaths(IProject project, List sumIncludes) {
+    public static List<String> translateIncludePaths(IProject project, List<String> sumIncludes) {
     	// first check if cygpath translation is needed at all
     	boolean translationNeeded = false;
     	if (Platform.getOS().equals(Platform.OS_WIN32)) {
-	    	for (Iterator i = sumIncludes.iterator(); i.hasNext(); ) {
-				String include = (String) i.next();
+	    	for (Iterator<String> i = sumIncludes.iterator(); i.hasNext(); ) {
+				String include = i.next();
 				if (include.startsWith("/")) { //$NON-NLS-1$
 					translationNeeded = true;
 					break;
@@ -102,9 +102,9 @@ public class CygpathTranslator {
     	
         CygpathTranslator cygpath = new CygpathTranslator(project);
         
-        List translatedIncludePaths = new ArrayList();
-        for (Iterator i = sumIncludes.iterator(); i.hasNext(); ) {
-            String includePath = (String) i.next();
+        List<String> translatedIncludePaths = new ArrayList<String>();
+        for (Iterator<String> i = sumIncludes.iterator(); i.hasNext(); ) {
+            String includePath = i.next();
             IPath realPath = new Path(includePath);
             // only allow native pathes if they have a device prefix
             // to avoid matches on the current drive, e.g. /usr/bin = C:\\usr\\bin
@@ -123,25 +123,24 @@ public class CygpathTranslator {
                 } else if (realPath.segmentCount() >= 2) {
                 	// try default conversions
                 	//     /cygdrive/x/ --> X:\
-                	//     /usr/        --> C:\Cygwin\\usr\\
                 	if ("cygdrive".equals(realPath.segment(0))) { //$NON-NLS-1$
                 		String drive= realPath.segment(1);
                 		if (drive.length() == 1) {
                 			translatedPath= realPath.removeFirstSegments(2).setDevice(drive.toUpperCase() + ':').toOSString();
                 		}
-                	} else {
-                		translatedPath= DEFAULT_CYGWIN_ROOT + realPath.toOSString();
                 	}
                 }
                 if (!translatedPath.equals(includePath)) {
                     // Check if the translated path exists
-                    IPath transPath = new Path(translatedPath);
-                    if (transPath.toFile().exists()) {
-                        translatedIncludePaths.add(transPath.toPortableString());
+                    if (new File(translatedPath).exists()) {
+                        translatedIncludePaths.add(translatedPath);
                     }
-                    else {
+                    else if (cygpath.isAvailable) {
                         // TODO VMIR for now add even if it does not exist
                         translatedIncludePaths.add(translatedPath);
+                    }
+                    else {
+                        translatedIncludePaths.add(includePath);
                     }
                 }
                 else {
@@ -150,7 +149,9 @@ public class CygpathTranslator {
                 }
             }
         }
-        cygpath.cygPath.dispose();
+        if (cygpath.cygPath != null) {
+        	cygpath.cygPath.dispose();
+        }
         return translatedIncludePaths;
     }
 

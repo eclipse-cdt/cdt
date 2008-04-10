@@ -20,7 +20,6 @@ import junit.framework.TestSuite;
  */
 public class ReplaceTestSuite{
 
-	@SuppressWarnings("nls")
 	public static Test suite() throws Exception {
 		TestSuite suite = new TestSuite("ChangegeneratorReplaceTests");
 	

@@ -516,8 +516,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				IScope tuScope = translationUnit.getScope();
 				
 				IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
-				for(int i=0; i<bindings.length; i++) {
-					ASTInternal.addBinding(tuScope, bindings[i]);
+				for (IBinding binding : bindings) {
+					ASTInternal.addBinding(tuScope, binding);
 				}
 			}
         } catch (Exception e2) {
@@ -1667,12 +1667,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                                     declaration = ((IASTSimpleDeclaration) decl);
 
                                     IASTDeclarator[] decltors = declaration.getDeclarators();
-                                    for (int k = 0; k < decltors.length; k++) {
+                                    for (IASTDeclarator decltor : decltors) {
                                         boolean decltorOk = false;
-                                        for (int j = 0; j < parmNames.length; j++) {
+                                        for (IASTName parmName : parmNames) {
                                             if (CharArrayUtils.equals(
-                                                    decltors[k].getName().toCharArray(),
-                                                    parmNames[j].toCharArray())) {
+                                                    decltor.getName().toCharArray(),
+                                                    parmName.toCharArray())) {
                                                 decltorOk = true;
                                                 break;
                                             }
@@ -1855,7 +1855,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTDeclarator();
     }
 
-    @SuppressWarnings("fallthrough")
 	protected void consumeArrayModifiers(List<IASTNode> arrayMods)
             throws EndOfFileException, BacktrackException {
 
@@ -1890,7 +1889,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.tSTAR:
                     isVarSized = true;
                     consume();
-                // deliberate fall through
+                    break outerLoop;
                 default:
                     break outerLoop;
                 }

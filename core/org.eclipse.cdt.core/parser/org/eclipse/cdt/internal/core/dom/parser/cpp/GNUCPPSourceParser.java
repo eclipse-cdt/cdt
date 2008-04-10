@@ -742,22 +742,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 throwExpression, throwToken.getOffset(), o); // fix for 95225
     }
 
-    @SuppressWarnings("fallthrough")
 	@Override
 	protected IASTExpression relationalExpression() throws BacktrackException, EndOfFileException {
 
         IASTExpression firstExpression = shiftExpression();
         for (;;) {
-            switch (LT(1)) {
+            final int lt1 = LT(1);
+			switch (lt1) {
             case IToken.tGT:
-                if (templateIdScopes.size() > 0
-                        && templateIdScopes.peek() == IToken.tLT) {
-                    return firstExpression;
-                }
-                // fall through
             case IToken.tLT:
             case IToken.tLTEQUAL:
             case IToken.tGTEQUAL:
+                if (lt1 == IToken.tGT && templateIdScopes.size() > 0 && templateIdScopes.peek() == IToken.tLT) 
+                    return firstExpression;
+                
                 IToken m = mark();
                 int t = consume().getType();
 
@@ -791,7 +789,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (supportMinAndMaxOperators
                         && (LT(1) == IGCCToken.tMIN || LT(1) == IGCCToken.tMAX)) {
                     int new_operator = 0;
-                    switch (LT(1)) {
+                    switch (lt1) {
                     case IGCCToken.tMAX:
                         consume();
                         new_operator = IGPPASTBinaryExpression.op_max;
@@ -2492,8 +2490,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // as a work around just flatten them.
             if (subName instanceof ICPPASTQualifiedName) {
             	IASTName[] subNames= ((ICPPASTQualifiedName) subName).getNames();
-            	for (int j = 0; j < subNames.length; j++) {
-					subName = subNames[j];
+            	for (IASTName subName2 : subNames) {
+					subName = subName2;
 	            	result.addName(subName);
 				}            
             }
@@ -4188,8 +4186,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				IScope tuScope = translationUnit.getScope();
 				
 				IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
-				for(int i=0; i<bindings.length; i++) {
-					ASTInternal.addBinding(tuScope, bindings[i]);
+				for (IBinding binding : bindings) {
+					ASTInternal.addBinding(tuScope, binding);
 				}
 			}
         } catch (Exception e2) {

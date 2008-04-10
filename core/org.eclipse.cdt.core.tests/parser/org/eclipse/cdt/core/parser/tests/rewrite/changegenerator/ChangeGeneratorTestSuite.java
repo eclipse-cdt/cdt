@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace.Replace
  */
 public class ChangeGeneratorTestSuite{
 
-	@SuppressWarnings("nls")
 	public static Test suite() throws Exception {
 		TestSuite suite = new TestSuite("ChangeGeneratorTests");
 

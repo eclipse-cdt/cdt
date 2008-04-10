@@ -20,7 +20,6 @@ import junit.framework.TestSuite;
  */
 public class AstWriterTestSuite{
 
-	@SuppressWarnings("nls")
 	public static Test suite() throws Exception {
 		TestSuite suite = new TestSuite("AstWriterTests");
 		suite.addTest(SourceRewriteTester.suite("ExpressionTests", "resources/rewrite/ASTWriterExpressionTestSource.awts"));

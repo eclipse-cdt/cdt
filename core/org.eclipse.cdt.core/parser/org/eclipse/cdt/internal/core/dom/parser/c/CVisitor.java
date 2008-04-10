@@ -550,8 +550,7 @@ public class CVisitor {
 	        if( scope != null && scope instanceof ICFunctionScope ){
 	            CFunctionScope functionScope = (CFunctionScope) scope;
 	            ILabel [] labels = functionScope.getLabels();
-	            for( int i = 0; i < labels.length; i++ ){
-	                ILabel label = labels[i];
+	            for (ILabel label : labels) {
 	                if( CharArrayUtils.equals( label.getNameCharArray(), gotoName) ){
 	                    return label;
 	                }
@@ -639,9 +638,9 @@ public class CVisitor {
 		        try {
 		            char [] p = fieldReference.getFieldName().toCharArray();
                     IField [] fields = ((ICompositeType) type).getFields();
-                    for ( int i = 0; i < fields.length; i++ ) {
-                        if( CharArrayUtils.equals( fields[i].getNameCharArray(), 0, p.length, p, true ) ){
-                            result = (IBinding[]) ArrayUtil.append( IBinding.class, result, fields[i] );
+                    for (IField field : fields) {
+                        if( CharArrayUtils.equals( field.getNameCharArray(), 0, p.length, p, true ) ){
+                            result = (IBinding[]) ArrayUtil.append( IBinding.class, result, field );
                         }
                     }
                     return ArrayUtil.trim( IBinding.class, result );
@@ -1391,8 +1390,8 @@ public class CVisitor {
 		if( prefixMap != null ){
 		    IBinding [] result = null;
 		    Object [] vals = prefixMap.valueArray();
-		    for ( int i = 0; i < vals.length; i++ ) {
-                result = (IBinding[]) ArrayUtil.append( IBinding.class, result, ((IASTName) vals[i]).resolveBinding() );
+		    for (Object val : vals) {
+                result = (IBinding[]) ArrayUtil.append( IBinding.class, result, ((IASTName) val).resolveBinding() );
             }
 		    
 		    IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
@@ -1472,9 +1471,9 @@ public class CVisitor {
 			}
 			//also have to check for any nested structs
 			IASTDeclaration [] nested = ((ICASTCompositeTypeSpecifier)declSpec).getMembers();
-			for( int i = 0; i < nested.length; i++ ){
-				if( nested[i] instanceof IASTSimpleDeclaration ){
-					IASTDeclSpecifier d = ((IASTSimpleDeclaration)nested[i]).getDeclSpecifier();
+			for (IASTDeclaration element : nested) {
+				if( element instanceof IASTSimpleDeclaration ){
+					IASTDeclSpecifier d = ((IASTSimpleDeclaration)element).getDeclSpecifier();
 					if( d instanceof ICASTCompositeTypeSpecifier || d instanceof IASTEnumerationSpecifier ) {
 						Object obj = checkForBinding( scope, d, name, typesOnly, prefixMap );
 					    if( prefixMap == null && resultName == null ){
@@ -1496,8 +1495,7 @@ public class CVisitor {
 			}
 		    //check enumerators
 		    IASTEnumerator [] list = ((ICASTEnumerationSpecifier) declSpec).getEnumerators();
-		    for( int i = 0; i < list.length; i++ ) {
-		        IASTEnumerator enumerator = list[i];
+		    for (IASTEnumerator enumerator : list) {
 		        if( enumerator == null ) break;
 		        tempName = enumerator.getName();
 		        if( scope != null )
@@ -1573,8 +1571,7 @@ public class CVisitor {
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
-			for( int i = 0; i < declarators.length; i++ ){
-				IASTDeclarator declarator = declarators[i];
+			for (IASTDeclarator declarator : declarators) {
 				while( declarator.getNestedDeclarator() != null ){
 					declarator = declarator.getNestedDeclarator();
 				}
@@ -1641,8 +1638,7 @@ public class CVisitor {
 		}
 		boolean begun = ( beginAtLoc == AT_BEGINNING );
 		if( list != null ){
-			for( int i = 0; i < list.length; i++ ){
-				IASTNode node = list[i];
+			for (IASTNode node : list) {
 				if( node == blockItem ){
 				    begun = true;
 					continue;
@@ -1784,7 +1780,6 @@ public class CVisitor {
 	 * @param declSpec the IASTDeclSpecifier used to determine if the base type is a CQualifierType or not
 	 * @return the base IType
 	 */
-	@SuppressWarnings("null")
 	public static IType createBaseType( IASTDeclSpecifier declSpec ) {
 		if( declSpec instanceof IGCCASTSimpleDeclSpecifier ){
 			IASTExpression exp = ((IGCCASTSimpleDeclSpecifier)declSpec).getTypeofExpression();
@@ -1804,6 +1799,8 @@ public class CVisitor {
 			name = ((IASTCompositeTypeSpecifier) declSpec).getName();		
 		} else if( declSpec instanceof IASTEnumerationSpecifier ){
 			name = ((IASTEnumerationSpecifier)declSpec).getName();
+		} else {
+			return new ProblemBinding(declSpec, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, declSpec.getRawSignature().toCharArray() );
 		}
 		
 		binding = name.resolveBinding();
@@ -1860,9 +1857,9 @@ public class CVisitor {
                 continue;
             
             IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
-            for( int j = 0; j < dtors.length; j++ ){
-                if( CharArrayUtils.equals( dtors[j].getName().toCharArray(), n ) ){
-                    return dtors[j]; 
+            for (IASTDeclarator dtor : dtors) {
+                if( CharArrayUtils.equals( dtor.getName().toCharArray(), n ) ){
+                    return dtor; 
                 }
             }
         }
@@ -2051,8 +2048,7 @@ public class CVisitor {
             char [] n = name.toCharArray();
             if( scope instanceof ICFunctionScope ){
                 ILabel [] labels = ((CFunctionScope)scope).getLabels();
-                for( int i = 0; i < labels.length; i++ ){
-	                ILabel label = labels[i];
+                for (ILabel label : labels) {
 	                if (prefixLookup) {
 	                	if (CharArrayUtils.equals(label.getNameCharArray(),
 	                			0, n.length, n, true)) {

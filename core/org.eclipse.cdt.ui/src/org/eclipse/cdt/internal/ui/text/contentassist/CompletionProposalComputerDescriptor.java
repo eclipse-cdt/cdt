@@ -127,10 +127,9 @@ final class CompletionProposalComputerDescriptor {
 	 * @param element the configuration element to read
 	 * @param registry the computer registry creating this descriptor
 	 */
-	@SuppressWarnings("null")
 	CompletionProposalComputerDescriptor(IConfigurationElement element, CompletionProposalComputerRegistry registry, List<CompletionProposalCategory> categories) throws InvalidRegistryObjectException {
-		Assert.isLegal(registry != null);
-		Assert.isLegal(element != null);
+		Assert.isNotNull(registry);
+		Assert.isNotNull(element);
 		
 		fRegistry= registry;
 		fElement= element;

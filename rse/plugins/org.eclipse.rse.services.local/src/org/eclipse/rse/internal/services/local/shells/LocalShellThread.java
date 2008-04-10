@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Javier Montalvo Orús (Symbian) - 138619: Fix codepage on Win2K
  * Lothar Werzinger (Tradescape) - 161838: Support terminating local shells
@@ -57,15 +57,16 @@ public class LocalShellThread extends Thread
 
 	private boolean _isWindows;
 	private String  _encoding;
-	
+
 	private BufferedReader _stdInput;
 	private BufferedReader _stdError;
-	
+
 	/**
-	 * consturtor for local command shell monitor
+	 * constructor for local command shell monitor
+	 * 
 	 * @param cwd initial working directory
 	 * @param invocation launch shell command
-	 * @param encoding
+	 * @param encoding encoding to use or <code>null</code> for default
 	 * @param envVars user and system environment variables to launch shell with
 	 */
 	public LocalShellThread(String cwd, String invocation, String encoding, String[] envVars)
@@ -75,20 +76,20 @@ public class LocalShellThread extends Thread
 		_isCancelled = false;
 		_cwd = cwd;
 		_invocation = invocation;
-		
+
 		// if pty exists for this client
 		// then the rse.pty property will have been set
 		// by the contributor of the pty exectuable
 		// on linux client this is a likely scenario
 		PSEUDO_TERMINAL = System.getProperty("rse.pty"); //$NON-NLS-1$
-		try
-		{
-			PSEUDO_TERMINAL = Platform.resolve(new URL(PSEUDO_TERMINAL)).getPath();
+		if (PSEUDO_TERMINAL != null) {
+			try {
+				PSEUDO_TERMINAL = Platform.resolve(new URL(PSEUDO_TERMINAL)).getPath();
+			} catch (Exception e) {
+				/* ignore, no pty available */
+			}
 		}
-		catch (Exception e)
-		{	
-		}
-	
+
 		_envVars = envVars;
 		init();
 	}
@@ -134,7 +135,7 @@ public class LocalShellThread extends Thread
 			String theOS = System.getProperty("os.name"); //$NON-NLS-1$
 			_isWindows = theOS.toLowerCase().startsWith("win"); //$NON-NLS-1$
 			_isTTY = PSEUDO_TERMINAL != null && (new File(PSEUDO_TERMINAL).exists());
-			
+
 			String theShell = null;
 
 			if (!_isWindows)
@@ -144,28 +145,28 @@ public class LocalShellThread extends Thread
 				{
 
 					String property = "SHELL="; //$NON-NLS-1$
-					
+
 					for (int i = 0; i < envVars.length; i++)
 					{
 						String var = envVars[i];
 						if (var.startsWith(property))
 						{
 							theShell = var.substring(property.length(), var.length());
-							
+
 							if (theShell.endsWith("bash")) //$NON-NLS-1$
 							{
 								theShell = "sh"; //$NON-NLS-1$
 							}
-							
+
 						}
 					}
-			
+
 					if (theShell == null)
 					{
 						theShell = "sh"; //$NON-NLS-1$
 					}
-				
-					
+
+
 				    if (_isTTY)
 				    {
 				        if (_invocation.equals(">")) //$NON-NLS-1$
@@ -173,11 +174,11 @@ public class LocalShellThread extends Thread
 							_invocation = theShell;
 							_isShell = true;
 						}
-				     
+
 						String args[] = new String[2];
 						args[0] = PSEUDO_TERMINAL;
 						args[1] = _invocation;
-					    			
+
 						_theProcess = Runtime.getRuntime().exec(args, envVars, theDirectory);
 				    }
 				    else
@@ -190,11 +191,11 @@ public class LocalShellThread extends Thread
 						String args[] = new String[1];
 						args[0] = _invocation;
 						//args[1] = "-i";
-					    			
+
 						_theProcess = Runtime.getRuntime().exec(args[0], envVars, theDirectory);
 				    }
 				}
-				
+
 			}
 			else
 			{
@@ -241,7 +242,7 @@ public class LocalShellThread extends Thread
 				{
 				}
 				if (_encoding == null)
-				{		
+				{
 					if (_encoding == null || _encoding.length() == 0)
 					{
 						_encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
@@ -250,7 +251,7 @@ public class LocalShellThread extends Thread
 			}
 
 			_stdInput = new BufferedReader(new InputStreamReader(_theProcess.getInputStream(), _encoding));
-			
+
 			_stdError = new BufferedReader(new InputStreamReader(_theProcess.getErrorStream()));
 
 		}
@@ -271,10 +272,10 @@ public class LocalShellThread extends Thread
 			//createObject("prompt", _cwdStr + ">");
 		}
 	}
-	
+
 	private void createPrompt(BufferedWriter writer)
 	{
-	
+
 		try
 		{
 			writer.write("echo $PWD'>'"); //$NON-NLS-1$
@@ -283,22 +284,22 @@ public class LocalShellThread extends Thread
 		}
 		catch (Exception e)
 		{
-			
+
 		}
-		
+
 	}
-	
+
 	public BufferedReader getOutputStream()
 	{
 		return _stdInput;
 	}
-	
+
 	public BufferedReader getErrorStream()
 	{
 		return _stdError;
 	}
-	
-	
+
+
 
 	public synchronized void stopThread()
 	{
@@ -362,7 +363,7 @@ public class LocalShellThread extends Thread
 			{
 				//MOB: Exception is expected when the process is already dead
 				//System.out.println(e);
-				
+
 		        // make the thread exit;
 		        _isShell = false;
 			}
@@ -429,7 +430,7 @@ public class LocalShellThread extends Thread
 		}
 
 		_isDone = true;
-		try 
+		try
 		{
 			_stdInput.close();
 			_stdError.close();
@@ -463,13 +464,13 @@ public class LocalShellThread extends Thread
 
 	}
 
-	
+
 	public String getPathEnvironmentVariable()
 	{
 		String[] vars = _envVars;
 		if (vars != null)
 		{
-		
+
 			for (int i = 0; i < vars.length; i++)
 			{
 				String var = vars[i].toUpperCase();
@@ -478,15 +479,15 @@ public class LocalShellThread extends Thread
 					return var;
 				}
 			}
-		
+
 		}
 		return null;
 	}
 
 	/**
 	 * Retrieve the system environment variables and append the user defined
-	 * environment variables to create the String array that can be passed to 
-	 * Runtime.exec().  We need to retrieve the system env vars because the 
+	 * environment variables to create the String array that can be passed to
+	 * Runtime.exec().  We need to retrieve the system env vars because the
 	 * env vars passed to Runtime.exec() prevent the system ones from being
 	 * inherited.
 	 */
@@ -502,6 +503,6 @@ public class LocalShellThread extends Thread
 		}
 		return _envVars;
 	}
-		
+
 
 }

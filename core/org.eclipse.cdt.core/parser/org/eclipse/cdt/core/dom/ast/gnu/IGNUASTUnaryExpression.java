@@ -24,16 +24,17 @@ public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
 	 * <code>op_typeof</code> is used for typeof( unaryExpression ) type
 	 * expressions.
 	 */
-	public static final int op_typeof = IASTUnaryExpression.op_last + 1;
+	public static final int op_typeof = IASTUnaryExpression.op_typeof;
 
 	/**
 	 * <code>op_alignOf</code> is used for __alignOf( unaryExpression ) type
 	 * expressions.
 	 */
-	public static final int op_alignOf = IASTUnaryExpression.op_last + 2;
+	public static final int op_alignOf = IASTUnaryExpression.op_alignOf;
 
 	/**
-	 * <code>op_last</code> is available for sub-interfaces.
+	 * @deprecated all constants to be defined in {@link IASTUnaryExpression}.
 	 */
-	public static final int op_last = op_alignOf;
+	@Deprecated
+	public static final int op_last = IASTUnaryExpression.op_last;
 }

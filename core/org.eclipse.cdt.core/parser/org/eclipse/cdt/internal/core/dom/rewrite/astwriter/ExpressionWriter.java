@@ -231,163 +231,99 @@ public class ExpressionWriter extends NodeWriter{
 	
 	private boolean isPrefixExpression(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
-		if (unaryExpressionType <= IASTUnaryExpression.op_last) {
 
-			switch (unaryExpressionType) {
-			case IASTUnaryExpression.op_prefixDecr:	
-			case IASTUnaryExpression.op_prefixIncr:
-			case IASTUnaryExpression.op_plus:
-			case IASTUnaryExpression.op_minus:
-			case IASTUnaryExpression.op_star:
-			case IASTUnaryExpression.op_amper:
-			case IASTUnaryExpression.op_tilde:
-			case IASTUnaryExpression.op_not:
-			case IASTUnaryExpression.op_sizeof:
-			case IASTUnaryExpression.op_bracketedPrimary:
+		switch (unaryExpressionType) {
+		case IASTUnaryExpression.op_prefixDecr:	
+		case IASTUnaryExpression.op_prefixIncr:
+		case IASTUnaryExpression.op_plus:
+		case IASTUnaryExpression.op_minus:
+		case IASTUnaryExpression.op_star:
+		case IASTUnaryExpression.op_amper:
+		case IASTUnaryExpression.op_tilde:
+		case IASTUnaryExpression.op_not:
+		case IASTUnaryExpression.op_sizeof:
+		case IASTUnaryExpression.op_bracketedPrimary:
+		case ICPPASTUnaryExpression.op_throw:
+		case ICPPASTUnaryExpression.op_typeid:
+		case IGNUASTUnaryExpression.op_alignOf:
+		case IGNUASTUnaryExpression.op_typeof:
+			return true;
 
-				return true;
-
-			default:
-				return false;
-			}
+		default:
+			return false;
 		}
-		if (unExp instanceof ICPPASTUnaryExpression) {
-			switch (unaryExpressionType) {
-			case ICPPASTUnaryExpression.op_throw:
-			case ICPPASTUnaryExpression.op_typeid:
-				return true;
-			default:
-				return false;
-			}
-		}else if (unExp instanceof IGNUASTUnaryExpression) {
-			switch (unaryExpressionType) {
-			case IGNUASTUnaryExpression.op_alignOf:
-			case IGNUASTUnaryExpression.op_typeof:
-				return true;
-			default:
-				return false;
-			}
-		}
-		return false;
 	}
 	
 	private boolean isPostfixExpression(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
-		if (unaryExpressionType <= IASTUnaryExpression.op_last) {
-			switch (unaryExpressionType) {
-			case IASTUnaryExpression.op_postFixDecr:	
-			case IASTUnaryExpression.op_postFixIncr:
-			case IASTUnaryExpression.op_bracketedPrimary:
+		switch (unaryExpressionType) {
+		case IASTUnaryExpression.op_postFixDecr:	
+		case IASTUnaryExpression.op_postFixIncr:
+		case IASTUnaryExpression.op_bracketedPrimary:
+		case ICPPASTUnaryExpression.op_typeid:
+		case IGNUASTUnaryExpression.op_alignOf:
+		case IGNUASTUnaryExpression.op_typeof:
+			return true;
 
-				return true;
-
-			default:
-				return false;
-			}
+		default:
+			return false;
 		}
-		if (unExp instanceof ICPPASTUnaryExpression) {
-			return unaryExpressionType == ICPPASTUnaryExpression.op_typeid;
-		}else if (unExp instanceof IGNUASTUnaryExpression) {
-			switch (unaryExpressionType) {
-			case IGNUASTUnaryExpression.op_alignOf:
-			case IGNUASTUnaryExpression.op_typeof:
-				return true;
-			default:
-				return false;
-			}
-		}
-		return false;
 	}
 	
 	private String getPrefixOperator(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
-		if (unaryExpressionType <= IASTUnaryExpression.op_last) {
-			switch (unaryExpressionType) {
-			case IASTUnaryExpression.op_prefixDecr:	
-				return DECREMENT_OP;
-			case IASTUnaryExpression.op_prefixIncr:
-				return INCREMENT_OP;
-			case IASTUnaryExpression.op_plus:
-				return UNARY_PLUS_OP;
-			case IASTUnaryExpression.op_minus:
-				return UNARY_MINUS_OP;
-			case IASTUnaryExpression.op_star:
-				return STAR_OP;
-			case IASTUnaryExpression.op_amper:
-				return AMPERSAND_OP;
-			case IASTUnaryExpression.op_tilde:
-				return TILDE_OP;
-			case IASTUnaryExpression.op_not:
-				return NOT_OP;
-			case IASTUnaryExpression.op_sizeof:
-				return SIZEOF_OP;
-			case IASTUnaryExpression.op_bracketedPrimary:
-				return OPEN_BRACKET_OP;
-			default:
-				System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-				throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-			}
-		}
-		if (unExp instanceof ICPPASTUnaryExpression) {
-			switch (unaryExpressionType) {
-			case ICPPASTUnaryExpression.op_throw:
-				return THROW;
-			case ICPPASTUnaryExpression.op_typeid:
-				return TYPEID_OP;
-			default:
-				System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-				throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-			}
-		}else if (unExp instanceof IGNUASTUnaryExpression) {
-			switch (unaryExpressionType) {
-			case IGNUASTUnaryExpression.op_alignOf:
-				return ALIGNOF_OP;
-			case IGNUASTUnaryExpression.op_typeof:
-				return TYPEOF_OP;
-			default:
-				System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-				throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
-			}
-		}
-		System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
+		switch (unaryExpressionType) {
+		case IASTUnaryExpression.op_prefixDecr:	
+			return DECREMENT_OP;
+		case IASTUnaryExpression.op_prefixIncr:
+			return INCREMENT_OP;
+		case IASTUnaryExpression.op_plus:
+			return UNARY_PLUS_OP;
+		case IASTUnaryExpression.op_minus:
+			return UNARY_MINUS_OP;
+		case IASTUnaryExpression.op_star:
+			return STAR_OP;
+		case IASTUnaryExpression.op_amper:
+			return AMPERSAND_OP;
+		case IASTUnaryExpression.op_tilde:
+			return TILDE_OP;
+		case IASTUnaryExpression.op_not:
+			return NOT_OP;
+		case IASTUnaryExpression.op_sizeof:
+			return SIZEOF_OP;
+		case IASTUnaryExpression.op_bracketedPrimary:
+			return OPEN_BRACKET_OP;
+		case ICPPASTUnaryExpression.op_throw:
+			return THROW;
+		case ICPPASTUnaryExpression.op_typeid:
+			return TYPEID_OP;
+		case IGNUASTUnaryExpression.op_alignOf:
+			return ALIGNOF_OP;
+		case IGNUASTUnaryExpression.op_typeof:
+			return TYPEOF_OP;
+		default:
+			System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
 		throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
+		}
 	}
 	
 	private String getPostfixOperator(IASTUnaryExpression unExp) {
 		int unaryExpressionType = unExp.getOperator();
-		if (unaryExpressionType <= IASTUnaryExpression.op_last) {
-			switch (unaryExpressionType) {
-			case IASTUnaryExpression.op_postFixDecr:
-				return DECREMENT_OP;
-			case IASTUnaryExpression.op_postFixIncr:
-				return INCREMENT_OP;
-			case IASTUnaryExpression.op_bracketedPrimary:
-				return CLOSING_BRACKET_OP;
-			default:
-				System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
+		switch (unaryExpressionType) {
+		case IASTUnaryExpression.op_postFixDecr:
+			return DECREMENT_OP;
+		case IASTUnaryExpression.op_postFixIncr:
+			return INCREMENT_OP;
+		case ICPPASTUnaryExpression.op_typeid:
+			return CLOSING_BRACKET_OP;
+		case IASTUnaryExpression.op_bracketedPrimary:
+		case IGNUASTUnaryExpression.op_alignOf:
+		case IGNUASTUnaryExpression.op_typeof:
+			return CLOSING_BRACKET_OP;
+		default:
+			System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
 			throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-			}
 		}
-		if (unExp instanceof ICPPASTUnaryExpression) {
-			switch (unaryExpressionType) {
-			case ICPPASTUnaryExpression.op_typeid:
-				return CLOSING_BRACKET_OP;
-			default:
-				System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-			}
-		}else if (unExp instanceof IGNUASTUnaryExpression) {
-			switch (unaryExpressionType) {
-			case IGNUASTUnaryExpression.op_alignOf:
-			case IGNUASTUnaryExpression.op_typeof:
-				return CLOSING_BRACKET_OP;
-			default:
-				System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-			}
-		}
-		System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
-		throw new IllegalArgumentException("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
 	}
 
 	private void writeBinaryExpression(IASTBinaryExpression binExp) {

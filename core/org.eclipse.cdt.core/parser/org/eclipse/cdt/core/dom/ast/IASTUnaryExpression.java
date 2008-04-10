@@ -90,9 +90,33 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_bracketedPrimary = 11;
 
 	/**
-	 * <code>op_last</code> is made available for subclasses.
+	 * for c++, only. <code>op_throw</code> throw exp
 	 */
-	public static final int op_last = op_bracketedPrimary;
+	public static final int op_throw = 12;
+
+	/**
+	 * for c++, only. <code>op_typeid</code> = typeid( exp )
+	 */
+	public static final int op_typeid = 13;
+
+	/**
+	 * for gnu parsers, only. <code>op_typeof</code> is used for typeof( unaryExpression ) type
+	 * expressions.
+	 */
+	public static final int op_typeof = 14;
+
+	/**
+	 * for gnu parsers, only. <code>op_alignOf</code> is used for __alignOf( unaryExpression ) type
+	 * expressions.
+	 */
+	public static final int op_alignOf = 15;
+
+	/**
+	 * <code>op_last</code> is made available for subclasses.
+	 * @deprecated all constants must be defined in this interface
+	 */
+	@Deprecated
+	public static final int op_last = op_alignOf;
 
 	/**
 	 * Get the operator/kind.

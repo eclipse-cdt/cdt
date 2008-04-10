@@ -20,16 +20,16 @@ public interface ICPPASTUnaryExpression extends IASTUnaryExpression {
 	/**
 	 * <code>op_throw</code> throw exp
 	 */
-	public static final int op_throw = IASTUnaryExpression.op_last + 1;
+	public static final int op_throw = IASTUnaryExpression.op_throw;
 
 	/**
 	 * <code>op_typeid</code> = typeid( exp )
 	 */
-	public static final int op_typeid = IASTUnaryExpression.op_last + 2;
+	public static final int op_typeid = IASTUnaryExpression.op_typeid;
 
 	/**
-	 * <code>op_last</code> is provided for subinterfaces.
+	 * @deprecated all constants to be defined in {@link IASTUnaryExpression}
 	 */
-	public static final int op_last = op_typeid;
-
+	@Deprecated
+	public static final int op_last = IASTUnaryExpression.op_last;
 }

@@ -198,15 +198,20 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	}
 	
 	public Object[] getOption(String id){
-		if (selectedElement == null) return null;
+		if (selectedElement == null) 
+			return null;
 		
 		IHoldsOptions selectedHolder = selectedElement.getHoldOptions();
-		if (selectedHolder == null) selectedHolder = selectedElement.getTool();
+		if (selectedHolder == null) 
+			selectedHolder = selectedElement.getTool();
 		Object options[][] = optCategory.getOptions(rcInfo, selectedHolder);
-
+		if (options == null)
+			return null;
+		
 		for(int i = 0; i < options.length; i++){
 			IHoldsOptions ho = (IHoldsOptions)options[i][0];
-			if(ho == null) break;
+			if(ho == null) 
+				break;
 			
 			IOption option = (IOption)options[i][1];
 			

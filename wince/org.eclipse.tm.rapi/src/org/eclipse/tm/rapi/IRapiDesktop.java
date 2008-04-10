@@ -14,8 +14,9 @@ import org.eclipse.tm.internal.rapi.RapiDesktop;
 
 /**
  * This class is used to find connected WinCE-based remote devices. 
- * <p> Use <code>IRapiDesktop.getInstance()</code> to obtain an instance.  
+ * <p> Use {@link IRapiDesktop#getInstance()} to obtain an instance.  
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @author Radoslav Gerganov
  */
 public abstract class IRapiDesktop extends IUnknown {

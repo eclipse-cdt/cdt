@@ -13,6 +13,7 @@ package org.eclipse.tm.rapi;
 /**
  * This class represents a connected WinCE-based remote device.
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @author Radoslav Gerganov
  */
 public abstract class IRapiDevice extends IUnknown {

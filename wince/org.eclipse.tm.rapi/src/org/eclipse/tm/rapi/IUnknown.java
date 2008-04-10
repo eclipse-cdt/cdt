@@ -13,6 +13,7 @@ package org.eclipse.tm.rapi;
 /**
  * Java wrapper for the native IUnknown interface.
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @author Radoslav Gerganov
  */
 public abstract class IUnknown {

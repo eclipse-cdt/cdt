@@ -14,6 +14,7 @@ package org.eclipse.tm.rapi;
  * This class provides access to some native Win32 APIs and constants.
  *
  * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  * @author Radoslav Gerganov
  */
 public final class Rapi {
@@ -80,6 +81,29 @@ public final class Rapi {
   public static final int COINIT_SPEED_OVER_MEMORY = 0x8;
 
   /**
+	 * Initializes the library, the clients must call this method before any
+	 * other. The meaning of the <code>init</code> parameter and the returned
+	 * value is platform dependent. On Win32 platforms this method is directly
+	 * mapped to <code>CoInitializeEx</code>.
+	 *
+	 * @param init on Win32 it is either {@link Rapi#COINIT_APARTMENTTHREADED}
+	 *            or {@link Rapi#COINIT_MULTITHREADED}
+	 * @return on Win32 this is the returned value from
+	 *         <code>CoInitializeEx</code>
+	 */
+  public static final int initialize(int init) {
+  	return CoInitializeEx(0, init);
+  }
+
+  /**
+   * Uninitializes the library, the clients must call this method last to free any allocated resources.
+   * This method is platform dependent, on Win32 it is directly mapped to <code>CoUninitialize</code>.
+   */
+  public static final void uninitialize() {
+  	CoUninitialize();
+  }
+
+  /**
    * Initializes the COM library.
    */
   public static final native int CoInitializeEx(int pvReserved, int dwCoInit);
@@ -89,6 +113,19 @@ public final class Rapi {
    */
   public static final native void CoUninitialize();
 
+  /**
+   * Sets the first element of the specified array with the address of a newly
+   * instantiated <code>IRAPIDesktop</code> native interface.
+   * @param pIRAPIDesktop an array with one element
+   * @return {@link Rapi#NOERROR} if the function succeeds; otherwise an error code
+   */
   final static native int CreateRapiDesktop(int[] pIRAPIDesktop);
+
+
+  /**
+   * Invokes the <code>Release</code> method of the <code>IUnkonwn</code> object
+   * having the specified address.
+   * @param addr the address of the <code>IUnknown</code> object
+   */
   final static native void ReleaseIUnknown(int addr);
 }

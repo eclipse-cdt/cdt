@@ -14,6 +14,7 @@ package org.eclipse.tm.rapi;
  * This class is used to perform Remote API 2 operations on a connected
  * WinCE-based remote device.
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @author Radoslav Gerganov
  */
 public abstract class IRapiSession extends IUnknown {

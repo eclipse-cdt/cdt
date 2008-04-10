@@ -15,6 +15,7 @@ package org.eclipse.tm.rapi;
  * remote devices which are represented by <code>IRapiDevice</code>
  * objects. 
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @author Radoslav Gerganov
  */
 public abstract class IRapiEnumDevices extends IUnknown {

@@ -568,24 +568,16 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private String getTypeIdExp(IASTTypeIdExpression typeIdExp) {
-		int type = typeIdExp.getOperator();
-		if (type <= IASTTypeIdExpression.op_last) {
-			if(type == IASTTypeIdExpression.op_sizeof) {
-				return SIZEOF_OP + "("; //$NON-NLS-1$
-			}
-		}else {
-			if (typeIdExp instanceof ICPPASTTypeIdExpression) {
-				if(type == ICPPASTTypeIdExpression.op_typeid) {
-					return TYPEID_OP;
-				}
-			}else if (typeIdExp instanceof IGNUASTTypeIdExpression) {
-				switch (type) {//TODO HSR Emanuel: check if there can't be GNUTypeIdExpressions here, see #162470
-				case IGNUASTTypeIdExpression.op_alignof:
-					return ALIGNOF_OP + "("; //$NON-NLS-1$
-				case IGNUASTTypeIdExpression.op_typeof:
-					return TYPEOF_OP;
-				}
-			}
+		final int type = typeIdExp.getOperator();
+		switch(type) {
+		case IASTTypeIdExpression.op_sizeof:
+			return SIZEOF_OP + "("; //$NON-NLS-1$
+		case ICPPASTTypeIdExpression.op_typeid:
+			return TYPEID_OP;
+		case IGNUASTTypeIdExpression.op_alignof:
+			return ALIGNOF_OP + "("; //$NON-NLS-1$
+		case IGNUASTTypeIdExpression.op_typeof:
+			return TYPEOF_OP;
 		}
 		throw new IllegalArgumentException("Unknown TypeId Type"); //$NON-NLS-1$
 	}

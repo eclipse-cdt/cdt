@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -21,9 +22,28 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_sizeof = 0;
 
 	/**
-	 * <code>op_last</code> defined for sub-interfaces to extend.
+	 * For c++, only.
 	 */
-	public static final int op_last = op_sizeof;
+	public static final int op_typeid = 1;
+
+	/**
+	 * For gnu-parsers, only.
+	 * <code>op_alignOf</code> is used for __alignOf( typeId ) type expressions.
+	 */
+	public static final int op_alignof = 2;
+
+	/**
+	 * For gnu-parsers, only.
+	 * <code>op_typeof</code> is used for typeof( typeId ) type expressions.
+	 */
+	public static final int op_typeof = 3;
+
+	/**
+	 * @deprecated constants should be declared here, to avoid using the same constant in different
+	 * interfaces.
+	 */
+	@Deprecated
+	public static final int op_last = op_alignof;
 
 	/**
 	 * Get the operator for the expression.
@@ -52,8 +72,6 @@ public interface IASTTypeIdExpression extends IASTExpression {
 
 	/**
 	 * Get the type Id.
-	 * 
-	 * @return
 	 */
 	public IASTTypeId getTypeId();
 

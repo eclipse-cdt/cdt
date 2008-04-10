@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems) 
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu;
 
@@ -23,17 +24,17 @@ public interface IGNUASTTypeIdExpression extends IASTTypeIdExpression {
 	/**
 	 * <code>op_typeof</code> is used for typeof( typeId ) type expressions.
 	 */
-	public static final int op_typeof = IASTTypeIdExpression.op_last + 1;
+	public static final int op_typeof = IASTTypeIdExpression.op_typeof;
 
 	/**
 	 * <code>op_alignOf</code> is used for __alignOf( typeId ) type
 	 * expressions.
 	 */
-	public static final int op_alignof = IASTTypeIdExpression.op_last + 2;
+	public static final int op_alignof = IASTTypeIdExpression.op_alignof;
 
 	/**
-	 * <code>op_last</code> is available for sub-interfaces.
+	 * @deprecated all constants must be declared in {@link IASTTypeIdExpression} 
 	 */
-	public static final int op_last = op_alignof;
-
+	@Deprecated
+	public static final int op_last = IASTTypeIdExpression.op_last;
 }

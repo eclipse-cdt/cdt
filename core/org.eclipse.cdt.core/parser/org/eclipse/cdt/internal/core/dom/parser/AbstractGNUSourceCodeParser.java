@@ -850,15 +850,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             BacktrackException {
         int offset = consume().getOffset(); // t_typeof
         IASTTypeId d = null;
-        IASTExpression unaryExpression = null;
+        IASTExpression expression = null;
 
         int lastOffset = 0;
-        // prefer unary expressions over type-expressions
+        // prefer expressions over type-ids
         if (LT(1) == IToken.tLPAREN && LT(2) != IToken.tLBRACE) {
         	consume();
             final IToken m = mark();
         	try {
-        		unaryExpression= unaryExpression();
+        		expression= expression();
         	}
         	catch (BacktrackException e) {
         		backup(m);
@@ -868,14 +868,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	}
         	lastOffset = consume(IToken.tRPAREN).getEndOffset();
         } else {
-            unaryExpression = unaryExpression();
-            lastOffset = calculateEndOffset(unaryExpression);
+            expression = unaryExpression();
+            lastOffset = calculateEndOffset(expression);
         }
         if (d != null)
             return buildTypeIdExpression(IGNUASTTypeIdExpression.op_typeof, d, offset, lastOffset);
         
-        if (unaryExpression != null)
-            return buildUnaryExpression(IGNUASTUnaryExpression.op_typeof, unaryExpression, offset, lastOffset);
+        if (expression != null)
+            return buildUnaryExpression(IGNUASTUnaryExpression.op_typeof, expression, offset, lastOffset);
         
         return null;
     }

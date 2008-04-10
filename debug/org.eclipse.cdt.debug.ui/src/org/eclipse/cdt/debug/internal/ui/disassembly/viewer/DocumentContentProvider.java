@@ -130,16 +130,14 @@ public class DocumentContentProvider implements IModelChangedListener {
 
     public void changeInput( VirtualSourceViewer viewer, IDocumentPresentation presentationContext, Object oldInput, Object newInput, int offset ) {
         fViewer = viewer;
-        if ( newInput != oldInput ) {
-            fInput = newInput;
-            IDocumentElementContentProvider contentAdapter = getContentAdapter( getInput() );
-            if ( contentAdapter != null ) {
-                DocumentBaseChangeUpdate update = new DocumentBaseChangeUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), offset );
-                schedule( update );
-            }
-            else {
-                inputChanged( new DocumentBaseChangeUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), offset ) );
-            }
+        fInput = newInput;
+        IDocumentElementContentProvider contentAdapter = getContentAdapter( getInput() );
+        if ( contentAdapter != null ) {
+            DocumentBaseChangeUpdate update = new DocumentBaseChangeUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), offset );
+            schedule( update );
+        }
+        else {
+            inputChanged( new DocumentBaseChangeUpdate( this, contentAdapter, presentationContext, getRoot(), getBase(), getInput(), offset ) );
         }
     }
 

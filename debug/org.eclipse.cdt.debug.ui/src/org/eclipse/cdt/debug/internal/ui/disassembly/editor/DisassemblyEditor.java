@@ -164,10 +164,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
         if ( document != null && viewer != null ) {
             DocumentContentProvider contentProvider = document.getContentProvider();
             Object oldInput = contentProvider.getInput();
-            if ( !oldInput.equals( debugContext ) ) {
-                contentProvider.changeInput( getViewer(), document.getPresentationContext(), oldInput, debugContext, document.getCurrentOffset() );
-//                getViewer().refresh( false, true );
-            }
+            contentProvider.changeInput( getViewer(), document.getPresentationContext(), oldInput, debugContext, document.getCurrentOffset() );
+//          getViewer().refresh( false, true );
         }
     }
 
@@ -186,9 +184,7 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
                     if ( disassemblyContext != null ) {
                         DisassemblyEditorInput oldInput = (DisassemblyEditorInput)getEditorInput();
                         if ( oldInput.getDisassemblyContext().equals( disassemblyContext ) ) {
-                            if ( !oldInput.getDebugContext().equals( context ) ) {
-                                setInput( new DisassemblyEditorInput( context, disassemblyContext ) );
-                            }
+                            setInput( new DisassemblyEditorInput( context, disassemblyContext ) );
                         }
                     }
                 }

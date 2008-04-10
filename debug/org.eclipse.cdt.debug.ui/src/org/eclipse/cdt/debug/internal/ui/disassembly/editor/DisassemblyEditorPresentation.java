@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.internal.ui.disassembly.editor;
 
+import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
@@ -21,19 +23,21 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
  */
 public class DisassemblyEditorPresentation extends PresentationContext implements IDocumentPresentation {
 
-    private boolean fShowIntstructions = true;
+    private boolean fShowInstructions = true;
     private boolean fShowSource = false;
 
     public DisassemblyEditorPresentation() {
         super( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR );
+        fShowInstructions = CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS );
+        fShowSource = CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE );
     }
 
     public boolean showIntstructions() {
-        return fShowIntstructions;
+        return fShowInstructions;
     }
 
     public void setShowIntstructions( boolean showIntstructions ) {
-        fShowIntstructions = showIntstructions;
+        fShowInstructions = showIntstructions;
     }
 
     public boolean showSource() {

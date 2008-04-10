@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [187115] force SystemMessageDialog always into Display thread
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [216596] determine whether to show yes/no or just okay
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Martin Oberhuber (Wind River) - Adding Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -57,6 +58,30 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * A dialog for showing SystemMessages and optionally asking the user for Yes /
+ * No / Ok / Cancel type of response.
+ * 
+ * The client may choose to construct and open the dialog itself, or use one of
+ * the provided static factory methods, which construct the dialog and
+ * synchronously open it without thread switch (must be called on the UI
+ * thread):
+ * <ul>
+ * <li>{@link #openError(Shell, String, String, IStatus)}</li>
+ * <li>{@link #openError(Shell, String, String, IStatus, int)}</li>
+ * </ul>
+ * or one of the convenience static factory methods which also switch to the UI
+ * thread automatically to synchronously open the dialog there if needed:
+ * <ul>
+ * <li>{@link #show(Shell, SystemMessage)}</li>
+ * <li>{@link #showExceptionMessage(Shell, String, Exception)}</li>
+ * <li>{@link #displayErrorMessage(Shell, String)}</li>
+ * <li>{@link #displayErrorMessage(Shell, SystemMessage)}</li>
+ * <li>{@link #displayErrorMessage(Shell, SystemMessage, Throwable)}</li>
+ * <li>... and many more displayXXX() static methods.</li>
+ * </ul>
+ *
+ * @noextend This class is not intended to be subclassed by clients, because we
+ *           want a uniform appearance of message dialogs.
  */
 public class SystemMessageDialog extends ErrorDialog implements Listener {
 
@@ -69,12 +94,12 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * The Details button.
 	 */
 	private Button detailsButton=null;
-	
+
 	/**
 	 * The message to display.
 	 */
 	private SystemMessage message;
-	
+
 	/**
 	 * Exception being reported and logged
 	 */
@@ -110,34 +135,34 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * (element type: <code>IStatus</code>).
 	 */
 	private java.util.List statusList;
-	
+
 	/**
 	 * the image to use when displaying the message
 	 */
 	// private String imageName;
 	private int imageId;
-	
+
 	/**
 	 * show the details panel
 	 */
 	private boolean showDetails=false;
-	
+
 	/**
 	 * buttons for button area
 	 */
 	private String []buttons=null;
-	
+
 	/**
-	 * default button 
+	 * default button
 	 */
 	private int defaultIndex=0;
-	
+
 	/**
 	 * button id number for the first button in the button bar.<p>
 	 * The second button, would have an id of buttonId+1 etc.
 	 */
 	public static final int BUTTON_ID=1000;
-	
+
 	/**
 	 * button pressed to dismiss the dialog
 	 */
@@ -147,20 +172,20 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 *  whether or not to open the dialog with the yes/no buttons
 	 */
 	private boolean yesNoButtons=false;
-	
+
 	/**
 	 *  whether or not to open the dialog with the yes/no/cancel buttons
 	 */
 	private boolean yesNoCancelButtons=false;
-	
+
 	protected boolean noShowAgainOption;
 	protected Button noShowAgainButton;
-	
+
 	// preference stuff for option to not show the dialog again
 	protected IPreferenceStore prefStore;
 	protected String prefId;
 	protected boolean prefValAsSelected;
-	
+
 	/**
 	 * Creates an error dialog.
 	 * Note that the dialog will have no visual representation (no widgets)
@@ -168,7 +193,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * @param parentShell the shell under which to create this dialog
 	 * @param message the message to display in the dialog
 	 */
-	public SystemMessageDialog(Shell parentShell, SystemMessage message) 
+	public SystemMessageDialog(Shell parentShell, SystemMessage message)
 	{
 		this(parentShell,
 			message.getFullMessageID(),
@@ -177,12 +202,12 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 			 		0xFFFFF);
 		((MultiStatus)this.status).add(new Status(IStatus.INFO, SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, message.getLevelTwoText(),  new Exception(""))); //$NON-NLS-1$
 		statusList = Arrays.asList(status.getChildren());
-		this.message=message;	
+		this.message=message;
 	    initImage(message);
 	}
 
 	private SystemMessageDialog(Shell parentShell, String dialogTitle, String message,
-                                IStatus status, int displayMask) 
+                                IStatus status, int displayMask)
     {
 	    super(parentShell, dialogTitle, message, status, displayMask);
 		this.status = status;
@@ -190,7 +215,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		this.displayMask = displayMask;
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
-	
+
 	private static String getStatusTitle(SystemMessage message) {
 		String title = null;
 		// setup image
@@ -207,7 +232,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 			title = GenericMessages.Warning;
 		return title;
 	}
-	
+
 
     private void initImage(SystemMessage message)
     {
@@ -233,11 +258,11 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * If the Ok button was pressed then close this dialog.  If the Details
 	 * button was pressed then toggle the displaying of the error details area.
 	 */
-	protected void buttonPressed(int id) 
+	protected void buttonPressed(int id)
 	{
-		if (id == IDialogConstants.DETAILS_ID)  // was the details button pressed?			
+		if (id == IDialogConstants.DETAILS_ID)  // was the details button pressed?
 		  toggleDetailsArea();
-	    else 
+	    else
 	    {
 		  super.buttonPressed(id);
 		  close();
@@ -245,22 +270,22 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		buttonIdPressed=id;
 	}
 
-	/* 
-	 * Creates the buttons for the button bar.  
+	/*
+	 * Creates the buttons for the button bar.
 	 * If the message is an inquiry
-	 * message or yes/no buttons are explicitly requested then Yes, No, and 
+	 * message or yes/no buttons are explicitly requested then Yes, No, and
 	 * perhaps Cancel are the preferred buttons.
 	 * Otherwise, if there are buttons supplied by the client use those.
 	 * Otherwise if no buttons are supplied, just supply an OK button.
 	 * A Details button is suppled if the message indicates that it has any
-	 * significant details.  In particular, test to see that the details length is 
+	 * significant details.  In particular, test to see that the details length is
 	 * greater than 2.  This disqualifies using %2 and getting details for some
 	 * reason.
 	 * d58252 - re-ordered tests to make logic easier to read.  Set initial focus
-	 * on the default button since it would normally be on the message which is 
+	 * on the default button since it would normally be on the message which is
 	 * now read-only text.
 	 */
-	protected void createButtonsForButtonBar(Composite parent) {	
+	protected void createButtonsForButtonBar(Composite parent) {
 		if ( yesNoButtons || yesNoCancelButtons || (message.getIndicator()==SystemMessage.INQUIRY) ) {
 			boolean yesDefault=(defaultIndex==0);
 			boolean noDefault=(defaultIndex==1);
@@ -289,14 +314,14 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 			getButton(IDialogConstants.OK_ID).setFocus();
 		}
-		if (status.isMultiStatus() && message != null && message.getLevelTwoText() != null && message.getLevelTwoText().length() > 2) { 
+		if (status.isMultiStatus() && message != null && message.getLevelTwoText() != null && message.getLevelTwoText().length() > 2) {
 			detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
 			if (showDetails) {
 				toggleDetailsArea2(parent);
 			}
 		}
 	}
-	
+
 	/*
 	 * Creates and returns the contents of the upper part
 	 * of the dialog (above the button bar).
@@ -320,8 +345,8 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 				GridData.HORIZONTAL_ALIGN_CENTER |
 				GridData.VERTICAL_ALIGN_BEGINNING));
 		}
-		
-		// create message, this is a read-only text field so it is tab enabled by 
+
+		// create message, this is a read-only text field so it is tab enabled by
 		// default for accessibility reasons
 		if (message != null) {
 			Text messageArea = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
@@ -330,7 +355,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			messageArea.setLayoutData(data);
 		}
-		
+
 		// if user wants the option to not show the dialog again
 		if (noShowAgainOption) {
 			Label l = new Label(composite, SWT.NONE);
@@ -339,7 +364,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 			GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 			noShowAgainButton.setLayoutData(data);
 		}
-	
+
 //		composite.pack(true);
 		return composite;
 	}
@@ -349,7 +374,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * @param parent the parent composite
 	 * @return the drop-down list component
 	 */
-	protected Text createDropDownList2(Composite parent) 
+	protected Text createDropDownList2(Composite parent)
 	{
 		// create the list
 		list = new Text(parent, SWT.READ_ONLY | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL );
@@ -363,10 +388,10 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		listCreated = true;
 		// fill the list
 		populateList(list);
-		
+
 		return list;
 	}
-	
+
 	/**
 	 * When the message involves an exception for which we want to log the stack,
 	 *  set that exception here.
@@ -379,25 +404,25 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	/**
 	 * logs the message in the appropriate log
 	 */
-	private void LogMessage() 
+	private void logMessage()
 	{
 		Object[] subList=message.getSubVariables();
-		for (int i=0; subList!=null && i<subList.length; i++) 
+		for (int i=0; subList!=null && i<subList.length; i++)
 		{
 			String msg=message.getFullMessageID()+": SUB#"+new Integer(i).toString()+":"+message.getSubValue(subList[i]); //$NON-NLS-1$ //$NON-NLS-2$
 			if (message.getIndicator()==SystemMessage.INFORMATION ||
 				message.getIndicator()==SystemMessage.COMPLETION ||
-				message.getIndicator()==SystemMessage.INQUIRY) 
+				message.getIndicator()==SystemMessage.INQUIRY)
 		    {
 				SystemBasePlugin.logInfo(msg);
 				if (i==subList.length-1 && message.getIndicator()==SystemMessage.INQUIRY)
 					SystemBasePlugin.logInfo(message.getFullMessageID()+" :Button ID Pressed:"+buttonIdPressed); //$NON-NLS-1$
-			}			
+			}
 			else if (message.getIndicator()==SystemMessage.WARNING)
 				SystemBasePlugin.logWarning(msg);
 			else if (message.getIndicator()==SystemMessage.ERROR)
 				SystemBasePlugin.logError(msg, null);
-			else if (message.getIndicator()==SystemMessage.UNEXPECTED) 
+			else if (message.getIndicator()==SystemMessage.UNEXPECTED)
 			{
 				if (i==subList.length-1)
 					SystemBasePlugin.logError(msg, (exc!=null) ? exc : new Exception());
@@ -405,7 +430,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 					SystemBasePlugin.logError(msg, null);
 			}
 		}
-		if (subList==null) 
+		if (subList==null)
 		{
 			String msg=message.getFullMessageID();
 			if (message.getIndicator()==SystemMessage.INFORMATION ||
@@ -418,27 +443,27 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 				SystemBasePlugin.logError(msg, null);
 			else if (message.getIndicator()==SystemMessage.UNEXPECTED)
 				SystemBasePlugin.logError(msg, (exc!=null) ? exc : new Exception());
-		}		
+		}
 	}
 
 	/**
 	 * Opens the message dialog to display the message.
 	 */
-	public int open() 
+	public int open()
 	{
 		if (!showDetails)
-			LogMessage();
+			logMessage();
 		return super.open();
 	}
 
 	/**
 	 * Opens the message dialog with the details showing to display the message.
 	 */
-	public int openWithDetails() 
+	public int openWithDetails()
 	{
 		showDetails=true;
 		return open();
-	}	
+	}
 
 	/**
 	 * Opens the message dialog with the details showing to display an exception, if that is
@@ -446,43 +471,50 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * <p>
 	 * Also logs the first level text plus exception.
 	 */
-	public int openWithDetails(Exception exc) 
+	public int openWithDetails(Exception exc)
 	{
 		showDetails=true;
 		SystemBasePlugin.logError(message.getLevelOneText(), exc);
 		return open();
-	}	
+	}
 
 	/**
-	 * opens the dialog with Yes, No, Details button for an Inquiry/Question message
-	 * Throws an IndicatorException if the message  is not an Inquiry message
-	 * returns true if Yes was pressed, False if No was pressed.
+	 * Open the dialog with Yes, No, Details button for an Inquiry/Question
+	 * message.
+	 *
+	 * @throws IndicatorException if the message is not an Inquiry message
+	 * @return <code>true</code> if Yes was pressed, <code>false</code> if
+	 *         No was pressed.
 	 */
-	public boolean openQuestion() throws IndicatorException 
+	public boolean openQuestion() throws IndicatorException
 	{
 		if (message.getIndicator()!=SystemMessage.INQUIRY)
 			throw new IndicatorException("Message "+message.getFullMessageID()+" is not an inquiry message."); //$NON-NLS-1$ //$NON-NLS-2$
-		yesNoButtons=true;	
+		yesNoButtons=true;
 		open();
 		return (buttonIdPressed==IDialogConstants.YES_ID);
 	}
-	
+
 	/**
-	 * opens the dialog with Yes/No, Details button for an Inquiry/Question message.
-	 * Eats up the IndicatorException, so only call this when you know what you are doing!
+	 * Open the dialog with Yes/No, Details button for an Inquiry/Question
+	 * message. Eats up the IndicatorException, so only call this when you know
+	 * what you are doing!
+	 *
+	 * @return <code>true</code> if Yes was pressed, <code>false</code> if
+	 *         No was pressed.
 	 */
-	public boolean openQuestionNoException() 
+	public boolean openQuestionNoException()
 	{
 		return openQuestionNoException(true);
 	}
-	
+
 	/**
 	 * opens the dialog with an optional Yes/No or OK, Details button for an Inquiry/Question message.
 	 * Eats up the IndicatorException, so only call this when you know what you are doing!
 	 */
-	public boolean openQuestionNoException(boolean showYesNo) 
+	public boolean openQuestionNoException(boolean showYesNo)
 	{
-		yesNoButtons=showYesNo;	
+		yesNoButtons=showYesNo;
 		open();
 		return (buttonIdPressed==IDialogConstants.YES_ID);
 	}
@@ -492,16 +524,16 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * throws an IndicatorException if the indicator is not Inquiry
 	 * @return IDialogConstants.YES_ID or NO_ID
   	 */
-	public int openYesNoCancel() 
+	public int openYesNoCancel()
 	{
 		yesNoCancelButtons=true;
 		return open();
 	}
 
 	/**
-	 * returns the id of the button pressed 
+	 * returns the id of the button pressed
 	 */
-	public int getButtonPressedId() 
+	public int getButtonPressedId()
 	{
 		return buttonIdPressed;
 	}
@@ -510,21 +542,21 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * overrides the default button selection.
 	 * @param buttonList  an array of buttons for the button bar
 	 */
-	public void setButtons(String [] buttonList) 
+	public void setButtons(String [] buttonList)
 	{
 		buttons=buttonList;
 	}
 	/**
-	 * sets the default button for the message.  
+	 * sets the default button for the message.
 	 * Use this method if you wan to override the default button (the first one)
 	 * @param buttonIndex the 0-based index of the button
 	 */
-	public void setButtonIndex(int buttonIndex) 
+	public void setButtonIndex(int buttonIndex)
 	{
 		defaultIndex=buttonIndex;
 	}
-	
-	
+
+
 
 
 	/**
@@ -535,33 +567,33 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * If the status's path was null then it (and the colon)
 	 * are omitted.
 	 */
-	private void populateList(Text list) 
+	private void populateList(Text list)
 	{
 		Iterator z = statusList.iterator();
-		while (z.hasNext())  
+		while (z.hasNext())
 		{
 			IStatus childStatus = (IStatus) z.next();
 			populateList(list, childStatus, 0);
 		}
 	}
-	
 
 
-	private void populateList(Text list, IStatus status, int nesting) 
+
+	private void populateList(Text list, IStatus status, int nesting)
 	{
-		if (!status.matches(displayMask)) 
+		if (!status.matches(displayMask))
 		{
 			return;
 		}
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < nesting; i++) 
+		for (int i = 0; i < nesting; i++)
 		{
 			sb.append("  "); //$NON-NLS-1$
 		}
 		sb.append(status.getMessage());
 		list.append(sb.toString());
 		IStatus[] children = status.getChildren();
-		for (int i = 0; i < children.length; i++) 
+		for (int i = 0; i < children.length; i++)
 		{
 			list.append("\n"); //$NON-NLS-1$
 			populateList(list, children[i], nesting + 1);
@@ -572,24 +604,24 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * Toggles the unfolding of the details area.  This is triggered by
 	 * the user pressing the details button.
 	 */
-	private void toggleDetailsArea() 
+	private void toggleDetailsArea()
 	{
 		Point windowSize = getShell().getSize();
 		getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	
-		if (listCreated) 
+
+		if (listCreated)
 		{
 			list.dispose();
 			listCreated = false;
 			detailsButton.setText(IDialogConstants.SHOW_DETAILS_LABEL);
-		} 
-		else 
+		}
+		else
 		{
 			list = createDropDownList2((Composite)getContents());
 			detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
 		}
 		Point newSize = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		
+
 		// yantzi:5.1.2 this leaves a gap at the bottom of the dialog when opened with details,
 		// why not just set it to the newSize.y?
 		//getShell().setSize(new Point(windowSize.x, windowSize.y + (newSize.y - oldSize.y)));
@@ -600,7 +632,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * Toggles the unfolding of the details area.  This is triggered by
 	 * open using openWithDetails.
 	 */
-	private void toggleDetailsArea2(Composite composite) 
+	private void toggleDetailsArea2(Composite composite)
 	{
 		Point windowSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		getDialogArea().computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -633,7 +665,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 			d.syncExec(r);
 		}
 	}
-	
+
 	private static int openInUIThread(final Window dlg) {
 		Display d = Display.getCurrent();
 		if (d!=null) {
@@ -650,7 +682,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 			return rv[0];
 		}
 	}
-	
+
 	/**
 	 * For ease of use for simple messages with no response from user.
 	 */
@@ -658,7 +690,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	{
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
-	}	
+	}
 
 	/**
 	 * For ease of use for simple messages which are the result of an exception
@@ -668,7 +700,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.setException(exc);
 		openInUIThread(msgDlg);
-	}	
+	}
 
 	/**
 	 * For ease of use for simple error message text with no response from user.
@@ -678,7 +710,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
 		msg.makeSubstitution(msgText);
 		displayErrorMessage(shell,msg);
-	}	
+	}
 
 	/**
 	 * For ease of use for simple message text with no response from user.
@@ -688,8 +720,8 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_I);
 		msg.makeSubstitution(msgText);
 		displayErrorMessage(shell,msg);
-	}	
-	
+	}
+
     /**
      * Display this wrapped system message to the user
      */
@@ -717,7 +749,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		msg.makeSubstitution(hostMsg);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
-	}	
+	}
 
 	/**
 	 * For ease of use for simple host error messages that are xlated already,
@@ -729,7 +761,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		msg.makeSubstitution(hostMsg,levelTwo);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
-	}	
+	}
 
 	/**
 	 * For ease of use for simple host warning messages that are xlated already.
@@ -740,7 +772,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		msg.makeSubstitution(hostMsg);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
-	}	
+	}
 
 	/**
 	 * For ease of use for simple host warning messages that are xlated already,
@@ -752,7 +784,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		msg.makeSubstitution(hostMsg,levelTwo);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
-	}	
+	}
 
 	/**
 	 * For displaying a generic error message when an unexpected exception happens.
@@ -766,8 +798,8 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		msgDlg.setException(exc);
 		openInUIThread(msgDlg);
 	}
-	
- 
+
+
 	/**
 	 * When an exception occurs and you want to turn it into a SystemMessage,
 	 *  call this...
@@ -778,9 +810,10 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		msg.makeSubstitution(exc);
 		return msg;
 	}
-		
+
 	/**
-	 * Put up an error message when the error msg framework itself doesn't work.
+	 * Put up an error message when the error message framework itself doesn't
+	 * work, and also log the error.
 	 */
 	public static void showExceptionMessage(Shell shell, String msg, Exception exc)
 	{
@@ -804,7 +837,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	{
 		boolean yes = false;
 		final SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-		
+
 		if (msg.getIndicator() != SystemMessage.INQUIRY)
 			openInUIThread(msgDlg);
 		else {
@@ -822,7 +855,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	/**
 	 * Set option to not show this dialog again and specify the preference that should be set
 	 * according to whether the user selects to show the dialog again or no. The caller can
-	 * query this preference to find out what the user selection is. 
+	 * query this preference to find out what the user selection is.
 	 * @param noShowAgainOption <code>true</code> to show the option in the dialog, <code>false</code> to not show it.
 	 * @param prefStore the preference store.
 	 * @param prefId the preference id for which a boolean value will be stored according to the user's selection.
@@ -838,7 +871,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		this.prefId = prefId;
 		this.prefValAsSelected = prefValAsSelected;
 	}
-	
+
 	/**
 	 * Creates a button to allow option to not show this dialog again.
 	 * @return the button that allows option to not show this dialog again.
@@ -859,12 +892,12 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	public void handleEvent(Event e)
 	{
 	    if (e.type == SWT.Selection) {
-	    	
+
 	    	if (e.widget == noShowAgainButton) {
 	    		boolean isNoShowSelected = noShowAgainButton.getSelection();
-	    		
+
 	    		if ((prefStore != null) && (prefId != null)) {
-	    			
+
 	    			if (prefValAsSelected) {
 	    				prefStore.setValue(prefId, isNoShowSelected);
 	    			}

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -35,6 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
  *
  */
 public class SemanticUtil {
+	private static final char[] OPERATOR_CHARS = Keywords.OPERATOR.toCharArray();
 	/**
 	 * Cache of overloadable operator names for fast lookup. Used by isConversionOperator.
 	 */
@@ -103,8 +105,9 @@ public class SemanticUtil {
 					IBinding binding= base.getBaseClass();
 					if(binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
 						ICPPClassType ct= (ICPPClassType) binding;
-						if(!done.containsKey(ct))
+						if(!done.containsKey(ct)) {
 							next.put(ct);
+						}
 					}
 				}
 			}
@@ -122,16 +125,12 @@ public class SemanticUtil {
 	private static final boolean isConversionOperator(ICPPMethod method) {
 		boolean result= false;
 		if(!method.isImplicit()) {
-			char[] name= method.getNameCharArray();
-			char[] expected= Keywords.OPERATOR.toCharArray();
-			if(name.length > expected.length + 1) {
-				for(int i=0; i<expected.length; i++) {
-					if(name[i] != expected[i])
-						return false;
+			final char[] name= method.getNameCharArray();
+			if (name.length > OPERATOR_CHARS.length + 1 &&
+					CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
+				if(name[OPERATOR_CHARS.length]==' ') {
+					result= !cas.containsKey(name, OPERATOR_CHARS.length+1, name.length - (OPERATOR_CHARS.length+1));
 				}
-				if(name[expected.length]!=' ')
-					return false;
-				result= !cas.containsKey(name, expected.length+1, name.length - (expected.length+1));
 			}
 		}
 		return result;
@@ -159,20 +158,20 @@ public class SemanticUtil {
 	static IType getUltimateType(IType type, IType[] lastPointerType, boolean stopAtPointerToMember) {
 	    try {
 	        while( true ){
-				if( type instanceof ITypedef )
+				if( type instanceof ITypedef ) {
 					type= ((ITypedef)type).getType();
-	            else if( type instanceof IQualifierType )
-	            	type= ((IQualifierType)type).getType();
-	            else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
+				} else if( type instanceof IQualifierType ) {
+					type= ((IQualifierType)type).getType();
+				} else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
 	                return type;
 				else if( type instanceof IPointerType ) {
 					if(lastPointerType!=null) {
 						lastPointerType[0]= type;
 					}
 					type= ((IPointerType) type).getType();
-				} else if( type instanceof ICPPReferenceType )
+				} else if( type instanceof ICPPReferenceType ) {
 					type= ((ICPPReferenceType)type).getType();
-				else 
+				} else 
 					return type;
 				
 			}
@@ -190,13 +189,13 @@ public class SemanticUtil {
 	public static IType getUltimateTypeUptoPointers(IType type){
 	    try {
 	        while( true ){
-				if( type instanceof ITypedef )
-				    type = ((ITypedef)type).getType();
-	            else if( type instanceof IQualifierType )
+				if( type instanceof ITypedef ) {
+					type = ((ITypedef)type).getType();
+				} else if( type instanceof IQualifierType ) {
 					type = ((IQualifierType)type).getType();
-				else if( type instanceof ICPPReferenceType )
+				} else if( type instanceof ICPPReferenceType ) {
 					type = ((ICPPReferenceType)type).getType();
-				else 
+				} else 
 					return type;
 			}
 	    } catch ( DOMException e ) {

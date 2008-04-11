@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.buildconsole.BuildConsoleTests;
 import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
+import org.eclipse.cdt.ui.tests.chelp.CHelpTest;
 import org.eclipse.cdt.ui.tests.includebrowser.IncludeBrowserTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestSuite;
 import org.eclipse.cdt.ui.tests.search.SearchTestSuite;
@@ -77,6 +78,9 @@ public class AutomatedSuite extends TestSuite {
 		
 		// tests from package org.eclipse.cdt.ui.tests.refactoring
 		addTest(RefactoringTestSuite.suite());
+		
+		// tests from package org.eclipse.cdt.ui.tests.chelp
+		addTest(CHelpTest.suite());
 	}
 	
 }

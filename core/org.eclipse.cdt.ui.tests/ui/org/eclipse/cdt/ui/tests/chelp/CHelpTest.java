@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,18 @@ public class CHelpTest extends TestCase {
 		return new TestSuite(CHelpTest.class);
 	}
 	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		CHelpTestInfoProvider.fgEnabled= true;
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		CHelpTestInfoProvider.fgEnabled= false;
+		super.tearDown();
+	}
+
 	public void testCHelpProviderManagerGeneral(){
 		CHelpProviderManager mngr = CHelpProviderManager.getDefault();
 		if(mngr == null)
@@ -131,7 +143,7 @@ public class CHelpTest extends TestCase {
 	
 	public void testGetMatchingFunctions(){
 		if(!CHelpProviderTester.getDefault().onlyTestInfoProvidersAvailable()){
-			//this test assumes that only CHelpTestInfoProviders are available 
+			//this test assumes that only CHelpTestInfoProviders are available
 			return;
 		}
 		try{
@@ -152,7 +164,7 @@ public class CHelpTest extends TestCase {
 	
 	public void testGetFunctionInfo(){
 		if(!CHelpProviderTester.getDefault().onlyTestInfoProvidersAvailable()){
-			//this test assumes that only CHelpTestInfoProviders are available 
+			//this test assumes that only CHelpTestInfoProviders are available
 			return;
 		}
 		try{
@@ -173,7 +185,7 @@ public class CHelpTest extends TestCase {
 
 	public void testGetHelpResources(){
 		if(!CHelpProviderTester.getDefault().onlyTestInfoProvidersAvailable()){
-			//this test assumes that only CHelpTestInfoProviders are available 
+			//this test assumes that only CHelpTestInfoProviders are available
 			return;
 		}
 		try{
@@ -223,7 +235,7 @@ public class CHelpTest extends TestCase {
 				}
 				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() + "\" of type HELP_TYPE_C was not found in C books", //$NON-NLS-1$ //$NON-NLS-2$
 						j < cBookDescriptors.length || curBookDes.getCHelpBook().getCHelpType() == ICHelpBook.HELP_TYPE_CPP);
-			}			
+			}
 		}
 		catch(CoreException e){
 			fail("CoreException occured: " + e.getMessage()); //$NON-NLS-1$

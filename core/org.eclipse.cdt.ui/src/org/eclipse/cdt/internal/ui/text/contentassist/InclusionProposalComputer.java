@@ -92,7 +92,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * Test whether the invocation offset is inside the file name part if an include directive.
 	 * 
 	 * @param context  the invocation context
-	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword 
+	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword
 	 */
 	private boolean inIncludeDirective(CContentAssistInvocationContext context) {
 		IDocument doc = context.getDocument();
@@ -168,7 +168,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @param prefixPath  the path part to match the sub-directory and file name
 	 * @param angleBrackets  whether angle brackets enclose the include file name
 	 * @return an array of incude file names
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private String[] collectIncludeFiles(final ITranslationUnit tu, IPath prefixPath, boolean angleBrackets) throws CoreException {
 		final List<String> includeFiles= new ArrayList<String>();
@@ -255,14 +255,8 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 			final String name= file.getName();
 			if (name.length() >= prefixLength && namePrefix.equalsIgnoreCase(name.substring(0, prefixLength))) {
 				if (file.isFile()) {
-					if (isCpp) {
-						if (CoreModel.isValidCXXHeaderUnitName(project, name)) {
-							includeFiles.add(prefixPath.append(name).toString());
-						}
-					} else {
-						if (CoreModel.isValidCHeaderUnitName(project, name)) {
-							includeFiles.add(prefixPath.append(name).toString());
-						}
+					if (CoreModel.isValidCXXHeaderUnitName(project, name) || CoreModel.isValidCHeaderUnitName(project, name)) {
+						includeFiles.add(prefixPath.append(name).toString());
 					}
 				} else if (file.isDirectory()) {
 					includeFiles.add(prefixPath.append(name).addTrailingSeparator().toString());
@@ -278,7 +272,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @param parent  the resource container
 	 * @param prefixPath  the path part to match the sub-directory and file name
 	 * @param includeFiles  the result list
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private void collectIncludeFilesFromContainer(final ITranslationUnit tu, IContainer parent, IPath prefixPath, final List<String> includeFiles) throws CoreException {
 		final boolean isCpp= tu.isCXXLanguage();
@@ -303,29 +297,25 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		final int prefixLength = namePrefix.length();
 		final IProject project= tu.getCProject().getProject();
 		parent.accept(new IResourceProxyVisitor() {
+			boolean fFirstVisit= true;
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				final int type= proxy.getType();
-				if (type == IResource.PROJECT) {
+				final String name= proxy.getName();
+				if (fFirstVisit) {
+					fFirstVisit= false;
 					return true;
 				}
-				final String name= proxy.getName();
 				if (name.length() >= prefixLength && namePrefix.equalsIgnoreCase(name.substring(0, prefixLength))) {
 					if (type == IResource.FILE) {
-						if (isCpp) {
-							if (CoreModel.isValidCXXHeaderUnitName(project, name)) {
-								includeFiles.add(cPrefixPath.append(name).toString());
-							}
-						} else {
-							if (CoreModel.isValidCHeaderUnitName(project, name)) {
-								includeFiles.add(cPrefixPath.append(name).toString());
-							}
+						if (CoreModel.isValidCXXHeaderUnitName(project, name) || CoreModel.isValidCHeaderUnitName(project, name)) {
+							includeFiles.add(cPrefixPath.append(name).toString());
 						}
 					} else if (type == IResource.FOLDER) {
 						includeFiles.add(cPrefixPath.append(name).addTrailingSeparator().toString());
 					}
 				}
 				return false;
-			}}, 0);
+			}}, IResource.DEPTH_ONE);
 	}
 
 	/**

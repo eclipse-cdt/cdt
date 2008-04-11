@@ -511,6 +511,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	/**
 	 * opens the dialog with an optional Yes/No or OK, Details button for an Inquiry/Question message.
 	 * Eats up the IndicatorException, so only call this when you know what you are doing!
+	 * @since 3.0
 	 */
 	public boolean openQuestionNoException(boolean showYesNo)
 	{

@@ -22,7 +22,8 @@ NEED_RESTART=0
 cd $IHOME/deploy/rse
 rm *.zip
 echo "Downloading RSE-SDK-latest.zip..."
-wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
+wget -q "http://build.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
+#wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
 if [ -e RSE-SDK-latest.zip ]; then
   echo "Unzipping..."
   unzip -q RSE-SDK-latest.zip

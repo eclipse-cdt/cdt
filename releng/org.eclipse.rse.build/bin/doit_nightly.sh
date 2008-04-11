@@ -74,6 +74,9 @@ if [ -d N.latest ]; then
     cd ../N.latest
     chgrp dsdp-tmadmin *.zip
     chmod g+w *.zip
+    if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then
+      cp -f * /shared/dsdp/public_html/tm/downloads/drops/N.latest/
+    fi
   fi
 fi
 

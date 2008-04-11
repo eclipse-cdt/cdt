@@ -117,6 +117,9 @@ if [ -f package.count -a "$FILES" != "" ]; then
     cp -f RSE-remotecdt-*.zip ../N.latest/RSE-remotecdt-latest.zip
     chgrp dsdp-tmadmin ../N.latest/*.zip
     chmod g+w ../N.latest/*.zip
+    if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then
+      cp -f ../N.latest/* /shared/dsdp/public_html/tm/downloads/drops/N.latest/
+    fi
   fi
 
   if [ ${buildType} != M -a ${buildType} != N ]; then

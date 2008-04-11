@@ -3,19 +3,20 @@
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Uwe Stieber (Wind River) - Extended system type -> subsystemConfiguration association.
  * Martin Oberhuber (Wind River) - [185098] Provide constants for all well-known system types
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -23,6 +24,7 @@ package org.eclipse.rse.core;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.model.SystemHostPool;
 import org.osgi.framework.Bundle;
 
@@ -198,6 +200,26 @@ public interface IRSESystemType extends IAdaptable {
 	public static final String PROPERTY_IS_CASE_SENSITIVE = "isCaseSensitive"; //$NON-NLS-1$
 
 	/**
+	 * System type Property Key (value: "supportsEncoding") indicating whether a
+	 * given system type supports the user specifying an encoding to use for
+	 * translating binary data to Java Unicode Strings when working on
+	 * subsystems.
+	 *
+	 * It is up to the subsystems registered against a given system type whether
+	 * they observe the system type's setting or not; the default
+	 * implementations do observe it. Given that all subsystem configurations
+	 * registered against a given system type do not support encodings, the
+	 * corresponding RSE controls for allowing the user to change encodings will
+	 * be disabled.
+	 *
+	 * Expected default value of this Property is "true" if not set.
+	 *
+	 * @see ISubSystemConfiguration#supportsEncoding(IHost)
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public static final String PROPERTY_SUPPORTS_ENCODING = "supportsEncoding"; //$NON-NLS-1$
+
+	/**
 	 * Returns the id of the system type.
 	 * @return the id of the system type
 	 */
@@ -205,7 +227,7 @@ public interface IRSESystemType extends IAdaptable {
 
 	/**
 	 * Returns the translatable label for use in the UI.
-	 * 
+	 *
 	 * @return The UI label or <code>null</code> if not set.
 	 */
 	public String getLabel();
@@ -213,7 +235,7 @@ public interface IRSESystemType extends IAdaptable {
 	/**
 	 * Returns the name of the system type.
 	 * @return the name of the system type
-	 * 
+	 *
 	 * @deprecated Use {@link #getId()} for accessing the unique id or {@link #getLabel()} for the UI label.
 	 */
 	public String getName();
@@ -227,7 +249,7 @@ public interface IRSESystemType extends IAdaptable {
 	/**
 	 * Returns the property of this system type with the given key.
 	 * <code>null</code> is returned if there is no such key/value pair.
-	 * 
+	 *
 	 * @param key the name of the property to return
 	 * @return the value associated with the given key or <code>null</code> if none
 	 */
@@ -236,12 +258,12 @@ public interface IRSESystemType extends IAdaptable {
 	/**
 	 * Tests whether the given boolean property matches the expected value
 	 * for this system type.
-	 * 
+	 *
 	 * Clients can use their own properties with system types, but should
 	 * use reverse DNS notation to qualify their property keys (e.g.
 	 * <code>com.acme.isFoobarSystem</code>. Property keys without qualifying
 	 * namespace are reserved for RSE internal use.
-	 * 
+	 *
 	 * @param key the name of the property to return
 	 * @param expectedValue the expected boolean value of the property.
 	 * @return <code>true</code> if the Property is set on the system type and
@@ -252,7 +274,7 @@ public interface IRSESystemType extends IAdaptable {
 
 	/**
 	 * Tests whether the system type is currently enabled.
-	 * 
+	 *
 	 * The enabled state is a dynamic property of a system type, compared to the
 	 * static configuration by plugin markup. Enablement is a non-UI property,
 	 * which can be set by a Product in the Preferences or modified by a user to
@@ -261,7 +283,7 @@ public interface IRSESystemType extends IAdaptable {
 	 * Implementers of custom system types (which are registered by a
 	 * SystemTypeProvider) can override this method to provide more advanced
 	 * enabled checks e.g. based on license availability.
-	 * 
+	 *
 	 * @return <code>true</code> if the system type is currently enabled, or
 	 *         <code>false</code> otherwise.
 	 * @since org.eclipse.rse.core 3.0
@@ -303,7 +325,7 @@ public interface IRSESystemType extends IAdaptable {
 	 * Returns the bundle which is responsible for the definition of this system type.
 	 * Typically this is used as a base for searching for images and other files
 	 * that are needed in presenting the system type.
-	 * 
+	 *
 	 * @return the bundle which defines this system type or <code>null</code> if none
 	 */
 	public Bundle getDefiningBundle();
@@ -317,7 +339,7 @@ public interface IRSESystemType extends IAdaptable {
 	 * <b>Note:</b> The list returned here does not imply that the corresponding
 	 * subsystem configurations exist. The list contains only possibilites not,
 	 * requirements.
-	 * 
+	 *
 	 * @return The list of subsystem configuration id's. May be empty,
 	 *         but never <code>null</code>.
 	 */
@@ -326,7 +348,7 @@ public interface IRSESystemType extends IAdaptable {
 	/**
 	 * Creates a new <code>IHost</code> object instance. This method is
 	 * called from {@link SystemHostPool#createHost(IRSESystemType, String, String, String, String, int)}.
-	 * 
+	 *
 	 * @param profile The system profile to associate with the host.
 	 * @return A new <code>IHost</code> object instance.
 	 */

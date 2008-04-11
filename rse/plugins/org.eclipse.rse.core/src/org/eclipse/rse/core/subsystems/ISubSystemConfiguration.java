@@ -3,13 +3,13 @@
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
@@ -20,6 +20,7 @@
  * Xuan Chen (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -37,7 +38,7 @@ import org.eclipse.rse.services.IService;
 
 /**
  * Subsystem Configuration interface.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Subsystem configuration implementations must subclass
  *              <code>SubSystemConfiguration</code> rather than implementing
@@ -65,6 +66,41 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	// ---------------------------------
 	// CRITICAL METHODS...
 	// ---------------------------------
+
+	/**
+	 * Test whether subsystems managed by this configuration support custom
+	 * encodings.
+	 * 
+	 * Encodings specify the way how binary data on the remote system is
+	 * translated into Java Unicode Strings. RSE provides some means for the
+	 * User to specify a particular encoding to use; typically, all subsystems
+	 * that do support custom encodings specified should use the same encoding
+	 * such that they can interoperate. Therefore, encodings are usually
+	 * obtained from {@link IHost#getDefaultEncoding(boolean)}.
+	 * 
+	 * It's possible, however, that a particular subsystem "knows" that its
+	 * resources are always encoded in a particular way, and there is no
+	 * possibility to ever change that. The Subsystem Configuration would return
+	 * <code>false</code> here in this case. Another possibility is that
+	 * encodings for a particular subsystem can be changed, but in a way that's
+	 * different than what RSE usually does. The default case, however, should
+	 * be that subsystems fall back to the setting specified by the host or its
+	 * underlying system type such that existing subsystem configurations can be
+	 * re-used in an environment where the encoding to use is pre-defined by the
+	 * system type or host connection.
+	 * 
+	 * If no subsystem registered against a given host supports encodings, the
+	 * corresponding UI controls on the IHost level are disabled in order to
+	 * avoid confusion to the user.
+	 * 
+	 * @return <code>true<code> if the RSE mechanisms for specifying custom
+	 *     encodings are observed and supported by the subsystems managed
+	 *     by this configuration for the given host.
+	 * @see IRSESystemType#PROPERTY_SUPPORTS_ENCODING
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public boolean supportsEncoding(IHost host);
+
 	/**
 	 * Return true if the subsystem supports more than one filter string
 	 * <p>RETURNS true BY DEFAULT
@@ -154,22 +190,22 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 
 	/**
 	 * Return true if deferred queries are supported.
-	 * 
+	 *
 	 * Deferred queries work such that when a filter or element
 	 * children query is made, a WorkbenchJob is started to
 	 * perform the query in a background thread. The query can
 	 * take time to complete, but a negative side-effect of this
 	 * is that it will always take time to complete.
-	 * 
+	 *
 	 * Alternative models can use asynchronous calls to populate
 	 * their model with data from the remote side, and refresh
 	 * the views when new data is in the model. Such subsystem
 	 * configurations should return <code>false</code> here.
-	 * 
+	 *
 	 * The default implementation returns <code>true</code>, indicating
 	 * that deferred queries are supported for filters, and delegates
 	 * the check for model elements to the ISystemViewElementAdapter.
-	 * 
+	 *
 	 * @return <code>true</code> if deferred queries are supported.
 	 */
 	public boolean supportsDeferredQueries();
@@ -179,7 +215,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * By default, the filter reference adapter treats a drop on a filter as an update to the list of filter
 	 * strings for a filter.  For things like files, it is more desirable to treat the drop as a physical
 	 * resource copy, so in that case, custom drop makes sense.
-	 * 
+	 *
 	 * By default this returns false.
 	 */
 	public boolean providesCustomDropInFilters();
@@ -403,7 +439,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * by a connector service manager known to this configuration. This must be
 	 * implemented by service subsystem configurations. Service subsystems allow
 	 * a connector service to be changed.
-	 * 
+	 *
 	 * @param host the host for which to set this connector service.
 	 * @param connectorService the connector service associated with this host.
 	 * @since org.eclipse.rse.core 3.0
@@ -415,7 +451,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * configuration is not a service subsystem configuration it must return
 	 * <code>null</code>, otherwise it must return the interface class that
 	 * the underlying service layer implements.
-	 * 
+	 *
 	 * @return an interface class that is implemented by the service layer used
 	 *         by subsystems that have this configuration, or <code>null</code>
 	 *         if this is not a service subsystem configuration.
@@ -429,7 +465,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * configuration then this must return <code>null</code>, otherwise it
 	 * must return the class that implements the interface specified in
 	 * {@link #getServiceType()}.
-	 * 
+	 *
 	 * @return an implementation class that implements the interface specified
 	 *         in {@link #getServiceType()}, or <code>null</code> if this is
 	 *         not a service subsystem configuration.
@@ -442,7 +478,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * configuration is not a service subsystem this must return null. Otherwise
 	 * this must return the particular instance of the class returned by
 	 * {@link #getServiceImplType()} that is associated with this host instance.
-	 * 
+	 *
 	 * @param host The host for which to retrieve the service.
 	 * @return The instance of {@link IService} which is associated with this
 	 *         host, or <code>null</code> if this is not a service subsystem
@@ -542,7 +578,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Get the filter pool manager for the given profile. A subsystem
 	 * configuration has a filter pool manager for each profile.
-	 * 
+	 *
 	 * @param profile The system profile for which to get the manager.
 	 * @param force if true then create the default filters for this subsystem
 	 *            configuration in this profile. This should only be done during
@@ -557,7 +593,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * configuration has a filter pool manager for each profile. Do not force
 	 * the creation of default filter pools. Fully equivalent to
 	 * getFilterPoolManager(profile, false).
-	 * 
+	 *
 	 * @param profile The system profile for which to get the manager.
 	 * @return a filter pool manager
 	 */
@@ -614,7 +650,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Determines whether this factory is responsible for the creation of subsytems of the specified type
 	 * Subsystem factories should override this to indicate which subsystems they support.
-	 * 
+	 *
 	 * @param subSystemType type of subsystem
 	 * @return whether this factory is for the specified subsystemtype
 	 */

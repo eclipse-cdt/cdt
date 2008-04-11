@@ -34,6 +34,7 @@
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -187,6 +188,24 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 	// CRITICAL METHODS...
 	// ---------------------------------
+
+	/**
+	 * Test whether this subsystem configuration supports custom encodings. We
+	 * fall back to the setting provided by the host, or its underlying system
+	 * type by default.
+	 *
+	 * @see ISubSystemConfiguration#supportsEncoding(IHost)
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public boolean supportsEncoding(IHost host) {
+		// support encodings by default
+		boolean rv = true;
+		if (host.getSystemType().testProperty(IRSESystemType.PROPERTY_SUPPORTS_ENCODING, false)) {
+			// switched off on system type level
+			rv = false;
+		}
+		return rv;
+	}
 
 	/**
 	 * Return true if instance of this subsystem configuration's subsystems support connect and disconnect actions.
@@ -534,7 +553,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * from static declaration in the
 	 * <tt>org.eclipse.rse.core.subsystemConfigurations</tt> and
 	 * <tt>org.eclipse.rse.core.systemTypes</tt> extension points.
-	 * 
+	 *
 	 * @noextend This method is not intended to be extended by clients. It will
 	 *           likely be declared <tt>final</tt> in the next release in
 	 *           order to ensure consistency with static xml markup in the

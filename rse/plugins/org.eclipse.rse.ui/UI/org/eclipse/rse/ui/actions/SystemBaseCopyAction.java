@@ -433,7 +433,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELED));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED));
     	msgDlg.open();
     }	
 

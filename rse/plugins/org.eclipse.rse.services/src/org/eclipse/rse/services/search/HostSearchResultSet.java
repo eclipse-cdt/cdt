@@ -222,7 +222,7 @@ public class HostSearchResultSet extends PlatformObject implements IHostSearchRe
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
 
 			// if a config is not cancelled, the search is not cancelled
-			if (config.getStatus() != IHostSearchConstants.CANCELED) {
+			if (config.getStatus() != IHostSearchConstants.CANCELLED) {
 				return false;
 			}
 		}

@@ -29,7 +29,7 @@ public class CommonMessages extends NLS {
 	public static String MSG_COMM_AUTH_FAILED_DETAILS;
 
 	public static String MSG_EXPAND_FAILED;
-	public static String MSG_EXPAND_CANCELED;
+	public static String MSG_EXPAND_CANCELLED;
 	
 	// operation status
 	public static String MSG_OPERATION_RUNNING;
@@ -37,7 +37,7 @@ public class CommonMessages extends NLS {
 	public static String MSG_OPERTION_STOPPED;
 	public static String MSG_OPERATION_DISCONNECTED;	
 	
-	public static String MSG_CONNECT_CANCELED;
+	public static String MSG_CONNECT_CANCELLED;
 	public static String MSG_CONNECT_PROGRESS;
 	public static String MSG_CONNECTWITHPORT_PROGRESS;
 	public static String MSG_CONNECT_FAILED;
@@ -46,10 +46,10 @@ public class CommonMessages extends NLS {
 	public static String MSG_DISCONNECT_PROGRESS;
 	public static String MSG_DISCONNECTWITHPORT_PROGRESS;
 	public static String MSG_DISCONNECT_FAILED;
-	public static String MSG_DISCONNECT_CANCELED;
+	public static String MSG_DISCONNECT_CANCELLED;
 	
 	public static String MSG_OPERATION_FAILED;
-	public static String MSG_OPERATION_CANCELED;
+	public static String MSG_OPERATION_CANCELLED;
 	
 	public static String MSG_RESOLVE_PROGRESS;
 

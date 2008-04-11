@@ -277,8 +277,8 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
      */
     protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
     {
-    	String msg = NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName);
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELED, IStatus.CANCEL, msg));
+    	String msg = NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELLED, hostName);
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELLED, IStatus.CANCEL, msg));
     	msgDlg.open();
     }
 }

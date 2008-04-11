@@ -159,7 +159,7 @@ public class LocalSearchHandler implements ISearchHandler
 		}
 		else
 		{
-			_searchConfig.setStatus(IHostSearchConstants.CANCELED);
+			_searchConfig.setStatus(IHostSearchConstants.CANCELLED);
 		}
 	}
 

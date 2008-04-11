@@ -234,7 +234,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			PromptForPassword prompter = new PromptForPassword(ss);
 			dis.syncExec(prompter);
 			if (prompter.isCanceled()) {
-				SystemMessage canceledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELED);
+				SystemMessage canceledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
 				SystemMessageObject canceledMessageObject = new SystemMessageObject(canceledMessage, ISystemMessageObject.MSGTYPE_CANCEL, _remoteObject);
 				_collector.add(canceledMessageObject, monitor);
 				throw new InterruptedException();

@@ -321,8 +321,8 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			//SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-					ICommonMessageIds.MSG_CONNECT_CANCELED, IStatus.CANCEL,
-					NLS.bind(CommonMessages.MSG_CONNECT_CANCELED,
+					ICommonMessageIds.MSG_CONNECT_CANCELLED, IStatus.CANCEL,
+					NLS.bind(CommonMessages.MSG_CONNECT_CANCELLED,
 							_connection.getHost().getAliasName()));
 
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
@@ -456,8 +456,8 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 		protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
 		{
 			//SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-			//                             ISystemMessages.MSG_DISCONNECT_CANCELED, hostName)
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELED, IStatus.CANCEL, NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName));
+			//                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName)
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELLED, IStatus.CANCEL, NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELLED, hostName));
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 			msgDlg.open();
 		}

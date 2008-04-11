@@ -579,7 +579,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 				switch (conflictAction.getState())
 				{
-					case SystemDownloadConflictAction.CANCELED :
+					case SystemDownloadConflictAction.CANCELLED :
 						return false;
 					case SystemDownloadConflictAction.OPEN_WITH_LOCAL :
 						return true;

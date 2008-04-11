@@ -413,7 +413,7 @@ public class SystemRenameDialog extends SystemPromptDialog
            	 	{
            	 		boolean ok = ValidatorConnectionName.validateNameNotInUse(newName, getShell());
            	 		if (!ok)
-           	 			errMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELED);
+           	 			errMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED);
            	 	}
 
 			}

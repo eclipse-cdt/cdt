@@ -194,7 +194,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 
 	public static final int REPLACE_WITH_REMOTE = 0;
 	public static final int OPEN_WITH_LOCAL = 1;
-	public static final int CANCELED = 2;
+	public static final int CANCELLED = 2;
 
 	/**
 	 * Constructor.
@@ -226,7 +226,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 	 * <ul>
 	 *   <li> REPLACE_WITH_REMOTE
 	 *   <li> OPEN_WITH_LOCAL
-	 *   <li> CANCELED
+	 *   <li> CANCELLED
 	 * </ul>
 	 * @return the response to the conflict
 	 */
@@ -285,7 +285,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 		}
 		else
 		{
-			_state = CANCELED;
+			_state = CANCELLED;
 
 			// cancelled dialog, so no remote synchronization
 			// set dirty flag!

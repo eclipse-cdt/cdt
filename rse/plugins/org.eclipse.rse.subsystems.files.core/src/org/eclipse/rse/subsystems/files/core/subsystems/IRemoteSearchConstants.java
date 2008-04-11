@@ -31,9 +31,8 @@ public interface IRemoteSearchConstants {
    
 	/**
 	 * Status indicating configuration has been cancelled, 2.
-	 * @since 3.0
 	 */
-	public static final int CANCELED = 2;
+	public static final int CANCELLED = 2;
    
 	/**
 	 * Status indicating configuration has been disconnected, 3.

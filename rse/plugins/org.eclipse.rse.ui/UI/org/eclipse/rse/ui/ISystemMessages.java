@@ -151,10 +151,7 @@ public interface ISystemMessages
 	
 	//public static final String MSG_OPERATION_PREFIX = MSG_PREFIX + "Operation.";
 	public static final String MSG_OPERATION_FAILED      = "RSEG1066"; 		 //$NON-NLS-1$
-	/**
-	 * @since 3.0
-	 */
-	public static final String MSG_OPERATION_CANCELED   = "RSEG1067";		 //$NON-NLS-1$
+	public static final String MSG_OPERATION_CANCELLED   = "RSEG1067";		 //$NON-NLS-1$
 
 
 	public static final String MSG_HOSTNAME_NOTFOUND = "RSEG1220";	 //$NON-NLS-1$
@@ -179,18 +176,15 @@ public interface ISystemMessages
     // --------------------------	
 	//public static final String MSG_EXPAND_PREFIX = MSG_PREFIX + "Expand.";
 	public static final String MSG_EXPAND_FAILED    = "RSEG1098"; //MSG_EXPAND_PREFIX + "Failed"; //$NON-NLS-1$
-	/**
-	 * @since 3.0
-	 */
-	public static final String MSG_EXPAND_CANCELED = "RSEG1067"; //MSG_EXPAND_PREFIX + "Cancelled"; //$NON-NLS-1$
+	public static final String MSG_EXPAND_CANCELLED = "RSEG1067"; //MSG_EXPAND_PREFIX + "Cancelled"; //$NON-NLS-1$
 	// Message vetoed by UCD
-	//public static final String MSG_EXPAND_CANCELED = "RSEG1099"; //MSG_EXPAND_PREFIX + "Cancelled";
+	//public static final String MSG_EXPAND_CANCELLED = "RSEG1099"; //MSG_EXPAND_PREFIX + "Cancelled";
 	public static final String MSG_EXPAND_EMPTY     = "RSEG1100"; //MSG_EXPAND_PREFIX + "Empty"; //$NON-NLS-1$
 	public static final String MSG_EXPAND_FILTERCREATED = "RSEG1102"; //MSG_EXPAND_PREFIX + "FilterCreated"; //$NON-NLS-1$
 	public static final String MSG_EXPAND_CONNECTIONCREATED = "RSEG1108"; //MSG_EXPAND_PREFIX + "ConnectionCreated"; //$NON-NLS-1$
 	
 	//public static final String MSG_LIST_PREFIX = MSG_PREFIX + "List.";
-	public static final String MSG_LIST_CANCELED = "RSEG1101"; //MSG_LIST_PREFIX + "Cancelled"; //$NON-NLS-1$
+	public static final String MSG_LIST_CANCELLED = "RSEG1101"; //MSG_LIST_PREFIX + "Cancelled"; //$NON-NLS-1$
 
     // ----------------------------------
     // GENERIC ERROR CHECKING MESSAGES...

@@ -55,8 +55,7 @@ public interface ISystemProcessRemoteConstants
 	public static final char STATE_ZOS_SWAPPEDOUT = 'I';
 	public static final char STATE_ZOS_PTHREADCREATED = 'J';
 	public static final char STATE_ZOS_OTHERKERNELWAIT = 'K';
-	/** @since 3.0 renamed from STATE_ZOS_CANCELLED */
-	public static final char STATE_ZOS_CANCELED = 'L';
+	public static final char STATE_ZOS_CANCELLED = 'L';
 	public static final char STATE_ZOS_MULTITHREAD = 'M';
 	public static final char STATE_ZOS_MEDIUMWEIGHTTHREAD = 'N';
 	public static final char STATE_ZOS_ASYNCHRONOUSTHREAD = 'O';
@@ -95,8 +94,7 @@ public interface ISystemProcessRemoteConstants
 	public static final int STATE_ZOS_SWAPPEDOUT_INDEX = 18;
 	public static final int STATE_ZOS_PTHREADCREATED_INDEX = 19;
 	public static final int STATE_ZOS_OTHERKERNELWAIT_INDEX = 20;
-	/** @since 3.0 renamed from STATE_ZOS_CANCELLED_INDEX */
-	public static final int STATE_ZOS_CANCELED_INDEX = 21;
+	public static final int STATE_ZOS_CANCELLED_INDEX = 21;
 	public static final int STATE_ZOS_MULTITHREAD_INDEX = 22;
 	public static final int STATE_ZOS_MEDIUMWEIGHTTHREAD_INDEX = 23;
 	public static final int STATE_ZOS_ASYNCHRONOUSTHREAD_INDEX = 24;
@@ -135,7 +133,7 @@ public interface ISystemProcessRemoteConstants
 		STATE_ZOS_SWAPPEDOUT,
 		STATE_ZOS_PTHREADCREATED,
 		STATE_ZOS_OTHERKERNELWAIT,
-		STATE_ZOS_CANCELED,
+		STATE_ZOS_CANCELLED,
 		STATE_ZOS_MULTITHREAD,
 		STATE_ZOS_MEDIUMWEIGHTTHREAD,
 		STATE_ZOS_ASYNCHRONOUSTHREAD,

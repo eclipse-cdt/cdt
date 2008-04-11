@@ -147,7 +147,7 @@ public class SystemViewAPIProviderForFilters
              ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, RSEUIPlugin.getTheSystemRegistryUI().getShell());
              if (newFilter == null)
              {
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
              }
              else // filter successfully created!
@@ -205,7 +205,7 @@ public class SystemViewAPIProviderForFilters
 		     catch (InterruptedException exc)
 		     {
 		     	children = new SystemMessageObject[1];
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
 		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user."); //$NON-NLS-1$
 		     }

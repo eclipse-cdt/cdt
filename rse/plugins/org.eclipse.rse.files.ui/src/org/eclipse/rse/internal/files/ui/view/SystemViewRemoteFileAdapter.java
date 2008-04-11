@@ -762,8 +762,8 @@ public class SystemViewRemoteFileAdapter
 			{
 				children = new SystemMessageObject[1];
 				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-						ICommonMessageIds.MSG_EXPAND_CANCELED,
-						IStatus.CANCEL, CommonMessages.MSG_EXPAND_CANCELED);
+						ICommonMessageIds.MSG_EXPAND_CANCELLED,
+						IStatus.CANCEL, CommonMessages.MSG_EXPAND_CANCELLED);
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_CANCEL, element);
 			}
 			catch (Exception exc)

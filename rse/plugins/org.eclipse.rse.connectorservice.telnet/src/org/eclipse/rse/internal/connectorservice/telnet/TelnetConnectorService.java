@@ -79,7 +79,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	private static final int ERROR_CODE = 100; // filed error code
 	private static final int SUCCESS_CODE = 150; // login pass code
 	private static final int CONNECT_CLOSED = 200; // code for end of login attempts
-	private static final int CONNECT_CANCELED = 250; // code for cancel progress
+	private static final int CONNECT_CANCELLED = 250; // code for cancel progress
 
 	public TelnetConnectorService(IHost host) {
 		super(TelnetConnectorResources.TelnetConnectorService_Name,
@@ -170,7 +170,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				if (monitor!=null) {
 					monitor.worked(1);
 					if (monitor.isCanceled()) {
-						status = CONNECT_CANCELED;
+						status = CONNECT_CANCELLED;
 						//Thread will be interrupted by sessionDisconnect()
 						//checkLogin.interrupt();
 						break;
@@ -184,7 +184,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				}
 				checkLogin.join(500);
 			}
-			if (status != CONNECT_CANCELED) {
+			if (status != CONNECT_CANCELLED) {
 				status = checkLogin.getLoginStatus();
 				checkLogin.join();
 			}
@@ -192,7 +192,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			Activator.trace("Telnet Service failed: " + e.toString()); //$NON-NLS-1$
 			nestedException = e;
 		} finally {
-			if (status == CONNECT_CANCELED) {
+			if (status == CONNECT_CANCELLED) {
 				Activator.trace("Telnet Service: Canceled"); //$NON-NLS-1$
 				try {
 					client.disconnect(); //will eventually destroy the LoginThread
@@ -367,9 +367,9 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			// SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-					ICommonMessageIds.MSG_CONNECT_CANCELED,
+					ICommonMessageIds.MSG_CONNECT_CANCELLED,
 					IStatus.CANCEL, 
-					NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, _connection.getHost().getAliasName()));
+					NLS.bind(CommonMessages.MSG_CONNECT_CANCELLED, _connection.getHost().getAliasName()));
 	
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
@@ -506,11 +506,11 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				String hostName, int port) {
 			// SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell,
 			// RSEUIPlugin.getResourceBundle(),
-			// ISystemMessages.MSG_DISCONNECT_CANCELED, hostName);
+			// ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-					ICommonMessageIds.MSG_DISCONNECT_CANCELED,
+					ICommonMessageIds.MSG_DISCONNECT_CANCELLED,
 					IStatus.CANCEL,
-					NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName));
+					NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELLED, hostName));
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 			msgDlg.open();
 		}

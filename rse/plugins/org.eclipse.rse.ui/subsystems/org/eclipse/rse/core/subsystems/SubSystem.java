@@ -531,9 +531,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 				else
 					if (e instanceof OperationCanceledException)
 					{
-						String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, getHost().getAliasName());
+						String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_CANCELLED, getHost().getAliasName());
 						SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
-								ICommonMessageIds.MSG_CONNECT_CANCELED,
+								ICommonMessageIds.MSG_CONNECT_CANCELLED,
 								IStatus.CANCEL, msgTxt);
 						throw new SystemMessageException(msg);
 					}
@@ -1826,9 +1826,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 */
 	protected void showConnectCancelledMessage(Shell shell, String hostName, int port)
 	{
-		String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, hostName);
+		String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_CANCELLED, hostName);
 		SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
-				ICommonMessageIds.MSG_CONNECT_CANCELED,
+				ICommonMessageIds.MSG_CONNECT_CANCELLED,
 				IStatus.CANCEL, msgTxt);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.open();
@@ -1856,9 +1856,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 */
 	protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
 	{
-		String msgTxt = NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName);
+		String msgTxt = NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELLED, hostName);
 		SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
-				ICommonMessageIds.MSG_DISCONNECT_CANCELED,
+				ICommonMessageIds.MSG_DISCONNECT_CANCELLED,
 				IStatus.CANCEL, msgTxt);
 
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
@@ -1954,9 +1954,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 */
 	protected void showOperationCancelledMessage(Shell shell)
 	{
-		String msgTxt = CommonMessages.MSG_OPERATION_CANCELED;
+		String msgTxt = CommonMessages.MSG_OPERATION_CANCELLED;
 		SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
-				ICommonMessageIds.MSG_OPERATION_CANCELED,
+				ICommonMessageIds.MSG_OPERATION_CANCELLED,
 				IStatus.CANCEL, msgTxt);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.open();

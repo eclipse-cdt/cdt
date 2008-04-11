@@ -1776,8 +1776,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	{
 		//This operation has been canceled by the user.
 		return new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
-				ICommonMessageIds.MSG_OPERATION_CANCELED,
-			IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED));
+				ICommonMessageIds.MSG_OPERATION_CANCELLED,
+			IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));
 	}
 
 }

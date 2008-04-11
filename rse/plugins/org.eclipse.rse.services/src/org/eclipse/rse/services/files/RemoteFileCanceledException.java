@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
@@ -28,8 +28,10 @@ import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
- * Exception thrown when attempting a file operation and the user
- * canceled it before it could be completed.
+ * Exception thrown when attempting a file operation and the user canceled it
+ * before it could be completed.
+ *
+ * @since org.eclipse.rse.services 3.0 renamed from RemoteFileCancelledException
  */
 public class RemoteFileCanceledException extends RemoteFileException {
 
@@ -42,17 +44,17 @@ public class RemoteFileCanceledException extends RemoteFileException {
 	private static SystemMessage myMessage = null;
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	public RemoteFileCanceledException() {
 		super(getMyMessage());
 	}
 
 	private static SystemMessage getMyMessage() {
-		String msgTxt = CommonMessages.MSG_OPERATION_CANCELED;
+		String msgTxt = CommonMessages.MSG_OPERATION_CANCELLED;
 
-		myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-				ICommonMessageIds.MSG_OPERATION_CANCELED,
+		myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
+				ICommonMessageIds.MSG_OPERATION_CANCELLED,
 				IStatus.ERROR, msgTxt);
 
 		return myMessage;

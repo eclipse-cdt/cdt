@@ -1273,8 +1273,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (null != monitor && monitor.isCanceled())
 		{
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-					ICommonMessageIds.MSG_OPERATION_CANCELED,
-					IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED);
+					ICommonMessageIds.MSG_OPERATION_CANCELLED,
+					IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED);
 			//This operation has been canceled by the user.
 			throw new SystemMessageException(msg);
 		}
@@ -1319,9 +1319,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			//This operation has been canceled by the user.
 			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
-					ICommonMessageIds.MSG_OPERATION_CANCELED,
+					ICommonMessageIds.MSG_OPERATION_CANCELLED,
 					IStatus.CANCEL,
-					CommonMessages.MSG_OPERATION_CANCELED));
+					CommonMessages.MSG_OPERATION_CANCELLED));
 		}
 
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS))
@@ -1362,9 +1362,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			//This operation has been canceled by the user.
 			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
-					ICommonMessageIds.MSG_OPERATION_CANCELED,
+					ICommonMessageIds.MSG_OPERATION_CANCELLED,
 					IStatus.CANCEL,
-					CommonMessages.MSG_OPERATION_CANCELED));
+					CommonMessages.MSG_OPERATION_CANCELLED));
 		}
 		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
 		// When running a server older than 2.0.1 success is not set for directories, so we must
@@ -1401,8 +1401,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			{
 				//This operation has been canceled by the user.
 				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
-						ICommonMessageIds.MSG_OPERATION_CANCELED,
-						IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED));
+						ICommonMessageIds.MSG_OPERATION_CANCELLED,
+						IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));
 			}
 			String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
 			// When running a server older than 2.0.1 success is not set for directories, so we must
@@ -1477,8 +1477,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (null != monitor && monitor.isCanceled())
 		{
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-					ICommonMessageIds.MSG_OPERATION_CANCELED,
-					IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED);
+					ICommonMessageIds.MSG_OPERATION_CANCELLED,
+					IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED);
 			//This operation has been canceled by the user.
 			throw new SystemMessageException(msg);
 		}
@@ -1697,8 +1697,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				{
 					//This operation has been canceled by the user.
 					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
-							ICommonMessageIds.MSG_OPERATION_CANCELED,
-							IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED));
+							ICommonMessageIds.MSG_OPERATION_CANCELLED,
+							IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));
 				}
 				// cancel monitor if it's still not canceled
 				if (monitor != null && !monitor.isCanceled())
@@ -1755,8 +1755,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				{
 					//This operation has been canceled by the user.
 					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
-							ICommonMessageIds.MSG_OPERATION_CANCELED,
-							IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED));
+							ICommonMessageIds.MSG_OPERATION_CANCELLED,
+							IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));
 				}
 				// cancel monitor if it's still not canceled
 				if (monitor != null && !monitor.isCanceled())

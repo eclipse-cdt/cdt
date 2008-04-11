@@ -119,6 +119,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
     chmod g+w ../N.latest/*.zip
     if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then
       cp -f ../N.latest/* /shared/dsdp/public_html/tm/downloads/drops/N.latest/
+      chmod -R g+w /shared/dsdp/public_html/tm/downloads/drops
     fi
   fi
 

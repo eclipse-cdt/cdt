@@ -76,6 +76,7 @@ if [ -d N.latest ]; then
     chmod g+w *.zip
     if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then
       cp -f * /shared/dsdp/public_html/tm/downloads/drops/N.latest/
+      chmod -R g+w /shared/dsdp/public_html/tm/downloads/drops
     fi
   fi
 fi

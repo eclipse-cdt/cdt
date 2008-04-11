@@ -125,6 +125,8 @@ public class ProcessBaseShell extends PlatformObject implements IBaseShell {
 		if (active) {
 			Thread watchdog = null;
 			if (timeout > 0) {
+				// TODO Check if using java.util.Timer would be more efficient
+				// than our own Watchdog
 				watchdog = new Watchdog(Thread.currentThread(), timeout) {
 					protected boolean conditionDone() {
 						return !isActive();

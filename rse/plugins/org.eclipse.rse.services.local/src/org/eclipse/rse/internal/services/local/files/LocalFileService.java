@@ -549,7 +549,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			if (null != monitor && monitor.isCanceled())
 			{
 				//This operation has been canceled by the user.
-				throw getCanceledException();
+				throw getCancelledException();
 			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.copyToArchive(): Handler's add() method returned false.");
 			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_FILE_NOT_SAVED, destination.getName(), "localhost"); //$NON-NLS-1$
@@ -949,7 +949,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				if (null != monitor && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw getCanceledException();
+					throw getCancelledException();
 				}
 
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED, newFile);
@@ -1029,7 +1029,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				if (null != monitor && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw getCanceledException();
+					throw getCancelledException();
 				}
 
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED, newFolder);
@@ -1135,7 +1135,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			if (monitor != null && monitor.isCanceled())
 			{
 				//This operation has been canceled by the user.
-				throw getCanceledException();
+				throw getCancelledException();
 			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
 			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED, destination);
@@ -1213,7 +1213,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				if (null != monitor && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw getCanceledException();
+					throw getCancelledException();
 				}
 
 				// for 192705, we need to throw an exception when rename fails
@@ -1432,7 +1432,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw getCanceledException();
+					throw getCancelledException();
 				}
 
 				// for 192705, we need to throw an exception when rename fails
@@ -1454,7 +1454,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		if (monitor != null && monitor.isCanceled())
 		{
 			//This operation has been canceled by the user.
-			throw getCanceledException();
+			throw getCancelledException();
 		}
 		if (child.isDirectory)
 		{
@@ -1500,7 +1500,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw getCanceledException();
+					throw getCancelledException();
 				}
 			}
 			return returnValue;
@@ -1772,7 +1772,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 	}
 
-	private SystemMessageException getCanceledException()
+	private SystemMessageException getCancelledException()
 	{
 		//This operation has been canceled by the user.
 		return new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,

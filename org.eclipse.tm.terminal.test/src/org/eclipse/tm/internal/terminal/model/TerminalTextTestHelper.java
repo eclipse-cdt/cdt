@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
@@ -17,8 +18,7 @@ import org.eclipse.tm.terminal.model.StyleColor;
 
 public class TerminalTextTestHelper {
 	static public String toSimple(ITerminalTextDataReadOnly term) {
-		return toMultiLineText(term).replaceAll("\000", " ").replaceAll("\n", "");
-		
+		return toSimple(toMultiLineText(term));
 	}
 	static public String toMultiLineText(ITerminalTextDataReadOnly term) {
 		StringBuffer buff=new StringBuffer();
@@ -33,8 +33,24 @@ public class TerminalTextTestHelper {
 		return buff.toString();
 	}
 	static public String toSimple(String str) {
-		return str.replaceAll("\000", " ").replaceAll("\n", "");
-		
+		//return str.replaceAll("\000", " ").replaceAll("\n", "");
+		// <J2ME CDC-1.1 Foundation-1.1 variant>
+		StringBuffer buf = new StringBuffer(str.length());
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			switch (c) {
+			case '\000':
+				buf.append(' ');
+				break;
+			case '\n':
+				break;
+			default:
+				buf.append(c);
+				break;
+			}
+		}
+		return buf.toString();
+		// </J2ME CDC-1.1 Foundation-1.1 variant>
 	}
 	/**
 	 * @param term
@@ -72,7 +88,7 @@ public class TerminalTextTestHelper {
 		term.setDimensions(height, width);
 		fill(term,0,0,s);
 	}
-	
+
 	static public void fill(ITerminalTextData term, int column, int line, String s) {
 		int xx=column;
 		int yy=line;

@@ -1,14 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
+
+import java.util.ArrayList;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -37,7 +40,26 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 	}
 	private String stripMultiLine(String s) {
 		StringBuffer b=new StringBuffer();
-		String[] lines=s.split("\n");
+		// String[] lines=s.split("\n");
+		// <J2ME CDC-1.1 Foundation-1.1 variant>
+		ArrayList l = new ArrayList();
+		int j = 0;
+		for (int k = 0; k < s.length(); k++) {
+			if (s.charAt(k) == '\n') {
+				l.add(s.substring(j, k));
+				j = k;
+			}
+		}
+		j = l.size() - 1;
+		while (j >= 0 && "".equals(l.get(j))) {
+			j--;
+		}
+		String[] lines = new String[j + 1];
+		while (j >= 0) {
+			lines[j] = (String) l.get(j);
+			j--;
+		}
+		// </J2ME CDC-1.1 Foundation-1.1 variant>
 		for (int i = 0; i < lines.length; i++) {
 			if(i>0)
 				b.append("\n"); //$NON-NLS-1$
@@ -146,46 +168,46 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		ITerminalTextData term=makeITerminalTextData();
 		term.setDimensions(8, 8);
 		LineSegment[] segments;
-		
+
 		term.setChars(2, 0,"0123".toCharArray(), s1);
 		term.setChars(2, 4,"abcd".toCharArray(), null);
 		segments=term.getLineSegments(2, 0, term.getWidth());
 		assertEquals(2, segments.length);
 		assertSegment(0, "0123", s1, segments[0]);
 		assertSegment(4, "abcd", null, segments[1]);
-		
-		
+
+
 		segments=term.getLineSegments(2, 4, term.getWidth()-4);
 		assertEquals(1, segments.length);
 		assertSegment(4, "abcd", null, segments[0]);
-		
+
 		segments=term.getLineSegments(2, 3, 2);
 		assertEquals(2, segments.length);
 		assertSegment(3, "3", s1, segments[0]);
 		assertSegment(4, "a", null, segments[1]);
-		
+
 		segments=term.getLineSegments(2, 7, 1);
 		assertEquals(1, segments.length);
 		assertSegment(7, "d", null, segments[0]);
-		
+
 		segments=term.getLineSegments(2, 0, 1);
 		assertEquals(1, segments.length);
 		assertSegment(0, "0", s1, segments[0]);
-		
+
 		// line 1
 		term.setChars(1, 0,"x".toCharArray(), s1);
 		term.setChars(1, 1,"y".toCharArray(), s2);
 		term.setChars(1, 2,"z".toCharArray(), s3);
-		
+
 		segments=term.getLineSegments(1, 0, term.getWidth());
 		assertEquals(1, segments.length);
 		assertSegment(0, "\000\000\000\000\000\000\000\000", null, segments[0]);
-		
+
 		// line 3
 		segments=term.getLineSegments(3, 0, term.getWidth());
 		assertEquals(1, segments.length);
 		assertSegment(0, "\000\000\000\000\000\000\000\000", null, segments[0]);
-		
+
 	}
 	public void testGetChar() {
 		String s="12345\n" +
@@ -228,7 +250,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 				assertSame(s, term.getStyle(line, column));
 			}
 		}
-		
+
 	}
 	public void testSetChar() {
 		ITerminalTextData term=makeITerminalTextData();
@@ -280,7 +302,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 				+ "def\n"
 				+ "efg\n"
 				+ "fgh", toMultiLineText(term));
-	
+
 		term.setChars(3, 1, new char[]{'1','2'}, null);
 		assertEqualsTerm(
 				  "abc\n"
@@ -298,7 +320,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 				+ "d12\n"
 				+ "e12\n"
 				+ "fgh", toMultiLineText(term));
-	
+
 	}
 	public void testSetCharsLen() {
 		ITerminalTextData term=makeITerminalTextData();
@@ -332,7 +354,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 				+ "ABCDEF", toMultiLineText(term));
 
 
-		
+
 		fill(term, s);
 		term.setChars(1, 2, chars, 3, 4, null);
 		assertEqualsTerm("ZYXWVU\n"
@@ -356,7 +378,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		termCopy.copyRange(term,0,0,5);
 		assertEqualsSimple(s, toSimple(term));
 		assertEqualsSimple("01234", toSimple(termCopy));
-	
+
 		fillSimple(termCopy, sCopy);
 		termCopy.copyRange(term,0,0,2);
 		assertEqualsSimple(s, toSimple(term));
@@ -420,7 +442,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		fill(dest, sCopy);
 		copySelective(dest,term,1,0,new boolean []{true,false,false,true});
 		assertEqualsTerm(s, toMultiLineText(term));
-		assertEqualsTerm(			
+		assertEqualsTerm(
 				"222\n" +
 				"bbb\n" +
 				"ccc\n" +
@@ -430,7 +452,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		fill(dest, sCopy);
 		copySelective(dest,term,2,0,new boolean []{true,true});
 		assertEqualsTerm(s, toMultiLineText(term));
-		assertEqualsTerm(			
+		assertEqualsTerm(
 				"333\n" +
 				"444\n" +
 				"ccc\n" +
@@ -441,7 +463,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		copySelective(dest,term,0,0,new boolean []{true,true,true,true,true});
 		assertEqualsTerm(s, toMultiLineText(term));
 		assertEqualsTerm(s, toMultiLineText(dest));
-	
+
 		fill(dest, sCopy);
 		copySelective(dest,term,0,0,new boolean []{false,false,false,false,false});
 		assertEqualsTerm(s, toMultiLineText(term));
@@ -453,7 +475,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		ITerminalTextData data=new TerminalTextData();
 		fillSimple(data,"abcd");
 		term.copy(data);
-		
-		
+
+
 	}
 }

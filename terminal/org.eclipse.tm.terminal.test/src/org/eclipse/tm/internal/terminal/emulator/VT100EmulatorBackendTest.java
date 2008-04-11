@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -34,7 +35,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	protected String toMultiLineText(ITerminalTextDataReadOnly term) {
 		return TerminalTextTestHelper.toMultiLineText(term);
 	}
-	
+
 	protected void fill(ITerminalTextData term, String s) {
 		TerminalTextTestHelper.fill(term,s);
 	}
@@ -50,7 +51,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	 * @param actual
 	 */
 	protected void assertEqualsTerm(String expected,String actual) {
-		assertEquals(expected.replaceAll(" ", "."), actual.replaceAll("\000", "."));
+		assertEquals(expected.replace(' ', '.'), actual.replace('\000', '.'));
 	}
 	/**
 	 * Used for simple text
@@ -91,7 +92,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertEquals(3,vt100.getLines());
 		assertEquals(4,vt100.getColumns());
 		assertEqualsTerm(s,toMultiLineText(term));
-		
+
 		vt100.setCursor(0, 2);
 		vt100.setDimensions(2, 4);
 		assertEquals(0, vt100.getCursorLine());
@@ -103,7 +104,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertEquals(2, vt100.getCursorColumn());
 
 		assertEqualsTerm(s,toMultiLineText(term));
-	
+
 		vt100.setCursor(0, 3);
 		vt100.setDimensions(5, 2);
 		assertEquals(0, vt100.getCursorLine());
@@ -126,7 +127,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		ITerminalTextData term=makeITerminalTextData();
 		IVT100EmulatorBackend vt100=makeBakend(term);
 		vt100.setDimensions(3, 4);
-		String s = 
+		String s =
 				"aaaa\n" +
 				"bbbb\n" +
 				"cccc\n" +
@@ -161,7 +162,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"1234\n" +
 				"4 56\n" +
 				"9012",toMultiLineText(term));
-	
+
 		fill(term, s);
 		vt100.setCursor(1, 1);
 		vt100.insertCharacters(2);
@@ -186,7 +187,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		vt100.setCursor(0, 0);
 		vt100.insertCharacters(14);
 		assertEqualsTerm("          ",toMultiLineText(term));
-	
+
 		vt100.setDimensions(1, 10);
 		fill(term, "0123456789");
 		vt100.setCursor(0, 3);
@@ -210,7 +211,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		ITerminalTextData term=makeITerminalTextData();
 		IVT100EmulatorBackend vt100=makeBakend(term);
 		vt100.setDimensions(3, 4);
-		String s = 
+		String s =
 				"aaaa\n" +
 				"bbbb\n" +
 				"cccc\n" +
@@ -234,7 +235,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"    \n" +
 				"    \n" +
 				"    ",toMultiLineText(term));
-		
+
 		fill(term, s);
 		vt100.setCursor(1, 0);
 		vt100.eraseToEndOfScreen();
@@ -264,7 +265,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"0123\n" +
 				"4   \n" +
 				"    ",toMultiLineText(term));
-		
+
 		fill(term, s);
 		vt100.setCursor(1, 4);
 		assertEquals(1,vt100.getCursorLine());
@@ -282,7 +283,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"456.\n" +
 				"    ",toMultiLineText(term));
 
-		
+
 		fill(term, s);
 		vt100.setCursor(1, 5);
 		vt100.eraseToEndOfScreen();
@@ -333,7 +334,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		ITerminalTextData term=makeITerminalTextData();
 		IVT100EmulatorBackend vt100=makeBakend(term);
 		vt100.setDimensions(3, 4);
-		String s = 
+		String s =
 				"aaaa\n" +
 				"bbbb\n" +
 				"cccc\n" +
@@ -357,7 +358,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				" 123\n" +
 				"4567\n" +
 				"8901",toMultiLineText(term));
-		
+
 		fill(term, s);
 		vt100.setCursor(1, 0);
 		vt100.eraseToCursor();
@@ -387,7 +388,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"    \n" +
 				"  67\n" +
 				"8901",toMultiLineText(term));
-		
+
 		fill(term, s);
 		vt100.setCursor(1, 4);
 		vt100.eraseToCursor();
@@ -403,7 +404,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"    \n" +
 				"8901",toMultiLineText(term));
 
-		
+
 		fill(term, s);
 		vt100.setCursor(1, 5);
 		vt100.eraseToCursor();
@@ -470,7 +471,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	}
 
 	public void testEraseLine() {
-		String s = 
+		String s =
 			"abcde\n" +
 			"fghij\n" +
 			"klmno\n" +
@@ -496,7 +497,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"zABCD\n" +
 				"EFGHI", toMultiLineText(term));
 
-		
+
 		vt100.setDimensions(3, 5);
 		fill(term, s);
 		vt100.setCursor(2, 3);
@@ -513,7 +514,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	}
 
 	public void testEraseLineToEnd() {
-		String s = 
+		String s =
 			"abcde\n" +
 			"fghij\n" +
 			"klmno\n" +
@@ -553,7 +554,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"zABCD\n" +
 				"EFGHI", toMultiLineText(term));
 
-		
+
 		vt100.setDimensions(3, 5);
 		fill(term, s);
 		vt100.setCursor(2, 3);
@@ -569,7 +570,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"EFG  ", toMultiLineText(term));
 		vt100.setDimensions(3, 5);
 		fill(term, s);
-		
+
 		vt100.setCursor(2, 4);
 		vt100.eraseLineToEnd();
 		assertEquals(2,vt100.getCursorLine());
@@ -597,7 +598,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	}
 
 	public void testEraseLineToCursor() {
-		String s = 
+		String s =
 			"abcde\n" +
 			"fghij\n" +
 			"klmno\n" +
@@ -637,7 +638,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"zABCD\n" +
 				"EFGHI", toMultiLineText(term));
 
-		
+
 		vt100.setDimensions(3, 5);
 		fill(term, s);
 		vt100.setCursor(2, 3);
@@ -653,7 +654,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"    I", toMultiLineText(term));
 		vt100.setDimensions(3, 5);
 		fill(term, s);
-		
+
 		vt100.setCursor(2, 4);
 		vt100.eraseLineToCursor();
 		assertEquals(2,vt100.getCursorLine());
@@ -789,7 +790,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		ITerminalTextData term=makeITerminalTextData();
 		IVT100EmulatorBackend vt100=makeBakend(term);
 		vt100.setDimensions(3, 4);
-		String s = 
+		String s =
 				"aaaa\n" +
 				"bbbb\n" +
 				"cccc\n" +
@@ -824,7 +825,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"1234\n" +
 				"467 \n" +
 				"9012",toMultiLineText(term));
-	
+
 		fill(term, s);
 		vt100.setCursor(1, 1);
 		vt100.deleteCharacters(2);
@@ -849,7 +850,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		vt100.setCursor(0, 0);
 		vt100.deleteCharacters(14);
 		assertEqualsTerm("          ",toMultiLineText(term));
-	
+
 		vt100.setDimensions(1, 10);
 		fill(term, "0123456789");
 		vt100.setCursor(0, 3);
@@ -861,7 +862,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		vt100.setCursor(0, 3);
 		vt100.deleteCharacters(2);
 		assertEqualsTerm("01256789  ",toMultiLineText(term));
-		
+
 		vt100.setDimensions(1, 10);
 		fill(term, "0123456789");
 		vt100.setCursor(0, 3);
@@ -1038,7 +1039,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"90a ", toMultiLineText(term));
 		assertEquals(2,vt100.getCursorLine());
 		assertEquals(3,vt100.getCursorColumn());
-		
+
 		vt100.appendString("b");
 		assertEqualsTerm(
 				"0123\n" +
@@ -1047,7 +1048,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"    ", toMultiLineText(term));
 		assertEquals(2,vt100.getCursorLine());
 		assertEquals(0,vt100.getCursorColumn());
-	
+
 		vt100.appendString("cd");
 		assertEqualsTerm(
 				"0123\n" +
@@ -1056,7 +1057,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"cd  ", toMultiLineText(term));
 		assertEquals(2,vt100.getCursorLine());
 		assertEquals(2,vt100.getCursorColumn());
-	
+
 		vt100.appendString("efgh");
 		assertEqualsTerm(
 				"0123\n" +
@@ -1066,7 +1067,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 				"gh  ", toMultiLineText(term));
 		assertEquals(2,vt100.getCursorLine());
 		assertEquals(2,vt100.getCursorColumn());
-	
+
 		vt100.appendString("ijklmnopqrstuvwx");
 		assertEqualsTerm(
 				"cdef\n" +
@@ -1140,7 +1141,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertEquals(2,vt100.getCursorLine());
 		assertEquals(3,vt100.getCursorColumn());
 
-	
+
 		vt100.processNewline();
 		assertEqualsTerm(
 				"2222\n" +

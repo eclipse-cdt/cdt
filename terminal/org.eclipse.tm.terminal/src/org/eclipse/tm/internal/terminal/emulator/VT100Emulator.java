@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Michael Scharf (Wind River) - [209746] There are cases where some colors not displayed correctly
+ * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -23,7 +24,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -839,10 +839,8 @@ public class VT100Emulator implements ControlListener {
 		String positionReport = "\u001b[" + (relativeCursorLine() + 1) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
 				(getCursorColumn() + 1) + "R"; //$NON-NLS-1$
 
-		OutputStreamWriter streamWriter = new OutputStreamWriter(terminal
-				.getOutputStream(), Charset.forName("ISO-8859-1")); //$NON-NLS-1$
-
 		try {
+			OutputStreamWriter streamWriter = new OutputStreamWriter(terminal.getOutputStream(), "ISO-8859-1"); //$NON-NLS-1$
 			streamWriter.write(positionReport, 0, positionReport.length());
 			streamWriter.flush();
 		} catch (IOException ex) {

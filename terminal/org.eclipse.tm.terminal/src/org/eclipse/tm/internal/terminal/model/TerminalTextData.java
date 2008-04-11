@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
@@ -54,7 +55,16 @@ public class TerminalTextData implements ITerminalTextData {
 				buff.append(term.getChar(line, column));
 			}
 		}
-		return buff.toString().replaceAll("\000+", "");  //$NON-NLS-1$//$NON-NLS-2$
+		// get rid of the empty space at the end of the lines
+		//return buff.toString().replaceAll("\000+", "");  //$NON-NLS-1$//$NON-NLS-2$
+		//<J2ME CDC-1.1 Foundation-1.1 variant>
+		int i = buff.length() - 1;
+		while (i >= 0 && buff.charAt(i) == '\000') {
+			i--;
+		}
+		buff.setLength(i + 1);
+		return buff.toString();
+		//</J2ME CDC-1.1 Foundation-1.1 variant>
 	}
 
 	/**

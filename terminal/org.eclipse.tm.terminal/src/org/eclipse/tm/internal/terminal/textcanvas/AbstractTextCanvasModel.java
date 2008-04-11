@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -293,7 +294,14 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 				if(line==fSelectionStartLine)
 					text=text.substring(Math.min(fSelectionStartCoumn,text.length()));
 				// get rid of the empty space at the end of the lines
-				text=text.replaceAll("\000+$","");  //$NON-NLS-1$//$NON-NLS-2$
+				// text=text.replaceAll("\000+$","");  //$NON-NLS-1$//$NON-NLS-2$
+				// <J2ME-CDC-1.1 version>
+				int i = text.length() - 1;
+				while (i >= 0 && text.charAt(i) == '\000') {
+					i--;
+				}
+				text = text.substring(0, i + 1);
+				// </J2ME-CDC-1.1 version>
 				// null means space
 				text=text.replace('\000', ' ');
 			} else {

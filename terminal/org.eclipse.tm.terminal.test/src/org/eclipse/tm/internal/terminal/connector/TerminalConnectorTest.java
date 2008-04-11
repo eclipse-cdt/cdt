@@ -150,25 +150,6 @@ public class TerminalConnectorTest extends TestCase {
 		assertEquals("xName", c.getName());
 	}
 
-	public void testIsInitialized() {
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName");
-		assertFalse(c.isInitialized());
-		c.getId();
-		assertFalse(c.isInitialized());
-		c.getName();
-		assertFalse(c.isInitialized());
-		c.getSettingsSummary();
-		assertFalse(c.isInitialized());
-		c.setTerminalSize(10,10);
-		assertFalse(c.isInitialized());
-		c.load(null);
-		assertFalse(c.isInitialized());
-		c.save(null);
-		assertFalse(c.isInitialized());
-		c.getAdapter(ConnectorMock.class);
-		assertFalse(c.isInitialized());
-	}
-
 	public void testConnect() {
 		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName");
 		assertFalse(c.isInitialized());
@@ -242,16 +223,6 @@ public class TerminalConnectorTest extends TestCase {
 		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
 		c.setTerminalSize(100, 200);
 
-	}
-
-	public void testGetAdapter() {
-		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
-		assertNull(c.getAdapter(ConnectorMock.class));
-		// the load is called after the connect...
-		c.connect(new TerminalControlMock());
-
-		assertSame(mock, c.getAdapter(ConnectorMock.class));
 	}
 
 }

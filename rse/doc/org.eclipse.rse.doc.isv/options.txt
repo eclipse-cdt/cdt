@@ -71,6 +71,7 @@ org.eclipse.rse.files.ui.dialogs
 org.eclipse.rse.files.ui.resources
 org.eclipse.rse.files.ui.widgets
 org.eclipse.rse.filters
+org.eclipse.rse.internal.services.terminals
 org.eclipse.rse.logging
 org.eclipse.rse.model
 org.eclipse.rse.persistence

@@ -283,7 +283,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 			fExpressionInput.setFocus();
 		}
 		else {
-			fAddressRadio.setSelection(false);
+			fExpressionRadio.setSelection(false);
 			fAddressRadio.setSelection(true);
 			fAddressInput.setFocus();
 		}

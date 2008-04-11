@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -45,9 +44,7 @@ class LocationCtxContainer extends LocationCtx {
 		if (fChildren == null) {
 			return Collections.emptyList();
 		}
-		else {
-			return fChildren;
-		}
+		return fChildren;
 	}
 
 	public void addChild(LocationCtx locationCtx) {
@@ -209,8 +206,7 @@ class LocationCtxContainer extends LocationCtx {
 	@Override
 	public void getInclusions(ArrayList<IASTInclusionNode> result) {
 		if (fChildren != null) {
-			for (Iterator<LocationCtx> iterator = fChildren.iterator(); iterator.hasNext();) {
-				LocationCtx ctx= iterator.next();
+			for (LocationCtx ctx : fChildren) {
 				if (ctx.getInclusionStatement() != null) {
 					result.add(new ASTInclusionNode(ctx));
 				}

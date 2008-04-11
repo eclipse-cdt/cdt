@@ -66,7 +66,10 @@ abstract class PreprocessorMacro implements IMacroBinding {
 		return null;
 	}
 
-	public int hasVarArgs() {
+	/**
+	 * Returns {@link FunctionStyleMacro#NO_VAARGS} 
+	 */
+	int hasVarArgs() {
 		return FunctionStyleMacro.NO_VAARGS;
 	}
 
@@ -149,6 +152,7 @@ class ObjectStyleMacro extends PreprocessorMacro {
 			fExpansionTokens= new TokenList();
 			Lexer lex= new Lexer(fExpansion, fExpansionOffset, fEndOffset, lexOptions, ILexerLog.NULL, this);
 			try {
+				lex.nextToken(); // consume the start token
 				mdp.parseExpansion(lex, ILexerLog.NULL, getNameCharArray(), getParameterPlaceholderList(), fExpansionTokens);
 			} catch (OffsetLimitReachedException e) {
 			}
@@ -249,10 +253,10 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	}
 		
 	/**
-	 * Returns one of {@link #NO_VAARGS}, {@link #VAARGS} or {@link #NAMED_VAARGS}.
+	 * Returns one of {@link FunctionStyleMacro#NO_VAARGS}, {@link #VAARGS} or {@link #NAMED_VAARGS}.
 	 */
 	@Override
-	public int hasVarArgs() {
+	int hasVarArgs() {
 		return fHasVarArgs;
 	}
 		

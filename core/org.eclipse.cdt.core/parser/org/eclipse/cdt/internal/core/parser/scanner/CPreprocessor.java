@@ -277,9 +277,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
 
         IMacro[] toAdd = config.getAdditionalMacros();
-        for (int i = 0; i < toAdd.length; i++) {
-        	final IMacro macro = toAdd[i];
-			addMacroDefinition(macro.getSignature(), macro.getExpansion());
+        for (final IMacro macro : toAdd) {
+        	addMacroDefinition(macro.getSignature(), macro.getExpansion());
 		}
         
         final Map<String, String> macroDict= info.getDefinedSymbols();
@@ -327,13 +326,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private char[] createSyntheticFile(String[] files) {
 		int totalLength= 0;
     	final char[] instruction= "#include <".toCharArray(); //$NON-NLS-1$
-    	for (int i = 0; i < files.length; i++) {
-    		totalLength+= instruction.length + 2 + files[i].length();
+    	for (String file : files) {
+    		totalLength+= instruction.length + 2 + file.length();
     	}
     	final char[] buffer= new char[totalLength];
     	int pos= 0;
-    	for (int i = 0; i < files.length; i++) {
-    		final char[] fileName= files[i].toCharArray();
+    	for (String file : files) {
+    		final char[] fileName= file.toCharArray();
     		System.arraycopy(instruction, 0, buffer, pos, instruction.length);
     		pos+= instruction.length;
     		System.arraycopy(fileName, 0, buffer, pos, fileName.length);
@@ -476,9 +475,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			final int tt2= t2.getType();
     			switch(tt2) {
     			case IToken.tLSTRING:
-    				isWide= true;
-    				// no break;
     			case IToken.tSTRING:
+    				isWide= tt2 == IToken.tLSTRING;
     				if (buf == null) {
     					buf= new StringBuffer();
     					appendStringContent(buf, t1);

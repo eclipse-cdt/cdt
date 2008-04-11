@@ -162,6 +162,7 @@ final public class Lexer {
 	 * @param origin parameter for the {@link OffsetLimitReachedException} when it has to be thrown.
 	 * @since 5.0
 	 */
+	@SuppressWarnings("fallthrough")
 	public final int consumeLine(int origin) throws OffsetLimitReachedException {
 		Token t= fToken;
 		Token lt= null;
@@ -223,11 +224,15 @@ final public class Lexer {
 						d= nextCharPhase3();
 						break;
 					}
-					// no break;
+					fOffset= pos;
+					fCharPhase3= d;
+					fEndOffset= pos+1;
+					break;
 				default:
 					fOffset= pos;
 					fCharPhase3= d;
 					fEndOffset= pos+1;
+					break;
 				}
 			}
 
@@ -640,7 +645,8 @@ final public class Lexer {
     	fLog.handleProblem(problemID, arg, offset, fOffset);
     }
 
-    private Token headerName(final int start, final boolean expectQuotes) throws OffsetLimitReachedException {
+    @SuppressWarnings("fallthrough")
+	private Token headerName(final int start, final boolean expectQuotes) throws OffsetLimitReachedException {
     	int length= 1;
 		boolean done = false;
 		int c= fCharPhase3;
@@ -700,6 +706,7 @@ final public class Lexer {
 		}
 	}
 
+	@SuppressWarnings("fallthrough")
 	private Token stringLiteral(final int start, final boolean wide) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
@@ -736,6 +743,7 @@ final public class Lexer {
 		return newToken(wide ? IToken.tLSTRING : IToken.tSTRING, start, length);
 	}
 	
+	@SuppressWarnings("fallthrough")
 	private Token charLiteral(final int start, boolean wide) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
@@ -938,6 +946,7 @@ final public class Lexer {
 	 * Perform phase 1-3: Replace \r\n with \n, handle trigraphs, detect line-splicing.
 	 * Changes fOffset, fEndOffset and fCharPhase3, stateless otherwise.
 	 */
+	@SuppressWarnings("fallthrough")
 	private int nextCharPhase3() {
 		int pos= fEndOffset;
 		do {
@@ -1025,6 +1034,7 @@ final public class Lexer {
 	/**
 	 * Returns the endoffset for a line-splice sequence, or -1 if there is none.
 	 */
+	@SuppressWarnings("fallthrough")
 	private int findEndOfLineSpliceSequence(int pos) {
 		boolean haveBackslash= true;
 		int result= -1;

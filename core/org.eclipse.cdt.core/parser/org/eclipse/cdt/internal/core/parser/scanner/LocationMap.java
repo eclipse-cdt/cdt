@@ -132,7 +132,7 @@ public class LocationMap implements ILocationResolver {
 
 	/**
 	 * Creates a name representing an implicit macro expansion. The returned name can be fed into 
-	 * {@link #pushMacroExpansion(int, int, int, int, IMacroBinding, IASTName[])}.
+	 * {@link #pushMacroExpansion(int, int, int, int, IMacroBinding, IASTName[], ImageLocationInfo[])}
 	 * @param macro the macro that has been expanded
 	 * @param imageLocationInfo the image-location for the name of the macro.
 	 */
@@ -172,8 +172,8 @@ public class LocationMap implements ILocationResolver {
 		ASTMacroExpansion expansion= new ASTMacroExpansion(fTranslationUnit, nameNumber, endNumber);
 		ASTMacroReferenceName explicitRef= new ASTMacroReferenceName(expansion, IASTPreprocessorMacroExpansion.EXPANSION_NAME, nameNumber, nameEndNumber, macro, null);
 		addMacroReference(explicitRef);
-		for (int i = 0; i < implicitMacroReferences.length; i++) {
-			ASTMacroReferenceName name = (ASTMacroReferenceName) implicitMacroReferences[i];
+		for (IASTName implicitMacroReference : implicitMacroReferences) {
+			ASTMacroReferenceName name = (ASTMacroReferenceName) implicitMacroReference;
 			name.setParent(expansion);
 			name.setOffsetAndLength(nameNumber, length);
 			addMacroReference(name);
@@ -254,8 +254,8 @@ public class LocationMap implements ILocationResolver {
 		final ASTElif elif = new ASTElif(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive);
 		fDirectives.add(elif);
 		
-		for (int i = 0; i < macrosInDefinedExpression.length; i++) {
-			ASTMacroReferenceName name = (ASTMacroReferenceName) macrosInDefinedExpression[i];
+		for (IASTName element : macrosInDefinedExpression) {
+			ASTMacroReferenceName name = (ASTMacroReferenceName) element;
 			name.setParent(elif);
 			name.setPropertyInParent(IASTPreprocessorStatement.MACRO_NAME);
 			addMacroReference(name);
@@ -313,8 +313,8 @@ public class LocationMap implements ILocationResolver {
 		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
 		final ASTIf astif = new ASTIf(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive);
 		fDirectives.add(astif);
-		for (int i = 0; i < macrosInDefinedExpression.length; i++) {
-			ASTMacroReferenceName name = (ASTMacroReferenceName) macrosInDefinedExpression[i];
+		for (IASTName element : macrosInDefinedExpression) {
+			ASTMacroReferenceName name = (ASTMacroReferenceName) element;
 			name.setParent(astif);
 			name.setPropertyInParent(IASTPreprocessorStatement.MACRO_NAME);
 			addMacroReference(name);
@@ -658,8 +658,7 @@ public class LocationMap implements ILocationResolver {
 				}
 			}
 			IASTPreprocessorMacroDefinition[] defs= getMacroDefinitions();
-			for (int i = 0; i < defs.length; i++) {
-				final IASTPreprocessorMacroDefinition def = defs[i];
+			for (final IASTPreprocessorMacroDefinition def : defs) {
 				final IASTName name = def.getName();
 				if (name != null) {
 					fMacroDefinitionMap.put(name.getBinding(), def);

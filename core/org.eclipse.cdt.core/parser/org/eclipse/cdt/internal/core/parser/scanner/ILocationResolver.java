@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -130,7 +131,7 @@ public interface ILocationResolver {
 	int getSequenceNumberForFileOffset(String filePath, int fileOffset);
 
 	/**
-	 * @see IASTNode#getRawSignature().
+	 * @see IASTNode#getRawSignature()
 	 */
 	char[] getUnpreprocessedSignature(IASTFileLocation loc);
 	

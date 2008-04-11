@@ -20,10 +20,8 @@ class TokenList {
 			fFirst= fLast= null;
 			return first;
 		}
-		else {
-			fFirst= (Token) first.getNext();
-			return first;
-		}
+		fFirst= (Token) first.getNext();
+		return first;
 	}
 
 	public final void append(Token t) {

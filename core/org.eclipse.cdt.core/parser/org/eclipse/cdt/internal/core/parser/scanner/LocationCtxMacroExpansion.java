@@ -83,10 +83,9 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		int nextToCheck= offset;
 		ImageLocationInfo firstInfo= null;
 		ImageLocationInfo lastInfo= null;
-		for (int i = 0; i < fLocationInfos.length; i++) {
-			ImageLocationInfo info = fLocationInfos[i];
+		for (ImageLocationInfo info : fLocationInfos) {
 			if (info.fTokenOffsetInExpansion == nextToCheck) {
-				if (lastInfo == null) {
+				if (firstInfo == null || lastInfo == null) {
 					firstInfo= lastInfo= info;
 				}
 				else if (lastInfo.canConcatenate(info)) {

@@ -107,7 +107,7 @@ final class ScannerContext {
 	}
 
 	/** 
-	 * Returns the current token from this context. When called before calling {@link #nextPPToken()} 
+	 * Returns the current token from this context. When called before calling nextPPToken() 
 	 * a token of type {@link Lexer#tBEFORE_INPUT} will be returned.
 	 * @since 5.0
 	 */

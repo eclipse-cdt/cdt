@@ -65,6 +65,7 @@ public class MacroDefinitionParser {
 		TokenList tl= new TokenList();
 		Lexer lex= new Lexer(expansionImage, offset, endOffset, new LexerOptions(), ILexerLog.NULL, null);
 		try {
+			lex.nextToken(); // consume the start token
 			new MacroDefinitionParser().parseExpansion(lex, ILexerLog.NULL, null, new char[][]{}, tl);
 		} catch (OffsetLimitReachedException e) {
 		}
@@ -229,7 +230,7 @@ public class MacroDefinitionParser {
 					next= param;
 					break;
 				}
-				// no break;
+				throw new InvalidMacroDefinitionException(name.getCharImage(), name.getOffset(), param.getEndOffset());
 			default:
 				throw new InvalidMacroDefinitionException(name.getCharImage(), name.getOffset(), param.getEndOffset());
 			}
@@ -243,6 +244,10 @@ public class MacroDefinitionParser {
 		return paramList.toArray(new char[paramList.size()][]);
 	}
 
+	/**
+	 * Parses the expansion for a macro, the current token must be the first token of the expansion
+	 * @since 5.0
+	 */
 	public void parseExpansion(final Lexer lexer, final ILexerLog log, final char[] name, final char[][] paramList,
 			TokenList result) throws OffsetLimitReachedException {
 		boolean needParam= false;

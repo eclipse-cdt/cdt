@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
@@ -38,7 +37,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
  * Visitor to select nodes by image-location.
  * @since 5.0
  */
-public class FindNodeByImageLocation extends CPPASTVisitor implements ICASTVisitor, ICPPASTVisitor {
+public class FindNodeByImageLocation extends CPPASTVisitor implements ICASTVisitor {
 	private final int fOffset;
 	private final int fLength;
 	private final ASTNodeSpecification<?> fNodeSpec;

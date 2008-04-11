@@ -152,7 +152,7 @@ public class MacroExpansionTracker {
 		Token n;
 		for (; t != null; l=t, t=n) {
 			n= (Token) t.getNext();
-			if (MacroExpander.hasImplicitSpace(l, t)) {
+			if (l != null && MacroExpander.hasImplicitSpace(l, t)) {
 				char[] input= getInputForSource(l.fSource, rootInput);
 				if (input == null) {
 					buf.append(' ');

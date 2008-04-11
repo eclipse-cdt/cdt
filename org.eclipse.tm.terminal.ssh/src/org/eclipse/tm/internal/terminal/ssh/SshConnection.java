@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  * Martin Oberhuber (Wind River) - [225792] Rename SshConnector.getTelnetSettings() to getSshSettings()
+ * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -25,10 +26,11 @@ import java.io.InterruptedIOException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -179,7 +181,7 @@ class SshConnection extends Thread {
     	return display;
     }
 
-    private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
+    private class MyUserInfo implements UserInfo, UIKeyboardInteractive {
     	private final String fConnectionId;
     	private final String fUser;
     	private String fPassword;
@@ -199,7 +201,12 @@ class SshConnection extends Thread {
 			final boolean[] retval = new boolean[1];
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					retval[0] = MessageDialog.openQuestion(null, SshMessages.WARNING, str);
+					// [168197] Replace JFace MessagDialog by SWT MessageBox
+					//retval[0] = MessageDialog.openQuestion(null, SshMessages.WARNING, str);
+					MessageBox mb = new MessageBox(fControl.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					mb.setText(SshMessages.WARNING);
+					mb.setMessage(str);
+					retval[0] = (mb.open() == SWT.YES);
 				}
 			});
 			return retval[0];
@@ -237,7 +244,12 @@ class SshConnection extends Thread {
 		public void showMessage(final String message) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					MessageDialog.openInformation(null, SshMessages.INFO, message);
+					// [168197] Replace JFace MessagDialog by SWT MessageBox
+					// MessageDialog.openInformation(null, SshMessages.INFO, message);
+					MessageBox mb = new MessageBox(null, SWT.ICON_INFORMATION | SWT.OK);
+					mb.setText(SshMessages.INFO);
+					mb.setMessage(message);
+					mb.open();
 				}
 			});
 		}

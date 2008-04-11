@@ -11,8 +11,9 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -24,7 +25,6 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
@@ -92,13 +93,15 @@ class TerminalSettingsDlg extends Dialog {
 					public void createControl(Composite parent) {
 						Label l=new Label(parent,SWT.WRAP);
 						String error=NLS.bind(ViewMessages.CONNECTOR_NOT_AVAILABLE,conn.getName());
-						l.setText(error); 
+						l.setText(error);
 						l.setForeground(l.getDisplay().getSystemColor(SWT.COLOR_RED));
-						MessageDialog.openError(getShell(), 
-								error,
-								NLS.bind(ViewMessages.CANNOT_INITIALIZE,
-										conn.getName(),
-										conn.getInitializationErrorMessage())); 
+						String msg = NLS.bind(ViewMessages.CANNOT_INITIALIZE, conn.getName(), conn.getInitializationErrorMessage());
+						// [168197] Replace JFace MessagDialog by SWT MessageBox
+						//MessageDialog.openError(getShell(), error, msg);
+						MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+						mb.setText(error);
+						mb.setMessage(msg);
+						mb.open();
 					}
 					public void loadSettings() {}
 					public void saveSettings() {}
@@ -114,7 +117,7 @@ class TerminalSettingsDlg extends Dialog {
 			resize();
 		}
 		return fPages[i];
-		
+
 	}
 	void resize() {
 		Point size=getShell().getSize();
@@ -201,12 +204,12 @@ class TerminalSettingsDlg extends Dialog {
 		wndGroup.setLayout(gridLayout);
 		wndGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		wndGroup.setText(ViewMessages.VIEW_SETTINGS);
-		
-		
+
+
 		Label label=new Label(wndGroup,SWT.NONE);
 		label.setText(ViewMessages.VIEW_TITLE);
 		label.setLayoutData(new GridData(GridData.BEGINNING));
-		
+
 		fTerminalTitleText = new Text(wndGroup, SWT.BORDER);
 		fTerminalTitleText.setText(fTerminalTitle);
 		fTerminalTitleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -229,7 +232,7 @@ class TerminalSettingsDlg extends Dialog {
 		gridData.widthHint = 200;
 		fCtlConnTypeCombo.setLayoutData(gridData);
 	}
-	
+
 	private void setupSettingsGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(ViewMessages.SETTINGS + ":"); //$NON-NLS-1$
@@ -273,15 +276,15 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings ds=TerminalViewPlugin.getDefault().getDialogSettings();
-		fDialogSettings = ds.getSection(getClass().getName()); 
+		fDialogSettings = ds.getSection(getClass().getName());
 		if (fDialogSettings == null) {
-			fDialogSettings = ds.addNewSection(getClass().getName()); 
+			fDialogSettings = ds.addNewSection(getClass().getName());
 		}
 		return fDialogSettings;
 	}
 	public void setTerminalTitle(String partName) {
 		fTerminalTitle=partName;
-		
+
 	}
 	public String getTerminalTitle() {
 		return fTerminalTitle;

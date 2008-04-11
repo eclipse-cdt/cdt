@@ -93,7 +93,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 
 		private IIndex fIndex;
 		private IPath fFilePath;
-		private Map fMap;
+		private Map<IPath, Counter> fMap;
 		/** The confidence level == number of hits */
 		private int fConfidence;
 		/** Suspect level == number of no index matches */
@@ -108,7 +108,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 			if (ast != null) {
 				fIndex= ast.getIndex();
 				fFilePath= Path.fromOSString(ast.getFilePath());
-				fMap= new HashMap();
+				fMap= new HashMap<IPath, Counter>();
 				if (fIndex != null) {
 					ast.accept(this);
 				}
@@ -168,7 +168,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		}
 
 		private void addPotentialPartnerFileLocation(IPath partnerFileLocation) {
-			Counter counter= (Counter)fMap.get(partnerFileLocation);
+			Counter counter= fMap.get(partnerFileLocation);
 			if (counter == null) {
 				counter= new Counter();
 				fMap.put(partnerFileLocation, counter);
@@ -291,7 +291,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		}
 		IPath partnerBasePath= sourceFileLocation.removeFileExtension();
 		IContentType[] contentTypes= getPartnerContentTypes(tUnit.getContentTypeId());
-		HashSet extensionsTried= new HashSet();
+		HashSet<String> extensionsTried= new HashSet<String>();
 		for (int j = 0; j < contentTypes.length; j++) {
 			IContentType contentType= contentTypes[j];
 			String[] partnerExtensions;

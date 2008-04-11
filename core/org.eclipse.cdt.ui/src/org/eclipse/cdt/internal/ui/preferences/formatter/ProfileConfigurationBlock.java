@@ -89,7 +89,7 @@ public abstract class ProfileConfigurationBlock {
 
 	class ProfileComboController implements Observer, SelectionListener {
 
-		private final List fSortedProfiles;
+		private final List<Profile> fSortedProfiles;
 
 		public ProfileComboController() {
 			fSortedProfiles= fProfileManager.getSortedProfiles();
@@ -101,7 +101,7 @@ public abstract class ProfileConfigurationBlock {
 
 		public void widgetSelected(SelectionEvent e) {
 			final int index= fProfileCombo.getSelectionIndex();
-			fProfileManager.setSelected((Profile)fSortedProfiles.get(index));
+			fProfileManager.setSelected(fSortedProfiles.get(index));
 		}
 
 		public void widgetDefaultSelected(SelectionEvent e) {}
@@ -201,7 +201,7 @@ public abstract class ProfileConfigurationBlock {
 			CUIPlugin.getDefault().getDialogSettings().put(fLastSaveLoadPathKey + ".loadpath", dialog.getFilterPath()); //$NON-NLS-1$
 
 			final File file= new File(path);
-			Collection profiles= null;
+			Collection<Profile> profiles= null;
 			try {
 				profiles= fProfileStore.readProfilesFromFile(file);
 			} catch (CoreException e) {
@@ -275,7 +275,7 @@ public abstract class ProfileConfigurationBlock {
 			fCurrContext= fInstanceScope;
 		}
 
-		List profiles= null;
+		List<Profile> profiles= null;
         try {
             profiles= fProfileStore.readProfiles(fInstanceScope);
         } catch (CoreException e) {
@@ -291,7 +291,7 @@ public abstract class ProfileConfigurationBlock {
         }
         
         if (profiles == null) 
-            profiles= new ArrayList();
+            profiles= new ArrayList<Profile>();
 
 		fProfileManager= createProfileManager(profiles, fCurrContext, access, fProfileVersioner);
 
@@ -317,7 +317,7 @@ public abstract class ProfileConfigurationBlock {
 	
 	protected abstract ProfileStore createProfileStore(IProfileVersioner versioner);
 	
-	protected abstract ProfileManager createProfileManager(List profiles, IScopeContext context, PreferencesAccess access, IProfileVersioner profileVersioner);
+	protected abstract ProfileManager createProfileManager(List<Profile> profiles, IScopeContext context, PreferencesAccess access, IProfileVersioner profileVersioner);
 	
 	protected abstract ModifyDialog createModifyDialog(Shell shell, Profile profile, ProfileManager profileManager, ProfileStore profileStore, boolean newProfile);
 

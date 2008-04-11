@@ -15,8 +15,8 @@ package org.eclipse.cdt.internal.formatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 
 
@@ -246,7 +246,7 @@ public class DefaultCodeFormatterOptions {
 		// cannot be instantiated
 	}
 
-	public DefaultCodeFormatterOptions(Map settings) {
+	public DefaultCodeFormatterOptions(Map<String,String> settings) {
 		setDefaultSettings();
 		if (settings == null) return;
 		set(settings);
@@ -256,8 +256,8 @@ public class DefaultCodeFormatterOptions {
 		return Integer.toString(alignment);
 	}
 
-	public Map getMap() {
-		Map options = new HashMap();
+	public Map<String,String> getMap() {
+		Map<String,String> options = new HashMap<String,String>();
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION, getAlignment(this.alignment_for_arguments_in_allocation_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, getAlignment(this.alignment_for_arguments_in_method_invocation));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT, getAlignment(this.alignment_for_assignment));
@@ -449,7 +449,7 @@ public class DefaultCodeFormatterOptions {
 		return options;
 	}
 
-	public void set(Map settings) {
+	public void set(Map<String,String> settings) {
 //		final Object alignmentForArgumentsInAllocationExpressionOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION);
 //		if (alignmentForArgumentsInAllocationExpressionOption != null) {
 //			try {
@@ -1571,7 +1571,7 @@ public class DefaultCodeFormatterOptions {
 	 * }
 	 * }
 	 * </pre>
-	 * @see http://en.wikipedia.org/wiki/Indent_style
+	 * @see "http://en.wikipedia.org/wiki/Indent_style"
 	 */
 	public void setKandRSettings() {
 		setDefaultSettings();
@@ -1595,7 +1595,7 @@ public class DefaultCodeFormatterOptions {
 	 * }
 	 * }
 	 * </pre>
-	 * @see http://en.wikipedia.org/wiki/Indent_style
+	 * @see "http://en.wikipedia.org/wiki/Indent_style"
 	 */
 	public void setAllmanSettings() {
 		setDefaultSettings();
@@ -1661,7 +1661,7 @@ public class DefaultCodeFormatterOptions {
 	 *   }
 	 * }
 	 * </pre>
-	 * @see http://en.wikipedia.org/wiki/Indent_style
+	 * @see "http://en.wikipedia.org/wiki/Indent_style"
 	 */
 	public void setGNUSettings() {
 		setDefaultSettings();
@@ -1732,7 +1732,7 @@ public class DefaultCodeFormatterOptions {
 	 *         }
 	 *     }
 	 * </pre>
-	 * @see http://en.wikipedia.org/wiki/Indent_style
+	 * @see "http://en.wikipedia.org/wiki/Indent_style"
 	 */
 	public void setWhitesmitsSettings() {
 		setDefaultSettings();

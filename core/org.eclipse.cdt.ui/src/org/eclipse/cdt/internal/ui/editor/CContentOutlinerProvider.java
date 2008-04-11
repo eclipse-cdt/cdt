@@ -212,7 +212,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	protected ISelection updateSelection(ISelection sel) {
 		final ArrayList<ICElement> newSelection = new ArrayList<ICElement>();
 		if (sel instanceof IStructuredSelection) {
-			final Iterator iter = ((IStructuredSelection) sel).iterator();
+			final Iterator<?> iter = ((IStructuredSelection) sel).iterator();
 			while (iter.hasNext()) {
 				final Object o = iter.next();
 				if (o instanceof ICElement) {
@@ -307,8 +307,8 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 				return null;
 			}
 
-			for (int i = 0; i < children.length; i++) {
-				final ICElementDelta d = findElement(unit, children[i]);
+			for (ICElementDelta element2 : children) {
+				final ICElementDelta d = findElement(unit, element2);
 				if (d != null) {
 					return d;
 				}

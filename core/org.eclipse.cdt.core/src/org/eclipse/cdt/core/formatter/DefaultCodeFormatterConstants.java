@@ -65,7 +65,6 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see #FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST
 	 * @see #FORMATTER_BRACE_POSITION_FOR_BLOCK
-	 * @see #FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_SWITCH
 	 * @see #FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION
@@ -2063,7 +2062,6 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see #FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST
 	 * @see #FORMATTER_BRACE_POSITION_FOR_BLOCK
-	 * @see #FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_SWITCH
 	 * @see #FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION
@@ -2076,7 +2074,6 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see #FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST
 	 * @see #FORMATTER_BRACE_POSITION_FOR_BLOCK
-	 * @see #FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_SWITCH
 	 * @see #FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION
@@ -2089,7 +2086,6 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see #FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST
 	 * @see #FORMATTER_BRACE_POSITION_FOR_BLOCK
-	 * @see #FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION
  	 * @see #FORMATTER_BRACE_POSITION_FOR_SWITCH
 	 * @see #FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION
@@ -2194,7 +2190,7 @@ public class DefaultCodeFormatterConstants {
 	 * 
 	 * @return the default settings
 	 */
-	public static Map getDefaultSettings() {
+	public static Map<String,String> getDefaultSettings() {
 		return DefaultCodeFormatterOptions.getDefaultSettings().getMap();
 	}
 
@@ -2203,7 +2199,7 @@ public class DefaultCodeFormatterConstants {
 	 * 
 	 * @return the K&R settings
 	 */
-	public static Map getKandRSettings() {
+	public static Map<String,String> getKandRSettings() {
 		return DefaultCodeFormatterOptions.getKandRSettings().getMap();
 	}
 
@@ -2212,7 +2208,7 @@ public class DefaultCodeFormatterConstants {
 	 * 
 	 * @return the Allman settings
 	 */
-	public static Map getAllmanSettings() {
+	public static Map<String,String> getAllmanSettings() {
 		return DefaultCodeFormatterOptions.getAllmanSettings().getMap();
 	}
 
@@ -2221,7 +2217,7 @@ public class DefaultCodeFormatterConstants {
 	 * 
 	 * @return the GNU settings
 	 */
-	public static Map getGNUSettings() {
+	public static Map<String,String> getGNUSettings() {
 		return DefaultCodeFormatterOptions.getGNUSettings().getMap();
 	}
 
@@ -2230,7 +2226,7 @@ public class DefaultCodeFormatterConstants {
 	 * 
 	 * @return the Whitesmiths settings
 	 */
-	public static Map getWhitesmithsSettings() {
+	public static Map<String,String> getWhitesmithsSettings() {
 		return DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
 	}
 

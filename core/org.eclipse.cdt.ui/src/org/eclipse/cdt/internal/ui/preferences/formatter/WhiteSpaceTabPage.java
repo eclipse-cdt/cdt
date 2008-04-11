@@ -13,18 +13,8 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -42,7 +32,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.part.PageBook;
 
@@ -65,8 +62,8 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 
 	    private final String PREF_NODE_KEY= CUIPlugin.PLUGIN_ID + "formatter_page.white_space_tab_page.node"; //$NON-NLS-1$
 	    
-	    private final List fIndexedNodeList;
-		private final List fTree;
+	    private final List<Node> fIndexedNodeList;
+		private final List<? extends Node> fTree;
 		
 		private ContainerCheckedTreeViewer fTreeViewer;
 		private Composite fComposite;
@@ -74,7 +71,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	    private Node fLastSelected= null;
 
 	    public SyntaxComponent() {
-	        fIndexedNodeList= new ArrayList();
+	        fIndexedNodeList= new ArrayList<Node>();
 			fTree= new WhiteSpaceOptions().createAltTree(fWorkingValues);
 			WhiteSpaceOptions.makeIndexForNodes(fTree, fIndexedNodeList);
 		}
@@ -89,7 +86,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	        fTreeViewer= new ContainerCheckedTreeViewer(fComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 			fTreeViewer.setContentProvider(new ITreeContentProvider() {
 				public Object[] getElements(Object inputElement) {
-					return ((Collection)inputElement).toArray();
+					return ((Collection<?>)inputElement).toArray();
 				}
 				public Object[] getChildren(Object parentElement) {
 					return ((Node)parentElement).getChildren().toArray();
@@ -118,9 +115,9 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 		}
 		
 		public void refreshState() {
-		    final ArrayList checked= new ArrayList(100);
-		    for (Iterator iter= fTree.iterator(); iter.hasNext();)
-		        ((Node) iter.next()).getCheckedLeafs(checked);
+		    final ArrayList<OptionNode> checked= new ArrayList<OptionNode>(100);
+		    for (Node node : fTree)
+				(node).getCheckedLeafs(checked);
 		    fTreeViewer.setGrayedElements(new Object[0]);
 		    fTreeViewer.setCheckedElements(checked.toArray());
 		    fPreview.clear();
@@ -161,7 +158,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 			if (index < 0 || index > fIndexedNodeList.size() - 1) {
 				index= 0;
 			}
-			final Node node= (Node)fIndexedNodeList.get(index);
+			final Node node= fIndexedNodeList.get(index);
 			if (node != null) {
 			    fTreeViewer.expandToLevel(node, 0);
 			    fTreeViewer.setSelection(new StructuredSelection(new Node [] {node}));
@@ -189,8 +186,8 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	    private final String PREF_INNER_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.white_space.java_view.inner"; //$NON-NLS-1$ 
 		private final String PREF_OPTION_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.white_space.java_view.option"; //$NON-NLS-1$
 		
-	    private final ArrayList fIndexedNodeList;
-	    private final ArrayList fTree;
+	    private final ArrayList<Node> fIndexedNodeList;
+	    private final ArrayList<InnerNode> fTree;
 	    
 	    private InnerNode fLastSelected;
 	    
@@ -200,7 +197,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	    private Composite fComposite;
 	    
 	    public JavaElementComponent() {
-			fIndexedNodeList= new ArrayList();
+			fIndexedNodeList= new ArrayList<Node>();
 			fTree= new WhiteSpaceOptions().createTreeByJavaElement(fWorkingValues);
 			WhiteSpaceOptions.makeIndexForNodes(fTree, fIndexedNodeList);
 	    }
@@ -220,13 +217,12 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 
 			fInnerViewer.setContentProvider(new ITreeContentProvider() {
 				public Object[] getElements(Object inputElement) {
-					return ((Collection)inputElement).toArray();
+					return ((Collection<?>)inputElement).toArray();
 				}
 				public Object[] getChildren(Object parentElement) {
-				    final List children= ((Node)parentElement).getChildren();
-				    final ArrayList innerChildren= new ArrayList();
-				    for (final Iterator iter= children.iterator(); iter.hasNext();) {
-                        final Object o= iter.next();
+				    final List<Node> children= ((Node)parentElement).getChildren();
+				    final ArrayList<Object> innerChildren= new ArrayList<Object>();
+				    for (Object o : children) { 
                         if (o instanceof InnerNode) innerChildren.add(o);
                     }
 				    return innerChildren.toArray();
@@ -237,9 +233,9 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 				    return null;
 				}
 				public boolean hasChildren(Object element) {
-				    final List children= ((Node)element).getChildren();
-				    for (final Iterator iter= children.iterator(); iter.hasNext();)
-                        if (iter.next() instanceof InnerNode) return true;
+				    final List<?> children= ((Node)element).getChildren();
+				    for (Object child : children)
+						if (child instanceof InnerNode) return true;
 				    return false;
 				}
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
@@ -283,7 +279,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	    private void restoreSelections() {
 	        Node node;
 	        final int innerIndex= getValidatedIndex(PREF_INNER_INDEX);
-			node= (Node)fIndexedNodeList.get(innerIndex);
+			node= fIndexedNodeList.get(innerIndex);
 			if (node instanceof InnerNode) {
 			    fInnerViewer.expandToLevel(node, 0);
 			    fInnerViewer.setSelection(new StructuredSelection(new Object[] {node}));
@@ -291,7 +287,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 			}
 			
 	        final int optionIndex= getValidatedIndex(PREF_OPTION_INDEX);
-			node= (Node)fIndexedNodeList.get(optionIndex);
+			node= fIndexedNodeList.get(optionIndex);
 			if (node instanceof OptionNode) {
 			    fOptionsViewer.setSelection(new StructuredSelection(new Object[] {node}));
 			}
@@ -338,19 +334,17 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	
         private void innerViewerChanged(InnerNode selectedNode) {
             
-			final List children= selectedNode.getChildren();
+			final List<Node> children= selectedNode.getChildren();
 			
-			final ArrayList optionsChildren= new ArrayList();
-			for (final Iterator iter= children.iterator(); iter.hasNext();) {
-			    final Object o= iter.next();
-			    if (o instanceof OptionNode) optionsChildren.add(o);
+			final ArrayList<OptionNode> optionsChildren= new ArrayList<OptionNode>();
+			for (Object o : children) {
+			    if (o instanceof OptionNode) optionsChildren.add((OptionNode) o);
 			}
 			
 			fOptionsViewer.setInput(optionsChildren.toArray());
 			
-			for (final Iterator iter= optionsChildren.iterator(); iter.hasNext();) {
-			    final OptionNode child= (OptionNode)iter.next();
-                    fOptionsViewer.setChecked(child, child.getChecked());
+			for (OptionNode child : optionsChildren) {
+				fOptionsViewer.setChecked(child, child.getChecked());
 			}
 			
 			fPreview.clear();
@@ -454,7 +448,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	 * @param modifyDialog
 	 * @param workingValues
 	 */
-	public WhiteSpaceTabPage(ModifyDialog modifyDialog, Map workingValues) {
+	public WhiteSpaceTabPage(ModifyDialog modifyDialog, Map<String,String> workingValues) {
 		super(modifyDialog, workingValues);
 		fDialogSettings= CUIPlugin.getDefault().getDialogSettings();
 		fSwitchComponent= new SwitchComponent();

@@ -87,7 +87,7 @@ public class OpenIncludeAction extends Action {
 		
 		try {
 			IResource res = include.getUnderlyingResource();
-			ArrayList/*<IPath>*/ filesFound = new ArrayList(4);
+			ArrayList<IPath> filesFound = new ArrayList<IPath>(4);
 			String fullFileName= include.getFullFileName();
 			if (fullFileName != null) {
 				IPath fullPath= new Path(fullFileName);
@@ -144,7 +144,7 @@ public class OpenIncludeAction extends Action {
 				noElementsFound();
 				fileToOpen= null;
 			} else if (nElementsFound == 1) {
-				fileToOpen= (IPath) filesFound.get(0);
+				fileToOpen= filesFound.get(0);
 			} else {
 				fileToOpen= chooseFile(filesFound);
 			}
@@ -198,7 +198,7 @@ public class OpenIncludeAction extends Action {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
-	private void findFile(String[] includePaths, String name, ArrayList list)
+	private void findFile(String[] includePaths, String name, ArrayList<IPath> list)
 			throws CoreException {
 		// in case it is an absolute path
 		IPath includeFile= new Path(name);		
@@ -209,14 +209,13 @@ public class OpenIncludeAction extends Action {
 				return;
 			}
 		}
-		HashSet foundSet = new HashSet();
-		for (int i = 0; i < includePaths.length; i++) {
-			IPath path = PathUtil.getCanonicalPath(new Path(includePaths[i]).append(includeFile));
+		HashSet<IPath> foundSet = new HashSet<IPath>();
+		for (String includePath : includePaths) {
+			IPath path = PathUtil.getCanonicalPath(new Path(includePath).append(includeFile));
 			File file = path.toFile();
 			if (file.exists()) {
 				IPath[] paths = resolveIncludeLink(path);
-				for (int j = 0; j < paths.length; j++) {
-					IPath p = paths[j];
+				for (IPath p : paths) {
 					if (foundSet.add(p)) {
 						list.add(p);
 					}
@@ -232,7 +231,7 @@ public class OpenIncludeAction extends Action {
 	 * @param list
 	 * @throws CoreException
 	 */
-	private void findFile(IContainer parent, final IPath name, final ArrayList list) throws CoreException {
+	private void findFile(IContainer parent, final IPath name, final ArrayList<IPath> list) throws CoreException {
 		parent.accept(new IResourceProxyVisitor() {
 
 			public boolean visit(IResourceProxy proxy) throws CoreException {
@@ -254,7 +253,7 @@ public class OpenIncludeAction extends Action {
 	}
 
 
-	private IPath chooseFile(ArrayList filesFound) {
+	private IPath chooseFile(ArrayList<IPath> filesFound) {
 		ILabelProvider renderer= new LabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -280,7 +279,7 @@ public class OpenIncludeAction extends Action {
 
 	private static IInclude getIncludeStatement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list= ((IStructuredSelection)sel).toList();
+			List<?> list= ((IStructuredSelection)sel).toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
 				if (element instanceof IInclude) {

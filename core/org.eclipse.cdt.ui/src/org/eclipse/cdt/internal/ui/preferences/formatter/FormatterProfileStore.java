@@ -21,6 +21,8 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+
 
 public class FormatterProfileStore extends ProfileStore {
 
@@ -38,7 +40,7 @@ public class FormatterProfileStore extends ProfileStore {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List readProfiles(IScopeContext scope) throws CoreException {
+	public List<Profile> readProfiles(IScopeContext scope) throws CoreException {
 		final IEclipsePreferences node= scope.getNode(CUIPlugin.PLUGIN_ID);
 		final String profilesValue= node.get(PREF_FORMATTER_PROFILES_OLD, null);
 		if (profilesValue != null) {

@@ -659,20 +659,19 @@ public class SemanticHighlightings {
 						// try to derive from AST
 						if (name instanceof ICPPASTQualifiedName) {
 							return false;
-						} else {
-							node= name.getParent();
-							while (node instanceof IASTName) {
+						}
+						node= name.getParent();
+						while (node instanceof IASTName) {
+							node= node.getParent();
+						}
+						if (node instanceof IASTFunctionDeclarator) {
+							while (node != token.getRoot() && !(node.getParent() instanceof IASTDeclSpecifier)) {
 								node= node.getParent();
 							}
-							if (node instanceof IASTFunctionDeclarator) {
-								while (node != token.getRoot() && !(node.getParent() instanceof IASTDeclSpecifier)) {
-									node= node.getParent();
-								}
-								if (node instanceof ICPPASTCompositeTypeSpecifier) {
-									return false;
-								}
-								return true;
+							if (node instanceof ICPPASTCompositeTypeSpecifier) {
+								return false;
 							}
+							return true;
 						}
 					}
 				}
@@ -1892,8 +1891,8 @@ public class SemanticHighlightings {
 						return false;
 					}
 					IIndexName[] decls= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
-					for (int i = 0; i < decls.length; i++) {
-						IIndexFile indexFile= decls[i].getFile();
+					for (IIndexName decl : decls) {
+						IIndexFile indexFile= decl.getFile();
 						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {
 							return false;
 						}
@@ -2010,8 +2009,7 @@ public class SemanticHighlightings {
 		store.setDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, true);
 
 		SemanticHighlighting[] semanticHighlightings= getSemanticHighlightings();
-		for (int i= 0, n= semanticHighlightings.length; i < n; i++) {
-			SemanticHighlighting semanticHighlighting= semanticHighlightings[i];
+		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
 			store.setDefault(SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting), DEBUG || semanticHighlighting.isEnabledByDefault());
 			PreferenceConverter.setDefault(store, SemanticHighlightings.getColorPreferenceKey(semanticHighlighting), semanticHighlighting.getDefaultTextColor());
 			store.setDefault(SemanticHighlightings.getBoldPreferenceKey(semanticHighlighting), semanticHighlighting.isBoldByDefault());
@@ -2036,8 +2034,8 @@ public class SemanticHighlightings {
 		}
 		String relevantKey= null;
 		SemanticHighlighting[] highlightings= getSemanticHighlightings();
-		for (int i= 0; i < highlightings.length; i++) {
-			if (event.getProperty().equals(getEnabledPreferenceKey(highlightings[i]))) {
+		for (SemanticHighlighting highlighting : highlightings) {
+			if (event.getProperty().equals(getEnabledPreferenceKey(highlighting))) {
 				relevantKey= event.getProperty();
 				break;
 			}
@@ -2045,8 +2043,8 @@ public class SemanticHighlightings {
 		if (relevantKey == null)
 			return false;
 
-		for (int i= 0; i < highlightings.length; i++) {
-			String key= getEnabledPreferenceKey(highlightings[i]);
+		for (SemanticHighlighting highlighting : highlightings) {
+			String key= getEnabledPreferenceKey(highlighting);
 			if (key.equals(relevantKey))
 				continue;
 			if (store.getBoolean(key))
@@ -2070,8 +2068,8 @@ public class SemanticHighlightings {
 		}
 		SemanticHighlighting[] highlightings= getSemanticHighlightings();
 		boolean enable= false;
-		for (int i= 0; i < highlightings.length; i++) {
-			String enabledKey= getEnabledPreferenceKey(highlightings[i]);
+		for (SemanticHighlighting highlighting : highlightings) {
+			String enabledKey= getEnabledPreferenceKey(highlighting);
 			if (store.getBoolean(enabledKey)) {
 				enable= true;
 				break;

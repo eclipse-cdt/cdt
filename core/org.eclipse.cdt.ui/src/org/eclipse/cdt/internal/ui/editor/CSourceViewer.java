@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -409,11 +410,14 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	public void prependTextPresentationListener(ITextPresentationListener listener) {
 		Assert.isNotNull(listener);
 
-		if (fTextPresentationListeners == null)
-			fTextPresentationListeners= new ArrayList<ITextPresentationListener>();
+		@SuppressWarnings("unchecked") // using list from base class
+		List<ITextPresentationListener> textPresentationListeners= fTextPresentationListeners;
+		
+		if (textPresentationListeners == null) 
+			fTextPresentationListeners= textPresentationListeners= new ArrayList<ITextPresentationListener>();
 
-		fTextPresentationListeners.remove(listener);
-		fTextPresentationListeners.add(0, listener);
+		textPresentationListeners.remove(listener);
+		textPresentationListeners.add(0, listener);
 	}
 
 	/**

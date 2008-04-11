@@ -105,12 +105,12 @@ public class CustomCodeFormatterBlock extends Observable {
 		}
 		fFormatterCombo.clearSelection();
 		fFormatterCombo.setText(DEFAULT);
-		Iterator iterator = idMap.entrySet().iterator();
+		Iterator<Map.Entry<String,String>> iterator = idMap.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry)iterator.next();
-			String val = (String)entry.getValue();
+			Map.Entry<String,String> entry = iterator.next();
+			String val = entry.getValue();
 			if (val != null && val.equals(fDefaultFormatterId)) {
-				fFormatterCombo.setText((String)entry.getKey());
+				fFormatterCombo.setText(entry.getKey());
 			}
 		}
 		handleFormatterChanged();
@@ -175,12 +175,12 @@ public class CustomCodeFormatterBlock extends Observable {
 		boolean init = false;
 		String formatterID= fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
 		if (formatterID != null) {
-			Iterator iterator = idMap.entrySet().iterator();
+			Iterator<Map.Entry<String,String>> iterator = idMap.entrySet().iterator();
 			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry)iterator.next();
-				String val = (String)entry.getValue();
+				Map.Entry<String, String> entry = iterator.next();
+				String val = entry.getValue();
 				if (val != null && val.equals(formatterID)) {
-					fFormatterCombo.setText((String)entry.getKey());
+					fFormatterCombo.setText(entry.getKey());
 					init = true;
 				}
 			}
@@ -197,8 +197,8 @@ public class CustomCodeFormatterBlock extends Observable {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.FORMATTER_EXTPOINT_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			for (int i = 0; i < exts.length; i++) {
-		 		IConfigurationElement[] elements = exts[i].getConfigurationElements();
+			for (IExtension ext : exts) {
+		 		IConfigurationElement[] elements = ext.getConfigurationElements();
 		 		for (int j = 0; j < elements.length; ++j) {
 		 			String name = elements[j].getAttribute(ATTR_NAME);
 		 			String id= elements[j].getAttribute(ATTR_ID);

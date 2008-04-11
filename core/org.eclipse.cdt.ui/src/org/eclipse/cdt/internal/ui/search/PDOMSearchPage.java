@@ -178,13 +178,13 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	    }
 	    
 		// get the list of elements for the scope
-		List elements = new ArrayList();
+		List<Object> elements = new ArrayList<Object>();
 		String scopeDescription = ""; //$NON-NLS-1$
 		switch (getContainer().getSelectedScope()) {
 		case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
 			if (structuredSelection != null) {
 				scopeDescription = CSearchMessages.ProjectScope; 
-				for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
+				for (Iterator<?> i = structuredSelection.iterator(); i.hasNext();) {
 					ICProject project = getProject(i.next());
 					if (project != null)
 						elements.add(project);
@@ -194,7 +194,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		case ISearchPageContainer.SELECTION_SCOPE:
 			if( structuredSelection != null) {
 				scopeDescription = CSearchMessages.SelectionScope; 
-				for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
+				for (Iterator<?> i = structuredSelection.iterator(); i.hasNext();) {
 					Object obj = i.next();
 					if (obj instanceof IResource)
 						elements.add(CoreModel.getDefault().create((IResource)obj));
@@ -225,7 +225,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		ICElement[] scope
 			= elements.isEmpty()
 			? null
-			: (ICElement[])elements.toArray(new ICElement[elements.size()]);
+			: elements.toArray(new ICElement[elements.size()]);
 		
 		try {
 			PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, patternStr, 

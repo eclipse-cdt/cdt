@@ -349,7 +349,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	 * @return the hard-coded positions
 	 */
 	private HighlightedPosition[] createHardcodedPositions() {
-		List positions= new ArrayList();
+		List<HighlightedPosition> positions= new ArrayList<HighlightedPosition>();
 		for (int i= 0; i < fHardcodedRanges.length; i++) {
 			HighlightedRange range= null;
 			HighlightingStyle hl= null;
@@ -364,7 +364,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 			if (range != null)
 				positions.add(fPresenter.createHighlightedPosition(range.getOffset(), range.getLength(), hl));
 		}
-		return (HighlightedPosition[]) positions.toArray(new HighlightedPosition[positions.size()]);
+		return positions.toArray(new HighlightedPosition[positions.size()]);
 	}
 
 	/**

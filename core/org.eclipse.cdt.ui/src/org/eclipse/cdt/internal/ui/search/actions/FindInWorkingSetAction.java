@@ -70,7 +70,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 		if (fWorkingSets == null) {
 			return new ICElement[0];
 		}
-		List scope = new ArrayList();
+		List<ICElement> scope = new ArrayList<ICElement>();
 		for (int i = 0; i < fWorkingSets.length; ++i) {
 			IAdaptable[] elements = fWorkingSets[i].getElements();
 			for (int j = 0; j < elements.length; ++j) {
@@ -80,7 +80,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 			}
 		}
 		
-		return (ICElement[])scope.toArray(new ICElement[scope.size()]);
+		return scope.toArray(new ICElement[scope.size()]);
 	}
 	
 	private IWorkingSet[] askForWorkingSets() {

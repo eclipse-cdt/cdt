@@ -82,18 +82,18 @@ public class ReferencesSearchGroup extends ActionGroup {
 		incomingMenu.add(fFindRefsProjectAction);
 		incomingMenu.add(fFindRefsInWorkingSetAction);
 		
-		for (int i=0; i<actions.length; i++){
-			incomingMenu.add(actions[i]);
+		for (FindAction action : actions) {
+			incomingMenu.add(action);
 		}
 		
 	}	
 	
 	private FindAction[] getWorkingSetActions() {
-		ArrayList actions= new ArrayList(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
+		ArrayList<FindAction> actions= new ArrayList<FindAction>(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
 		
-		Iterator iter= CSearchUtil.getLRUWorkingSets().iterator();
+		Iterator<IWorkingSet[]> iter= CSearchUtil.getLRUWorkingSets().iterator();
 		while (iter.hasNext()) {
-			IWorkingSet[] workingSets= (IWorkingSet[])iter.next();
+			IWorkingSet[] workingSets= iter.next();
 			FindAction action;
 			if (fEditor != null)
 				action= new WorkingSetFindAction(fEditor, new FindRefsInWorkingSetAction(fEditor, workingSets), CSearchUtil.toString(workingSets));
@@ -103,7 +103,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 			actions.add(action);
 		}
 		
-		return (FindAction[])actions.toArray(new FindAction[actions.size()]);
+		return actions.toArray(new FindAction[actions.size()]);
 	}
 	
 	/* 

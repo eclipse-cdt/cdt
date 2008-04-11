@@ -85,8 +85,8 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	private final ProfileStore fProfileStore;
 	private final boolean fNewProfile;
 	private Profile fProfile;
-	private final Map fWorkingValues;
-	private final List fTabPages;
+	private final Map<String, String> fWorkingValues;
+	private final List<IModifyDialogTabPage> fTabPages;
 	private final IDialogSettings fDialogSettings;
 	private TabFolder fTabFolder;
 	private final ProfileManager fProfileManager;
@@ -112,13 +112,13 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 				
 		fProfile= profile;
 		setTitle(Messages.format(FormatterMessages.ModifyDialog_dialog_title, profile.getName()));
-		fWorkingValues= new HashMap(fProfile.getSettings());
+		fWorkingValues= new HashMap<String, String>(fProfile.getSettings());
 		setStatusLineAboveButtons(false);
-		fTabPages= new ArrayList();
+		fTabPages= new ArrayList<IModifyDialogTabPage>();
 		fDialogSettings= CUIPlugin.getDefault().getDialogSettings();	
 	}
 
-	protected abstract void addPages(Map values);
+	protected abstract void addPages(Map<String, String> values);
 
 	@Override
 	public void create() {
@@ -261,13 +261,13 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		if (!fProfile.getName().equals(fProfileNameField.getText())) {
 			fProfile= fProfile.rename(fProfileNameField.getText(), fProfileManager);
 		}
-		fProfile.setSettings(new HashMap(fWorkingValues));
+		fProfile.setSettings(new HashMap<String, String>(fWorkingValues));
 		fProfileManager.setSelected(fProfile);
 		doValidate();
 	}
 	
 	private void saveButtonPressed() {
-		Profile selected= new CustomProfile(fProfileNameField.getText(), new HashMap(fWorkingValues), fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
+		Profile selected= new CustomProfile(fProfileNameField.getText(), new HashMap<String, String>(fWorkingValues), fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
 		
 		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
 		dialog.setText(FormatterMessages.CodingStyleConfigurationBlock_save_profile_dialog_title); 
@@ -291,7 +291,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		final IContentType type= Platform.getContentTypeManager().getContentType("org.eclipse.core.runtime.xml"); //$NON-NLS-1$
 		if (type != null)
 			encoding= type.getDefaultCharset();
-		final Collection profiles= new ArrayList();
+		final Collection<Profile> profiles= new ArrayList<Profile>();
 		profiles.add(selected);
 		try {
 			fProfileStore.writeProfilesToFile(profiles, file, encoding);
@@ -393,9 +393,9 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		if (!fProfileNameField.getText().trim().equals(fProfile.getName()))
 			return true;
 		
-		Iterator iter= fProfile.getSettings().entrySet().iterator();
+		Iterator<Map.Entry<String, String>> iter= fProfile.getSettings().entrySet().iterator();
 		for (;iter.hasNext();) {
-			Map.Entry curr= (Map.Entry) iter.next();
+			Map.Entry<String, String> curr= iter.next();
 			if (!fWorkingValues.get(curr.getKey()).equals(curr.getValue())) {
 				return true;
 			}

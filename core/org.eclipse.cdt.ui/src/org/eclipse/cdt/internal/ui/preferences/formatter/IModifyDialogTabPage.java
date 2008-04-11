@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -36,7 +35,7 @@ public interface IModifyDialogTabPage {
 	 * 
 	 * @param workingValues the values to work with
 	 */
-	public void setWorkingValues(Map workingValues);
+	public void setWorkingValues(Map<String, String> workingValues);
 
 	/**
 	 * A modify listener which must be informed whenever

@@ -87,7 +87,7 @@ public class IndentationTabPage extends FormatterTabPage {
 	private TranslationUnitPreview fPreview;
 	private String fOldTabChar= null;
 	
-	public IndentationTabPage(ModifyDialog modifyDialog, Map workingValues) {
+	public IndentationTabPage(ModifyDialog modifyDialog, Map<String,String> workingValues) {
 		super(modifyDialog, workingValues);
 	}
 
@@ -110,7 +110,7 @@ public class IndentationTabPage extends FormatterTabPage {
 		final NumberPreference indentSize= createNumberPref(generalGroup, numColumns, FormatterMessages.IndentationTabPage_general_group_option_indent_size, DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, 0, 32); 
 		final NumberPreference tabSize= createNumberPref(generalGroup, numColumns, FormatterMessages.IndentationTabPage_general_group_option_tab_size, DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, 0, 32);
 		
-		String tabchar= (String) fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
+		String tabchar= fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 		updateTabPreferences(tabchar, tabSize, indentSize, onlyForLeading);
 		tabPolicy.addObserver(new Observer() {
 			public void update(Observable o, Object arg) {
@@ -208,8 +208,8 @@ public class IndentationTabPage extends FormatterTabPage {
 	}
 
 	private void swapTabValues() {
-		Object tabSize= fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE);
-		Object indentSize= fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE);
+		String tabSize= fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE);
+		String indentSize= fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE);
 		fWorkingValues.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, indentSize);
 		fWorkingValues.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, tabSize);
 	}

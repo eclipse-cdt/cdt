@@ -112,7 +112,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
     }
 	
 	@Override
-	protected ProfileManager createProfileManager(List profiles, IScopeContext context, PreferencesAccess access, IProfileVersioner profileVersioner) {
+	protected ProfileManager createProfileManager(List<Profile> profiles, IScopeContext context, PreferencesAccess access, IProfileVersioner profileVersioner) {
 	    return new FormatterProfileManager(profiles, context, access, profileVersioner);
     }
 	

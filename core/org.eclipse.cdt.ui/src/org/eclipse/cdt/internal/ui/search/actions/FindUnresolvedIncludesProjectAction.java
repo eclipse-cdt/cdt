@@ -45,7 +45,7 @@ public class FindUnresolvedIncludesProjectAction implements IObjectActionDelegat
 	public void run(IAction action) {
 		List<ICProject> projects= new ArrayList<ICProject>();
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
-		for (Iterator i = cElements.iterator(); i.hasNext();) {
+		for (Iterator<?> i = cElements.iterator(); i.hasNext();) {
 			Object elem = i.next();
 			if (elem instanceof ICProject) {
 				projects.add((ICProject) elem);

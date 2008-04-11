@@ -95,8 +95,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			
 			// visit macro definitions
 			IASTPreprocessorMacroDefinition[] macroDefs= tu.getMacroDefinitions();
-			for (int i= 0; i < macroDefs.length; i++) {
-				IASTPreprocessorMacroDefinition macroDef= macroDefs[i];
+			for (IASTPreprocessorMacroDefinition macroDef : macroDefs) {
 				if (macroDef.isPartOfTranslationUnitFile()) {
 					visitNode(macroDef.getName());
 				}
@@ -105,14 +104,12 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 			// visit macro expansions
 			IASTPreprocessorMacroExpansion[] macroExps= tu.getMacroExpansions();
-			for (int i= 0; i < macroExps.length; i++) {
-				IASTPreprocessorMacroExpansion macroExp= macroExps[i];
+			for (IASTPreprocessorMacroExpansion macroExp : macroExps) {
 				if (macroExp.isPartOfTranslationUnitFile()) {
 					IASTName macroRef= macroExp.getMacroReference();
 					visitNode(macroRef);
 					IASTName[] nestedMacroRefs= macroExp.getNestedMacroReferences();
-					for (int j= 0; j < nestedMacroRefs.length; j++) {
-						IASTName nestedMacroRef= nestedMacroRefs[j];
+					for (IASTName nestedMacroRef : nestedMacroRefs) {
 						visitNode(nestedMacroRef);
 					}
 				}
@@ -144,8 +141,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				IASTFunctionDefinition functionDef= (IASTFunctionDefinition) declaration;
 				ICPPASTFunctionTryBlockDeclarator declarator= (ICPPASTFunctionTryBlockDeclarator) functionDef.getDeclarator();
 				ICPPASTCatchHandler[] catchHandlers= declarator.getCatchHandlers();
-				for (int i = 0; i < catchHandlers.length; i++) {
-					catchHandlers[i].accept(this);
+				for (ICPPASTCatchHandler catchHandler : catchHandlers) {
+					catchHandler.accept(this);
 				}
 			}
 			return PROCESS_CONTINUE;
@@ -273,7 +270,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			boolean isExisting= false;
 			// TODO: use binary search
 			for (int i= 0, n= fRemovedPositions.size(); i < n; i++) {
-				HighlightedPosition position= (HighlightedPosition) fRemovedPositions.get(i);
+				HighlightedPosition position= fRemovedPositions.get(i);
 				if (position == null)
 					continue;
 				if (position.isEqual(offset, length, highlighting)) {
@@ -285,7 +282,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 
 			if (!isExisting) {
-				Position position= fJobPresenter.createHighlightedPosition(offset, length, highlighting);
+				HighlightedPosition position= fJobPresenter.createHighlightedPosition(offset, length, highlighting);
 				fAddedPositions.add(position);
 			}
 		}
@@ -302,9 +299,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private HighlightingStyle[] fHighlightings;
 
 	/** Background job's added highlighted positions */
-	private List<Position> fAddedPositions= new ArrayList<Position>();
+	private List<HighlightedPosition> fAddedPositions= new ArrayList<HighlightedPosition>();
 	/** Background job's removed highlighted positions */
-	private List<Object> fRemovedPositions= new ArrayList<Object>();
+	private List<HighlightedPosition> fRemovedPositions= new ArrayList<HighlightedPosition>();
 	/** Number of removed positions */
 	private int fNOfRemovedPositions;
 
@@ -342,8 +339,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		synchronized (fReconcileLock) {
 			if (fIsReconciling)
 				return;
-			else
-				fIsReconciling= true;
+			fIsReconciling= true;
 		}
 		fJobPresenter= fPresenter;
 		fJobSemanticHighlightings= fSemanticHighlightings;
@@ -399,10 +395,10 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 */
 	private void reconcilePositions(IASTTranslationUnit ast, PositionCollector visitor) {
 		ast.accept(visitor);
-		List<Object> oldPositions= fRemovedPositions;
-		List<Object> newPositions= new ArrayList<Object>(fNOfRemovedPositions);
+		List<HighlightedPosition> oldPositions= fRemovedPositions;
+		List<HighlightedPosition> newPositions= new ArrayList<HighlightedPosition>(fNOfRemovedPositions);
 		for (int i= 0, n= oldPositions.size(); i < n; i ++) {
-			Object current= oldPositions.get(i);
+			HighlightedPosition current= oldPositions.get(i);
 			if (current != null)
 				newPositions.add(current);
 		}
@@ -421,7 +417,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * @param addedPositions the added positions
 	 * @param removedPositions the removed positions
 	 */
-	private void updatePresentation(TextPresentation textPresentation, List<Position> addedPositions, List<Object> removedPositions) {
+	private void updatePresentation(TextPresentation textPresentation, List<HighlightedPosition> addedPositions, List<HighlightedPosition> removedPositions) {
 		Runnable runnable= fJobPresenter.createUpdateRunnable(textPresentation, addedPositions, removedPositions);
 		if (runnable == null)
 			return;

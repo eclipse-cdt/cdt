@@ -28,6 +28,8 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 
 public class FormatterProfileManager extends ProfileManager {
 	
+	private static final List<String> EMPTY_LIST = Collections.emptyList();
+
 	public final static String KANDR_PROFILE= "org.eclipse.cdt.ui.default.kandr_profile"; //$NON-NLS-1$
 	public final static String ALLMAN_PROFILE= "org.eclipse.cdt.ui.default.allman_profile"; //$NON-NLS-1$
 	public final static String GNU_PROFILE= "org.eclipse.cdt.ui.default.gnu_profile"; //$NON-NLS-1$
@@ -36,18 +38,18 @@ public class FormatterProfileManager extends ProfileManager {
 	public final static String DEFAULT_PROFILE= KANDR_PROFILE;
 	
 	private final static KeySet[] KEY_SETS= new KeySet[] {
-		new KeySet(CCorePlugin.PLUGIN_ID, new ArrayList(DefaultCodeFormatterConstants.getDefaultSettings().keySet())),
-		new KeySet(CUIPlugin.PLUGIN_ID, Collections.EMPTY_LIST)	
+		new KeySet(CCorePlugin.PLUGIN_ID, new ArrayList<String>(DefaultCodeFormatterConstants.getDefaultSettings().keySet())),
+		new KeySet(CUIPlugin.PLUGIN_ID, EMPTY_LIST)	
 	};
 	
 	private final static String PROFILE_KEY= PreferenceConstants.FORMATTER_PROFILE;
 	private final static String FORMATTER_SETTINGS_VERSION= "formatter_settings_version";  //$NON-NLS-1$
 
-	public FormatterProfileManager(List profiles, IScopeContext context, PreferencesAccess preferencesAccess, IProfileVersioner profileVersioner) {
+	public FormatterProfileManager(List<Profile> profiles, IScopeContext context, PreferencesAccess preferencesAccess, IProfileVersioner profileVersioner) {
 	    super(addBuiltinProfiles(profiles, profileVersioner), context, preferencesAccess, profileVersioner, KEY_SETS, PROFILE_KEY, FORMATTER_SETTINGS_VERSION);
     }
 	
-	private static List addBuiltinProfiles(List profiles, IProfileVersioner profileVersioner) {
+	private static List<Profile> addBuiltinProfiles(List<Profile> profiles, IProfileVersioner profileVersioner) {
 		final Profile kandrProfile= new BuiltInProfile(KANDR_PROFILE, FormatterMessages.ProfileManager_kandr_profile_name, getKandRSettings(), 2, profileVersioner.getCurrentVersion(), profileVersioner.getProfileKind()); 
 		profiles.add(kandrProfile);
 		final Profile allmanProfile= new BuiltInProfile(ALLMAN_PROFILE, FormatterMessages.ProfileManager_allman_profile_name, getAllmanSettings(), 2, profileVersioner.getCurrentVersion(), profileVersioner.getProfileKind()); 
@@ -62,35 +64,35 @@ public class FormatterProfileManager extends ProfileManager {
 	/** 
 	 * @return Returns the default settings.
 	 */
-	public static Map getDefaultSettings() {
+	public static Map<String, String> getDefaultSettings() {
 		return DefaultCodeFormatterConstants.getDefaultSettings();
 	}
 
 	/** 
 	 * @return Returns the K&R settings.
 	 */
-	public static Map getKandRSettings() {
+	public static Map<String, String> getKandRSettings() {
 		return DefaultCodeFormatterConstants.getKandRSettings();
 	}
 
 	/** 
 	 * @return Returns the ANSI settings.
 	 */
-	public static Map getAllmanSettings() {
+	public static Map<String, String> getAllmanSettings() {
 		return DefaultCodeFormatterConstants.getAllmanSettings();
 	}
 
 	/** 
 	 * @return Returns the GNU settings.
 	 */
-	public static Map getGNUSettings() {
+	public static Map<String, String> getGNUSettings() {
 		return DefaultCodeFormatterConstants.getGNUSettings();
 	}
 
 	/** 
 	 * @return Returns the Whitesmiths settings.
 	 */
-	public static Map getWhitesmithsSettings() {
+	public static Map<String, String> getWhitesmithsSettings() {
 		return DefaultCodeFormatterConstants.getWhitesmithsSettings();
 	}
 

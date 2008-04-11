@@ -85,14 +85,11 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 				IStorage storage = new EFSFileStorage(uri);
 				return createExternalSearchAnnotationModel(storage, null);
 			}
-			else {
-				ILocationProvider provider = (ILocationProvider) adaptable
-						.getAdapter(ILocationProvider.class);
-				if (provider != null) {
-					IPath path = provider.getPath(element);
-					IStorage storage = new FileStorage(path);
-					return createExternalSearchAnnotationModel(storage, null);
-				}
+			ILocationProvider provider = (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+			if (provider != null) {
+				IPath path = provider.getPath(element);
+				IStorage storage = new FileStorage(path);
+				return createExternalSearchAnnotationModel(storage, null);
 			}
 		}
 		return null;

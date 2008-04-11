@@ -26,6 +26,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.swt.widgets.Display;
 
@@ -84,7 +85,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	/** The editor this is installed on */
 	private CEditor fEditor;
 	/** The list of currently highlighted positions */
-	private List fInactiveCodePositions= Collections.EMPTY_LIST;
+	private List<Position> fInactiveCodePositions= Collections.emptyList();
 	private IDocument fDocument;
 
 	/**
@@ -161,7 +162,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		}
 		if (fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 			fLineBackgroundPainter.removeHighlightPositions(fInactiveCodePositions);
-			fInactiveCodePositions= Collections.EMPTY_LIST;
+			fInactiveCodePositions= Collections.emptyList();
 			fLineBackgroundPainter= null;
 		}
 		if (fEditor != null) {
@@ -195,7 +196,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		if (progressMonitor != null && progressMonitor.isCanceled()) {
 			return;
 		}
-		final List newInactiveCodePositions= collectInactiveCodePositions(ast);
+		final List<Position> newInactiveCodePositions= collectInactiveCodePositions(ast);
 		Runnable updater = new Runnable() {
 			public void run() {
 				if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
@@ -216,23 +217,22 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
 	 * @return a {@link List} of {@link IRegion}s
 	 */
-	private List collectInactiveCodePositions(IASTTranslationUnit translationUnit) {
+	private List<Position> collectInactiveCodePositions(IASTTranslationUnit translationUnit) {
 		if (translationUnit == null) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		String fileName = translationUnit.getFilePath();
 		if (fileName == null) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
-		List positions = new ArrayList();
+		List<Position> positions = new ArrayList<Position>();
 		int inactiveCodeStart = -1;
 		boolean inInactiveCode = false;
-		Stack inactiveCodeStack = new Stack();
+		Stack<Boolean> inactiveCodeStack = new Stack<Boolean>();
 
 		IASTPreprocessorStatement[] preprocStmts = translationUnit.getAllPreprocessorStatements();
 
-		for (int i = 0; i < preprocStmts.length; i++) {
-			IASTPreprocessorStatement statement = preprocStmts[i];
+		for (IASTPreprocessorStatement statement : preprocStmts) {
 			IASTFileLocation floc= statement.getFileLocation();
 			if (floc == null || !fileName.equals(floc.getFileName())) {
 				// preprocessor directive is from a different file
@@ -287,7 +287,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 				}
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
 				try {
-					boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
+					boolean wasInInactiveCode = inactiveCodeStack.pop().booleanValue();
 					if (inInactiveCode && !wasInInactiveCode) {
 						int inactiveCodeEnd = floc.getNodeOffset() + floc.getNodeLength();
 						positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, true, fHighlightKey));
@@ -337,7 +337,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 			fLineBackgroundPainter.removeHighlightPositions(fInactiveCodePositions);
-			fInactiveCodePositions= Collections.EMPTY_LIST;
+			fInactiveCodePositions= Collections.emptyList();
 		}
 	}
 

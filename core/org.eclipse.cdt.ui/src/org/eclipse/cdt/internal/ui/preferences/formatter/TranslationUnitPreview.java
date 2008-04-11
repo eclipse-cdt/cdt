@@ -41,7 +41,7 @@ public class TranslationUnitPreview extends CPreview {
      * @param workingValues
      * @param parent
      */
-    public TranslationUnitPreview(Map workingValues, Composite parent) {
+    public TranslationUnitPreview(Map<String, String> workingValues, Composite parent) {
         super(workingValues, parent);
     }
 
@@ -59,9 +59,9 @@ public class TranslationUnitPreview extends CPreview {
 			final IContentFormatter formatter =	fViewerConfiguration.getContentFormatter(fSourceViewer);
 			if (formatter instanceof IContentFormatterExtension) {
 				final IContentFormatterExtension extension = (IContentFormatterExtension) formatter;
-				Map prefs= fWorkingValues;
+				Map<String, String> prefs= fWorkingValues;
 				if (fFormatterId != null) {
-					prefs= new HashMap(fWorkingValues);
+					prefs= new HashMap<String, String>(fWorkingValues);
 					prefs.put(CCorePreferenceConstants.CODE_FORMATTER, fFormatterId);
 				}
 				context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, prefs);

@@ -96,7 +96,7 @@ public abstract class CPreview {
 	
 	protected final MarginPainter fMarginPainter;
 	
-	protected Map fWorkingValues;
+	protected Map<String, String> fWorkingValues;
 
 	private int fTabSize= 0;
 	private WhitespaceCharacterPainter fWhitespaceCharacterPainter;
@@ -106,7 +106,7 @@ public abstract class CPreview {
 	 * @param workingValues
 	 * @param parent
 	 */
-	public CPreview(Map workingValues, Composite parent) {
+	public CPreview(Map<String, String> workingValues, Composite parent) {
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		fPreviewDocument= new Document();
 		fWorkingValues= workingValues;
@@ -141,12 +141,12 @@ public abstract class CPreview {
 		}
 		
 		// update the print margin
-		final String value= (String)fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT);
+		final String value= fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT);
 		final int lineWidth= getPositiveIntValue(value, 0);
 		fMarginPainter.setMarginRulerColumn(lineWidth);
 		
 		// update the tab size
-		final int tabSize= getPositiveIntValue((String) fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE), 0);
+		final int tabSize= getPositiveIntValue(fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE), 0);
 		if (tabSize != fTabSize) fSourceViewer.getTextWidget().setTabs(tabSize);
 		fTabSize= tabSize;
 		
@@ -192,12 +192,12 @@ public abstract class CPreview {
 	
 
 	
-	public Map getWorkingValues() {
+	public Map<String, String> getWorkingValues() {
 		return fWorkingValues;
 	}
 	
 	
-	public void setWorkingValues(Map workingValues) {
+	public void setWorkingValues(Map<String, String> workingValues) {
 		fWorkingValues= workingValues;
 	}
 

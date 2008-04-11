@@ -78,7 +78,7 @@ public class ControlStatementsTabPage extends FormatterTabPage {
 	protected CheckboxPreference fThenStatementPref, fSimpleIfPref;
 
 	
-	public ControlStatementsTabPage(ModifyDialog modifyDialog, Map workingValues) {
+	public ControlStatementsTabPage(ModifyDialog modifyDialog, Map<String, String> workingValues) {
 		super(modifyDialog, workingValues);
 	}
 

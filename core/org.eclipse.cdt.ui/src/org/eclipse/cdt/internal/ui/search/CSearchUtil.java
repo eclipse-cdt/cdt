@@ -13,10 +13,11 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
+
+import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * @author aniefer
@@ -54,7 +55,7 @@ public class CSearchUtil {
 	}
 
 	public static String toString(IWorkingSet[] workingSets) {
-		if( workingSets != null & workingSets.length > 0 ){
+		if( workingSets != null && workingSets.length > 0 ){
 			String string = new String();
 			for( int i = 0; i < workingSets.length; i++ ){
 				if( i > 0 )

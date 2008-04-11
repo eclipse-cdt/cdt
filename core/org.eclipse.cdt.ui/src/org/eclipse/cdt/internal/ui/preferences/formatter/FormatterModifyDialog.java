@@ -24,7 +24,7 @@ public class FormatterModifyDialog extends ModifyDialog {
 	}
 	
 	@Override
-	protected void addPages(Map values) {
+	protected void addPages(Map<String, String> values) {
 	    addTabPage(FormatterMessages.ModifyDialog_tabpage_indentation_title, new IndentationTabPage(this, values)); 
 		addTabPage(FormatterMessages.ModifyDialog_tabpage_braces_title, new BracesTabPage(this, values)); 
 		addTabPage(FormatterMessages.ModifyDialog_tabpage_whitespace_title, new WhiteSpaceTabPage(this, values)); 

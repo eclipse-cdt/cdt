@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -21,6 +19,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
+
+import org.eclipse.cdt.core.model.ICElement;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class SelectionSearchGroup extends ActionGroup {
 	
@@ -63,14 +65,13 @@ public class SelectionSearchGroup extends ActionGroup {
 	public static boolean canActionBeAdded(ISelection selection) {
 		if(selection instanceof ITextSelection) {
 			return (((ITextSelection)selection).getLength() > 0);
-		} else {
-			return getElement(selection) != null;
 		}
+		return getElement(selection) != null;
 	}
 	
 	private static ICElement getElement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list= ((IStructuredSelection)sel).toList();
+			List<?> list= ((IStructuredSelection)sel).toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
 				if (element instanceof ICElement) {

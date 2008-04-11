@@ -116,7 +116,7 @@ public class BracesTabPage extends FormatterTabPage {
 	 * @param modifyDialog
 	 * @param workingValues
 	 */
-	public BracesTabPage(ModifyDialog modifyDialog, Map workingValues) {
+	public BracesTabPage(ModifyDialog modifyDialog, Map<String,String> workingValues) {
 		super(modifyDialog, workingValues);
 	}
 	

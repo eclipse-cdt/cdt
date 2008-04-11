@@ -20,9 +20,9 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 /**
  * Filters problems based on their types.
  */
-public class CAnnotationIterator implements Iterator {
+public class CAnnotationIterator implements Iterator<Annotation> {
 			
-	private Iterator fIterator;
+	private Iterator<Annotation> fIterator;
 	private Annotation fNext;
 	private boolean fSkipIrrelevants;
 	private boolean fReturnAllAnnotations;
@@ -40,6 +40,7 @@ public class CAnnotationIterator implements Iterator {
 	 * @param skipIrrelevants whether to skip irrelevant annotations
 	 * @param returnAllAnnotations Whether to return non IJavaAnnotations as well
 	 */
+	@SuppressWarnings("unchecked") // using api without generics
 	public CAnnotationIterator(IAnnotationModel model, boolean skipIrrelevants, boolean returnAllAnnotations) {
 		fReturnAllAnnotations= returnAllAnnotations;
 		if (model != null)
@@ -52,7 +53,7 @@ public class CAnnotationIterator implements Iterator {
 	
 	private void skip() {
 		while (fIterator.hasNext()) {
-			Annotation next= (Annotation) fIterator.next();
+			Annotation next= fIterator.next();
 			if (next instanceof ICAnnotation) {
 				if (fSkipIrrelevants) {
 					if (!next.isMarkedDeleted()) {
@@ -81,7 +82,7 @@ public class CAnnotationIterator implements Iterator {
 	/*
 	 * @see Iterator#next()
 	 */
-	public Object next() {
+	public Annotation next() {
 		try {
 			return fNext;
 		} finally {

@@ -122,6 +122,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
@@ -268,9 +269,9 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 */
 	private Annotation getAnnotation(int offset, int length) {
 		IAnnotationModel model = getDocumentProvider().getAnnotationModel(getEditorInput());
-		Iterator e = new CAnnotationIterator(model, true, true);
+		Iterator<Annotation> e = new CAnnotationIterator(model, true, true);
 		while (e.hasNext()) {
-			Annotation a = (Annotation) e.next();
+			Annotation a = e.next();
 			if (!isNavigationTarget(a))
 				continue;
 				

@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,16 +39,16 @@ public final class WhiteSpaceOptions {
 	    
 	    public int index;
 	    
-	    protected final Map fWorkingValues;
-	    protected final ArrayList fChildren;
+	    protected final Map<String,String> fWorkingValues;
+	    protected final ArrayList<Node> fChildren;
 
-	    public Node(InnerNode parent, Map workingValues, String message) {
+	    public Node(InnerNode parent, Map<String,String> workingValues, String message) {
 	        if (workingValues == null || message == null)
 	            throw new IllegalArgumentException();
 	        fParent= parent;
 	        fWorkingValues= workingValues;
 	        fName= message;
-	        fChildren= new ArrayList();
+	        fChildren= new ArrayList<Node>();
 	        if (fParent != null)
 	            fParent.add(this);
 	    }
@@ -60,7 +59,7 @@ public final class WhiteSpaceOptions {
 	        return !fChildren.isEmpty();
 	    }
 	    
-	    public List getChildren() {
+	    public List<Node> getChildren() {
 	        return Collections.unmodifiableList(fChildren);
 	    }
 	    
@@ -73,9 +72,9 @@ public final class WhiteSpaceOptions {
 	        return fName;
 	    }
 	    
-	    public abstract List getSnippets();
+	    public abstract List<PreviewSnippet> getSnippets();
 	    
-	    public abstract void getCheckedLeafs(List list);
+	    public abstract void getCheckedLeafs(List<OptionNode> list);
 	}
 	
 	/**
@@ -83,14 +82,14 @@ public final class WhiteSpaceOptions {
 	 */
 	public static class InnerNode extends Node {
 	    
-        public InnerNode(InnerNode parent, Map workingValues, String messageKey) {
+        public InnerNode(InnerNode parent, Map<String,String> workingValues, String messageKey) {
             super(parent, workingValues, messageKey);
         }
 
 	    @Override
 		public void setChecked(boolean checked) {
-	        for (final Iterator iter = fChildren.iterator(); iter.hasNext();)
-	            ((Node)iter.next()).setChecked(checked);
+	        for (Object element : fChildren)
+				((Node)element).setChecked(checked);
 	    }
 
 	    public void add(Node child) {
@@ -98,12 +97,11 @@ public final class WhiteSpaceOptions {
 	    }
 
         @Override
-		public List getSnippets() {
-            final ArrayList snippets= new ArrayList(fChildren.size());
-            for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-                final List childSnippets= ((Node)iter.next()).getSnippets();
-                for (final Iterator chIter= childSnippets.iterator(); chIter.hasNext(); ) {
-                    final Object snippet= chIter.next();
+		public List<PreviewSnippet> getSnippets() {
+            final ArrayList<PreviewSnippet> snippets= new ArrayList<PreviewSnippet>(fChildren.size());
+            for (Object element : fChildren) {
+                final List<PreviewSnippet> childSnippets= ((Node)element).getSnippets();
+                for (PreviewSnippet snippet : childSnippets) {
                     if (!snippets.contains(snippet)) 
                         snippets.add(snippet);
                 }
@@ -112,9 +110,9 @@ public final class WhiteSpaceOptions {
         }
         
         @Override
-		public void getCheckedLeafs(List list) {
-            for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-                ((Node)iter.next()).getCheckedLeafs(list);
+		public void getCheckedLeafs(List<OptionNode> list) {
+            for (Node element : fChildren) {
+                element.getCheckedLeafs(list);
             }
         }
 	}
@@ -125,12 +123,12 @@ public final class WhiteSpaceOptions {
 	 */
 	public static class OptionNode extends Node {
 	    private final String fKey;
-	    private final ArrayList fSnippets;
+	    private final ArrayList<PreviewSnippet> fSnippets;
 	    
-	    public OptionNode(InnerNode parent, Map workingValues, String messageKey, String key, PreviewSnippet snippet) {
+	    public OptionNode(InnerNode parent, Map<String, String> workingValues, String messageKey, String key, PreviewSnippet snippet) {
 	        super(parent, workingValues, messageKey);
 	        fKey= key;
-	        fSnippets= new ArrayList(1);
+	        fSnippets= new ArrayList<PreviewSnippet>(1);
 	        fSnippets.add(snippet);
 	    }
 	    
@@ -144,12 +142,12 @@ public final class WhiteSpaceOptions {
         }
         
         @Override
-		public List getSnippets() {
+		public List<PreviewSnippet> getSnippets() {
             return fSnippets;
         }
         
         @Override
-		public void getCheckedLeafs(List list) {
+		public void getCheckedLeafs(List<OptionNode> list) {
             if (getChecked()) 
                 list.add(this);
         }
@@ -255,8 +253,8 @@ public final class WhiteSpaceOptions {
 	 * @param workingValues
 	 * @return returns roots (type <code>Node</code>)
 	 */
-	public List createTreeBySyntaxElem(Map workingValues) {
-        final ArrayList roots= new ArrayList();
+	public List<InnerNode> createTreeBySyntaxElem(Map<String, String> workingValues) {
+        final ArrayList<InnerNode> roots= new ArrayList<InnerNode>();
         
         InnerNode element;
 
@@ -335,9 +333,9 @@ public final class WhiteSpaceOptions {
      * @param workingValues
      * @return returns roots (type <code>Node</code>)
      */
-    public List createAltTree(Map workingValues) {
+    public List<InnerNode> createAltTree(Map<String, String> workingValues) {
 
-        final ArrayList roots= new ArrayList();
+        final ArrayList<InnerNode> roots= new ArrayList<InnerNode>();
         
         InnerNode parent;
         
@@ -435,13 +433,13 @@ public final class WhiteSpaceOptions {
         return roots;
 	}
 
-	private InnerNode createParentNode(List roots, Map workingValues, String text) {
+	private InnerNode createParentNode(List<InnerNode> roots, Map<String, String> workingValues, String text) {
         final InnerNode parent= new InnerNode(null, workingValues, text);
         roots.add(parent);
         return parent;
     }
 
-    public ArrayList createTreeByJavaElement(Map workingValues) {
+    public ArrayList<InnerNode> createTreeByJavaElement(Map<String, String> workingValues) {
 
         final InnerNode declarations= new InnerNode(null, workingValues, FormatterMessages.WhiteSpaceTabPage_declarations); 
         createClassTree(workingValues, declarations);
@@ -478,7 +476,7 @@ public final class WhiteSpaceOptions {
 		createTemplateArgumentTree(workingValues, templates);
 		createTemplateParameterTree(workingValues, templates);
 		
-        final ArrayList roots= new ArrayList();
+        final ArrayList<InnerNode> roots= new ArrayList<InnerNode>();
 		roots.add(declarations);
 		roots.add(statements);
 		roots.add(expressions);
@@ -487,16 +485,16 @@ public final class WhiteSpaceOptions {
         return roots;
     }
 	
-	private void createBeforeQuestionTree(Map workingValues, final InnerNode parent) {
+	private void createBeforeQuestionTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_conditional, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_QUESTION_IN_CONDITIONAL, CONDITIONAL_PREVIEW); 
 	}
 	
-    private void createBeforeSemicolonTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeSemicolonTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR, FOR_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_statements, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON, SEMICOLON_PREVIEW); 
     }
 
-    private void createBeforeColonTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeColonTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_conditional, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_CONDITIONAL, CONDITIONAL_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_label, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_LABELED_STATEMENT, LABEL_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_base_clause, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_BASE_CLAUSE, CLASS_DECL_PREVIEW); 
@@ -506,7 +504,7 @@ public final class WhiteSpaceOptions {
         createOption(switchStatement, workingValues, FormatterMessages.WhiteSpaceOptions_default, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_DEFAULT, SWITCH_PREVIEW); 
     }
 
-    private void createBeforeCommaTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeCommaTree(Map<String, String> workingValues, final InnerNode parent) {
 
 //        final InnerNode forStatement= createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for);  
 //        createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_initialization, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INITS, FOR_PREVIEW); 
@@ -533,7 +531,7 @@ public final class WhiteSpaceOptions {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_arguments, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
      }
 
-    private void createBeforeOperatorTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeOperatorTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_assignment_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ASSIGNMENT_OPERATOR, OPERATOR_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_unary_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_UNARY_OPERATOR, OPERATOR_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_binary_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_BINARY_OPERATOR, OPERATOR_PREVIEW); 
@@ -541,30 +539,30 @@ public final class WhiteSpaceOptions {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_postfix_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POSTFIX_OPERATOR, OPERATOR_PREVIEW); 
     }
 
-    private void createBeforeClosingBracketTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeClosingBracketTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arrays, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACKET, ARRAY_PREVIEW); 
     }
 
-    private void createBeforeClosingAngleBracketTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeClosingAngleBracketTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_parameters, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_PARAMETERS, TEMPLATES_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_arguments, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
     }
     
     
-    private void createBeforeOpenBracketTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeOpenBracketTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arrays, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACKET, ARRAY_PREVIEW); 
     }
     
-    private void createBeforeOpenAngleBracketTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeOpenAngleBracketTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_parameters, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_TEMPLATE_PARAMETERS, TEMPLATES_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_arguments, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
     }
 
-    private void createBeforeClosingBraceTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeClosingBraceTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_initializer_list, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACE_IN_INITIALIZER_LIST, CLASS_DECL_PREVIEW); 
     }
     
-    private void createBeforeOpenBraceTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeOpenBraceTree(Map<String, String> workingValues, final InnerNode parent) {
 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_class_decl, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_TYPE_DECLARATION, CLASS_DECL_PREVIEW); 
 
@@ -578,7 +576,7 @@ public final class WhiteSpaceOptions {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_switch, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_SWITCH, SWITCH_PREVIEW); 
     }
 
-    private void createBeforeClosingParenTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeClosingParenTree(Map<String, String> workingValues, final InnerNode parent) {
 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_catch, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_CATCH, CATCH_PREVIEW);  
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_FOR, FOR_PREVIEW);  
@@ -596,7 +594,7 @@ public final class WhiteSpaceOptions {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_paren_expr, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_PARENTHESIZED_EXPRESSION, PAREN_EXPR_PREVIEW);  
     }
 
-    private void createBeforeOpenParenTree(Map workingValues, final InnerNode parent) {
+    private void createBeforeOpenParenTree(Map<String, String> workingValues, final InnerNode parent) {
 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_catch, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_CATCH, CATCH_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_FOR, FOR_PREVIEW); 
@@ -614,7 +612,7 @@ public final class WhiteSpaceOptions {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_paren_expr, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_PARENTHESIZED_EXPRESSION, PAREN_EXPR_PREVIEW); 
     }
 
-	private void createAfterQuestionTree(Map workingValues, final InnerNode parent) {
+	private void createAfterQuestionTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_conditional, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_QUESTION_IN_CONDITIONAL, CONDITIONAL_PREVIEW); 
 	}
 
@@ -626,17 +624,17 @@ public final class WhiteSpaceOptions {
 //		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_vararg_parameter, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_ELLIPSIS, VARARG_PARAMETER_PREVIEW); 
 //	}
 	
-    private void createAfterSemicolonTree(Map workingValues, final InnerNode parent) {
+    private void createAfterSemicolonTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_SEMICOLON_IN_FOR, FOR_PREVIEW); 
     }
 
-    private void createAfterColonTree(Map workingValues, final InnerNode parent) {
+    private void createAfterColonTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_conditional, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COLON_IN_CONDITIONAL, CONDITIONAL_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_label, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COLON_IN_LABELED_STATEMENT, LABEL_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_base_clause, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COLON_IN_BASE_CLAUSE, CLASS_DECL_PREVIEW); 
     }
 
-    private void createAfterCommaTree(Map workingValues, final InnerNode parent) {
+    private void createAfterCommaTree(Map<String, String> workingValues, final InnerNode parent) {
 
 //        final InnerNode forStatement= createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for); { 
 //            createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_initialization, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INITS, FOR_PREVIEW); 
@@ -664,7 +662,7 @@ public final class WhiteSpaceOptions {
 	    createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_arguments, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
     }
 
-    private void createAfterOperatorTree(Map workingValues, final InnerNode parent) {
+    private void createAfterOperatorTree(Map<String, String> workingValues, final InnerNode parent) {
 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_assignment_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_ASSIGNMENT_OPERATOR, OPERATOR_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_unary_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_UNARY_OPERATOR, OPERATOR_PREVIEW); 
@@ -673,38 +671,38 @@ public final class WhiteSpaceOptions {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_postfix_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_POSTFIX_OPERATOR, OPERATOR_PREVIEW); 
     }
     
-    private void createAfterOpenBracketTree(Map workingValues, final InnerNode parent) {
+    private void createAfterOpenBracketTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arrays, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACKET, ARRAY_PREVIEW); 
     }
     
-    private void createAfterOpenAngleBracketTree(Map workingValues, final InnerNode parent) {
+    private void createAfterOpenAngleBracketTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_parameters, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_ANGLE_BRACKET_IN_TEMPLATE_PARAMETERS, TEMPLATES_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_arguments, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
     }
     
 
     
-    private void createAfterOpenBraceTree(Map workingValues, final InnerNode parent) {
+    private void createAfterOpenBraceTree(Map<String, String> workingValues, final InnerNode parent) {
         
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_initializer_list, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACE_IN_INITIALIZER_LIST, INITIALIZER_LIST_PREVIEW); 
     }
     
-    private void createAfterCloseBraceTree(Map workingValues, final InnerNode parent) {
+    private void createAfterCloseBraceTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_block, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_CLOSING_BRACE_IN_BLOCK, BLOCK_PREVIEW); 
     }
     
-    private void createAfterCloseParenTree(Map workingValues, final InnerNode parent) {
+    private void createAfterCloseParenTree(Map<String, String> workingValues, final InnerNode parent) {
         
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_type_cast, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_CLOSING_PAREN_IN_CAST, CAST_PREVIEW); 
     }
     
-    private void createAfterClosingAngleBracketTree(Map workingValues, final InnerNode parent) {
+    private void createAfterClosingAngleBracketTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_parameters, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_PARAMETERS, TEMPLATES_PREVIEW); 
         //createOption(parent, workingValues, "WhiteSpaceOptions.parameterized_type", DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_CLOSING_ANGLE_BRACKET_IN_PARAMETERIZED_TYPE_REFERENCE, TYPE_ARGUMENTS_PREVIEW); //$NON-NLS-1$
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_template_arguments, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
     }
     
-    private void createAfterOpenParenTree(Map workingValues, final InnerNode parent) {
+    private void createAfterOpenParenTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_catch, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CATCH, CATCH_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_FOR, FOR_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_if, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_IF, IF_PREVIEW); 
@@ -720,24 +718,24 @@ public final class WhiteSpaceOptions {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_paren_expr, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_PARENTHESIZED_EXPRESSION, PAREN_EXPR_PREVIEW); 
     }
     
-    private void createBetweenEmptyParenTree(Map workingValues, final InnerNode parent) {
+    private void createBetweenEmptyParenTree(Map<String, String> workingValues, final InnerNode parent) {
         
 //        createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_constructor_decl, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_CONSTRUCTOR_DECLARATION, CONSTRUCTOR_DECL_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_method_decl, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_DECLARATION, METHOD_DECL_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_method_call, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION, METHOD_CALL_PREVIEW); 
     }
     
-    private void createBetweenEmptyBracketsTree(Map workingValues, final InnerNode parent) {
+    private void createBetweenEmptyBracketsTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arrays, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACKETS, ARRAY_PREVIEW); 
     }
     
-    private void createBetweenEmptyBracesTree(Map workingValues, final InnerNode parent) {
+    private void createBetweenEmptyBracesTree(Map<String, String> workingValues, final InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_initializer_list, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACES_IN_INITIALIZER_LIST, INITIALIZER_LIST_PREVIEW); 
     }
     
     // syntax element tree
 
-    private InnerNode createClassTree(Map workingValues, InnerNode parent) {
+    private InnerNode createClassTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_classes); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_classes_before_opening_brace_of_a_class, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_TYPE_DECLARATION, CLASS_DECL_PREVIEW); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_classes_before_colon_of_base_clause, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_BASE_CLAUSE, CLASS_DECL_PREVIEW); 
@@ -747,14 +745,14 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createAssignmentTree(Map workingValues, InnerNode parent) {
+    private InnerNode createAssignmentTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_assignments); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_assignments_before_assignment_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ASSIGNMENT_OPERATOR, OPERATOR_PREVIEW); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_assignments_after_assignment_operator, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_ASSIGNMENT_OPERATOR, OPERATOR_PREVIEW); 
         return root;
     }
     
-    private InnerNode createOperatorTree(Map workingValues, InnerNode parent) {
+    private InnerNode createOperatorTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_operators); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_operators_before_binary_operators, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_BINARY_OPERATOR, OPERATOR_PREVIEW); 
@@ -768,7 +766,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createMethodDeclTree(Map workingValues, InnerNode parent) {
+    private InnerNode createMethodDeclTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_methods); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_DECLARATION, METHOD_DECL_PREVIEW); 
@@ -803,7 +801,7 @@ public final class WhiteSpaceOptions {
 //        return root;
 //    }
     
-    private InnerNode createDeclaratorListTree(Map workingValues, InnerNode parent) {
+    private InnerNode createDeclaratorListTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_declarator_list); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_declarator_list_before_comma, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_DECLARATOR_LIST, DECLARATOR_LIST_PREVIEW); 
@@ -811,14 +809,14 @@ public final class WhiteSpaceOptions {
         return root;
     }	
     
-    private InnerNode createExpressionListTree(Map workingValues, InnerNode parent) {
+    private InnerNode createExpressionListTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_expression_list); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_expression_list_before_comma, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_EXPRESSION_LIST, EXPRESSION_LIST_PREVIEW); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_expression_list_after_comma, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_EXPRESSION_LIST, EXPRESSION_LIST_PREVIEW); 
         return root;
     }
    
-    private InnerNode createInitializerListTree(Map workingValues, InnerNode parent) {
+    private InnerNode createInitializerListTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_initializer_list); 
    
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_brace, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_INITIALIZER_LIST, INITIALIZER_LIST_PREVIEW); 
@@ -830,7 +828,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createArrayTree(Map workingValues, InnerNode parent) {
+    private InnerNode createArrayTree(Map<String, String> workingValues, InnerNode parent) {
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_bracket, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACKET, ARRAY_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_after_opening_bracket, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACKET, ARRAY_PREVIEW); 
         createOption(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_before_closing_bracket, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACKET, ARRAY_PREVIEW); 
@@ -838,7 +836,7 @@ public final class WhiteSpaceOptions {
        return parent;
     }
    
-    private InnerNode createFunctionCallTree(Map workingValues, InnerNode parent) {
+    private InnerNode createFunctionCallTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_calls); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION, METHOD_CALL_PREVIEW); 
@@ -852,7 +850,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createBlockTree(Map workingValues, InnerNode parent) {
+    private InnerNode createBlockTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_blocks); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_brace, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_BLOCK, BLOCK_PREVIEW); 
@@ -860,7 +858,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createSwitchStatementTree(Map workingValues, InnerNode parent) {
+    private InnerNode createSwitchStatementTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_switch); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_switch_before_case_colon, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_CASE, SWITCH_PREVIEW); 
@@ -872,7 +870,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createDoWhileTree(Map workingValues, InnerNode parent) {
+    private InnerNode createDoWhileTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_do); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_WHILE, WHILE_PREVIEW); 
@@ -882,7 +880,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createTryStatementTree(Map workingValues, InnerNode parent) {
+    private InnerNode createTryStatementTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_try); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_CATCH, CATCH_PREVIEW); 
@@ -890,7 +888,7 @@ public final class WhiteSpaceOptions {
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_closing_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_CATCH, CATCH_PREVIEW); 
         return root;
     }
-    private InnerNode createIfStatementTree(Map workingValues, InnerNode parent) {
+    private InnerNode createIfStatementTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_if); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_IF, IF_PREVIEW); 
@@ -899,7 +897,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createForStatementTree(Map workingValues, InnerNode parent) {
+    private InnerNode createForStatementTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_for); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_FOR, FOR_PREVIEW); 
@@ -927,14 +925,14 @@ public final class WhiteSpaceOptions {
 //    	return root;
 //    }
 
-    private InnerNode createLabelTree(Map workingValues, InnerNode parent) {
+    private InnerNode createLabelTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_labels); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_colon, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_LABELED_STATEMENT, LABEL_PREVIEW); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_colon, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COLON_IN_LABELED_STATEMENT, LABEL_PREVIEW); 
         return root;
     }
     
-    private InnerNode createTemplateArgumentTree(Map workingValues, InnerNode parent) {
+    private InnerNode createTemplateArgumentTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_template_arguments); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_angle_bracket, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_opening_angle_bracket, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS, TEMPLATES_PREVIEW); 
@@ -945,7 +943,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
     
-    private InnerNode createTemplateParameterTree(Map workingValues, InnerNode parent) {
+    private InnerNode createTemplateParameterTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_template_parameters); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_angle_bracket, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_TEMPLATE_PARAMETERS, TEMPLATES_PREVIEW); 
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_opening_angle_bracket, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_ANGLE_BRACKET_IN_TEMPLATE_PARAMETERS, TEMPLATES_PREVIEW); 
@@ -956,7 +954,7 @@ public final class WhiteSpaceOptions {
         return root;
     }
 
-    private InnerNode createConditionalTree(Map workingValues, InnerNode parent) {
+    private InnerNode createConditionalTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_conditionals); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_question, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_QUESTION_IN_CONDITIONAL, CONDITIONAL_PREVIEW); 
@@ -967,7 +965,7 @@ public final class WhiteSpaceOptions {
     }
     
     
-    private InnerNode createTypecastTree(Map workingValues, InnerNode parent) {
+    private InnerNode createTypecastTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_typecasts); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CAST, CAST_PREVIEW); 
@@ -977,7 +975,7 @@ public final class WhiteSpaceOptions {
     }
     
     
-    private InnerNode createParenthesizedExpressionTree(Map workingValues, InnerNode parent) {
+    private InnerNode createParenthesizedExpressionTree(Map<String, String> workingValues, InnerNode parent) {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_parenexpr); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_paren, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_PARENTHESIZED_EXPRESSION, PAREN_EXPR_PREVIEW); 
@@ -988,17 +986,16 @@ public final class WhiteSpaceOptions {
     
     
     
-    private static InnerNode createChild(InnerNode root, Map workingValues, String message) {
+    private static InnerNode createChild(InnerNode root, Map<String, String> workingValues, String message) {
 	    return new InnerNode(root, workingValues, message);
 	}
 	
-	private static OptionNode createOption(InnerNode root, Map workingValues, String message, String key, PreviewSnippet snippet) {
+	private static OptionNode createOption(InnerNode root, Map<String, String> workingValues, String message, String key, PreviewSnippet snippet) {
 	    return new OptionNode(root, workingValues, message, key, snippet);
 	}
 
-	public static void makeIndexForNodes(List tree, List flatList) {
-        for (final Iterator iter= tree.iterator(); iter.hasNext();) {
-            final Node node= (Node) iter.next();
+	public static void makeIndexForNodes(List<? extends Node> tree, List<Node> flatList) {
+        for (Node node : tree) {
             node.index= flatList.size();
             flatList.add(node);
             makeIndexForNodes(node.getChildren(), flatList);

@@ -49,17 +49,17 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	private Map<Object, Set<Object>> tree = new HashMap<Object, Set<Object>>();
 
 	public Object[] getChildren(Object parentElement) {
-		Set children = tree.get(parentElement);
+		Set<Object> children = tree.get(parentElement);
 		if (children == null)
 			return new Object[0];
 		return children.toArray();
 	}
 
 	public Object getParent(Object element) {
-		Iterator p = tree.keySet().iterator();
+		Iterator<Object> p = tree.keySet().iterator();
 		while (p.hasNext()) {
 			Object parent = p.next();
-			Set children = tree.get(parent);
+			Set<Object> children = tree.get(parent);
 			if (children.contains(element))
 				return parent;
 		}
@@ -236,7 +236,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			// reached the search result
 			return;
 		
-		Set siblings = tree.get(parent);
+		Set<Object> siblings = tree.get(parent);
 		siblings.remove(element);
 		
 		if (siblings.isEmpty()) {

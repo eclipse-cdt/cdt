@@ -330,8 +330,7 @@ public final class IndentUtil {
 	private static int computeVisualLength(char ch, int tabSize) {
 		if (ch == '\t')
 			return tabSize;
-		else
-			return 1;
+		return 1;
 	}
 
 	/**

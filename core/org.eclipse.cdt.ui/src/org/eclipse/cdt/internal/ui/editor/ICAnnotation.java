@@ -64,9 +64,9 @@ public interface ICAnnotation {
 	 * Returns an iterator for iterating over the
  	 * annotation which are overlaid by this annotation.
 	 * 
-	 * @return an iterator over the overlaid annotaions
+	 * @return an iterator over the overlaid annotations
 	 */
-	Iterator getOverlaidIterator();
+	Iterator<ICAnnotation> getOverlaidIterator();
 	
 	/**
 	 * Adds the given annotation to the list of

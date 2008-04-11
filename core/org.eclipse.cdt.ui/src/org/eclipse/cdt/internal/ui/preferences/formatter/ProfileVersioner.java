@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
@@ -43,8 +42,8 @@ public class ProfileVersioner implements IProfileVersioner {
     }
 
 	public void update(CustomProfile profile) {
-		final Map oldSettings= profile.getSettings();
-		Map newSettings= updateAndComplete(oldSettings, profile.getVersion());
+		final Map<String, String> oldSettings= profile.getSettings();
+		Map<String, String> newSettings= updateAndComplete(oldSettings, profile.getVersion());
 		profile.setVersion(CURRENT_VERSION);
 		profile.setSettings(newSettings);
 	}
@@ -60,28 +59,28 @@ public class ProfileVersioner implements IProfileVersioner {
 	}
 	
 	public static void updateAndComplete(CustomProfile profile) {
-		final Map oldSettings= profile.getSettings();
-		Map newSettings= updateAndComplete(oldSettings, profile.getVersion());
+		final Map<String, String> oldSettings= profile.getSettings();
+		Map<String, String> newSettings= updateAndComplete(oldSettings, profile.getVersion());
 		profile.setVersion(CURRENT_VERSION);
 		profile.setSettings(newSettings);
 	}
 	
-	public static Map updateAndComplete(Map oldSettings, int version) {
-		final Map newSettings= FormatterProfileManager.getDefaultSettings();
+	public static Map<String, String> updateAndComplete(Map<String, String> oldSettings, int version) {
+		final Map<String, String> newSettings= FormatterProfileManager.getDefaultSettings();
 		
 		switch (version) {
 		    
 		default:
-		    for (final Iterator iter= oldSettings.keySet().iterator(); iter.hasNext(); ) {
-		        final String key= (String)iter.next();
-		        if (!newSettings.containsKey(key)) 
-		            continue;
-		        
-		        final String value= (String)oldSettings.get(key);
-		        if (value != null) {
-		            newSettings.put(key, value);
-		        }
-		    }
+		    for (Object element : oldSettings.keySet()) {
+				    final String key= (String)element;
+				    if (!newSettings.containsKey(key)) 
+				        continue;
+				    
+				    final String value= oldSettings.get(key);
+				    if (value != null) {
+				        newSettings.put(key, value);
+				    }
+				}
 		}
 		return newSettings;
 	}

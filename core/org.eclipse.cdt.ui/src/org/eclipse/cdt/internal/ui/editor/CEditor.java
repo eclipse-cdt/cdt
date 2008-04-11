@@ -189,12 +189,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
-import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
@@ -1389,6 +1389,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
@@ -1410,7 +1411,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					ce = null;
 				}
 			} catch (CModelException ex) {
-				ce= null;
 			}
 			final ISelection selection= ce != null ? new StructuredSelection(ce) : null;
 			return new IShowInSource() {
@@ -1582,9 +1582,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		SourceViewerConfiguration configuration= getSourceViewerConfiguration();
 		String[] types= configuration.getConfiguredContentTypes(getSourceViewer());
 
-		for (int i= 0; i < types.length; i++) {
-
-			String t= types[i];
+		for (String t : types) {
 
 			ISourceViewer sourceViewer= getSourceViewer();
 			if (sourceViewer instanceof ITextViewerExtension2) {
@@ -1594,8 +1592,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(getSourceViewer(), t);
 
 				if (stateMasks != null) {
-					for (int j= 0; j < stateMasks.length; j++)	{
-						int stateMask= stateMasks[j];
+					for (int stateMask : stateMasks) {
 						ITextHover textHover= configuration.getTextHover(sourceViewer, t, stateMask);
 						((ITextViewerExtension2)sourceViewer).setTextHover(textHover, t, stateMask);
 					}
@@ -2413,9 +2410,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	private Annotation getAnnotation(int offset, int length) {
 		IAnnotationModel model = getDocumentProvider().getAnnotationModel(getEditorInput());
-		Iterator e = new CAnnotationIterator(model, true, true);
+		Iterator<Annotation> e = new CAnnotationIterator(model, true, true);
 		while (e.hasNext()) {
-			Annotation a = (Annotation) e.next();
+			Annotation a = e.next();
 			if (!isNavigationTarget(a))
 				continue;
 
@@ -2994,10 +2991,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
 				} else {
 					removeOccurrenceAnnotations();
-					Iterator iter= annotationMap.entrySet().iterator();
+					Iterator<Map.Entry<Annotation, Position>> iter= annotationMap.entrySet().iterator();
 					while (iter.hasNext()) {
-						Map.Entry mapEntry= (Map.Entry)iter.next();
-						annotationModel.addAnnotation((Annotation)mapEntry.getKey(), (Position)mapEntry.getValue());
+						Map.Entry<Annotation, Position> mapEntry= iter.next();
+						annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
 					}
 				}
 				fOccurrenceAnnotations= annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
@@ -3230,8 +3227,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			if (annotationModel instanceof IAnnotationModelExtension) {
 				((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, null);
 			} else {
-				for (int i= 0, length= fOccurrenceAnnotations.length; i < length; i++)
-					annotationModel.removeAnnotation(fOccurrenceAnnotations[i]);
+				for (Annotation occurrenceAnnotation : fOccurrenceAnnotations)
+					annotationModel.removeAnnotation(occurrenceAnnotation);
 			}
 			fOccurrenceAnnotations= null;
 		}

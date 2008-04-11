@@ -35,11 +35,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class LRUWorkingSets {
 	
-	ArrayList workingSetsCache = null;
+	ArrayList<IWorkingSet[]> workingSetsCache = null;
 	int size=0;
 	
 	public LRUWorkingSets(int size){
-		workingSetsCache = new ArrayList(size);
+		workingSetsCache = new ArrayList<IWorkingSet[]>(size);
 		this.size = size;
 	}
 	
@@ -54,12 +54,12 @@ public class LRUWorkingSets {
 		workingSetsCache.add(0, workingSet);
 	}
 	
-	private IWorkingSet[] find(ArrayList list, IWorkingSet[] workingSet) {
-		Set workingSetList= new HashSet(Arrays.asList(workingSet));
-		Iterator iter= list.iterator();
+	private IWorkingSet[] find(ArrayList<IWorkingSet[]> list, IWorkingSet[] workingSet) {
+		Set<IWorkingSet> workingSetList= new HashSet<IWorkingSet>(Arrays.asList(workingSet));
+		Iterator<IWorkingSet[]> iter= list.iterator();
 		while (iter.hasNext()) {
-			IWorkingSet[] lruWorkingSets= (IWorkingSet[])iter.next();
-			Set lruWorkingSetList= new HashSet(Arrays.asList(lruWorkingSets));
+			IWorkingSet[] lruWorkingSets= iter.next();
+			Set<IWorkingSet> lruWorkingSetList= new HashSet<IWorkingSet>(Arrays.asList(lruWorkingSets));
 			if (lruWorkingSetList.equals(workingSetList))
 				return lruWorkingSets;
 		}
@@ -68,9 +68,9 @@ public class LRUWorkingSets {
 
 	private void cleanUpCache(){
      //Remove any previously deleted entries
-	 Iterator iter = workingSetsCache.iterator();
+	 Iterator<IWorkingSet[]> iter = workingSetsCache.iterator();
 	 while (iter.hasNext()){
-	 	IWorkingSet[] workingSet = (IWorkingSet []) iter.next();
+	 	IWorkingSet[] workingSet = iter.next();
 	 	for (int i= 0; i < workingSet.length; i++) {
 			if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSet[i].getName()) == null) {
 				workingSetsCache.remove(workingSet);
@@ -80,7 +80,7 @@ public class LRUWorkingSets {
 	 }
 	}
 
-	public Iterator iterator() {
+	public Iterator<IWorkingSet[]> iterator() {
 		return workingSetsCache.iterator(); 
 	}
 }

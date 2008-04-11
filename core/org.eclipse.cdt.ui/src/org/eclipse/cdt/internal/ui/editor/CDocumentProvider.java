@@ -580,9 +580,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private void overlayMarkers(Position position, ProblemAnnotation problemAnnotation) {
 			Object value= getAnnotations(position);
 			if (value instanceof List) {
-				List list= (List) value;
-				for (Iterator e = list.iterator(); e.hasNext();)
-					setOverlay(e.next(), problemAnnotation);
+				List<?> list= (List<?>) value;
+				for (Object element : list)
+					setOverlay(element, problemAnnotation);
 			} else {
 				setOverlay(value, problemAnnotation);
 			}
@@ -681,7 +681,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			synchronized (getLockObject()) {
 				Object cached= fReverseMap.get(position);
 				if (cached instanceof List) {
-					List list= (List) cached;
+					List<?> list= (List<?>) cached;
 					list.remove(annotation);
 					if (list.size() == 1) {
 						fReverseMap.put(position, list.get(0));
@@ -708,8 +708,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		public void modelChanged(IAnnotationModel model) {
 			Object[] listeners= fListenerList.getListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				((IAnnotationModelListener) listeners[i]).modelChanged(model);
+			for (Object listener : listeners) {
+				((IAnnotationModelListener) listener).modelChanged(model);
 			}
 		}
 
@@ -718,8 +718,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		public void modelChanged(AnnotationModelEvent event) {
 			Object[] listeners= fListenerList.getListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				Object curr= listeners[i];
+			for (Object curr : listeners) {
 				if (curr instanceof IAnnotationModelListenerExtension) {
 					((IAnnotationModelListenerExtension) curr).modelChanged(event);
 				}
@@ -1034,7 +1033,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 */
 	protected void enableHandlingTemporaryProblems() {
 		boolean enable= isHandlingTemporaryProblems();
-		for (Iterator iter= getFileInfosIterator(); iter.hasNext();) {
+		for (Iterator<?> iter= getFileInfosIterator(); iter.hasNext();) {
 			FileInfo info= (FileInfo) iter.next();
 			if (info.fModel instanceof IProblemRequestorExtension) {
 				IProblemRequestorExtension  extension= (IProblemRequestorExtension) info.fModel;
@@ -1062,7 +1061,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 	public void shutdown() {
 //		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
-		Iterator e = getConnectedElementsIterator();
+		Iterator<?> e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
 	}

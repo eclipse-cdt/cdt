@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
@@ -44,11 +43,11 @@ public class SnippetPreview extends CPreview {
         }
     }
     
-    private ArrayList fSnippets;
+    private ArrayList<PreviewSnippet> fSnippets;
 
-    public SnippetPreview(Map workingValues, Composite parent) {
+    public SnippetPreview(Map<String,String> workingValues, Composite parent) {
         super(workingValues, parent);
-        fSnippets= new ArrayList();
+        fSnippets= new ArrayList<PreviewSnippet>();
     }
 
     @Override
@@ -62,8 +61,7 @@ public class SnippetPreview extends CPreview {
         final String delimiter= "\n"; //$NON-NLS-1$
         
         final StringBuffer buffer= new StringBuffer();
-        for (final Iterator iter= fSnippets.iterator(); iter.hasNext();) {
-            final PreviewSnippet snippet= (PreviewSnippet) iter.next();
+        for (PreviewSnippet snippet: fSnippets) {
             String formattedSource;
             try {
                 TextEdit edit= CodeFormatterUtil.format(snippet.kind, snippet.source, 0, delimiter, fWorkingValues);
@@ -98,7 +96,7 @@ public class SnippetPreview extends CPreview {
         fSnippets.remove(snippet);
     }
     
-    public void addAll(Collection snippets) {
+    public void addAll(Collection<PreviewSnippet> snippets) {
         fSnippets.addAll(snippets);
     }
     

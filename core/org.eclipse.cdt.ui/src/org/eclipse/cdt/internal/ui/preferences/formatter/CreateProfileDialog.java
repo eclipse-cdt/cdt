@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.cdt.internal.ui.preferences.formatter.IProfileVersioner;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -58,7 +57,7 @@ public class CreateProfileDialog extends StatusDialog {
 	private final static StatusInfo fDuplicate= new StatusInfo(IStatus.ERROR, FormatterMessages.CreateProfileDialog_status_message_profile_with_this_name_already_exists); 
 
 	private final ProfileManager fProfileManager;
-	private final List fSortedProfiles;
+	private final List<Profile> fSortedProfiles;
 	private final String [] fSortedNames;
 	
 	private CustomProfile fCreatedProfile;
@@ -187,7 +186,7 @@ public class CreateProfileDialog extends StatusDialog {
 
 		CUIPlugin.getDefault().getDialogSettings().put(PREF_OPEN_EDIT_DIALOG, fOpenEditDialog);
 
-		final Map baseSettings= new HashMap(((Profile)fSortedProfiles.get(fProfileCombo.getSelectionIndex())).getSettings());
+		final Map<String, String> baseSettings= new HashMap<String, String>((fSortedProfiles.get(fProfileCombo.getSelectionIndex())).getSettings());
 		final String profileName= fNameText.getText();
 		
 		fCreatedProfile= new CustomProfile(profileName, baseSettings, fProfileVersioner.getCurrentVersion(), fProfileVersioner.getProfileKind());

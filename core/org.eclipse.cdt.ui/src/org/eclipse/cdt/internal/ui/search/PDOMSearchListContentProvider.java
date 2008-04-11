@@ -42,12 +42,12 @@ public class PDOMSearchListContentProvider implements
 	private PDOMSearchResult result;
 	
 	public Object[] getElements(Object inputElement) {
-		Set uncoveredProjects = new HashSet(); 
+		Set<String> uncoveredProjects = new HashSet<String>(); 
 		
 		PDOMSearchResult result = (PDOMSearchResult) inputElement;
 		
 		Object[] results = result.getElements();
-		List resultList = new ArrayList(Arrays.asList(results));
+		List<Object> resultList = new ArrayList<Object>(Arrays.asList(results));
 		
 		// see if indexer was busy
 		if (result.wasIndexerBusy()) {

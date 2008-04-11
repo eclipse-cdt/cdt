@@ -30,7 +30,7 @@ import org.eclipse.ui.IEditorInput;
 public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyManagerExtension {
 	
 	private CDocumentProvider fDocumentProvider;
-	private Map fMap;
+	private Map<IEditorInput, IWorkingCopy> fMap;
 	private boolean fIsShuttingDown;
 
 	/**
@@ -80,7 +80,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	 * @see org.eclipse.cdt.ui.IWorkingCopyManager#getWorkingCopy(org.eclipse.ui.IEditorInput)
 	 */
 	public IWorkingCopy getWorkingCopy(IEditorInput input) {
-		IWorkingCopy unit= fMap == null ? null : (IWorkingCopy) fMap.get(input);
+		IWorkingCopy unit= fMap == null ? null : fMap.get(input);
 		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
 	}
 	
@@ -90,7 +90,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	public void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null)
-				fMap= new HashMap();
+				fMap= new HashMap<IEditorInput, IWorkingCopy>();
 			fMap.put(input, workingCopy);
 		}
 	}

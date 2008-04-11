@@ -178,9 +178,9 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	private DocumentSetCommand fSetCmd= new DocumentSetCommand();
 	private DocumentReplaceCommand fReplaceCmd= new DocumentReplaceCommand();
 
-	private Set fLegalLineDelimiters;
+	private Set<String> fLegalLineDelimiters;
 
-	private List fBufferListeners= new ArrayList(3);
+	private List<IBufferChangedListener> fBufferListeners= new ArrayList<IBufferChangedListener>(3);
 	private IStatus fStatus;
 
 	final private IPath fLocation;
@@ -451,7 +451,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 
 		if (fLegalLineDelimiters == null) {
 			// collect all line delimiters in the document
-			HashSet existingDelimiters= new HashSet();
+			HashSet<String> existingDelimiters= new HashSet<String>();
 
 			for (int i= fDocument.getNumberOfLines() - 1; i >= 0; i-- ) {
 				try {
@@ -509,9 +509,9 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	
 	private void fireBufferChanged(BufferChangedEvent event) {
 		if (fBufferListeners != null && fBufferListeners.size() > 0) {
-			Iterator e= new ArrayList(fBufferListeners).iterator();
+			Iterator<IBufferChangedListener> e= new ArrayList<IBufferChangedListener>(fBufferListeners).iterator();
 			while (e.hasNext())
-				((IBufferChangedListener) e.next()).bufferChanged(event);
+				e.next().bufferChanged(event);
 		}
 	}
 

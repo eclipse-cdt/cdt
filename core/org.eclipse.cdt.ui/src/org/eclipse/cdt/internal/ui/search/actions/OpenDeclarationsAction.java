@@ -203,13 +203,11 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 			return Status.OK_STATUS;
 		} 
 
-		// Check if we're in an include statement
-		if (searchName == null) {
-			IASTNode node= nodeSelector.findEnclosingNode(selectionStart, selectionLength);
-			if (node instanceof IASTPreprocessorIncludeStatement) {
-				openInclude(((IASTPreprocessorIncludeStatement) node));
-				return Status.OK_STATUS;
-			}
+		// no enclosing name, check if we're in an include statement
+		IASTNode node= nodeSelector.findEnclosingNode(selectionStart, selectionLength);
+		if (node instanceof IASTPreprocessorIncludeStatement) {
+			openInclude(((IASTPreprocessorIncludeStatement) node));
+			return Status.OK_STATUS;
 		}
 		if (!navigationFallBack(ast)) {
 			reportSelectionMatchFailure();
@@ -267,8 +265,8 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	}
 
 	private boolean navigateOneLocation(IName[] declNames) {
-		for (int i = 0; i < declNames.length; i++) {
-			IASTFileLocation fileloc = declNames[i].getFileLocation();
+		for (IName declName : declNames) {
+			IASTFileLocation fileloc = declName.getFileLocation();
 			if (fileloc != null) {
 
 				final IPath path = new Path(fileloc.getFileName());
@@ -298,9 +296,9 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 
 
 	private void convertToCElements(ICProject project, IIndex index, IName[] declNames, List<ICElement> elements) {
-		for (int i = 0; i < declNames.length; i++) {
+		for (IName declName : declNames) {
 			try {
-				ICElement elem = getCElementForName(project, index, declNames[i]);
+				ICElement elem = getCElementForName(project, index, declName);
 				if (elem instanceof ISourceReference) {
 					elements.add(elem);
 				}

@@ -12,15 +12,16 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.Iterator;
+
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 
 /**
  * Filters problems based on their types.
  */
-public class ProblemAnnotationIterator implements Iterator {
+public class ProblemAnnotationIterator implements Iterator<IProblemAnnotation> {
 			
-	private Iterator fIterator;
+	private Iterator<?> fIterator;
 	private IProblemAnnotation fNext;
 	
 	public ProblemAnnotationIterator(IAnnotationModel model) {
@@ -49,7 +50,7 @@ public class ProblemAnnotationIterator implements Iterator {
 	/*
 	 * @see Iterator#next()
 	 */
-	public Object next() {
+	public IProblemAnnotation next() {
 		try {
 			return fNext;
 		} finally {

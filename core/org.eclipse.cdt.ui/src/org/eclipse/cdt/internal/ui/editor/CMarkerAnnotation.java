@@ -154,7 +154,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/*
 	 * @see ICAnnotation#getOverlaidIterator()
 	 */
-	public Iterator getOverlaidIterator() {
+	public Iterator<ICAnnotation> getOverlaidIterator() {
 		// not supported
 		return null;
 	}

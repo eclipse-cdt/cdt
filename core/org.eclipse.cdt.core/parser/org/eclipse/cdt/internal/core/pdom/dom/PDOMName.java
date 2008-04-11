@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
@@ -58,8 +57,8 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public static final int WRITE_ACCESS 						= 0x20;
 
 	
-
-	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller) throws CoreException {
+	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller)
+			throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
@@ -71,21 +70,19 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		db.putByte(record + FLAGS, (byte) flags);
 
 		// Hook us up to the binding
-		if (binding != null) {
-			switch (flags & DECL_DEF_REF_MASK) {
-			case IS_DEFINITION:
-				binding.addDefinition(this);
-				break;
-			case IS_DECLARATION:
-				binding.addDeclaration(this);
-				break;
-			case IS_REFERENCE:
-				binding.addReference(this);
-				break;
-			}
-
-			db.putInt(record + BINDING_REC_OFFSET, binding.getRecord());
+		switch (flags & DECL_DEF_REF_MASK) {
+		case IS_DEFINITION:
+			binding.addDefinition(this);
+			break;
+		case IS_DECLARATION:
+			binding.addDeclaration(this);
+			break;
+		case IS_REFERENCE:
+			binding.addReference(this);
+			break;
 		}
+
+		db.putInt(record + BINDING_REC_OFFSET, binding.getRecord());
 		
 		db.putInt(record + FILE_REC_OFFSET, file.getRecord());
 		if (caller != null) {
@@ -274,17 +271,17 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public String getFileName() {
 		try {
 			PDOMFile file = (PDOMFile) getFile();
-			if(file!=null) {
+			if (file != null) {
 				/*
 				 * We need to spec. what this method can return to know
-				 * how to implement this. Existing implmentations return
+				 * how to implement this. Existing implementations return
 				 * the absolute path, so here we attempt to do the same.
 				 */
 				URI uri = file.getLocation().getURI();
 				if ("file".equals(uri.getScheme())) //$NON-NLS-1$
 					return uri.getSchemeSpecificPart();
 				File f = EFS.getStore(uri).toLocalFile(0, null);
-				if( f != null )
+				if (f != null)
 					return f.getAbsolutePath();
 			}
 		} catch (CoreException e) {

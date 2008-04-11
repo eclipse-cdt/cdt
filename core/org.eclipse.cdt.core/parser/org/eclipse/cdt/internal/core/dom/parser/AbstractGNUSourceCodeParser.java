@@ -1689,9 +1689,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IASTStatement parseCaseStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset(); // t_case
-        IASTExpression case_exp = constantExpression();
+        IASTExpression caseExpression = constantExpression();
+        int lt1 = LT(1);
+		if (lt1 == IToken.tELLIPSIS) {
+			consume();
+        	IASTExpression upperBoundExpression= constantExpression();
+        	caseExpression = buildBinaryExpression(IASTBinaryExpression.op_assign,
+        			caseExpression, upperBoundExpression, calculateEndOffset(upperBoundExpression));
+        	lt1= LT(1);
+		}
         int lastOffset = 0;
-        switch (LT(1)) {
+        switch (lt1) {
         case IToken.tCOLON:
         case IToken.tEOC:
             lastOffset = consume().getEndOffset();
@@ -1702,7 +1710,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         IASTCaseStatement cs = createCaseStatement();
         ((ASTNode) cs).setOffsetAndLength(startOffset, lastOffset - startOffset);
-        cs.setExpression(case_exp);
+        cs.setExpression(caseExpression);
         return cs;
     }
 

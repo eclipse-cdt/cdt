@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+
 /**
  * This interface represents a binary expression.
  * 
@@ -194,9 +195,40 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_notequals = 29;
 
 	/**
-	 * op_last is the field used in subinterfaces to start their operators at
+	 * For c==, only.
+	 * <code>op_pmdot</code> pointer-to-member field dereference.
 	 */
-	public static final int op_last = op_notequals;
+	public static final int op_pmdot = 30;
+
+	/**
+	 * For c++, only.
+	 * <code>op_pmarrow</code> pointer-to-member pointer dereference.
+	 */
+	public static final int op_pmarrow = 31;
+
+	/**
+	 * For g++, only.
+	 * <code>op_max</code> represents >?
+	 */
+	public static final int op_max = 32;
+
+	/**
+	 * For g++, only.
+	 * <code>op_min</code> represents <?
+	 */
+	public static final int op_min = 33;
+	
+	/**
+	 * For gcc compilers, only.
+	 * <code>op_ellipses</code> represents ... as used for case ranges.
+	 */
+	public static final int op_ellipses= 34;
+	
+	/**
+	 * @deprecated all constants must be defined here, to avoid using the same value twice.
+	 */
+	@Deprecated
+	public static final int op_last = op_ellipses;
 
 	/**
 	 * Get the first operand.

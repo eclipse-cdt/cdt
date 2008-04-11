@@ -4493,4 +4493,15 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
+	
+	// void test(int count) {
+	//    switch(count) {
+	//       case 1 ... 3: break;
+	//    }
+	// }
+	public void testCaseRange_Bug211882() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
 }

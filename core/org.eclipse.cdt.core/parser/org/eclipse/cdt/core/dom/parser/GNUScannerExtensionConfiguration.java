@@ -43,17 +43,23 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 	
 	public static void addAdditionalGNUKeywords(CharArrayIntMap target) {
 		target.put(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		target.put(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		target.put(GCCKeywords.cp__ASM, IToken.t_asm); 
 		target.put(GCCKeywords.cp__ASM__, IToken.t_asm); 
 		target.put(GCCKeywords.cp__ATTRIBUTE, IGCCToken.t__attribute__ );
 		target.put(GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
 		target.put(GCCKeywords.cp__CONST, IToken.t_const); 
 		target.put(GCCKeywords.cp__CONST__, IToken.t_const); 
 		target.put(GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec );
+		target.put(GCCKeywords.cp__INLINE, IToken.t_inline); 
 		target.put(GCCKeywords.cp__INLINE__, IToken.t_inline); 
 		target.put(GCCKeywords.cp__RESTRICT, IToken.t_restrict); 
 		target.put(GCCKeywords.cp__RESTRICT__, IToken.t_restrict); 
+		target.put(GCCKeywords.cp__VOLATILE, IToken.t_volatile); 
 		target.put(GCCKeywords.cp__VOLATILE__, IToken.t_volatile); 
+		target.put(GCCKeywords.cp__SIGNED, IToken.t_signed); 
 		target.put(GCCKeywords.cp__SIGNED__, IToken.t_signed); 
+		target.put(GCCKeywords.cp__TYPEOF, IGCCToken.t_typeof); 
 		target.put(GCCKeywords.cp__TYPEOF__, IGCCToken.t_typeof); 
 		target.put(GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
 	}

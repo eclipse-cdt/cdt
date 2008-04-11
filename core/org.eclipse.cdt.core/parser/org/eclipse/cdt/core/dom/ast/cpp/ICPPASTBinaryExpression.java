@@ -22,15 +22,17 @@ public interface ICPPASTBinaryExpression extends IASTBinaryExpression {
 	/**
 	 * <code>op_pmdot</code> pointer-to-member field dereference.
 	 */
-	public static final int op_pmdot = IASTBinaryExpression.op_last + 1;
+	public static final int op_pmdot = IASTBinaryExpression.op_pmdot;
 
 	/**
 	 * <code>op_pmarrow</code> pointer-to-member pointer dereference.
 	 */
-	public static final int op_pmarrow = IASTBinaryExpression.op_last + 2;
+	public static final int op_pmarrow = IASTBinaryExpression.op_pmarrow;
 
 	/**
-	 * <code>op_last</code> is defined for subinterfaces to further extend.
+	 * @deprecated all constants must be defined in {@link IASTBinaryExpression}, to avoid 
+	 * duplicate usage of the same constant.
 	 */
-	public static final int op_last = op_pmarrow;
+	@Deprecated
+	public static final int op_last = IASTBinaryExpression.op_last;
 }

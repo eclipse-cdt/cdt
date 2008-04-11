@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 
 /**
@@ -22,16 +23,18 @@ public interface IGPPASTBinaryExpression extends ICPPASTBinaryExpression {
 	/**
 	 * <code>op_max</code> represents >?
 	 */
-	public static final int op_max = ICPPASTBinaryExpression.op_last + 1;
+	public static final int op_max = IASTBinaryExpression.op_max;
 
 	/**
 	 * <code>op_min</code> represents <?
 	 */
-	public static final int op_min = ICPPASTBinaryExpression.op_last + 2;
+	public static final int op_min = IASTBinaryExpression.op_min;
 
 	/**
-	 * <code>op_last</code> provided for sub-interfaces to extend.
+	 * @deprecated all constants must be defined in {@link IASTBinaryExpression} to avoid
+	 * using a constant twice.
 	 */
-	public static final int op_last = op_min;
+	@Deprecated
+	public static final int op_last = IASTBinaryExpression.op_last;
 
 }

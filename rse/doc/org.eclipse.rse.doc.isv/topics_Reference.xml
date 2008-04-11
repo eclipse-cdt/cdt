@@ -60,6 +60,7 @@
 			<topic label="org.eclipse.rse.services.processes" href="reference/api/org/eclipse/rse/services/processes/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.search" href="reference/api/org/eclipse/rse/services/search/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.shells" href="reference/api/org/eclipse/rse/services/shells/package-summary.html"/>
+			<topic label="org.eclipse.rse.internal.services.terminals" href="reference/api/org/eclipse/rse/internal/services/terminals/package-summary.html"/>
 		</topic>
 		<topic label="Services Implementations" href="provisional_api.html">
 			<topic label="org.eclipse.rse.services.dstore" href="reference/api/org/eclipse/rse/services/dstore/package-summary.html"/>

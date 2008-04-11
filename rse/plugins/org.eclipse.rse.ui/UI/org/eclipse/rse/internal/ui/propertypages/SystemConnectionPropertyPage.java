@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [226574] don't show encoding if no subsystem supports it
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -64,8 +65,20 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		// prepare input data
     	IHost conn = (IHost)getElement();
 		form.initializeInputFields(conn);
-		// add encoding fields
-		form.addDefaultEncodingFields();
+		
+		// only add encoding fields if needed for this connection
+		ISubSystem[] sses = conn.getSubSystems();
+		boolean addEncodingFields = false;
+		for (int i = 0; i < sses.length && !addEncodingFields; i++){
+			ISubSystem ss = sses[i];
+			addEncodingFields = ss.getSubSystemConfiguration().supportsEncoding(conn);
+		}
+		
+		if (addEncodingFields){
+			// add encoding fields
+			form.addDefaultEncodingFields();
+		}
+		
 		// create validators
     	ISystemValidator connectionNameValidators[] = new ISystemValidator[1];
     	connectionNameValidators[0] = SystemConnectionForm.getConnectionNameValidator(conn);    	

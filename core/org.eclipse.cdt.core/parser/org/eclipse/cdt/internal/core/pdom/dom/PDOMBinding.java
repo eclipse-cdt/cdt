@@ -247,7 +247,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	protected static String getConstantNameForValue(PDOMLinkage linkage, int value) {
 		Class<? extends PDOMLinkage> c= linkage.getClass();
 		Field[] fields= c.getFields();
-		for(int i=0; i<fields.length; i++) {
+		for (int i = 0; i < fields.length; i++) {
 			try {
 				fields[i].setAccessible(true);
 				if((fields[i].getModifiers() & Modifier.STATIC) != 0) {
@@ -320,7 +320,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
      * The first non-zero comparison is returned as the result.
 	 * @param b0
 	 * @param b1
-	 * @return<ul><li> -1 if b0 &lt; b1
+	 * @return <ul><li> -1 if b0 &lt; b1
 	 * <li> 0 if b0 == b1
 	 * <li> 1 if b0 &gt; b1
 	 * </ul>
@@ -360,7 +360,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 */
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp = comparePDOMBindingQNs(this, other);
-		if(cmp==0) {
+		if (cmp == 0) {
 			int t1 = getNodeType();
 			int t2 = other.getNodeType();
 			return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);

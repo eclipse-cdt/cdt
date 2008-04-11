@@ -82,6 +82,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String MAX_OP = " >? "; //$NON-NLS-1$
 	private static final String PMARROW_OP = "->*"; //$NON-NLS-1$
 	private static final String PMDOT_OP = ".*"; //$NON-NLS-1$
+	private static final String ELLIPSES = "..."; //$NON-NLS-1$
 	private static final String NOT_EQUALS_OP = " != "; //$NON-NLS-1$
 	private static final String EQUALS_OP = " == "; //$NON-NLS-1$
 	private static final String BINARY_OR_ASSIGN = " |= "; //$NON-NLS-1$
@@ -222,6 +223,8 @@ public class ExpressionWriter extends NodeWriter{
 			return MAX_OP;
 		case IGPPASTBinaryExpression.op_min:
 			return MIN_OP;
+		case IASTBinaryExpression.op_ellipses:
+			return ELLIPSES;
 		default:
 			System.err.println("Unknown unaryExpressionType: " + operator); //$NON-NLS-1$
 			throw new IllegalArgumentException("Unknown unaryExpressionType: " + operator); //$NON-NLS-1$

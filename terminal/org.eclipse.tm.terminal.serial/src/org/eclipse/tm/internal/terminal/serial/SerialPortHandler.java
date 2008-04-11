@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,9 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalControl 
+ * Michael Scharf (Wind River) - extracted from TerminalControl
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -23,8 +24,9 @@ import gnu.io.SerialPortEventListener;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
@@ -71,12 +73,16 @@ public class SerialPortHandler implements
 			public void run() {
 				String[] args = new String[] { fConn.getSerialSettings().getSerialPort() };
 				String strMsg = MessageFormat.format(SerialMessages.PORT_IN_USE, args);
-
-				if (!MessageDialog.openQuestion(fControl.getShell(), SerialMessages.PROP_TITLE, strMsg))
+				// [168197] Replace JFace MessagDialog by SWT MessageBox
+				//if (!MessageDialog.openQuestion(fControl.getShell(), SerialMessages.PROP_TITLE, strMsg))
+				MessageBox mb = new MessageBox(fControl.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+				mb.setText(SerialMessages.PROP_TITLE);
+				mb.setMessage(strMsg);
+				if (mb.open() != SWT.YES)
 					return;
 				fConn.disconnect();
 			}
-			
+
 		});
 	}
 

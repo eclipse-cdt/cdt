@@ -20,6 +20,7 @@
  * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
  * Ruslan Sychev (Xored Software) - [217675] NPE or SWTException when closing Terminal View while connection establishing
  * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
+ * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -32,7 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
@@ -368,7 +369,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 						}
 					} finally {
 						// clean the job: start a new one when the connection gets restarted
-						// Bug 208145: make sure we do not clean an other job that's already started (since it would become a Zombie) 
+						// Bug 208145: make sure we do not clean an other job that's already started (since it would become a Zombie)
 						synchronized (VT100TerminalControl.this) {
 							if (fJob==this) {
 								fJob=null;
@@ -386,7 +387,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	private void showErrorMessage(String message) {
 		String strTitle = TerminalMessages.TerminalError;
-		MessageDialog.openError( getShell(), strTitle, message);
+		// [168197] Replace JFace MessagDialog by SWT MessageBox
+		//MessageDialog.openError( getShell(), strTitle, message);
+		MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+		mb.setText(strTitle);
+		mb.setMessage(message);
+		mb.open();
 	}
 
 	protected void sendString(String string) {

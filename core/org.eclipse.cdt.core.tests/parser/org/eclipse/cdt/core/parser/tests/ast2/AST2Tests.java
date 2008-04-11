@@ -4494,6 +4494,15 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
 	
+	//	void func() {
+	//	  typeof(__attribute__((regparm(3)))void (*)(int *)) a;
+	//	} 
+	public void testTypeofExpressionWithAttribute_Bug226492() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
+
 	// void test(int count) {
 	//    switch(count) {
 	//       case 1 ... 3: break;

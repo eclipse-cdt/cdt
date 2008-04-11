@@ -418,13 +418,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	if (templateArgListCount > 0) {
     		// bug 104706, don't allow usage of logical operators in template argument lists.
     		if (expr instanceof IASTConditionalExpression)
-    			throw new BacktrackException();
+    			
     		if (expr instanceof IASTBinaryExpression) {
     			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
     			switch (bexpr.getOperator()) {
     			case IASTBinaryExpression.op_logicalAnd:
     			case IASTBinaryExpression.op_logicalOr:
-    				throw new BacktrackException();
+    				final ASTNode node = (ASTNode) expr;
+					throwBacktrack(node.getOffset(), node.getLength());
     			}
     		}
     	}

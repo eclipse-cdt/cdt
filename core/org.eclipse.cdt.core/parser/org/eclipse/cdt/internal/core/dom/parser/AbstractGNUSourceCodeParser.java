@@ -864,7 +864,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		backup(m);
             	d = typeId(false);
             	if (d == null) 
-            		throw new BacktrackException();
+            		throw e;
         	}
         	lastOffset = consume(IToken.tRPAREN).getEndOffset();
         } else {
@@ -2052,6 +2052,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         // gcc-special
         case IGCCToken.t_typeof:
+        case IGCCToken.t__attribute__:
 
         // content assist
         case IToken.tCOMPLETION:

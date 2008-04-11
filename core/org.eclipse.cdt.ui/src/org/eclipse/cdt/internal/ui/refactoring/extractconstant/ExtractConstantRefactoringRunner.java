@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
-import org.eclipse.ui.IWorkbenchWindow;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -29,8 +28,8 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
  */
 public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 
-	public ExtractConstantRefactoringRunner(IFile file, ISelection selection, IWorkbenchWindow window) {
-		super(file, selection, window);
+	public ExtractConstantRefactoringRunner(IFile file, ISelection selection) {
+		super(file, selection);
 	}
 
 	@Override
@@ -43,7 +42,7 @@ public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 		try {
 			refactoring.lockIndex();
 			try {
-				operator.run(window.getShell(), refactoring.getName());
+				operator.run(shell, refactoring.getName());
 			}
 			finally {
 				refactoring.unlockIndex();

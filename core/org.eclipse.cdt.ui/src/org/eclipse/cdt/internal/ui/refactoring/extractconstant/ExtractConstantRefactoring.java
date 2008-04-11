@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -99,13 +99,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 		
-		ITextSelection textSelection = null;
-		if (selection instanceof ITextSelection) {
-			textSelection = (ITextSelection) selection;
-		} else {
-			initStatus.addFatalError(Messages.ExtractConstantRefactoring_LiteralMustBeSelected); 
-			return initStatus;
-		}
+		ITextSelection textSelection = getTextSelection();
 		sm.worked(1);
 
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;

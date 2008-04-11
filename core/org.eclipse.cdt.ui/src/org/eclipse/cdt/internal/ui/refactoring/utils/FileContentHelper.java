@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
- * Some helper methods to access part of the content of an ifile 
+ * Some helper methods to access part of the content of an iFile 
  * 
  * @author Emanuel Graf
  *
@@ -32,12 +32,9 @@ public class FileContentHelper {
 	private static final int bufferSize = 512;
 
 	public static String getContent(IFile file, int start) throws CoreException, IOException{
-		
 		InputStreamReader reader = getReaderForFile(file);	
 		skip(start, reader);
-		
 		return readRest(reader);
-		
 	}
 	
 	public static String getContent(IFile file, int start, int length) {
@@ -72,8 +69,6 @@ public class FileContentHelper {
 		while((bytesRead = reader.read(buffer)) >= 0){
 			content.append(buffer, 0, bytesRead);
 		}
-
-		
 		return content.toString();
 	}
 	
@@ -90,14 +85,13 @@ public class FileContentHelper {
 		}
 	}
 
-	private static void skip(int start, InputStreamReader r) throws IOException {
+	private static void skip(int count, InputStreamReader r) throws IOException {
 		long skipped = 0;
-		while(skipped >= 0 && start > 0 && r.ready()){
-			skipped = r.skip(start);
+		while(skipped >= 0 && count > 0 && r.ready()){
+			skipped = r.skip(count);
 			if(skipped > 0){
-				start -= skipped;
+				count -= skipped;
 			}
 		}
 	}
-
 }

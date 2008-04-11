@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -26,17 +26,12 @@ public abstract class RefactoringRunner {
 
 	protected IFile file;
 	protected ISelection selection;
-	protected IWorkbenchWindow window;
+	protected Shell shell;
 
-	public RefactoringRunner(IFile file, ISelection selection, IWorkbenchWindow window) {
-		super();
+	public RefactoringRunner(IFile file, ISelection selection) {
 		this.file = file;
 		this.selection = selection;
-		if(window != null) {
-			this.window = window;
-		}else {
-			this.window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		}
+		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 	
 	public abstract void run();

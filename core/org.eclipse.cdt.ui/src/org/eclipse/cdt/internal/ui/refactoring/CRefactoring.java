@@ -68,11 +68,10 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected String name = Messages.HSRRefactoring_name; 
 	protected IFile file;
-	protected ISelection selection;
+	private ISelection selection;
 	protected RefactoringStatus initStatus;
 	protected IASTTranslationUnit unit;
 	private IIndex fIndex;
-	public static final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 
 	public CRefactoring(IFile file, ISelection selection) {
 		this.file = file;
@@ -240,23 +239,25 @@ public abstract class CRefactoring extends Refactoring {
 		return collector.createFinalChange();
 	}
 	
-	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
-		throws CoreException, OperationCanceledException {
-	}
+	abstract protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
+		throws CoreException, OperationCanceledException;
 
 	@Override
 	public String getName() {
 		return name;
 	}
-	
-	protected boolean loadTranslationUnit(RefactoringStatus status, IProgressMonitor mon) {
+
+	protected ITextSelection getTextSelection() {
+		return (ITextSelection) selection;
+	}
+
+	private boolean loadTranslationUnit(RefactoringStatus status,
+			IProgressMonitor mon) {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 10);
 		if (file != null) {
 			try {
-				subMonitor.subTask(Messages.HSRRefactoring_PM_ParseTU); 
-				ITranslationUnit tu = (ITranslationUnit) CCorePlugin
-						.getDefault().getCoreModel().create(file);
-				unit = tu.getAST(fIndex, AST_STYLE);
+				subMonitor.subTask(Messages.HSRRefactoring_PM_ParseTU);
+				unit = loadTranslationUnit(file);
 				subMonitor.worked(2);
 				if(isProgressMonitorCanceld(subMonitor, initStatus)) {
 					return true;
@@ -277,6 +278,11 @@ public abstract class CRefactoring extends Refactoring {
 		}
 		subMonitor.done();
 		return true;
+	}
+
+	protected IASTTranslationUnit loadTranslationUnit(IFile file) throws CoreException {
+		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
+		return tu.getAST(fIndex, AST_STYLE);
 	}
 
 	private static class ExpressionPosition {

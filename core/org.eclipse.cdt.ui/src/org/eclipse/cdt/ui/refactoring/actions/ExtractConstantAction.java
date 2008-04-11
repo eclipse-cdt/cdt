@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.ui.refactoring.actions;
 
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITextSelection;
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoringRunner;
 
 /**
- * Launches a rename refactoring.
+ * Launches a extract constant refactoring.
  */          
 public class ExtractConstantAction extends RefactoringAction {
     
@@ -35,12 +36,10 @@ public class ExtractConstantAction extends RefactoringAction {
 	}
 
 	@Override
-	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection s) {
+	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection selection) {
 		IResource res= wc.getResource();
 		if (res instanceof IFile) {
-			new ExtractConstantRefactoringRunner((IFile) res, 
-					fEditor.getSelectionProvider().getSelection(), 
-					fEditor.getSite().getWorkbenchWindow()).run();
+			new ExtractConstantRefactoringRunner((IFile) res, selection).run();
 		}
 	}
 

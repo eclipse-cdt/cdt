@@ -62,29 +62,29 @@ public abstract class RefactoringBaseTest extends BaseTestFramework implements I
 	}
 	
 	protected void assertEquals(TestSourceFile file, IFile file2) throws Exception {
-		StringBuffer code = getCodeFromIFile(file2);
-		assertEquals(file.getExpectedSource(), TestHelper.unifyNewLines(code.toString()));
+		String code = getCodeFromIFile(file2);
+		assertEquals(file.getExpectedSource(), TestHelper.unifyNewLines(code));
 	}
 	
 	protected void compareFiles(Map<String,TestSourceFile> testResourceFiles) throws Exception {
 		for (String fileName : testResourceFiles.keySet()) {
-			TestSourceFile file = testResourceFiles.get(fileName);
+			String expectedSource = testResourceFiles.get(fileName).getExpectedSource();
 			IFile iFile = project.getFile(new Path(fileName));
-			StringBuffer code = getCodeFromIFile(iFile);
-			assertEquals(TestHelper.unifyNewLines(file.getExpectedSource()), TestHelper.unifyNewLines(code.toString()));
+			String code = getCodeFromIFile(iFile);
+			assertEquals(TestHelper.unifyNewLines(expectedSource), TestHelper.unifyNewLines(code));
 		}
 	}
 
-	protected StringBuffer getCodeFromIFile(IFile file) throws Exception {
+	protected String getCodeFromIFile(IFile file) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
-		StringBuffer code = new StringBuffer();
+		StringBuilder code = new StringBuilder();
 		String line;
 		while((line = br.readLine()) != null) {
 			code.append(line);
 			code.append('\n');
 		}
 		br.close();
-		return code;
+		return code.toString();
 	}
 
 	@Override

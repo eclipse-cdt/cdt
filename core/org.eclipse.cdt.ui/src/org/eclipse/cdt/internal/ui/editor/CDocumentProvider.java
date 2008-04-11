@@ -45,6 +45,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
@@ -316,7 +317,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 	/**
 	 * Annotation model dealing with c marker annotations and temporary problems.
-	 * Also acts as problem requestor for its translation unit. Initialiy inactive. Must explicitly be
+	 * Also acts as a problem requestor for its translation unit. Initially inactive. Must be explicitly
 	 * activated.
 	 */
 	protected static class TranslationUnitAnnotationModel extends ResourceMarkerAnnotationModel implements IProblemRequestor, IProblemRequestorExtension {
@@ -502,7 +503,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			boolean temporaryProblemsChanged= false;
 			
 			synchronized (getLockObject()) {
-				
 				boolean isCanceled= false;
 				
 				fPreviouslyOverlaid= fCurrentlyOverlaid;
@@ -515,7 +515,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				}
 				
 				if (reportedProblems != null && reportedProblems.size() > 0) {
-					
 					Iterator<IProblem> e= reportedProblems.iterator();
 					while (e.hasNext()) {
 						
@@ -578,7 +577,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			}
 		}
 		
-		private void  overlayMarkers(Position position, ProblemAnnotation problemAnnotation) {
+		private void overlayMarkers(Position position, ProblemAnnotation problemAnnotation) {
 			Object value= getAnnotations(position);
 			if (value instanceof List) {
 				List list= (List) value;
@@ -648,9 +647,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			
 			synchronized (getLockObject()) {
 				Object cached= fReverseMap.get(position);
-				if (cached == null)
+				if (cached == null) {
 					fReverseMap.put(position, annotation);
-				else if (cached instanceof List) {
+				} else if (cached instanceof List) {
 					List<Annotation> list= (List<Annotation>) cached;
 					list.add(annotation);
 				} else if (cached instanceof Annotation) {
@@ -956,8 +955,38 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				// empty files.
 				int lastLineLength = document.getLineLength(lastLineIndex);
 				if (lastLineLength != 0) {
-					document.replace(document.getLength(), 0, TextUtilities
-							.getDefaultLineDelimiter(document));
+					document.replace(document.getLength(), 0,
+							TextUtilities.getDefaultLineDelimiter(document));
+				}
+			} catch (BadLocationException e) {
+			}
+		}		
+		
+		// Remove trailing whitespace when saving. Triggered by the flag 
+		// in Preferences -> C/C++ -> Editor 
+		if (PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.REMOVE_TRAILING_WHITESPACE)) {
+			try {
+				int lineCount= document.getNumberOfLines();
+				for (int i= 0; i < lineCount; i++) {
+					
+					IRegion region= document.getLineInformation(i);
+					if (region.getLength() == 0)
+						continue;
+					
+					int lineStart= region.getOffset();
+					int lineExclusiveEnd= lineStart + region.getLength();
+					
+					// Find the rightmost none-whitespace character
+					int charPos= lineExclusiveEnd - 1;
+					while (charPos >= lineStart && Character.isWhitespace(document.getChar(charPos)))
+						charPos--;
+					
+					charPos++;
+					if (charPos < lineExclusiveEnd) {
+						DeleteEdit edit= new DeleteEdit(charPos, lineExclusiveEnd - charPos);
+						edit.apply(document);
+					}
 				}
 			} catch (BadLocationException e) {
 			}

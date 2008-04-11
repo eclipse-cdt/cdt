@@ -928,6 +928,13 @@ public class PreferenceConstants {
 	public final static String ENSURE_NEWLINE_AT_EOF = "ensureNewlineAtEOF"; //$NON-NLS-1$
 
 	/**
+	 * Preference key for whether to remove trailing whitespace when saving.
+	 *
+	 * @since 5.0
+	 */
+	public final static String REMOVE_TRAILING_WHITESPACE = "removeTrailingWhitespace"; //$NON-NLS-1$
+	
+	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
 	 *
 	 * @since 3.1.1
@@ -1410,6 +1417,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_AUTO_INDENT, true);
 
 		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);
+		store.setDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, false);
 
 		// formatter profile
 		store.setDefault(PreferenceConstants.FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);

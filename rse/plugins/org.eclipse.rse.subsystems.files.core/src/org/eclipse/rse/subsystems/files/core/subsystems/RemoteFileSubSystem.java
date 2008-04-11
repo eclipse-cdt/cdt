@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1035,10 +1036,10 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	/**
 	 * Return the object within the subsystem that corresponds to the specified
 	 * unique ID.
-	 * 
+	 *
 	 * For remote files, assuming the key is the absolute path of a file, this
 	 * is simply a wrapper to getRemoteFileObject().
-	 * 
+	 *
 	 * @see SubSystem#getObjectWithAbsoluteName(String, IProgressMonitor)
 	 */
 	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
@@ -1441,15 +1442,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		// TODO Auto-generated method stub
 
-	}
-
-	/**
-	 * Returns <code>true</code> by default. Subclasses should override if they do not support encodings.
-	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#supportsEncoding()
-	 * @since 2.0
-	 */
-	public boolean supportsEncoding() {
-		return true;
 	}
 
 	/**

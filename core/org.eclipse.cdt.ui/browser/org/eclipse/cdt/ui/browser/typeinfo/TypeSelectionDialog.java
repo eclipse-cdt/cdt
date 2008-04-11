@@ -184,14 +184,11 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		}
 	}
 	
-	private static class StringComparator implements Comparator {
-	    public int compare(Object left, Object right) {
-	     	String leftString = (String) left;
-	     	String rightString = (String) right;
-	     	
-			int result = leftString.compareToIgnoreCase(rightString);			
+	private static class StringComparator implements Comparator<String> {
+	    public int compare(String left, String right) {
+	     	int result = left.compareToIgnoreCase(right);			
 			if (result == 0)
-				result = leftString.compareTo(rightString);
+				result = left.compareTo(right);
 
 			return result;
 	    }
@@ -676,8 +673,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
     	ArrayList<IndexTypeInfo> result= new ArrayList<IndexTypeInfo>();
     	Object[] typeInfos= super.getFoldedElements(index);
     	if (typeInfos != null) {
-    		for (int i = 0; i < typeInfos.length; i++) {
-    			Object typeInfo = typeInfos[i];
+    		for (Object typeInfo : typeInfos) {
     			if (typeInfo instanceof IndexTypeInfo) {
     				addFoldedElements((IndexTypeInfo) typeInfo, result);
     			}
@@ -688,8 +684,8 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	private void addFoldedElements(IndexTypeInfo typeInfo, ArrayList<IndexTypeInfo> result) {
 		ITypeReference[] refs= typeInfo.getReferences();
-		for (int i = 0; i < refs.length; i++) {
-			result.add(new IndexTypeInfo(typeInfo, refs[i]));
+		for (ITypeReference ref : refs) {
+			result.add(new IndexTypeInfo(typeInfo, ref));
 		}
 	}
 }

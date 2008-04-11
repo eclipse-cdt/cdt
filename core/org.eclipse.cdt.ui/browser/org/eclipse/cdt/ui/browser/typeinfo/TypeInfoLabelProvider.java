@@ -119,6 +119,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 						buf.append(returnType);
 					}
 				}
+				break;
 			case ICElement.C_VARIABLE:
 				ITypeReference ref= typeInfo.getResolvedReference();
 				if (ref != null) {
@@ -137,6 +138,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 						}
 					}
 				}
+				break;
 			}
 		}
 		if (isSet(SHOW_PATH)) {

@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial implementation
  * Michael Scharf (Wing River) - [211659] Add field assist to terminal input field
  * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
+ * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -42,10 +42,10 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
  * <li>
  * <ul>Navigate with ARROW_UP,ARROW_DOWN,PAGE_UP,PAGE_DOWN
  * <ul>ESC to cancel history editing
- * <ul>History can be edited (by moving up and edit) but changes are 
- * not persistent (like in bash). 
- * <ul>If the same command is entered multiple times in a row, 
- * only one entry is kept in the history. 
+ * <ul>History can be edited (by moving up and edit) but changes are
+ * not persistent (like in bash).
+ * <ul>If the same command is entered multiple times in a row,
+ * only one entry is kept in the history.
  * </li>
  *
  */
@@ -69,10 +69,10 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 			}
 			return (IContentProposal[]) result.toArray(new IContentProposal[result.size()]);
 		}
-		
+
 	}
 	private static class Proposal implements IContentProposal {
-		
+
 		private final String fContent;
 		private final String fLabel;
 		Proposal(String content, String label) {
@@ -82,15 +82,15 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		public String getContent() {
 			return fContent;
 		}
-		
+
 		public String getLabel() {
 			return fLabel;
 		}
-		
+
 		public String getDescription() {
 			return null;
 		}
-		
+
 		public int getCursorPosition() {
 			return fContent.length();
 		}
@@ -118,7 +118,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		fMaxSize=maxHistorySize;
 	}
 	/**
-	 * Add a line to the history. 
+	 * Add a line to the history.
 	 * @param line The line to be added to the history.
 	 */
 	protected void pushLine(String line) {
@@ -143,7 +143,20 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		fHistory.clear();
 		if(history==null)
 			return;
-		fHistory.addAll(Arrays.asList(history.split("\n"))); //$NON-NLS-1$
+		// add history entries separated by '\n'
+		// fHistory.addAll(Arrays.asList(history.split("\n"))); //$NON-NLS-1$
+		//<J2ME CDC-1.1 Foundation-1.1 variant>
+		int i = 0;
+		int j = history.indexOf('\n');
+		while (j > i) {
+			fHistory.add(history.substring(i, j));
+			do {
+				j++;
+			} while (j < history.length() && history.charAt(j) == '\n');
+			i = j;
+			j = history.indexOf('\n', i);
+		}
+		//</J2ME CDC-1.1 Foundation-1.1 variant>
 	}
 	/**
 	 * @return the current content of the history buffer and new line separated list
@@ -218,7 +231,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 				GridData gdata = (GridData) fInputField.getLayoutData();
 				Rectangle sashRect = fSash.getBounds ();
 				Rectangle containerRect = parent.getClientArea ();
-				
+
 				int h=fInputField.getLineHeight();
 				// make sure the input filed hight is a multiple of the line height
 				gdata.heightHint = Math.max(((containerRect.height-e.y-sashRect.height)/h)*h,h);
@@ -248,7 +261,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		new ContentAssistCommandAdapter(
 				fInputField,
 				new TextContentAdapter(),
-				new FieldAssist(), 
+				new FieldAssist(),
 				null,
 				null,
 				installDecoration);
@@ -295,6 +308,6 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		fSash=null;
 		fInputField.dispose();
 		fInputField=null;
-		
+
 	}
 }

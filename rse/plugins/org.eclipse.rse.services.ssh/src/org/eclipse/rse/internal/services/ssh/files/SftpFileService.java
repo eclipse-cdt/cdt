@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [224799] Fix JSch encoding problems with Arabic filenames
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * Martin Oberhuber (Wind River) - [170910] Adopt RSE ITerminalService API for SSH
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -154,7 +155,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	}
 
 	//private SshConnectorService fConnector;
-	private ISshSessionProvider fSessionProvider;
+	private final ISshSessionProvider fSessionProvider;
 	private ChannelSftp fChannelSftp;
 	private String fUserHome;
 	private Mutex fDirChannelMutex = new Mutex();
@@ -172,6 +173,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 
 	public SftpFileService(ISshSessionProvider sessionProvider) {
 		fSessionProvider = sessionProvider;
+	}
+
+	public ISshSessionProvider getSessionProvider() {
+		return fSessionProvider;
 	}
 
 	public void setControlEncoding(String encoding) throws SystemMessageException {

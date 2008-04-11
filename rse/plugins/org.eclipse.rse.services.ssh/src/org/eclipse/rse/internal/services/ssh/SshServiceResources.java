@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
+ * Yu-Fen Kuo       (MontaVista) - [170910] Integrate the TM Terminal View with RSE
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh;
@@ -33,6 +34,11 @@ public class SshServiceResources extends NLS {
 	public static String SshShellService_Description;
 
 	public static String SshShellService_Name;
+	
+	public static String SshTerminalService_Name;
+	
+	public static String SshTerminalService_Description;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SshServiceResources.class);

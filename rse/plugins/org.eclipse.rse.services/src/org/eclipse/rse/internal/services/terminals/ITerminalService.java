@@ -13,29 +13,28 @@ package org.eclipse.rse.internal.services.terminals;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.rse.services.AbstractService;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
  * Interface for getting Terminal Connections from a remote side, also known as
  * terminal session with Streams.
- *
+ * 
  * One ITerminalService instance is typically associated with one particular
  * connection to a (potentially remote) system, such that the ITerminalService
  * instance can also hold state data about that session, such as connected
  * state, login and authentication information, configuration data or
  * environment variables.
- *
+ * 
  * Each
  * {@link #launchTerminal(String, String, String[], String, String, IProgressMonitor)}
  * invocation, however, acts as a factory method such that it creates a new
  * (remote) process and associated {@link ITerminalShell} connection.
- *
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
- *              Clients must subclass the {@link AbstractService} class rather
- *              than implementing this interface directly.
- *
+ *              Clients must subclass the {@link AbstractTerminalService} class
+ *              rather than implementing this interface directly.
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
@@ -43,9 +42,9 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
  * team.
  * </p>
- *
+ * 
  * @since org.eclipse.rse.services 3.0
- *
+ * 
  */
 public interface ITerminalService extends IService {
 

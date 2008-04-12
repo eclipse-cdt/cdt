@@ -149,7 +149,7 @@ public class SystemViewAPIProviderForFilterStrings
 		    children = new SystemMessageObject[1];
 		    children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                          ISystemMessageObject.MSGTYPE_CANCEL, element);
-		 	System.out.println("Canceled."); //$NON-NLS-1$
+		 	System.out.println("Cancelled."); //$NON-NLS-1$
 		}
 		catch (Exception exc)
 		{

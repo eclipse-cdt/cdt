@@ -719,7 +719,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				}
 				catch (InterruptedException e)
 				{
-					// cancel monitor if it's still not canceled
+					// cancel monitor if it's still not cancelled
 					if (monitor != null && !monitor.isCanceled())
 					{
 						monitor.setCanceled(true);
@@ -956,7 +956,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					}
 					catch (InterruptedException e)
 					{
-						// cancel monitor if it's still not canceled
+						// cancel monitor if it's still not cancelled
 						if (monitor != null && !monitor.isCanceled())
 						{
 							monitor.setCanceled(true);
@@ -1275,7 +1275,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_OPERATION_CANCELLED,
 					IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED);
-			//This operation has been canceled by the user.
+			//This operation has been cancelled by the user.
 			throw new SystemMessageException(msg);
 		}
 
@@ -1317,7 +1317,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		if (null != monitor && monitor.isCanceled())
 		{
-			//This operation has been canceled by the user.
+			//This operation has been cancelled by the user.
 			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_OPERATION_CANCELLED,
 					IStatus.CANCEL,
@@ -1360,7 +1360,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (status == null) return false;
 		if (null != monitor && monitor.isCanceled())
 		{
-			//This operation has been canceled by the user.
+			//This operation has been cancelled by the user.
 			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_OPERATION_CANCELLED,
 					IStatus.CANCEL,
@@ -1399,7 +1399,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			if (null != monitor && monitor.isCanceled())
 			{
-				//This operation has been canceled by the user.
+				//This operation has been cancelled by the user.
 				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ICommonMessageIds.MSG_OPERATION_CANCELLED,
 						IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));
@@ -1479,7 +1479,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_OPERATION_CANCELLED,
 					IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED);
-			//This operation has been canceled by the user.
+			//This operation has been cancelled by the user.
 			throw new SystemMessageException(msg);
 		}
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS))
@@ -1518,7 +1518,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			{
 				if (null != monitor && monitor.isCanceled())
 				{
-					//This mean the copy operation is ok, but delete operation has been canceled by user.
+					//This mean the copy operation is ok, but delete operation has been cancelled by user.
 					//The delete() call will take care of recovered from the cancel operation.
 					//So we need to make sure to remove the already copied file/folder.
 					getFile(tgtParent, tgtName, null); //need to call getFile first to put this object into DataElement map first
@@ -1695,12 +1695,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			{
 				if (monitor != null && monitor.isCanceled())
 				{
-					//This operation has been canceled by the user.
+					//This operation has been cancelled by the user.
 					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 							ICommonMessageIds.MSG_OPERATION_CANCELLED,
 							IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));
 				}
-				// cancel monitor if it's still not canceled
+				// cancel monitor if it's still not cancelled
 				if (monitor != null && !monitor.isCanceled())
 				{
 					monitor.setCanceled(true);
@@ -1753,12 +1753,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			{
 				if (monitor != null && monitor.isCanceled())
 				{
-					//This operation has been canceled by the user.
+					//This operation has been cancelled by the user.
 					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 							ICommonMessageIds.MSG_OPERATION_CANCELLED,
 							IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));
 				}
-				// cancel monitor if it's still not canceled
+				// cancel monitor if it's still not cancelled
 				if (monitor != null && !monitor.isCanceled())
 				{
 					monitor.setCanceled(true);

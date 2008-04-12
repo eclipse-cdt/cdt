@@ -158,7 +158,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 				catch (SystemMessageException exc)
 				{
 					copiedOk = false;
-					//If this operation is canceled, need to display a proper message to the user.
+					//If this operation is cancelled, need to display a proper message to the user.
 					if (monitor.isCanceled() && movedFileNames.size() > 0)
 					{
 						//Get the moved file names

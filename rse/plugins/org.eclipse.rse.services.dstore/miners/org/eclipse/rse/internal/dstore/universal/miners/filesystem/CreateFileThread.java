@@ -61,7 +61,7 @@ public class CreateFileThread extends SecuredThread implements ICancellableHandl
 		_isCancelled = true;
 		if (null != systemOperationMonitor)
 		{
-			systemOperationMonitor.setCanceled(true);
+			systemOperationMonitor.setCancelled(true);
 		}
 	}
 

@@ -1,15 +1,15 @@
-/********************************************************************************
- * Copyright (c) 2007, 2007 IBM Corporation. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html 
  * 
- * Contributors:
- * {Name} (company) - description of contribution.
- * 
- * Xuan Chen (IBM) - initial API and implementation 
+ * Contributors: 
+ * Martin Oberhuber (Wind River) - initial API and implementation 
+ * Xuan Chen        (IBM)        - [160775] Derive from org.eclipse.rse.services.Mutex
  * Xuan Chen        (IBM)        - [209825] add some info of printing the lock status
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
 
@@ -19,14 +19,14 @@ import java.util.List;
 
 /**
  * A SystemMutex Exclusion Lock for Threads that need to access a resource
- * in a serialized manner. 
+ * in a serialized manner.
  * If the request for the lock is running on the same thread who is currently holding the lock,
  * it will "borrow" the lock, and the call to waitForLock() will go through.
  * An SystemOperationMonitor is accepted
  * in order to support cancellation when waiting for the SystemMutex.
- * This is a clone for org.eclipse.rse.services.Mutex with some modification to make sure the 
+ * This is a clone for org.eclipse.rse.services.Mutex with some modification to make sure the
  * sequential calls to waitForLock() method in the same thread will not be blocked.
- * 
+ *
  * Usage Example:
  * <code>
  *    private SystemMutex fooMutex = new SystemMutex();
@@ -47,10 +47,10 @@ import java.util.List;
  *        return false;
  *    }
  * </code>
- * 
+ *
  */
 public class SystemReentrantMutex {
-	
+
 	private boolean fLocked = false;
 	private List fWaitQueue = new LinkedList();
 	private Thread threadLockThisMutex = null;
@@ -64,15 +64,15 @@ public class SystemReentrantMutex {
      */
 	public SystemReentrantMutex() {
 	}
-	
+
 	/**
 	 * Try to acquire the lock maintained by this mutex.
 	 *
 	 * If the thread needs to wait before it can acquire the mutex, it
-	 * will wait in a first-come-first-serve fashion. In case a progress 
-	 * monitor was given, it will be updated and checked for cancel every 
+	 * will wait in a first-come-first-serve fashion. In case a progress
+	 * monitor was given, it will be updated and checked for cancel every
 	 * second.
-	 * 
+	 *
 	 * @param monitor SystemOperationMonitor. May be <code>null</code>.
 	 * @param timeout Maximum wait time given in milliseconds.
 	 * @return <code>LOCK_STATUS_AQUIRED</code> if the lock was acquired successfully.
@@ -83,7 +83,7 @@ public class SystemReentrantMutex {
         if (Thread.interrupted()) {
         	return LOCK_STATUS_NOLOCK;
 		}
-        if (monitor!=null && monitor.isCanceled()) {
+        if (monitor!=null && monitor.isCancelled()) {
         	return LOCK_STATUS_NOLOCK;
         }
     	final Thread myself = Thread.currentThread();
@@ -106,8 +106,8 @@ public class SystemReentrantMutex {
             //And we don't want to wait forever here
             long pollTime = (timeLeft > 1000) ? 1000 : timeLeft;
             long nextProgressUpdate = start+500;
-        	boolean canceled = false;
-            while (timeLeft>0 && !canceled && lockStatus == LOCK_STATUS_NOLOCK) {
+        	boolean cancelled = false;
+			while (timeLeft > 0 && !cancelled && lockStatus == LOCK_STATUS_NOLOCK) {
             	//is it my turn yet? Check wait queue and wait
         		synchronized(fWaitQueue) {
                 	if (!fLocked && fWaitQueue.get(0) == myself) {
@@ -115,7 +115,7 @@ public class SystemReentrantMutex {
                 		fLocked = true;
                 		lockStatus = LOCK_STATUS_AQUIRED;
                 		threadLockThisMutex = myself;
-                	} else 
+                	} else
                 	{
                 		if (threadLockThisMutex == myself && fWaitQueue.contains(myself))
                 		{
@@ -147,15 +147,15 @@ public class SystemReentrantMutex {
                 	long curTime = System.currentTimeMillis();
                     timeLeft = start + timeout - curTime;
                 	if (monitor!=null) {
-                		canceled = monitor.isCanceled();
-                		if (!canceled && (curTime>nextProgressUpdate)) {
+                		cancelled = monitor.isCancelled();
+						if (!cancelled && (curTime > nextProgressUpdate)) {
                 			nextProgressUpdate+=1000;
                 		}
                 	}
         		}
             }
         } catch(InterruptedException e) {
-          	//canceled waiting -> no lock acquired
+          	//cancelled waiting -> no lock acquired
     	} finally {
     		if (lockStatus == LOCK_STATUS_NOLOCK) {
         		synchronized(fWaitQueue) {
@@ -168,8 +168,8 @@ public class SystemReentrantMutex {
 
 	/**
 	 * Release this mutex's lock.
-	 * 
-	 * May only be called by the same thread that originally acquired 
+	 *
+	 * May only be called by the same thread that originally acquired
 	 * the SystemMutex.
 	 */
 	public void release() {
@@ -190,12 +190,12 @@ public class SystemReentrantMutex {
 			return fLocked;
 		}
 	}
-	
+
 	/**
 	 * Interrupt all threads waiting for the Lock, causing their
 	 * {@link #waitForLock(ISystemOperationMonitor, long)} method to return
 	 * <code>false</code>.
-	 * This should be called if the resource that the Threads are 
+	 * This should be called if the resource that the Threads are
 	 * contending for, becomes unavailable for some other reason.
 	 */
 	public void interruptAll() {
@@ -207,11 +207,11 @@ public class SystemReentrantMutex {
 			}
 		}
 	}
-	
+
 	/*
 	 * Method used to debug this mutex
 	 * uncomment it when needed
-	 * 
+	 *
 	private void printLockMessage(int status, Thread myself)
 	{
 		if (status == LOCK_STATUS_AQUIRED)

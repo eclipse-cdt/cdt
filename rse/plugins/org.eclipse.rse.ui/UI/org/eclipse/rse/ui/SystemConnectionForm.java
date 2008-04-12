@@ -464,7 +464,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 				try {
 					getRunnableContext().run(true, true, this);
 				} catch (InterruptedException e) {
-					// user canceled				
+					// user cancelled				
 					ok = false;
 					controlInError = textHostName;
 				} catch (InvocationTargetException e) {

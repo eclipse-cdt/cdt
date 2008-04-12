@@ -23,7 +23,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 162511 - FTP file service does not process filter strings correctly
  * Javier Montalvo Orus (Symbian) - Fixing 162782 - File filter does not display correct result in RC3
  * Javier Montalvo Orus (Symbian) - Fixing 162878 - New file and new folder dialogs don't work in FTP in a folder with subfolders
- * Javier Montalvo Orus (Symbian) - Fixing 162585 - [FTP] fetch children cannot be canceled
+ * Javier Montalvo Orus (Symbian) - Fixing 162585 - [FTP] fetch children cannot be cancelled
  * Javier Montalvo Orus (Symbian) - Fixing 161209 - Need a Log of ftp commands
  * Javier Montalvo Orus (Symbian) - Fixing 163264 - FTP Only can not delete first subfolder
  * Michael Scharf (Wind River) - Fix 164223 - Wrong call for setting binary transfer mode
@@ -117,7 +117,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
-import org.eclipse.rse.services.files.RemoteFileCanceledException;
+import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
@@ -569,7 +569,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     	fileName = checkEncoding(fileName);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCanceledException();
+				throw new RemoteFileCancelledException();
 			}
 		}
 
@@ -609,7 +609,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 				if(!listFiles(monitor))
 				{
-					throw new RemoteFileCanceledException();
+					throw new RemoteFileCancelledException();
 				}
 
 				synchronized(_fCachePreviousFiles) {
@@ -669,7 +669,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     	parentPath = checkEncoding(parentPath);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCanceledException();
+				throw new RemoteFileCancelledException();
 			}
 		}
 
@@ -699,7 +699,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 				if(!listFiles(monitor))
 				{
-					throw new RemoteFileCanceledException();
+					throw new RemoteFileCancelledException();
 				}
 
 				synchronized (_fCachePreviousFiles) {
@@ -764,7 +764,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCanceledException();
+				throw new RemoteFileCancelledException();
 			}
 		}
 		else{
@@ -906,7 +906,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCanceledException();
+				throw new RemoteFileCancelledException();
 			}
 		}
 
@@ -1075,7 +1075,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	{
 		if(monitor.isCanceled())
 		{
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 
 		clearCache(parentPath);
@@ -1286,7 +1286,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
     	if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCanceledException();
+				throw new RemoteFileCancelledException();
 			}
 		}
 
@@ -1316,7 +1316,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     {
     	if(monitor.fMonitor.isCanceled())
 		{
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 
     	boolean success = false;
@@ -1606,7 +1606,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 
 		if (monitor != null && monitor.isCanceled()){
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 
 		InputStream stream = null;
@@ -1641,7 +1641,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     	remoteFile = checkEncoding(remoteFile);
 
 		if (monitor != null && monitor.isCanceled()){
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 
 		OutputStream stream = null;

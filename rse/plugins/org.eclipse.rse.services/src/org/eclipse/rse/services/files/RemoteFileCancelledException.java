@@ -28,12 +28,10 @@ import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
- * Exception thrown when attempting a file operation and the user canceled it
+ * Exception thrown when attempting a file operation and the user cancelled it
  * before it could be completed.
- *
- * @since org.eclipse.rse.services 3.0 renamed from RemoteFileCancelledException
  */
-public class RemoteFileCanceledException extends RemoteFileException {
+public class RemoteFileCancelledException extends RemoteFileException {
 
 	/**
 	 * A serialVersionUID is recommended for all serializable classes.
@@ -46,7 +44,7 @@ public class RemoteFileCanceledException extends RemoteFileException {
 	/**
 	 * Constructor
 	 */
-	public RemoteFileCanceledException() {
+	public RemoteFileCancelledException() {
 		super(getMyMessage());
 	}
 

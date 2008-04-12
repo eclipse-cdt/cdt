@@ -290,8 +290,8 @@ public final class VirtualChild {
 						if (!(_extractedFile.delete() && _extractedFile.mkdirs()))
 						{
 							System.out.println("VirtualChild.getExtractedFile(): Could not create temp dir."); //$NON-NLS-1$
-							//We only set the status of the archive operation montor to done if it is not been canceled.
-							if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+							//We only set the status of the archive operation montor to done if it is not been cancelled.
+							if (null != archiveOperationMonitor && !archiveOperationMonitor.isCancelled())
 							{
 								archiveOperationMonitor.setDone(true);
 							}
@@ -321,8 +321,8 @@ public final class VirtualChild {
 			returnedFile = _extractedFile;
 		}
 		
-		//We only set the status of the archive operation montor to done if it is not been canceled.
-		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+		//We only set the status of the archive operation montor to done if it is not been cancelled.
+		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCancelled())
 		{
 			archiveOperationMonitor.setDone(true);
 		}
@@ -374,8 +374,8 @@ public final class VirtualChild {
 			}
 			_extractedFile = destination;
 		}
-		//We only set the status of the archive operation montor to done if it is not been canceled.
-		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+		//We only set the status of the archive operation montor to done if it is not been cancelled.
+		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCancelled())
 		{
 			archiveOperationMonitor.setDone(true);
 		}

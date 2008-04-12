@@ -497,7 +497,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 *
 	 * @param filesToImport the list of file system objects to import
 	 *   (element type: <code>Object</code>)
-	 * @exception OperationCanceledException if canceled
+	 * @exception OperationCanceledException if cancelled
 	 */
 	void importFileSystemObjects(List filesToImport) {
 		Iterator filesEnum = filesToImport.iterator();
@@ -569,7 +569,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 *
 	 * @param fileSystemObject the file system object to be imported
 	 * @param policy determines how the file system object and children are imported
-	 * @exception OperationCanceledException if canceled
+	 * @exception OperationCanceledException if cancelled
 	 */
 	void importRecursivelyFrom(Object fileSystemObject, int policy) {
 		if (monitor.isCanceled()) throw new OperationCanceledException();
@@ -591,7 +591,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * 
 	 * @param path the workspace path of the resource that needs to be overwritten
 	 * @return <code>true</code> to overwrite, <code>false</code> to not overwrite
-	 * @exception OperationCanceledException if canceled
+	 * @exception OperationCanceledException if cancelled
 	 */
 	boolean queryOverwrite(IPath resourcePath) throws OperationCanceledException {
 		String overwriteAnswer = overwriteCallback.queryOverwrite(resourcePath.makeRelative().toString());

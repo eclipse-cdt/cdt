@@ -1903,7 +1903,7 @@ public class UniversalFileTransferUtility
 		{
 			if (monitor.isCanceled())
 			{
-				//If this operation if canceled, and if the destination has already been created (partially)
+				//If this operation if cancelled, and if the destination has already been created (partially)
 				//in the host, we need to delete it.
 				if (newTargetFolder.exists())
 				{

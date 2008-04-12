@@ -66,7 +66,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		private boolean canceled = false;
 
 		/**
-		 * @return true if prompting was canceled.
+		 * @return true if prompting was cancelled.
 		 */
 		public boolean isCanceled() {
 			return canceled;

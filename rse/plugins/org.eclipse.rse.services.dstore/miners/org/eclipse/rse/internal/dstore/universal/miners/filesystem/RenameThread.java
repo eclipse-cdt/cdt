@@ -57,7 +57,7 @@ public class RenameThread extends SecuredThread implements ICancellableHandler {
 		_isCancelled = true;
 		if (null != systemOperationMonitor)
 		{
-			systemOperationMonitor.setCanceled(true);
+			systemOperationMonitor.setCancelled(true);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class RenameThread extends SecuredThread implements ICancellableHandler {
 				_status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 				_dataStore.update(_subject);
 			} 
-			else if (systemOperationMonitor.isCanceled())
+			else if (systemOperationMonitor.isCancelled())
 			{
 				_subject.setAttribute(DE.A_SOURCE, _miner.setProperties(handler
 						.getVirtualFile(oldAbsPath.getVirtualPart(), systemOperationMonitor)));

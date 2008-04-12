@@ -1067,7 +1067,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 
 		if (newChildren.length == 0)
 		{
-			//it is a error situation, or the operation has been canceled.
+			//it is a error situation, or the operation has been cancelled.
 			return false;
 		}
 		extractVirtualFile(dir + '/', topFile, sourceEncoding, isText, archiveOperationMonitor);
@@ -1291,9 +1291,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					int numFiles = files.length;
 					for (int i = 0; i < numFiles; i++)
 					{
-						if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+						if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 						{
-							//the operation has been canceled
+							//the operation has been cancelled
 							closeZipFile();
 							return false;
 						}
@@ -1333,14 +1333,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					}
 
 					// Now for each new file to add
-					// We need to remember the entries added, and if this operation is not canceled, we
+					// We need to remember the entries added, and if this operation is not cancelled, we
 					// will add them into Virtual File system.
 					ZipEntry[] newEntriesAdded = new ZipEntry[numFiles];
 					for (int i = 0; i < numFiles; i++)
 					{
-						if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+						if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 						{
-							//the operation has been canceled
+							//the operation has been cancelled
 							dest.close();
 							if (!(outputTempFile == null))
 							{
@@ -1399,9 +1399,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		for (int i = 0; i < children.length; i++)
 		{
-			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+			if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 			{
-				//the operation has been canceled
+				//the operation has been cancelled
 				return true;
 			}
 			if (!found.contains(children[i])) // prevent infinite loops due to symlinks
@@ -1445,9 +1445,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		//else
 		for (int i = 0; i < vcList.length; i++)
 		{
-			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+			if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 			{
-				//the operation has been canceled
+				//the operation has been cancelled
 				return true;
 			}
 
@@ -1494,9 +1494,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		for (int i = 0; i < vcList.length; i++)
 		{
-			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+			if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 			{
-				//the operation has been canceled
+				//the operation has been cancelled
 				return true;
 			}
 			// for each entry, append it to the new temp zip
@@ -2920,8 +2920,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 
 	private void setArchiveOperationMonitorStatusDone(ISystemOperationMonitor archiveOperationMonitor)
 	{
-		//We only set the status of the archive operation montor to done if it is not been canceled.
-		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+		//We only set the status of the archive operation montor to done if it is not been cancelled.
+		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCancelled())
 		{
 			archiveOperationMonitor.setDone(true);
 		}

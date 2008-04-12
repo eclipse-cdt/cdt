@@ -1265,7 +1265,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				// for each new file to add
 				for (int i = 0; i < numFiles; i++) {
 
-					if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+					if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 					{
 						outStream.close();
 						if (outputTempFile != null)
@@ -1341,7 +1341,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * @param omitChildren the set of names for children that should be omitted
 	 *            from the given array of virtual children.
 	 * @param archiveOperationMonitor the operation progress monitor
-	 * @return <code>true</code> if the operation has been canceled, <code>false</code> otherwise   
+	 * @return <code>true</code> if the operation has been cancelled, <code>false</code> otherwise   
 	 * @throws IOException if an I/O exception occurs.
 	 * @since org.eclipse.rse.services 3.0
 	 */
@@ -1357,9 +1357,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		// go through each child
 		for (int i = 0; i < children.length; i++) {
 
-			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+			if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 			{
-				//the operation has been canceled
+				//the operation has been cancelled
 				return false;
 			}
 			// if entry name is in the omit set, then do not include it
@@ -2044,7 +2044,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 *            names. Old names are the keys in the map, and the values are
 	 *            the new names.
 	 * @param archiveOperationMonitor the operation progress monitor
-	 * @return <code>true</code> if the operation has been canceled, <code>false</code> otherwise.
+	 * @return <code>true</code> if the operation has been cancelled, <code>false</code> otherwise.
 	 * @throws IOException if an I/O exception occurs.
 	 * @since org.eclipse.rse.services 3.0
 	 */
@@ -2055,9 +2055,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		// go through each child
 		for (int i = 0; i < children.length; i++) {
 
-			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+			if (archiveOperationMonitor != null && archiveOperationMonitor.isCancelled())
 			{
-				//the operation has been canceled
+				//the operation has been cancelled
 				return false;
 			}
 
@@ -2657,8 +2657,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 	private void setArchiveOperationMonitorStatusDone(ISystemOperationMonitor archiveOperationMonitor)
 	{
-		//We only set the status of the archive operation montor to done if it is not been canceled.
-		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+		//We only set the status of the archive operation montor to done if it is not been cancelled.
+		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCancelled())
 		{
 			archiveOperationMonitor.setDone(true);
 		}

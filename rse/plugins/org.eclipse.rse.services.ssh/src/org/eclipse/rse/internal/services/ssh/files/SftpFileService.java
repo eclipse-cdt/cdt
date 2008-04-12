@@ -77,7 +77,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
-import org.eclipse.rse.services.files.RemoteFileCanceledException;
+import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -377,10 +377,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		return fChannelSftp;
 	}
 
-	protected void progressTick(IProgressMonitor monitor, int ticks) throws RemoteFileCanceledException {
+	protected void progressTick(IProgressMonitor monitor, int ticks) throws RemoteFileCancelledException {
 		if (monitor!=null) {
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCanceledException();
+				throw new RemoteFileCancelledException();
 			}
 			monitor.worked(ticks);
 		}
@@ -463,7 +463,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				fDirChannelMutex.release();
 			}
 		} else {
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 		if (node==null) {
 			node = new SftpHostFile(remoteParent, fileName, false, false, false, 0, 0);
@@ -540,7 +540,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				if (haveSubMonitor) monitor.done(); else progressTick(monitor, 40);
 			}
 		} else {
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
@@ -864,7 +864,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				fDirChannelMutex.release();
 			}
 		} else {
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 		return result;
 	}
@@ -887,7 +887,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				fDirChannelMutex.release();
 			}
 		} else {
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 		return result;
 	}
@@ -1219,7 +1219,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			throw makeSystemMessageException(e);
 		}
 		if (monitor.isCanceled()) {
-			throw new RemoteFileCanceledException();
+			throw new RemoteFileCancelledException();
 		}
 		return stream;
 	}

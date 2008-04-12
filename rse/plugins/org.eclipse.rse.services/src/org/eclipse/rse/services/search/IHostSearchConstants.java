@@ -29,7 +29,7 @@ public interface IHostSearchConstants {
 	public static final int FINISHED = 1;
 
 	/**
-	 * Status indicating configuration has been canceled, 2.
+	 * Status indicating configuration has been cancelled, 2.
 	 */
 	public static final int CANCELLED = 2;
 

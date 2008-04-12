@@ -61,7 +61,7 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 		_isCancelled = true;
 		if (null != systemOperationMonitor)
 		{
-			systemOperationMonitor.setCanceled(true);
+			systemOperationMonitor.setCancelled(true);
 		}
 	}
 

@@ -29,14 +29,14 @@ public class SystemOperationMonitor implements ISystemOperationMonitor
 		done = value;
 	}
 	
-	public boolean isCanceled()
+	public boolean isCancelled()
 	{
 		return canceled;
 	}
 	
 	
 	
-	public void setCanceled(boolean value)
+	public void setCancelled(boolean value)
 	{
 		canceled = value;
 	}

@@ -128,7 +128,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			monitor.setTaskName(getTaskName());
 			execute(Policy.subMonitorFor(monitor, 100));
 			endOperation();
-		} catch (InterruptedException e) { // operation was canceled
+		} catch (InterruptedException e) { // operation was cancelled
 			endOperation();
 			monitor.setCanceled(true);
 			throw e;

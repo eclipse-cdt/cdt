@@ -37,7 +37,7 @@ public class RemoteUtil {
 	/**
 	 * Progress Monitor Helper: Checks the passed progress monitor
 	 * and throws an {@link OperationCanceledException} when it is
-	 * canceled.
+	 * cancelled.
 	 * 
 	 * @param monitor The ProgressMonitor to be checked
 	 */

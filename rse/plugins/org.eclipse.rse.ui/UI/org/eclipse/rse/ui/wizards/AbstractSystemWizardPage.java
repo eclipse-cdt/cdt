@@ -219,7 +219,7 @@ public abstract class AbstractSystemWizardPage
     /**
      * Abstract method. <br>
      * Perform error checking of the page contents, returning true only if there are no errors. 
-     * <p>Called by the main wizard when the user presses Finish. The operation will be canceled if 
+     * <p>Called by the main wizard when the user presses Finish. The operation will be cancelled if 
      * this method returns false for any page.
      */
 	public abstract boolean performFinish();    

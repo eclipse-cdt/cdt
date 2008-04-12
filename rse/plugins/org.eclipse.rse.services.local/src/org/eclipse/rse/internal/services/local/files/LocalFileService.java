@@ -236,7 +236,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 			if(monitor.isCanceled() && !archiveOperationMonitor.isDone())
 			{
-				archiveOperationMonitor.setCanceled(true);
+				archiveOperationMonitor.setCancelled(true);
 			}
 		}
 	}
@@ -548,7 +548,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			if (null != monitor && monitor.isCanceled())
 			{
-				//This operation has been canceled by the user.
+				//This operation has been cancelled by the user.
 				throw getCancelledException();
 			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.copyToArchive(): Handler's add() method returned false.");
@@ -948,7 +948,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			{
 				if (null != monitor && monitor.isCanceled())
 				{
-					//This operation has been canceled by the user.
+					//This operation has been cancelled by the user.
 					throw getCancelledException();
 				}
 
@@ -1028,7 +1028,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			{
 				if (null != monitor && monitor.isCanceled())
 				{
-					//This operation has been canceled by the user.
+					//This operation has been cancelled by the user.
 					throw getCancelledException();
 				}
 
@@ -1134,7 +1134,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			if (monitor != null && monitor.isCanceled())
 			{
-				//This operation has been canceled by the user.
+				//This operation has been cancelled by the user.
 				throw getCancelledException();
 			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
@@ -1212,7 +1212,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			{
 				if (null != monitor && monitor.isCanceled())
 				{
-					//This operation has been canceled by the user.
+					//This operation has been cancelled by the user.
 					throw getCancelledException();
 				}
 
@@ -1260,7 +1260,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				{
 					if (monitor.isCanceled())
 					{
-						//This mean the copy operation is ok, but delete operation has been canceled by user.
+						//This mean the copy operation is ok, but delete operation has been cancelled by user.
 						//The delete() call will take care of recovered from the cancel operation.
 						//So we need to make sure to remove the already copied file/folder.
 						delete(tgtParent, tgtName, null);
@@ -1431,7 +1431,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 				if (monitor != null && monitor.isCanceled())
 				{
-					//This operation has been canceled by the user.
+					//This operation has been cancelled by the user.
 					throw getCancelledException();
 				}
 
@@ -1453,7 +1453,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		src = child.getExtractedFile(sourceEncoding, isText, archiveOperationMonitor).getAbsolutePath();
 		if (monitor != null && monitor.isCanceled())
 		{
-			//This operation has been canceled by the user.
+			//This operation has been cancelled by the user.
 			throw getCancelledException();
 		}
 		if (child.isDirectory)
@@ -1499,7 +1499,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			{
 				if (monitor != null && monitor.isCanceled())
 				{
-					//This operation has been canceled by the user.
+					//This operation has been cancelled by the user.
 					throw getCancelledException();
 				}
 			}
@@ -1774,7 +1774,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 	private SystemMessageException getCancelledException()
 	{
-		//This operation has been canceled by the user.
+		//This operation has been cancelled by the user.
 		return new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 				ICommonMessageIds.MSG_OPERATION_CANCELLED,
 			IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED));

@@ -207,7 +207,7 @@ public class SystemViewAPIProviderForFilters
 		     	children = new SystemMessageObject[1];
 		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
-		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user."); //$NON-NLS-1$
+		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving cancelled by user."); //$NON-NLS-1$
 		     }
 		     catch (Exception exc)
 		     {

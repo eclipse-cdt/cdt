@@ -237,7 +237,7 @@ public class CopyThread extends SecuredThread implements ICancellableHandler {
 		_isCancelled = true;
 		if (null != systemOperationMonitor)
 		{
-			systemOperationMonitor.setCanceled(true);
+			systemOperationMonitor.setCancelled(true);
 		}
 	}
 

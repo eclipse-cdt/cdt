@@ -148,7 +148,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	protected SystemMessageObject nullObject     = null;
 	/**
-	 * Frequently returned msg object from getChildren: "operation canceled"
+	 * Frequently returned msg object from getChildren: "operation cancelled"
 	 */
 	protected SystemMessageObject canceledObject = null;	
 	/**
@@ -1909,7 +1909,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 
     /**
      * <i>Callable by subclasses. Do not override</i><br>
-     * Return the "Operation canceled by user" msg as an object array so can be used to answer getChildren()
+     * Return the "Operation cancelled by user" msg as an object array so can be used to answer getChildren()
      */
     protected final Object[] getCancelledMessageObject()
     {    	

@@ -1605,7 +1605,7 @@ public class SystemTableView
 			}
 			catch (SystemMessageException exc) {
 				ok = false;
-				//If this operation is canceled, need to display a proper message to the user.
+				//If this operation is cancelled, need to display a proper message to the user.
 				if (monitor.isCanceled() && fileNamesRenamed.size() > 0)
 				{
 					//Get the renamed file names

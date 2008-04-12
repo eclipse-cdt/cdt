@@ -253,7 +253,7 @@ public class SystemEditionAction extends SystemBaseAction
 				}
 				catch (InterruptedException x)
 				{
-					// Do nothing. Operation has been canceled by user.
+					// Do nothing. Operation has been cancelled by user.
 
 				}
 				catch (InvocationTargetException x)

@@ -308,7 +308,7 @@ public class DStoreProcessService extends AbstractProcessService
 			}
 			catch (InterruptedException e)
 			{
-				// cancel monitor if it's still not canceled
+				// cancel monitor if it's still not cancelled
 				if (monitor != null && !monitor.isCanceled())
 				{
 					monitor.setCanceled(true);

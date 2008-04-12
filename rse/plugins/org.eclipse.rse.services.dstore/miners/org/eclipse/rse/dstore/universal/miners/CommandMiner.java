@@ -13,7 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)  - [191599] use specified encoding for shell
- * David McKnight  (IBM)  - [202822] canceled output should be created before thread cleanup
+ * David McKnight  (IBM)  - [202822] cancelled output should be created before thread cleanup
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/

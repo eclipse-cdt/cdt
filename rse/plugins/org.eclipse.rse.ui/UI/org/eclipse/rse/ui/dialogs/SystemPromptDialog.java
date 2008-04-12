@@ -1795,7 +1795,7 @@ public abstract class SystemPromptDialog
     public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
            throws InvocationTargetException, InterruptedException
     {
-    	// The operation can only be canceled if it is executed in a separate thread.
+    	// The operation can only be cancelled if it is executed in a separate thread.
     	// Otherwise the UI is blocked anyway.
     	Object state = aboutToStart(fork && cancelable);
     	activeRunningOperations++;

@@ -66,7 +66,7 @@ public class SystemSelectFileTypesDialog
 	// instruction to show user
 	protected String instruction;
 	
-	// the final collection of selected elements, or null if this dialog was canceled
+	// the final collection of selected elements, or null if this dialog was cancelled
 	protected Object[] result;
 
 	// the visual selection widget group
@@ -383,7 +383,7 @@ public class SystemSelectFileTypesDialog
 	}
 	/**
 	 * Set the selections made by the user, or <code>null</code> if
-	 * the selection was canceled.
+	 * the selection was cancelled.
 	 *
 	 * @param newResult list of selected elements, or <code>null</code> if Cancel was
 	 *   pressed
@@ -457,7 +457,7 @@ public class SystemSelectFileTypesDialog
 
 	/**
 	 * Returns the list of selections made by the user, or <code>null</code> if
-	 * the selection was canceled.
+	 * the selection was cancelled.
 	 *
 	 * @return the array of selected elements, or <code>null</code> if Cancel was
 	 *   pressed

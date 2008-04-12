@@ -124,7 +124,7 @@ public class Mutex {
         		}
             }
         } catch(InterruptedException e) {
-          	//canceled waiting -> no lock aquired
+          	//cancelled waiting -> no lock aquired
     	} finally {
     		if (!lockAcquired) {
         		synchronized(fWaitQueue) {

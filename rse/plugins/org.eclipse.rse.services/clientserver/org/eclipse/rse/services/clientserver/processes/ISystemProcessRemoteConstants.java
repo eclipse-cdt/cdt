@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] add API "since" tags
  *******************************************************************************/
@@ -172,7 +172,7 @@ public interface ISystemProcessRemoteConstants
 		"ISTATE_ZOS_SWAPPEDOUT", //$NON-NLS-1$
 		"JSTATE_ZOS_PTHREADCREATED", //$NON-NLS-1$
 		"KSTATE_ZOS_OTHERKERNELWAIT", //$NON-NLS-1$
-		"LSTATE_ZOS_CANCELED", //$NON-NLS-1$
+		"LSTATE_ZOS_CANCELLED", //$NON-NLS-1$
 		"MSTATE_ZOS_MULTITHREAD", //$NON-NLS-1$
 		"NSTATE_ZOS_MEDIUMWEIGHTTHREAD", //$NON-NLS-1$
 		"OSTATE_ZOS_ASYNCHRONOUSTHREAD", //$NON-NLS-1$

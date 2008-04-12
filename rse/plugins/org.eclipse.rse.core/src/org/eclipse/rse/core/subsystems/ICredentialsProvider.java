@@ -40,7 +40,7 @@ public interface ICredentialsProvider {
 	 * credentials. Typically used to force the showing of a dialog containing
 	 * remembered credentials.
 	 * @throws OperationCanceledException if the acquisition of credentials is 
-	 * canceled by the user, if the provider is in suppressed state,
+	 * cancelled by the user, if the provider is in suppressed state,
 	 * a resource (such as the workbench) not being available, 
 	 * or interrupted by some other means.
 	 * @since 3.0 throws OperationCanceledException instead of InterruptedException
@@ -54,9 +54,9 @@ public interface ICredentialsProvider {
 	 * an expired password.
 	 * @param message the message indicating the nature of the damage that must
 	 * be repaired. For example, indicating expiration of a password.
-	 * @throws OperationCanceledException if the repair is canceled for some reason. This could
+	 * @throws OperationCanceledException if the repair is cancelled for some reason. This could
 	 * include the inability of a credentials provider to open a dialog or a dialog being
-	 * canceled.
+	 * cancelled.
 	 * @since 3.0 throws OperationCanceledException instead of InterruptedException
 	 */
 	void repairCredentials(SystemMessage message)throws OperationCanceledException;

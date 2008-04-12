@@ -570,7 +570,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 				});
 				String[] result=finResult[0];
 				if (result == null)
-					return null; // canceled
+					return null; // cancelled
 				if (result.length == 1 && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
 					fPassword = result[0];
 				}

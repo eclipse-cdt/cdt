@@ -698,8 +698,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImport
 	 * be a DOM root node (RSEDOM).
 	 * @param nodeLocation The location in which the contents of this node is found.
 	 * @param monitor The monitor used to report progress and cancelation. If the monitor is
-	 * in canceled state then it this does method does nothing and returns null. If the monitor
-	 * is not canceled then its work count is incremented by one.
+	 * in cancelled state then it this does method does nothing and returns null. If the monitor
+	 * is not cancelled then its work count is incremented by one.
 	 * @return The newly loaded node.
 	 */
 	private RSEDOMNode loadNode(RSEDOMNode parent, PFPersistenceLocation nodeLocation, IProgressMonitor monitor) {

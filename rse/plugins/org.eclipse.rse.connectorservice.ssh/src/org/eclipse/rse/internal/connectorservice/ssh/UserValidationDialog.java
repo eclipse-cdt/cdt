@@ -213,7 +213,7 @@ public class UserValidationDialog extends TrayDialog {
 	
 	/**
 	 * Returns the password entered by the user, or null
-	 * if the user canceled.
+	 * if the user cancelled.
 	 * 
 	 * @return the entered password
 	 */
@@ -223,7 +223,7 @@ public class UserValidationDialog extends TrayDialog {
 	
 	/**
 	 * Returns the username entered by the user, or null
-	 * if the user canceled.
+	 * if the user cancelled.
 	 * 
 	 * @return the entered username
 	 */

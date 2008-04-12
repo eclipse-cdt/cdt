@@ -26,7 +26,7 @@ public interface ISystemMessageObject {
 	 */
 	public static final int MSGTYPE_ERROR = 0;
 	/**
-	 * 1. User canceled
+	 * 1. User cancelled
 	 */
 	public static final int MSGTYPE_CANCEL = 1;
 	/**

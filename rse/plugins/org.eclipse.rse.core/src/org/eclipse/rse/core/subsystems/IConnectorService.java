@@ -90,7 +90,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * operation.
 	 * @throws Exception an exception of there is a failure to connect.
 	 * Typically, this will be a {@link SystemMessageException}.
-	 * @since 3.0 throws an {@link OperationCanceledException} if the connect was canceled by the user
+	 * @since 3.0 throws an {@link OperationCanceledException} if the connect was cancelled by the user
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
 
@@ -278,7 +278,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * use this to acquire the credentials using some implementation defined means.
 	 * <p>
 	 * Throws {@link OperationCanceledException} if acquisition of the
-	 * credentials is canceled or is being suppressed.
+	 * credentials is cancelled or is being suppressed.
 	 * @param refresh if true will force the connector service to discard
 	 * any remembered value and reacquire the credentials.
 	 * @since 3.0 throws OperationCanceledException instead of InterruptedException

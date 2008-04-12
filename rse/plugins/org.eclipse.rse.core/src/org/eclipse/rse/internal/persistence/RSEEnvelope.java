@@ -77,7 +77,7 @@ public class RSEEnvelope {
 	 * If asynchronous operation is desired place this invocation inside a job.
 	 * @param in the input stream which is read into the envelope.
 	 * @param monitor a monitor used for tracking progress and cancelation.
-	 * If the monitor is canceled this envelope will be empty.
+	 * If the monitor is cancelled this envelope will be empty.
 	 * @throws IOException should one occur manipulating the stream.
 	 */
 	public void get(InputStream in, IProgressMonitor monitor) throws IOException {
@@ -104,7 +104,7 @@ public class RSEEnvelope {
 	 * If asynchronous operation is desired place this invocation inside a job.
 	 * @param out the output stream into which the contents of this envelope will be written
 	 * @param provider the persistence provider used to write the contents of this envelope
-	 * @param monitor a monitor used for tracking progress and cancelation. If the monitor is canceled the 
+	 * @param monitor a monitor used for tracking progress and cancelation. If the monitor is cancelled the 
 	 * receiving location is deleted.
 	 * @throws CoreException containing a status describing the error, in particular this may be causes by 
 	 * an IOException while preparing the contents or if the provider does not support export.

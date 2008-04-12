@@ -193,7 +193,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			nestedException = e;
 		} finally {
 			if (status == CONNECT_CANCELLED) {
-				Activator.trace("Telnet Service: Canceled"); //$NON-NLS-1$
+				Activator.trace("Telnet Service: Cancelled"); //$NON-NLS-1$
 				try {
 					client.disconnect(); //will eventually destroy the LoginThread
 				} catch(Exception e) {

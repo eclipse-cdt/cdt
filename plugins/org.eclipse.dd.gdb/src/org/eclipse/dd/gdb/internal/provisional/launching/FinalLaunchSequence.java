@@ -41,6 +41,7 @@ import org.eclipse.dd.mi.service.command.commands.MIFileExecFile;
 import org.eclipse.dd.mi.service.command.commands.MIFileSymbolFile;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
+import org.eclipse.dd.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -59,6 +60,26 @@ public class FinalLaunchSequence extends Sequence {
             tracker.dispose();
 
             requestMonitor.done();
+        }},
+    	/*
+    	 * Specify connection of inferior input/output with a terminal.
+    	 */
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+        	try {
+        		boolean useTerminal = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
+        		
+        		if (useTerminal) {
+            		fCommandControl.queueCommand(
+         				new MIInferiorTTYSet(fCommandControl.getControlDMContext(), fCommandControl.getPtyName()), 
+     					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        		} else {
+        			requestMonitor.done();
+        		}
+        	} catch (CoreException e) {
+        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get terminal option", e)); //$NON-NLS-1$
+        		requestMonitor.done();
+        	}
         }},
     	/*
     	 * Source the gdbinit file specified in the launch

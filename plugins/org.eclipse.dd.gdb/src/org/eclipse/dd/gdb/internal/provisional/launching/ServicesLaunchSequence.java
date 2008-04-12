@@ -43,9 +43,11 @@ public class ServicesLaunchSequence extends Sequence {
             @Override
             public void execute(RequestMonitor requestMonitor) {
             	String debugMode = ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN;
+            	boolean useTerminal = true;
             	try {
             		debugMode = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
             				                                                  ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+               		useTerminal = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
             	} catch (CoreException e) {
             	}
 
@@ -64,7 +66,7 @@ public class ServicesLaunchSequence extends Sequence {
                 //
                 // Create the connection.
                 //
-                fCommandControl = new GDBControl(fSession, getGDBPath(), fExecPath, fSessionType, 30);
+                fCommandControl = new GDBControl(fSession, getGDBPath(), fExecPath, fSessionType, useTerminal, 30);
                 fCommandControl.initialize(requestMonitor);
             }
         },

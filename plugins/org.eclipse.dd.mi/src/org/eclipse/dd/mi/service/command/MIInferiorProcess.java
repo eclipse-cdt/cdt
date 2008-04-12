@@ -291,7 +291,7 @@ public class MIInferiorProcess extends Process
             fInputStream.close();
         } catch (IOException e) {}
         try {
-            fInputStreamPiped.close();
+            if (fInputStreamPiped != null) fInputStreamPiped.close();
         } catch (IOException e) {}
         try {
             fErrorStream.close();

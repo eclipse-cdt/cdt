@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.IPath;
@@ -97,16 +98,19 @@ public class GDBControl extends AbstractMIControl {
     private MIRunControlEventProcessor fMIEventProcessor;
     private CLIEventProcessor fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
-    private MIInferiorProcess fInferiorProcess;
+    private MIInferiorProcess fInferiorProcess = null;
     
-    public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType type, int gdbLaunchTimeout) {
+    boolean fUseTerminal;
+    private PTY fPty;
+    
+    public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType type, boolean useTerminal, int gdbLaunchTimeout) {
         super(session);
         fSessionType = type;
         fGdbPath = gdbPath;
         fExecPath = execPath;
         fGDBLaunchTimeout = gdbLaunchTimeout;
         fControlDmc = new GDBControlDMContext(session.getId(), getClass().getName() + ":" + ++fgInstanceCounter); //$NON-NLS-1$
-
+        fUseTerminal = useTerminal;
     }
 
     @Override
@@ -256,6 +260,10 @@ public class GDBControl extends AbstractMIControl {
     public IPath getExecutablePath() { return fExecPath; }
         
     public void getInferiorProcessId(DataRequestMonitor<Integer> rm) {
+    }
+    
+    public String getPtyName() {
+    	return fPty.getSlaveName();
     }
         
     @DsfServiceEventHandler 
@@ -518,8 +526,19 @@ public class GDBControl extends AbstractMIControl {
                 requestMonitor.done();
                 return;
             }
+
+            if (fUseTerminal) {
+                try {
+                	fPty = new PTY();
+		    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fPty);
+			    } catch (IOException e) {
+			    }
+            }
             
-            fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fProcess.getOutputStream());
+            // If !fUseTerminal or IOException was caught
+            if (fInferiorProcess == null)
+            	fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fProcess.getOutputStream());
+			
             fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc, fInferiorProcess);
             fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
 

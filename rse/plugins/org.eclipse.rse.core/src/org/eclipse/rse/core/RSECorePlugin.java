@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -57,7 +58,7 @@ import org.osgi.framework.BundleContext;
  * RSECorePlugin provides the activation for the RSE core and acts as the
  * primary registry for logging, persistence, and the main RSE service
  * registries.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -65,7 +66,7 @@ public class RSECorePlugin extends Plugin {
 
 	/**
 	 * The plugin id for this plugin. Value "org.eclipse.rse.core".
-	 * 
+	 *
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.rse.core"; //$NON-NLS-1$
@@ -85,7 +86,7 @@ public class RSECorePlugin extends Plugin {
 	 * {@link #isInitComplete(int)} which will return true if all phases of
 	 * initialization are complete. Clients must not assume any particular
 	 * ordering among phases based on the value.
-	 * 
+	 *
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static final int INIT_ALL = 0;
@@ -95,7 +96,7 @@ public class RSECorePlugin extends Plugin {
 	 * {@link #isInitComplete(int)} which will return true if the model phase of
 	 * the initialization is complete. Clients must not assume any particular
 	 * ordering among phases based on the value.
-	 * 
+	 *
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static final int INIT_MODEL = 1;
@@ -105,7 +106,7 @@ public class RSECorePlugin extends Plugin {
 	 * {@link #isInitComplete(int)} which will return true if the initializer
 	 * phase of the initialization is complete. Clients must not assume any
 	 * particular ordering among phases based on the value.
-	 * 
+	 *
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static final int INIT_INITIALIZER = 2;
@@ -115,6 +116,7 @@ public class RSECorePlugin extends Plugin {
 	private ISystemRegistry _systemRegistry = null;
 	private IRSEPersistenceManager _persistenceManager = null;
 	private ISubSystemConfigurationProxy[] _subsystemConfigurations = null;
+	private IRSEInteractionProvider _interactionProvider = null;
 
 	/**
 	 * Returns the singleton instance of RSECorePlugin.
@@ -127,7 +129,7 @@ public class RSECorePlugin extends Plugin {
 	/**
 	 * Waits until the RSE model has been fully restored from its persistent
 	 * form. Should be used before accessing pieces of the model.
-	 * 
+	 *
 	 * @return an IStatus indicating how the initialization ended.
 	 * @throws InterruptedException if this wait was interrupted for some
 	 *             reason.
@@ -139,7 +141,7 @@ public class RSECorePlugin extends Plugin {
 
 	/**
 	 * Waits until the RSE has completed a specific phase of its initialization.
-	 * 
+	 *
 	 * @param phase the phase to wait for completion.
 	 * @throws InterruptedException if this wait was interrupted for some
 	 *             reason.
@@ -156,7 +158,7 @@ public class RSECorePlugin extends Plugin {
 	/**
 	 * Check whether the initialization of the RSE model is complete for a given
 	 * phase.
-	 * 
+	 *
 	 * @param phase the phase identifier.
 	 * @return <code>true</code> if the initialization for the given phase has
 	 *         completed regardless of its status of that completion.
@@ -175,7 +177,7 @@ public class RSECorePlugin extends Plugin {
 	 * initialization phases complete. If the listener is added after the phase
 	 * has completed it will not be invoked. If the listener is already in the
 	 * set it will not be added again. Listeners may be notified in any order.
-	 * 
+	 *
 	 * @param listener the listener to be added
 	 * @since org.eclipse.rse.core 3.0
 	 */
@@ -186,7 +188,7 @@ public class RSECorePlugin extends Plugin {
 	/**
 	 * Removes a listener to the set of listeners to be notified when phases
 	 * complete. If the listener is not in the set this does nothing.
-	 * 
+	 *
 	 * @param listener the listener to be removed
 	 * @since org.eclipse.rse.core 3.0
 	 */
@@ -214,7 +216,7 @@ public class RSECorePlugin extends Plugin {
 
 	/**
 	 * Return the master profile manager singleton.
-	 * 
+	 *
 	 * @return the RSE Profile Manager Singleton.
 	 * @since org.eclipse.rse.core 3.0
 	 */
@@ -226,7 +228,7 @@ public class RSECorePlugin extends Plugin {
 	 * Check if the SystemRegistry has been instantiated already. Use this when
 	 * you don't want to start the system registry as a side effect of
 	 * retrieving it.
-	 * 
+	 *
 	 * @return <code>true</code> if the System Registry has been instantiated
 	 *         already.
 	 * @since org.eclipse.rse.core 3.0
@@ -396,6 +398,36 @@ public class RSECorePlugin extends Plugin {
 	 */
 	private void log(Throwable t) {
 		getLogger().logError("Unexpected Exception", t); //$NON-NLS-1$
+	}
+
+	/**
+	 * Set the default interaction provider.
+	 *
+	 * When RSE is run with UI, the UI plugins need to set an UI-based
+	 * interaction provider for showing dialogs from Core operations. Non-UI
+	 * headless operations can use an Interaction Provider that just logs its
+	 * messages and works without other UI.
+	 *
+	 * @param p the interaction provider to set.
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public void setDefaultInteractionProvider(IRSEInteractionProvider p) {
+		synchronized (this) {
+			_interactionProvider = p;
+		}
+	}
+
+	/**
+	 * Get the default interface for interacting with the user or other outside
+	 * world.
+	 *
+	 * @return the default interaction provider.
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public IRSEInteractionProvider getDefaultInteractionProvider() {
+		synchronized (this) {
+			return _interactionProvider;
+		}
 	}
 
 	/**

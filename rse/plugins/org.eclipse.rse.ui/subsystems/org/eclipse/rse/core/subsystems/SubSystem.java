@@ -36,6 +36,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -62,6 +63,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.core.IRSEInteractionProvider;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.events.ISystemModelChangeEvent;
@@ -101,7 +103,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -164,8 +165,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 	protected ISubSystemConfiguration parentSubSystemConfiguration;
 	protected String           previousUserIdKey;
-
+	private IRSEInteractionProvider _interactionProvider = null;
 	protected Shell shell = null;
+
 	protected boolean supportsConnecting = true;
 	protected boolean sortResults = true;
 	protected boolean runInThread = true;
@@ -184,7 +186,6 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	protected String _name = null;
 	protected String _subsystemConfigurationId = null;
 	protected boolean _hidden = false;
-
 	private boolean _isInitialized = false;
 
 
@@ -223,6 +224,37 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		_host = host;
 		_connectorService = connectorService;
 		_connectorService.registerSubSystem(this);
+	}
+
+	/**
+	 * Set an Interaction Provider specific for this subsystem.
+	 *
+	 * @param p the new interaction provider to use, or <code>null</code> to
+	 *            fall back to the default interaction provider (from
+	 *            RSECorePlugin).
+	 * @since 3.0
+	 */
+	public void setInteractionProvider(IRSEInteractionProvider p) {
+		synchronized (this) {
+			_interactionProvider = p;
+		}
+	}
+
+	/**
+	 * Get the current Interaction Provider. Returns a specific one for this
+	 * subsystem if it has been set, or falls back to the default one from
+	 * RSECorePlugin otherwise.
+	 *
+	 * @return the interaction provider to use.
+	 * @since 3.0
+	 */
+	public IRSEInteractionProvider getInteractionProvider() {
+		synchronized (this) {
+			if (_interactionProvider != null) {
+				return _interactionProvider;
+			}
+		}
+		return RSECorePlugin.getDefault().getDefaultInteractionProvider();
 	}
 
 	/**
@@ -2908,7 +2940,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			// for other cases, use statusbar
 			IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
 			if (win != null) {
-				Shell winShell = getActiveWorkbenchShell();
+				Shell winShell = SystemBasePlugin.getActiveWorkbenchShell();
 				if (winShell != null && !winShell.isDisposed() && winShell.isVisible()) {
 					SystemBasePlugin.logInfo("Using active workbench window as runnable context"); //$NON-NLS-1$
 					shell = winShell;
@@ -2933,41 +2965,6 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	protected Shell getShell()
 	{
 		return shell;
-	}
-
-	/**
-	 * Helper/convenience method. Return shell of active window.
-	 */
-	public static Shell getActiveWorkbenchShell()
-	{
-		Shell result = null;
-		if (PlatformUI.isWorkbenchRunning())
-		{
-			try
-			{
-				IWorkbenchWindow window = getActiveWorkbenchWindow();
-				if (window != null)
-				{
-					result = window.getShell();
-				}
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
-		}
-		else // workbench has not been loaded yet!
-		{
-			return null;
-		}
-		return result;
-	}
-	/**
-	 * Helper/convenience method. Return active window
-	 */
-	public static IWorkbenchWindow getActiveWorkbenchWindow()
-	{
-		return RSEUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	/**

@@ -29,6 +29,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <code>IRunnableWithProgress</code> to the <code>run</code> method of an
  * <code>IRunnableContext</code>, which provides the UI for the progress
  * monitor and Cancel button.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will work or
+ * that it will remain the same. Please do not use this API without consulting
+ * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
+ * team.
+ * </p>
  *
  * @see IRSEInteractionProvider
  * @since org.eclipse.rse.core 3.0

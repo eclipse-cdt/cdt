@@ -228,6 +228,13 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 	/**
 	 * Set an Interaction Provider specific for this subsystem.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is no guarantee that this API will work
+	 * or that it will remain the same. Please do not use this API without
+	 * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target
+	 * Management</a> team.
+	 * </p>
 	 *
 	 * @param p the new interaction provider to use, or <code>null</code> to
 	 *            fall back to the default interaction provider (from
@@ -244,6 +251,13 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * Get the current Interaction Provider. Returns a specific one for this
 	 * subsystem if it has been set, or falls back to the default one from
 	 * RSECorePlugin otherwise.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is no guarantee that this API will work
+	 * or that it will remain the same. Please do not use this API without
+	 * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target
+	 * Management</a> team.
+	 * </p>
 	 *
 	 * @return the interaction provider to use.
 	 * @since 3.0

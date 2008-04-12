@@ -407,6 +407,13 @@ public class RSECorePlugin extends Plugin {
 	 * interaction provider for showing dialogs from Core operations. Non-UI
 	 * headless operations can use an Interaction Provider that just logs its
 	 * messages and works without other UI.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is no guarantee that this API will work
+	 * or that it will remain the same. Please do not use this API without
+	 * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target
+	 * Management</a> team.
+	 * </p>
 	 *
 	 * @param p the interaction provider to set.
 	 * @since org.eclipse.rse.core 3.0
@@ -420,6 +427,13 @@ public class RSECorePlugin extends Plugin {
 	/**
 	 * Get the default interface for interacting with the user or other outside
 	 * world.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is no guarantee that this API will work
+	 * or that it will remain the same. Please do not use this API without
+	 * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target
+	 * Management</a> team.
+	 * </p>
 	 *
 	 * @return the default interaction provider.
 	 * @since org.eclipse.rse.core 3.0

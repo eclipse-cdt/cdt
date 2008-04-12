@@ -29,9 +29,16 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A Default Interaction Provider that runs in the Eclipse / SWT UI.
- * Meant to provide the same functionality as it was there before
- * UI / Non-UI Splitting.
+ * A Default Interaction Provider that runs in the Eclipse / SWT UI. Meant to
+ * provide the same functionality as it was there before UI / Non-UI Splitting.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will work or
+ * that it will remain the same. Please do not use this API without consulting
+ * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
+ * team.
+ * </p>
+ * 
  * @since org.eclipse.rse.ui 3.0
  */
 public class DefaultUIInteractionProvider implements IRSEInteractionProvider {

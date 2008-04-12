@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
@@ -54,8 +54,8 @@ import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
- * A SystemFetchOperation is used to perform a query of a remote system on behalf of a subsystem. The operation 
- * has some knowledge of the containing user interface, e.g. the workbench part which is responsible for 
+ * A SystemFetchOperation is used to perform a query of a remote system on behalf of a subsystem. The operation
+ * has some knowledge of the containing user interface, e.g. the workbench part which is responsible for
  * issuing the query. It is created with a "collector" that will contain the results of the query.
  * <p>
  * This class may be subclassed but usually is used directly.
@@ -69,7 +69,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     protected ISystemViewElementAdapter _adapter;
     protected boolean _canRunAsJob;
     protected InvocationTargetException _exc;
- 
+
     /**
      * Creates an instance of this fetch operation. This instance cannot be run in a job, but must be invoked directly.
      * @param part the workbench part associated with this fetch.
@@ -77,7 +77,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
      * @param adapter the adapter that can be used to extract information from the remote objects that will be retrieved by this fetch.
      * @param collector the collector for the fetch results.
      */
-    public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector) 
+    public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector)
     {
 		_part = part;
 		_remoteObject = remoteObject;
@@ -85,7 +85,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		_adapter = adapter;
 		_canRunAsJob = false;
 	}
-    
+
     /**
      * Creates an instance of this fetch operation.
      * @param part the workbench part associated with this fetch.
@@ -94,7 +94,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
      * @param collector the collector for the fetch results.
      * @param canRunAsJob true if this fetch operation can be run in a job of its own, false otherwise
      */
-    public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector, boolean canRunAsJob) 
+    public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector, boolean canRunAsJob)
     {
 		_part = part;
 		_remoteObject = remoteObject;
@@ -102,21 +102,21 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		_adapter = adapter;
 		_canRunAsJob = canRunAsJob;
 	}
-    
+
     public void setException(InvocationTargetException exc)
     {
     	_exc = exc;
     }
-    
+
 	/**
 	 * Return the part that is associated with this operation.
-	 * 
+	 *
 	 * @return Returns the part or <code>null</code>
 	 */
 	public IWorkbenchPart getPart() {
 		return _part;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -139,18 +139,18 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			monitor.done();
 		}
 	}
-	
+
 	protected void startOperation() {
 		//statusCount = 0;
 		//resetErrors();
 		//confirmOverwrite = true;
 	}
-	
+
 	protected void endOperation() {
 		//handleErrors((IStatus[]) errors.toArray(new IStatus[errors.size()]));
 	}
-	
-	
+
+
 	/**
 	 * An action that prompts the user for credentials to connect the subsystem that is issued the fetch.
 	 * <p>
@@ -159,33 +159,37 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	public class PromptForPassword implements Runnable
 	{
 		public SubSystem _ss;
-		private boolean isCanceled = false; 
+		private boolean isCancelled = false;
 		public PromptForPassword(SubSystem ss)
 		{
 			_ss = ss;
 		}
-		
+
 		public void run()
 		{
 			try
 			{
-				isCanceled = false;
+				isCancelled = false;
 				_ss.promptForPassword();
 			}
 			catch (InterruptedException e) {
-				isCanceled = true;
+				isCancelled = true;
 			}
 			catch (Exception e)
 			{
-				
+
 			}
 		}
-		
-		public boolean isCanceled() {
-			return isCanceled;
+
+		/**
+		 * @since org.eclipse.rse.ui 3.0 renamed from isCanceled to isCancelled
+		 * @return true if cancelled
+		 */
+		public boolean isCancelled() {
+			return isCancelled;
 		}
 	}
-	
+
 	/**
 	 * A sub-operation that broadcasts any connection status change.
 	 * <p>
@@ -198,18 +202,18 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		{
 			_ss = ss;
 		}
-		
+
 		public void run()
 		{
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.connectedStatusChange(_ss, true, false);
 		}
 	}
-	
+
 	/**
 	 * Subclasses must override this method to perform the operation.
 	 * Clients should never call this method directly.
-	 * 
+	 *
 	 * @param monitor
 	 * @throws Exception
 	 * @throws InterruptedException
@@ -229,14 +233,14 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		{
 		if (!ss.isConnected())
 		{
-			
+
 			Display dis = Display.getDefault();
 			PromptForPassword prompter = new PromptForPassword(ss);
 			dis.syncExec(prompter);
-			if (prompter.isCanceled()) {
-				SystemMessage canceledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
-				SystemMessageObject canceledMessageObject = new SystemMessageObject(canceledMessage, ISystemMessageObject.MSGTYPE_CANCEL, _remoteObject);
-				_collector.add(canceledMessageObject, monitor);
+			if (prompter.isCancelled()) {
+				SystemMessage cancelledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
+				SystemMessageObject cancelledMessageObject = new SystemMessageObject(cancelledMessage, ISystemMessageObject.MSGTYPE_CANCEL, _remoteObject);
+				_collector.add(cancelledMessageObject, monitor);
 				throw new InterruptedException();
 			}
 			try
@@ -255,9 +259,9 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			{
 				showOperationErrorMessage(null, e, ss);
 			}
-			
+
 			dis.asyncExec(new UpdateRegistry(ss));
-			
+
 		}
 		}
 		Object[] children = null;
@@ -272,7 +276,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	    _collector.add(children, monitor);
 	    monitor.done();
 	}
-	
+
     /**
      * Show an error message as a result of running this operation.
      * Uses the user interface knowledge of this operation to show the message.
@@ -295,7 +299,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     	{
     	        displayAsyncMsg(ss, (SystemMessageException)exc);
     	  //sysMsg = ((SystemMessageException)exc).getSystemMessage();
-    	} 
+    	}
     	else
     	{
     	  String excMsg = exc.getMessage();
@@ -303,12 +307,12 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     	    excMsg = "Exception " + exc.getClass().getName(); //$NON-NLS-1$
           sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
           sysMsg.makeSubstitution(excMsg);
-    	
+
     	 SystemMessageDialog.displayErrorMessage(shell, sysMsg, exc);
     	}
- 
+
     }
-    
+
 	/**
 	 * Display message on message thread
 	 */
@@ -324,7 +328,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	{
 	    return GenericMessages.RSEQuery_task;
 	}
-	
+
 	/**
 	 * Run the operation in a context that is determined by the {@link #canRunAsJob()}
 	 * hint. If this operation can run as a job then it will be run in a background thread.
@@ -341,7 +345,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	 * the operation is run in the operation's context. Subclasses may
 	 * override in order to perform prechecks to determine if the operation
 	 * should run. This may include prompting the user for information, etc.
-	 * 
+	 *
 	 * @return whether the operation should be run.
 	 */
 	protected boolean shouldRun() {
@@ -351,7 +355,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	/**
 	 * Returns the scheduling rule that is to be obtained before this
 	 * operation is executed by it's context or <code>null</code> if
-	 * no scheduling rule is to be obtained. If the operation is run 
+	 * no scheduling rule is to be obtained. If the operation is run
 	 * as a job, the schdulin rule is used as the schduling rule of the
 	 * job. Otherwise, it is obtained before execution of the operation
 	 * occurs.
@@ -360,90 +364,90 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	 * rule is obtained. Sublcasses can override to in order ot obtain a
 	 * scheduling rule or can obtain schduling rules withing their operation
 	 * if finer grained schduling is desired.
-	 * 
+	 *
 	 * @return the schduling rule to be obtained by this operation
 	 * or <code>null</code>.
 	 */
 	protected ISchedulingRule getSchedulingRule() {
 		return null;
 	}
-	
+
 	/**
 	 * Return whether the auto-build should be postponed until after
 	 * the operation is complete. The default is to postpone the auto-build.
 	 * subclas can override.
-	 * 
+	 *
 	 * @return whether to postpone the auto-build while the operation is executing.
 	 */
 	protected boolean isPostponeAutobuild() {
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * If this operation can safely be run in the background, then subclasses can
 	 * override this method and return <code>true</code>. This will make their
-	 * action run in a {@link  org.eclipse.core.runtime.jobs.Job}. 
-	 * Subsclass that override this method should 
+	 * action run in a {@link  org.eclipse.core.runtime.jobs.Job}.
+	 * Subsclass that override this method should
 	 * also override the <code>getJobName()</code> method.
-	 * 
+	 *
 	 * @return <code>true</code> if this action can be run in the background and
 	 * <code>false</code> otherwise.
 	 */
 	protected boolean canRunAsJob() {
 		return _canRunAsJob;
 	}
-	
+
 	/**
 	 * Return the job name to be used if the action can run as a job. (i.e.
 	 * if <code>canRunAsJob()</code> returns <code>true</code>).
-	 * 
+	 *
 	 * @return the string to be used as the job name
 	 */
 	protected String getJobName() {
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * This method is called to allow subclasses to configure an action that could be run to show
 	 * the results of the action to the user. Default is to return null.
-	 * 
+	 *
 	 * @return an action that could be run to see the results of this operation
 	 */
 	protected IAction getGotoAction() {
 		return null;
 	}
-	
+
 	/**
 	 * This method is called to allow subclasses to configure an icon to show when running this
 	 * operation.
-	 * 
+	 *
 	 * @return an URL to an icon
 	 */
 	protected URL getOperationIcon() {
 		return null;
 	}
-	
+
 	/**
 	 * This method is called to allow subclasses to have the operation remain in the progress
 	 * indicator even after the job is done.
-	 * 
+	 *
 	 * @return <code>true</code> to keep the operation and <code>false</code> otherwise.
 	 */
 	protected boolean getKeepOperation() {
 		return false;
 	}
-	
+
 	/**
 	 * Return a shell that can be used by the operation to display dialogs, etc.
-	 * 
+	 *
 	 * @return a shell
 	 */
-	protected Shell getShell() 
+	protected Shell getShell()
 	{
 	    return SystemBasePlugin.getActiveWorkbenchShell();
 	}
-	
+
 	private ISystemRunnableContext getRunnableContext() {
 		if (context == null && canRunAsJob()) {
 			SystemJobRunnableContext context = new SystemJobRunnableContext(getJobName(), getOperationIcon(), getGotoAction(), getKeepOperation(), this, getSite());
@@ -460,10 +464,10 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			return context;
 		}
 	}
-	
-	
 
-	
+
+
+
 	private IWorkbenchSite getSite() {
 		IWorkbenchSite site = null;
 		if(_part != null) {

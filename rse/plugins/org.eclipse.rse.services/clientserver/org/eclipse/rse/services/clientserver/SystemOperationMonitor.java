@@ -15,7 +15,7 @@ package org.eclipse.rse.services.clientserver;
 
 public class SystemOperationMonitor implements ISystemOperationMonitor 
 {
-	private boolean canceled = false;
+	private boolean cancelled = false;
 	private boolean done = false;
 	
 	
@@ -31,13 +31,13 @@ public class SystemOperationMonitor implements ISystemOperationMonitor
 	
 	public boolean isCancelled()
 	{
-		return canceled;
+		return cancelled;
 	}
 	
 	
 	
 	public void setCancelled(boolean value)
 	{
-		canceled = value;
+		cancelled = value;
 	}
 }

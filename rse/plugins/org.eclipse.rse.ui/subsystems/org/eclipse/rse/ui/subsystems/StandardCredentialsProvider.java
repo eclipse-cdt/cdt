@@ -63,13 +63,13 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	 * A runnable that will actually perform the prompting.
 	 */
 	private class PromptForCredentials implements Runnable {
-		private boolean canceled = false;
+		private boolean cancelled = false;
 
 		/**
 		 * @return true if prompting was cancelled.
 		 */
-		public boolean isCanceled() {
-			return canceled;
+		public boolean isCancelled() {
+			return cancelled;
 		}
 
 		/* (non-Javadoc)
@@ -95,15 +95,15 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 				} catch (Exception e) {
 					logException(e);
 				}
-				canceled = dialog.wasCancelled();
-				if (!canceled) {
+				cancelled = dialog.wasCancelled();
+				if (!cancelled) {
 					userId = dialog.getUserId();
 					password = dialog.getPassword();
 					saveUserId = dialog.getIsUserIdChangePermanent();
 					savePassword = dialog.getIsSavePassword();
 				}
 			} else {
-				canceled = true;
+				cancelled = true;
 			}
 		}
 	}
@@ -114,14 +114,14 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	 */
 	private class PromptForNewPassword implements Runnable {
 		private SystemMessage message;
-		private boolean canceled = false;
+		private boolean cancelled = false;
 
 		public PromptForNewPassword(SystemMessage message) {
 			this.message = message;
 		}
 
 		public boolean isCancelled() {
-			return canceled;
+			return cancelled;
 		}
 
 		public void run() {
@@ -130,13 +130,13 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 				SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(shell, getConnectorService().getHostName(), getUserId(), message);
 				dlg.setSavePassword(savePassword);
 				dlg.open();
-				canceled = dlg.wasCancelled();
-				if (!canceled) {
+				cancelled = dlg.wasCancelled();
+				if (!cancelled) {
 					password = dlg.getNewPassword();
 					savePassword = dlg.getIsSavePassword();
 				}
 			} else {
-				canceled = true;
+				cancelled = true;
 			}
 		}
 	}
@@ -398,7 +398,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	private void promptForCredentials() throws OperationCanceledException {
 		PromptForCredentials runnable = new PromptForCredentials();
 		Display.getDefault().syncExec(runnable);
-		if (runnable.isCanceled()) {
+		if (runnable.isCancelled()) {
 			throw new OperationCanceledException();
 		}
 	}

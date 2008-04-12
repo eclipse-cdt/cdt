@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [192741] [Archives] Move a folder from within an Archive doesn't work if > 1 level deep
@@ -818,7 +818,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	/**
 	 * Same as {@link #getSizeFor(String)} but allows to specify whether to
 	 * close the zip file or not.
-	 * 
+	 *
 	 * @param fullVirtualName absolute virtual path to the node to inspect
 	 * @param closeZipFile <code>true</code> if the zip file should be closed
 	 * @return the uncompressed size of the node requested.
@@ -1119,7 +1119,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 
 	/**
 	 * Create an empty file, also creating parent folders if necessary.
-	 * 
+	 *
 	 * @param file An abstract file handle to create physically.
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
@@ -1199,8 +1199,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 						// if it is an empty zip file, no need to recreate it
 						if (!(vcList.length == 1) || !vcList[0].fullName.equals("")) //$NON-NLS-1$
 						{
-							boolean isCanceled = recreateZipDeleteEntries(vcList, dest, null, archiveOperationMonitor);
-							if (isCanceled)
+							boolean isCancelled = recreateZipDeleteEntries(vcList, dest, null, archiveOperationMonitor);
+							if (isCancelled)
 							{
 								dest.close();
 								if (!(outputTempFile == null)) outputTempFile.delete();
@@ -1319,8 +1319,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					// if it is an empty zip file, no need to recreate it
 					if (!(vcList.length == 1) || !vcList[0].fullName.equals("")) //$NON-NLS-1$
 					{
-						boolean isCanceled = recreateZipDeleteEntries(vcList, dest, null, archiveOperationMonitor);
-						if (isCanceled)
+						boolean isCancelled = recreateZipDeleteEntries(vcList, dest, null, archiveOperationMonitor);
+						if (isCancelled)
 						{
 							dest.close();
 							if (!(outputTempFile == null))
@@ -1386,7 +1386,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	/**
 	 * Helper method. populates <code>found</code> with a collapsed list of
 	 * all nodes in the subtree of the file system rooted at <code>parent</code>.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static boolean listAllFiles(File parent, HashSet found, ISystemOperationMonitor archiveOperationMonitor)
@@ -1751,8 +1751,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					}
 
 					// recreate the zip file without the omissions
-					boolean isCanceled = recreateZipDeleteEntries(vcList, dest, omissions, archiveOperationMonitor);
-					if (isCanceled)
+					boolean isCancelled = recreateZipDeleteEntries(vcList, dest, omissions, archiveOperationMonitor);
+					if (isCancelled)
 					{
 						dest.close();
 						if (!(outputTempFile == null)) outputTempFile.delete();
@@ -1855,8 +1855,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				HashSet omissions = new HashSet();
 				omissions.add(fullVirtualName);
 
-				boolean isCanceled = recreateZipDeleteEntries(vcList, dest, omissions, archiveOperationMonitor);
-				if (isCanceled)
+				boolean isCancelled = recreateZipDeleteEntries(vcList, dest, omissions, archiveOperationMonitor);
+				if (isCancelled)
 				{
 					dest.close();
 					if (!(outputTempFile == null)) outputTempFile.delete();
@@ -1932,8 +1932,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				VirtualChild[] vcList = getVirtualChildrenList(false, archiveOperationMonitor);
 				HashSet omissions = new HashSet();
 				omissions.add(fullVirtualName);
-				boolean isCanceled = recreateZipDeleteEntries(vcList, dest, omissions, archiveOperationMonitor);
-				if (isCanceled)
+				boolean isCancelled = recreateZipDeleteEntries(vcList, dest, omissions, archiveOperationMonitor);
+				if (isCancelled)
 				{
 					dest.close();
 					if (!(outputTempFile == null)) outputTempFile.delete();
@@ -2054,11 +2054,11 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					newOldNames.put(newFullVirtualName, fullVirtualName);
 				}
 				// find the entry to rename and rename it
-				boolean isCanceled = recreateZipRenameEntries(vcList, dest, oldNewNames, archiveOperationMonitor);
+				boolean isCancelled = recreateZipRenameEntries(vcList, dest, oldNewNames, archiveOperationMonitor);
 
 				dest.close();
 
-				if (isCanceled)
+				if (isCancelled)
 				{
 					if (!(outputTempFile == null)) outputTempFile.delete();
 					if (closeZipFile) closeZipFile();
@@ -2228,8 +2228,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					// if it is an empty zip file, no need to recreate it
 					if (!(vcList.length == 1) || !vcList[0].fullName.equals("")) //$NON-NLS-1$
 					{
-						boolean isCanceled = recreateZipDeleteEntries(vcList, dest, null, archiveOperationMonitor);
-						if (isCanceled)
+						boolean isCancelled = recreateZipDeleteEntries(vcList, dest, null, archiveOperationMonitor);
+						if (isCancelled)
 						{
 							dest.close();
 							if (!(outputTempFile == null)) outputTempFile.delete();
@@ -2752,8 +2752,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		{
 			//String sourceName = name;
 			HashSet children = new HashSet();
-			boolean isCanceled = listAllFiles(file, children, archiveOperationMonitor);
-			if (isCanceled)
+			boolean isCancelled = listAllFiles(file, children, archiveOperationMonitor);
+			if (isCancelled)
 			{
 				return false;
 			}
@@ -2840,8 +2840,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				else
 				{
 					HashSet children = new HashSet();
-					boolean isCanceled = listAllFiles(file, children, archiveOperationMonitor);
-					if (isCanceled)
+					boolean isCancelled = listAllFiles(file, children, archiveOperationMonitor);
+					if (isCancelled)
 					{
 						return false;
 					}

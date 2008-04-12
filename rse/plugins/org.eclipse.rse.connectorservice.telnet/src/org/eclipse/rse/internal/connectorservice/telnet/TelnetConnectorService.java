@@ -114,7 +114,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		return telnetSet;
 	}
 
-	public static void checkCanceled(IProgressMonitor monitor) {
+	public static void checkCancelled(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			throw new OperationCanceledException();
 	}

@@ -24,8 +24,8 @@ import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
  */
 class GDBCLIProcess extends AbstractCLIProcess {
 
-    public GDBCLIProcess(GDBControl commandControl, boolean useExecConsole) throws IOException {
-        super(commandControl, useExecConsole);
+    public GDBCLIProcess(GDBControl commandControl) throws IOException {
+        super(commandControl);
     }
 
 

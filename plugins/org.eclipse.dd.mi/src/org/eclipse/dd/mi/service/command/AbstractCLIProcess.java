@@ -67,8 +67,6 @@ public abstract class AbstractCLIProcess extends Process
     private final PipedInputStream fMIInLogPipe;
     private final PipedOutputStream fMIOutLogPipe;
 
-    private final boolean fUseExecConsole;
-
     private boolean fDisposed = false;
     
     /**
@@ -88,10 +86,9 @@ public abstract class AbstractCLIProcess extends Process
     private int fPrompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
 
     @ConfinedToDsfExecutor("fSession#getExecutor")
-	public AbstractCLIProcess(AbstractMIControl commandControl, boolean useExecConsole) throws IOException {
+	public AbstractCLIProcess(AbstractMIControl commandControl) throws IOException {
         fSession = commandControl.getSession();
         fCommandControl = commandControl;
-        fUseExecConsole = useExecConsole;
         
         commandControl.addEventListener(this);
         commandControl.addCommandListener(this);
@@ -294,7 +291,7 @@ public abstract class AbstractCLIProcess extends Process
             if (secondary) {
                 cmd = new RawCommand(getCommandControl().getControlDMContext(), str);
             }
-            else if (fUseExecConsole && ! CLIEventProcessor.isSteppingOperation(str)) 
+            else if (! CLIEventProcessor.isSteppingOperation(str)) 
             {
                 cmd = new ProcessMIInterpreterExecConsole(getCommandControl().getControlDMContext(), str);
             } 

@@ -47,7 +47,6 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.MIRunControlEventProcessor;
 import org.eclipse.dd.mi.service.command.commands.MIGDBExit;
-import org.eclipse.dd.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.debug.core.DebugException;
 import org.osgi.framework.BundleContext;
@@ -87,7 +86,6 @@ public class GDBControl extends AbstractMIControl {
     private SessionType fSessionType;
     
     private boolean fConnected = false;
-    private boolean fUseInterpreterConsole;
     
     private MonitorJob fMonitorJob;
     private IPath fGdbPath; 
@@ -131,7 +129,6 @@ public class GDBControl extends AbstractMIControl {
                 new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
-                new CheckInterpreterConsoleStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
             };
@@ -147,7 +144,6 @@ public class GDBControl extends AbstractMIControl {
         final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
                 new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CheckInterpreterConsoleStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new MonitorJobStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new GDBProcessStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
@@ -509,32 +505,13 @@ public class GDBControl extends AbstractMIControl {
         }
     }
 
-    protected class CheckInterpreterConsoleStep extends InitializationShutdownStep {
-        CheckInterpreterConsoleStep(Direction direction) { super(direction); }
-
-        @Override
-        public void initialize(final RequestMonitor requestMonitor) {
-        	MIInterpreterExecConsole<MIInfo> cmd = new MIInterpreterExecConsole<MIInfo>(fControlDmc, "echo"); //$NON-NLS-1$
-        	GDBControl.this.queueCommand(
-            	cmd,
-            	new DataRequestMonitor<MIInfo>(getExecutor(), null) { 
-                    @Override
-                    protected void handleCompleted() {
-                    	fUseInterpreterConsole = isSuccess();
-                        requestMonitor.done();
-                    }
-            	}
-            );
-        }
-    }
-
     protected class CommandProcessorsStep extends InitializationShutdownStep {
         CommandProcessorsStep(Direction direction) { super(direction); }
 
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
             try {
-                fCLIProcess = new GDBCLIProcess(GDBControl.this, fUseInterpreterConsole);
+                fCLIProcess = new GDBCLIProcess(GDBControl.this);
             }
             catch(IOException e) {
                 requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$

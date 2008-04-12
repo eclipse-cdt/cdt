@@ -148,7 +148,7 @@ public class KeyboardInteractiveDialog extends TrayDialog {
   }
   /**                                                                                           
    * Returns the entered values, or null                                          
-   * if the user canceled.                                                                      
+   * if the user cancelled.                                                                      
    *                                                                                            
    * @return the entered values
    */

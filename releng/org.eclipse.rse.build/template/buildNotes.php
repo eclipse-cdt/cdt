@@ -59,7 +59,7 @@
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211067">211067</a>]
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
 </ul></li>
-<li>At least 89 bugs were fixed: Use 
+<li>At least 96 bugs were fixed: Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-04-11&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B3457%5D">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
@@ -265,7 +265,9 @@ We'll strive to fix these as soon as possible.
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197027">bug 197027</a> - maj - [persistence] Can lose data if close Eclipse before saving profile completes</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=219934">bug 219934</a> - maj - [regression][dnd] Cannot Copy & Paste / Drag&Drop remote to Resource Navigator</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj -   	[persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj - [persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226727">bug 226727</a> - maj - Remote search results in ConcurrentModificationException</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=225573">bug 225573</a> - maj - [dstore] client not falling back to single operation when missing batch descriptors (due to old server)</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 Wind River Systems, Inc.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.rse.services;
@@ -23,7 +23,7 @@ import org.eclipse.rse.internal.services.Activator;
  * A Mutual Exclusion Lock for Threads that need to access a resource
  * in a serialized manner. An Eclipse ProgressMonitor is accepted
  * in order to support cancellation when waiting for the Mutex.
- * 
+ *
  * Usage Example:
  * <code>
  *    private Mutex fooMutex = new Mutex();
@@ -38,12 +38,12 @@ import org.eclipse.rse.internal.services.Activator;
  *        return false;
  *    }
  * </code>
- * 
- * The Mutex is not reentrant, so when a Thread has locked the 
+ *
+ * The Mutex is not reentrant, so when a Thread has locked the
  * Mutex it must not try locking it again.
  */
 public class Mutex {
-	
+
 	private boolean fLocked = false;
 	private List fWaitQueue = new LinkedList();
 
@@ -52,15 +52,15 @@ public class Mutex {
      */
 	public Mutex() {
 	}
-	
+
 	/**
 	 * Try to acquire the lock maintained by this mutex.
 	 *
 	 * If the thread needs to wait before it can acquire the mutex, it
-	 * will wait in a first-come-first-serve fashion. In case a progress 
-	 * monitor was given, it will be updated and checked for cancel every 
+	 * will wait in a first-come-first-serve fashion. In case a progress
+	 * monitor was given, it will be updated and checked for cancel every
 	 * second.
-	 * 
+	 *
 	 * @param monitor Eclipse Progress Monitor. May be <code>null</code>.
 	 * @param timeout Maximum wait time given in milliseconds.
 	 * @return <code>true</code> if the lock was obtained successfully.
@@ -90,8 +90,8 @@ public class Mutex {
             long timeLeft = timeout;
             long pollTime = (monitor!=null) ? 1000 : timeLeft;
             long nextProgressUpdate = start+500;
-        	boolean canceled = false;
-            while (timeLeft>0 && !canceled && !lockAcquired) {
+        	boolean cancelled = false;
+			while (timeLeft > 0 && !cancelled && !lockAcquired) {
             	//is it my turn yet? Check wait queue and wait
         		synchronized(fWaitQueue) {
                 	if (!fLocked && fWaitQueue.get(0) == myself) {
@@ -115,8 +115,8 @@ public class Mutex {
                 	long curTime = System.currentTimeMillis();
                     timeLeft = start + timeout - curTime;
                 	if (monitor!=null) {
-                		canceled = monitor.isCanceled();
-                		if (!canceled && (curTime>nextProgressUpdate)) {
+                		cancelled = monitor.isCanceled();
+						if (!cancelled && (curTime > nextProgressUpdate)) {
                     		monitor.worked(1);
                 			nextProgressUpdate+=1000;
                 		}
@@ -138,8 +138,8 @@ public class Mutex {
 
 	/**
 	 * Release this mutex's lock.
-	 * 
-	 * May only be called by the same thread that originally acquired 
+	 *
+	 * May only be called by the same thread that originally acquired
 	 * the Mutex.
 	 */
 	public void release() {
@@ -162,12 +162,12 @@ public class Mutex {
 			return fLocked;
 		}
 	}
-	
+
 	/**
 	 * Interrupt all threads waiting for the Lock, causing their
 	 * {@link #waitForLock(IProgressMonitor, long)} method to return
 	 * <code>false</code>.
-	 * This should be called if the resource that the Threads are 
+	 * This should be called if the resource that the Threads are
 	 * contending for, becomes unavailable for some other reason.
 	 */
 	public void interruptAll() {

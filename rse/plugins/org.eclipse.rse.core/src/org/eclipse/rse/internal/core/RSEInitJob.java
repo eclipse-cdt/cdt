@@ -32,33 +32,33 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.logging.Logger;
 
 /**
- * This is a job named "Initialize RSE". It is instantiated and run during 
- * RSE startup. It must not be run at any other time. The job restores the 
- * persistent form of the RSE model. Use the extension point 
- * org.eclipse.rse.core.modelInitializers to supplement the model once it is 
+ * This is a job named "Initialize RSE". It is instantiated and run during
+ * RSE startup. It must not be run at any other time. The job restores the
+ * persistent form of the RSE model. Use the extension point
+ * org.eclipse.rse.core.modelInitializers to supplement the model once it is
  * restored.
  */
 public final class RSEInitJob extends Job {
-	
+
 	/**
 	 * The name of this job. This is API. Clients may use this name to find this job by name.
 	 */
 	public final static String NAME = "Initialize RSE"; //$NON-NLS-1$
-	
+
 	private static RSEInitJob instance = new RSEInitJob();
 
 	private class Phase {
-		private volatile boolean isCanceled = false;
+		private volatile boolean isCancelled = false;
 		private volatile boolean isComplete = false;
 		private int phaseNumber = 0;
 		public Phase(int phaseNumber) {
 			this.phaseNumber = phaseNumber;
 		}
 		public synchronized void waitForCompletion() throws InterruptedException {
-			while (!isComplete && !isCanceled) {
+			while (!isComplete && !isCancelled) {
 				wait();
 			}
-			if (isCanceled) {
+			if (isCancelled) {
 				throw new InterruptedException();
 			}
 		}
@@ -70,14 +70,14 @@ public final class RSEInitJob extends Job {
 			notifyListeners(phaseNumber);
 		}
 		public synchronized void cancel() {
-			isCanceled = true;
+			isCancelled = true;
 			notifyAll();
 		}
 		public boolean isComplete() {
 			return isComplete;
 		}
 	}
-	
+
 	private class MyJobChangeListener implements IJobChangeListener {
 		public void aboutToRun(IJobChangeEvent event) {
 		}
@@ -100,15 +100,15 @@ public final class RSEInitJob extends Job {
 		public void sleeping(IJobChangeEvent event) {
 		}
 	}
-	
+
 	private Phase finalPhase = new Phase(RSECorePlugin.INIT_ALL);
 	private Phase modelPhase = new Phase(RSECorePlugin.INIT_MODEL);
 	private Phase initializerPhase = new Phase(RSECorePlugin.INIT_INITIALIZER);
 	private List listeners = new ArrayList(10);
 	private Logger logger = RSECorePlugin.getDefault().getLogger();
 	private MyJobChangeListener myJobChangeListener = new MyJobChangeListener();
-	
-	
+
+
 	/**
 	 * Returns the singleton instance of this job.
 	 * @return the InitRSEJob instance for this workbench.
@@ -116,12 +116,12 @@ public final class RSEInitJob extends Job {
 	public static RSEInitJob getInstance() {
 		return instance;
 	}
-	
+
 	private RSEInitJob() {
 		super(NAME);
 		addJobChangeListener(myJobChangeListener);
 	}
-	
+
 	/**
 	 * Adds a new listener to the set of listeners to be notified when initialization phases complete.
 	 * If the listener is added after the phase has completed it will not be invoked.
@@ -134,7 +134,7 @@ public final class RSEInitJob extends Job {
 			listeners.add(listener);
 		}
 	}
-	
+
 	/**
 	 * Removes a listener to the set of listeners to be notified when phases complete.
 	 * If the listener is not in the set this does nothing.
@@ -145,7 +145,7 @@ public final class RSEInitJob extends Job {
 			listeners.remove(listener);
 		}
 	}
-	
+
 	/**
 	 * Notify all registered listeners of a phase completion
 	 * @param phase the phase just completed.
@@ -164,7 +164,7 @@ public final class RSEInitJob extends Job {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -175,7 +175,7 @@ public final class RSEInitJob extends Job {
 		modelPhase.done();
 		// instantiate and run initializers
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.rse.core.modelInitializers"); //$NON-NLS-1$
-		monitor.beginTask(RSECoreMessages.InitRSEJob_initializing_rse, elements.length); 
+		monitor.beginTask(RSECoreMessages.InitRSEJob_initializing_rse, elements.length);
 		for (int i = 0; i < elements.length && !monitor.isCanceled(); i++) {
 			IConfigurationElement element = elements[i];
 			IProgressMonitor submonitor = new SubProgressMonitor(monitor, 1);
@@ -203,7 +203,7 @@ public final class RSEInitJob extends Job {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns a handle to a mark file based on the initializer class name.
 	 * @param element the element that defines the initializer
@@ -218,7 +218,7 @@ public final class RSEInitJob extends Job {
 		File markFile = new File(markPath.toOSString());
 		return markFile;
 	}
-	
+
 	/**
 	 * @param element the element to test for marking
 	 * @return true if the element is marked
@@ -227,7 +227,7 @@ public final class RSEInitJob extends Job {
 		File markFile = getMarkFile(element);
 		return markFile.exists();
 	}
-	
+
 	/**
 	 * @param element the element to mark
 	 * @return a status indicating if the marking was successful
@@ -261,18 +261,18 @@ public final class RSEInitJob extends Job {
 			try {
 				status = initializer.run(submonitor);
 			} catch (RuntimeException e) {
-				String message = NLS.bind(RSECoreMessages.InitRSEJob_initializer_ended_in_error, initializerName); 
+				String message = NLS.bind(RSECoreMessages.InitRSEJob_initializer_ended_in_error, initializerName);
 				logger.logError(message, e);
 				status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, message, e);
 			}
 		} catch (CoreException e) {
-			String message = NLS.bind(RSECoreMessages.InitRSEJob_initializer_failed_to_load, initializerName); 
+			String message = NLS.bind(RSECoreMessages.InitRSEJob_initializer_failed_to_load, initializerName);
 			logger.logError(message, e);
 			status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, message, e);
 		}
 		return status;
 	}
-	
+
 	/**
 	 * Waits until a job is completed.
 	 * @return the status of the job upon its completion.
@@ -307,7 +307,7 @@ public final class RSEInitJob extends Job {
 	}
 
 	/**
-	 * @param phase the phase for which completion is requested. 
+	 * @param phase the phase for which completion is requested.
 	 * Phases are defined in {@link RSECorePlugin}.
 	 * @return true if this phase has completed.
 	 * @throws IllegalArgumentException if the phase is undefined.
@@ -332,5 +332,5 @@ public final class RSEInitJob extends Job {
 		}
 		return result;
 	}
-	
+
 }

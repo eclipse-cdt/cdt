@@ -27,10 +27,8 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
-abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements
-		ICPPTemplateInstance {
+abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements	ICPPTemplateInstance {
 	
 	private static final int ARGUMENTS = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	
@@ -84,17 +82,17 @@ abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements
 			return visitor.getTemplateArguments();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new IType[0];
+			return IType.EMPTY_TYPE_ARRAY;
 		}
 	}
 	
 	@Override
 	public boolean matchesArguments(IType[] arguments) {
-		IType [] args = getArguments();
-		if( args.length == arguments.length ){
+		IType[] args = getArguments();
+		if (args.length == arguments.length) {
 			int i = 0;
-			for(; i < args.length; i++) {
-				if( !( args[i].isSameType( arguments[i] ) ) )
+			for (; i < args.length; i++) {
+				if (!(args[i].isSameType(arguments[i])))
 					break;
 			}
 			return i == args.length;

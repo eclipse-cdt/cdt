@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeEvent;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -117,8 +118,8 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			fMappings = manager.getLanguageConfiguration(project);
 			
 			ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project);
-			Map availableLanguages = LanguageVerifier.computeAvailableLanguages();
-			Set missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, description, availableLanguages);
+			Map<String, ILanguage> availableLanguages = LanguageVerifier.computeAvailableLanguages();
+			Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, description, availableLanguages);
 			if (missingLanguages.size() > 0) {
 				MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 				messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
@@ -138,8 +139,8 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			LanguageManager manager = LanguageManager.getInstance();
 			WorkspaceLanguageConfiguration workspaceMappings = manager.getWorkspaceLanguageConfiguration();
 
-			Map availableLanguages = LanguageVerifier.computeAvailableLanguages();
-			Set missingLanguages = LanguageVerifier.removeMissingLanguages(workspaceMappings, availableLanguages);
+			Map<String, ILanguage> availableLanguages = LanguageVerifier.computeAvailableLanguages();
+			Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(workspaceMappings, availableLanguages);
 			if (missingLanguages.size() > 0) {
 				MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 				messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);

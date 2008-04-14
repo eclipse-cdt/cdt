@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,11 +42,11 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
-	private Map fContentTypeMappings;
+	private Map<String, String> fContentTypeMappings;
 	
 	public WorkspaceLanguageMappingWidget() {
 		super();
-		fContentTypeMappings = new TreeMap();
+		fContentTypeMappings = new TreeMap<String, String>();
 	}
 	
 	@Override
@@ -119,7 +119,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 					TableItem[] selection = fTable.getSelection();
 	
 					for (int i = 0; i < selection.length; i++) {
-						String contentType = (String) fContentTypeNamesToIDsMap.get(selection[i].getText(0));
+						String contentType = fContentTypeNamesToIDsMap.get(selection[i].getText(0));
 	
 						fContentTypeMappings.remove(contentType);
 	
@@ -147,18 +147,18 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		}
 		
 		fTable.removeAll();
-		Iterator mappings = fContentTypeMappings.entrySet().iterator();
+		Iterator<Entry<String, String>> mappings = fContentTypeMappings.entrySet().iterator();
 
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
 		while (mappings.hasNext()) {
-			Entry entry = (Entry) mappings.next();
+			Entry<String, String> entry = mappings.next();
 
 			TableItem item = new TableItem(fTable, SWT.NONE);
 
-			String contentType = (String) entry.getKey();
+			String contentType = entry.getKey();
 			String contentTypeName = contentTypeManager.getContentType(contentType).getName();
-			String languageName = LanguageManager.getInstance().getLanguage((String) entry.getValue()).getName();
+			String languageName = LanguageManager.getInstance().getLanguage(entry.getValue()).getName();
 
 			if (fOverriddenContentTypes.contains(contentType)) {
 				item.setText(0, Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_overriddenContentType, contentTypeName));
@@ -170,18 +170,18 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		}
 		
 		if (fChild != null) {
-			Set overrides = new HashSet(fContentTypeMappings.keySet());
+			Set<String> overrides = new HashSet<String>(fContentTypeMappings.keySet());
 			overrides.addAll(fOverriddenContentTypes);
 			fChild.setOverriddenContentTypes(overrides);
 			fChild.refreshMappings();
 		}
 	}
 	
-	public void setMappings(Map mappings) {
-		fContentTypeMappings = new TreeMap(mappings);
+	public void setMappings(Map<String, String> mappings) {
+		fContentTypeMappings = new TreeMap<String, String>(mappings);
 	}
 
-	public Map getContentTypeMappings() {
+	public Map<String, String> getContentTypeMappings() {
 		return Collections.unmodifiableMap(fContentTypeMappings);
 	}
 }

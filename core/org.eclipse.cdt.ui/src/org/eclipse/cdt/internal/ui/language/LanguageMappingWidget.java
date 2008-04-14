@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,22 +36,22 @@ public abstract class LanguageMappingWidget {
 	protected boolean fIsReadOnly;
 	
 	protected Table fTable;
-	protected HashMap fContentTypeNamesToIDsMap;
-	protected Set fAffectedContentTypes;
+	protected HashMap<String, String> fContentTypeNamesToIDsMap;
+	protected Set<IContentType> fAffectedContentTypes;
 	protected Font fOverriddenFont;
 	protected LanguageMappingWidget fChild;
 	protected IAdaptable fElement;
 	
-	protected Set fOverriddenContentTypes;
+	protected Set<String> fOverriddenContentTypes;
 	
 	private boolean fIsChanged;
 	
 	public LanguageMappingWidget() {
 		fOverriddenFont = JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
-		fOverriddenContentTypes = Collections.EMPTY_SET;
+		fOverriddenContentTypes = Collections.emptySet();
 		
 		// keep a mapping of all registered content types and their names
-		fContentTypeNamesToIDsMap = new HashMap();
+		fContentTypeNamesToIDsMap = new HashMap<String, String>();
 		String[] contentTypesIDs = LanguageManager.getInstance().getRegisteredContentTypeIds();
 
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
@@ -66,7 +66,7 @@ public abstract class LanguageMappingWidget {
 			fContentTypeNamesToIDsMap.put(name, contentTypesIDs[i]);
 		}
 
-		fAffectedContentTypes = new HashSet();
+		fAffectedContentTypes = new HashSet<IContentType>();
 	}
 
 	public IAdaptable getElement() {
@@ -77,12 +77,12 @@ public abstract class LanguageMappingWidget {
 		fElement = element;
 	}
 	
-	public void setOverriddenContentTypes(Set contentTypes) {
+	public void setOverriddenContentTypes(Set<String> contentTypes) {
 		fOverriddenContentTypes = contentTypes;
 	}
 	
 	public IContentType[] getAffectedContentTypes() {
-		return (IContentType[]) fAffectedContentTypes.toArray(new IContentType[fAffectedContentTypes.size()]);
+		return fAffectedContentTypes.toArray(new IContentType[fAffectedContentTypes.size()]);
 	}
 
 	public void setReadOnly(boolean isReadOnly) {

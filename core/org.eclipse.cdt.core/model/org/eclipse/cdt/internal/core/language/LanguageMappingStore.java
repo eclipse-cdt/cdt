@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Corporation - Initial API and implementation
+ *   IBM Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.language;
 
@@ -86,16 +86,16 @@ public class LanguageMappingStore {
 		return config;
 	}
 	
-	private Map decodeProjectContentTypeMappings(Element rootElement) {
-		Map decodedMappings = new TreeMap();
+	private Map<String, Map<String, String>> decodeProjectContentTypeMappings(Element rootElement) {
+		Map<String, Map<String, String>> decodedMappings = new TreeMap<String, Map<String, String>>();
 		NodeList mappingElements = rootElement.getElementsByTagName(CONTENT_TYPE_MAPPING);
 		for (int j = 0; j < mappingElements.getLength(); j++) {
 			Element mapping = (Element) mappingElements.item(j);
 			String configuration = mapping.getAttribute(ATTRIBUTE_CONFIGURATION);
 			
-			Map contentTypeMappings = (Map) decodedMappings.get(configuration);
+			Map<String, String> contentTypeMappings = decodedMappings.get(configuration);
 			if (contentTypeMappings == null) {
-				contentTypeMappings = new TreeMap();
+				contentTypeMappings = new TreeMap<String, String>();
 				decodedMappings.put(configuration, contentTypeMappings);
 			}
 			String contentType = mapping.getAttribute(ATTRIBUTE_CONTENT_TYPE);
@@ -109,20 +109,20 @@ public class LanguageMappingStore {
 		return CCorePlugin.getDefault().getCProjectDescription(project, true);
 	}
 	
-	private Map decodeContentTypeMappings(Element rootElement) throws CoreException {
+	private Map<String, String> decodeContentTypeMappings(Element rootElement) throws CoreException {
 		return decodeMappings(rootElement, CONTENT_TYPE_MAPPING, ATTRIBUTE_CONTENT_TYPE, ATTRIBUTE_LANGUAGE);
 	}
 	
-	private Map decodeFileMappings(Element rootElement) throws CoreException {
-		Map decodedMappings = new TreeMap();
+	private Map<String, Map<String, String>> decodeFileMappings(Element rootElement) throws CoreException {
+		Map<String, Map<String, String>> decodedMappings = new TreeMap<String, Map<String, String>>();
 		NodeList mappingElements = rootElement.getElementsByTagName(FILE_MAPPING);
 		for (int j = 0; j < mappingElements.getLength(); j++) {
 			Element mapping = (Element) mappingElements.item(j);
 			String path = mapping.getAttribute(ATTRIBUTE_PATH);
 			
-			Map configurationMappings = (Map) decodedMappings.get(path);
+			Map<String, String> configurationMappings = decodedMappings.get(path);
 			if (configurationMappings == null) {
-				configurationMappings = new TreeMap();
+				configurationMappings = new TreeMap<String, String>();
 				decodedMappings.put(path, configurationMappings);
 			}
 			String configuration = mapping.getAttribute(ATTRIBUTE_CONFIGURATION);
@@ -132,8 +132,8 @@ public class LanguageMappingStore {
 		return decodedMappings;
 	}
 	
-	private Map decodeMappings(Element rootElement, String category, String keyName, String valueName) {
-		Map decodedMappings = new TreeMap();
+	private Map<String, String> decodeMappings(Element rootElement, String category, String keyName, String valueName) {
+		Map<String, String> decodedMappings = new TreeMap<String, String>();
 		NodeList mappingElements = rootElement.getElementsByTagName(category);
 		for (int j = 0; j < mappingElements.getLength(); j++) {
 			Element mapping = (Element) mappingElements.item(j);
@@ -158,18 +158,18 @@ public class LanguageMappingStore {
 		descriptor.saveProjectData();
 	}
 
-	private void addProjectContentTypeMappings(Map contentTypeMappings, Element rootElement) {
+	private void addProjectContentTypeMappings(Map<String, Map<String, String>> contentTypeMappings, Element rootElement) {
 		Document document = rootElement.getOwnerDocument();
-		Iterator entries = contentTypeMappings.entrySet().iterator();
+		Iterator<Entry<String, Map<String, String>>> entries = contentTypeMappings.entrySet().iterator();
 		while (entries.hasNext()) {
-			Entry entry = (Entry) entries.next();
+			Entry<String, Map<String, String>> entry = entries.next();
 			
-			String configuration = (String) entry.getKey();
-			Iterator contentTypeEntries = ((Map) entry.getValue()).entrySet().iterator();
+			String configuration = entry.getKey();
+			Iterator<Entry<String, String>> contentTypeEntries = entry.getValue().entrySet().iterator();
 			while (contentTypeEntries.hasNext()) {
-				Entry configurationEntry = (Entry) contentTypeEntries.next();
-				String contentType = (String) configurationEntry.getKey();
-				String language = (String) configurationEntry.getValue();
+				Entry<String, String> configurationEntry = contentTypeEntries.next();
+				String contentType = configurationEntry.getKey();
+				String language = configurationEntry.getValue();
 				
 				Element mapping = document.createElement(CONTENT_TYPE_MAPPING);
 				mapping.setAttribute(ATTRIBUTE_CONTENT_TYPE, contentType);
@@ -246,35 +246,35 @@ public class LanguageMappingStore {
 		}
 	}
 
-	private void addMappings(Map mappings, Element rootElement, String category, String keyName, String valueName) {
+	private void addMappings(Map<String, String> mappings, Element rootElement, String category, String keyName, String valueName) {
 		Document document = rootElement.getOwnerDocument();
-		Iterator entries = mappings.entrySet().iterator();
+		Iterator<Entry<String, String>> entries = mappings.entrySet().iterator();
 		while (entries.hasNext()) {
-			Entry entry = (Entry) entries.next();
+			Entry<String, String> entry = entries.next();
 			Element mapping = document.createElement(category);
-			mapping.setAttribute(keyName, (String) entry.getKey());
-			mapping.setAttribute(valueName, (String) entry.getValue());
+			mapping.setAttribute(keyName, entry.getKey());
+			mapping.setAttribute(valueName, entry.getValue());
 			rootElement.appendChild(mapping);
 		}
 	}
 	
-	private void addContentTypeMappings(Map mappings, Element rootElement) {
+	private void addContentTypeMappings(Map<String, String> mappings, Element rootElement) {
 		addMappings(mappings, rootElement, CONTENT_TYPE_MAPPING, ATTRIBUTE_CONTENT_TYPE, ATTRIBUTE_LANGUAGE);
 	}
 	
-	private void addFileMappings(Map mappings, Element rootElement) {
+	private void addFileMappings(Map<String, Map<String, String>> mappings, Element rootElement) {
 		Document document = rootElement.getOwnerDocument();
-		Iterator entries = mappings.entrySet().iterator();
+		Iterator<Entry<String, Map<String, String>>> entries = mappings.entrySet().iterator();
 		while (entries.hasNext()) {
-			Entry entry = (Entry) entries.next();
+			Entry<String, Map<String, String>> entry = entries.next();
 			Element mapping = document.createElement(FILE_MAPPING);
 			
-			String path = (String) entry.getKey();
-			Iterator configurationEntries = ((Map) entry.getValue()).entrySet().iterator();
+			String path = entry.getKey();
+			Iterator<Entry<String, String>> configurationEntries = entry.getValue().entrySet().iterator();
 			while (configurationEntries.hasNext()) {
-				Entry configurationEntry = (Entry) configurationEntries.next();
-				String configuration = (String) configurationEntry.getKey();
-				String language = (String) configurationEntry.getValue();
+				Entry<String, String> configurationEntry = configurationEntries.next();
+				String configuration = configurationEntry.getKey();
+				String language = configurationEntry.getValue();
 				
 				mapping.setAttribute(ATTRIBUTE_PATH, path);
 				mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);

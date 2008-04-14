@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	private Composite fContents;
 	private Table fTable;
 	private ILanguage[] fLanguages;
-	private Map fLanguageIds;
+	private Map<String, ILanguage> fLanguageIds;
 	private boolean fHasChanges;
 	
 	public FileLanguageMappingPropertyPage() {
@@ -213,7 +213,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		
 		ProjectLanguageConfiguration config = LanguageManager.getInstance().getLanguageConfiguration(project);
 		
-		Set missingLanguages = LanguageVerifier.removeMissingLanguages(config, description, fLanguageIds);
+		Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(config, description, fLanguageIds);
 		if (missingLanguages.size() > 0) {
 			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 			messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
@@ -232,7 +232,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			String languageId = config.getLanguageForFile(configurations[i], file);
 			
 			if (languageId != null) {
-				ILanguage language = (ILanguage) fLanguageIds.get(languageId);
+				ILanguage language = fLanguageIds.get(languageId);
 				String languageName =  language.getName();
 				item.setText(LANGUAGE_COLUMN, languageName);
 			}
@@ -322,7 +322,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			LanguageManager manager = LanguageManager.getInstance();
 			ProjectLanguageConfiguration config = manager.getLanguageConfiguration(project);
 			
-			Map mappings = new TreeMap();
+			Map<String, String> mappings = new TreeMap<String, String>();
 			TableItem[] items = fTable.getItems();
 			for (int i = 0; i < items.length; i++) {
 				TableItem item = items[i];

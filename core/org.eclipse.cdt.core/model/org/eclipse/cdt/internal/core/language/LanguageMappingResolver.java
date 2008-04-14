@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Corporation - Initial API and implementation
+ *   IBM Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.language;
 
@@ -51,7 +51,7 @@ public class LanguageMappingResolver {
 	 */
 	public static LanguageMapping[] computeLanguage(IProject project, String filePath, ICConfigurationDescription configuration, String contentTypeId, boolean fetchAll) throws CoreException {
   		LanguageManager manager = LanguageManager.getInstance();
-		List inheritedLanguages = new LinkedList();
+		List<LanguageMapping> inheritedLanguages = new LinkedList<LanguageMapping>();
 		
 		if (project != null) {
 			ProjectLanguageConfiguration mappings = manager.getLanguageConfiguration(project);
@@ -121,12 +121,12 @@ public class LanguageMappingResolver {
 		return createLanguageMappingArray(inheritedLanguages);
 	}
 
-	private static LanguageMapping[] createLanguageMappingArray(List inheritedLanguages) {
+	private static LanguageMapping[] createLanguageMappingArray(List<LanguageMapping> inheritedLanguages) {
 		LanguageMapping[] results = new LanguageMapping[inheritedLanguages.size()];
-		Iterator mappings = inheritedLanguages.iterator();
+		Iterator<LanguageMapping> mappings = inheritedLanguages.iterator();
 		int i = 0;
 		while (mappings.hasNext()) {
-			LanguageMapping mapping = (LanguageMapping) mappings.next();
+			LanguageMapping mapping = mappings.next();
 			results[i] = mapping;
 			i++;
 		}

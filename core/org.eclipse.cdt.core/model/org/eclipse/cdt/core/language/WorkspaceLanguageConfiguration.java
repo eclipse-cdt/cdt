@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,14 @@ public class WorkspaceLanguageConfiguration {
 	/**
 	 * Workspace-wide content type mappings.
 	 */
-	private Map fMappings;
+	private Map<String, String> fMappings;
 	
 	/**
 	 * Creates a new <code>WorkspaceLanguageConfiguration</code> with no
 	 * language mappings defined.
 	 */
 	public WorkspaceLanguageConfiguration() {
-		fMappings = new TreeMap();
+		fMappings = new TreeMap<String, String>();
 	}
 	
 	/**
@@ -53,26 +53,26 @@ public class WorkspaceLanguageConfiguration {
 	 * Replaces the existing language mappings with the given
 	 * mappings.  The given mappings should be between content type ids
 	 * (<code>String</code>) and language ids (<code>String</code>)
-	 * @param projectMappings
+	 * @param mappings
 	 */
-	public void setWorkspaceMappings(Map/*<String, String>*/ mappings) {
-		fMappings = new TreeMap(mappings);
+	public void setWorkspaceMappings(Map<String, String> mappings) {
+		fMappings = new TreeMap<String, String>(mappings);
 	}
 	
 	/**
 	 * Returns a read-only copy of the workspace-wide language mappings.
 	 * @return a read-only copy of the workspace-wide language mappings.
 	 */
-	public Map getWorkspaceMappings() {
+	public Map<String, String> getWorkspaceMappings() {
 		return Collections.unmodifiableMap(fMappings);
 	}
 
 	/**
 	 * Returns the language id that is mapped to the given content type.
 	 * @param contentTypeId
-	 * @return
+	 * @return the language id that is mapped to the given content type.
 	 */
 	public String getLanguageForContentType(String contentTypeId) {
-		return (String) fMappings.get(contentTypeId);
+		return fMappings.get(contentTypeId);
 	}
 }

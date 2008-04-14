@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
@@ -52,8 +53,8 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 	private void fetchMappings() throws CoreException {
 		fMappings = LanguageManager.getInstance().getWorkspaceLanguageConfiguration();
 		
-		Map availableLanguages = LanguageVerifier.computeAvailableLanguages();
-		Set missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, availableLanguages);
+		Map<String, ILanguage> availableLanguages = LanguageVerifier.computeAvailableLanguages();
+		Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, availableLanguages);
 		if (missingLanguages.size() > 0) {
 			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 			messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);

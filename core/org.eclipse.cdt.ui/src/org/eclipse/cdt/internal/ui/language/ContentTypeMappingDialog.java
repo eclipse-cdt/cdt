@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,13 +34,13 @@ public abstract class ContentTypeMappingDialog extends Dialog {
 	String fSelectedLanguageID;
 	String fSelectedConfigurationID;
 	String fSelectedConfigurationName;
-	HashMap fContentTypeNamesToIDsMap;
-	HashMap fLanguageNamesToIDsMap;
+	HashMap<String, String> fContentTypeNamesToIDsMap;
+	HashMap<String, String> fLanguageNamesToIDsMap;
 
 	public ContentTypeMappingDialog(Shell parentShell) {
 		super(parentShell);
-		fContentTypeNamesToIDsMap = new HashMap();
-		fLanguageNamesToIDsMap = new HashMap();
+		fContentTypeNamesToIDsMap = new HashMap<String, String>();
+		fLanguageNamesToIDsMap = new HashMap<String, String>();
 	}
 
 	public String getSelectedContentTypeName() {

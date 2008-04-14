@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,11 +32,11 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog {
-	private Set fFilteredContentTypes;
+	private Set<String> fFilteredContentTypes;
 
 	public WorkspaceContentTypeMappingDialog(Shell parentShell) {
 		super(parentShell);
-		fFilteredContentTypes = Collections.EMPTY_SET;
+		fFilteredContentTypes = Collections.emptySet();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 		fContentType.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				fSelectedContentTypeName = fContentType.getText();
-				fSelectedContentTypeID = (String) fContentTypeNamesToIDsMap.get(fSelectedContentTypeName);
+				fSelectedContentTypeID = fContentTypeNamesToIDsMap.get(fSelectedContentTypeName);
 				getButton(IDialogConstants.OK_ID).setEnabled(isValidSelection());
 			}
 		});
@@ -67,7 +67,7 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 		fLanguage.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				fSelectedLanguageName = fLanguage.getText();
-				fSelectedLanguageID = (String) fLanguageNamesToIDsMap.get(fSelectedLanguageName);
+				fSelectedLanguageID = fLanguageNamesToIDsMap.get(fSelectedLanguageName);
 				getButton(IDialogConstants.OK_ID).setEnabled(isValidSelection());
 			}
 		});
@@ -99,7 +99,7 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 		}
 	}
 
-	public void setContentTypeFilter(Set contentTypes) {
+	public void setContentTypeFilter(Set<String> contentTypes) {
 		fFilteredContentTypes = contentTypes;
 	}
 

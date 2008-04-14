@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,13 +57,13 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 
 	private static final int LANGUAGE_COLUMN = 2;
 	
-	private Map fConfigurationContentTypeMappings;
+	private Map<String, Map<String, String>> fConfigurationContentTypeMappings;
 
-	public void setMappings(Map contentTypeMappings) {
+	public void setMappings(Map<String, Map<String, String>> contentTypeMappings) {
 		fConfigurationContentTypeMappings = contentTypeMappings;
 	}
 
-	public Map getContentTypeMappings() {
+	public Map<String, Map<String, String>> getContentTypeMappings() {
 		return fConfigurationContentTypeMappings;
 	}
 
@@ -129,9 +129,9 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 					if (configuration == null) {
 						configuration = ALL_CONFIGURATIONS;
 					}
-					Map contentTypeMappings = (Map) fConfigurationContentTypeMappings.get(configuration);
+					Map<String, String> contentTypeMappings = fConfigurationContentTypeMappings.get(configuration);
 					if (contentTypeMappings == null) {
-						contentTypeMappings = new TreeMap();
+						contentTypeMappings = new TreeMap<String, String>();
 						fConfigurationContentTypeMappings.put(configuration, contentTypeMappings);
 					}
 					contentTypeMappings.put(contentType, language);
@@ -163,7 +163,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 						configurationId = data.configuration.getId();
 					}
 					
-					Map contentTypeMappings = (Map) fConfigurationContentTypeMappings.get(configurationId);
+					Map<String, String> contentTypeMappings = fConfigurationContentTypeMappings.get(configurationId);
 					if (contentTypeMappings != null) {
 						contentTypeMappings.remove(contentType);
 					}
@@ -184,16 +184,16 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		return fContents;
 	}
 
-	private Set createContentTypeFilter(Map mappings) {
-		Set filter = new HashSet();
-		Iterator configurationContentTypeMappings = mappings.entrySet().iterator();
+	private Set<String> createContentTypeFilter(Map<String, Map<String, String>> mappings) {
+		Set<String> filter = new HashSet<String>();
+		Iterator<Entry<String, Map<String, String>>> configurationContentTypeMappings = mappings.entrySet().iterator();
 		while (configurationContentTypeMappings.hasNext()) {
-			Entry entry = (Entry) configurationContentTypeMappings.next();
-			String configuration = (String) entry.getKey();
-			Iterator contentTypeMappings = ((Map) entry.getValue()).entrySet().iterator();
+			Entry<String, Map<String, String>> entry = configurationContentTypeMappings.next();
+			String configuration = entry.getKey();
+			Iterator<Entry<String, String>> contentTypeMappings = entry.getValue().entrySet().iterator();
 			while (contentTypeMappings.hasNext()) {
-				Entry contentTypeEntry = (Entry) contentTypeMappings.next();
-				String contentType = (String) contentTypeEntry.getKey();
+				Entry<String, String> contentTypeEntry = contentTypeMappings.next();
+				String contentType = contentTypeEntry.getKey();
 				filter.add(createFilterKey(configuration, contentType));
 			}
 		}
@@ -207,7 +207,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		}
 		
 		fTable.removeAll();
-		Iterator mappings = fConfigurationContentTypeMappings.entrySet().iterator();
+		Iterator<Entry<String, Map<String, String>>> mappings = fConfigurationContentTypeMappings.entrySet().iterator();
 
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
@@ -215,16 +215,16 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, false);
 
 		while (mappings.hasNext()) {
-			Entry configurationEntry = (Entry) mappings.next();
-			String configurationId = (String) configurationEntry.getKey();
-			Iterator contentTypeMappings = ((Map) configurationEntry.getValue()).entrySet().iterator();
+			Entry<String, Map<String, String>> configurationEntry = mappings.next();
+			String configurationId = configurationEntry.getKey();
+			Iterator<Entry<String, String>> contentTypeMappings = configurationEntry.getValue().entrySet().iterator();
 			while (contentTypeMappings.hasNext()) {
-				Entry entry = (Entry) contentTypeMappings.next();
+				Entry<String, String> entry = contentTypeMappings.next();
 				TableItem item = new TableItem(fTable, SWT.NONE);
 	
-				String contentType = (String) entry.getKey();
+				String contentType = entry.getKey();
 				String contentTypeName = contentTypeManager.getContentType(contentType).getName();
-				String languageId = (String) entry.getValue();
+				String languageId = entry.getValue();
 				String languageName = LanguageManager.getInstance().getLanguage(languageId).getName();
 				
 				ICConfigurationDescription configuration = description.getConfigurationById(configurationId);
@@ -248,16 +248,16 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		}
 		
 		if (fChild != null) {
-			Set overrides = new HashSet(createWorkspaceContentTypeFilter(fConfigurationContentTypeMappings));
+			Set<String> overrides = new HashSet<String>(createWorkspaceContentTypeFilter(fConfigurationContentTypeMappings));
 			fChild.setOverriddenContentTypes(overrides);
 			fChild.refreshMappings();
 		}
 	}
 	
-	private Set createWorkspaceContentTypeFilter(Map configurationContentTypeMappings) {
-		Map contentTypeMappings = (Map) configurationContentTypeMappings.get(ALL_CONFIGURATIONS);
+	private Set<String> createWorkspaceContentTypeFilter(Map<String, Map<String, String>> configurationContentTypeMappings) {
+		Map<String, String> contentTypeMappings = configurationContentTypeMappings.get(ALL_CONFIGURATIONS);
 		if (contentTypeMappings == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return contentTypeMappings.keySet();
 	}

@@ -43,14 +43,14 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	private IPreferenceStore fStore;
 	protected OverlayPreferenceStore fOverlayStore;
 	private OverlayKey[] fKeys;
-	protected Map fCheckBoxes= new HashMap();
+	protected Map<Button, String> fCheckBoxes= new HashMap<Button, String>();
 
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
-			String key= (String) fCheckBoxes.get(button);
+			String key= fCheckBoxes.get(button);
 			fOverlayStore.setValue(key, button.getSelection());
 			updateEnablement(key);
 		}
@@ -65,7 +65,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	}
 	
 	private OverlayKey[] createKeys() {
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_MACROS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_FUNCTIONS));
@@ -77,7 +77,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_STATEMENTS));
 		
-		return (OverlayKey[]) overlayKeys.toArray(new OverlayKey[overlayKeys.size()]);
+		return overlayKeys.toArray(new OverlayKey[overlayKeys.size()]);
 	}
 
 	/*
@@ -127,10 +127,10 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	}
 	
 	private void initializeFields() {
-		Iterator it= fCheckBoxes.keySet().iterator();
+		Iterator<Button> it= fCheckBoxes.keySet().iterator();
 		while (it.hasNext()) {
-			Button b= (Button) it.next();
-			String key= (String) fCheckBoxes.get(b);
+			Button b= it.next();
+			String key= fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
 			updateEnablement(key);
 		}

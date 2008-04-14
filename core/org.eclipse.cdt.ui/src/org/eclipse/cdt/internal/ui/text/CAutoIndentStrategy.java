@@ -765,8 +765,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	private int computeVisualLength(char ch) {
 		if (ch == '\t')
 			return getVisualTabLengthPreference();
-		else
-			return 1;
+		return 1;
 	}
 
 	/**

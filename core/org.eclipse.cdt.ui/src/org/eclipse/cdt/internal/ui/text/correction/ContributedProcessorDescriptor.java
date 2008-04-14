@@ -15,15 +15,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
@@ -37,7 +36,7 @@ public final class ContributedProcessorDescriptor {
 	private Object fProcessorInstance;
 	private Boolean fStatus;
 	private boolean fLastResult;
-	private final Set fHandledMarkerTypes;
+	private final Set<String> fHandledMarkerTypes;
 
 	private static final String ID= "id"; //$NON-NLS-1$
 	private static final String CLASS= "class"; //$NON-NLS-1$
@@ -55,13 +54,13 @@ public final class ContributedProcessorDescriptor {
 		fHandledMarkerTypes= testMarkerTypes ? getHandledMarkerTypes(element) : null;
 	}
 
-	private Set getHandledMarkerTypes(IConfigurationElement element) {
-		HashSet map= new HashSet(7);
+	private Set<String> getHandledMarkerTypes(IConfigurationElement element) {
+		HashSet<String> map= new HashSet<String>(7);
 		IConfigurationElement[] children= element.getChildren(HANDLED_MARKER_TYPES);
-		for (int i= 0; i < children.length; i++) {
-			IConfigurationElement[] types= children[i].getChildren(MARKER_TYPE);
-			for (int k= 0; k < types.length; k++) {
-				String attribute= types[k].getAttribute(ID);
+		for (IConfigurationElement element2 : children) {
+			IConfigurationElement[] types= element2.getChildren(MARKER_TYPE);
+			for (IConfigurationElement type : types) {
+				String attribute= type.getAttribute(ID);
 				if (attribute != null) {
 					map.add(attribute);
 				}

@@ -46,7 +46,7 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 	protected int fPrevious= 0;
 
 	/** The sentence breaks */
-	private final LinkedList fSentenceBreaks= new LinkedList();
+	private final LinkedList<Integer> fSentenceBreaks= new LinkedList<Integer>();
 
 	/** Does the current word start a sentence? */
 	private boolean fStartsSentence= false;
@@ -174,8 +174,8 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 	 */
 	protected final boolean isToken(final String token, final String[] tags) {
 		if (token != null) {
-			for (int index= 0; index < tags.length; index++) {
-				if (token.equals(tags[index]))
+			for (String tag : tags) {
+				if (token.equals(tag))
 					return true;
 			}
 		}
@@ -211,8 +211,8 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 	 *         <code>false</code> otherwise
 	 */
 	protected final boolean isUrlToken(final int begin) {
-		for (int index= 0; index < DefaultSpellChecker.URL_PREFIXES.length; index++) {
-			if (fContent.startsWith(DefaultSpellChecker.URL_PREFIXES[index], begin))
+		for (String element : DefaultSpellChecker.URL_PREFIXES) {
+			if (fContent.startsWith(element, begin))
 				return true;
 		}
 		return false;
@@ -237,7 +237,7 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 	/*
 	 * @see java.util.Iterator#next()
 	 */
-	public Object next() {
+	public String next() {
 		String token= nextToken();
 		while (token == null && fSuccessor != BreakIterator.DONE)
 			token= nextToken();
@@ -261,7 +261,7 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 	 * @return the next sentence break
 	 */
 	protected final int nextSentence() {
-		return ((Integer) fSentenceBreaks.getFirst()).intValue();
+		return fSentenceBreaks.getFirst().intValue();
 	}
 
 	/**

@@ -111,7 +111,7 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
         if (model == null)
             return ;
 
-        Iterator iter= model.getAnnotationIterator();
+        Iterator<?> iter= model.getAnnotationIterator();
         int layer= Integer.MIN_VALUE;
 
         while (iter.hasNext()) {
@@ -138,21 +138,20 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
                 fHasCorrection= true;
                 layer= annotationLayer;
                 continue;
-            } else {
-                AnnotationPreference preference= fAnnotationPreferenceLookup.getAnnotationPreference(annotation);
-                if (preference == null)
-                    continue;
-
-                String key= preference.getVerticalRulerPreferenceKey();
-                if (key == null)
-                    continue;
-
-                if (fStore.getBoolean(key)) {
-                    fPosition= position;
-                    fHasCorrection= false;
-                    layer= annotationLayer;
-                }
             }
+			AnnotationPreference preference= fAnnotationPreferenceLookup.getAnnotationPreference(annotation);
+			if (preference == null)
+			    continue;
+
+			String key= preference.getVerticalRulerPreferenceKey();
+			if (key == null)
+			    continue;
+
+			if (fStore.getBoolean(key)) {
+			    fPosition= position;
+			    fHasCorrection= false;
+			    layer= annotationLayer;
+			}
         }
     }
 }

@@ -119,14 +119,16 @@ public class CDocHover extends AbstractCEditorTextHover {
 	 */
 	@Override
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
-		Point selectedRange = viewer.getSelectedRange();
-		if (selectedRange.x >= 0 && 
-			 selectedRange.y > 0 &&
-			 offset >= selectedRange.x &&
-			 offset <= selectedRange.x + selectedRange.y)
-			return new Region( selectedRange.x, selectedRange.y );
-		if (viewer != null)
+		if (viewer != null) {
+			Point selectedRange = viewer.getSelectedRange();
+			if (selectedRange.x >= 0 && 
+					selectedRange.y > 0 &&
+					offset >= selectedRange.x &&
+					offset <= selectedRange.x + selectedRange.y)
+				return new Region( selectedRange.x, selectedRange.y );
+			
 			return CWordFinder.findWord(viewer.getDocument(), offset);
+		}
 		return null;
 	}
 	

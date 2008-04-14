@@ -38,6 +38,7 @@ import org.eclipse.ui.keys.IBindingService;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -74,7 +75,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	
 	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection, ITranslationUnit cu, IAnnotationModel model) {
 		CorrectionContext context= new CorrectionContext(cu, selection.getOffset(), selection.getLength());
-		Collection proposals= new ArrayList(10);
+		Collection<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>(10);
 		if (isAssist) {
 			CCorrectionProcessor.collectAssists(context, new ProblemLocation[0], proposals);
 		} else {
@@ -86,7 +87,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 				return null;
 			}
 		}
-		for (Iterator iter= proposals.iterator(); iter.hasNext();) {
+		for (Iterator<ICCompletionProposal> iter= proposals.iterator(); iter.hasNext();) {
 			Object curr= iter.next();
 			if (curr instanceof ICommandAccess) {
 				if (id.equals(((ICommandAccess) curr).getCommandId())) {
@@ -98,9 +99,9 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	}
 
 	private Annotation[] getAnnotations(int offset, boolean goToClosest) throws BadLocationException {
-		ArrayList resultingAnnotations= new ArrayList();
+		ArrayList<Annotation> resultingAnnotations= new ArrayList<Annotation>();
 		CCorrectionAssistant.collectQuickFixableAnnotations(fEditor, offset, goToClosest, resultingAnnotations);
-		return (Annotation[]) resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
+		return resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
 	}
 	
 	private IDocument getDocument() {

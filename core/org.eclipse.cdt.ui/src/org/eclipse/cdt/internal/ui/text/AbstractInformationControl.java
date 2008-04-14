@@ -96,8 +96,8 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		private boolean hasUnfilteredChild(TreeViewer viewer, Object element) {
 			if (element instanceof IParent) {
 				Object[] children=  ((ITreeContentProvider) viewer.getContentProvider()).getChildren(element);
-				for (int i= 0; i < children.length; i++)
-					if (select(viewer, element, children[i]))
+				for (Object element2 : children)
+					if (select(viewer, element, element2))
 						return true;
 			}
 			return false;
@@ -413,21 +413,19 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 
 	private ICElement findElement(TreeItem[] items) {
 		ILabelProvider labelProvider= (ILabelProvider)fTreeViewer.getLabelProvider();
-		for (int i= 0; i < items.length; i++) {
-			Object item= items[i].getData();
+		for (TreeItem item2 : items) {
+			Object item= item2.getData();
 			ICElement element= null;
 			if (item instanceof ICElement) {
 				element= (ICElement)item;
 				if (fStringMatcher == null)
 					return element;
 	
-				if (element != null) {
-					String label= labelProvider.getText(element);
-					if (fStringMatcher.match(label))
-						return element;
-				}
+				String label= labelProvider.getText(element);
+				if (fStringMatcher.match(label))
+					return element;
 			}
-			element= findElement(items[i].getItems());
+			element= findElement(item2.getItems());
 			if (element != null)
 				return element;
 		}

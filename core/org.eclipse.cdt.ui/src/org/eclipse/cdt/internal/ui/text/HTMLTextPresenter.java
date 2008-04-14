@@ -14,16 +14,16 @@ package org.eclipse.cdt.internal.ui.text;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-
 import java.util.Iterator;
+
+import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextPresentation;
 
 
 public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter {
@@ -52,10 +52,11 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		int yoursEnd=   offset + insertLength -1;
 		yoursEnd= Math.max(yoursStart, yoursEnd);
 		
-		Iterator e= presentation.getAllStyleRangeIterator();
+		@SuppressWarnings("unchecked")
+		Iterator<StyleRange> e= presentation.getAllStyleRangeIterator();
 		while (e.hasNext()) {
 			
-			StyleRange range= (StyleRange) e.next();
+			StyleRange range= e.next();
 		
 			int myStart= range.start;
 			int myEnd=   range.start + range.length -1;

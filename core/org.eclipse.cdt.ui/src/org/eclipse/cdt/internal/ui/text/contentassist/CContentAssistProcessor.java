@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -148,14 +147,14 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#filterAndSort(java.util.List, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected List filterAndSortProposals(List proposals, IProgressMonitor monitor, ContentAssistInvocationContext context) {
+	protected List<ICompletionProposal> filterAndSortProposals(List<ICompletionProposal> proposals, IProgressMonitor monitor, ContentAssistInvocationContext context) {
 		IProposalFilter filter = getCompletionFilter();
 		ICCompletionProposal[] proposalsInput= new ICCompletionProposal[proposals.size()];
 		// wrap proposals which are no ICCompletionProposals
 		boolean wrapped= false;
 		int i=0;
-		for (Iterator iterator = proposals.iterator(); iterator.hasNext(); ) {
-			ICompletionProposal proposal= (ICompletionProposal) iterator.next();
+		for (Object element : proposals) {
+			ICompletionProposal proposal= (ICompletionProposal) element;
 			if (proposal instanceof ICCompletionProposal) {
 				proposalsInput[i++]= (ICCompletionProposal)proposal;
 			} else {
@@ -177,12 +176,11 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			propsComp.setOrderAlphabetically(sortByAlphabet);
 			Arrays.sort(proposalsFiltered, propsComp);
 		}
-		List filteredList;
+		List<ICompletionProposal> filteredList;
 		if (wrapped) {
 			// unwrap again
-			filteredList= new ArrayList(proposalsFiltered.length);
-			for (int j= 0; j < proposalsFiltered.length; j++) {
-				ICCompletionProposal proposal= proposalsFiltered[j];
+			filteredList= new ArrayList<ICompletionProposal>(proposalsFiltered.length);
+			for (ICCompletionProposal proposal : proposalsFiltered) {
 				if (proposal instanceof CCompletionProposalWrapper) {
 					filteredList.add(((CCompletionProposalWrapper)proposal).unwrap());
 				} else {
@@ -190,7 +188,8 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 				}
 			}
 		} else {
-			filteredList= Arrays.asList(proposalsFiltered);
+			final ICompletionProposal[] tmp= proposalsFiltered;
+			filteredList= Arrays.asList(tmp);
 		}
 		return filteredList;
 	}
@@ -222,7 +221,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	}
 	
 	@Override
-	protected List filterAndSortContextInformation(List contexts,
+	protected List<IContextInformation> filterAndSortContextInformation(List<IContextInformation> contexts,
 			IProgressMonitor monitor) {
 		return contexts;
 	}

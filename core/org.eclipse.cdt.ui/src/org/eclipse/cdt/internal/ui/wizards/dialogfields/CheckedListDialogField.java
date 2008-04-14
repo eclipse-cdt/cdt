@@ -31,16 +31,16 @@ import org.eclipse.swt.widgets.Table;
  * List model is independend of widget creation.
  * DialogFields controls are: Label, List and Composite containing buttons.
  */
-public class CheckedListDialogField extends ListDialogField {
+public class CheckedListDialogField<T> extends ListDialogField<T> {
 	
 	private int fCheckAllButtonIndex;
 	private int fUncheckAllButtonIndex;
 	
-	private List fCheckElements;
+	private List<T> fCheckElements;
 
-	public CheckedListDialogField(IListAdapter adapter, String[] customButtonLabels, IBaseLabelProvider lprovider) {
+	public CheckedListDialogField(IListAdapter<T> adapter, String[] customButtonLabels, IBaseLabelProvider lprovider) {
 		super(adapter, customButtonLabels, lprovider);
-		fCheckElements= new ArrayList();
+		fCheckElements= new ArrayList<T>();
 		
 		fCheckAllButtonIndex= -1;
 		fUncheckAllButtonIndex= -1;
@@ -117,8 +117,8 @@ public class CheckedListDialogField extends ListDialogField {
 	/**
 	 * Gets the checked elements.
 	 */
-	public List getCheckedElements() {
-		return new ArrayList(fCheckElements);
+	public List<T> getCheckedElements() {
+		return new ArrayList<T>(fCheckElements);
 	}
 	
 	/**
@@ -138,8 +138,8 @@ public class CheckedListDialogField extends ListDialogField {
 	/**
 	 * Sets the checked elements.
 	 */	
-	public void setCheckedElements(Collection list) {
-		fCheckElements= new ArrayList(list);
+	public void setCheckedElements(Collection<T> list) {
+		fCheckElements= new ArrayList<T>(list);
 		if (fTable != null) {
 			((CheckboxTableViewer)fTable).setCheckedElements(list.toArray());
 		}
@@ -149,7 +149,7 @@ public class CheckedListDialogField extends ListDialogField {
 	/**
 	 * Sets the checked state of an element.
 	 */		
-	public void setChecked(Object object, boolean state) {
+	public void setChecked(T object, boolean state) {
 		setCheckedWithoutUpdate(object, state);
 		checkStateChanged();
 	}
@@ -157,7 +157,7 @@ public class CheckedListDialogField extends ListDialogField {
 	/**
 	 * Sets the checked state of an element. No dialog changed listener is informed.
 	 */		
-	public void setCheckedWithoutUpdate(Object object, boolean state) {
+	public void setCheckedWithoutUpdate(T object, boolean state) {
 		if (state) {
 			if (!fCheckElements.contains(object)) {
 				fCheckElements.add(object);
@@ -188,7 +188,9 @@ public class CheckedListDialogField extends ListDialogField {
 			
 	void doCheckStateChanged(CheckStateChangedEvent e) {
 		if (e.getChecked()) {
-			fCheckElements.add(e.getElement());
+			@SuppressWarnings("unchecked")
+			T elem= (T) e.getElement();
+			fCheckElements.add(elem);
 		} else {
 			fCheckElements.remove(e.getElement());
 		}		
@@ -199,7 +201,7 @@ public class CheckedListDialogField extends ListDialogField {
 	 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField#replaceElement(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void replaceElement(Object oldElement, Object newElement) throws IllegalArgumentException {
+	public void replaceElement(T oldElement, T newElement) throws IllegalArgumentException {
 		boolean wasChecked= isChecked(oldElement);
 		super.replaceElement(oldElement, newElement);
 		setChecked(newElement, wasChecked);

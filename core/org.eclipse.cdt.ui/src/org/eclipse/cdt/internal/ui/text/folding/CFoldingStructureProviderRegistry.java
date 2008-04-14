@@ -28,7 +28,7 @@ public class CFoldingStructureProviderRegistry {
 	private static final String EXTENSION_POINT= "foldingStructureProviders"; //$NON-NLS-1$
 	
 	/** The map of descriptors, indexed by their identifiers. */
-	private Map fDescriptors;
+	private Map<String, CFoldingStructureProviderDescriptor> fDescriptors;
 
 	/**
 	 * Creates a new instance. 
@@ -46,7 +46,7 @@ public class CFoldingStructureProviderRegistry {
 	public CFoldingStructureProviderDescriptor[] getFoldingProviderDescriptors() {
 		synchronized (this) {
 			ensureRegistered();
-			return (CFoldingStructureProviderDescriptor[]) fDescriptors.values().toArray(new CFoldingStructureProviderDescriptor[fDescriptors.size()]);
+			return fDescriptors.values().toArray(new CFoldingStructureProviderDescriptor[fDescriptors.size()]);
 		}
 	}
 	
@@ -61,7 +61,7 @@ public class CFoldingStructureProviderRegistry {
 	public CFoldingStructureProviderDescriptor getFoldingProviderDescriptor(String id) {
 		synchronized (this) {
 			ensureRegistered();
-			return (CFoldingStructureProviderDescriptor) fDescriptors.get(id);
+			return fDescriptors.get(id);
 		}
 	}
 	
@@ -102,7 +102,7 @@ public class CFoldingStructureProviderRegistry {
 	 */
 	public void reloadExtensions() {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		Map map= new HashMap();
+		Map<String, CFoldingStructureProviderDescriptor> map= new HashMap<String, CFoldingStructureProviderDescriptor>();
 
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(CUIPlugin.getPluginId(), EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {

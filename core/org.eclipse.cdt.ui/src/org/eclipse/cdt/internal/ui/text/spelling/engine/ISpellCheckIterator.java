@@ -17,7 +17,7 @@ import java.util.Iterator;
 /**
  * Interface for iterators used for spell checking.
  */
-public interface ISpellCheckIterator extends Iterator {
+public interface ISpellCheckIterator extends Iterator<String> {
 	/**
 	 * Returns the begin index (inclusive) of the current word.
 	 *

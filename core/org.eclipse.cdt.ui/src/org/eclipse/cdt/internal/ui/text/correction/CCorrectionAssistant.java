@@ -18,15 +18,8 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -40,7 +33,10 @@ import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
-
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -156,7 +152,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 			return super.showPossibleQuickAssists();
 
 
-		ArrayList resultingAnnotations= new ArrayList(20);
+		ArrayList<Annotation> resultingAnnotations= new ArrayList<Annotation>(20);
 		try {
 			Point selectedRange= fViewer.getSelectedRange();
 			int currOffset= selectedRange.x;
@@ -172,7 +168,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);
 		}
-		fCurrentAnnotations= (Annotation[]) resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
+		fCurrentAnnotations= resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
 
 		return super.showPossibleQuickAssists();
 	}
@@ -190,7 +186,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		return document.getLineInformationOfOffset(invocationLocation);
 	}
 	
-	public static int collectQuickFixableAnnotations(ITextEditor editor, int invocationLocation, boolean goToClosest, ArrayList resultingAnnotations) throws BadLocationException {
+	public static int collectQuickFixableAnnotations(ITextEditor editor, int invocationLocation, boolean goToClosest, ArrayList<Annotation> resultingAnnotations) throws BadLocationException {
 		IAnnotationModel model= CUIPlugin.getDefault().getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 		if (model == null) {
 			return invocationLocation;
@@ -198,7 +194,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		
 		ensureUpdatedAnnotations(editor);
 		
-		Iterator iter= model.getAnnotationIterator();
+		Iterator<?> iter= model.getAnnotationIterator();
 		if (goToClosest) {
 			IRegion lineInfo= getRegionOfInterest(editor, invocationLocation);
 			if (lineInfo == null) {
@@ -207,8 +203,8 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 			int rangeStart= lineInfo.getOffset();
 			int rangeEnd= rangeStart + lineInfo.getLength();
 			
-			ArrayList allAnnotations= new ArrayList();
-			ArrayList allPositions= new ArrayList();
+			ArrayList<Annotation> allAnnotations= new ArrayList<Annotation>();
+			ArrayList<Position> allPositions= new ArrayList<Position>();
 			int bestOffset= Integer.MAX_VALUE;
 			while (iter.hasNext()) {
 				Annotation annot= (Annotation) iter.next();
@@ -225,24 +221,23 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 				return invocationLocation;
 			}
 			for (int i= 0; i < allPositions.size(); i++) {
-				Position pos= (Position) allPositions.get(i);
+				Position pos= allPositions.get(i);
 				if (isInside(bestOffset, pos.offset, pos.offset + pos.length)) {
 					resultingAnnotations.add(allAnnotations.get(i));
 				}
 			}
 			return bestOffset;
-		} else {
-			while (iter.hasNext()) {
-				Annotation annot= (Annotation) iter.next();
-				if (CCorrectionProcessor.isQuickFixableType(annot)) {
-					Position pos= model.getPosition(annot);
-					if (pos != null && isInside(invocationLocation, pos.offset, pos.offset + pos.length)) {
-						resultingAnnotations.add(annot);
-					}
+		}
+		while (iter.hasNext()) {
+			Annotation annot= (Annotation) iter.next();
+			if (CCorrectionProcessor.isQuickFixableType(annot)) {
+				Position pos= model.getPosition(annot);
+				if (pos != null && isInside(invocationLocation, pos.offset, pos.offset + pos.length)) {
+					resultingAnnotations.add(annot);
 				}
 			}
-			return invocationLocation;
 		}
+		return invocationLocation;
 	}
 
 	private static void ensureUpdatedAnnotations(ITextEditor editor) {

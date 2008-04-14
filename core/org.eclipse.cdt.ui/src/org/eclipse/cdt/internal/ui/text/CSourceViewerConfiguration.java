@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
@@ -642,10 +643,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 		int stateMasks[]= new int[hoverDescs.length];
 		int stateMasksLength= 0;		
-		for (int i= 0; i < hoverDescs.length; i++) {
-			if (hoverDescs[i].isEnabled()) {
+		for (CEditorTextHoverDescriptor hoverDesc : hoverDescs) {
+			if (hoverDesc.isEnabled()) {
 				int j= 0;
-				int stateMask= hoverDescs[i].getStateMask();
+				int stateMask= hoverDesc.getStateMask();
 				while (j < stateMasksLength) {
 					if (stateMasks[j] == stateMask)
 						break;
@@ -784,8 +785,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		// Register information provider
 		IInformationProvider provider= new CInformationProvider(getEditor());
 		String[] contentTypes= getConfiguredContentTypes(sourceViewer);
-		for (int i= 0; i < contentTypes.length; i++)
-			presenter.setInformationProvider(provider, contentTypes[i]);
+		for (String contentType : contentTypes)
+			presenter.setInformationProvider(provider, contentType);
 		
 		presenter.setSizeConstraints(60, 10, true, true);
 		return presenter;
@@ -975,8 +976,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectorTargets(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	@Override
-	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
-		Map targets= super.getHyperlinkDetectorTargets(sourceViewer);
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		@SuppressWarnings("unchecked")
+		Map<String, IAdaptable> targets= super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put("org.eclipse.cdt.ui.cCode", fTextEditor); //$NON-NLS-1$
 		return targets;
 	}

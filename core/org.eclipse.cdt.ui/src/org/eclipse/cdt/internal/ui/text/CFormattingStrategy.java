@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -35,9 +36,9 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	
 
 	/** Documents to be formatted by this strategy */
-	private final LinkedList fDocuments= new LinkedList();
+	private final LinkedList<IDocument> fDocuments= new LinkedList<IDocument>();
 	/** Partitions to be formatted by this strategy */
-	private final LinkedList fPartitions= new LinkedList();
+	private final LinkedList<TypedPosition> fPartitions= new LinkedList<TypedPosition>();
 
 	/**
 	 * Creates a new java formatting strategy.
@@ -53,17 +54,18 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	public void format() {
 		super.format();
 		
-		final IDocument document= (IDocument)fDocuments.removeFirst();
-		final TypedPosition partition= (TypedPosition)fPartitions.removeFirst();
+		final IDocument document= fDocuments.removeFirst();
+		final TypedPosition partition= fPartitions.removeFirst();
 		
 		if (document != null && partition != null) {
 			try {
-
+				@SuppressWarnings("unchecked")
+				final Map<String,String> preferences = getPreferences();
 				final TextEdit edit = CodeFormatterUtil.format(
 						CodeFormatter.K_TRANSLATION_UNIT, document.get(),
 						partition.getOffset(), partition.getLength(), 0,
 						TextUtilities.getDefaultLineDelimiter(document),
-						getPreferences());
+						preferences);
 
 				if (edit != null)
 					edit.apply(document);
@@ -85,8 +87,14 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	public void formatterStarts(final IFormattingContext context) {
 		super.formatterStarts(context);
 		
-		fPartitions.addLast(context.getProperty(FormattingContextProperties.CONTEXT_PARTITION));
-		fDocuments.addLast(context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM));
+		Object property = context.getProperty(FormattingContextProperties.CONTEXT_PARTITION);
+		if (property instanceof TypedPosition) {
+			fPartitions.addLast((TypedPosition) property);
+		}
+		property= context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM);
+		if (property instanceof IDocument) {			
+			fDocuments.addLast((IDocument) property);
+		}
 	}
 
 	/*

@@ -31,12 +31,12 @@ import org.eclipse.swt.custom.StyleRange;
  * the tags or cut them out.
  */
 public class HTML2TextReader extends SubstitutionTextReader {
-	private static final Map fgEntityLookup;
-	private static final Set fgTags;
+	private static final Map<String, String> fgEntityLookup;
+	private static final Set<String> fgTags;
 	
 	static {
 		
-		fgTags= new HashSet();
+		fgTags= new HashSet<String>();
 		fgTags.add("b"); //$NON-NLS-1$
 		fgTags.add("br"); //$NON-NLS-1$
 		fgTags.add("h5"); //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		fgTags.add("li"); //$NON-NLS-1$
 		fgTags.add("ul"); //$NON-NLS-1$
 		
-		fgEntityLookup= new HashMap(7);
+		fgEntityLookup= new HashMap<String, String>(7);
 		fgEntityLookup.put("lt", "<"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("gt", ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("nbsp", " "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -230,7 +230,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			} catch (NumberFormatException e) {
 			}
 		} else {
-			String str= (String) fgEntityLookup.get(symbol);
+			String str= fgEntityLookup.get(symbol);
 			if (str != null) {
 				return str;
 			}

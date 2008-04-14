@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.util;
  
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,13 +20,16 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.cdt.internal.ui.text.IColorManager;
+import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
+
 /**
  * CDT color manager.
  */
 public class CColorManager implements IColorManager, IColorManagerExtension {
 	
-	protected Map fKeyTable= new HashMap(10);
-	protected Map fDisplayTable= new HashMap(2);
+	protected Map<String, RGB> fKeyTable= new HashMap<String, RGB>(10);
+	protected Map<Display, Map<RGB, Color>> fDisplayTable= new HashMap<Display, Map<RGB, Color>>(2);
 	
 	/**
 	 * Flag which tells if the colors are automatically disposed when
@@ -59,11 +60,11 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 	}
 
 	protected void dispose(Display display) {		
-		Map colorTable= (Map) fDisplayTable.get(display);
+		Map<RGB, Color> colorTable= fDisplayTable.get(display);
 		if (colorTable != null) {
-			Iterator e= colorTable.values().iterator();
+			Iterator<Color> e= colorTable.values().iterator();
 			while (e.hasNext())
-				((Color) e.next()).dispose();
+				(e.next()).dispose();
 		}
 	}
 	
@@ -76,9 +77,9 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 			return null;
 		
 		final Display display= Display.getCurrent();
-		Map colorTable= (Map) fDisplayTable.get(display);
+		Map<RGB, Color> colorTable= fDisplayTable.get(display);
 		if (colorTable == null) {
-			colorTable= new HashMap(10);
+			colorTable= new HashMap<RGB, Color>(10);
 			fDisplayTable.put(display, colorTable);
 			if (fAutoDisposeOnDisplayDispose) {
 				display.disposeExec(new Runnable() {
@@ -89,7 +90,7 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 			}
 		}
 		
-		Color color= (Color) colorTable.get(rgb);
+		Color color= colorTable.get(rgb);
 		if (color == null) {
 			color= new Color(Display.getCurrent(), rgb);
 			colorTable.put(rgb, color);
@@ -114,7 +115,7 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 		if (key == null)
 			return null;
 			
-		RGB rgb= (RGB) fKeyTable.get(key);
+		RGB rgb= fKeyTable.get(key);
 		return getColor(rgb);
 	}
 	

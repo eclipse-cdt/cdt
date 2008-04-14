@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -33,7 +34,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer {
 
 	@Override
-	protected List computeCompletionProposals(
+	protected List<ICompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext cContext,
 			IASTCompletionNode completionNode, String prefix)
 			throws CoreException {
@@ -58,7 +59,7 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 		}
 		
 		if (!handleHelp) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		
 		final ITranslationUnit tu = cContext.getTranslationUnit();
@@ -77,17 +78,16 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 		IFunctionSummary[] summaries = CHelpProviderManager.getDefault()
 				.getMatchingFunctions(helpContext, prefix);
 		if (summaries == null)
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 
 		int repOffset = cContext.getInvocationOffset() - prefix.length();
 		int repLength = prefix.length();
 		Image image = CUIPlugin.getImageDescriptorRegistry().get(
 				CElementImageProvider.getFunctionImageDescriptor());
 
-		List proposals = new ArrayList();
+		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 
-		for (int j = 0; j < summaries.length; j++) {
-			IFunctionSummary summary = summaries[j];
+		for (IFunctionSummary summary : summaries) {
 			String fname = summary.getName() + "()"; //$NON-NLS-1$
 			String fdesc = summary.getDescription();
 			IFunctionSummary.IFunctionPrototypeSummary fproto = summary

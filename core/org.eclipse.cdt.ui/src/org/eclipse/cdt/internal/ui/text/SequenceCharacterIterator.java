@@ -87,8 +87,7 @@ public class SequenceCharacterIterator implements CharacterIterator {
 	public char last() {
 		if (fFirst == fLast)
 			return setIndex(getEndIndex());
-		else
-			return setIndex(getEndIndex() - 1);
+		return setIndex(getEndIndex() - 1);
 	}
 
 	/*
@@ -97,8 +96,7 @@ public class SequenceCharacterIterator implements CharacterIterator {
 	public char current() {
 		if (fIndex >= fFirst && fIndex < fLast)
 			return fSequence.charAt(fIndex);
-		else
-			return DONE;
+		return DONE;
 	}
 
 	/*
@@ -114,9 +112,8 @@ public class SequenceCharacterIterator implements CharacterIterator {
 	public char previous() {
 		if (fIndex > getBeginIndex()) {
 			return setIndex(fIndex - 1);
-		} else {
-			return DONE;
 		}
+		return DONE;
 	}
 
 	/*

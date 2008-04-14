@@ -74,7 +74,7 @@ public class SpellEvent implements ISpellEvent {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEvent#getProposals()
 	 */
-	public final Set getProposals() {
+	public final Set<RankedWordProposal> getProposals() {
 		return fChecker.getProposals(fWord, fSentence);
 	}
 

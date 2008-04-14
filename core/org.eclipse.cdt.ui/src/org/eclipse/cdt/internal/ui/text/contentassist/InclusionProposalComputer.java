@@ -31,6 +31,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -54,15 +56,15 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	private String fErrorMessage;
 
-	public List computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
-		List<CCompletionProposal> proposals= Collections.emptyList();
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+		List<ICompletionProposal> proposals= Collections.emptyList();
 		fErrorMessage= null;
 		
 		if (context instanceof CContentAssistInvocationContext) {
 			CContentAssistInvocationContext cContext= (CContentAssistInvocationContext) context;
 			if (inIncludeDirective(cContext)) {
 				// add include file proposals
-				proposals= new ArrayList<CCompletionProposal>();
+				proposals= new ArrayList<ICompletionProposal>();
 				try {
 					addInclusionProposals(cContext, proposals);
 				} catch (Exception exc) {
@@ -74,7 +76,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		return proposals;
 	}
 
-	public List computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return null;
 	}
 
@@ -113,7 +115,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		return false;
 	}
 
-	private void addInclusionProposals(CContentAssistInvocationContext context, List<CCompletionProposal> proposals) throws Exception {
+	private void addInclusionProposals(CContentAssistInvocationContext context, List<ICompletionProposal> proposals) throws Exception {
 		if (context.isContextInformationStyle()) {
 			return;
 		}
@@ -130,13 +132,11 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		if (potentialIncludes.length > 0) {
 			IInclude[] includes= context.getTranslationUnit().getIncludes();
 			Set<String> alreadyIncluded= new HashSet<String>();
-			for (int i = 0; i < includes.length; i++) {
-				IInclude includeDirective= includes[i];
+			for (IInclude includeDirective : includes) {
 				alreadyIncluded.add(includeDirective.getElementName());
 			}
 			Image image = getImage(CElementImageProvider.getIncludeImageDescriptor());
-			for (int i = 0; i < potentialIncludes.length; i++) {
-				String include= potentialIncludes[i];
+			for (String include : potentialIncludes) {
 				if (alreadyIncluded.add(include)) {
 					final char openingBracket= angleBrackets ? '<' : '"';
 					final char closingBracket= angleBrackets ? '>' : '"';
@@ -205,16 +205,16 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 			String[] quoteIncludes= extendedInfo.getLocalIncludePath();
 			
 			if (quoteIncludes != null) {
-				for (int i = 0; i < quoteIncludes.length; i++) {
-					IPath includeDir= new Path(quoteIncludes[i]);
+				for (String quoteInclude : quoteIncludes) {
+					IPath includeDir= new Path(quoteInclude);
 					collectIncludeFilesFromDirectory(tu, includeDir, prefixPath, includeFiles);
 				}
 			}
 		}
 		
 		String[] allIncludes= info.getIncludePaths();
-		for (int i = 0; i < allIncludes.length; i++) {
-			IPath includeDir= new Path(allIncludes[i]);
+		for (String allInclude : allIncludes) {
+			IPath includeDir= new Path(allInclude);
 			collectIncludeFilesFromDirectory(tu, includeDir, prefixPath, includeFiles);
 		}
 	}
@@ -228,7 +228,6 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @param includeFiles  the result list
 	 */
 	private void collectIncludeFilesFromDirectory(ITranslationUnit tu, IPath directory, IPath prefixPath, List<String> includeFiles) {
-		final boolean isCpp= tu.isCXXLanguage();
 		final String namePrefix;
 		if (prefixPath.segmentCount() == 0) {
 			namePrefix= ""; //$NON-NLS-1$
@@ -250,8 +249,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		final int prefixLength = namePrefix.length();
 		final IProject project= tu.getCProject().getProject();
 		File[] files= fileDir.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			File file = files[i];
+		for (File file : files) {
 			final String name= file.getName();
 			if (name.length() >= prefixLength && namePrefix.equalsIgnoreCase(name.substring(0, prefixLength))) {
 				if (file.isFile()) {
@@ -275,7 +273,6 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 	 * @throws CoreException
 	 */
 	private void collectIncludeFilesFromContainer(final ITranslationUnit tu, IContainer parent, IPath prefixPath, final List<String> includeFiles) throws CoreException {
-		final boolean isCpp= tu.isCXXLanguage();
 		final String namePrefix;
 		if (prefixPath.segmentCount() == 0) {
 			namePrefix= ""; //$NON-NLS-1$

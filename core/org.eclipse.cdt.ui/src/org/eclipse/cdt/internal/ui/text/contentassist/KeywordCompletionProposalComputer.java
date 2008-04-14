@@ -21,6 +21,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -31,14 +32,13 @@ import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
-public class KeywordCompletionProposalComputer extends ParsingBasedProposalComputer implements ICompletionProposalComputer {
+public class KeywordCompletionProposalComputer extends ParsingBasedProposalComputer {
 
 	@Override
-	protected List<CCompletionProposal> computeCompletionProposals(
+	protected List<ICompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix)
 			throws CoreException {
@@ -58,7 +58,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
         // keywords are matched case-sensitive
 		final int relevance = RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.KEYWORD_TYPE_RELEVANCE;
 
-		List<CCompletionProposal> proposals = new ArrayList<CCompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 
 		if (inPreprocessorDirective(context)) {
 			// TODO split this into a separate proposal computer?

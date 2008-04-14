@@ -20,6 +20,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -86,11 +87,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 	
 	@Override
-	protected List<CCompletionProposal> computeCompletionProposals(
+	protected List<ICompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
 
-		List<CCompletionProposal> proposals = new ArrayList<CCompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 		
 		if(inPreprocessorDirective(context)) {
 			if (!inPreprocessorKeyword(context)) {
@@ -183,7 +184,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return false;
 	}
 
-	private void addMacroProposals(CContentAssistInvocationContext context, String prefix, List<CCompletionProposal> proposals) {
+	private void addMacroProposals(CContentAssistInvocationContext context, String prefix, List<ICompletionProposal> proposals) {
 		char[] prefixChars= prefix.toCharArray();
 		final boolean matchPrefix= !context.isContextInformationStyle();
 		IASTCompletionNode completionNode = context.getCompletionNode();
@@ -203,7 +204,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			}
 	}
 	
-	private void handleMacro(IASTPreprocessorMacroDefinition macro, CContentAssistInvocationContext context, String prefix, List<CCompletionProposal> proposals) {
+	private void handleMacro(IASTPreprocessorMacroDefinition macro, CContentAssistInvocationContext context, String prefix, List<ICompletionProposal> proposals) {
 		final String macroName = macro.getName().toString();
 		final int baseRelevance= computeBaseRelevance(prefix, macroName);
 
@@ -255,7 +256,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			CContentAssistInvocationContext cContext,
 			String prefix, 
 			IASTCompletionContext astContext, 
-			List<CCompletionProposal> proposals) {
+			List<ICompletionProposal> proposals) {
 
 		if ((binding instanceof CPPImplicitFunction
 				|| binding instanceof CPPImplicitFunctionTemplate || binding instanceof CPPImplicitTypedef)
@@ -293,12 +294,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return name.length == 0 || name[0] == '{';
 	}
 
-	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext, CContentAssistInvocationContext context, int baseRelevance, List<CCompletionProposal> proposals) {
+	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext, CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		if (context.isContextInformationStyle()) {
 			try {
 				ICPPConstructor[] constructors = classType.getConstructors();
-				for (int i = 0; i < constructors.length; i++) {
-					handleFunction(constructors[i], context, baseRelevance, proposals);
+				for (ICPPConstructor constructor : constructors) {
+					handleFunction(constructor, context, baseRelevance, proposals);
 				}
 			} catch (DOMException e) {
 			}
@@ -309,10 +310,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				case ICPPClassType.k_class:
 					relevance= RelevanceConstants.CLASS_TYPE_RELEVANCE;
 					break;
-				case ICPPClassType.k_struct:
+				case ICompositeType.k_struct:
 					relevance= RelevanceConstants.STRUCT_TYPE_RELEVANCE;
 					break;
-				case ICPPClassType.k_union:
+				case ICompositeType.k_union:
 					relevance= RelevanceConstants.UNION_TYPE_RELEVANCE;
 					break;
 				}
@@ -328,7 +329,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 	}
 	
-	private void handleFunction(IFunction function, CContentAssistInvocationContext context, int baseRelevance, List<CCompletionProposal> proposals) {	
+	private void handleFunction(IFunction function, CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {	
 		Image image = getImage(function);
 		
 		StringBuilder repStringBuff = new StringBuilder();
@@ -340,7 +341,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		String returnTypeStr = null;
 		try {
 			IParameter[] params = function.getParameters();
-			if (params != null)
+			if (params != null) {
 				for (int i = 0; i < params.length; ++i) {
 					IType paramType = params[i].getType();
 					if (i > 0) {
@@ -357,18 +358,18 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					}
 				}
 			
-			if (function.takesVarArgs()) {
-				if (params.length > 0) {
-                    dispargs.append(',');
-                    idargs.append(',');
-                }
-                dispargs.append("..."); //$NON-NLS-1$
-                idargs.append("..."); //$NON-NLS-1$
-			} else if (params.length == 0) { // force the void in
-			    dispargs.append("void"); //$NON-NLS-1$
-                idargs.append("void"); //$NON-NLS-1$
-            }
-			
+				if (function.takesVarArgs()) {
+					if (params.length > 0) {
+						dispargs.append(',');
+						idargs.append(',');
+					}
+					dispargs.append("..."); //$NON-NLS-1$
+					idargs.append("..."); //$NON-NLS-1$
+				} else if (params.length == 0) { // force the void in
+					dispargs.append("void"); //$NON-NLS-1$
+					idargs.append("void"); //$NON-NLS-1$
+				}
+			}
 			IFunctionType functionType = function.getType();
 			if (functionType != null) {
 				IType returnType = functionType.getReturnType();
@@ -413,7 +414,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		proposals.add(proposal);
 	}
 	
-	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, int baseRelevance, List<CCompletionProposal> proposals) {
+	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		StringBuilder repStringBuff = new StringBuilder();
 		repStringBuff.append(variable.getName());
 		
@@ -479,7 +480,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			IASTCompletionContext astContext,
 			CContentAssistInvocationContext cContext, 
 			int baseRelevance, 
-			List<CCompletionProposal> proposals) {
+			List<ICompletionProposal> proposals) {
 
 		if (astContext instanceof ICPPASTQualifiedName) {
 			IASTCompletionContext parent = ((ICPPASTQualifiedName) astContext)

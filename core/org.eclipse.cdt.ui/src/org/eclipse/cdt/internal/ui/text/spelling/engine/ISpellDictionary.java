@@ -40,7 +40,7 @@ public interface ISpellDictionary {
 	 *                   <code>false</code> otherwise
 	 * @return Array of ranked word proposals
 	 */
-	public Set getProposals(String word, boolean sentence);
+	public Set<RankedWordProposal> getProposals(String word, boolean sentence);
 
 	/**
 	 * Is the specified word correctly spelled?

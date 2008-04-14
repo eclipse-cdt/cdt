@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.ui.text.spelling.engine;
 /**
  * Ranked word proposal for quick fix and content assist.
  */
-public class RankedWordProposal implements Comparable {
+public class RankedWordProposal implements Comparable<RankedWordProposal> {
 	/** The word rank */
 	private int fRank;
 
@@ -36,9 +36,8 @@ public class RankedWordProposal implements Comparable {
 	/*
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public final int compareTo(Object object) {
+	public final int compareTo(RankedWordProposal word) {
 
-		final RankedWordProposal word= (RankedWordProposal)object;
 		final int rank= word.getRank();
 
 		if (fRank < rank)

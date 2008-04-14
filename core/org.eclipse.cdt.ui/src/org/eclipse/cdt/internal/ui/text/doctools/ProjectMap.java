@@ -158,12 +158,12 @@ class ProjectMap {
 		}
 
 		// invert and persist associations
-		for(Iterator i= fMap.values().iterator(); i.hasNext();) {
-			String cid= (String) i.next();
+		for(Iterator<String> i= fMap.values().iterator(); i.hasNext();) {
+			String cid= i.next();
 			Element commentNode= data.getOwnerDocument().createElement(ELEMENT_DOC_COMMENT_OWNER);
 			commentNode.setAttribute(ATTRKEY_DCO_ID, cid);
-			for(Iterator j= fMap.keySet().iterator(); j.hasNext(); ) {
-				IPath path= (IPath) j.next();
+			for(Iterator<IPath> j= fMap.keySet().iterator(); j.hasNext(); ) {
+				IPath path= j.next();
 				String ccid= fMap.get(path);
 				if(cid.equals(ccid)) {
 					Element pathNode= data.getOwnerDocument().createElement(ELEMENT_PATH);

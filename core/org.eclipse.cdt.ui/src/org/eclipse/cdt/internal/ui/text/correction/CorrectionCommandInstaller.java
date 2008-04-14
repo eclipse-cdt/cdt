@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.text.correction;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IWorkbench;
@@ -39,7 +38,7 @@ public class CorrectionCommandInstaller {
 	 */
 	public static final String ASSIST_SUFFIX= ".assist"; //$NON-NLS-1$
 	
-	private List fCorrectionHandlerActivations;
+	private List<IHandlerActivation> fCorrectionHandlerActivations;
 	
 	public CorrectionCommandInstaller() {
 		fCorrectionHandlerActivations= null;
@@ -56,11 +55,12 @@ public class CorrectionCommandInstaller {
 		if (fCorrectionHandlerActivations != null) {
 			CUIPlugin.getDefault().logErrorMessage("correction handler activations not released"); //$NON-NLS-1$
 		}
-		fCorrectionHandlerActivations= new ArrayList();
+		fCorrectionHandlerActivations= new ArrayList<IHandlerActivation>();
 		
-		Collection definedCommandIds= commandService.getDefinedCommandIds();
-		for (Iterator iter= definedCommandIds.iterator(); iter.hasNext();) {
-			String id= (String) iter.next();
+		@SuppressWarnings("unchecked")
+		Collection<String> definedCommandIds= commandService.getDefinedCommandIds();
+		for (Object element : definedCommandIds) {
+			String id= (String) element;
 			if (id.startsWith(COMMAND_PREFIX)) {
 				boolean isAssist= id.endsWith(ASSIST_SUFFIX);
 				CorrectionCommandHandler handler= new CorrectionCommandHandler(editor, id, isAssist);

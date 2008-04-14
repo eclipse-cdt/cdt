@@ -38,7 +38,7 @@ public class CHelpProviderDescriptor {
 	final private static String ELEMENT_PROVIDER = "provider"; //$NON-NLS-1$
 	final private static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
-	private static Map fProvidersMap = null;
+	private static Map<String, ICHelpProvider> fProvidersMap = null;
 
 	private ICHelpProvider fHelpProvider = null;
 	private IConfigurationElement fConfigElement;
@@ -79,9 +79,9 @@ public class CHelpProviderDescriptor {
 		return null;
 	}
 
-	private static Map getProvidersMap(){
+	private static Map<String, ICHelpProvider> getProvidersMap(){
 		if(fProvidersMap == null){
-			fProvidersMap = new HashMap();
+			fProvidersMap = new HashMap<String, ICHelpProvider>();
 		}
 		return fProvidersMap;
 	}
@@ -91,9 +91,9 @@ public class CHelpProviderDescriptor {
 		if(id == null || "".equals(id)) //$NON-NLS-1$
 			return null;
 
-		Map providersMap = getProvidersMap();
+		Map<String, ICHelpProvider> providersMap = getProvidersMap();
 		try{
-			ICHelpProvider provider = (ICHelpProvider)providersMap.get(id);
+			ICHelpProvider provider = providersMap.get(id);
 			if(provider == null){
 				provider = (ICHelpProvider)element.createExecutableExtension(CLASS);
 				providersMap.put(id,provider);
@@ -133,13 +133,13 @@ public class CHelpProviderDescriptor {
 			if (provider != null && fProject != null) {
 				ICHelpBook books[] = provider.getCHelpBooks();
 				if(books != null){
-					List descriptorList = new ArrayList();
+					List<CHelpBookDescriptor> descriptorList = new ArrayList<CHelpBookDescriptor>();
 					for(int i = 0; i < books.length; i++){
 						CHelpBookDescriptor des = new CHelpBookDescriptor(books[i],projectElement);
 						if(des.matches(fProject))
 							descriptorList.add(des);
 					}
-					fHelpBookDescriptors = (CHelpBookDescriptor[])descriptorList.toArray(new CHelpBookDescriptor[descriptorList.size()]);
+					fHelpBookDescriptors = descriptorList.toArray(new CHelpBookDescriptor[descriptorList.size()]);
 				}
 			}
 			if(fHelpBookDescriptors == null)
@@ -156,12 +156,12 @@ public class CHelpProviderDescriptor {
 		CHelpBookDescriptor bookDescriptors[] = getCHelpBookDescriptors();
 		if(bookDescriptors.length == 0)
 			return null;
-		List bookList = new ArrayList();
+		List<ICHelpBook> bookList = new ArrayList<ICHelpBook>();
 		for(int i = 0; i < bookDescriptors.length; i++){
 			if(bookDescriptors[i].isEnabled() && bookDescriptors[i].matches(context))
 				bookList.add(bookDescriptors[i].getCHelpBook());
 		}
-		return (ICHelpBook[])bookList.toArray(new ICHelpBook[bookList.size()]);
+		return bookList.toArray(new ICHelpBook[bookList.size()]);
 	}
 	
 	public void serialize(Document doc, Element parentElement){

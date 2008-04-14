@@ -46,7 +46,7 @@ public class WordQuickFixProcessor implements IQuickFixProcessor {
 		final int threshold= SpellingPreferences.spellingProposalThreshold();
 
 		int size= 0;
-		List proposals= null;
+		List<RankedWordProposal> proposals= null;
 		String[] arguments= null;
 
 		IProblemLocation location= null;
@@ -73,7 +73,7 @@ public class WordQuickFixProcessor implements IQuickFixProcessor {
 						if ((sentence && match) && !fixed) {
 							result= new ICCompletionProposal[] { new ChangeCaseProposal(arguments, location.getOffset(), location.getLength(), context, engine.getLocale())};
 						} else {
-							proposals= new ArrayList(checker.getProposals(arguments[0], sentence));
+							proposals= new ArrayList<RankedWordProposal>(checker.getProposals(arguments[0], sentence));
 							size= proposals.size();
 
 							if (threshold > 0 && size > threshold) {
@@ -86,7 +86,7 @@ public class WordQuickFixProcessor implements IQuickFixProcessor {
 							result= new ICCompletionProposal[size + (extendable ? 3 : 2)];
 
 							for (index= 0; index < size; index++) {
-								proposal= (RankedWordProposal)proposals.get(index);
+								proposal= proposals.get(index);
 								result[index]= new WordCorrectionProposal(proposal.getText(), arguments, location.getOffset(), location.getLength(), context, proposal.getRank());
 							}
 

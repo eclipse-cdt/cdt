@@ -18,24 +18,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.osgi.framework.Bundle;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
+
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * CEditorTexHoverDescriptor
  */
-public class CEditorTextHoverDescriptor implements Comparable {
+public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDescriptor> {
 
 	private static final String C_EDITOR_TEXT_HOVER_EXTENSION_POINT= "org.eclipse.cdt.ui.textHovers"; //$NON-NLS-1$
 	private static final String HOVER_TAG= "hover"; //$NON-NLS-1$
@@ -182,28 +184,27 @@ public class CEditorTextHoverDescriptor implements Comparable {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int compareTo(Object o) {
-		return Collator.getInstance().compare(getLabel(), ((CEditorTextHoverDescriptor)o).getLabel());
+	public int compareTo(CEditorTextHoverDescriptor o) {
+		return Collator.getInstance().compare(getLabel(), o.getLabel());
 	}
 
 	private static CEditorTextHoverDescriptor[] createDescriptors(IConfigurationElement[] elements) {
-		List result= new ArrayList(elements.length);
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
+		List<CEditorTextHoverDescriptor> result= new ArrayList<CEditorTextHoverDescriptor>(elements.length);
+		for (IConfigurationElement element : elements) {
 			if (HOVER_TAG.equals(element.getName())) {
 				CEditorTextHoverDescriptor desc= new CEditorTextHoverDescriptor(element);
 				result.add(desc);
 			}
 		}
 		Collections.sort(result);
-		return (CEditorTextHoverDescriptor[])result.toArray(new CEditorTextHoverDescriptor[result.size()]);
+		return result.toArray(new CEditorTextHoverDescriptor[result.size()]);
 	}
 
 	private static void initializeFromPreferences(CEditorTextHoverDescriptor[] hovers) {
 		String compiledTextHoverModifiers= CUIPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS);
 		
 		StringTokenizer tokenizer= new StringTokenizer(compiledTextHoverModifiers, VALUE_SEPARATOR);
-		HashMap idToModifier= new HashMap(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifier= new HashMap<String, String>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id= tokenizer.nextToken();
@@ -214,7 +215,7 @@ public class CEditorTextHoverDescriptor implements Comparable {
 		String compiledTextHoverModifierMasks= CUIPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS);
 
 		tokenizer= new StringTokenizer(compiledTextHoverModifierMasks, VALUE_SEPARATOR);
-		HashMap idToModifierMask= new HashMap(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifierMask= new HashMap<String, String>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id= tokenizer.nextToken();
@@ -223,7 +224,7 @@ public class CEditorTextHoverDescriptor implements Comparable {
 		}
 
 		for (int i= 0; i < hovers.length; i++) {
-			String modifierString= (String)idToModifier.get(hovers[i].getId());
+			String modifierString= idToModifier.get(hovers[i].getId());
 			boolean enabled= true;
 			if (modifierString == null)
 				modifierString= DISABLED_TAG;
@@ -242,7 +243,7 @@ public class CEditorTextHoverDescriptor implements Comparable {
 			if (hovers[i].fStateMask == -1) {
 				// Fallback: use stored modifier masks
 				try {
-					hovers[i].fStateMask= Integer.parseInt((String)idToModifierMask.get(hovers[i].getId()));
+					hovers[i].fStateMask= Integer.parseInt(idToModifierMask.get(hovers[i].getId()));
 				} catch (NumberFormatException ex) {
 					hovers[i].fStateMask= -1;
 				}

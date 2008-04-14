@@ -278,8 +278,9 @@ public class CWordFinder {
 	 * @return  true if curled brace found.
 	 */
 	public static boolean hasCBraces (String s) {
-		if (s.indexOf(CBRACE_L) > -1 || s.indexOf(CBRACE_R) > -1) return true;
-		else return false;
+		if (s.indexOf(CBRACE_L) > -1 || s.indexOf(CBRACE_R) > -1) 
+			return true;
+		return false;
 	}
 }
 

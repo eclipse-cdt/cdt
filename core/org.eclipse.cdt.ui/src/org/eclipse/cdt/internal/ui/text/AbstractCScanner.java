@@ -86,8 +86,8 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 		if(fTokenStore.affectsBehavior(event)) {
 			fTokenStore.adaptToPreferenceChange(event);
 		}
-		for(Iterator i= pcps.iterator(); i.hasNext(); ) {
-			((IPropertyChangeParticipant)i.next()).adaptToPreferenceChange(event);
+		for (IPropertyChangeParticipant propertyChangeParticipant : pcps) {
+			propertyChangeParticipant.adaptToPreferenceChange(event);
 		}
 	}
 
@@ -96,8 +96,8 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		boolean result= fTokenStore.affectsBehavior(event);
-		for(Iterator i= pcps.iterator(); !result && i.hasNext(); ) {
-			result |= ((IPropertyChangeParticipant)i.next()).affectsBehavior(event);
+		for(Iterator<IPropertyChangeParticipant> i= pcps.iterator(); !result && i.hasNext(); ) {
+			result |= (i.next()).affectsBehavior(event);
 		}
 		return result;
 	}

@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -33,6 +34,7 @@ import java.util.Set;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -59,7 +61,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	private IPhoneticDistanceAlgorithm fDistanceAlgorithm= new DefaultPhoneticDistanceAlgorithm();
 
 	/** The mapping from phonetic hashes to word lists */
-	private final Map fHashBuckets= new HashMap(HASH_CAPACITY);
+	private final Map<String, Serializable> fHashBuckets= new HashMap<String, Serializable>(HASH_CAPACITY);
 
 	/** The phonetic hash provider */
 	private IPhoneticHashProvider fHashProvider= new DefaultPhoneticHashProvider();
@@ -100,17 +102,17 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	 *                   Array of close hashes to find the matches
 	 * @return Set of ranked words with bounded distance to the specified word
 	 */
-	protected final Set getCandidates(final String word, final boolean sentence, final ArrayList hashs) {
+	protected final Set<RankedWordProposal> getCandidates(final String word, final boolean sentence, final ArrayList<String> hashs) {
 
 		int distance= 0;
 		String hash= null;
 
 		final StringBuffer buffer= new StringBuffer(BUFFER_CAPACITY);
-		final HashSet result= new HashSet(BUCKET_CAPACITY * hashs.size());
+		final HashSet<RankedWordProposal> result= new HashSet<RankedWordProposal>(BUCKET_CAPACITY * hashs.size());
 
 		for (int index= 0; index < hashs.size(); index++) {
 
-			hash= (String)hashs.get(index);
+			hash= hashs.get(index);
 
 			final Object candidates= getCandidates(hash);
 			if (candidates == null)
@@ -128,10 +130,11 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 				continue;
 			}
 
-			final ArrayList candidateList= (ArrayList)candidates;
+			@SuppressWarnings("unchecked")
+			final ArrayList<String> candidateList= (ArrayList<String>)candidates;
 			for (int offset= 0; offset < candidateList.size(); offset++) {
 
-				String candidate= (String)candidateList.get(offset);
+				String candidate= candidateList.get(offset);
 				distance= fDistanceAlgorithm.getDistance(word, candidate);
 
 				if (distance < DISTANCE_THRESHOLD) {
@@ -162,7 +165,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	 *                   Set of ranked words with smallest possible distance to the
 	 *                   specified word
 	 */
-	protected final void getCandidates(final String word, final boolean sentence, final Set result) {
+	protected final void getCandidates(final String word, final boolean sentence, final Set<RankedWordProposal> result) {
 
 		int distance= 0;
 		int minimum= Integer.MAX_VALUE;
@@ -182,11 +185,12 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 			return;
 		}
 
-		final ArrayList candidateList= (ArrayList)candidates;
-		final ArrayList matches= new ArrayList(candidateList.size());
+		@SuppressWarnings("unchecked")
+		final ArrayList<String> candidateList= (ArrayList<String>)candidates;
+		final ArrayList<RankedWordProposal> matches= new ArrayList<RankedWordProposal>(candidateList.size());
 
 		for (int index= 0; index < candidateList.size(); index++) {
-			String candidate= (String)candidateList.get(index);
+			String candidate= candidateList.get(index);
 			distance= fDistanceAlgorithm.getDistance(word, candidate);
 
 			if (distance <= minimum) {
@@ -238,7 +242,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary#getProposals(java.lang.String,boolean)
 	 */
-	public Set getProposals(final String word, final boolean sentence) {
+	public Set<RankedWordProposal> getProposals(final String word, final boolean sentence) {
 
 		try {
 
@@ -257,10 +261,10 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		final String hash= fHashProvider.getHash(word);
 		final char[] mutators= fHashProvider.getMutators();
 
-		final ArrayList neighborhood= new ArrayList((word.length() + 1) * (mutators.length + 2));
+		final ArrayList<String> neighborhood= new ArrayList<String>((word.length() + 1) * (mutators.length + 2));
 		neighborhood.add(hash);
 
-		final Set candidates= getCandidates(word, sentence, neighborhood);
+		final Set<RankedWordProposal> candidates= getCandidates(word, sentence, neighborhood);
 		neighborhood.clear();
 
 		char previous= 0;
@@ -288,9 +292,9 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 
 		while (true) {
 
-			for (int index= 0; index < mutators.length; index++) {
+			for (char mutator : mutators) {
 
-				characters[offset]= mutators[index];
+				characters[offset]= mutator;
 				neighborhood.add(fHashProvider.getHash(new String(characters)));
 			}
 
@@ -307,9 +311,9 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		for (int index= 0; index < word.length(); index++) {
 
 			mutated= characters[index];
-			for (int mutator= 0; mutator < mutators.length; mutator++) {
+			for (char mutator2 : mutators) {
 
-				characters[index]= mutators[mutator];
+				characters[index]= mutator2;
 				neighborhood.add(fHashProvider.getHash(new String(characters)));
 			}
 			characters[index]= mutated;
@@ -338,7 +342,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		}
 
 		neighborhood.remove(hash);
-		final Set matches= getCandidates(word, sentence, neighborhood);
+		final Set<RankedWordProposal> matches= getCandidates(word, sentence, neighborhood);
 
 		if (matches.size() == 0 && candidates.size() == 0)
 			getCandidates(word, sentence, candidates);
@@ -371,9 +375,11 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		if (bucket == null) {
 			fHashBuckets.put(hash, word);
 		} else if (bucket instanceof ArrayList) {
-			((ArrayList)bucket).add(word);
+			@SuppressWarnings("unchecked")
+			final ArrayList<Object> bucket2 = (ArrayList)bucket;
+			bucket2.add(word);
 		} else {
-			ArrayList list= new ArrayList(BUCKET_CAPACITY);
+			ArrayList<Object> list= new ArrayList<Object>(BUCKET_CAPACITY);
 			list.add(bucket);
 			list.add(word);
 			fHashBuckets.put(hash, list);
@@ -408,7 +414,8 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 				return true;
 			return false;
 		}
-		final ArrayList candidateList= (ArrayList)candidates;
+		@SuppressWarnings("unchecked")
+		final ArrayList<String> candidateList= (ArrayList)candidates;
 		if (candidateList.contains(word) || candidateList.contains(word.toLowerCase()))
 			return true;
 
@@ -492,7 +499,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 							word= reader.readLine();
 							decoder.onMalformedInput(CodingErrorAction.REPORT);
 							
-							String message= Messages.bind(Messages.AbstractSpellingDictionary_encodingError,
+							String message= NLS.bind(Messages.AbstractSpellingDictionary_encodingError,
 									new String[] { word, decoder.replacement(), url.toString() });
 							IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, message, ex);
 							CUIPlugin.log(status);
@@ -520,7 +527,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 				}
 			} catch (IOException exception) {
 				if (line > 0) {
-					String message= Messages.bind(Messages.AbstractSpellingDictionary_encodingError,
+					String message= NLS.bind(Messages.AbstractSpellingDictionary_encodingError,
 							String.valueOf(line), url.toString());
 					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, message, exception);
 					CUIPlugin.log(status);
@@ -543,11 +550,11 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	 * Compacts the dictionary.
 	 */
 	private void compact() {
-		Iterator iter= fHashBuckets.values().iterator();
+		Iterator<Serializable> iter= fHashBuckets.values().iterator();
 		while (iter.hasNext()) {
 			Object element= iter.next();
 			if (element instanceof ArrayList)
-				((ArrayList)element).trimToSize();
+				((ArrayList<?>)element).trimToSize();
 		}
 	}
 

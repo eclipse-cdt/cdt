@@ -59,7 +59,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 
 	private static ContributedProcessorDescriptor[] getProcessorDescriptors(String contributionId, boolean testMarkerTypes) {
 		IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(CUIPlugin.PLUGIN_ID, contributionId);
-		ArrayList res= new ArrayList(elements.length);
+		ArrayList<ContributedProcessorDescriptor> res= new ArrayList<ContributedProcessorDescriptor>(elements.length);
 
 		for (int i= 0; i < elements.length; i++) {
 			ContributedProcessorDescriptor desc= new ContributedProcessorDescriptor(elements[i], testMarkerTypes);
@@ -70,7 +70,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 				CUIPlugin.log(status);
 			}
 		}
-		return (ContributedProcessorDescriptor[]) res.toArray(new ContributedProcessorDescriptor[res.size()]);
+		return res.toArray(new ContributedProcessorDescriptor[res.size()]);
 	}
 
 	private static ContributedProcessorDescriptor[] getCorrectionProcessors() {
@@ -198,9 +198,9 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 		
 		ICCompletionProposal[] res= null;
 		if (model != null && annotations != null) {
-			ArrayList proposals= new ArrayList(10);
+			ArrayList<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>(10);
 			IStatus status= collectProposals(context, model, annotations, true, !fAssistant.isUpdatedOffset(), proposals);
-			res= (ICCompletionProposal[]) proposals.toArray(new ICCompletionProposal[proposals.size()]);
+			res= proposals.toArray(new ICCompletionProposal[proposals.size()]);
 			if (!status.isOK()) {
 				fErrorMessage= status.getMessage();
 				CUIPlugin.log(status);
@@ -217,8 +217,8 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 		return res;
 	}
 
-	public static IStatus collectProposals(CorrectionContext context, IAnnotationModel model, Annotation[] annotations, boolean addQuickFixes, boolean addQuickAssists, Collection proposals) {
-		ArrayList problems= new ArrayList();
+	public static IStatus collectProposals(CorrectionContext context, IAnnotationModel model, Annotation[] annotations, boolean addQuickFixes, boolean addQuickAssists, Collection<ICCompletionProposal> proposals) {
+		ArrayList<ProblemLocation> problems= new ArrayList<ProblemLocation>();
 		
 		// collect problem locations and corrections from marker annotations
 		for (int i= 0; i < annotations.length; i++) {
@@ -235,7 +235,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 		}
 		MultiStatus resStatus= null;
 		
-		IProblemLocation[] problemLocations= (IProblemLocation[]) problems.toArray(new IProblemLocation[problems.size()]);
+		IProblemLocation[] problemLocations= problems.toArray(new IProblemLocation[problems.size()]);
 		if (addQuickFixes) {
 			IStatus status= collectCorrections(context, problemLocations, proposals);
 			if (!status.isOK()) {
@@ -269,7 +269,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 		return null;
 	}
 
-	private static void collectMarkerProposals(SimpleMarkerAnnotation annotation, Collection proposals) {
+	private static void collectMarkerProposals(SimpleMarkerAnnotation annotation, Collection<ICCompletionProposal> proposals) {
 		IMarker marker= annotation.getMarker();
 		IMarkerResolution[] res= IDE.getMarkerHelpRegistry().getResolutions(marker);
 		if (res.length > 0) {
@@ -318,10 +318,10 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 
 	private static class SafeCorrectionCollector extends SafeCorrectionProcessorAccess {
 		private final CorrectionContext fContext;
-		private final Collection fProposals;
+		private final Collection<ICCompletionProposal> fProposals;
 		private IProblemLocation[] fLocations;
 
-		public SafeCorrectionCollector(CorrectionContext context, Collection proposals) {
+		public SafeCorrectionCollector(CorrectionContext context, Collection<ICCompletionProposal> proposals) {
 			fContext= context;
 			fProposals= proposals;
 		}
@@ -347,9 +347,9 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 	private static class SafeAssistCollector extends SafeCorrectionProcessorAccess {
 		private final CorrectionContext fContext;
 		private final IProblemLocation[] fLocations;
-		private final Collection fProposals;
+		private final Collection<ICCompletionProposal> fProposals;
 
-		public SafeAssistCollector(CorrectionContext context, IProblemLocation[] locations, Collection proposals) {
+		public SafeAssistCollector(CorrectionContext context, IProblemLocation[] locations, Collection<ICCompletionProposal> proposals) {
 			fContext= context;
 			fLocations= locations;
 			fProposals= proposals;
@@ -415,7 +415,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 		}
 	}
 
-	public static IStatus collectCorrections(CorrectionContext context, IProblemLocation[] locations, Collection proposals) {
+	public static IStatus collectCorrections(CorrectionContext context, IProblemLocation[] locations, Collection<ICCompletionProposal> proposals) {
 		ContributedProcessorDescriptor[] processors= getCorrectionProcessors();
 		SafeCorrectionCollector collector= new SafeCorrectionCollector(context, proposals);
 		for (int i= 0; i < processors.length; i++) {
@@ -432,19 +432,19 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 	private static IProblemLocation[] getHandledProblems(IProblemLocation[] locations, ContributedProcessorDescriptor processor) {
 		// implementation tries to avoid creating a new array
 		boolean allHandled= true;
-		ArrayList res= null;
+		ArrayList<IProblemLocation> res= null;
 		for (int i= 0; i < locations.length; i++) {
 			IProblemLocation curr= locations[i];
 			if (processor.canHandleMarkerType(curr.getMarkerType())) {
 				if (!allHandled) { // first handled problem
 					if (res == null) {
-						res= new ArrayList(locations.length - i);
+						res= new ArrayList<IProblemLocation>(locations.length - i);
 					}
 					res.add(curr);
 				}
 			} else if (allHandled) { 
 				if (i > 0) { // first non handled problem 
-					res= new ArrayList(locations.length - i);
+					res= new ArrayList<IProblemLocation>(locations.length - i);
 					for (int k= 0; k < i; k++) {
 						res.add(locations[k]);
 					}
@@ -458,10 +458,10 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 		if (res == null) {
 			return null;
 		}
-		return (IProblemLocation[]) res.toArray(new IProblemLocation[res.size()]);
+		return res.toArray(new IProblemLocation[res.size()]);
 	}
 
-	public static IStatus collectAssists(CorrectionContext context, IProblemLocation[] locations, Collection proposals) {
+	public static IStatus collectAssists(CorrectionContext context, IProblemLocation[] locations, Collection<ICCompletionProposal> proposals) {
 		ContributedProcessorDescriptor[] processors= getAssistProcessors();
 		SafeAssistCollector collector= new SafeAssistCollector(context, locations, proposals);
 		collector.process(processors);

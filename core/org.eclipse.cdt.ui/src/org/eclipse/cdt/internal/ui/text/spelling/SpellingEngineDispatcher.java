@@ -46,7 +46,7 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 	private static final IContentType CXXSOURCE_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 	/** Available spelling engines by content type */
-	private Map fEngines= new HashMap();
+	private Map<IContentType, SpellingEngine> fEngines= new HashMap<IContentType, SpellingEngine>();
 	private ISpellingEngine defaultEngine;
 
 	/**
@@ -96,7 +96,7 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 			return null;
 
 		if (fEngines.containsKey(contentType))
-			return (ISpellingEngine) fEngines.get(contentType);
+			return fEngines.get(contentType);
 
 		return getEngine(contentType.getBaseType());
 	}

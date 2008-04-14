@@ -101,8 +101,8 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 *               otherwise
 	 */
 	protected static boolean isUrl(final String word) {
-		for (int index= 0; index < URL_PREFIXES.length; index++) {
-			if (word.startsWith(URL_PREFIXES[index]))
+		for (String element : URL_PREFIXES) {
+			if (word.startsWith(element))
 				return true;
 		}
 		return false;
@@ -112,18 +112,18 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 * The dictionaries to use for spell checking. Synchronized to avoid
 	 * concurrent modifications.
 	 */
-	private final Set fDictionaries= Collections.synchronizedSet(new HashSet());
+	private final Set<ISpellDictionary> fDictionaries= Collections.synchronizedSet(new HashSet<ISpellDictionary>());
 
 	/**
 	 * The words to be ignored. Synchronized to avoid concurrent modifications.
 	 */
-	private final Set fIgnored= Collections.synchronizedSet(new HashSet());
+	private final Set<String> fIgnored= Collections.synchronizedSet(new HashSet<String>());
 
 	/**
 	 * The spell event listeners. Synchronized to avoid concurrent
 	 * modifications.
 	 */
-	private final Set fListeners= Collections.synchronizedSet(new HashSet());
+	private final Set<ISpellEventListener> fListeners= Collections.synchronizedSet(new HashSet<ISpellEventListener>());
 
 	/**
 	 * The locale of this checker.
@@ -166,14 +166,14 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// synchronizing might not be needed here since acceptWords is
 		// a read-only access and only called in the same thread as
 		// the modifying methods add/checkWord (?)
-		Set copy;
+		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet(fDictionaries);
+			copy= new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
 		ISpellDictionary dictionary= null;
-		for (final Iterator iterator= copy.iterator(); iterator.hasNext();) {
-			dictionary= (ISpellDictionary) iterator.next();
+		for (final Iterator<ISpellDictionary> iterator= copy.iterator(); iterator.hasNext();) {
+			dictionary= iterator.next();
 			if (dictionary.acceptsWords())
 				return true;
 		}
@@ -185,14 +185,13 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 */
 	public void addWord(final String word) {
 		// synchronizing is necessary as this is a write access
-		Set copy;
+		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet(fDictionaries);
+			copy= new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
 		final String addable= word.toLowerCase();
-		for (final Iterator iterator= copy.iterator(); iterator.hasNext();) {
-			ISpellDictionary dictionary= (ISpellDictionary) iterator.next();
+		for (ISpellDictionary dictionary : copy) {
 			if (dictionary.acceptsWords())
 				dictionary.addWord(addable);
 		}
@@ -220,15 +219,15 @@ public class DefaultSpellChecker implements ISpellChecker {
 		
 		iterator.setIgnoreSingleLetters(ignoreSingleLetters);
 		
-		Iterator iter= fDictionaries.iterator();
+		Iterator<ISpellDictionary> iter= fDictionaries.iterator();
 		while (iter.hasNext())
-			((ISpellDictionary) iter.next()).setStripNonLetters(ignoreNonLetters);
+			iter.next().setStripNonLetters(ignoreNonLetters);
 
 		String word= null;
 		boolean starts= false;
 
 		while (iterator.hasNext()) {
-			word= (String) iterator.next();
+			word= iterator.next();
 			if (word != null) {
 				// synchronizing is necessary as this is called inside the reconciler
 				if (!fIgnored.contains(word)) {
@@ -258,32 +257,32 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 */
 	protected final void fireEvent(final ISpellEvent event) {
 		// synchronizing is necessary as this is called from execute
-		Set copy;
+		Set<ISpellEventListener> copy;
 		synchronized (fListeners) {
-			copy= new HashSet(fListeners);
+			copy= new HashSet<ISpellEventListener>(fListeners);
 		}
-		for (final Iterator iterator= copy.iterator(); iterator.hasNext();) {
-			((ISpellEventListener)iterator.next()).handle(event);
+		for (ISpellEventListener spellEventListener : copy) {
+			spellEventListener.handle(event);
 		}
 	}
 
 	/*
 	 * @see org.eclipse.spelling.done.ISpellChecker#getProposals(java.lang.String,boolean)
 	 */
-	public Set getProposals(final String word, final boolean sentence) {
+	public Set<RankedWordProposal> getProposals(final String word, final boolean sentence) {
 		// synchronizing might not be needed here since getProposals is
 		// a read-only access and only called in the same thread as
 		// the modifying methods add/removeDictionary (?)
-		Set copy;
+		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet(fDictionaries);
+			copy= new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
 		ISpellDictionary dictionary= null;
-		final HashSet proposals= new HashSet();
+		final HashSet<RankedWordProposal> proposals= new HashSet<RankedWordProposal>();
 
-		for (final Iterator iterator= copy.iterator(); iterator.hasNext();) {
-			dictionary= (ISpellDictionary)iterator.next();
+		for (final Iterator<ISpellDictionary> iterator= copy.iterator(); iterator.hasNext();) {
+			dictionary= iterator.next();
 			proposals.addAll(dictionary.getProposals(word, sentence));
 		}
 		return proposals;
@@ -302,17 +301,17 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 */
 	public final boolean isCorrect(final String word) {
 		// synchronizing is necessary as this is called from execute
-		Set copy;
+		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet(fDictionaries);
+			copy= new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
 		if (fIgnored.contains(word.toLowerCase()))
 			return true;
 
 		ISpellDictionary dictionary= null;
-		for (final Iterator iterator= copy.iterator(); iterator.hasNext();) {
-			dictionary= (ISpellDictionary) iterator.next();
+		for (final Iterator<ISpellDictionary> iterator= copy.iterator(); iterator.hasNext();) {
+			dictionary= iterator.next();
 			if (dictionary.isCorrect(word))
 				return true;
 		}

@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -170,8 +171,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					if (switchstmt instanceof IASTCompoundStatement) {
 						IASTStatement[] stmts = ((IASTCompoundStatement)switchstmt).getStatements();
 						boolean pushedMR = false;
-						for (int i = 0; i < stmts.length; i++) {
-							IASTStatement tmpstmt = stmts[i];
+						for (IASTStatement tmpstmt : stmts) {
 							StatementRegion tmpmr;
 							if (!(tmpstmt instanceof IASTCaseStatement || tmpstmt instanceof IASTDefaultStatement)) {
 								if (!pushedMR) return PROCESS_SKIP;
@@ -315,16 +315,14 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				return false;
 			}
 			IASTProblem[] problems= ast.getPreprocessorProblems();
-			for (int i = 0; i < problems.length; i++) {
-				IASTProblem problem = problems[i];
-				if ((problem.getID() & (IASTProblem.SYNTAX_ERROR | IASTProblem.SCANNER_RELATED)) != 0) {
+			for (IASTProblem problem : problems) {
+				if ((problem.getID() & (IProblem.SYNTAX_ERROR | IProblem.SCANNER_RELATED)) != 0) {
 					return true;
 				}
 			}
 			problems= CPPVisitor.getProblems(ast);
-			for (int i = 0; i < problems.length; i++) {
-				IASTProblem problem = problems[i];
-				if ((problem.getID() & (IASTProblem.SYNTAX_ERROR | IASTProblem.SCANNER_RELATED)) != 0) {
+			for (IASTProblem problem : problems) {
+				if ((problem.getID() & (IProblem.SYNTAX_ERROR | IProblem.SCANNER_RELATED)) != 0) {
 					return true;
 				}
 			}
@@ -1024,23 +1022,23 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		Map<CProjectionAnnotation,Position> updated= ctx.fMap;
 		Map<Object, List<Tuple>> previous= computeCurrentStructure(ctx);
 
-		Iterator e= updated.keySet().iterator();
+		Iterator<CProjectionAnnotation> e= updated.keySet().iterator();
 		while (e.hasNext()) {
-			CProjectionAnnotation newAnnotation= (CProjectionAnnotation) e.next();
+			CProjectionAnnotation newAnnotation= e.next();
 			Object key= newAnnotation.getElement();
 			Position newPosition= updated.get(newAnnotation);
 
-			List annotations= previous.get(key);
+			List<Tuple> annotations= previous.get(key);
 			if (annotations == null) {
 				if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() new annotation " + newAnnotation); //$NON-NLS-1$
 
 				additions.put(newAnnotation, newPosition);
 
 			} else {
-				Iterator x= annotations.iterator();
+				Iterator<Tuple> x= annotations.iterator();
 				boolean matched= false;
 				while (x.hasNext()) {
-					Tuple tuple= (Tuple) x.next();
+					Tuple tuple= x.next();
 					CProjectionAnnotation existingAnnotation= tuple.annotation;
 					Position existingPosition= tuple.position;
 					if (newAnnotation.getCategory() == existingAnnotation.getCategory()) {
@@ -1072,12 +1070,12 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 
-		e= previous.values().iterator();
-		while (e.hasNext()) {
-			List list= (List) e.next();
+		Iterator<List<Tuple>> e2= previous.values().iterator();
+		while (e2.hasNext()) {
+			List<Tuple> list= e2.next();
 			int size= list.size();
 			for (int i= 0; i < size; i++) {
-				CProjectionAnnotation annotation= ((Tuple) list.get(i)).annotation;
+				CProjectionAnnotation annotation= list.get(i).annotation;
 				if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() deleted annotation " + annotation); //$NON-NLS-1$
 				deletions.add(annotation);
 			}
@@ -1109,9 +1107,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		List<CProjectionAnnotation> newDeletions= new ArrayList<CProjectionAnnotation>();
 		List<CProjectionAnnotation> newChanges= new ArrayList<CProjectionAnnotation>();
 
-		Iterator deletionIterator= deletions.iterator();
+		Iterator<CProjectionAnnotation> deletionIterator= deletions.iterator();
 		while (deletionIterator.hasNext()) {
-			CProjectionAnnotation deleted= (CProjectionAnnotation) deletionIterator.next();
+			CProjectionAnnotation deleted= deletionIterator.next();
 			Position deletedPosition= ctx.getModel().getPosition(deleted);
 			if (deletedPosition == null || deletedPosition.length < 5)
 				continue;
@@ -1197,7 +1195,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		boolean includeCModel= ctx.fAST != null || !(fPreprocessorBranchFoldingEnabled || fStatementsFoldingEnabled);
 		Map<Object, List<Tuple>> map= new HashMap<Object, List<Tuple>>();
 		ProjectionAnnotationModel model= ctx.getModel();
-		Iterator e= model.getAnnotationIterator();
+		Iterator<?> e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Object annotation= e.next();
 			if (annotation instanceof CProjectionAnnotation) {
@@ -1366,8 +1364,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		IASTPreprocessorStatement[] preprocStmts = ast.getAllPreprocessorStatements();
 
-		for (int i = 0; i < preprocStmts.length; i++) {
-			IASTPreprocessorStatement statement = preprocStmts[i];
+		for (IASTPreprocessorStatement statement : preprocStmts) {
 			if (!statement.isPartOfTranslationUnitFile()) {
 				// preprocessor directive is from a different file
 				continue;
@@ -1418,8 +1415,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 
 		Map<String, Counter> keys= new HashMap<String, Counter>(branches.size());
-		for (Iterator<Branch> iter = branches.iterator(); iter.hasNext(); ) {
-			Branch branch= iter.next();
+		for (Branch branch : branches) {
 			IRegion aligned = alignRegion(branch, ctx, branch.fInclusive);
 			if (aligned != null) {
 				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
@@ -1468,8 +1464,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		int endLine = -1;
 		List<Tuple> comments= new ArrayList<Tuple>();
 		ModifiableRegion commentRange = new ModifiableRegion();
-		for (int i = 0; i < partitions.length; i++) {
-			ITypedRegion partition = partitions[i];
+		for (ITypedRegion partition : partitions) {
 			boolean singleLine= false;
 			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())
 				|| ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(partition.getType())) {
@@ -1550,9 +1545,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	}
 
 	private void computeFoldingStructure(ICElement[] elements, FoldingStructureComputationContext ctx) throws CModelException {
-		for (int i= 0; i < elements.length; i++) {
-			ICElement element= elements[i];
-
+		for (ICElement element : elements) {
 			computeFoldingStructure(element, ctx);
 
 			if (element instanceof IParent) {

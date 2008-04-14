@@ -188,9 +188,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			IASTPreprocessorMacroDefinition[] macroDefs;
 			final IASTPreprocessorMacroDefinition[] localMacroDefs= ast.getMacroDefinitions();
 			for (macroDefs= localMacroDefs; macroDefs != null; macroDefs= (macroDefs == localMacroDefs) ? ast.getBuiltinMacroDefinitions() : null) {
-				for (int i = 0; i < macroDefs.length; i++) {
-					if (Arrays.equals(macroDefs[i].getName().toCharArray(), macroName)) {
-						macroDef= macroDefs[i];
+				for (IASTPreprocessorMacroDefinition macroDef2 : macroDefs) {
+					if (Arrays.equals(macroDef2.getName().toCharArray(), macroName)) {
+						macroDef= macroDef2;
 						break;
 					}
 				}
@@ -244,8 +244,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				names= findDeclarations(ast, binding);
 			}
 			if (names.length > 0) {
-				for (int i = 0; i < names.length; i++) {
-					String source= computeSourceForName(names[0], binding);
+				for (IName name : names) {
+					String source= computeSourceForName(name, binding);
 					if (source != null) {
 						return source;
 					}
@@ -417,9 +417,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 						type= ((ITypedef)binding).getType();
 					} else if (binding instanceof IVariable) {
 						type= ((IVariable)binding).getType();
-					} else {
-						type= null;
-					}
+					} 
 				} catch (DOMException exc) {
 				}
 				expectClosingBrace= type instanceof ICompositeType || type instanceof IEnumeration;
@@ -786,8 +784,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			i= 0;
 		} finally {
 			try {
-				if (reader != null)
-					reader.close();
+				reader.close();
 			} catch (IOException ex) {
 				CUIPlugin.log(ex);
 			}
@@ -831,7 +828,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 *         name is not considered a keyword
 	 */
 	private boolean selectionIsKeyword(String name) {
-		Set keywords= ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
+		Set<String> keywords= ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
 		return keywords.contains(name);
 	}
 

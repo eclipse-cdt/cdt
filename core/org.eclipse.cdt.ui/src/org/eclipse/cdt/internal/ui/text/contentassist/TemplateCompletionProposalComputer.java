@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -51,25 +53,19 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 			contextType= new CContextType();
 			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(contextType);
 		}
-		if (contextType != null)
-			fCTemplateEngine= new TemplateEngine(contextType);
-		else
-			fCTemplateEngine= null;
+		fCTemplateEngine= new TemplateEngine(contextType);
 		contextType= CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CommentContextType.ID);
 		if (contextType == null) {
 			contextType= new CommentContextType();
 			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(contextType);
 		}
-		if (contextType != null)
-			fCommentTemplateEngine= new TemplateEngine(contextType);
-		else
-			fCommentTemplateEngine= null;
+		fCommentTemplateEngine= new TemplateEngine(contextType);
 	}
 	
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public List computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		ITextViewer viewer= context.getViewer();
 		int offset= context.getInvocationOffset();
 		TemplateEngine engine= null;
@@ -83,23 +79,23 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 				}
 			}
 		} catch (BadLocationException x) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		
 		if (engine != null && context instanceof CContentAssistInvocationContext) {
 			CContentAssistInvocationContext cContext= (CContentAssistInvocationContext)context;
 			ITranslationUnit tUnit = cContext.getTranslationUnit();
 			if (tUnit == null) {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 			engine.reset();
 			engine.complete(viewer, offset, tUnit);
 
-			List result= engine.getResults();
+			List<ICompletionProposal> result= engine.getResults();
 
 			return result;
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	/**
@@ -117,8 +113,8 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public List computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
-		return Collections.EMPTY_LIST;
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+		return Collections.emptyList();
 	}
 
 	/*

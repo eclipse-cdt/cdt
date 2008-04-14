@@ -142,9 +142,9 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 			return false;
 
 		final String checkable= new String(token, offset, length);
-		for (int index= 0; index < candidates.length; index++) {
+		for (String candidate : candidates) {
 
-			if (candidates[index].equals(checkable))
+			if (candidate.equals(checkable))
 				return true;
 		}
 		return false;
@@ -162,9 +162,9 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 	 *               candidates, <code>false</code> otherwise.
 	 */
 	protected static final boolean hasOneOf(final String[] candidates, final String token) {
-		for (int index= 0; index < candidates.length; index++) {
+		for (String candidate : candidates) {
 
-			if (token.indexOf(candidates[index]) >= 0)
+			if (token.indexOf(candidate) >= 0)
 				return true;
 		}
 		return false;
@@ -186,8 +186,8 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 	protected static final boolean hasVowel(final char[] token, final int offset, final int length) {
 		if (offset >= 0 && offset < length) {
 			final char character= token[offset];
-			for (int index= 0; index < VOWEL_CHARACTERS.length; index++) {
-				if (VOWEL_CHARACTERS[index] == character)
+			for (char element : VOWEL_CHARACTERS) {
+				if (element == character)
 					return true;
 			}
 		}
@@ -291,12 +291,11 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 							else
 								buffer.append('X');
 							offset += 3;
-							break;
 						} else {
 							buffer.append('K');
 							offset += 2;
-							break;
 						}
+						break;
 					}
 					if (hasOneOf(meta24, hashable, offset, 2)) {
 						buffer.append('K');
@@ -324,12 +323,11 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 						if (hasOneOf(meta31, hashable, offset + 2, 1)) {
 							buffer.append('J');
 							offset += 3;
-							break;
 						} else {
 							buffer.append("TK"); //$NON-NLS-1$
 							offset += 2;
-							break;
 						}
+						break;
 					}
 					buffer.append('T');
 					if (hasOneOf(meta32, hashable, offset, 2)) {
@@ -364,7 +362,6 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 						}
 						if ((offset > 1) && hasOneOf(meta33, hashable, offset - 2, 1) || ((offset > 2) && hasOneOf(meta34, hashable, offset - 3, 1)) || ((offset > 3) && hasOneOf(meta35, hashable, offset - 4, 1))) {
 							offset += 2;
-							break;
 						} else {
 							if ((offset > 2) && (hashable[offset - 1] == 'U') && hasOneOf(meta36, hashable, offset - 3, 1)) {
 								buffer.append('F');
@@ -373,8 +370,8 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 									buffer.append('K');
 							}
 							offset += 2;
-							break;
 						}
+						break;
 					}
 					if (hashable[offset + 1] == 'N') {
 						if ((offset == 1) && hasVowel(hashable, 0, hashable.length) && !has95) {
@@ -553,7 +550,7 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 						break;
 					}
 					if (hasOneOf(meta74, hashable, offset, 2)) {
-						if (hashable[offset + 2] == 'H')
+						if (hashable[offset + 2] == 'H') {
 							if (hasOneOf(meta75, hashable, offset + 3, 2)) {
 								if (hasOneOf(meta76, hashable, offset + 3, 2)) {
 									buffer.append("X"); //$NON-NLS-1$
@@ -561,12 +558,12 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 									buffer.append("SK"); //$NON-NLS-1$
 								}
 								offset += 3;
-								break;
 							} else {
 								buffer.append('X');
 								offset += 3;
-								break;
 							}
+							break;
+						}
 						if (hasOneOf(meta77, hashable, offset + 2, 1)) {
 							buffer.append('S');
 							offset += 3;
@@ -650,9 +647,8 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 						buffer.append('J');
 						offset += 2;
 						break;
-					} else {
-						buffer.append('S');
 					}
+					buffer.append('S');
 					if (hashable[offset + 1] == 'Z')
 						offset += 2;
 					else

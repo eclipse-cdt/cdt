@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -38,11 +40,11 @@ abstract class AbstractDocCommentProposalComputer implements ICompletionProposal
 		return getConfiguration(owner);
 	}
 	
-	public List computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return getConfiguration().createProposalComputer().computeCompletionProposals(context, monitor);
 	}
 
-	public List computeContextInformation(
+	public List<IContextInformation> computeContextInformation(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return getConfiguration().createProposalComputer().computeContextInformation(context, monitor);
 	}

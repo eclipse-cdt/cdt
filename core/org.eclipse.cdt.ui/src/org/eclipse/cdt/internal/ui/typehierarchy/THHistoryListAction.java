@@ -41,7 +41,7 @@ public class THHistoryListAction extends Action {
 	
 	private class HistoryListDialog extends StatusDialog {
 		
-		private ListDialogField fHistoryList;
+		private ListDialogField<ICElement> fHistoryList;
 		private IStatus fHistoryStatus;
 		private ICElement fResult;
 		
@@ -53,22 +53,22 @@ public class THHistoryListAction extends Action {
 				Messages.THHistoryListAction_Remove, 
 			};
 					
-			IListAdapter adapter= new IListAdapter() {
-				public void customButtonPressed(ListDialogField field, int index) {
+			IListAdapter<ICElement> adapter= new IListAdapter<ICElement>() {
+				public void customButtonPressed(ListDialogField<ICElement> field, int index) {
 					doCustomButtonPressed();
 				}
-				public void selectionChanged(ListDialogField field) {
+				public void selectionChanged(ListDialogField<ICElement> field) {
 					doSelectionChanged();
 				}
 				
-				public void doubleClicked(ListDialogField field) {
+				public void doubleClicked(ListDialogField<ICElement> field) {
 					doDoubleClicked();
 				}				
 			};
 		
 			LabelProvider labelProvider= new CUILabelProvider(THHistoryAction.LABEL_OPTIONS, CElementImageProvider.OVERLAY_ICONS);
 			
-			fHistoryList= new ListDialogField(adapter, buttonLabels, labelProvider);
+			fHistoryList= new ListDialogField<ICElement>(adapter, buttonLabels, labelProvider);
 			fHistoryList.setLabelText(Messages.THHistoryListAction_HistoryList_label); 
 			fHistoryList.setElements(Arrays.asList(historyEntries));
 			

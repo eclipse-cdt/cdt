@@ -409,10 +409,9 @@ public final class CHeuristicScanner implements Symbols {
 			return getToken(identOrKeyword);
 
 
-		} else {
-			// operators, number literals etc
-			return TokenOTHER;
 		}
+		// operators, number literals etc
+		return TokenOTHER;
 	}
 
 	/**
@@ -511,10 +510,9 @@ public final class CHeuristicScanner implements Symbols {
 			return getToken(identOrKeyword);
 
 
-		} else {
-			// operators, number literals etc
-			return TokenOTHER;
 		}
+		// operators, number literals etc
+		return TokenOTHER;
 
 	}
 
@@ -1084,6 +1082,7 @@ public final class CHeuristicScanner implements Symbols {
 	 *        <code>bound</code> &lt; <code>start</code>, or <code>UNBOUND</code>
 	 * @return <code>true</code> if the current position looks like a composite type definition
 	 */
+	@SuppressWarnings("fallthrough")
 	public boolean looksLikeCompositeTypeDefinitionBackward(int start, int bound) {
 		int token= previousToken(start - 1, bound);
 		switch (token) {

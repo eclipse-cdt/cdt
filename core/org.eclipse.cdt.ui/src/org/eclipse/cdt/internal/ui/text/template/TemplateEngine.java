@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.text.template;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +27,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContext;
@@ -58,9 +58,9 @@ public class TemplateEngine {
 	/** The context type. */
 	private TemplateContextType fContextType;	
 	/** The result proposals. */
-	private ArrayList fProposals= new ArrayList();
+	private ArrayList<ICompletionProposal> fProposals= new ArrayList<ICompletionProposal>();
 	/** Positions created on the key documents to remove in reset. */
-	private final Map fPositions= new HashMap();
+	private final Map<IDocument, Position> fPositions= new HashMap<IDocument, Position>();
 
 	public class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
 		
@@ -116,10 +116,10 @@ public class TemplateEngine {
 	 */
 	public void reset() {
 		fProposals.clear();
-		for (Iterator it= fPositions.entrySet().iterator(); it.hasNext();) {
-			Entry entry= (Entry) it.next();
-			IDocument doc= (IDocument) entry.getKey();
-			Position position= (Position) entry.getValue();
+		for (Entry<IDocument, Position> entry2 : fPositions.entrySet()) {
+			Entry<IDocument, Position> entry= entry2;
+			IDocument doc= entry.getKey();
+			Position position= entry.getValue();
 			doc.removePosition(position);
 		}
 		fPositions.clear();
@@ -128,7 +128,7 @@ public class TemplateEngine {
 	/**
 	 * Returns the array of matching templates.
 	 */
-	public List getResults() {
+	public List<ICompletionProposal> getResults() {
 		//return (TemplateProposal[]) fProposals.toArray(new TemplateProposal[fProposals.size()]);
 		return fProposals;
 	}

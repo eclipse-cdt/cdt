@@ -71,7 +71,7 @@ public interface ISpellChecker {
 	 *                   sentence, <code>false</code> otherwise
 	 * @return Set of ranked proposals for the word
 	 */
-	Set getProposals(String word, boolean sentence);
+	Set<RankedWordProposal> getProposals(String word, boolean sentence);
 
 	/**
 	 * Ignores the specified word until calling <code>checkWord(String)</code>.

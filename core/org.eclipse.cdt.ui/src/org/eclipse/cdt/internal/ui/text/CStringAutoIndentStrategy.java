@@ -13,14 +13,12 @@
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.MultiPageEditorPart;
@@ -60,11 +58,10 @@ public class CStringAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 						buffer.append(indentation);
 						buffer.append("\""); //$NON-NLS-1$
 						continue;
-					} else {
-						buffer.append("\"" + delimiter); //$NON-NLS-1$
-						buffer.append(indentation);
-						buffer.append("\""); //$NON-NLS-1$
 					}
+					buffer.append("\"" + delimiter); //$NON-NLS-1$
+					buffer.append(indentation);
+					buffer.append("\""); //$NON-NLS-1$
 				} else {
 					continue;
 				}

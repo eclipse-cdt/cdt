@@ -33,8 +33,8 @@ import org.eclipse.ui.IEditorPart;
  */
 public class BestMatchHover extends AbstractCEditorTextHover {
 
-	private List fTextHoverSpecifications;
-	private List fInstantiatedTextHovers;
+	private List<CEditorTextHoverDescriptor> fTextHoverSpecifications;
+	private List<ITextHover> fInstantiatedTextHovers;
 	private ITextHover fBestHover;
 
 	public BestMatchHover() {
@@ -52,8 +52,8 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	private void installTextHovers() {
 		
 		// initialize lists - indicates that the initialization happened
-		fTextHoverSpecifications= new ArrayList(2);
-		fInstantiatedTextHovers= new ArrayList(2);
+		fTextHoverSpecifications= new ArrayList<CEditorTextHoverDescriptor>(2);
+		fInstantiatedTextHovers= new ArrayList<ITextHover>(2);
 
 		// populate list
 		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
@@ -68,8 +68,8 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 		if (fTextHoverSpecifications.size() == 0)
 			return;
 
-		for (Iterator iterator= new ArrayList(fTextHoverSpecifications).iterator(); iterator.hasNext(); ) {
-			CEditorTextHoverDescriptor spec= (CEditorTextHoverDescriptor) iterator.next();
+		for (Iterator<CEditorTextHoverDescriptor> iterator= new ArrayList<CEditorTextHoverDescriptor>(fTextHoverSpecifications).iterator(); iterator.hasNext(); ) {
+			CEditorTextHoverDescriptor spec= iterator.next();
 
 			ICEditorTextHover hover= spec.createTextHover();
 			if (hover != null) {
@@ -97,8 +97,8 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 		if (fInstantiatedTextHovers == null)
 			return null;
 
-		for (Iterator iterator= fInstantiatedTextHovers.iterator(); iterator.hasNext(); ) {
-			ITextHover hover= (ITextHover)iterator.next();
+		for (Iterator<ITextHover> iterator= fInstantiatedTextHovers.iterator(); iterator.hasNext(); ) {
+			ITextHover hover= iterator.next();
 
 			String s= hover.getHoverInfo(textViewer, hoverRegion);
 			if (s != null && s.trim().length() > 0) {
@@ -122,8 +122,8 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 		if (fInstantiatedTextHovers == null)
 			return null;
 		
-		for (Iterator iterator= fInstantiatedTextHovers.iterator(); iterator.hasNext(); ) {
-			ITextHover hover= (ITextHover)iterator.next();
+		for (Iterator<ITextHover> iterator= fInstantiatedTextHovers.iterator(); iterator.hasNext(); ) {
+			ITextHover hover= iterator.next();
 			
 			if (hover instanceof ITextHoverExtension2) {
 				Object info= ((ITextHoverExtension2) hover).getHoverInfo2(textViewer, hoverRegion);

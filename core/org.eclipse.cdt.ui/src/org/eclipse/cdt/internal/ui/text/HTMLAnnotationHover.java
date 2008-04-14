@@ -40,6 +40,7 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 	/*
 	 * Formats several message as HTML text.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected String formatMultipleMessages(List messages) {
 		StringBuffer buffer= new StringBuffer();
@@ -47,9 +48,9 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(CUIMessages.getString("CAnnotationHover.multipleMarkers"))); //$NON-NLS-1$
 
 		HTMLPrinter.startBulletList(buffer);
-		Iterator e= messages.iterator();
+		Iterator<String> e= messages.iterator();
 		while (e.hasNext())
-			HTMLPrinter.addBullet(buffer, HTMLPrinter.convertToHTMLContent((String) e.next()));
+			HTMLPrinter.addBullet(buffer, HTMLPrinter.convertToHTMLContent(e.next()));
 		HTMLPrinter.endBulletList(buffer);
 
 		HTMLPrinter.addPageEpilog(buffer);

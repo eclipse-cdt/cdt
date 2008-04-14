@@ -93,13 +93,13 @@ public class CHelpSettings {
 		if(providerDescriptors.length == 0)
 			return new CHelpBookDescriptor[0];
 		
-		List bookList = new ArrayList(); 	
+		List<CHelpBookDescriptor> bookList = new ArrayList<CHelpBookDescriptor>(); 	
 		for(int i = 0; i < providerDescriptors.length; i++){
 			CHelpBookDescriptor bookDescriptors[] = providerDescriptors[i].getCHelpBookDescriptors();
 			if(bookDescriptors.length != 0)
 				bookList.addAll(Arrays.asList(bookDescriptors));
 		}
-		return (CHelpBookDescriptor[])bookList.toArray(new CHelpBookDescriptor[bookList.size()]);
+		return bookList.toArray(new CHelpBookDescriptor[bookList.size()]);
 	}
 	
 	private static IConfigurationElement[] getConfigElements(){
@@ -129,7 +129,7 @@ public class CHelpSettings {
 	
 	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, String frag){
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
-		List sumaryList = new ArrayList();
+		List<IFunctionSummary> sumaryList = new ArrayList<IFunctionSummary>();
 		for(int i = 0; i < providerDescriptors.length; i++){
 			ICHelpBook books[] = providerDescriptors[i].getEnabledMatchedCHelpBooks(context);
 			if(books != null && books.length != 0){
@@ -144,12 +144,12 @@ public class CHelpSettings {
 		if(sumaryList.size() == 0)
 			return null;
 		
-		return (IFunctionSummary[])sumaryList.toArray(new IFunctionSummary[sumaryList.size()]);
+		return sumaryList.toArray(new IFunctionSummary[sumaryList.size()]);
 	}
 	
 	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, String name){
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
-		List resourcesList = new ArrayList();
+		List<ICHelpResourceDescriptor> resourcesList = new ArrayList<ICHelpResourceDescriptor>();
 		for(int i = 0; i < providerDescriptors.length; i++){
 			ICHelpBook books[] = providerDescriptors[i].getEnabledMatchedCHelpBooks(context);
 			if(books != null && books.length != 0){
@@ -164,7 +164,7 @@ public class CHelpSettings {
 		if(resourcesList.size() == 0)
 			return null;
 		
-		return (ICHelpResourceDescriptor[])resourcesList.toArray(new ICHelpResourceDescriptor[resourcesList.size()]);
+		return resourcesList.toArray(new ICHelpResourceDescriptor[resourcesList.size()]);
 	}
 	
 	public void serialize(Document doc, Element parentElement){

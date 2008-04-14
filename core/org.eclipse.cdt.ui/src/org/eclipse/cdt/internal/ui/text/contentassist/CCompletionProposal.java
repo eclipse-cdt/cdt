@@ -12,12 +12,9 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -51,6 +48,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 	
@@ -510,7 +512,10 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * <code>false</code> otherwise.
 	 */	
 	protected boolean startsWith(IDocument document, int offset, String word) {
-		int wordLength= word == null ? 0 : word.length();
+		if (word == null) 
+			return false;
+		
+		final int wordLength= word.length();
 		if (offset >=  fReplacementOffset + wordLength)
 			return false;
 		

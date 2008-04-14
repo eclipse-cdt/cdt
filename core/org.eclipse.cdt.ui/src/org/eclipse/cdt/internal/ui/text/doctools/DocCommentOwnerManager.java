@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.text.doctools;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -225,16 +224,15 @@ public class DocCommentOwnerManager {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CUIPlugin.ID_COMMENT_OWNER);
 		IExtension[] extensions = indexProviders.getExtensions();
-		for(int i=0; i<extensions.length; i++) {
-			IExtension extension = extensions[i];
+		for (IExtension extension : extensions) {
 			try {
 				IConfigurationElement[] ce = extension.getConfigurationElements();
-				for(int j=0; j<ce.length; j++) {
-					if(ce[j].getName().equals(ELEMENT_OWNER)) { 
-						IDocCommentViewerConfiguration multi = (IDocCommentViewerConfiguration) ce[j].createExecutableExtension(ATTRKEY_OWNER_MULTILINE);
-						IDocCommentViewerConfiguration single = (IDocCommentViewerConfiguration) ce[j].createExecutableExtension(ATTRKEY_OWNER_SINGLELINE);
-						String id= ce[j].getAttribute(ATTRKEY_OWNER_ID);
-						String name= ce[j].getAttribute(ATTRKEY_OWNER_NAME);
+				for (IConfigurationElement element : ce) {
+					if(element.getName().equals(ELEMENT_OWNER)) { 
+						IDocCommentViewerConfiguration multi = (IDocCommentViewerConfiguration) element.createExecutableExtension(ATTRKEY_OWNER_MULTILINE);
+						IDocCommentViewerConfiguration single = (IDocCommentViewerConfiguration) element.createExecutableExtension(ATTRKEY_OWNER_SINGLELINE);
+						String id= element.getAttribute(ATTRKEY_OWNER_ID);
+						String name= element.getAttribute(ATTRKEY_OWNER_NAME);
 						if(result.put(id, new DocCommentOwner(id, name, multi, single))!=null) {
 							String msg= MessageFormat.format(Messages.DocCommentOwnerManager_DuplicateMapping0, id);
 							CCorePlugin.log(new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, msg));
@@ -250,14 +248,14 @@ public class DocCommentOwnerManager {
 	}
 
 	private void fireOwnershipChanged(IResource resource, boolean submappingsRemoved, IDocCommentOwner oldOwner, IDocCommentOwner newOwner) {
-		for(Iterator i= fListeners.iterator(); i.hasNext();) {
-			((IDocCommentOwnershipListener)i.next()).ownershipChanged(resource, submappingsRemoved, oldOwner, newOwner);
+		for (IDocCommentOwnershipListener docCommentOwnershipListener : fListeners) {
+			docCommentOwnershipListener.ownershipChanged(resource, submappingsRemoved, oldOwner, newOwner);
 		}
 	}
 
 	private void fireWorkspaceOwnershipChanged(IDocCommentOwner oldOwner, IDocCommentOwner newOwner) {
-		for(Iterator i= fListeners.iterator(); i.hasNext();) {
-			((IDocCommentOwnershipListener)i.next()).workspaceOwnershipChanged(oldOwner, newOwner);
+		for (IDocCommentOwnershipListener element : fListeners) {
+			element.workspaceOwnershipChanged(oldOwner, newOwner);
 		}
 	}
 }

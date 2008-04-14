@@ -11,10 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import com.ibm.icu.text.BreakIterator;
 import java.text.CharacterIterator;
 
 import org.eclipse.core.runtime.Assert;
+
+import com.ibm.icu.text.BreakIterator;
 
 
 /**
@@ -355,8 +356,7 @@ public class CBreakIterator extends BreakIterator {
 	public boolean isBoundary(int offset) {
         if (offset == getText().getBeginIndex())
             return true;
-        else
-            return following(offset - 1) == offset;
+		return following(offset - 1) == offset;
 	}
 
 	/*

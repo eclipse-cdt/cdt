@@ -260,7 +260,7 @@ public class QuickAssistLightBulbUpdater {
 			int currLine= document.getLineOfOffset(offset);
 
 			// this iterator is not protected, it may throw ConcurrentModificationExceptions
-			Iterator iter= model.getAnnotationIterator();
+			Iterator<?> iter= model.getAnnotationIterator();
 			while (iter.hasNext()) {
 				Annotation annot= (Annotation) iter.next();
 				if (CCorrectionProcessor.isQuickFixableType(annot)) {

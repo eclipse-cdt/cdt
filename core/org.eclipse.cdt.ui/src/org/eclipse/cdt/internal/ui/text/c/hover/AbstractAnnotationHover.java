@@ -13,10 +13,6 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
@@ -28,6 +24,12 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
 
 /**
  * AbstractAnnotationHover
@@ -68,11 +70,11 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		IAnnotationModel model= provider.getAnnotationModel(getEditor().getEditorInput());
 		
 		if (model != null) {
-			Iterator e= new CAnnotationIterator(model, true, fAllAnnotations);
+			Iterator<Annotation> e= new CAnnotationIterator(model, true, fAllAnnotations);
 			int layer= -1;
 			String message= null;
 			while (e.hasNext()) {
-				Annotation a= (Annotation) e.next();
+				Annotation a= e.next();
 
 				AnnotationPreference preference= getAnnotationPreference(a);
 				if (preference == null || !(preference.getTextPreferenceKey() != null && fStore.getBoolean(preference.getTextPreferenceKey()) || (preference.getHighlightPreferenceKey() != null && fStore.getBoolean(preference.getHighlightPreferenceKey()))))

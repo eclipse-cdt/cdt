@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.IMenuManager;
@@ -128,8 +127,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents= super.createContents(parent);
-		for (Iterator<Control> it= fColorExclusionControls.iterator(); it.hasNext(); ) {
-			Control ctrl = it.next();
+		for (Control ctrl : fColorExclusionControls) {
 			ctrl.setBackground(fBackgroundColor);
 		}
 		return contents;
@@ -207,6 +205,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 */
 	@Override
 	protected List<Control> getBackgroundColorExclusions() {
+		@SuppressWarnings("unchecked")
 		List<Control> exclusions= super.getBackgroundColorExclusions();
 		exclusions.addAll(fColorExclusionControls);
 		return exclusions;
@@ -217,6 +216,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 */
 	@Override
 	protected List<Control> getForegroundColorExclusions() {
+		@SuppressWarnings("unchecked")
 		List<Control> exclusions= super.getForegroundColorExclusions();
 		exclusions.addAll(fColorExclusionControls);
 		return exclusions;

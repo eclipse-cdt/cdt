@@ -21,6 +21,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
@@ -81,9 +82,9 @@ public class CSpellingProblem extends SpellingProblem {
 	@Override
 	public String getMessage() {
 		if (isSentenceStart() && isDictionaryMatch())
-			return Messages.bind(Messages.Spelling_error_case_label, fSpellEvent.getWord());
+			return NLS.bind(Messages.Spelling_error_case_label, fSpellEvent.getWord());
 
-		return Messages.bind(Messages.Spelling_error_label, fSpellEvent.getWord());
+		return NLS.bind(Messages.Spelling_error_label, fSpellEvent.getWord());
 	}
 
 	/*
@@ -97,7 +98,7 @@ public class CSpellingProblem extends SpellingProblem {
 		
 		final int threshold= SpellingPreferences.spellingProposalThreshold();
 		int size= 0;
-		List proposals= null;
+		List<RankedWordProposal> proposals= null;
 
 		RankedWordProposal proposal= null;
 		ICCompletionProposal[] result= null;
@@ -118,7 +119,7 @@ public class CSpellingProblem extends SpellingProblem {
 						arguments, getOffset(), getLength(), context,
 						engine.getLocale()) };
 		    } else {
-				proposals= new ArrayList(checker.getProposals(arguments[0],
+				proposals= new ArrayList<RankedWordProposal>(checker.getProposals(arguments[0],
 						sentence));
 				size= proposals.size();
 
@@ -132,7 +133,7 @@ public class CSpellingProblem extends SpellingProblem {
 				result= new ICCompletionProposal[size + (extendable ? 3 : 2)];
 
 				for (index= 0; index < size; index++) {
-					proposal= (RankedWordProposal) proposals.get(index);
+					proposal= proposals.get(index);
 					result[index]= new WordCorrectionProposal(proposal
 							.getText(), arguments, getOffset(), getLength(),
 							context, proposal.getRank());

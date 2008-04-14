@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.text.spelling.engine;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -53,7 +52,7 @@ public class PersistentSpellDictionary extends AbstractSpellDictionary {
 		if (isCorrect(word))
 			return;
 
-		OutputStreamWriter writer= null;
+		FileOutputStream fileStream= null;
 		try {
 			Charset charset= Charset.forName(getEncoding());
 			ByteBuffer byteBuffer= charset.encode(word + "\n"); //$NON-NLS-1$
@@ -66,7 +65,7 @@ public class PersistentSpellDictionary extends AbstractSpellDictionary {
 				byteBuffer.get(byteArray);
 			}
 			
-			FileOutputStream fileStream= new FileOutputStream(fLocation.getPath(), true);
+			fileStream= new FileOutputStream(fLocation.getPath(), true);
 			
 			// Encoding UTF-16 charset writes a BOM. In which case we need to cut it away if the file isn't empty
 			int bomCutSize= 0;
@@ -79,8 +78,8 @@ public class PersistentSpellDictionary extends AbstractSpellDictionary {
 			return;
 		} finally {
 			try {
-				if (writer != null)
-					writer.close();
+				if (fileStream != null)
+					fileStream.close();
 			} catch (IOException e) {
 			}
 		}

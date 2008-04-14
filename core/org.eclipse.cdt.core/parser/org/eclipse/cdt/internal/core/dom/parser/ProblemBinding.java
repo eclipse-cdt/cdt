@@ -39,24 +39,24 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class ProblemBinding extends PlatformObject implements IProblemBinding, IType, IScope, IASTInternalScope {
     protected final int id;
-    protected final char [] arg;
+    protected final char[] arg;
     protected IASTNode node;
     private String message = null;
     
-    public ProblemBinding( IASTNode node, int id, char [] arg ){
+    public ProblemBinding(IASTNode node, int id, char[] arg) {
         this.id = id;
         this.arg = arg;
         this.node = node;
     }
     
-    public IASTNode getASTNode(){
+    public IASTNode getASTNode() {
         return node;
     }
     
     protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
-    protected static final String [] errorMessages;
+    protected static final String[] errorMessages;
     static {
-        errorMessages = new String [ IProblemBinding.LAST_PROBLEM ];
+        errorMessages = new String[IProblemBinding.LAST_PROBLEM];
         errorMessages[SEMANTIC_NAME_NOT_FOUND - 1] 		 		= ParserMessages.getString("ASTProblemFactory.error.semantic.nameNotFound"); //$NON-NLS-1$
         errorMessages[SEMANTIC_AMBIGUOUS_LOOKUP - 1]			= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.ambiguousLookup"); //$NON-NLS-1$ 
         errorMessages[SEMANTIC_INVALID_TYPE - 1]				= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidType"); //$NON-NLS-1$ 
@@ -87,7 +87,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         if (message != null)
             return message;
 
-        String msg = ( id >= 0 && id <= LAST_PROBLEM ) ? errorMessages[ id - 1 ] : ""; //$NON-NLS-1$
+        String msg = (id >= 0 && id <= LAST_PROBLEM) ? errorMessages[id - 1] : ""; //$NON-NLS-1$
 
         if (arg != null) {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
@@ -95,6 +95,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 		return msg;
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
@@ -113,7 +114,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() throws DOMException {
-        throw new DOMException( this );
+        throw new DOMException(this);
     }
 
     /* (non-Javadoc)
@@ -124,24 +125,23 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     }
 
     @Override
-	public Object clone(){
-    	//don't clone problems
+	public Object clone() {
+    	// Don't clone problems
         return this;
     }
-
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
      */
     public IScope getParent() throws DOMException {
-        throw new DOMException( this );
+        throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public IBinding[] find( String name ) throws DOMException {
-        throw new DOMException( this );
+    public IBinding[] find(String name) throws DOMException {
+        throw new DOMException(this);
     }
 
 	/* (non-Javadoc)
@@ -154,59 +154,60 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public void addName( IASTName name ) throws DOMException {
-        throw new DOMException( this );
+    public void addName(IASTName name) throws DOMException {
+        throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
      */
-    public void removeBinding( IBinding binding ) throws DOMException {
-        throw new DOMException( this );
+    public void removeBinding(IBinding binding) throws DOMException {
+        throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding( IASTName name, boolean resolve ) throws DOMException {
-        throw new DOMException( this );
+    public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+        throw new DOMException(this);
     }
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
-        throw new DOMException( this );
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix)
+			throws DOMException {
+        throw new DOMException(this);
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding( IASTName name, boolean resolve, IIndexFileSet fileSet ) throws DOMException {
-        throw new DOMException( this );
+    public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+        throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet ) throws DOMException {
-        throw new DOMException( this );
+    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+        throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#setFullyCached(boolean)
      */
-    public void setFullyCached( boolean b ) {
+    public void setFullyCached(boolean b) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#isFullyCached()
      */
     public boolean isFullyCached() throws DOMException {
-        throw new DOMException( this );
+        throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType( IType type ) {
+    public boolean isSameType(IType type) {
         return type == this;
     }
 
@@ -214,14 +215,14 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public String getFileName() {
-		if( node != null )
+		if (node != null)
 			return node.getContainingFilename();
 
 		return ""; //$NON-NLS-1$
 	}
 
 	public int getLineNumber() {
-		if( node != null ){
+		if (node != null) {
 			IASTFileLocation fileLoc = node.getFileLocation();
 			return fileLoc.getStartingLineNumber();
 		}
@@ -229,10 +230,15 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public void addBinding(IBinding binding) throws DOMException {
-		throw new DOMException( this );
+		throw new DOMException(this);
 	}
 
 	public ILinkage getLinkage() {
 		return Linkage.NO_LINKAGE;
+	}
+	
+	@Override
+	public String toString() {
+		return getMessage();
 	}
 }

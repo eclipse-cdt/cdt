@@ -33,31 +33,67 @@
   compatibility fallback to also run on Eclipse 3.3 if that particular fix
   is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-<li>API: Several <b>SystemMessages and Shared Resource Strings</b> have been moved
-  from RSEUIPlugin to non-UI
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
-<li>A new downloadable package is now available for the RSE User Actions framework
+<li>The <b>RSE User Actions</b> framework is available as a new downloadable package
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187395">187395</a>].</li>
-<li>A new downloadable package is now available for Windows CE connectivity. Thanks
-  to Radoslav Gerganov for contributing this new functionality
+<li>The <b>RAPI Library and Windows CE Subsystem</b> is available as a new downloadable
+  package in Incubation status. Thanks to Radoslav Gerganov for contributing this new
+  functionality
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=214887">214887</a>].</li>
-<li>The optional terminal input line is now resizeable
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196447">196447</a>].</li>
-<li>Tgz and tar.gz files are now supported by the DSore and Local archive handlers.
+<li><b>Tgz and tar.gz files</b> are now supported by the DSore and Local archive handlers.
   Thanks to Johnson Ma for contributing this new functionality
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=195402">195402</a>].</li>
-<li>API: RSE Early Startup and initialization behavior was improved. New API was added
-  for clients to register initialization handlers, or to query when initialization is
-  complete
+<li>The optional <b>terminal input line is now resizeable</b>
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196447">196447</a>].</li>
+<li>Performance: <b>Fewer plugins are now activated</b> when RSE starts up, because the
+  code that loads UI Adapters for the core services being used now loads those
+  adapters more lazily. For some extenders of RSE, this might mean that they need
+  to manually provide for loading their adapters when needed. For details, see the
+  final comments on bug
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218304">218304</a>].</li>
+<li>API: <b>Streamed remote shell and Terminal access</b> is now supported by API. 
+  <code>IAdaptable</code> is used to convert the old API into the new one. This
+  will enable RSE Terminal integrations, and provide better performance and 
+  consumability. At the same time, the RSE Services was cleaned up and made 
+  implement <code>IAdaptable</code> in general
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170910">170910</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226262">226262</a>].</li>
+<li>API: <b>RSE Early Startup and initialization</b> behavior was improved. The
+  <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_core_modelInitializers.html">org.eclipse.rse.core.modelInitializers</a></code>
+  extension point was added for clients to register code that needs to be executed
+  when the RSE Model is initialized. For clients, new API was added to
+  <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html">RSECorePlugin</a></code>
+  in order to
+  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html#isInitComplete(int)">query</a>
+  when initialization is complete, or to 
+  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html#waitForInitCompletion(int)">wait</a>
+  until initialization completes a given phase, or to get
+  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html#addInitListener(org.eclipse.rse.core.IRSEInitListener)">notified</a>
+  when initialization passes a given phase
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197167">197167</a>].</li>
-<li>API: RSE SystemMessage objects can now be constructed more easily with the new
-  <b>SimpleSystemMessage</b> API. Contents of these messages typically comes from
+<li>API: <b>RSE SystemMessages</b> can now be constructed more easily with the new
+  <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/messages/SimpleSystemMessage.html">SimpleSystemMessage</a></code> API.
+  Contents of these messages typically comes from
   standard Eclipse NLS property files, rather than the RSE-specific monolithic
-  systemmessages.xml file. This accounts for better modularity and Platform integration;
+  systemmessages.xml file. At the same time, messages have been refactored into
+  non-UI plugins where possible, or the correct feature-specific plugins. This 
+  accounts for better modularity and Platform integration;
   but it also means breaking API changes where clients had re-used RSE messages
   for themselves. Such re-use is now no longer supported  
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211067">211067</a>]
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
+  [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?quicksearch=211067,216252,220309">211067,216252,220309</a>].</li>
+<li>API: <b>RSE MOVE and COPY Events</b> now also contain source and destination objects,
+  such that listeners can update data associated with moved remote objects
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224313">224313</a>].</li>
+<li>API: Added API to support running the dstore server in multi-threaded mode,
+  where many clients can share a single remote process to save resources
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220126">220126</a>].</li>
+<li>API: The TerminalConnectorProxy class was removed, and replaced by
+  an <code>IAdaptable</code> mechanism to get a concrete connector instance. This
+  allows to programmatically create connections when a concrete connector instance
+  is known, and will be further enhanced in the future
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=200541">200541</a>].</li>
+<li>API: RSE FTP Listing Parsers can now contribute custom commands to send on
+  connect. This enables connecting IBM System/i (OS400) FTP in IFS mode
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=212382">212382</a>].</li>
 </ul></li>
 <li>At least 100 bugs were fixed: Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-04-12&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B3457%5D">
@@ -138,18 +174,39 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M6&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
 <ul>
+<li><b>RSE UI Adapter Loading</b> has been made more lazy. This means, that contributors
+  of RSE subsystems, which provide core services and UI adapters in separate plugins, may
+  need to take care of loading their adapters at the right time. RSE does provide for 
+  automatica adapter loading when a subsystem gets connected, but any adapter functionality
+  that's needed before that time needs to be provided by the client. For details, see the
+  final comments on bug
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218304">218304</a>].</li>
+<li>Several <b>SystemMessages and Shared Resource Strings</b> have been moved to different packages in order
+    to allow better integration with other Eclipse projects and better UI/Non-UI splitting.
+    New <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/messages/SimpleSystemMessage.html">SimpleSystemMessage</a></code> class has been added to create System Messages out 
+    of standard Eclipse NLS Strings. A list of related breaking API changes is attached to bugs
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>]
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220309">220309</a>].</li>
+<li><b>Adaptable Services</b>: All RSE Services must now extend <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/package-summary.html">AbstractService</a></code>
+  rather than implementing the Service interface directly, in order to make the Service
+  adaptable
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226262">226262</a>].</li>
+<li><b>ISystemNewConnectionWizardPage</b> was moved from Core to non-UI, and replaced
+  by a non-UI base class named <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/model/ISubSystemConfigurator.html">ISubSystemConfigurator</a></code> in non-UI.
+  Contributed Wizard Pages should use the new API in order to support configuring 
+  subsystems without bringing in unnecessary UI dependencies
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168976">168976</a>].</li>
 <li><b>SystemFileTransferModeRegistry</b> has been moved to internal class. <code>ISystemFileTransferModeRegistry</code> can now
-    be accessed by calling new API <code>RemoteFileUtility.getSystemFileTransferModeRegistry()</code>
+    be accessed by calling new API <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/model/RemoteFileUtility.html#getSystemFileTransferModeRegistry()">RemoteFileUtility.getSystemFileTransferModeRegistry()</a></code>
     instead
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220020">220020</a>].</li>
-<li>Several <b>SystemMessages and Shared Resource Strings</b> have been moved to different packages in order
-    to allow better integration with other Eclipse projects and better UI/Non-UI splitting. A list of related
-    breaking API changes is attached to bug
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
 <li>Some deprecated or not correctly working methods have been removed but should not have
     been used by any clients anyways
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=219975">219975</a>]
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220041">220041</a>].</li>
+    [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?quicksearch=219975,221138,220041,223126">219975,220041,223126</a>].</li>
+<li>Some less relevant breaking API changes, mostly for cleaning up API, have been made.
+    See the bug reports if you find that your code doesn't compile any more against RSE
+    3.0M6 and you find that not even an "organize imports" operation helps:
+    [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bbreaking%5D&product=Target+Management&component=Core&component=RSE&component=Terminal&resolution=FIXED&chfieldfrom=2008-02-19&chfieldto=2008-04-12&chfield=resolution&chfieldvalue=&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0+M%5B3457%5D&field0-0-2=bug_id&type0-0-2=anyexact&value0-0-2=168976%2C220020%2C216252%2C220309%2C219975%2C220041%2C223126%2C218304%2C221138%2C226262">query bugzilla</a>].</li>
 </ul></li>
 <li>TM 3.0M5 Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M5&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
 <ul>

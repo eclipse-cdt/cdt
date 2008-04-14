@@ -30,22 +30,22 @@ public class DocumentLabelProvider extends BaseLabelProvider {
         super();
         fDocument = document;
     }
-
-    public void update( Object parent, Object[] elements, IDocumentPresentation context ) {
-        IDocumentElementLabelProvider labelProvider = getLabelAdapter( parent );
-        if ( labelProvider != null ) {
-            Object root = getDocument().getContentProvider().getRoot();
-            Object base = getDocument().getContentProvider().getBase();
-            DocumentLabelUpdate[] updates = new DocumentLabelUpdate[elements.length];
-            for ( int i = 0; i < elements.length; ++i ) {
-                updates[i] = new DocumentLabelUpdate( this, context, root, base, elements[i], i );
-            }
-            labelProvider.update( updates );
-        }
-    }
+//
+//    public void update( Object parent, Object[] elements, IDocumentPresentation context ) {
+//        IDocumentElementLabelProvider labelProvider = getLabelAdapter( parent );
+//        if ( labelProvider != null ) {
+//            Object root = getDocument().getContentProvider().getRoot();
+//            Object base = getDocument().getContentProvider().getBase();
+//            DocumentLabelUpdate[] updates = new DocumentLabelUpdate[elements.length];
+//            for ( int i = 0; i < elements.length; ++i ) {
+//                updates[i] = new DocumentLabelUpdate( this, context, root, base, elements[i], i );
+//            }
+//            labelProvider.update( updates );
+//        }
+//    }
 
     public void update( Object parent, Object element, int index, IDocumentPresentation context ) {
-        IDocumentElementLabelProvider labelProvider = getLabelAdapter( parent );
+        IDocumentElementLabelProvider labelProvider = getLabelAdapter( element );
         if ( labelProvider != null ) {
             Object root = getDocument().getContentProvider().getRoot();
             Object base = getDocument().getContentProvider().getBase();

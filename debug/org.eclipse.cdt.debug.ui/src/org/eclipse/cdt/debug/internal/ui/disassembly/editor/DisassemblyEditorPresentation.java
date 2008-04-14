@@ -25,6 +25,9 @@ public class DisassemblyEditorPresentation extends PresentationContext implement
 
     private boolean fShowInstructions = true;
     private boolean fShowSource = false;
+    
+    private boolean fShowAddresses = true;
+    private boolean fShowLineNumbers = true;
 
     public DisassemblyEditorPresentation() {
         super( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR );
@@ -46,5 +49,21 @@ public class DisassemblyEditorPresentation extends PresentationContext implement
 
     public void setShowSource( boolean showSource ) {
         fShowSource = showSource;
+    }
+
+    public boolean showAddresses() {
+        return fShowAddresses;
+    }
+
+    public void setShowAddresses( boolean showAddresses ) {
+        fShowAddresses = showAddresses;
+    }
+
+    public boolean showLineNumbers() {
+        return fShowLineNumbers;
+    }
+
+    public void setShowLineNumbers( boolean showLineNumbers ) {
+        fShowLineNumbers = showLineNumbers;
     }
 }

@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.internal.ui.disassembly.viewer;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentPresentation;
@@ -22,6 +24,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * Converts the model elements into the text content
@@ -140,9 +143,6 @@ public class VirtualDocument extends Document {
             }
         }
         else { // scrolling down
-            for ( int i = 0; i < offset - oldOffset; ++i ) {
-//                removePosition( CATEGORY_LINE, new LinePosition( ) )
-            }
             line += offset - oldOffset;
         }
         for ( int i = 0; i < intersectCount; ++i ) {
@@ -196,10 +196,41 @@ public class VirtualDocument extends Document {
         getAnnotationProvider().update( getContentProvider().getInput(), element, index, getPresentationContext() );
     }
 
+    @SuppressWarnings("unchecked")
     protected void updateAnnotations( int lineNumber, Annotation[] annotations ) {
+        IAnnotationModel annotationModel = getAnnotationModel();
+        try {
+            Position[] positions = getPositions( CATEGORY_LINE );
+            if ( lineNumber < positions.length ) {
+                Iterator it = annotationModel.getAnnotationIterator();
+                ArrayList<Annotation> oldAnnotations = new ArrayList<Annotation>( 3 );
+                while( it.hasNext() ) {
+                    Annotation ann = (Annotation)it.next();
+                    if ( positions[lineNumber].equals( annotationModel.getPosition( ann ) ) ) {
+                        oldAnnotations.add( ann );
+                    }
+                }
+                for ( Annotation ann : oldAnnotations ) {
+                    annotationModel.removeAnnotation( ann );
+                }
+                for ( Annotation ann : annotations ) {
+                    annotationModel.addAnnotation( ann, positions[lineNumber] );
+                }
+            }
+        }
+        catch( BadPositionCategoryException e ) {
+        }
     }
 
     final void labelDone( Object element, int lineNumber, Properties labels ) {
+        try {
+            String line = labels.getProperty( IDocumentPresentation.ATTR_LINE_LABEL );
+            IRegion region = getLineInformation( lineNumber );
+            if ( get( region.getOffset(), region.getLength() ).compareTo( line ) != 0 )
+                replace( region.getOffset(), region.getLength(), line );
+        }
+        catch( BadLocationException e ) {
+        }
     }
 
     protected void removeLine( int lineNumber ) {

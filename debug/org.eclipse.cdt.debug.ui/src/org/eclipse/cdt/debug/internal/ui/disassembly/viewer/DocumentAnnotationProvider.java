@@ -50,7 +50,7 @@ public class DocumentAnnotationProvider {
     }
 
     public void update( Object parent, Object element, int index, IDocumentPresentation context ) {
-        IDocumentElementAnnotationProvider annotationProvider = getAnnotationAdapter( parent );
+        IDocumentElementAnnotationProvider annotationProvider = getAnnotationAdapter( element );
         if ( annotationProvider != null ) {
             Object root = getDocument().getContentProvider().getRoot();
             Object base = getDocument().getContentProvider().getBase();

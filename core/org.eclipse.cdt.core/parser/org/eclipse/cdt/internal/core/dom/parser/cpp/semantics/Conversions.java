@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
@@ -59,7 +58,7 @@ class Conversions {
 
 	/**
 	 * Computes the cost of using the standard conversion sequence from source to target.
-	 * @param ignoreDerivedToBaseConversion handles the special case when members of different
+	 * @param isImplicitThis handles the special case when members of different
 	 *    classes are nominated via using-declarations. In such a situation the derived to
 	 *    base conversion does not cause any costs.
 	 * @throws DOMException
@@ -121,33 +120,31 @@ class Conversions {
 	}
 
 	static Cost checkUserDefinedConversionSequence( IType source, IType target ) throws DOMException {
-		Cost cost = null;
 		Cost constructorCost = null;
-		Cost conversionCost = null;
+		Cost operatorCost = null;
 
 		IType s = getUltimateType( source, true );
 		IType t = getUltimateType( target, true );
-
-		ICPPConstructor constructor = null;
-		ICPPMethod conversion = null;
 
 		//constructors
 		if( t instanceof ICPPClassType ){
 			ICPPConstructor [] constructors = ((ICPPClassType)t).getConstructors();
 			if( constructors.length > 0 ){
-				if( constructors.length == 1 && constructors[0] instanceof IProblemBinding )
-					constructor = null;
-				else {
+				if( constructors.length > 0 && constructors[0] instanceof IProblemBinding == false ){
 					LookupData data = new LookupData();
 					data.forUserDefinedConversion = true;
 					data.functionParameters = new IType [] { source };
 					IBinding binding = CPPSemantics.resolveFunction( data, constructors );
-					if( binding instanceof ICPPConstructor )
-						constructor = (ICPPConstructor) binding;
+					if( binding instanceof ICPPConstructor ) {
+						ICPPConstructor constructor = (ICPPConstructor) binding;
+						if(!constructor.isExplicit()){
+							constructorCost = checkStandardConversionSequence( t, target, false );
+							if (constructorCost.rank == Cost.NO_MATCH_RANK) {
+								constructorCost= null;
+							}
+						}
 				}
 			}
-			if( constructor != null && !constructor.isExplicit() ){
-				constructorCost = checkStandardConversionSequence( t, target, false );
 			}
 		}
 
@@ -159,55 +156,51 @@ class Conversions {
 			|| s instanceof CPPClassInstance);
 		
 		//conversion operators
+		boolean ambigousConversionOperator= false;
 		if (checkConversionOperators) {
 			ICPPMethod [] ops = SemanticUtil.getConversionOperators((ICPPClassType)s); 
-			if( ops.length > 0 && !(ops[0] instanceof IProblemBinding) ){
-				Cost [] costs = null;
-				for (int i = 0; i < ops.length; i++) {
-					cost = checkStandardConversionSequence( ops[i].getType().getReturnType(), target, false );
-					if( cost.rank != Cost.NO_MATCH_RANK )
-						costs = (Cost[]) ArrayUtil.append( Cost.class, costs, cost );
-				}
-				if( costs != null ){
-					Cost best = costs[0];
-					boolean bestIsBest = true;
-					int bestIdx = 0;
-					for (int i = 1; i < costs.length && costs[i] != null; i++) {
-						int comp = best.compare( costs[i] );
-						if( comp == 0 )
-							bestIsBest = false;
-						else if( comp > 0 ){
-							best = costs[ bestIdx = i ];
-							bestIsBest = true;
+			if( ops.length > 0 && ops[0] instanceof IProblemBinding == false ){
+				for (final ICPPMethod op : ops) {
+					Cost cost = checkStandardConversionSequence( op.getType().getReturnType(), target, false );
+					if( cost.rank != Cost.NO_MATCH_RANK ) {
+						if (operatorCost == null) {
+							operatorCost= cost;
 						}
-					}
-					if( bestIsBest ){
-						conversion = ops[ bestIdx ]; 
-						conversionCost = best;
+						else {
+							int cmp= operatorCost.compare(cost);
+							if (cmp >= 0) {
+								ambigousConversionOperator= cmp == 0;
+								operatorCost= cost;
+							}
+						}
 					}
 				}
 			}
 		}
 
-		//if both are valid, then the conversion is ambiguous
-		if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK && 
-				conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK )
-		{
-			cost = constructorCost;
-			cost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
-			cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-		} else {
-			if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK ){
-				cost = constructorCost;
-				cost.userDefined = constructor.hashCode();
-				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			} else if( conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK ){
-				cost = conversionCost;
-				cost.userDefined = conversion.hashCode();
-				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+		if (constructorCost != null) {
+			if (operatorCost == null || ambigousConversionOperator) {
+				constructorCost.userDefined = Cost.USERDEFINED_CONVERSION;
+				constructorCost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+			}
+			else {
+				//if both are valid, then the conversion is ambiguous
+				constructorCost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
+				constructorCost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+			}
+			return constructorCost;
+		} 
+		if (operatorCost != null) {
+			operatorCost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+			if (ambigousConversionOperator) {
+				operatorCost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;
+			}
+			else {
+				operatorCost.userDefined = Cost.USERDEFINED_CONVERSION;
 			} 			
+			return operatorCost;
 		}
-		return cost;
+		return null;
 	}
 
 	/**
@@ -225,8 +218,8 @@ class Conversions {
 
 		if(maxdepth>0) {
 			ICPPBase [] bases = clazz.getBases();
-			for(int i=0; i<bases.length; i++) {
-				IBinding base = bases[i].getBaseClass();
+			for (ICPPBase cppBase : bases) {
+				IBinding base = cppBase.getBaseClass();
 				if(base instanceof IType) {
 					IType tbase= (IType) base;
 					if( tbase.isSameType(ancestorToFind) || 
@@ -341,11 +334,6 @@ class Conversions {
 	}
 
 	/**
-	 * 
-	 * @param source
-	 * @param target
-	 * @return int
-	 * 
 	 * 4.5-1 char, signed char, unsigned char, short int or unsigned short int
 	 * can be converted to int if int can represent all the values of the source
 	 * type, otherwise they can be converted to unsigned int.
@@ -394,13 +382,12 @@ class Conversions {
 		while( true ){
 			s= getUltimateTypeViaTypedefs(s);
 			t= getUltimateTypeViaTypedefs(t);
-			IPointerType op1= s instanceof IPointerType ? (IPointerType) s : null;
-			IPointerType op2= t instanceof IPointerType ? (IPointerType) t : null;
+			final boolean sourceIsPointer= s instanceof IPointerType;
+			final boolean targetIsPointer= t instanceof IPointerType;
 
-			if( op1 == null && op2 == null )
-				break;
-			else if( op1 == null ^ op2 == null) {
-				// 4.12 - pointer types can be converted to bool
+			if (!targetIsPointer) {
+				if (!sourceIsPointer) 
+					break;
 				if(t instanceof ICPPBasicType) {
 					if(((ICPPBasicType)t).getType() == ICPPBasicType.t_bool) {
 						canConvert= true;
@@ -410,10 +397,17 @@ class Conversions {
 				}
 				canConvert = false; 
 				break;
-			} else if( op1 instanceof ICPPPointerToMemberType ^ op2 instanceof ICPPPointerToMemberType ){
+			} else if (!sourceIsPointer) {
+				canConvert = false; 
+				break;
+			} else if( s instanceof ICPPPointerToMemberType ^ t instanceof ICPPPointerToMemberType ){
 				canConvert = false;
 				break;
 			} 
+			
+			// both are pointers
+			IPointerType op1= (IPointerType) s;
+			IPointerType op2= (IPointerType) t;
 
 			//if const is in cv1,j then const is in cv2,j.  Similary for volatile
 			if( ( op1.isConst() && !op2.isConst() ) || ( op1.isVolatile() && !op2.isVolatile() ) ) {

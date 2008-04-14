@@ -25,7 +25,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  */
 class Cost {
 	//Some constants to help clarify things
+	public static final int NO_USERDEFINED_CONVERSION = 0;
 	public static final int AMBIGUOUS_USERDEFINED_CONVERSION = 1;
+	public static final int USERDEFINED_CONVERSION = 2;
 	
 	public static final int NO_MATCH_RANK = -1;
 	public static final int IDENTITY_RANK = 0;
@@ -46,7 +48,7 @@ class Cost {
 	public int promotion;
 	public int conversion;
 	public int qualification;
-	public int userDefined;
+	public int userDefined= NO_USERDEFINED_CONVERSION;
 	public int rank = -1;
 	public int detail;
 	
@@ -62,17 +64,18 @@ class Cost {
 			return cost.rank - rank;
 		}
 		
-		if( userDefined != 0 || cost.userDefined != 0 ){
-			if( userDefined == 0 || cost.userDefined == 0 ){
+		if (userDefined == cost.userDefined) {
+			if (userDefined == AMBIGUOUS_USERDEFINED_CONVERSION) {
+				return 0;
+			}
+			// same or no userconversion --> rank on standard conversion sequence.
+		}
+		else {
+			if (userDefined == NO_USERDEFINED_CONVERSION || cost.userDefined == NO_USERDEFINED_CONVERSION) {
 				return cost.userDefined - userDefined;
-			} 
-			if( (userDefined == AMBIGUOUS_USERDEFINED_CONVERSION || cost.userDefined == AMBIGUOUS_USERDEFINED_CONVERSION) ||
-				(userDefined != cost.userDefined ) )
-					return 0;
-	 
-				// else they are the same constructor/conversion operator and are ranked
-				//on the standard conversion sequence
-	
+			}
+			// one ambiguous, the other needs conversion --> can't use std conversion to rank
+			return 0;
 		}
 		
 		if( promotion > 0 || cost.promotion > 0 ){
@@ -92,6 +95,9 @@ class Cost {
 			} else if( (cost.qualification == qualification) && qualification == 0 ){
 				return 0;
 			} else {
+				// something is wrong below:
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=226877
+
 				IPointerType op1, op2;
 				IType t1 = cost.target, t2 = target;
 				int subOrSuper = 0;

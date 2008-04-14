@@ -13,9 +13,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * A model initializer creates objects an RSE profile. For example, initializers
- * can be used to create initial connections, filter pools, and filters.
- *
+ * A model initializer creates objects in an RSE profile. For example,
+ * initializers can be used to create initial connections, filter pools, and
+ * filters.
+ * 
  * @since org.eclipse.rse.core 3.0
  */
 public interface IRSEModelInitializer {

@@ -240,8 +240,12 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		} else {
 			buttonSetText(3, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
 		}
-    	boolean canMoveUp = canEdit && index > 0 && !ent.isBuiltIn();
-    	boolean canMoveDown = canEdit && (index < table.getItemCount() - 1) && !ent.isBuiltIn(); 
+		boolean canMoveUp = false;
+		boolean canMoveDown = false;
+		if (ent != null) {
+			canMoveUp = canEdit && index > 0 && !ent.isBuiltIn();
+			canMoveDown = canEdit && (index < table.getItemCount() - 1) && !ent.isBuiltIn();
+		}
     	if (canMoveDown && showBIButton.getSelection()) {
     		ent = (ICLanguageSettingEntry)(table.getItem(index+1).getData());
     		if (ent.isBuiltIn()) canMoveDown = false; // cannot exchange with built in
@@ -318,8 +322,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			
 			shownEntries = getIncs(); 
 			tv.setInput(shownEntries.toArray(new Object[shownEntries.size()]));
-			if (table.getItemCount() > x) table.select(x);
-			else if (table.getItemCount() > 0) table.select(0);
+			if (table.getItemCount() > x) table.setSelection(x);
+			else if (table.getItemCount() > 0) table.setSelection(0);
 		}		
 		
 		updateLbs(lb1, lb2);
@@ -546,6 +550,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		default:
 			break;
 		}
+		table.setFocus();
 	}
 
 	private void deleteExportSetting(ICSettingEntry ent) {
@@ -655,8 +660,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 				return IMG_MK;				
 			if ((le.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0)
 				return IMG_WS;
-			else 
-				return IMG_FS;
+			return IMG_FS;
 		}
 		@Override
 		public String getText(Object element) {
@@ -687,8 +691,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (le.isBuiltIn()) return null;    // built in
 			if (le.isReadOnly())                // read only
 				return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
-			else	                            // normal
-				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
+			// normal
+			return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 		}
 	}
 
@@ -700,8 +704,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			ICFolderDescription foDes = (ICFolderDescription)rcDes;
 			if (foDes instanceof ICMultiFolderDescription) {
 				return getLS((ICMultiFolderDescription)foDes);
-			} else 
-				return foDes.getLanguageSettings();
+			}  
+			return foDes.getLanguageSettings();
 		case ICSettingBase.SETTING_FILE:
 			ICFileDescription fiDes = (ICFileDescription)rcDes;
 			ICLanguageSetting ls = fiDes.getLanguageSetting();
@@ -757,8 +761,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			ICLanguageSettingEntry[] out = new ICLanguageSettingEntry[res.length];
 			System.arraycopy(res, 0, out, 0, res.length);
 			return Arrays.asList(out);
-		} else
-			return lang.getSettingEntriesList(kind);
+		} 
+		return lang.getSettingEntriesList(kind);
 	}
 	
 	private ICLanguageSetting[] conv2LS(Object[] ob) {

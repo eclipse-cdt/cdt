@@ -82,9 +82,9 @@ public class SymbolTab extends AbstractLangsListTab {
 			Collections.sort(shownEntries, CDTListComparator.getInstance());
 			tv.setInput(shownEntries.toArray(new Object[shownEntries.size()]));
 			if (table.getItemCount() > x)
-				table.select(x);
+				table.setSelection(x);
 			else if (table.getItemCount() > 0) 
-				table.select(0);
+				table.setSelection(0);
 		}		
 		updateLbs(lb1, lb2);
 		updateButtons();

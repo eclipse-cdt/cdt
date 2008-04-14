@@ -47,7 +47,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A class that implements &lt;b&gt;org.eclipse.rse.core.IRSEModelInitializer&lt;/b&gt;.
+                  A class that extends &lt;b&gt;org.eclipse.rse.core.IRSEModelInitializer&lt;/b&gt;.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.rse.core.model.RSEModelInitializer"/>

@@ -66,7 +66,20 @@ public abstract class PDOMNode implements IPDOMNode {
 	public int getRecord() {
 		return record;
 	}
-	
+
+	/**
+	 * Checks if <code>other</code> node is the immediate parent of this one.
+	 * @param other paternity test subject.
+	 * @return <code>true</code> if <code>other</code> node in the parent of this one.
+	 */
+	public boolean isChildOf(PDOMNode other) {
+		try {
+			return other.pdom == pdom && other.record == getParentNodeRec();
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
 	@Override
 	public final boolean equals(Object obj) {
 		if (obj == this)

@@ -91,7 +91,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	public PDOMCPPLinkage(PDOM pdom, int record) {
@@ -251,16 +250,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				if (parent == null)
 					return null;
 				
-				if(binding instanceof ICPPSpecialization) {
+				if (binding instanceof ICPPSpecialization) {
 					IBinding specialized= ((ICPPSpecialization)binding).getSpecializedBinding();
 					PDOMBinding pdomSpecialized= adaptBinding(specialized);
-					if(pdomSpecialized == null) {
+					if (pdomSpecialized == null) {
 						addBinding(specialized, null);
 					}
 				}
 				
 				pdomBinding = adaptBinding(binding);
-				if(pdomBinding == null) {
+				if (pdomBinding == null) {
 					pdomBinding = addBinding(parent, binding);
 					if ((pdomBinding instanceof PDOMCPPClassInstance || pdomBinding instanceof PDOMCPPDeferredClassInstance) && binding instanceof ICPPClassType) {
 						// Add instantiated constructors to the index (bug 201174).
@@ -316,7 +315,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (binding instanceof ICPPSpecialization) {
 			IBinding specialized = ((ICPPSpecialization)binding).getSpecializedBinding();
 			PDOMBinding pdomSpecialized= adaptBinding(specialized);
-			if(pdomSpecialized == null)
+			if (pdomSpecialized == null)
 				return null;
 			if (binding instanceof ICPPDeferredTemplateInstance) {
 				if (binding instanceof ICPPFunction && pdomSpecialized instanceof ICPPFunctionTemplate) {
@@ -388,7 +387,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 //			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
 //				pdomBinding = new PDOMCPPTemplateNonTypeParameter(pdom, parent, (ICPPTemplateNonTypeParameter)binding);
 //			}
-		} else if (binding instanceof ICPPField ) {
+		} else if (binding instanceof ICPPField) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
 				pdomBinding = new PDOMCPPField(pdom, parent, (ICPPField) binding);
 			}
@@ -771,7 +770,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 	
 	@Override
-	@SuppressWarnings("hiding")
 	public PDOMNode getNode(int record) throws CoreException {
 		if (record == 0)
 			return null;
@@ -880,12 +878,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		
 		IASTNode parentNode= name.getParent();
 		if (parentNode instanceof ICPPASTQualifiedName) {
-		    IASTName [] ns = ((ICPPASTQualifiedName)parentNode).getNames();
-		    if ( name != ns[ ns.length -1 ] ) {
+		    IASTName[] ns = ((ICPPASTQualifiedName) parentNode).getNames();
+		    if (name != ns[ns.length - 1]) {
 		    	return;
-		    } else {
-		    	parentNode = parentNode.getParent();
 		    }
+	    	parentNode = parentNode.getParent();
 		}
 		if (parentNode instanceof ICPPASTBaseSpecifier) {
 			PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
@@ -893,13 +890,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				ICPPASTBaseSpecifier baseNode= (ICPPASTBaseSpecifier) parentNode;
 				PDOMBinding derivedClassBinding= derivedClassName.getBinding();
 				if (derivedClassBinding instanceof PDOMCPPClassType) {
-					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
+					PDOMCPPClassType ownerClass = (PDOMCPPClassType) derivedClassBinding;
 					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(),
 							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
 					pdomName.setIsBaseSpecifier(true);
 				} else if (derivedClassBinding instanceof PDOMCPPClassSpecialization) {
-					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization)derivedClassBinding;
+					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization) derivedClassBinding;
 					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(),
 							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);

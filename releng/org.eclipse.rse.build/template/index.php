@@ -151,16 +151,6 @@
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All (<i>Experimental</i>)</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-wince-@buildId@.zip">RSE-wince-@buildId@.zip</a></td>
-        <td><small>&nbsp;</small><br/>
-			RSE Services for accessing Windows CE devices via Microsoft RAPI2.
-			Provides a File subsystem for transparent remote file access.
-			Requires Microsoft RAPI libraries installed.
-			Includes Source.
-        </td>
-    </tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
@@ -174,6 +164,47 @@
         <td><small>&nbsp;</small><br/>
         	Additional Framework for user-defined actions and compile commands.
         	Includes Source.
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr><td colspan="2">&nbsp;</td></tr>
+</table>
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
+		<font face="Arial,Helvetica" color="#FFFFFF">Add-ons in Incubation</font></b>
+		</td>
+	</tr>
+	<tr>
+	    <td>Add-ons in 
+	    <a href="http://www.eclipse.org/projects/what-is-incubation.php">
+	    Incubation</a> state provide new features, but have 
+	    not yet hardened their APIs through public review such that there could be 
+	    a promise to keep them stable over releases. These add-ons have a 0.x version
+	    number, and are provided for early adopters. Note that these features may 
+	    already be very mature in terms of features provided, but not yet in terms
+	    of the APIs provided.</td>
+	</tr>
+</table>
+<table border="0" cellspacing="2" cellpadding="0" width="100%">
+	<tr>
+		<td align="RIGHT" valign="TOP" width="7%">
+		   <div align="left"><b>Status</b></div>
+		</td>
+		<td width="7%"><b>Platform</b></td>
+		<td width="23%"><b>Download</b></td>
+		<td width="63%"><b>Notes</b></td>
+	</tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All <img src="egg.gif" width=20 height=20></td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-wince-incubation-@buildId@.zip">RSE-wince-incubation-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+			RSE Services for accessing Windows CE devices via Microsoft RAPI2.
+			Provides a File subsystem for transparent remote file access.
+			Requires Microsoft RAPI libraries installed.
+			Includes Source.
         </td>
     </tr>
 </table>

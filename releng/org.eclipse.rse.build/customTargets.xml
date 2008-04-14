@@ -131,7 +131,7 @@
 	</target>
 
 	<target name="assemble.org.eclipse.rse.wince">
-		<property name="archiveName" value="RSE-wince-${buildId}.zip"/>
+		<property name="archiveName" value="RSE-wince-incubation-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

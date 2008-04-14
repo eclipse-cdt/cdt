@@ -264,7 +264,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					if ((pdomBinding instanceof PDOMCPPClassInstance || pdomBinding instanceof PDOMCPPDeferredClassInstance) && binding instanceof ICPPClassType) {
 						// Add instantiated constructors to the index (bug 201174).
 						addConstructors(pdomBinding, (ICPPClassType) binding);
-						addConversionOperators(pdomBinding, (ICPPClassType) binding);
+						if(SemanticUtil.ENABLE_224364) {
+							addConversionOperators(pdomBinding, (ICPPClassType) binding);
+						}
 					}
 				}
 			} catch (DOMException e) {

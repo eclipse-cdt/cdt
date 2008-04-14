@@ -41,6 +41,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
@@ -147,8 +151,15 @@ class Conversions {
 			}
 		}
 
+		boolean checkConversionOperators=
+			(SemanticUtil.ENABLE_224364 && s instanceof ICPPClassType)
+			|| (s instanceof CPPClassType
+			|| s instanceof CPPClassTemplate
+			|| s instanceof CPPClassSpecialization
+			|| s instanceof CPPClassInstance);
+		
 		//conversion operators
-		if( s instanceof ICPPClassType ){
+		if (checkConversionOperators) {
 			ICPPMethod [] ops = SemanticUtil.getConversionOperators((ICPPClassType)s); 
 			if( ops.length > 0 && !(ops[0] instanceof IProblemBinding) ){
 				Cost [] costs = null;

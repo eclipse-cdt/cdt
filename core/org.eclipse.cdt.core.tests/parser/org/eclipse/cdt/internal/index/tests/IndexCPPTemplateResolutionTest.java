@@ -953,7 +953,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     //      C<X> cx;
     //      foo(cx);
 	//	}
-    public void testUserDefinedConversionOperator_224364() throws Exception {
+    public void _testUserDefinedConversionOperator_224364() throws Exception {
     	IBinding ca=   getBindingFromASTName("C<A>", 4);
     	assertInstance(ca, ICPPClassType.class);
     	assertInstance(ca, ICPPTemplateInstance.class);

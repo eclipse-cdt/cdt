@@ -42,16 +42,23 @@ public class SemanticUtil {
 	 */
 	private static final CharArraySet cas= new CharArraySet(OverloadableOperator.values().length);
 	
+	/**
+	 * Switch for enabling fix for bug 224364 
+	 */
+	public static final boolean ENABLE_224364= System.getProperty("cdt.enable.224364") != null; //$NON-NLS-1$
+	
 	static {
+		final int OPERATOR_SPC= OPERATOR_CHARS.length + 1;
 		for(OverloadableOperator op : OverloadableOperator.values()) {
-			cas.put(op.toCharArray());
+			char[] name= op.toCharArray();
+			cas.put(CharArrayUtils.subarray(name, OPERATOR_SPC, name.length));
 		}
 	}
 	
 	/**
 	 * Returns a list of ICPPMethod objects representing all conversion operators
-	 * declared by the specified class. It does not include inherited methods. Conversion
-	 * operators can not be implicit.
+	 * declared by the specified class. This does not include inherited methods. Conversion
+	 * operators cannot be implicit.
 	 * @param clazz
 	 * @return List of ICPPMethod
 	 */
@@ -70,8 +77,8 @@ public class SemanticUtil {
 	
 	/**
 	 * Returns a list of ICPPMethod objects representing all conversion operators
-	 * declared by the specified class and its ancestors. It does not include inherited
-	 * methods. Conversion operators can not be implicit.
+	 * declared by the specified class and its ancestors. This includes inherited
+	 * methods. Conversion operators cannot be implicit.
 	 * @param clazz
 	 * @return List of ICPPMethod
 	 */
@@ -120,9 +127,9 @@ public class SemanticUtil {
 	
 	/**
 	 * @param method
-	 * @return true is the specified method is a conversion operator
+	 * @return true if the specified method is a conversion operator
 	 */
-	private static final boolean isConversionOperator(ICPPMethod method) {
+	public static final boolean isConversionOperator(ICPPMethod method) {
 		boolean result= false;
 		if(!method.isImplicit()) {
 			final char[] name= method.getNameCharArray();

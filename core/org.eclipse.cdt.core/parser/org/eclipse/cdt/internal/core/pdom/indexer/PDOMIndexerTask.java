@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.text.NumberFormat;
 import java.util.Calendar;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -168,6 +169,11 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			scanInfo= provider.getScannerInformation(file);
 			if (scanInfo == null || scanInfo.getDefinedSymbols().isEmpty()) {
 				scanInfo= provider.getScannerInformation(project);
+				if (linkageID == ILinkage.C_LINKAGE_ID) {
+					final Map<String, String> definedSymbols = scanInfo.getDefinedSymbols();
+					definedSymbols.remove("__cplusplus__"); //$NON-NLS-1$
+					definedSymbols.remove("__cplusplus"); //$NON-NLS-1$
+				}
 			}
 		}
 		else {
@@ -273,64 +279,62 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 					+ fStatistics.fReferenceCount + " references, "    //$NON-NLS-1$
 					+ fStatistics.fProblemBindingCount + "(" + nfPercent.format(problemPct) + ") unresolved.");     //$NON-NLS-1$ //$NON-NLS-2$
 			
-			if (index != null) {
-				long misses= index.getCacheMisses();
-				long hits= index.getCacheHits();
-				long tries= misses+hits;
-				double missPct= tries==0 ? 0.0 : (double) misses / (double) tries;
-				System.out.println(ident + " Cache["    //$NON-NLS-1$
+			long misses= index.getCacheMisses();
+			long hits= index.getCacheHits();
+			long tries= misses+hits;
+			double missPct= tries==0 ? 0.0 : (double) misses / (double) tries;
+			System.out.println(ident + " Cache["    //$NON-NLS-1$
 					+ ChunkCache.getSharedInstance().getMaxSize() / 1024 / 1024 + "mb]: " +    //$NON-NLS-1$
 					+ hits + " hits, "      //$NON-NLS-1$
 					+ misses + "(" + nfPercent.format(missPct)+ ") misses.");      //$NON-NLS-1$ //$NON-NLS-2$
-			
-				if ("true".equals(System.getProperty("SHOW_COMPRESSED_INDEXER_INFO"))) {    //$NON-NLS-1$ //$NON-NLS-2$
-					Calendar cal = Calendar.getInstance();
-					NumberFormat twoDigits= NumberFormat.getNumberInstance();
-					twoDigits.setMinimumIntegerDigits(2);
-					NumberFormat nfGroup= NumberFormat.getNumberInstance();
-					nfGroup.setGroupingUsed(true);
 
-					final String sep0 = "|"; //$NON-NLS-1$
-					final String sep = "|  "; //$NON-NLS-1$
-					final String sec = "s"; //$NON-NLS-1$
-					final String mb = "mb"; //$NON-NLS-1$
-					final String million = "M"; //$NON-NLS-1$
-					System.out.print(sep0);   
-					System.out.print(cal.get(Calendar.YEAR) + twoDigits.format(cal.get(Calendar.MONTH)+1) + twoDigits.format(cal.get(Calendar.DAY_OF_MONTH)+1));
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(info.fCompletedSources));
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(info.fCompletedHeaders));
-					System.out.print(sep);   
-					System.out.print(nfGroup.format((totalTime+500)/1000) + sec);   
-					System.out.print(sep);   
-					System.out.print(nfGroup.format((fStatistics.fParsingTime+500)/1000) + sec);   
-					System.out.print(sep);    
-					System.out.print(nfGroup.format((fStatistics.fResolutionTime+500)/1000) + sec);   
-					System.out.print(sep);   
-					System.out.print(nfGroup.format((fStatistics.fAddToIndexTime+500)/1000) + sec);   
-					System.out.print(sep);   
-					System.out.print(nfGroup.format((dbSize+1024*512)/1024/1024) + mb);   
-					System.out.print(sep);   
-					System.out.print(nfGroup.format((tries+1000*500)/1000000) + million);   
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(fStatistics.fDeclarationCount));  
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(fStatistics.fReferenceCount));  
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(fStatistics.fProblemBindingCount));  
-					System.out.print(sep);   
-					System.out.print(nfPercent.format(problemPct));   
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(fStatistics.fErrorCount));  
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(fStatistics.fUnresolvedIncludesCount));  
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(fStatistics.fPreprocessorProblemCount));  
-					System.out.print(sep);   
-					System.out.print(nfGroup.format(fStatistics.fSyntaxProblemsCount));  
-					System.out.println(sep0);   
-				}
+			if ("true".equals(System.getProperty("SHOW_COMPRESSED_INDEXER_INFO"))) {    //$NON-NLS-1$ //$NON-NLS-2$
+				Calendar cal = Calendar.getInstance();
+				NumberFormat twoDigits= NumberFormat.getNumberInstance();
+				twoDigits.setMinimumIntegerDigits(2);
+				NumberFormat nfGroup= NumberFormat.getNumberInstance();
+				nfGroup.setGroupingUsed(true);
+
+				final String sep0 = "|"; //$NON-NLS-1$
+				final String sep = "|  "; //$NON-NLS-1$
+				final String sec = "s"; //$NON-NLS-1$
+				final String mb = "mb"; //$NON-NLS-1$
+				final String million = "M"; //$NON-NLS-1$
+				System.out.print(sep0);   
+				System.out.print(cal.get(Calendar.YEAR) + twoDigits.format(cal.get(Calendar.MONTH)+1) + twoDigits.format(cal.get(Calendar.DAY_OF_MONTH)+1));
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(info.fCompletedSources));
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(info.fCompletedHeaders));
+				System.out.print(sep);   
+				System.out.print(nfGroup.format((totalTime+500)/1000) + sec);   
+				System.out.print(sep);   
+				System.out.print(nfGroup.format((fStatistics.fParsingTime+500)/1000) + sec);   
+				System.out.print(sep);    
+				System.out.print(nfGroup.format((fStatistics.fResolutionTime+500)/1000) + sec);   
+				System.out.print(sep);   
+				System.out.print(nfGroup.format((fStatistics.fAddToIndexTime+500)/1000) + sec);   
+				System.out.print(sep);   
+				System.out.print(nfGroup.format((dbSize+1024*512)/1024/1024) + mb);   
+				System.out.print(sep);   
+				System.out.print(nfGroup.format((tries+1000*500)/1000000) + million);   
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(fStatistics.fDeclarationCount));  
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(fStatistics.fReferenceCount));  
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(fStatistics.fProblemBindingCount));  
+				System.out.print(sep);   
+				System.out.print(nfPercent.format(problemPct));   
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(fStatistics.fErrorCount));  
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(fStatistics.fUnresolvedIncludesCount));  
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(fStatistics.fPreprocessorProblemCount));  
+				System.out.print(sep);   
+				System.out.print(nfGroup.format(fStatistics.fSyntaxProblemsCount));  
+				System.out.println(sep0);   
 			}
 		}
 	}

@@ -70,9 +70,9 @@ public class PathEntryUtil {
 								ICProject refCProject = CoreModel.getDefault().create(project);
 								if (refCProject != null) {
 									IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
-									for (int i = 0; i < entries.length; i++) {
-										if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
-											IIncludeEntry refEntry = (IIncludeEntry)entries[i];
+									for (IPathEntry entrie : entries) {
+										if (entrie.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+											IIncludeEntry refEntry = (IIncludeEntry)entrie;
 											if (refEntry.getIncludePath().equals(includePath)) {
 												IPath newBasePath = refEntry.getBasePath();
 												// If the includePath is
@@ -106,9 +106,9 @@ public class PathEntryUtil {
 						IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
 						if (container != null) {
 							IPathEntry[] entries = container.getPathEntries();
-							for (int i = 0; i < entries.length; i++) {
-								if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
-									IIncludeEntry refEntry = (IIncludeEntry)entries[i];
+							for (IPathEntry entrie : entries) {
+								if (entrie.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+									IIncludeEntry refEntry = (IIncludeEntry)entrie;
 									if (refEntry.getIncludePath().equals(includePath)) {
 										IPath newBasePath = refEntry.getBasePath();
 										return CoreModel.newIncludeEntry(includeEntry.getPath(), newBasePath, includePath);
@@ -134,9 +134,9 @@ public class PathEntryUtil {
 								ICProject refCProject = CoreModel.getDefault().create(project);
 								if (refCProject != null) {
 									IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
-									for (int i = 0; i < entries.length; i++) {
-										if (entries[i].getEntryKind() == IPathEntry.CDT_MACRO) {
-											IMacroEntry refEntry = (IMacroEntry)entries[i];
+									for (IPathEntry entrie : entries) {
+										if (entrie.getEntryKind() == IPathEntry.CDT_MACRO) {
+											IMacroEntry refEntry = (IMacroEntry)entrie;
 											if (refEntry.getMacroName().equals(name)) {
 												String value = refEntry.getMacroValue();
 												return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);
@@ -150,9 +150,9 @@ public class PathEntryUtil {
 						IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
 						if (container != null) {
 							IPathEntry[] entries = container.getPathEntries();
-							for (int i = 0; i < entries.length; i++) {
-								if (entries[i].getEntryKind() == IPathEntry.CDT_MACRO) {
-									IMacroEntry refEntry = (IMacroEntry)entries[i];
+							for (IPathEntry entrie : entries) {
+								if (entrie.getEntryKind() == IPathEntry.CDT_MACRO) {
+									IMacroEntry refEntry = (IMacroEntry)entrie;
 									if (refEntry.getMacroName().equals(name)) {
 										String value = refEntry.getMacroValue();
 										return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);
@@ -178,9 +178,9 @@ public class PathEntryUtil {
 								ICProject refCProject = CoreModel.getDefault().create(project);
 								if (refCProject != null) {
 									IPathEntry[] entries = manager.getResolvedPathEntries(refCProject);
-									for (int i = 0; i < entries.length; i++) {
-										if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
-											ILibraryEntry refEntry = (ILibraryEntry)entries[i];
+									for (IPathEntry entrie : entries) {
+										if (entrie.getEntryKind() == IPathEntry.CDT_LIBRARY) {
+											ILibraryEntry refEntry = (ILibraryEntry)entrie;
 											if (refEntry.getLibraryPath().equals(libraryPath)) {
 												IPath newBasePath = refEntry.getBasePath();
 												// If the libraryPath is
@@ -218,9 +218,9 @@ public class PathEntryUtil {
 						IPathEntryContainer container = manager.getPathEntryContainer(refPath, cproject);
 						if (container != null) {
 							IPathEntry[] entries = container.getPathEntries();
-							for (int i = 0; i < entries.length; i++) {
-								if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
-									ILibraryEntry refEntry = (ILibraryEntry)entries[i];
+							for (IPathEntry entrie : entries) {
+								if (entrie.getEntryKind() == IPathEntry.CDT_LIBRARY) {
+									ILibraryEntry refEntry = (ILibraryEntry)entrie;
 									if (refEntry.getPath().equals(libraryPath)) {
 										return CoreModel.newLibraryEntry(entry.getPath(), refEntry.getBasePath(),
 												refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
@@ -335,13 +335,11 @@ public class PathEntryUtil {
 	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
 
 		// Check duplication.
-		for (int i = 0; i < entries.length; i++) {
-			IPathEntry entry = entries[i];
+		for (IPathEntry entry : entries) {
 			if (entry == null) {
 				continue;
 			}
-			for (int j = 0; j < entries.length; j++) {
-				IPathEntry otherEntry = entries[j];
+			for (IPathEntry otherEntry : entries) {
 				if (otherEntry == null) {
 					continue;
 				}
@@ -353,7 +351,7 @@ public class PathEntryUtil {
 		}
 
 		// check duplication of sources
-		List dups = checkForDuplication(Arrays.asList(entries), IPathEntry.CDT_SOURCE);
+		List<IPathEntry> dups = checkForDuplication(Arrays.asList(entries), IPathEntry.CDT_SOURCE);
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
@@ -376,16 +374,14 @@ public class PathEntryUtil {
 
 		// allow nesting source entries in each other as long as the outer entry
 		// excludes the inner one
-		for (int i = 0; i < entries.length; i++) {
-			IPathEntry entry = entries[i];
+		for (IPathEntry entry : entries) {
 			if (entry == null) {
 				continue;
 			}
 			IPath entryPath = entry.getPath();
 			int kind = entry.getEntryKind();
 			if (kind == IPathEntry.CDT_SOURCE) {
-				for (int j = 0; j < entries.length; j++) {
-					IPathEntry otherEntry = entries[j];
+				for (IPathEntry otherEntry : entries) {
 					if (otherEntry == null) {
 						continue;
 					}
@@ -491,8 +487,8 @@ public class PathEntryUtil {
 					try {
 						IPathEntryContainer cont = manager.getPathEntryContainer((IContainerEntry)entry, cProject);
 						IPathEntry[] contEntries = cont.getPathEntries();
-						for (int i = 0; i < contEntries.length; i++) {
-							ICModelStatus status = validatePathEntry(cProject, contEntries[i], checkSourceAttachment, false);
+						for (IPathEntry contEntrie : contEntries) {
+							ICModelStatus status = validatePathEntry(cProject, contEntrie, checkSourceAttachment, false);
 							if (!status.isOK()) {
 								return status;
 							}
@@ -541,13 +537,13 @@ public class PathEntryUtil {
 		return true;
 	}
 
-	public static List checkForDuplication(List pathEntries, int type) {
-		List duplicate = new ArrayList(pathEntries.size());
+	public static List<IPathEntry> checkForDuplication(List<IPathEntry> pathEntries, int type) {
+		List<IPathEntry> duplicate = new ArrayList<IPathEntry>(pathEntries.size());
 		for (int i = 0; i < pathEntries.size(); ++i) {
-			IPathEntry pathEntry = (IPathEntry)pathEntries.get(i);
+			IPathEntry pathEntry = pathEntries.get(i);
 			if (pathEntry.getEntryKind() == type) {
 				for (int j = 0; j < pathEntries.size(); ++j) {
-					IPathEntry otherEntry = (IPathEntry)pathEntries.get(j);
+					IPathEntry otherEntry = pathEntries.get(j);
 					if (otherEntry.getEntryKind() == type) {
 						if (!pathEntry.equals(otherEntry)) {
 							if (!duplicate.contains(pathEntry)) {

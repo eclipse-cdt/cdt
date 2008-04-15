@@ -174,7 +174,10 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		// Ask the dynamic UI to create its Control
 		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		getDynamicTab().createControl(getDynamicTabHolder());
-		getDynamicTab().getControl().setVisible(true);
+		Control control = getDynamicTab().getControl();
+		if (control != null) {
+			control.setVisible(true);
+		}
 		getDynamicTabHolder().layout(true);
 		contentsChanged();
 	}

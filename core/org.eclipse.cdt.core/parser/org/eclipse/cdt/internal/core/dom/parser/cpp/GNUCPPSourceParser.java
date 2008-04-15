@@ -564,7 +564,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             		lastToken= consume();
             	}
                 ICPPASTReferenceOperator refOp = createReferenceOperator();
-                ((ASTNode) refOp).setOffsetAndLength(from, lastToken.getEndOffset());
+                ((ASTNode) refOp).setOffsetAndLength(from, lastToken.getEndOffset()-from);
                 collection.add(refOp);
                 return;
             }

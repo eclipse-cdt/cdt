@@ -4513,4 +4513,15 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
+	
+	//	template<typename T> class X {
+	//		typename T::t func() {
+	//			return typename T::t();
+	//		}
+	//	};
+	public void testTypenameInExpression() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 }

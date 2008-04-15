@@ -1319,7 +1319,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         switch (LT(1)) {
         case IToken.t_typename:
-            int o = consume().getOffset();
+            int typenameOffset= consume().getOffset();
 
             boolean templateTokenConsumed = false;
             if (LT(1) == IToken.t_template) {
@@ -1328,28 +1328,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             ITokenDuple nestedName = name();
             IASTName name = createName(nestedName);
-
-            consume(IToken.tLPAREN);
-            int lastOffset;
-            IASTExpression expressionList;
-            if (templateIdScopes.size() > 0) {
-                templateIdScopes.push(IToken.tLPAREN);
-            }
-            try {
-            	expressionList = expression();
-            	lastOffset = consume(IToken.tRPAREN).getEndOffset();
-            }
-            finally {
-            	if (templateIdScopes.size() > 0) {
-            		templateIdScopes.pop();
-            	}
+            if (LT(1) != IToken.tLPAREN) {
+            	throwBacktrack(nestedName.getFirstToken().getOffset(), nestedName.getLastToken().getEndOffset());
             }
 
             ICPPASTTypenameExpression result = createTypenameExpression();
-            ((ASTNode) result).setOffsetAndLength(o, lastOffset - o);
+            ((ASTNode) result).setOffsetAndLength(typenameOffset, nestedName.getLastToken().getEndOffset() - typenameOffset);
             result.setIsTemplate(templateTokenConsumed);
             result.setName(name);
-            result.setInitialValue(expressionList);
             firstExpression = result;
             break;
         // simple-type-specifier ( assignment-expression , .. )
@@ -1396,6 +1382,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             firstExpression = specialCastExpression(ICPPASTCastExpression.op_const_cast);
             break;
         case IToken.t_typeid:
+        	int lastOffset;
             int so = consume().getOffset();
             consume(IToken.tLPAREN);
             if (templateIdScopes.size() > 0) {

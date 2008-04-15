@@ -4313,62 +4313,113 @@ public class AST2Tests extends AST2BaseTest {
 	//    void fc(volatile int& r) {}
 	//    void fd(const volatile int& r) {}
 	//
+    //    int five() { return 5; }
+    //
 	//    void ref() {
 	//    	fa(5); // should be an error
 	//    	fb(5); // ok 
 	//    	fc(5); // should be an error
 	//    	fd(5); // should be an error
+    //
+   	//    	fb(five()); // ok
+    //      fa(five()); // should be an error 
+	//    	fc(five()); // should be an error
+	//    	fd(five()); // should be an error
 	//    }
 	public void _testBug222418_c() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
-    	ba.assertProblem("fa(5",  2);
+    	
+		ICPPFunction fn= ba.assertNonProblem("five() {", 4, ICPPFunction.class);
+		assertFalse(fn.getType().getReturnType() instanceof IProblemBinding);
+		
+		ba.assertProblem("fa(5",2);
     	ICPPFunction fb= ba.assertNonProblem("fb(5", 2, ICPPFunction.class);
-    	ba.assertProblem("fc(5", 2);
+    	ba.assertProblem("fc(5",2);
     	ba.assertProblem("fd(5",2);
+		
+    	ICPPFunction fb2= ba.assertNonProblem("fb(f", 2, ICPPFunction.class);
+		ba.assertProblem("fa(f",2);
+    	ba.assertProblem("fc(f",2);
+    	ba.assertProblem("fd(f",2);
     	
     	assertEquals(ASTTypeUtil.getParameterTypeString(fb.getType()), "(const int &)");
+    	assertEquals(ASTTypeUtil.getParameterTypeString(fb2.getType()), "(const int &)");
 	}
 	
 	//	class X {
 	//		public:
 	//			X(int x) {}
 	//	};
-	//
-	//	void f_nonconst(X& x) {}
+	//	
 	//	void f_const(const X& x) {}
+	//  void f_nonconst(X& x) {}
 	//
 	//	void ref() {
-	//		f_const(2);
+	//		f_const(2);    // ok
 	//		f_nonconst(2); // should be an error
 	//	}
 	public void _testBug222418_d() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
-    	ba.assertNonProblem("f_const(2",  6, ICPPFunction.class);
-    	ba.assertProblem("f_nonconst(2",  9);
+    	ba.assertNonProblem("f_const(2",  7, ICPPFunction.class);
+    	ba.assertProblem("f_nonconst(2",  10);
 	}
 	
-	//	class B {};
+	//	class A {};
 	//
-	//	class C { 
-	//	public: 
-	//		operator const B() const { return *new B();}
-	//	}; 
+	//	void f1(A& r) {}
+	//	void f2(const A& r) {}
+	//	void f3(volatile A& r) {}
+	//	void f4(const volatile A& r) {}
 	//
-	//	void foo(B b) {}
+	//	void ref() {
+	//		A i= *new A();
+	//		const A ci= *new A();
+	//		volatile A vi= *new A();
+	//		const volatile A cvi = *new A();
 	//
-	//	int refs() {
-	//		const C c= *new C();
-	//		const B b= *new B();
+	//		f1(i);
+	//		f1(ci);  // should be an error
+	//		f1(vi);  // should be an error
+	//		f1(cvi); // should be an error
 	//
-	//		foo(b); 
-	//		foo(c); 
+	//		f2(i);
+	//		f2(ci);
+	//		f2(vi);  // should be an error
+	//		f2(cvi); // should be an error
+	//
+	//		f3(i);
+	//		f3(ci);  // should be an error
+	//		f3(vi);
+	//		f3(cvi); // should be an error
+	//
+	//		f4(i); 
+	//		f4(ci);
+	//		f4(vi);
+	//		f4(cvi);
 	//	}
-	public void _testBug222444_a() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
-		ICPPFunction foo1= ba.assertNonProblem("foo(b", 3, ICPPFunction.class);
-		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
-	}
-	
+    public void _testBug222418_e() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertNonProblem("f1(i)",2);
+    	ba.assertProblem("f1(ci)",  2);
+    	ba.assertProblem("f1(vi)",  2);
+    	ba.assertProblem("f1(cvi)", 2);
+
+    	ba.assertNonProblem("f2(i)", 2);
+    	ba.assertNonProblem("f2(ci)",2);
+    	ba.assertProblem("f2(vi)",   2);
+    	ba.assertProblem("f2(cvi)",  2);
+
+    	ba.assertNonProblem("f3(i)", 2);
+    	ba.assertProblem("f3(ci)",   2);
+    	ba.assertNonProblem("f3(vi)",2);
+    	ba.assertProblem("f3(cvi)",  2);
+
+    	ba.assertNonProblem("f4(i)",  2);
+    	ba.assertNonProblem("f4(ci)", 2);
+    	ba.assertNonProblem("f4(vi)", 2);
+    	ba.assertNonProblem("f4(cvi)",2);
+    }
+
 	//	class B {};
 	//
 	//	class A {
@@ -4407,7 +4458,7 @@ public class AST2Tests extends AST2BaseTest {
 	//		foo1(3); 
 	//		foo2(4); // should be an error (222418)
 	//
-	//		foo2(A(5)); // should be an error (222418)
+	//		foo1(A(5));
 	//		foo2(A(6)); // should be an error (222418)
 	//
 	//		foo1(c);
@@ -4421,14 +4472,14 @@ public class AST2Tests extends AST2BaseTest {
 	//
 	//		return 0;
 	//	}
-	public void _testBug222444_b() throws Exception {
+	public void _testBug222418_f() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true); 
 		ba.assertNonProblem("foo1(a)", 4);
 		ba.assertNonProblem("foo2(a)", 4);
 		ba.assertNonProblem("foo1(3)", 4);
 		ba.assertProblem("foo2(4)", 4);
-		ba.assertProblem("foo1(A", 4);
-		ba.assertProblem("foo2(A", 4);
+		ba.assertNonProblem("foo1(A(", 4);
+		ba.assertProblem("foo2(A(", 4);
 		ba.assertNonProblem("foo1(c)", 4);
 		ba.assertNonProblem("foo2(c)", 4);
 		ba.assertNonProblem("foo1(d)", 4);
@@ -4437,6 +4488,151 @@ public class AST2Tests extends AST2BaseTest {
 		ba.assertProblem("foo2(b)", 4);
 	}
 	
+	
+	// class A {};
+	// class B : public A {};
+	//
+	// void f(const A) {}
+	// void ref() {
+	//    B b;
+	//    const B& b2= b;
+	//    f(b2);
+	// }
+	public void testBug222418_g_regression() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("f(b2)", 1);
+	}
+	
+	// void f(int &i) {}
+	// void ref() {
+	//    int a=3;
+	//    int& r= a;
+	//    f(r);
+	// }
+	public void testBug222418_h_regression() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("f(r)", 1);
+	}
+	
+	// class A {};
+	// class B : public A {};
+	// void f(A &a) {}
+	// void ref() {
+	//    B b;
+	//    B& b2= b;
+	//    f(b2);
+	// }
+	public void testBug222418_i_regression() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("f(b2)", 1);
+	}
+	
+	//  // test adapted from IndexNamesTests.testReadWriteFlagsCpp()
+	// 
+	//	int ri, wi, rwi, ridebug;
+	//	int* rp; int* wp; int* rwp; 
+	//	int* const rpc= 0;
+	//	const int * const rcpc= 0;
+	//	void fi(int);
+	//	void fp(int*);
+	//	void fr(int&);
+	//	void fcp(const int*);
+	//	void fcr(const int&);
+	//	void fpp(int**);
+	//	void fpr(int*&);
+	//	void fcpp(int const**);
+	//	void fcpr(int const*&);
+	//	void fpcp(int *const*);
+	//	void fpcr(int *const&);
+	//	void fcpcp(int const *const*);
+	//	void fcpcr(int const *const&);
+	//
+	//	int test() {
+	//		fi(ri); fp(&rwi); fcp(&ri); 
+	//		fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fpcp(&rpc); fcpcp(&rcpc); 
+	//		fr(rwi); fcr(ri);
+	//		fpcr(&rwi); fcpcr(&ri);
+	//		fpr(rwp); fpcr(rp); fcpcr(rp);
+	//		
+	//		fcpp(&rwp);     // should be error 
+	//		fpr(&rwi);      // should be error
+	//		fcpr(&ridebug); // should be error
+	//		fcpr(rwp);      // should be error
+	//		
+	//		return ri;
+	//	}
+	public void _testBug222418_j() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		
+		ba.assertNonProblem("fi(ri)", 2);
+		ba.assertNonProblem("fp(&rwi)", 2);
+		ba.assertNonProblem("fcp(&ri)", 3);
+		
+		ba.assertNonProblem("fi(*rp)", 2);
+		ba.assertNonProblem("fp(rp)", 2);
+		ba.assertNonProblem("fcp(rp)", 3);
+		ba.assertNonProblem("fpp(&rwp)", 3);
+		ba.assertNonProblem("fpcp(&rpc)", 4);
+		ba.assertNonProblem("fcpcp(&rcpc)", 5);
+		
+		ba.assertNonProblem("fr(rwi)", 2);
+		ba.assertNonProblem("fcr(ri)", 3);
+		
+		ba.assertNonProblem("fpcr(&rwi)", 4);
+		ba.assertNonProblem("fcpcr(&ri)", 5);
+		
+		ba.assertNonProblem("fpr(rwp)", 3);
+		ba.assertNonProblem("fpcr(rp)", 4);
+		ba.assertNonProblem("fcpcr(rp)", 5);
+		
+		ba.assertProblem("fcpp(&rwp)", 4);
+		ba.assertProblem("fpr(&rwi)", 3);
+		ba.assertProblem("fcpr(&ridebug)", 4);
+		ba.assertProblem("fcpr(rwp)", 4);
+	}
+	
+	//	class B {};
+	//
+	//	class C { 
+	//	public: 
+	//		operator const B() const { return *new B();}
+	//	}; 
+	//
+	//	void foo(B b) {}
+	//
+	//	void refs() {
+	//		const C c= *new C();
+	//		const B b= *new B();
+	//
+	//		foo(b); 
+	//		foo(c); 
+	//	}
+	public void _testBug222444_a() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction foo1= ba.assertNonProblem("foo(b", 3, ICPPFunction.class);
+		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
+	}
+	
+	//	class A {};
+	//  class B : public A {};
+	// 
+	//	class C { 
+	//	public: 
+	//		operator const B() { return *new B();}
+	//	}; 
+	//
+	//	void foo(A a) {}
+	//
+	//	void refs() {
+	//		C c= *new C();
+	// 
+	//		foo(c);
+	//	}
+	public void _testBug222444_b() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
+	}
+			
 	// int a, b, c;
 	// void test() {
 	//    a= b ? : c;

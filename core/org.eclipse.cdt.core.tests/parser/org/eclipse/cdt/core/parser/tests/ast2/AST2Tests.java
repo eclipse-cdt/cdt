@@ -4332,11 +4332,11 @@ public class AST2Tests extends AST2BaseTest {
 		ICPPFunction fn= ba.assertNonProblem("five() {", 4, ICPPFunction.class);
 		assertFalse(fn.getType().getReturnType() instanceof IProblemBinding);
 		
-		ba.assertProblem("fa(5",2);
+    	ba.assertProblem("fa(5",  2);
     	ICPPFunction fb= ba.assertNonProblem("fb(5", 2, ICPPFunction.class);
-    	ba.assertProblem("fc(5",2);
+    	ba.assertProblem("fc(5", 2);
     	ba.assertProblem("fd(5",2);
-		
+    	
     	ICPPFunction fb2= ba.assertNonProblem("fb(f", 2, ICPPFunction.class);
 		ba.assertProblem("fa(f",2);
     	ba.assertProblem("fc(f",2);
@@ -4350,9 +4350,9 @@ public class AST2Tests extends AST2BaseTest {
 	//		public:
 	//			X(int x) {}
 	//	};
-	//	
+	//
 	//	void f_const(const X& x) {}
-	//  void f_nonconst(X& x) {}
+	//	void f_nonconst(X& x) {}
 	//
 	//	void ref() {
 	//		f_const(2);    // ok
@@ -4398,7 +4398,7 @@ public class AST2Tests extends AST2BaseTest {
 	//		f4(cvi);
 	//	}
     public void _testBug222418_e() throws Exception {
-    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
     	ba.assertNonProblem("f1(i)",2);
     	ba.assertProblem("f1(ci)",  2);
     	ba.assertProblem("f1(vi)",  2);
@@ -4418,8 +4418,8 @@ public class AST2Tests extends AST2BaseTest {
     	ba.assertNonProblem("f4(ci)", 2);
     	ba.assertNonProblem("f4(vi)", 2);
     	ba.assertNonProblem("f4(cvi)",2);
-    }
-
+	}
+	
 	//	class B {};
 	//
 	//	class A {
@@ -4741,4 +4741,19 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}	
+	
+	//	class X {
+	//		public:
+	//			void* operator new(unsigned int sz, char* buf) {return buf;}
+	//	};
+	//
+	//	char* buffer;
+	//	void test1() {
+	//		X* it = buffer == 0 ?  new (buffer) X : 0;
+	//	}
+	public void testPlacementNewInConditionalExpression_Bug227104() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}	
+
 }

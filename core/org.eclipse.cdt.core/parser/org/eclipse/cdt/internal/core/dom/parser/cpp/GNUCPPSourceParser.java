@@ -3667,6 +3667,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         finalOffset = calculateEndOffset(arrayMods.get(arrayMods.size() - 1));
                     continue;
                 case IToken.tCOLON:
+                	if (forNewTypeId) 
+                		break;
                     consume();
                     bitField = constantExpression();
                     finalOffset = calculateEndOffset(bitField);

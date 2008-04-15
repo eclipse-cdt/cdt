@@ -4524,4 +4524,11 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 
+	//	struct __attribute__((declspec)) bla;
+	public void testAttributeInElaboratedTypeSpecifier_Bug227085() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
+	
 }

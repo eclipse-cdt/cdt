@@ -3285,6 +3285,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(t.getOffset(), t.getLength());
         }
 
+        // if __attribute__ or __declspec occurs after struct/union/class and before the identifier        
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+
         IASTName name = createName(name());
 
         ICPPASTElaboratedTypeSpecifier elaboratedTypeSpec = createElaboratedTypeSpecifier();

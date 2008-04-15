@@ -1528,6 +1528,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             backup(t);
             throwBacktrack(t.getOffset(), t.getLength());
         }
+        
+        // if __attribute__ or __declspec occurs after struct/union/class and before the identifier
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         IToken identifier = identifier();
         IASTName name = createName(identifier);

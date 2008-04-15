@@ -306,7 +306,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 //			if (sumDiscoveredSymbols == null) {
 //				sumDiscoveredSymbols = new LinkedHashMap();
 //			}
-			addedSymbols = ScannerConfigUtil.scAddSymbolsList2SymbolEntryMap(sumDiscoveredSymbols, discoveredSymbols, false);
+			addedSymbols = ScannerConfigUtil.scAddSymbolsList2SymbolEntryMap(sumDiscoveredSymbols, discoveredSymbols, true);
 			
 			// Step 2. Get project's scanner config
 			LinkedHashMap persistedSymbols = discPathInfo.getSymbolMap();

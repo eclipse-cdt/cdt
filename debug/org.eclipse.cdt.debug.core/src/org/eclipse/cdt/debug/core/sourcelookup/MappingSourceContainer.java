@@ -86,6 +86,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 		for( int i = 0; i < containers.length; i++ ) {
 			ISourceContainer container = containers[i];
 			try {
+				container.init(this.getDirector());
 				Object[] objects = container.findSourceElements( name );
 				if ( objects.length > 0 ) {
 					if ( isFindDuplicates() && results != null ) {

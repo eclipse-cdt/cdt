@@ -4531,4 +4531,10 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
 	
+	// struct X;
+	// void test(struct X* __restrict result);
+	public void testRestrictReference_Bug227110() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
 }

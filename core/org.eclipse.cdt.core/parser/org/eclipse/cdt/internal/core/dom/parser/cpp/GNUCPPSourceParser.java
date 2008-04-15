@@ -556,10 +556,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             __attribute_decl_seq(supportAttributeSpecifiers, false);
         	
             if (LT(1) == IToken.tAMPER) {
-                int length = LA(1).getEndOffset() - LA(1).getOffset();
-                int o = consume().getOffset();
+//            	boolean isRestrict= false;
+            	IToken lastToken= consume();
+            	final int from= lastToken.getOffset();
+            	if (allowCPPRestrict && LT(1) == IToken.t_restrict) {
+//            		isRestrict= true;
+            		lastToken= consume();
+            	}
                 ICPPASTReferenceOperator refOp = createReferenceOperator();
-                ((ASTNode) refOp).setOffsetAndLength(o, length);
+                ((ASTNode) refOp).setOffsetAndLength(from, lastToken.getEndOffset());
                 collection.add(refOp);
                 return;
             }

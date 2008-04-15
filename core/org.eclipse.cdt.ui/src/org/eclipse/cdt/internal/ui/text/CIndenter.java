@@ -1009,23 +1009,23 @@ public final class CIndenter {
 	/**
 	 * Test whether an identifier encountered during scanning is part of
 	 * a type declaration, by scanning backward and ignoring any identifiers, commas,
-	 * and colons until we hit <code>class</code>, <code>struct</code>, <code>union</code>, 
+	 * and colons until we hit <code>class</code>, <code>struct</code>, <code>union</code>,
 	 * or <code>enum</code>.  If any braces, semicolons, or parentheses are encountered,
-	 * this is not a type declaration. 
+	 * this is not a type declaration.
 	 * @return the reference offset of the start of the statement
 	 */
 	private int matchTypeDeclaration() {
 		while (true) {
 			nextToken();
-			if (fToken == Symbols.TokenIDENT 
+			if (fToken == Symbols.TokenIDENT
 					|| fToken == Symbols.TokenCOMMA
 					|| fToken == Symbols.TokenCOLON
-					|| fToken == Symbols.TokenPUBLIC 
+					|| fToken == Symbols.TokenPUBLIC
 					|| fToken == Symbols.TokenPROTECTED
 					|| fToken == Symbols.TokenPRIVATE) {
 				continue;
 			}
-			else if (fToken == Symbols.TokenCLASS 
+			else if (fToken == Symbols.TokenCLASS
 					|| fToken == Symbols.TokenSTRUCT
 					|| fToken == Symbols.TokenUNION
 					|| fToken == Symbols.TokenENUM) {
@@ -1045,7 +1045,7 @@ public final class CIndenter {
 	}
 
 	/**
-	 * Test whether the colon at the current position marks a case statement 
+	 * Test whether the colon at the current position marks a case statement
 	 * 
 	 * @return <code>true</code> if this looks like a case statement
 	 */
@@ -1071,6 +1071,7 @@ public final class CIndenter {
 			case Symbols.TokenCASE:
 				return true;
 			}
+			break;
 		case Symbols.TokenDEFAULT:
 			return true;
 		}
@@ -1078,7 +1079,7 @@ public final class CIndenter {
 	}
 
 	/**
-	 * Test whether the colon at the current position marks a type inheritance decl. 
+	 * Test whether the colon at the current position marks a type inheritance decl.
 	 * 
 	 * @return <code>true</code> if this looks like a a type inheritance decl
 	 */
@@ -1205,6 +1206,7 @@ public final class CIndenter {
 				case Symbols.TokenRPAREN:
 					if (isInBlock)
 						mayBeMethodBody= READ_PARENS;
+					// fall thru
 				case Symbols.TokenRBRACKET:
 				case Symbols.TokenGREATERTHAN:
 					pos= fPreviousPos;
@@ -1281,6 +1283,7 @@ public final class CIndenter {
 					if (previous == Symbols.TokenIDENT) {
 						return false;
 					}
+					// fall thru
 				case Symbols.TokenDOUBLECOLON:
 				case Symbols.TokenOTHER:
 					continue;
@@ -1353,8 +1356,8 @@ public final class CIndenter {
 	}
 
 	/**
-	 * Returns as a reference any previous access specifiers (<code>public</code>, 
-	 * <code>protected</code> or <code>default</code>) or the offset of the brace that 
+	 * Returns as a reference any previous access specifiers (<code>public</code>,
+	 * <code>protected</code> or <code>default</code>) or the offset of the brace that
 	 * scopes the class body.
 	 * Sets <code>fIndent</code> to <code>prefAccessSpecifierIndent</code> upon
 	 * a match.
@@ -1491,6 +1494,7 @@ public final class CIndenter {
 					case Symbols.TokenIDENT:
 						if (!isGenericStarter(getTokenContent()))
 							break;
+						// fall thru
 					case Symbols.TokenQUESTIONMARK:
 					case Symbols.TokenGREATERTHAN:
 						if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
@@ -1660,7 +1664,7 @@ public final class CIndenter {
 
 	/**
 	 * Returns <code>true</code> if the next token received after calling
-	 * <code>nextToken</code> is either an equal sign, an opening brace, 
+	 * <code>nextToken</code> is either an equal sign, an opening brace,
 	 * a comma or an array designator ('[]').
 	 *
 	 * @return <code>true</code> if the next elements look like the start of an array definition

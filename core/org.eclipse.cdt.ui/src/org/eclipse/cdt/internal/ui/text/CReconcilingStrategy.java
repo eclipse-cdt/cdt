@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,20 +26,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 
-import org.eclipse.cdt.internal.core.model.CModelManager;
-
 
 public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
-	private ITextEditor fEditor;	
+	private ITextEditor fEditor;
 	private IWorkingCopyManager fManager;
 	private IProgressMonitor fProgressMonitor;
-	private String txt = null;
 	// used by tests
 	protected boolean fInitialProcessDone;
 	
@@ -52,7 +48,14 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
-	}	
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
+	 */
+	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
+		// only called for incremental reconciler
+	}
 
 	/*
 	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)
@@ -68,50 +71,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 		reconcile(false);
 	}
 
-
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
-	 * Called for incremental reconciler only - currently not used (no shift deltas)
-	 */
-	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
-		// consistent data needs not further checks !  
-		ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
-		if (tu != null && tu.isWorkingCopy()) {
-			try {
-				if (tu.isConsistent()) return;
-			} catch (CModelException e) {}	
-		}
-		
-		// bug 113518
-		// local data needs not to be re-parsed
-		boolean needReconcile = true;
-		int dOff = dirtyRegion.getOffset();
-		int dLen = dirtyRegion.getLength();		
-		IDocument doc = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
-		
-		if ((doc != null) && (!CWordFinder.isGlobal(doc, dOff))) {
-			String s = ""; //$NON-NLS-1$
-			if (dirtyRegion.getType().charAt(2) == 'i') { // insert operation
-				s = dirtyRegion.getText();
-				if (!CWordFinder.hasCBraces(s)) {
-					CModelManager.getDefault().fireShift(tu, dOff, dLen, CWordFinder.countLFs(s));
-					needReconcile = false;
-				}					
-			} else { // remove operation
-				// check whether old document copy is relevant
-				if (txt != null && (txt.length() == doc.getLength() + dLen)) {
-					s = txt.substring(dOff, dOff + dLen);
-					if (!CWordFinder.hasCBraces(s)) {
-						CModelManager.getDefault().fireShift(tu, dOff, -dLen, -CWordFinder.countLFs(s));
-						needReconcile = false;						
-					}
-				}
-			}
-		} 
-		if (needReconcile) reconcile(false);
-		txt = doc.get(); // save doc copy for further use
-	}
-	
 	private void reconcile(final boolean initialReconcile) {
 		boolean computeAST= fEditor instanceof ICReconcilingListener;
 		IASTTranslationUnit ast= null;
@@ -172,5 +131,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 		if (fEditor instanceof ICReconcilingListener) {
 			((ICReconcilingListener)fEditor).aboutToBeReconciled();
 		}
-	}	
+	}
+
 }

@@ -1753,16 +1753,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             		case IToken.tRPAREN:
             		case IToken.tEOC:
             			endoffset[0]= consume().getEndOffset();
+                		typeIdLA = LA(1);
             			break;
             		default:
             			typeId = null;
             		}
             	}
-            	if (typeId != null) {
+            	else {
+        			endoffset[0]= calculateEndOffset(typeId);
             		typeIdLA = LA(1);
-            		if (!typeIdWithParentheses) {
-            			endoffset[0]= calculateEndOffset(typeId);
-            		}
             	}
             }
         } catch (BacktrackException e) { }
@@ -1784,8 +1783,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             endoffset[0]= calculateEndOffset(unaryExpression);
             return new IASTNode[] {unaryExpression};
         }
-        if (unaryExpression != null && typeId != null && typeIdLA == unaryExpressionLA) {
-            return new IASTNode[] {typeId, unaryExpression};
+        if (unaryExpression != null && typeId != null) {
+        	if (typeIdLA == unaryExpressionLA) {
+        		return new IASTNode[] {typeId, unaryExpression};
+        	}
+        	return new IASTNode[] {unaryExpression};
         }
         return EMPTY_NODE_ARRAY;
 

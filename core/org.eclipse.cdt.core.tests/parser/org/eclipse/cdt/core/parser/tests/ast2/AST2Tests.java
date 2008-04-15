@@ -4537,4 +4537,12 @@ public class AST2Tests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
+	
+	// char buf[256];
+	// int x= sizeof(buf)[0];
+	public void testSizeofUnaryWithParenthesis_Bug227122() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}	
 }

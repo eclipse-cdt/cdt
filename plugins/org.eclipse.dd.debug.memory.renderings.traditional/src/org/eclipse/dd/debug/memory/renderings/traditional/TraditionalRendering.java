@@ -823,20 +823,20 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         displayColumnCountAuto.setChecked(fRendering.getColumnsSetting() == Rendering.COLUMNS_AUTO_SIZE_TO_FIT);
         
         final Action[] displayColumnCounts = new Action[MAX_MENU_COLUMN_COUNT];
-        for(int i = 0; i < MAX_MENU_COLUMN_COUNT; i++)
+        for(int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT; i++, j*=2)
         {
-        	final int finali = i;
+        	final int finali = j;
         	displayColumnCounts[i] = new Action(
                 TraditionalRenderingMessages
-                    .getString("TraditionalRendering.COLUMN_COUNT_" + (i + 1)), //$NON-NLS-1$
+                    .getString("TraditionalRendering.COLUMN_COUNT_" + finali), //$NON-NLS-1$
                 IAction.AS_RADIO_BUTTON)
             {
                 public void run()
                 {
-                	TraditionalRendering.this.fRendering.setColumnsSetting(finali + 1);  
+                	TraditionalRendering.this.fRendering.setColumnsSetting(finali);  
                 }
             };
-            displayColumnCounts[i].setChecked(fRendering.getColumnsSetting() == i + 1);
+            displayColumnCounts[i].setChecked(fRendering.getColumnsSetting() == finali);
         }
 
         final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON)
@@ -845,7 +845,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             {
             }
         };
-        displayColumnCountCustomValue.setChecked(fRendering.getColumnsSetting() > 8);
+        boolean currentCountIsCustom = true;
+        for(int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; i++, j*=2)
+        	currentCountIsCustom = (j != fRendering.getColumnsSetting());
+        displayColumnCountCustomValue.setChecked(currentCountIsCustom);
         
         
         final Action displayColumnCountCustom = new Action(
@@ -883,11 +886,19 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 	int currentColumnSetting = TraditionalRendering.this.fRendering.getColumnsSetting();
                 	if(currentColumnSetting == Rendering.COLUMNS_AUTO_SIZE_TO_FIT)
                 		displayColumnCountAuto.setChecked(true);
-                	else if(currentColumnSetting > 0 && currentColumnSetting <= MAX_MENU_COLUMN_COUNT)
-                		displayColumnCounts[currentColumnSetting - 1].setChecked(true);
                 	else
-                		displayColumnCountCustomValue.setChecked(true);
-                
+                	{
+                		boolean currentCountIsCustom = true;
+                        for(int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; i++, j*=2)
+                        {
+                        	currentCountIsCustom = (j != fRendering.getColumnsSetting());
+                        	if(j == fRendering.getColumnsSetting())
+                        		displayColumnCounts[i].setChecked(true);
+                        }
+                        if(currentCountIsCustom)
+                        	displayColumnCountCustomValue.setChecked(true);
+                	}
+
                 	return;
                 }
                 

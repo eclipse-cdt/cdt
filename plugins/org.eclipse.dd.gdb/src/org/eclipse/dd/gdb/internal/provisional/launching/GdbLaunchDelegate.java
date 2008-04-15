@@ -61,7 +61,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
 {
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.gdb"; //$NON-NLS-1$
     private SessionType fSessionType;
-    
+        
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -107,23 +107,42 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
 		}
         final GdbLaunch launch = (GdbLaunch)l;
 
-        
         if (fSessionType == SessionType.REMOTE) {
             monitor.subTask( "Debugging remote C/C++ application" ); //$NON-NLS-1$    	
         } else {
             monitor.subTask( "Debugging local C/C++ application" ); //$NON-NLS-1$
         }
+        
 		IPath exePath = verifyProgramPath( config );
 		ICProject project = verifyCProject( config );
 		if ( exePath != null ) {
             verifyBinary( project, exePath );
 		}
 
-		setDefaultSourceLocator(launch, config);
-
         monitor.worked( 1 );
-        
 
+        // If we are attaching, get the process id now, so as to avoid starting the launch
+        // and canceling it if the user does not put the pid properly.
+    	int pid = -1;
+        if (fSessionType == SessionType.ATTACH) {
+        	try {
+        		// have we already been given the pid (maybe from a JUnit test launch or something)
+        		pid = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
+        	} catch (CoreException e) { 
+        		// do nothing and fall to below
+        	}
+
+        	if (pid == -1) {
+        		pid = promptForProcessID(config);
+        	}
+        	if (pid == -1) {
+        		throw new DebugException(new Status(IStatus.CANCEL, GdbPlugin.PLUGIN_ID, 
+        				LaunchMessages.getString("LocalAttachLaunchDelegate.No_Process_ID_selected"))); //$NON-NLS-1$
+        	}
+    	}
+
+		setDefaultSourceLocator(launch, config);
+        
         // Create and invoke the launch sequence to create the debug control and services
         final ServicesLaunchSequence servicesLaunchSequence = 
             new ServicesLaunchSequence(launch.getSession(), launch, exePath);
@@ -165,8 +184,12 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         }            
         
         // Create and invoke the final launch sequence to setup GDB
-        final FinalLaunchSequence finalLaunchSequence = 
-            new FinalLaunchSequence(launch.getSession().getExecutor(), launch, fSessionType);
+        final FinalLaunchSequence finalLaunchSequence;
+        if (fSessionType == SessionType.ATTACH) {
+        	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, pid);
+        } else {
+        	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, fSessionType);
+        	}
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
         	finalLaunchSequence.get();
@@ -198,6 +221,21 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         } catch (RejectedExecutionException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }
+	}
+
+	// Copied from the CDT
+	protected int promptForProcessID(ILaunchConfiguration config) throws CoreException {
+		IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null); //$NON-NLS-1$//$NON-NLS-2$
+		IStatus processPrompt = new Status(IStatus.INFO, "org.eclipse.cdt.launch", 100, "", null); //$NON-NLS-1$//$NON-NLS-2$
+		// consult a status handler
+		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
+		if (prompter != null) {
+			Object result = prompter.handleStatus(processPrompt, config);
+			if (result instanceof Integer) {
+				return ((Integer)result).intValue();
+			}
+		}
+		return -1;
 	}
 
 

@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -37,11 +38,11 @@ import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.dd.mi.service.command.commands.MICommand;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecRun;
-import org.eclipse.dd.mi.service.command.commands.MIFileExecFile;
-import org.eclipse.dd.mi.service.command.commands.MIFileSymbolFile;
+import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.dd.mi.service.command.commands.MIInferiorTTYSet;
+import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -66,6 +67,11 @@ public class FinalLaunchSequence extends Sequence {
     	 */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
+        	if (fSessionType == SessionType.ATTACH) {
+        		requestMonitor.done();
+        		return;
+        	}
+        	
         	try {
         		boolean useTerminal = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
         		
@@ -114,24 +120,19 @@ public class FinalLaunchSequence extends Sequence {
         	}
         }},
     	/*
-    	 * Specify the executable file to be debugged.
+    	 * Specify the executable file to be debugged and read the symbol table.
     	 */
         new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fCommandControl.queueCommand(
-           		new MIFileExecFile(fCommandControl.getControlDMContext(), 
-            			           fCommandControl.getExecutablePath().toOSString()), 
-           	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-        }},
-    	/*
-    	 * Read symbol table.
-    	 */
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fCommandControl.queueCommand(
-               	new MIFileSymbolFile(fCommandControl.getControlDMContext(), 
-                		             fCommandControl.getExecutablePath().toOSString()), 
-               	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        public void execute(final RequestMonitor requestMonitor) {
+        	final IPath execPath = fCommandControl.getExecutablePath();
+        	if (execPath != null && !execPath.isEmpty()) {
+        		fCommandControl.queueCommand(
+       				new MIFileExecAndSymbols(fCommandControl.getControlDMContext(), 
+       						                 execPath.toOSString()), 
+       				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        	} else {
+        		requestMonitor.done();
+        	}
         }},
         /*
          * Tell GDB to automatically load or not the shared library symbols
@@ -185,7 +186,8 @@ public class FinalLaunchSequence extends Sequence {
                	                             locator.getSourceContainers(), requestMonitor);
         }},
         /* 
-         * If remote debugging, connect to target 
+         * If remote debugging, connect to target.
+         * If attach session, perform the attach. 
          */
         new Step() {
         	private boolean fTcpConnection;
@@ -241,7 +243,7 @@ public class FinalLaunchSequence extends Sequence {
                 }
                 return true;
             }
-
+            
             @Override
             public void execute(final RequestMonitor requestMonitor) {
                	if (fSessionType == SessionType.REMOTE) {
@@ -263,6 +265,10 @@ public class FinalLaunchSequence extends Sequence {
                         				           fSerialDevice), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		}
+            	} else if (fSessionType == SessionType.ATTACH) {            		
+                    fCommandControl.queueCommand(
+                    		new CLIAttach(fCommandControl.getControlDMContext(), fPid), 
+                    	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
             	} else {
             		requestMonitor.done();
             	}
@@ -314,6 +320,11 @@ public class FinalLaunchSequence extends Sequence {
             
             @Override
             public void execute(final RequestMonitor requestMonitor) {
+            	if (fSessionType == SessionType.ATTACH) {
+            		requestMonitor.done();
+            		return;
+            	}
+
             	final MICommand<MIInfo> execCommand;
             	if (fSessionType == SessionType.REMOTE) {
             		// When doing remote debugging, we use -exec-continue instead of -exec-run 
@@ -349,13 +360,20 @@ public class FinalLaunchSequence extends Sequence {
 
     GdbLaunch fLaunch;
     SessionType fSessionType;
+    int fPid;
 
     GDBControl fCommandControl;
 
     public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType type) {
         super(executor);
         fLaunch = launch;
-        fSessionType = type;   
+        fSessionType = type;
+    }
+
+    // If a pid is specified, it is for an ATTACH type
+    public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, int attachToPid) {
+        this(executor, launch, SessionType.ATTACH);
+        fPid = attachToPid;
     }
     
     

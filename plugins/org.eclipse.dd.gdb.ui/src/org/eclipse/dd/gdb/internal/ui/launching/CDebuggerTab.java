@@ -217,7 +217,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
                 (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN) 
                 		                      && debugConfigs[i].getName().equals("gdb/mi") && debugConfigs[i].supportsMode(mode)) ||  //$NON-NLS-1$
                 (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH) 
-                  		                      && debugConfigs[i].getName().equals("gdb Debugger") && debugConfigs[i].supportsMode(mode))) {  //$NON-NLS-1$
+                  		                      && debugConfigs[i].getName().equals("gdb/mi") && debugConfigs[i].supportsMode(mode))) {  //$NON-NLS-1$
 				String debuggerPlatform = debugConfigs[i].getPlatform();
 				if (validatePlatform(config, debugConfigs[i])) {
 					list.add(debugConfigs[i]);

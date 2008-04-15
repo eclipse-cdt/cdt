@@ -7,7 +7,7 @@
             delegate="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate"
             public="true"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
-            name="Local C/C++ Application (Experimental - DSF)"
+            name="C/C++ Local Application (Experimental - DSF)"
             id="org.eclipse.dd.gdb.launch.localCLaunch"
             modes="debug">
       </launchConfigurationType>
@@ -15,7 +15,16 @@
             delegate="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate"
             id="org.eclipse.dd.gdb.launch.remoteCLaunch"
             modes="debug"
-            name="Remote C/C++ Application  (Experimental - DSF)"
+            name="C/C++ Remote Application  (Experimental - DSF)"
+            public="true"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate"
+            id="org.eclipse.dd.gdb.launch.attachCLaunch"
+            modes="debug"
+            name="C/C++ Attach to Local Application (Experimental - DSF)"
             public="true"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
@@ -33,6 +42,11 @@
             id="org.eclipse.dd.gdb.launch.remoteRunLaunchTabGroup"
             type="org.eclipse.dd.gdb.launch.remoteCLaunch">
       </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.dd.gdb.internal.ui.launching.GdbAttachLaunchConfigurationTabGroup"
+            id="org.eclipse.dd.gdb.launch.localAttachLaunchTabGroup"
+            type="org.eclipse.dd.gdb.launch.attachCLaunch">
+      </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -45,6 +59,11 @@
             configTypeID="org.eclipse.dd.gdb.launch.remoteCLaunch"
             icon="icons/full/obj16/c_app.gif"
             id="org.eclipse.dd.gdb.launch.remoteRunLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.dd.gdb.launch.attachCLaunch"
+            icon="icons/full/obj16/c_app.gif"
+            id="org.eclipse.dd.gdb.launch.attachRunLaunchImage">
       </launchConfigurationTypeImage>
    </extension>
 </plugin>

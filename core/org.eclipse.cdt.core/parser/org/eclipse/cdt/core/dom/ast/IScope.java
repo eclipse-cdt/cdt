@@ -15,16 +15,14 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 
-
 /**
- * 
  * @author Doug Schaefer
  */
 public interface IScope {
 
 	/**
      * Get the IName for this scope, may be null 
-     * @return
+     * @return The name of this scope.
      * @throws DOMException
      */
     public IName getScopeName() throws DOMException;
@@ -33,7 +31,7 @@ public interface IScope {
 	 * Scopes are arranged hierarchically. Lookups will generally
 	 * flow upward to find resolution.
 	 * 
-	 * @return
+	 * @return The parent scope.
 	 */
 	public IScope getParent() throws DOMException;
 
@@ -43,8 +41,8 @@ public interface IScope {
 	 * lookup.  Constructors are not considered during this lookup and won't be returned.
 	 * No attempt is made to resolve potential ambiguities or perform access checking.
 	 * 
-	 * @param searchString
-	 * @return List of IBinding
+	 * @param name
+	 * @return An array of bindings.
 	 */
 	public IBinding[] find(String name) throws DOMException;
 	

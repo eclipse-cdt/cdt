@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.CoreException;
  * Represents a file containing names.
  * 
  * @author Doug Schaefer
- *
  */
 public class PDOMFile implements IIndexFragmentFile {
 	private final PDOM pdom;
@@ -100,7 +99,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
 		String locationString = pdom.getLocationConverter().toInternalFormat(location);
-		if(locationString==null)
+		if (locationString==null)
 			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem")+location.getURI())); //$NON-NLS-1$
 		IString locationDBString = db.newString(locationString);
 		db.putInt(record + LOCATION_REPRESENTATION, locationDBString.getRecord());
@@ -136,7 +135,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	 * Directly changes this record's internal location string. The format
 	 * of this string is unspecified in general and is determined by the 
 	 * associated IIndexLocationConverter
-	 * @param newName
+	 * @param internalLocation
 	 * @throws CoreException
 	 */
 	public void setInternalLocation(String internalLocation) throws CoreException {
@@ -237,8 +236,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			PDOMMacro pdomMacro = new PDOMMacro(pdom, container, macro, this);
 			if (lastMacro == null) {
 				setFirstMacro(pdomMacro);
-			}
-			else {
+			} else {
 				lastMacro.setNextMacro(pdomMacro);
 			}
 			lastMacro= pdomMacro;
@@ -283,8 +281,7 @@ public class PDOMFile implements IIndexFragmentFile {
 					PDOMMacroReferenceName macroName = (PDOMMacroReferenceName) fname;
 					if (lastMacroName == null) {
 						setFirstMacroReference(macroName);
-					}
-					else {
+					} else {
 						lastMacroName.setNextInFile(macroName);
 					}
 					lastMacroName= macroName;
@@ -302,13 +299,11 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (binding instanceof IMacroBinding) {
 				return createPDOMMacroReferenceName(linkage, name);
 			}
-			else {
-				PDOMBinding pdomBinding = linkage.addBinding(name);
-				if (pdomBinding != null) {
-					final PDOMName result= new PDOMName(pdom, name, this, pdomBinding, caller);
-					linkage.onCreateName(this, name, result);
-					return result;
-				}
+			PDOMBinding pdomBinding = linkage.addBinding(name);
+			if (pdomBinding != null) {
+				final PDOMName result= new PDOMName(pdom, name, this, pdomBinding, caller);
+				linkage.onCreateName(this, name, result);
+				return result;
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -396,8 +391,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			if (lastInclude == null) {
 				setFirstInclude(pdomInclude);
-			}
-			else {
+			} else {
 				lastInclude.setNextInIncludes(pdomInclude);
 			}
 			lastInclude= pdomInclude;
@@ -411,8 +405,7 @@ public class PDOMFile implements IIndexFragmentFile {
 				setFirstIncludedBy(include);
 				include.setNextInIncludedBy(firstIncludedBy);
 				firstIncludedBy.setPrevInIncludedBy(include);				
-			}
-			else {
+			} else {
 				PDOMInclude secondIncludedBy= firstIncludedBy.getNextInIncludedBy();
 				if (secondIncludedBy != null) {
 					include.setNextInIncludedBy(secondIncludedBy);
@@ -458,8 +451,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset+length) {
 					result.add(name);
-				}
-				else if (name.isReference()) { 
+				} else if (name.isReference()) { 
 					// names are ordered, but callers are inserted before
 					// their references
 					break;
@@ -472,8 +464,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset+length) {
 					result.add(name.getDefinition());
-				}
-				else { 
+				} else { 
 					break;
 				}
 			}
@@ -483,8 +474,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset+length) {
 					result.add(name);
-				}
-				else { 
+				} else { 
 					break;
 				}
 			}
@@ -496,7 +486,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		int record= 0;
-		if(internalRepresentation!=null) {
+		if (internalRepresentation != null) {
 			Finder finder = new Finder(pdom.getDB(), internalRepresentation, linkageID);
 			btree.accept(finder);
 			record= finder.getRecord();
@@ -507,7 +497,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	public static IIndexFragmentFile[] findFiles(PDOM pdom, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
 			throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
-		if(internalRepresentation!=null) {
+		if (internalRepresentation != null) {
 			Finder finder = new Finder(pdom.getDB(), internalRepresentation, -1);
 			btree.accept(finder);
 			int[] records= finder.getRecords();
@@ -542,12 +532,11 @@ public class PDOMFile implements IIndexFragmentFile {
 				if (record == 0) {
 					return EMPTY;
 				}
-				return new int[] {record};
+				return new int[] { record };
 			}
 			return records;
 		}
 		
-		@SuppressWarnings("hiding")
 		public int compare(int record) throws CoreException {
 			IString name = db.getString(db.getInt(record + PDOMFile.LOCATION_REPRESENTATION));
 			int cmp= name.compare(rawKey, true);
@@ -557,7 +546,6 @@ public class PDOMFile implements IIndexFragmentFile {
 			return cmp;
 		}
 		
-		@SuppressWarnings("hiding")
 		public boolean visit(int record) throws CoreException {
 			if (linkageID >= 0) {
 				this.record = record;
@@ -565,11 +553,9 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			if (this.record == 0) {
 				this.record= record;
-			}
-			else if (this.records == null) {
+			} else if (this.records == null) {
 				this.records= new int[] {this.record, record};
-			}
-			else {
+			} else {
 				int[] cpy= new int[this.records.length+1];
 				System.arraycopy(this.records, 0, cpy, 0, this.records.length);
 				cpy[cpy.length-1]= record;
@@ -588,7 +574,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			Database db = pdom.getDB();
 			String raw = db.getString(db.getInt(record + LOCATION_REPRESENTATION)).getString();
 			location= pdom.getLocationConverter().fromInternalFormat(raw);
-			if(location==null)
+			if (location == null)
 				throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toExternalProblem")+raw)); //$NON-NLS-1$
 		}
 		return location;

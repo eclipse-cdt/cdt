@@ -27,14 +27,16 @@ import org.eclipse.core.runtime.OperationCanceledException;
 public class FindBinding {
 	public static class DefaultBindingBTreeComparator implements IBTreeComparator {
 		protected PDOM pdom;
+
 		public DefaultBindingBTreeComparator(PDOM pdom) {
 			this.pdom = pdom;
 		}
+
 		public int compare(int record1, int record2) throws CoreException {
 			IString nm1 = PDOMNamedNode.getDBName(pdom, record1);
 			IString nm2 = PDOMNamedNode.getDBName(pdom, record2);
 			int cmp= nm1.compareCompatibleWithIgnoreCase(nm2);
-			if(cmp == 0) {
+			if (cmp == 0) {
 				int t1= PDOMBinding.getLocalToFileRec(pdom, record1);
 				int t2= PDOMBinding.getLocalToFileRec(pdom, record2);
 				if (t1 == t2) {
@@ -60,11 +62,12 @@ public class FindBinding {
 			fConstants = constants;
 			fLocalToFile= localToFile;
 		}
+		
 		// IBTreeVisitor
 		public int compare(int record) throws CoreException {
 			IString nm1 = PDOMNamedNode.getDBName(fPdom, record);
 			int cmp= nm1.compareCompatibleWithIgnoreCase(fName); 
-			if(cmp == 0) {
+			if (cmp == 0) {
 				int t1= PDOMBinding.getLocalToFileRec(fPdom, record);
 				int t2= fLocalToFile;
 				cmp= t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
@@ -88,8 +91,8 @@ public class FindBinding {
 		protected boolean matches(PDOMBinding nnode) throws CoreException {
 			if (nnode.hasName(fName)) {
 				int constant = nnode.getNodeType();
-				for(int i=0; i<fConstants.length; i++) {
-					if(constant==fConstants[i]) {
+				for (int i=0; i<fConstants.length; i++) {
+					if (constant == fConstants[i]) {
 						return true;
 					}
 				}
@@ -116,21 +119,21 @@ public class FindBinding {
 		}
 	}
 
-	public static class NestedBindingsBTreeComparator extends DefaultBindingBTreeComparator implements IBTreeComparator {
+	public static class NestedBindingsBTreeComparator extends DefaultBindingBTreeComparator {
 		protected PDOMLinkage linkage;
 		
 		public NestedBindingsBTreeComparator(PDOMLinkage linkage) {
 			super(linkage.pdom);
 			this.linkage= linkage;
 		}
+
 		@Override
 		public int compare(int record1, int record2) throws CoreException {
 			int cmp= super.compare(record1, record2);	// compare names
-			if (cmp==0) {								// any order will do.
+			if (cmp == 0) {								// any order will do.
 				if (record1 < record2) {
 					return -1;
-				}
-				else if (record1 > record2) {			
+				} else if (record1 > record2) {			
 					return 1;
 				}
 			}
@@ -152,7 +155,7 @@ public class FindBinding {
 		}
 	}
 
-	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[]name, final int[] constants, 
+	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[] name, final int[] constants, 
 			final int localToFileRec) throws CoreException {
 		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(pdom, name, constants, localToFileRec);
 		btree.accept(visitor);
@@ -160,7 +163,7 @@ public class FindBinding {
 	}
 
 
-	public static PDOMBinding findBinding(IPDOMNode node, final PDOM pdom, final char[]name, final int[] constants,
+	public static PDOMBinding findBinding(IPDOMNode node, final PDOM pdom, final char[] name, final int[] constants,
 			int localToFileRec) throws CoreException {
 		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(pdom, name, constants, localToFileRec);
 		try {

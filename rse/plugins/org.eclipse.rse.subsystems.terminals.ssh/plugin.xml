@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2008 MontaVista Software, Inc. 
+All rights reserved. This program and the accompanying materials 
+are made available under the terms of the Eclipse Public License v1.0 
+which accompanies this distribution, and is available at 
+http://www.eclipse.org/legal/epl-v10.html 
+
+Contributors: 
+Yu-Fen Kuo (MontaVista)- initial API and implementation 
+-->
+<?eclipse version="3.1"?>
+<plugin>
+    <extension
+        point="org.eclipse.rse.core.subsystemConfigurations">
+        <configuration
+        category="terminals"
+        class="org.eclipse.rse.subsystems.terminals.ssh.SshTerminalSubSystemConfiguration"
+        description="%SshTerminalSubsystemDescription"
+        icon="icons/full/obj16/terminalcommands_obj.gif"
+        iconlive="icons/full/obj16/terminalcommandslive_obj.gif"
+        id="ssh.terminals"
+        name="%SshTerminalSubsystemName"
+        priority="300"
+        serviceType="_ssh._tcp;_sftp-ssh._tcp"
+        systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.ssh"
+        vendor="%providerName">
+        </configuration>
+    </extension>
+
+</plugin> 

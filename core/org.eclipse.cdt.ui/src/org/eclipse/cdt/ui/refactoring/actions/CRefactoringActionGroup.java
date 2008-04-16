@@ -114,6 +114,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
     private CRenameAction fRenameAction;
     private RefactoringAction fExtractConstantAction;
     private RefactoringAction fExtractFunctionAction;
+    private RefactoringAction fHideMethodAction;
 	private IWorkbenchSite fSite;
 	private List<RefactoringAction> fAllActions= new ArrayList<RefactoringAction>();
 
@@ -154,6 +155,10 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			fExtractFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.EXTRACT_FUNCTION);
 			fAllActions.add(fExtractFunctionAction);
         }
+
+        fHideMethodAction = new HideMethodAction();
+        fHideMethodAction.setActionDefinitionId(ICEditorActionDefinitionIds.HIDE_METHOD);
+        fAllActions.add(fHideMethodAction);
 	}
 
     public void setWorkbenchSite(IWorkbenchSite site) {
@@ -190,6 +195,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 		setActionHandler(actionBar, CdtActionConstants.RENAME, fRenameAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_CONSTANT, fExtractConstantAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_METHOD, fExtractFunctionAction);
+		setActionHandler(actionBar, CdtActionConstants.HIDE_METHOD, fHideMethodAction);		
 	}
 
 	private void setActionHandler(IActionBars actionBar, String id, RefactoringAction action) {
@@ -219,6 +225,8 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			refactorSubmenu.add(new Separator(GROUP_CODING));
 			addAction(refactorSubmenu, fExtractConstantAction);
 			addAction(refactorSubmenu, fExtractFunctionAction);
+			addAction(refactorSubmenu, fHideMethodAction);
+
 			refactorSubmenu.add(new Separator(GROUP_REORG2));
 			refactorSubmenu.add(new Separator(GROUP_TYPE));
 			refactorSubmenu.add(new Separator(GROUP_TYPE2));

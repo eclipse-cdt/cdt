@@ -1151,6 +1151,13 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.refactor.hide.method"
+               label="%Refactoring.hideMethod.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.HideMethod"
+               retarget="true">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.refactor.extract.function"
                label="%Refactoring.extractFunction.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
@@ -1967,6 +1974,10 @@
 	        categoryId="org.eclipse.cdt.ui.category.refactoring"
 	        id="org.eclipse.cdt.ui.refactoring.command.ExtractConstant"
 	        name="%refactoringExtractConstant.label"/>
+	  <command
+	        categoryId="org.eclipse.cdt.ui.category.refactoring"
+	        id="org.eclipse.cdt.ui.refactor.hide.method"   
+	        name="%refactoringHideMethod.label"/>
       <command
             name="%ActionDefinition.renameElement.name"
             description="%ActionDefinition.renameElement.description"

@@ -1,0 +1,845 @@
+//!HideMethodChangeToDefaultVisibility
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+	//$void method2();$//
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+private:
+	void method2();
+};
+
+#endif /*A_H_*/
+
+//!HideMethodSimple
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    //$void method2();$//
+    std::string toString();
+private:
+	int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//!HideMethodLineComment
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    //Kommentar
+    //$void method2();$//
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    //Kommentar
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//!HideMethodBlockComment
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    /*Kommentar*/
+    //$void method2();$//
+    std::string toString();
+
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    /*Kommentar*/
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//!HideMethodLineCommentBehind
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    //$void method2();$////Kommentar
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    void method2(); //Kommentar
+};
+
+#endif /*A_H_*/
+
+//!HideMethodBlockCommentBehind
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    //$void method2();$///*Kommentar*/
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    void method2(); /*Kommentar*/
+};
+
+#endif /*A_H_*/
+
+//!HideMethodLineCommentWithSpace
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+		
+    //Kommentar
+    //$void method2();$//
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    //Kommentar
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//!HideMethodBlockCommentWithSpace
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+
+    /*Kommentar*/
+    //$void method2();$//
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    /*Kommentar*/
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//!HideMethodLineCommentWithSpaceBehind
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    //$void method2();$////Kommentar
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    void method2(); //Kommentar
+};
+
+#endif /*A_H_*/
+
+//!HideMethodBlockCommentWithSpaceBehind
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    //$void method2();$///*Kommentar*/
+
+    std::string toString();
+private:
+    int i;
+};
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    void method2(); /*Kommentar*/
+};
+#endif /*A_H_*/
+
+//!HideMethodBigBlockComment
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    /*
+         * Kommentar
+         */
+    //$void method2();$//
+    std::string toString();
+private:
+    int i;
+};
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    /*
+         * Kommentar
+         */
+    void method2();
+};
+#endif /*A_H_*/
+
+//!HideMethodBigBlockCommentBehind
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+	//$void method2();$//		/*
+							 * Kommentar
+							 */
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    void method2(); /*
+							 * Kommentar
+							 */
+};
+
+#endif /*A_H_*/
+
+//!HideMethodBigBlockCommentBeforeAndBehind
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    /*
+     * Davor
+     */
+    //$void method2();$//		/*
+							 * Kommentar
+							 */
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    /*
+     * Davor
+     */
+    void method2(); /*
+							 * Kommentar
+							 */
+};
+
+#endif /*A_H_*/
+
+//!HideMethodMixedCommentBeforeAndAfter
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    /*123*/
+    //$void method2();$////TEST
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    /*123*/
+    void method2(); //TEST
+};
+
+#endif /*A_H_*/
+
+//!HideMethodBlockCommentBeforeAndBehind
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    /*123*/
+    //$void method2();$///*TEST*/
+    std::string toString();
+private:
+    int i;
+};
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    /*123*/
+    void method2(); /*TEST*/
+};
+#endif /*A_H_*/
+
+//!HideMethodNoChange
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+private:
+    //$void method2();$//
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+private:
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//!HideMethod2MethodsDifferentLine
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    //$void method1();$//
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    void method2();
+private:
+    void method1();
+};
+
+#endif /*A_H_*/
+
+//!HideMethod2MethodsSameLine
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    //$void method1();$//void method2();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    void method2();
+private:
+    void method1();
+};
+
+#endif /*A_H_*/
+
+//!HideMethod2MethodsDifferentLineWithComment
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    //Kommentar
+    //$void method1();$//
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    void method2();
+private:
+    //Kommentar
+    void method1();
+};
+
+#endif /*A_H_*/
+
+//!HideMethod2MethodsSameLineWithComment
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    //Kommentar
+    //$void method1();$//void method2();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    void method2();
+private:
+    //Kommentar
+    void method1();
+};
+
+#endif /*A_H_*/
+
+//!HideMethodSimple ImplementationFile
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    void method2();
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    void method2();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+void A:://$method2$//()
+{
+}
+
+//!HideMethodSimple ImplementationFile with Comments BUG #60
+//#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    //TEST 1
+    void method2(); //TEST 2
+    std::string toString();
+private:
+    int i;
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include <iostream>
+
+class A{
+public:
+    A();
+    std::string toString();
+private:
+    int i;
+    //TEST 1
+    void method2(); //TEST 2
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+void A:://$method2$//()
+{
+}
+

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -48,8 +50,12 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
@@ -65,25 +71,41 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 public abstract class CRefactoring extends Refactoring {
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-	public static final String NEWLINE = "\n"; // mstodo //$NON-NLS-1$
+	public static final String NEWLINE = "\n";  //$NON-NLS-1$
 
 	protected String name = Messages.HSRRefactoring_name; 
 	protected IFile file;
-	protected ISelection selection;
+	protected Region region;
 	protected RefactoringStatus initStatus;
 	protected IASTTranslationUnit unit;
 	private IIndex fIndex;
 
-	public CRefactoring(IFile file, ISelection selection) {
-		this.file = file;
-		this.selection = selection;
-		this.initStatus=new RefactoringStatus();
+	public CRefactoring(IFile file, ISelection selection, ICElement element) {
+		if (element instanceof ISourceReference) {
+			ISourceReference sourceRef= (ISourceReference) element;
+			ITranslationUnit tu= sourceRef.getTranslationUnit();
+			IResource res= tu.getResource();
+			if (res instanceof IFile) 
+				this.file= (IFile) res;
+		
+			try {
+				final ISourceRange sourceRange = sourceRef.getSourceRange();
+				this.region = new Region(sourceRange.getIdStartPos(), sourceRange.getIdLength());
+			} catch (CModelException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		else {
+			this.file = file;
+			this.region = getRegion(selection);
+		}
 
-		if(selection == null){
-			initStatus.addError(Messages.HSRRefactoring_SelectionNotValid);  
+		this.initStatus=new RefactoringStatus();
+		if (this.file == null || region == null) {
+			initStatus.addFatalError(Messages.HSRRefactoring_SelectionNotValid);  
 		}
 	}
-	
+
 	private class ProblemFinder extends ASTVisitor{
 		
 		private boolean problemFound = false;
@@ -248,10 +270,14 @@ public abstract class CRefactoring extends Refactoring {
 		return name;
 	}
 
-	protected ITextSelection getTextSelection() {
-		return (ITextSelection) selection;
+	private Region getRegion(ISelection selection) {
+		if (selection instanceof ITextSelection) {
+			final ITextSelection txtSelection= (ITextSelection) selection;
+			return new Region(txtSelection.getOffset(), txtSelection.getLength());
+		}
+		return null;
 	}
-
+ 
 	private boolean loadTranslationUnit(RefactoringStatus status,
 			IProgressMonitor mon) {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 10);
@@ -325,7 +351,7 @@ public abstract class CRefactoring extends Refactoring {
 		return selection;
 	}
 
-	protected boolean isExpressionWhollyInSelection(ITextSelection textSelection, IASTNode expression) {
+	protected boolean isExpressionWhollyInSelection(Region textSelection, IASTNode expression) {
 		ExpressionPosition exprPos = createExpressionPosition(expression);
 
 		int selStart = textSelection.getOffset();
@@ -334,7 +360,7 @@ public abstract class CRefactoring extends Refactoring {
 		return exprPos.start >= selStart && exprPos.end <= selEnd;
 	}
 
-	public static boolean isSelectionOnExpression(ITextSelection textSelection, IASTNode expression) {
+	public static boolean isSelectionOnExpression(Region textSelection, IASTNode expression) {
 		ExpressionPosition exprPos = createExpressionPosition(expression);
 		int selStart = textSelection.getOffset();
 		int selEnd = textSelection.getLength() + selStart;
@@ -348,14 +374,14 @@ public abstract class CRefactoring extends Refactoring {
 		return locFile.equals(tmpFile);
 	}
 	
-	protected boolean isInSameFileSelection(ITextSelection textSelection, IASTNode node) {
+	protected boolean isInSameFileSelection(Region textSelection, IASTNode node) {
 		if( isInSameFile(node) ) {
 			return isSelectionOnExpression(textSelection, node);
 		}
 		return false;
 	}
 	
-	protected boolean isSelectedFile(ITextSelection textSelection, IASTNode node) {
+	protected boolean isSelectedFile(Region textSelection, IASTNode node) {
 		if( isInSameFile(node) ) {
 			return isExpressionWhollyInSelection(textSelection, node);
 		}

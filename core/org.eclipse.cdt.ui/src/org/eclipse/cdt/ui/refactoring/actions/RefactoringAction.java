@@ -78,6 +78,7 @@ public abstract class RefactoringAction extends Action {
 
 	public void updateSelection(ICElement elem) {
 		fElement= elem;
+		setEnabled(elem != null);
 	}
 
     public abstract void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection s);

@@ -15,6 +15,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
 
+import org.eclipse.cdt.core.model.ICElement;
+
 /**
  * Base class for all refactoring runners.
  * 
@@ -25,14 +27,16 @@ public abstract class RefactoringRunner {
 
 	protected IFile file;
 	protected ISelection selection;
+	protected ICElement celement;
 	protected IShellProvider shellProvider;
 
-	public RefactoringRunner(IFile file, ISelection selection, IShellProvider shellProvider) {
+	public RefactoringRunner(IFile file, ISelection selection, ICElement element, IShellProvider shellProvider) {
 		this.file = file;
 		this.selection = selection;
+		this.celement= element;
 		this.shellProvider= shellProvider;
 	}
-	
+
 	public abstract void run();
 
 }

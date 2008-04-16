@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
@@ -80,14 +80,14 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	private final NameNVisibilityInformation info;
 	
 	public ExtractConstantRefactoring(IFile file, ISelection selection, NameNVisibilityInformation info){
-		super(file,selection);
+		super(file,selection, null);
 		this.info = info;
 		name = Messages.ExtractConstantRefactoring_ExtractConst; 
 	}
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		SubMonitor sm = SubMonitor.convert(pm, 10);
+		SubMonitor sm = SubMonitor.convert(pm, 9);
 		super.checkInitialConditions(sm.newChild(6));
 
 		Collection<IASTLiteralExpression> literalExpressionVector = findAllLiterals();
@@ -95,16 +95,11 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			initStatus.addFatalError(Messages.ExtractConstantRefactoring_LiteralMustBeSelected); 
 			return initStatus;
 		}
+		
 		sm.worked(1);
-
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 		
-		ITextSelection textSelection = getTextSelection();
-		sm.worked(1);
-
-		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
-		
-		boolean oneMarked = isOneMarked(literalExpressionVector, textSelection);
+		boolean oneMarked = region != null && isOneMarked(literalExpressionVector, region);
 		if(!oneMarked){ 
 			//No or more than one marked
 			if(target == null){
@@ -132,7 +127,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		String nameString = literal.toString();
 		switch (literal.getKind()) {
 		case IASTLiteralExpression.lk_char_constant:
-		case ICPPASTLiteralExpression.lk_string_literal:
+		case IASTLiteralExpression.lk_string_literal:
 			int beginIndex = 1;
 			if(nameString.startsWith("L")) {  //$NON-NLS-1$
 				beginIndex = 2;
@@ -220,7 +215,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		}
 	}
 
-	private boolean isOneMarked(Collection<IASTLiteralExpression> literalExpressionVector, ITextSelection textSelection) {
+	private boolean isOneMarked(Collection<IASTLiteralExpression> literalExpressionVector, Region textSelection) {
 		boolean oneMarked = false;
 		for (IASTLiteralExpression expression : literalExpressionVector) {
 			boolean isInSameFileSelection = isInSameFileSelection(textSelection, expression);

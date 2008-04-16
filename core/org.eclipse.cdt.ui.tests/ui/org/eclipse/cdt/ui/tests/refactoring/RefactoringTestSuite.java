@@ -29,6 +29,7 @@ public class RefactoringTestSuite extends TestSuite {
 		suite.addTest(RenameRegressionTests.suite());
 		suite.addTest(ExtractFunctionTestSuite.suite());
 		suite.addTest(RefactoringTester.suite("ExtractConstantRefactoringTests", "resources/refactoring/ExtractConstant.rts"));
+		suite.addTest(RefactoringTester.suite("HideMethodRefactoringTests", "resources/refactoring/HideMethod.rts"));
 		suite.addTest(UtilTestSuite.suite());
 		return suite;
 	}

@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
@@ -123,7 +122,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	public ExtractFunctionRefactoring(IFile file, ISelection selection,
 			ExtractFunctionInformation info) {
-		super(file, selection);
+		super(file, selection, null);
 		this.info = info;
 		name = Messages.ExtractFunctionRefactoring_ExtractFunction;
 		names = new HashMap<String, Integer>();
@@ -902,39 +901,31 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private NodeContainer findExtractableNodes() {
 		final NodeContainer container = new NodeContainer();
-		if (selection instanceof ITextSelection) {
-			final ITextSelection textSelection = (ITextSelection) selection;
+		unit.accept(new CPPASTVisitor() {
+			{
+				shouldVisitStatements = true;
+				shouldVisitExpressions = true;
+			}
 
-			unit.accept(new CPPASTVisitor() {
-
-				{
-					shouldVisitStatements = true;
-					shouldVisitExpressions = true;
+			@Override
+			public int visit(IASTStatement stmt) {
+				if (!(stmt instanceof IASTCompoundStatement)
+						&& isSelectedFile(region, stmt)) {
+					container.add(stmt);
+					return PROCESS_SKIP;
 				}
+				return super.visit(stmt);
+			}
 
-				@Override
-				public int visit(IASTStatement stmt) {
-					if (!(stmt instanceof IASTCompoundStatement)
-							&& isSelectedFile(textSelection, stmt)) {
-						container.add(stmt);
-						return PROCESS_SKIP;
-					}
-					return super.visit(stmt);
+			@Override
+			public int visit(IASTExpression expression) {
+				if (isSelectedFile(region, expression)) {
+					container.add(expression);
+					return PROCESS_SKIP;
 				}
-
-				@Override
-				public int visit(IASTExpression expression) {
-					if (isSelectedFile(textSelection, expression)) {
-						container.add(expression);
-						return PROCESS_SKIP;
-					}
-					return super.visit(expression);
-				}
-
-			});
-
-		}
-
+				return super.visit(expression);
+			}
+		});
 		return container;
 	}
 

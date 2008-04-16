@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 
 	public ExtractConstantRefactoringRunner(IFile file, ISelection selection, IShellProvider shellProvider) {
-		super(file, selection, shellProvider);
+		super(file, selection, null, shellProvider);
 	}
 
 	@Override

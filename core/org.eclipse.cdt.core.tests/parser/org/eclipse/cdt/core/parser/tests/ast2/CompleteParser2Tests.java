@@ -710,6 +710,45 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse( "asm ( \"blah blah blah\" );" ); //$NON-NLS-1$
 	}
 
+	
+	/** 
+	 *  Tests GNU extensions to asm
+	 *  e.g. asm volatile ("stuff");
+	 *       asm ("addl %%ebx,%%eax" : "=a"(foo) : "a"(foo),"b"(bar) ); 
+	 */
+	public void testGNUASMExtension() throws Exception
+	{
+		// volatile keyword
+		parse( "asm volatile( \"blah blah blah\" );", true, ParserLanguage.C, true ); //$NON-NLS-1$
+		parse( "asm volatile( \"blah blah blah\" );", true, ParserLanguage.CPP, true ); //$NON-NLS-1$
+		
+		// Use of operands
+		parse( "asm (\"addl  %%ebx,%%eax\" : \"=a\"(foo) :\"a\"(foo), \"b\"(bar) );", true, ParserLanguage.C, true );//$NON-NLS-1$
+		parse( "asm (\"addl  %%ebx,%%eax\" : \"=a\"(foo) :\"a\"(foo), \"b\"(bar) );", true, ParserLanguage.CPP, true );//$NON-NLS-1$
+		
+		// Invalid use of operands
+		parse( "asm (\"addl  %%ebx,%%eax\"  \"=a\"(foo) :\"a\"(foo) : \"b\"(bar) );", false, ParserLanguage.C, true );//$NON-NLS-1$
+		parse( "asm (\"addl  %%ebx,%%eax\"  \"=a\"(foo) :\"a\"(foo) : \"b\"(bar) );", false, ParserLanguage.CPP, true );//$NON-NLS-1$
+
+		// Code from bug 145389.
+		parse("#define mb()  __asm__ __volatile__ (\"sync\" : : : \"memory\")\r\n" + 
+				"\r\n" + 
+				"int main(int argc, char **argv) {\r\n" + 
+				"        mb();\r\n" + 
+				"}");
+		// Code from bug 117001
+		parse("static inline long\r\n" + 
+				"div_ll_X_l_rem(long long divs, long div, long *rem)\r\n" + 
+				"{\r\n" + 
+				"        long dum2;\r\n" + 
+				"      __asm__(\"divl %2\":\"=a\"(dum2), \"=d\"(*rem) // syntax error indicated at \":\"\r\n" + 
+				"      : \"rm\"(div), \"A\"(divs));\r\n" + 
+				"\r\n" + 
+				"        return dum2;\r\n" + 
+				"\r\n" + 
+				"}");
+	}
+
 	public void testOverride() throws Exception
 	{
 		IASTTranslationUnit tu = parse( "void foo();\n void foo( int );\n"); //$NON-NLS-1$

@@ -8,6 +8,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Anna Dushistova  (MontaVista) - [170910] Integrate the TM Terminal View with RSE
+ * Martin Oberhuber (Wind River) - [227320] Fix endless loop in SshTerminalShell
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.terminal;
@@ -193,8 +194,22 @@ public class SshTerminalShell extends AbstractTerminalShell {
 
 	public void exit() {
 		if (fChannel != null) {
-			fChannel.disconnect();
-			isActive();
+			try {
+				try {
+					getInputStream().close();
+				} catch (IOException ioe) {
+					/* ignore */
+				}
+				try {
+					getOutputStream().close();
+				} catch (IOException ioe) {
+					/* ignore */
+				}
+				fChannel.disconnect();
+			} finally {
+				fChannel = null;
+				isActive();
+			}
 		}
 	}
 

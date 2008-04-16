@@ -4243,7 +4243,7 @@ public class AST2Tests extends AST2BaseTest {
 	//    	f4(vi);
 	//    	f4(cvi);
 	//    }
-    public void _testBug222418_a() throws Exception {
+    public void testBug222418_a() throws Exception {
     	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
     	ba.assertNonProblem("f1(i)",2);
     	ba.assertProblem("f1(ci)",  2);
@@ -4282,7 +4282,7 @@ public class AST2Tests extends AST2BaseTest {
 	//    	f1(vi); // (3)
 	//    	f1(cvi); // (4)
 	//    }
-    public void _testBug222418_b() throws Exception {
+    public void testBug222418_b() throws Exception {
     	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
     	
     	ICPPFunction f1_1= ba.assertNonProblem("f1(i)",  2, ICPPFunction.class);
@@ -4326,7 +4326,7 @@ public class AST2Tests extends AST2BaseTest {
 	//    	fc(five()); // should be an error
 	//    	fd(five()); // should be an error
 	//    }
-	public void _testBug222418_c() throws Exception {
+	public void testBug222418_c() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
     	
 		ICPPFunction fn= ba.assertNonProblem("five() {", 4, ICPPFunction.class);
@@ -4358,7 +4358,7 @@ public class AST2Tests extends AST2BaseTest {
 	//		f_const(2);    // ok
 	//		f_nonconst(2); // should be an error
 	//	}
-	public void _testBug222418_d() throws Exception {
+	public void testBug222418_d() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
     	ba.assertNonProblem("f_const(2",  7, ICPPFunction.class);
     	ba.assertProblem("f_nonconst(2",  10);
@@ -4397,7 +4397,7 @@ public class AST2Tests extends AST2BaseTest {
 	//		f4(vi);
 	//		f4(cvi);
 	//	}
-    public void _testBug222418_e() throws Exception {
+    public void testBug222418_e() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
     	ba.assertNonProblem("f1(i)",2);
     	ba.assertProblem("f1(ci)",  2);
@@ -4472,7 +4472,7 @@ public class AST2Tests extends AST2BaseTest {
 	//
 	//		return 0;
 	//	}
-	public void _testBug222418_f() throws Exception {
+	public void testBug222418_f() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true); 
 		ba.assertNonProblem("foo1(a)", 4);
 		ba.assertNonProblem("foo2(a)", 4);
@@ -4561,7 +4561,7 @@ public class AST2Tests extends AST2BaseTest {
 	//		
 	//		return ri;
 	//	}
-	public void _testBug222418_j() throws Exception {
+	public void testBug222418_j() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		
 		ba.assertNonProblem("fi(ri)", 2);
@@ -4589,6 +4589,20 @@ public class AST2Tests extends AST2BaseTest {
 		ba.assertProblem("fpr(&rwi)", 3);
 		ba.assertProblem("fcpr(&ridebug)", 4);
 		ba.assertProblem("fcpr(rwp)", 4);
+	}
+	
+	// class A {
+	//    public:
+	//       void foo() {}
+	//       void foo() const {}
+	// };
+	// void ref() {
+	//    A a;
+	//    a.foo();
+	// }
+	public void testBug222418_k() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("foo();", 3);
 	}
 	
 	//	class B {};

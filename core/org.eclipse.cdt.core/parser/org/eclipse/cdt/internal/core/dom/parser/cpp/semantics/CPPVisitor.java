@@ -2183,4 +2183,37 @@ public class CPPVisitor {
 		}
 		return false;
 	}
+	
+	/**
+     * [3.10] Lvalues and Rvalues
+	 * @param exp
+	 * @return whether the specified expression is an rvalue
+	 */
+	static boolean isRValue(IASTExpression exp) {
+		if(exp instanceof IASTUnaryExpression) {
+			IASTUnaryExpression ue= (IASTUnaryExpression) exp;
+			if(ue.getOperator() == IASTUnaryExpression.op_amper) {
+				return true;
+			}
+		}
+		if(exp instanceof IASTLiteralExpression)
+			return true;
+		if(exp instanceof IASTFunctionCallExpression) {
+			try {
+				IASTFunctionCallExpression fc= (IASTFunctionCallExpression) exp;
+				IASTExpression fne= fc.getFunctionNameExpression();
+				if(fne instanceof IASTIdExpression) {
+					IASTIdExpression ide= (IASTIdExpression) fne;
+					IBinding b= ide.getName().resolveBinding();
+					if(b instanceof IFunction) {
+						IFunctionType tp= ((IFunction)b).getType();
+						return !(tp.getReturnType() instanceof ICPPReferenceType);
+					}
+				}
+			} catch(DOMException de) {
+				// fall-through
+			}
+		}
+		return false;
+	}
 }

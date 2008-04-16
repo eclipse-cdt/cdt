@@ -313,7 +313,7 @@ public class CPPSemantics {
         return binding;
     }
 
-    static private LookupData createLookupData( IASTName name, boolean considerAssociatedScopes ){
+    private static LookupData createLookupData( IASTName name, boolean considerAssociatedScopes ){
 		LookupData data = new LookupData( name );
 		IASTNode parent = name.getParent();
 		
@@ -1895,6 +1895,7 @@ public class CPPSemantics {
 		Cost [] bestFnCost = null;				//the cost of the best function
 		Cost [] currFnCost = null;				//the cost for the current function
 				
+		IASTExpression sourceExp; 
 		IType source = null;					//parameter we are called with
 		IType target = null;					//function's parameter
 		
@@ -1933,9 +1934,13 @@ public class CPPSemantics {
 			for (int j = 0; j < sourceLen; j++) {
 			    if (useImplicitObj > 0) {
 			    	isImpliedObject= j==0;
-			        source = isImpliedObject ? impliedObjectType : sourceParameters[j - 1];
+			        source= isImpliedObject ? impliedObjectType : sourceParameters[j - 1];
+			        Object se= isImpliedObject || data.functionParameters.length==0 ? null : data.functionParameters[j - 1];
+			        sourceExp=  se instanceof IASTExpression ? (IASTExpression) se : null;
 			    } else { 
 			        source = sourceParameters[j];
+			        Object se= data.functionParameters.length==0 ? null : data.functionParameters[j];
+			        sourceExp= se instanceof IASTExpression ? (IASTExpression) se : null;
 			    }
 		    
 				if (j < numTargetParams) {
@@ -1960,16 +1965,7 @@ public class CPPSemantics {
 					cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
-					cost = Conversions.checkStandardConversionSequence( source, target, isImpliedObject);
-					//12.3-4 At most one user-defined conversion is implicitly applied to
-					//a single value.  (also prevents infinite loop)				
-					if (!data.forUserDefinedConversion && (cost.rank == Cost.NO_MATCH_RANK || 
-							cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
-						Cost udcCost= Conversions.checkUserDefinedConversionSequence( source, target );
-						if( udcCost != null ){
-							cost = udcCost;
-						}
-					}
+					cost= Conversions.checkImplicitConversionSequence(!data.forUserDefinedConversion, sourceExp, source, target, isImpliedObject);
 				}
 				
 				currFnCost[ j ] = cost;

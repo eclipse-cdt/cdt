@@ -328,8 +328,8 @@ public class IndexNamesTests extends BaseTestCase {
 				final String name = indexName.toString();
 				final char c0= name.length() > 0 ? name.charAt(0) : 0;
 				if ((c0 == '_' || c0 == 'r' || c0 == 'w') && indexName.isReference()) {
-					boolean isRead= name.charAt(0) == 'r';
-					boolean isWrite= name.charAt(isRead ? 1 : 0) == 'w';
+					boolean isRead= name.charAt(0) == 'r' || name.charAt(0) == 'u';
+					boolean isWrite= name.charAt(isRead ? 1 : 0) == 'w' || name.charAt(0) == 'u';
 					String msg= "i=" + i + ", " + name + ":";
 					assertEquals(msg, isRead, indexName.isReadAccess());
 					assertEquals(msg, isWrite, indexName.isWriteAccess());
@@ -346,8 +346,8 @@ public class IndexNamesTests extends BaseTestCase {
 		}
 	}
 
-	//	int _i, ri, wi, rwi, rfind, ridebug;
-	//  int* rp; int* wp; int* rwp; 
+	//	int _i, ri, wi, rwi, rfind, ui;
+	//  int* rp; int* wp; int* rwp; int* up; 
 	//  int* const rpc= 0;
 	//  const int * const rcpc= 0;
 	//  const int* cip= &ri;
@@ -366,7 +366,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//  void fcpcp(int const *const*);
 	//  void fcpcr(int const *const&);
 	//
-	//	void test() {
+	//	int test() {
 	//      _i; 	
 	//		wi= ri, _i, _i; // expr-list
 	//      rwi %= ri;     // assignment
@@ -378,10 +378,10 @@ public class IndexNamesTests extends BaseTestCase {
 	//      while(ri) {_i;};
 	//      switch(ri) {case ri: _i;};
 	//      fi(ri); fp(&rwi); fcp(&ri); 
-	//      fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fcpp(&rwp); fpcp(&rpc); fcpcp(&rcpc); 
-	//      fr(rwi); fcr(ri); fpr(&rwi); 
-	//      fcpr(&ridebug); fpcr(&rwi); fcpcr(&ri);
-	//      fpr(rwp); fcpr(rwp); fpcr(rp); fcpcr(rp);
+	//      fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fcpp(&up); fpcp(&rpc); fcpcp(&rcpc); 
+	//      fr(rwi); fcr(ri); fpr(&ui); 
+	//      fcpr(&ui); fpcr(&rwi); fcpcr(&ri);
+	//      fpr(rwp); fcpr(up); fpcr(rp); fcpcr(rp);
 	//      return ri;
 	//	}
 	public void testReadWriteFlagsCpp() throws Exception {
@@ -390,6 +390,6 @@ public class IndexNamesTests extends BaseTestCase {
 		IFile file= createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
-		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 51);
+		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 47);
 	}
 }

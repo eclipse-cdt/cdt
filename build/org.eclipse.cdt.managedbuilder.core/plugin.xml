@@ -371,7 +371,7 @@
           ignoreErrCmd="-k"
           parallelBuildCmd="-j*"
           errorParsers="org.eclipse.cdt.core.MakeErrorParser"
-          name="Gnu Make Builder"
+          name="%GNUMakeBuilder.name"
           isSystem="true">
    	  </builder>   
 	  	

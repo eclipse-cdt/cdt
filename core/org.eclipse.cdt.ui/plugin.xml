@@ -1172,9 +1172,16 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.refactor.getters.and.setters"
+               label="%Refactoring.gettersAndSetters.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
+               id="org.eclipse.cdt.ui.actions.GettersAndSetters"
+               retarget="true">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.refactor.implement.method"
                label="%Refactoring.implementMethod.label"
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
                id="org.eclipse.cdt.ui.actions.ImplementMethod"
                retarget="true">
          </action>
@@ -1989,27 +1996,27 @@
             name="%ActionDefinition.renameElement.name"
             description="%ActionDefinition.renameElement.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
-            id="org.eclipse.cdt.ui.edit.text.rename.element">
-      </command>
+            id="org.eclipse.cdt.ui.edit.text.rename.element"/>
       <command
             name="%ActionDefinition.extractConstant.name"
             description="%ActionDefinition.extractConstant.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
-            id="org.eclipse.cdt.ui.refactor.extract.constant">
-      </command>
+            id="org.eclipse.cdt.ui.refactor.extract.constant"/>
       <command
             name="%ActionDefinition.extractFunction.name"
             description="%ActionDefinition.extractFunction.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
-            id="org.eclipse.cdt.ui.refactor.extract.function">
-      </command>
+            id="org.eclipse.cdt.ui.refactor.extract.function"/>
       <command
             name="%ActionDefinition.implementMethod.name"
             description="%ActionDefinition.implementMethod.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
-            id="org.eclipse.cdt.ui.refactor.implement.method">
-      </command>
-	        
+            id="org.eclipse.cdt.ui.refactor.implement.method"/>
+      <command
+      		name="%ActionDefinition.gettersAndSetters.name"
+            description="%ActionDefinition.gettersAndSetters.description"
+	        categoryId="org.eclipse.cdt.ui.category.refactoring"
+	        id="org.eclipse.cdt.ui.refactor.getters.and.setters"/>
    </extension>
    <extension
          id="pdomSearchPage"

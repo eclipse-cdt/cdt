@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String ExtractFunctionAction_label;
 	public static String HideMethodAction_label;
 	public static String ImplementMethodAction_label;
+	public static String GettersAndSetters_label;
 
 	static {
 		// initialize resource bundle

@@ -1,0 +1,652 @@
+//!Generate Getters and Setters One Getter Selection
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+getters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     //$SocSecNo$//();
+	
+	int     GetUniqueId();
+	
+	int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this.systemId = systemId;
+	}
+};
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     SocSecNo();
+	
+	int     GetUniqueId();
+    char *getName() const
+    {
+        return name;
+    }
+
+    int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this.systemId = systemId;
+	}
+};
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//!Generate Getters and Setters One Getter Selection with Namespace
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+getters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+namespace Personal {
+	class Person {
+	
+	private:
+	
+	  int systemId;
+	
+	protected:
+	
+	  char *name;
+	
+	public:
+	
+	  const int socSecNo;
+	  
+	  Person myFriend;
+	
+	
+	  Person(int socSecNo); // contructor
+	
+	  ~Person(); // destructor
+	
+	
+		char*   Name();
+		
+		void    Print();
+		
+		int     //$SocSecNo$//();
+		
+		int     GetUniqueId();
+		
+		int getSystemId(){
+			return systemId;
+		}
+		
+		void setSystemId(int systemId){
+			this.systemId = systemId;
+		}
+	};
+}
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//=
+#ifndef C_H_
+#define C_H_
+
+namespace Personal {
+	class Person {
+	
+	private:
+	
+	  int systemId;
+	
+	protected:
+	
+	  char *name;
+	
+	public:
+	
+	  const int socSecNo;
+	  
+	  Person myFriend;
+	
+	
+	  Person(int socSecNo); // contructor
+	
+	  ~Person(); // destructor
+	
+	
+		char*   Name();
+		
+		void    Print();
+		
+		int     SocSecNo();
+		
+		int     GetUniqueId();
+	    char *getName() const
+	    {
+	        return name;
+	    }
+
+	    int getSystemId(){
+			return systemId;
+		}
+		
+		void setSystemId(int systemId){
+			this.systemId = systemId;
+		}
+	};
+}
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//!Generate Getters and Setters One Setter Selection
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+setters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     //$SocSecNo$//();
+	
+	int     GetUniqueId();
+	
+	int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this.systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     SocSecNo();
+	
+	int     GetUniqueId();
+    void setName(char *name)
+    {
+        this.name = name;
+    }
+
+    int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this.systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//!Generate Getters and Setters Getter and Setter Selection
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+setters=name
+getters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     //$SocSecNo$//();
+	
+	int     GetUniqueId();
+	
+	int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this.systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     SocSecNo();
+	
+	int     GetUniqueId();
+    char *getName() const
+    {
+        return name;
+    }
+
+    void setName(char *name)
+    {
+        this.name = name;
+    }
+
+    int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this.systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//!Generate Getters and Setters Multiple Selection
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+getters=name,systemId
+setters=name,systemId
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     //$SocSecNo$//();
+	
+	int     GetUniqueId();
+
+};
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+    int getSystemId() const
+    {
+        return systemId;
+    }
+
+    void setSystemId(int systemId)
+    {
+        this.systemId = systemId;
+    }
+
+    char *getName() const
+    {
+        return name;
+    }
+
+    void setName(char *name)
+    {
+        this.name = name;
+    }
+
+    Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     SocSecNo();
+	
+	int     GetUniqueId();
+
+};
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//!Generate Getters and Setters Visibility order 1
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=GaS.h
+getters=i,isOk
+setters=i,isOk
+//@GaS.cpp
+#include "Getters.h"
+
+GaS::Getters() {
+}
+
+GaS::~Getters() {
+}
+
+//@GaS.h
+#ifndef GAS_H_
+#define GAS_H_
+
+class GaS {
+public:
+	GaS();
+	virtual ~GaS();
+	bool //$isOk$//;
+	void methode2();
+
+private:
+	int i;
+};
+
+#endif
+
+//=
+#ifndef GAS_H_
+#define GAS_H_
+
+class GaS {
+public:
+	GaS();
+	virtual ~GaS();
+	bool isOk;
+	void methode2();
+    bool getIsOk() const
+    {
+        return isOk;
+    }
+
+    void setIsOk(bool isOk)
+    {
+        this.isOk = isOk;
+    }
+
+    int getI() const
+    {
+        return i;
+    }
+
+    void setI(int i)
+    {
+        this.i = i;
+    }
+
+private:
+	int i;
+};
+
+#endif
+

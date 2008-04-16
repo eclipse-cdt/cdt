@@ -278,7 +278,7 @@ public abstract class CRefactoring extends Refactoring {
 		return null;
 	}
  
-	private boolean loadTranslationUnit(RefactoringStatus status,
+	protected boolean loadTranslationUnit(RefactoringStatus status,
 			IProgressMonitor mon) {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 10);
 		if (file != null) {

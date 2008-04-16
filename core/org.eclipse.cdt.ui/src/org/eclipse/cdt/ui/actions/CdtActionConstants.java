@@ -261,6 +261,12 @@ public class CdtActionConstants {
 	public static final String IMPLEMENT_METHOD= "org.eclipse.cdt.ui.actions.ImplementMethod"; //$NON-NLS-1$
 
 	/**
+	 * Refactor menu: name of standard Generate Getters and Setters global action
+	 * (value <code>"org.eclipse.cdt.ui.actions.GettersAndSetters"</code>).
+	 */
+	public static final String GETTERS_AND_SETTERS= "org.eclipse.cdt.ui.actions.GettersAndSetters"; //$NON-NLS-1$
+	
+	/**
 	 * Refactor menu: name of standard Introduce Parameter global action
 	 * (value <code>"org.eclipse.cdt.ui.actions.IntroduceParameter"</code>).
 	 */

@@ -117,6 +117,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String IMPLEMENT_METHOD= "org.eclipse.cdt.ui.refactor.implement.method"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID of the refactor -> generate getters and setters
+	 * (value <code>"org.eclipse.cdt.ui.refactor.getters.and.setters"</code>).
+	 */
+	public static final String GETTERS_AND_SETTERS= "org.eclipse.cdt.ui.refactor.getters.and.setters"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID of the refactor -> undo action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.undo.action"</code>).
 	 */

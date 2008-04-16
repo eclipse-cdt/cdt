@@ -79,7 +79,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 	}
 	
 	private class CHelpSettingsDisplay {
-		private CheckedListDialogField fCHelpBookList;
+		private CheckedListDialogField<CHelpBookDescriptor> fCHelpBookList;
 		private IProject fProject;
 		private CHelpBookDescriptor fCHelpBookDescriptors[];
 		
@@ -90,7 +90,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 				/* 1 */ CUIMessages.getString("CHelpConfigurationPropertyPage.buttonLabels.UncheckAll") //NewWizardMessages.getString("BuildPathsBlock.classpath.uncheckall.button") //$NON-NLS-1$
 			};
 		
-			fCHelpBookList= new CheckedListDialogField(null, buttonLabels, new CHelpBookListLabelProvider());
+			fCHelpBookList= new CheckedListDialogField<CHelpBookDescriptor>(null, buttonLabels, new CHelpBookListLabelProvider());
 			fCHelpBookList.setLabelText(CUIMessages.getString("CHelpConfigurationPropertyPage.HelpBooks")); //$NON-NLS-1$
 			fCHelpBookList.setCheckAllButtonIndex(0);
 			fCHelpBookList.setUncheckAllButtonIndex(1);
@@ -120,19 +120,19 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 				}
 			);
 
-			List allTopicsList= Arrays.asList(fCHelpBookDescriptors);
-			List enabledTopicsList= getEnabledEntries(allTopicsList);
+			List<CHelpBookDescriptor> allTopicsList= Arrays.asList(fCHelpBookDescriptors);
+			List<CHelpBookDescriptor> enabledTopicsList= getEnabledEntries(allTopicsList);
 			
 			fCHelpBookList.setElements(allTopicsList);
 			fCHelpBookList.setCheckedElements(enabledTopicsList);
 		}
 
-		private List getEnabledEntries(List list) {
+		private List<CHelpBookDescriptor> getEnabledEntries(List<CHelpBookDescriptor> list) {
 			int size = list.size();
-			List desList= new ArrayList();
+			List<CHelpBookDescriptor> desList= new ArrayList<CHelpBookDescriptor>();
 
 			for (int i= 0; i < size; i++) {
-				CHelpBookDescriptor el = (CHelpBookDescriptor)list.get(i);
+				CHelpBookDescriptor el = list.get(i);
 				if(el.isEnabled())
 					desList.add(el);
 			}
@@ -140,7 +140,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		}
 		
 		public void performOk(){
-			List list = fCHelpBookList.getElements();
+			List<CHelpBookDescriptor> list = fCHelpBookList.getElements();
 			final IProject project = fProject;
 			
 			for(int i = 0; i < list.size(); i++){

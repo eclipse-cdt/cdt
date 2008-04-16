@@ -13,9 +13,6 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -29,7 +26,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 
-public class BaseClassesListDialogField extends ListDialogField {
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+
+public class BaseClassesListDialogField extends ListDialogField<IBaseClassInfo> {
     
     // column properties
     private static final String CP_NAME = "name"; //$NON-NLS-1$
@@ -97,7 +99,7 @@ public class BaseClassesListDialogField extends ListDialogField {
         }
     }
     
-    public BaseClassesListDialogField(String title, IListAdapter listAdapter) {
+    public BaseClassesListDialogField(String title, IListAdapter<IBaseClassInfo> listAdapter) {
         super(listAdapter,
         	new String[] {
                 /* 0 */ NewClassWizardMessages.getString("BaseClassesListDialogField.buttons.add"), //$NON-NLS-1$
@@ -174,7 +176,7 @@ public class BaseClassesListDialogField extends ListDialogField {
     }
     
     public IBaseClassInfo[] getBaseClasses() {
-	    List baseClasses = getElements();
-	    return (IBaseClassInfo[]) baseClasses.toArray(new IBaseClassInfo[baseClasses.size()]);
+	    List<IBaseClassInfo> baseClasses = getElements();
+	    return baseClasses.toArray(new IBaseClassInfo[baseClasses.size()]);
     }
 }

@@ -13,12 +13,13 @@ package org.eclipse.cdt.internal.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Convenience class for drop-in C/C++ Wizard contributions.
@@ -94,7 +95,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getProjectWizardElements() {
-		List elemList = new ArrayList();
+		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
 	    IConfigurationElement[] elements = getAllWizardElements();
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -102,7 +103,7 @@ public class CWizardRegistry {
 			    elemList.add(element);
             }
 	    }
-		return (IConfigurationElement[]) elemList.toArray(new IConfigurationElement[elemList.size()]);
+		return elemList.toArray(new IConfigurationElement[elemList.size()]);
 	}
 	
     private static boolean isProjectWizard(IConfigurationElement element) {
@@ -113,10 +114,9 @@ public class CWizardRegistry {
 
 	    IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
-			for (int i = 0; i < classElements.length; i++) {
-				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
-				for (int k = 0; k < paramElements.length; k++) {
-					IConfigurationElement curr = paramElements[k];
+			for (IConfigurationElement classElement : classElements) {
+				IConfigurationElement[] paramElements = classElement.getChildren(TAG_PARAMETER);
+				for (IConfigurationElement curr : paramElements) {
 					String name = curr.getAttribute(TAG_NAME);
 					if (name != null && (name.equals(ATT_CPROJECT) || name.equals(ATT_CCPROJECT))) {
 					    String value = curr.getAttribute(TAG_VALUE);
@@ -162,7 +162,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getTypeWizardElements() {
-		List elemList = new ArrayList();
+		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
 	    IConfigurationElement[] elements = getAllWizardElements();
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -170,16 +170,15 @@ public class CWizardRegistry {
 			    elemList.add(element);
             }
 	    }
-		return (IConfigurationElement[]) elemList.toArray(new IConfigurationElement[elemList.size()]);
+		return elemList.toArray(new IConfigurationElement[elemList.size()]);
 	}
 	
     private static boolean isTypeWizard(IConfigurationElement element) {
 		IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
-			for (int i = 0; i < classElements.length; i++) {
-				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
-				for (int k = 0; k < paramElements.length; k++) {
-					IConfigurationElement curr = paramElements[k];
+			for (IConfigurationElement classElement : classElements) {
+				IConfigurationElement[] paramElements = classElement.getChildren(TAG_PARAMETER);
+				for (IConfigurationElement curr : paramElements) {
 					String name = curr.getAttribute(TAG_NAME);
 					if (name != null && name.equals(ATT_CTYPE)) {
 					    String value = curr.getAttribute(TAG_VALUE);
@@ -223,7 +222,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getFileWizardElements() {
-		List elemList = new ArrayList();
+		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
 	    IConfigurationElement[] elements = getAllWizardElements();
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -231,16 +230,15 @@ public class CWizardRegistry {
 			    elemList.add(element);
             }
 	    }
-		return (IConfigurationElement[]) elemList.toArray(new IConfigurationElement[elemList.size()]);
+		return elemList.toArray(new IConfigurationElement[elemList.size()]);
 	}
 	
     private static boolean isFileWizard(IConfigurationElement element) {
 		IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
-			for (int i = 0; i < classElements.length; i++) {
-				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
-				for (int k = 0; k < paramElements.length; k++) {
-					IConfigurationElement curr = paramElements[k];
+			for (IConfigurationElement classElement : classElements) {
+				IConfigurationElement[] paramElements = classElement.getChildren(TAG_PARAMETER);
+				for (IConfigurationElement curr : paramElements) {
 					String name = curr.getAttribute(TAG_NAME);
 					if (name != null && name.equals(ATT_CFILE)) {
 					    String value = curr.getAttribute(TAG_VALUE);
@@ -284,7 +282,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getFolderWizardElements() {
-		List elemList = new ArrayList();
+		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
 	    IConfigurationElement[] elements = getAllWizardElements();
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -292,16 +290,15 @@ public class CWizardRegistry {
 			    elemList.add(element);
             }
 	    }
-		return (IConfigurationElement[]) elemList.toArray(new IConfigurationElement[elemList.size()]);
+		return elemList.toArray(new IConfigurationElement[elemList.size()]);
 	}
 	
     private static boolean isFolderWizard(IConfigurationElement element) {
 		IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
-			for (int i = 0; i < classElements.length; i++) {
-				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
-				for (int k = 0; k < paramElements.length; k++) {
-					IConfigurationElement curr = paramElements[k];
+			for (IConfigurationElement classElement : classElements) {
+				IConfigurationElement[] paramElements = classElement.getChildren(TAG_PARAMETER);
+				for (IConfigurationElement curr : paramElements) {
 					String name = curr.getAttribute(TAG_NAME);
 					if (name != null && name.equals(ATT_CFOLDER)) {
 					    String value = curr.getAttribute(TAG_VALUE);
@@ -319,7 +316,7 @@ public class CWizardRegistry {
     }
     
 	private static String[] getWizardIDs(IConfigurationElement[] elements) {
-	    List idList = new ArrayList();
+	    List<String> idList = new ArrayList<String>();
 
 	    // add C wizards first
 	    for (int i = 0; i < elements.length; ++i) {
@@ -342,12 +339,12 @@ public class CWizardRegistry {
 			}
 	    }
 	    
-		return (String[]) idList.toArray(new String[idList.size()]);
+		return idList.toArray(new String[idList.size()]);
 	}
     
     private static IAction[] createActions(IConfigurationElement[] elements) {
-	    List idList = new ArrayList();
-	    List actionList = new ArrayList();
+	    List<String> idList = new ArrayList<String>();
+	    List<IAction> actionList = new ArrayList<IAction>();
 
 	    // add C wizards first
 	    for (int i = 0; i < elements.length; ++i) {
@@ -357,9 +354,7 @@ public class CWizardRegistry {
 	            if (id != null && !idList.contains(id)) {
 	            	idList.add(id);
 	    	        IAction action = new OpenNewWizardAction(element);
-	    	        if (action != null) {
-	    	        	actionList.add(action);
-	    	        }
+	    	        actionList.add(action);
 	            }
 			}
 	    }
@@ -371,14 +366,12 @@ public class CWizardRegistry {
 	            if (id != null && !idList.contains(id)) {
 	            	idList.add(id);
 	    	        IAction action = new OpenNewWizardAction(element);
-	    	        if (action != null) {
-	    	        	actionList.add(action);
-	    	        }
+	    	        actionList.add(action);
 	            }
 			}
 	    }
 	    
-		return (IAction[]) actionList.toArray(new IAction[actionList.size()]);
+		return actionList.toArray(new IAction[actionList.size()]);
     }
 
     /**
@@ -396,12 +389,11 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getAllWizardElements() {
-		List elemList = new ArrayList();
+		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, PL_NEW);
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-			for (int i = 0; i < elements.length; i++) {
-				IConfigurationElement element= elements[i];
+			for (IConfigurationElement element : elements) {
 				if (element.getName().equals(TAG_WIZARD)) {
 				    String category = element.getAttribute(ATT_CATEGORY);
 				    if (category != null &&
@@ -412,7 +404,7 @@ public class CWizardRegistry {
 				}
 			}
 		}
-		return (IConfigurationElement[]) elemList.toArray(new IConfigurationElement[elemList.size()]);
+		return elemList.toArray(new IConfigurationElement[elemList.size()]);
 	}
 	
 }

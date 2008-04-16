@@ -92,9 +92,8 @@ public final class ProjectTemplateStore {
 	public TemplatePersistenceData[] getTemplateData() {
 		if (fProjectStore != null) {
 			return fProjectStore.getTemplateData(true);
-		} else {
-			return fInstanceStore.getTemplateData(true);
 		}
+		return fInstanceStore.getTemplateData(true);
 	}
 	
 	public Template findTemplateById(String id) {
@@ -111,19 +110,18 @@ public final class ProjectTemplateStore {
 		if (fProjectStore != null) {
 			fProjectStore.load();
 			
-			Set datas= new HashSet();
+			Set<String> datas= new HashSet<String>();
 			TemplatePersistenceData[] data= fProjectStore.getTemplateData(false);
-			for (int i= 0; i < data.length; i++) {
-				String id= data[i].getId();
+			for (TemplatePersistenceData element : data) {
+				String id= element.getId();
 				if (id == null) {
-					id= data[i].getTemplate().getName();
+					id= element.getTemplate().getName();
 				}
 				datas.add(id);
 			}
 			
 			data= fInstanceStore.getTemplateData(false);
-			for (int i= 0; i < data.length; i++) {
-				TemplatePersistenceData orig= data[i];
+			for (TemplatePersistenceData orig : data) {
 				String origId= orig.getId();
 				if (origId == null) {
 					origId= orig.getTemplate().getName();
@@ -155,9 +153,8 @@ public final class ProjectTemplateStore {
 		TemplatePersistenceData data= fProjectStore.getTemplateData(id);
 		if (data == null) {
 			return; // does not exist
-		} else {
-			data.setDeleted(!projectSpecific);
 		}
+		data.setDeleted(!projectSpecific);
 	}
 
 	public void restoreDefaults() {

@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -57,7 +56,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
  
-public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage implements Listener {
+public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage {
 
     private IStructuredSelection fInitialSelection;
 	private CheckboxTableViewer fProjectViewer;
@@ -199,9 +198,9 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
         ICProject[] projects;
 		try {
 			projects = CoreModel.getDefault().getCModel().getCProjects();
-	        for (int i = 0; i < projects.length; i++) {
-	            if (projects[i].getProject().isOpen()) {
-					input.add(projects[i]);
+	        for (ICProject project : projects) {
+	            if (project.getProject().isOpen()) {
+					input.add(project);
 				}
 	        }
 		} catch (CModelException e) {
@@ -212,15 +211,15 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
 
     private void setupBasedOnInitialSelections() {
     	HashSet<String> names= new HashSet<String>();
-        Iterator it = fInitialSelection.iterator();
+        Iterator<?> it = fInitialSelection.iterator();
         while (it.hasNext()) {
             IProject project = (IProject) it.next();
             names.add(project.getName());
         }
         
-        Collection prjs= (Collection) fProjectViewer.getInput();
-        for (Iterator iterator = prjs.iterator(); iterator.hasNext();) {
-			ICProject prj = (ICProject) iterator.next();
+        Collection<?> prjs= (Collection<?>) fProjectViewer.getInput();
+        for (Object element : prjs) {
+			ICProject prj = (ICProject) element;
 			if (names.contains(prj.getElementName())) {
 	            fProjectViewer.setChecked(prj, true);
 			}
@@ -308,8 +307,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
     	IRunnableWithProgress op= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask("", projects.length); //$NON-NLS-1$
-				for (int i = 0; i < projects.length; i++) {
-					ICProject project = projects[i];
+				for (ICProject project : projects) {
 					TeamPDOMExportOperation op= new TeamPDOMExportOperation(project);
 					op.setTargetLocation(dest);
 					try {

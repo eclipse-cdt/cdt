@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.TextProcessor;
@@ -205,12 +205,11 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        		IFileInfo f = fs.fetchInfo();
 		        	if (f.exists()) {
 		        		if (f.isDirectory()) {
-		        			setMessage(UIMessages.getString("CMainWizardPage.7"), DialogPage.WARNING); //$NON-NLS-1$
+		        			setMessage(UIMessages.getString("CMainWizardPage.7"), IMessageProvider.WARNING); //$NON-NLS-1$
 			        		return true;
-		        		} else {
-		        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
-			        		return false;
 		        		}
+						setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
+						return false;
 		        	}
 	        	} catch (CoreException e) {
 	        		CUIPlugin.log(e.getStatus());
@@ -271,11 +270,11 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			List<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
 			for (int i = 0; i < extensions.length; ++i)	{
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-				for (int k = 0; k < elements.length; k++) {
-					if (elements[k].getName().equals(ELEMENT_NAME)) {
+				for (IConfigurationElement element : elements) {
+					if (element.getName().equals(ELEMENT_NAME)) {
 						CNewWizard w = null;
 						try {
-							w = (CNewWizard) elements[k].createExecutableExtension(CLASS_NAME);
+							w = (CNewWizard) element.createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
 							System.out.println(UIMessages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
 							return null; 
@@ -298,9 +297,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				// try to search item which was selected before
 				if (savedStr != null) {
 					TreeItem[] all = tree.getItems();
-					for (int i=0; i<all.length; i++) {
-						if (savedStr.equals(all[i].getText())) {
-							target = all[i];
+					for (TreeItem element : all) {
+						if (savedStr.equals(element.getText())) {
+							target = element;
 							break;
 						}
 					}
@@ -331,9 +330,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			}
 			while(true) {
 				boolean found = false;
-				Iterator it2 = items.iterator();
+				Iterator<EntryDescriptor> it2 = items.iterator();
 				while (it2.hasNext()) {
-					EntryDescriptor wd1 = (EntryDescriptor)it2.next();
+					EntryDescriptor wd1 = it2.next();
 					if (wd1.getParentId() == null) continue;
 					for (int i=0; i<placedEntryDescriptorsList.size(); i++) {
 						EntryDescriptor wd2 = placedEntryDescriptorsList.get(i);
@@ -346,10 +345,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 
 							wd1.setPath(wd2.getPath() + "/" + wd1.getId()); //$NON-NLS-1$
 							wd1.setParent(wd2);
-							if (wd1.getHandler() == null && !wd1.isCategory())
-								wd1.setHandler((CWizardHandler)h.clone());
-							if (h != null && !h.isApplicable(wd1))
-								break;
+							if (h != null) {
+								if (wd1.getHandler() == null && !wd1.isCategory())
+									wd1.setHandler((CWizardHandler)h.clone());
+								if (!h.isApplicable(wd1))
+									break;
+							}
 							
 							TreeItem p = placedTreeItemsList.get(i);
 							TreeItem ti = new TreeItem(p, SWT.NONE);
@@ -393,8 +394,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			TreeItem[] sel = _tree.getSelection();
 			if (sel == null || sel.length == 0) 
 				return null;
-			else
-				return (EntryDescriptor)sel[0].getData(DESC);
+			return (EntryDescriptor)sel[0].getData(DESC);
 		}
 		
 		public void toolChainListChanged(int count) {

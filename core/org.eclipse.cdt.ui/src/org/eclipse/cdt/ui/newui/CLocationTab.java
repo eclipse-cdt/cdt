@@ -88,8 +88,8 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			if (s.length == 0) 
 				return UIMessages.getString("CLocationTab.0"); //$NON-NLS-1$
 			String x = UIMessages.getString("CLocationTab.1"); //$NON-NLS-1$
-			for (int i=0; i< s.length; i++) 
-				x = x + s[i] + UIMessages.getString("CLocationTab.2"); //$NON-NLS-1$
+			for (String element : s)
+				x = x + element + UIMessages.getString("CLocationTab.2"); //$NON-NLS-1$
 			x = x.substring(0, x.length() - 2) + UIMessages.getString("CLocationTab.3"); //$NON-NLS-1$
 			return x;
 		} 
@@ -186,8 +186,8 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		case 0:
 			String[] ss = getProjectDialog(shell);
 			if (ss != null) {
-				for (int i=0; i<ss.length; i++)
-					src.add(new _Entry(newEntry(new Path(ss[i]), new IPath[0], true)));
+				for (String element : ss)
+					src.add(new _Entry(newEntry(new Path(element), new IPath[0], true)));
 				saveData();
 			}
 			break;
@@ -227,9 +227,9 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			break;
 		case 3:
 			if (sel.length == 0) return;
-			for (int i = 0; i < sel.length; i++) {
-				if (sel[i].getData() instanceof _Entry) src.remove(sel[i].getData());
-			}
+			for (TreeItem element : sel) {
+					if (element.getData() instanceof _Entry) src.remove(element.getData());
+				}
 			saveData();
 			break;
 		default:
@@ -239,9 +239,9 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	
 	private void saveData() {
 		ICExclusionPatternPathEntry[] p = new ICExclusionPatternPathEntry[src.size()];
-		Iterator it = src.iterator();
+		Iterator<_Entry> it = src.iterator();
 		int i=0;
-		while(it.hasNext()) { p[i++] = ((_Entry)it.next()).ent; }
+		while(it.hasNext()) { p[i++] = (it.next()).ent; }
 		setEntries(cfgd, p);
 		tree.setInput(cfgd);
 		updateData(cfgd);
@@ -346,6 +346,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			p = _f.getFullPath();
 		}
 		
+		@SuppressWarnings("unchecked")
 		public Object getAdapter(Class adapter) {
 			return f.getAdapter(adapter);
 		}

@@ -44,6 +44,5 @@ public interface IWizardItemsListListener {
 	 * @param items - list of EntryDescriptor objects 
 	 * @return - list with filtered items
 	 */
-	List<EntryDescriptor> filterItems(List items);
-	
+	List<EntryDescriptor> filterItems(List<? extends EntryDescriptor> items);
 }

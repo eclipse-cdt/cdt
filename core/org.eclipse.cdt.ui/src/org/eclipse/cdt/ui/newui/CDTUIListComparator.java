@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.ui.newui.AbstractExportTab.ExtData;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 
-public class CDTUIListComparator extends CDTListComparator implements Comparator<Object> {
+public class CDTUIListComparator extends CDTListComparator {
 	private static Comparator<Object> comparator = null;
 
 	public static Comparator<Object> getInstance() {

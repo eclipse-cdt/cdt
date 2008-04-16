@@ -82,9 +82,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 				);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			for (int i = 0; i < exts.length; i++) {
-				if (exts[i].getConfigurationElements().length > 0) {
-					mapParsers.put(exts[i].getUniqueIdentifier(), exts[i].getLabel());
+			for (IExtension ext : exts) {
+				if (ext.getConfigurationElements().length > 0) {
+					mapParsers.put(ext.getUniqueIdentifier(), ext.getLabel());
 				}
 			}
 		}
@@ -160,19 +160,19 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		ArrayList<TableData> checked = new ArrayList<TableData>(ss.length);
 		HashMap<String, String> cloneMap = new HashMap<String, String>(mapParsers);
 		// add checked elements
-		for (int i=0; i<ss.length; i++) {
-			String s = cloneMap.get(ss[i]);
+		for (String element : ss) {
+			String s = cloneMap.get(element);
 			if (s != null) {
-				TableData d = new TableData(ss[i],s);
+				TableData d = new TableData(element,s);
 				data.add(d);
 				checked.add(d);
-				cloneMap.remove(ss[i]);
+				cloneMap.remove(element);
 			}
 		}
 		// add remaining parsers (unchecked)
-		Iterator it = cloneMap.keySet().iterator();
+		Iterator<String> it = cloneMap.keySet().iterator();
 		while (it.hasNext()) {
-			String s = (String)it.next();
+			String s = it.next();
 			data.add(new TableData(s, cloneMap.get(s)));
 		}
 		tv.setInput(data.toArray());

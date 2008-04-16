@@ -49,9 +49,9 @@ public class RemoteTreeContentManager {
      * Queue of parents to fetch children for, and
      * associated element collectors and deferred adapters.
      */
-    private List fElementQueue = new ArrayList();
-    private List fCollectors = new ArrayList();
-    private List fAdapaters = new ArrayList();
+    private List<Object> fElementQueue = new ArrayList<Object>();
+    private List<IElementCollector> fCollectors = new ArrayList<IElementCollector>();
+    private List<IDeferredWorkbenchAdapter> fAdapaters = new ArrayList<IDeferredWorkbenchAdapter>();
     
     /**
      * Fetching children is done in a single background job.
@@ -79,8 +79,8 @@ public class RemoteTreeContentManager {
 						return Status.CANCEL_STATUS;
 					}
 					element = fElementQueue.remove(0);
-					collector = (IElementCollector) fCollectors.remove(0);
-					adapter = (IDeferredWorkbenchAdapter) fAdapaters.remove(0);
+					collector = fCollectors.remove(0);
+					adapter = fAdapaters.remove(0);
 				}
 				adapter.fetchDeferredChildren(element, collector, monitor);
 			}

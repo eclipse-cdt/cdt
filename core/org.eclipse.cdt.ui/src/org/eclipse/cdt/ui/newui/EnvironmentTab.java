@@ -307,8 +307,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		
 		data.clear();
 		if (_vars != null) {
-			for (int i=0; i<_vars.length; i++) {
-				data.add(new TabData(_vars[i], false));
+			for (IEnvironmentVariable _var : _vars) {
+				data.add(new TabData(_var, false));
 			}
 		}
 		tv.setInput(data);
@@ -324,12 +324,13 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		
 		ce.setAppendEnvironment(ce.appendEnvironment(src), dst);
 		IEnvironmentVariable[] v = ce.getVariables(dst);
-		for (int i=0; i<v.length; i++) ce.removeVariable(v[i].getName(), dst);
+		for (IEnvironmentVariable element : v)
+			ce.removeVariable(element.getName(), dst);
 		v = ce.getVariables(src);
-		for (int i=0; i<v.length; i++) {
-			if (ce.isUserVariable(src, v[i]))
-					ce.addVariable(v[i].getName(), v[i].getValue(), 
-							v[i].getOperation(), v[i].getDelimiter(), dst);
+		for (IEnvironmentVariable element : v) {
+			if (ce.isUserVariable(src, element))
+					ce.addVariable(element.getName(), element.getValue(), 
+							element.getOperation(), element.getDelimiter(), dst);
 		}
 	}
 
@@ -437,11 +438,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				if (cfgd == null)
 					vars.createVariable(dlg.t1.trim(), dlg.t2.trim(), 
 							IEnvironmentVariable.ENVVAR_APPEND,	SEMI);
-				else	
-					for (int x=0; x<cfgs.length; x++) { 
+				else
+					for (ICConfigurationDescription cfg : cfgs) { 
 						ce.addVariable(dlg.t1.trim(), dlg.t2.trim(), 
 								IEnvironmentVariable.ENVVAR_APPEND, 
-								SEMI, cfgs[x]);
+								SEMI, cfg);
 					}
 				updateData();
 			}
@@ -450,7 +451,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	
 	private void handleEnvSelectButtonSelected() {
 		// get Environment Variables from the OS
-		Map v = EnvironmentReader.getEnvVars();
+		Map<?,?> v = EnvironmentReader.getEnvVars();
 		MyListSelectionDialog dialog = new MyListSelectionDialog(usercomp.getShell(), v, createSelectionDialogContentProvider());
 		
 		dialog.setTitle(UIMessages.getString("EnvironmentTab.14")); //$NON-NLS-1$
@@ -462,8 +463,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			else 
 				cfgs = new ICConfigurationDescription[] {cfgd};
 			
-			for (int i = 0; i < selected.length; i++) {
-				String name = (String)selected[i];
+			for (Object element : selected) {
+				String name = (String)element;
 				String value = EMPTY_STR;
 				int x = name.indexOf(LBR);
 				if (x >= 0) {
@@ -472,13 +473,13 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				}
 				
 				if (cfgd == null) 
-					vars.createVariable(name, value); 
+					vars.createVariable(name, value);
 				else
-					for (int y=0; y<cfgs.length; y++) { 
+					for (ICConfigurationDescription cfg : cfgs) { 
 						ce.addVariable(
 								name, value, 
 								IEnvironmentVariable.ENVVAR_APPEND, 
-								SEMI, cfgs[y]);
+								SEMI, cfg);
 				}
 			}
 			updateData();
@@ -491,12 +492,13 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			public Object[] getElements(Object inputElement) {
 				String[] els = null;
 				if (inputElement instanceof Map) {
-					Map m = (Map)inputElement;
+					@SuppressWarnings("unchecked")
+					Map<String,?> m = (Map)inputElement;
 					els = new String[m.size()];  
 					int index = 0;
-					for (Iterator iterator = m.keySet().iterator(); iterator.hasNext(); index++) {
-						String k = (String)iterator.next();
-						els[index] = TextProcessor.process(k + LBR + (String)m.get(k) + RBR);  
+					for (Iterator<String> iterator = m.keySet().iterator(); iterator.hasNext(); index++) {
+						String k = iterator.next();
+						els[index] = TextProcessor.process(k + LBR + m.get(k) + RBR);  
 					}
 				}
 				Arrays.sort(els, CDTListComparator.getInstance());

@@ -49,7 +49,7 @@ public class ChangeBuildConfigActionBase {
 	/**
 	 * List of selected managed-built projects
 	 */
-	protected HashSet fProjects = new HashSet();
+	protected HashSet<IProject> fProjects = new HashSet<IProject>();
 	
 	/**
 	 * Fills the menu with build configurations which are common for all selected projects
@@ -60,22 +60,23 @@ public class ChangeBuildConfigActionBase {
 		if (menu == null) return;
 
 		MenuItem[] items = menu.getItems();
-		for (int i = 0; i < items.length; i++) items[i].dispose();
+		for (MenuItem item2 : items)
+			item2.dispose();
 		
-		List configNames = new ArrayList();
-		Iterator projIter = fProjects.iterator();
+		List<String> configNames = new ArrayList<String>();
+		Iterator<IProject> projIter = fProjects.iterator();
 		String sCurrentConfig = null;
 		boolean bCurrentConfig = true;
 		while (projIter.hasNext()) {
-			ICConfigurationDescription[] cfgDescs = getCfgs((IProject)projIter.next());
+			ICConfigurationDescription[] cfgDescs = getCfgs(projIter.next());
 
 			String sActiveConfig = null;
 			// Store names and detect active configuration
-			for (int i=0; i<cfgDescs.length; i++) {
-				String s = cfgDescs[i].getName();
+			for (ICConfigurationDescription cfgDesc : cfgDescs) {
+				String s = cfgDesc.getName();
 				if (!configNames.contains(s)) 
 					configNames.add(s);
-				if (cfgDescs[i].isActive())	
+				if (cfgDesc.isActive())	
 					sActiveConfig = s;
 			}
 
@@ -90,17 +91,17 @@ public class ChangeBuildConfigActionBase {
 			}
 		}
 		
-		Iterator confIter = configNames.iterator();
+		Iterator<String> confIter = configNames.iterator();
 		int accel = 0;
 		while (confIter.hasNext()) {
-			String sName = (String)confIter.next();
+			String sName = confIter.next();
 			String sDesc = null;
 			projIter = fProjects.iterator();
 			boolean commonName = true;
 			boolean commonDesc = true;
 			boolean firstProj = true;
 			while (projIter.hasNext()) {
-				ICConfigurationDescription[] cfgDescs = getCfgs((IProject)projIter.next());
+				ICConfigurationDescription[] cfgDescs = getCfgs(projIter.next());
 				int i = 0;
 				for (; i < cfgDescs.length; i++) {
 					if (cfgDescs[i].getName().equals(sName)) {
@@ -137,7 +138,7 @@ public class ChangeBuildConfigActionBase {
 				}
 					
 				IAction action = makeAction(sName ,builder, accel);
-				if (bCurrentConfig && sCurrentConfig.equals(sName)) {
+				if (bCurrentConfig && sCurrentConfig != null && sCurrentConfig.equals(sName)) {
 					action.setChecked(true);
 				}
 				ActionContributionItem item = new ActionContributionItem(action);
@@ -179,7 +180,7 @@ public class ChangeBuildConfigActionBase {
 						}
 					}
 				}
-				Iterator iter = ((IStructuredSelection)selection).iterator();
+				Iterator<?> iter = ((IStructuredSelection)selection).iterator();
 				while (iter.hasNext()) {
 					Object selItem = iter.next();
 					IProject project = null;
@@ -230,22 +231,20 @@ public class ChangeBuildConfigActionBase {
 				// back to a project.
 				IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
 				if (window != null) {
-					if (window != null) {
-						IWorkbenchPage page = window.getActivePage();
-						if (page != null) {
-							IWorkbenchPart part = page.getActivePart();
-							if (part instanceof IEditorPart) {
-								IEditorPart epart = (IEditorPart) part;
-								IResource resource = (IResource) epart.getEditorInput().getAdapter(IResource.class);
-								if (resource != null)
-								{
-									IProject project = resource.getProject();
-									badObject = !(project != null && CoreModel.getDefault().isNewStyleProject(project));
+					IWorkbenchPage page = window.getActivePage();
+					if (page != null) {
+						IWorkbenchPart part = page.getActivePart();
+						if (part instanceof IEditorPart) {
+							IEditorPart epart = (IEditorPart) part;
+							IResource resource = (IResource) epart.getEditorInput().getAdapter(IResource.class);
+							if (resource != null)
+							{
+								IProject project = resource.getProject();
+								badObject = !(project != null && CoreModel.getDefault().isNewStyleProject(project));
 
-									if (!badObject) {
-										fProjects.add(project);
-									}									
-								}
+								if (!badObject) {
+									fProjects.add(project);
+								}									
 							}
 						}
 					}
@@ -257,16 +256,16 @@ public class ChangeBuildConfigActionBase {
 		
 		boolean enable = false;
 		if (!badObject && !fProjects.isEmpty()) {
-			Iterator iter = fProjects.iterator();
-			ICConfigurationDescription[] firstConfigs = getCfgs((IProject)iter.next());
-			for (int i = 0; i < firstConfigs.length; i++) {
+			Iterator<IProject> iter = fProjects.iterator();
+			ICConfigurationDescription[] firstConfigs = getCfgs(iter.next());
+			for (ICConfigurationDescription firstConfig : firstConfigs) {
 				boolean common = true;
-				Iterator iter2 = fProjects.iterator();
+				Iterator<IProject> iter2 = fProjects.iterator();
 				while (iter2.hasNext()) {
-					ICConfigurationDescription[] currentConfigs = getCfgs((IProject)iter2.next());
+					ICConfigurationDescription[] currentConfigs = getCfgs(iter2.next());
 					int j = 0;
 					for (; j < currentConfigs.length; j++) {
-						if (firstConfigs[i].getName().equals(currentConfigs[j].getName())) 
+						if (firstConfig.getName().equals(currentConfigs[j].getName())) 
 							break;
 					}
 					if (j == currentConfigs.length) {

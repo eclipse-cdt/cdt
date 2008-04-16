@@ -219,14 +219,14 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
 	protected void editTemplates() {
 		String prefPageId= CodeTemplatePreferencePage.PREF_ID;
-		Map data= null;
+		Map<String, String> data= null;
 		String templateName= null;
 		Template template= getSelectedTemplate();
 		if (template != null) {
 			templateName= template.getName();
 		}
 		if (templateName != null) {
-			data= new HashMap();
+			data= new HashMap<String, String>();
 			data.put(CodeTemplatePreferencePage.DATA_SELECT_TEMPLATE, templateName);
 		}
 		PreferenceDialog dialog= PreferencesUtil.createPreferenceDialogOn(getShell(), prefPageId, new String[] { prefPageId }, data);

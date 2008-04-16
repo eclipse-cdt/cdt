@@ -14,18 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IProjectEntry;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.util.SelectionUtil;
-import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -38,6 +29,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IProjectEntry;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
 public class ProjectContainerPage extends WizardPage implements IPathEntryContainerPage {
 
@@ -69,9 +71,12 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 	IProjectEntry getProjectEntry() {
 		if (viewer != null) {
 			ISelection selection = viewer.getSelection();
-			ICProject project = (ICProject)SelectionUtil.getSingleElement(selection);
-			if (project != null) {
-				return CoreModel.newProjectEntry(project.getPath());
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (ss.size() == 1) {
+					ICProject project = (ICProject) ss.getFirstElement();
+					return CoreModel.newProjectEntry(project.getPath());
+				}
 			}
 		}
 		return null;
@@ -124,8 +129,8 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 	}
 
 	private void initializeView() {
-		List list = new ArrayList();
-		List current;
+		List<ICProject> list = new ArrayList<ICProject>();
+		List<IPathEntry> current;
 		try {
 			current = Arrays.asList(fCProject.getRawPathEntries());
 			ICProject[] cProjects = CoreModel.getDefault().getCModel().getCProjects();
@@ -133,9 +138,9 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 				boolean added = false;
 				if (!cProjects[i].equals(fCProject) && !current.contains(CoreModel.newProjectEntry(cProjects[i].getPath()))) {
 					IPathEntry[] projEntries = cProjects[i].getRawPathEntries();
-					for (int j = 0; j < projEntries.length; j++) {
-						for (int k = 0; k < fFilterType.length; k++) {
-							if (projEntries[j].getEntryKind() == fFilterType[k] && projEntries[j].isExported()) {
+					for (IPathEntry projEntrie : projEntries) {
+						for (int element : fFilterType) {
+							if (projEntrie.getEntryKind() == element && projEntrie.isExported()) {
 								list.add(cProjects[i]);
 								added = true;
 								break;

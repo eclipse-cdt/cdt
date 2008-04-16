@@ -28,7 +28,7 @@ import org.eclipse.cdt.ui.newui.CDTPropertyManager;
 public class ChangeConfigAction extends Action {
 
 	private String fConfigName = null;
-	protected HashSet fProjects = null;
+	protected HashSet<IProject> fProjects = null;
 	
 	/**
 	 * Constructs the action.
@@ -36,7 +36,7 @@ public class ChangeConfigAction extends Action {
 	 * @param configName Build configuration name
 	 * @param accel Number to be used as accelerator
 	 */
-	public ChangeConfigAction(HashSet projects, String configName, String displayName, int accel) {
+	public ChangeConfigAction(HashSet<IProject> projects, String configName, String displayName, int accel) {
 		super("&" + accel + " " + displayName); //$NON-NLS-1$ //$NON-NLS-2$
 		fProjects = projects;
 		fConfigName = configName;
@@ -47,16 +47,16 @@ public class ChangeConfigAction extends Action {
 	 */
 	@Override
 	public void run() {
-		Iterator iter = fProjects.iterator();
+		Iterator<IProject> iter = fProjects.iterator();
 		while (iter.hasNext()) {
-			IProject prj = (IProject)iter.next();
+			IProject prj = iter.next();
 			ICProjectDescription prjd = CDTPropertyManager.getProjectDescription(prj);
 			boolean changed = false;
 			ICConfigurationDescription[] configs = prjd.getConfigurations(); 
 			if (configs != null && configs.length > 0) {
-				for (int i = 0; i < configs.length; i++) {
-					if (configs[i].getName().equals(fConfigName)) {
-						configs[i].setActive();
+				for (ICConfigurationDescription config : configs) {
+					if (config.getName().equals(fConfigName)) {
+						config.setActive();
 						CDTPropertyManager.performOk(null);
 						AbstractPage.updateViews(prj);
 						changed = true;

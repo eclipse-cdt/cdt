@@ -68,17 +68,17 @@ public class RefsTab extends AbstractCPropertyTab {
 							sel.setExpanded(true);
 			    		    objs[0].setChecked(true);
 			    	    } else {
-			    	    	for (int i=0; i<objs.length; i++)
-			    	    		objs[i].setChecked(false);
+			    	    	for (TreeItem obj : objs)
+								obj.setChecked(false);
 			    	    }
 			    	} else {
 			    		TreeItem parent = sel.getParentItem();
 			    		TreeItem[] objs = parent.getItems();
 			    		if (sel.getChecked()) {
 			    			if (parent.getChecked()) {
-			    				for (int i=0; i<objs.length; i++) {
+			    				for (TreeItem obj : objs) {
 			    				//	if (!sel.equals(objs[i]))
-			    						objs[i].setChecked(false);
+			    						obj.setChecked(false);
 			    				}
 			    				sel.setChecked(true);
 			    			} else
@@ -139,9 +139,9 @@ public class RefsTab extends AbstractCPropertyTab {
 	private void saveChecked() {
 		TreeItem[] tr = tree.getItems();
 		Map<String, String> refs = new HashMap<String, String>();
-		for (int i=0; i<tr.length; i++) {
-			if (tr[i].getChecked()) {
-				TreeItem[] cfgs = tr[i].getItems();
+		for (TreeItem element : tr) {
+			if (element.getChecked()) {
+				TreeItem[] cfgs = element.getItems();
 				for (int j=0; j<cfgs.length; j++) {
 					if (cfgs[j].getChecked()) {
 						String cfgId = EMPTY_STR;
@@ -151,7 +151,7 @@ public class RefsTab extends AbstractCPropertyTab {
 								cfgId = ((ICConfigurationDescription)ob).getId();
 							}
 						}
-						refs.put(tr[i].getText(), cfgId);
+						refs.put(element.getText(), cfgId);
 						break;
 					}				
 				}
@@ -166,7 +166,7 @@ public class RefsTab extends AbstractCPropertyTab {
 		if (p == null) return;
 		IProject[] ps = p.getWorkspace().getRoot().getProjects();
 
-		Map refs = getResDesc().getConfiguration().getReferenceInfo();
+		Map<String,String> refs = getResDesc().getConfiguration().getReferenceInfo();
 
 		
 		TreeItem ti, ti1;
@@ -183,7 +183,7 @@ public class RefsTab extends AbstractCPropertyTab {
 				ti.setText(name);
 				ti.setData(ps[i]);
 				if (refs.containsKey(name)) {
-					ref = (String)refs.get(name);
+					ref = refs.get(name);
 					ti.setChecked(true);
 				}
 				ti1 = new TreeItem(ti, SWT.NONE);
@@ -191,11 +191,11 @@ public class RefsTab extends AbstractCPropertyTab {
 				ti1.setData(new ActiveCfg(ps[i]));
 				if (EMPTY_STR.equals(ref))
 					ti1.setChecked(true);
-				for (int j=0; j<cfgs.length; j++) {
+				for (ICConfigurationDescription cfg : cfgs) {
 					ti1 = new TreeItem(ti, SWT.NONE);
-					ti1.setText(cfgs[j].getName());
-					ti1.setData(cfgs[j]);
-					if (cfgs[j].getId().equals(ref)) {
+					ti1.setText(cfg.getName());
+					ti1.setData(cfg);
+					if (cfg.getId().equals(ref)) {
 						ti1.setChecked(true);
 					}
 				}

@@ -58,14 +58,14 @@ public class ExpDialog extends AbstractPropertyDialog {
 	private int kind;
 	private ICConfigurationDescription cfgd;
 	private String[] names_l, names_t;
-	private java.util.List existing;
+	private java.util.List<String> existing;
 
 	public ExpDialog(Shell parent, boolean _newAction,
 		String title, String _data1, String _data2,
 		ICConfigurationDescription _cfgd,
 		String[] _langs, String[] _types,
 		int _kind, String[] _names_l, String[] _names_t, 
-		java.util.List _existing, boolean _isWsp) {
+		java.util.List<String> _existing, boolean _isWsp) {
 		super(parent, title);
 		super.text1 = (_data1 == null) ? EMPTY_STR : _data1;
 		super.text2 = (_data2 == null) ? EMPTY_STR : _data2;
@@ -304,8 +304,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			for (int i=0; i<indices.length; i++) indices[i] = -1;
 			
 			for (int i=0; i<items.length; i++) {
-				for (int j=0; j<sel.length; j++) {
-					if (items[i].equals(sel[j])) {
+				for (String element : sel) {
+					if (items[i].equals(element)) {
 						indices[cnt++] = i;
 						break;
 					}

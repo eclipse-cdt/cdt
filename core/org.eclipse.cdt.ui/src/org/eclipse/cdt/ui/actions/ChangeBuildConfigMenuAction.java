@@ -69,7 +69,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IProject[] obs = (IProject[])fProjects.toArray(new IProject[fProjects.size()]);
+		IProject[] obs = fProjects.toArray(new IProject[fProjects.size()]);
 		IConfigManager cm = ManageConfigSelector.getManager(obs);
 		if (cm != null) {
 			cm.manage(obs, true);

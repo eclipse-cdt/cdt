@@ -109,7 +109,7 @@ public class ProblemTreeViewer extends TreeViewer {
 		}
 		Object[] changed= event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
-			ArrayList others= new ArrayList(changed.length);
+			ArrayList<Object> others= new ArrayList<Object>(changed.length);
 			for (int i= 0; i < changed.length; i++) {
 				Object curr= changed[i];
 				if (curr instanceof IResource) {

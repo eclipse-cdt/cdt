@@ -41,8 +41,8 @@ public void additionalTableSet() {
 				flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			}
 			return new CIncludePathEntry(dlg.text1, flags);
-		} else 
-			return null;
+		}
+		return null;
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public void additionalTableSet() {
 			int flags = 0;
 			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			return new CIncludePathEntry(dlg.text1, flags);
-		} else 
-			return null;
+		}
+		return null;
 	}
 	
 	@Override

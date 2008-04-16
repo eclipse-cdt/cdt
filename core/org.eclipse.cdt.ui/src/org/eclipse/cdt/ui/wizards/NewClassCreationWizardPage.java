@@ -13,7 +13,6 @@
 package org.eclipse.cdt.ui.wizards;
 
 import java.net.URI;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
@@ -693,8 +692,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * 
      * @return array of <code>IBaseClassInfo</code>
      */
-    @SuppressWarnings("unchecked")
-	protected IBaseClassInfo[] getBaseClasses() {
+    protected IBaseClassInfo[] getBaseClasses() {
         List<IBaseClassInfo> classesList = fBaseClassesDialogField.getElements();
         return classesList.toArray(new IBaseClassInfo[classesList.size()]);
     }
@@ -707,10 +705,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      */
     protected void addBaseClass(ITypeInfo newBaseClass, ASTAccessVisibility access, boolean isVirtual) {
         // check if already exists
-        List baseClasses = fBaseClassesDialogField.getElements();
+        List<IBaseClassInfo> baseClasses = fBaseClassesDialogField.getElements();
         if (baseClasses != null) {
-            for (Iterator i = baseClasses.iterator(); i.hasNext(); ) {
-                BaseClassInfo info = (BaseClassInfo) i.next();
+            for (IBaseClassInfo baseClassInfo : baseClasses) {
+                BaseClassInfo info = (BaseClassInfo) baseClassInfo;
                 if (info.getType().equals(newBaseClass)) {
                     // already added
                     return;
@@ -1002,15 +1000,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		            IPath newFolderPath = updateSourceFolderFromPath(ns.getEnclosingProject().getProject().getFullPath());
 			        if (newFolderPath != null) {
 			            changedFields |= SOURCE_FOLDER_ID | HEADER_FILE_ID | SOURCE_FILE_ID;
-					    // adjust the relative paths
-						if (oldFolderPath != null && oldFolderPath.matchingFirstSegments(newFolderPath) == 0) {
-						    if (headerPath != null) {
-						        headerPath = newFolderPath.append(headerPath.lastSegment());
-						    }
-						    if (sourcePath != null) {
-						        sourcePath = newFolderPath.append(sourcePath.lastSegment());
-						    }
-						}
 					    setSourceFolderFullPath(newFolderPath, false);
 					    // adjust the relative paths
 					    setHeaderFileFullPath(headerPath, false);
@@ -1089,18 +1078,18 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     /**
      * handles changes to the base classes field
      */
-	private final class BaseClassesFieldAdapter implements IListAdapter {
-        public void customButtonPressed(ListDialogField field, int index) {
+	private final class BaseClassesFieldAdapter implements IListAdapter<IBaseClassInfo> {
+        public void customButtonPressed(ListDialogField<IBaseClassInfo> field, int index) {
             if (index == 0) {
                 chooseBaseClasses();
             }
             handleFieldChanged(BASE_CLASSES_ID);
         }
 
-        public void selectionChanged(ListDialogField field) {
+        public void selectionChanged(ListDialogField<IBaseClassInfo> field) {
         }
 
-        public void doubleClicked(ListDialogField field) {
+        public void doubleClicked(ListDialogField<IBaseClassInfo> field) {
         }
     }
     
@@ -1113,7 +1102,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             return;
         }
         
-        List oldContents = fBaseClassesDialogField.getElements();
+        List<IBaseClassInfo> oldContents = fBaseClassesDialogField.getElements();
         NewBaseClassSelectionDialog dialog = new NewBaseClassSelectionDialog(getShell());
         dialog.addListener(new ITypeSelectionListener() {
             public void typeAdded(ITypeInfo newBaseClass) {
@@ -1131,15 +1120,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     /**
      * handles changes to the method stubs field
      */
-	private final class MethodStubsFieldAdapter implements IListAdapter {
+	private final class MethodStubsFieldAdapter implements IListAdapter<IMethodStub> {
 
-        public void customButtonPressed(ListDialogField field, int index) {
+        public void customButtonPressed(ListDialogField<IMethodStub> field, int index) {
         }
 
-        public void selectionChanged(ListDialogField field) {
+        public void selectionChanged(ListDialogField<IMethodStub> field) {
         }
 
-        public void doubleClicked(ListDialogField field) {
+        public void doubleClicked(ListDialogField<IMethodStub> field) {
         }
     }
 

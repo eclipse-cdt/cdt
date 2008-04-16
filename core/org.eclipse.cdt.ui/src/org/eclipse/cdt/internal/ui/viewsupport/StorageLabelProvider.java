@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 public class StorageLabelProvider extends LabelProvider {
 	
 	private IEditorRegistry fEditorRegistry= PlatformUI.getWorkbench().getEditorRegistry();
-	private Map fJarImageMap= new HashMap(10);
+	private Map<String, Image> fJarImageMap= new HashMap<String, Image>(10);
 	private Image fDefaultImage;
 
 	/* (non-Javadoc)
@@ -66,9 +66,9 @@ public class StorageLabelProvider extends LabelProvider {
 	@Override
 	public void dispose() {
 		if (fJarImageMap != null) {
-			Iterator each= fJarImageMap.values().iterator();
+			Iterator<Image> each= fJarImageMap.values().iterator();
 			while (each.hasNext()) {
-				Image image= (Image)each.next();
+				Image image= each.next();
 				image.dispose();
 			}
 			fJarImageMap= null;
@@ -91,7 +91,7 @@ public class StorageLabelProvider extends LabelProvider {
 
 		// Try to find icon for full name
 		String name= element.getName();
-		Image image= (Image)fJarImageMap.get(name);
+		Image image= fJarImageMap.get(name);
 		if (image != null) 
 			return image;
 		IFileEditorMapping[] mappings= fEditorRegistry.getFileEditorMappings();
@@ -110,7 +110,7 @@ public class StorageLabelProvider extends LabelProvider {
 			key= path.getFileExtension();
 			if (key == null)
 				return getDefaultImage();
-			image= (Image)fJarImageMap.get(key);
+			image= fJarImageMap.get(key);
 			if (image != null) 
 				return image;
 		}

@@ -404,12 +404,12 @@ public abstract class ConvertProjectWizardPage
 
         IWorkspace workspace = CUIPlugin.getWorkspace();
         IProject[] projects = workspace.getRoot().getProjects();
-        Vector     candidates = new Vector(projects.length);
+        Vector<IProject>     candidates = new Vector<IProject>(projects.length);
         IProject   next = null;
 
         // ensure we only present open, valid candidates to the user
-        for (int i = 0; i < projects.length; i++) {
-            next = projects[i];
+        for (IProject project : projects) {
+            next = project;
 
             if ((next != null) 
                     && next.isOpen() 
@@ -448,7 +448,7 @@ public abstract class ConvertProjectWizardPage
         Object[] selection = getCheckedElements();
         int      totalSelected = selection.length;
 
-        if ((selection != null) && (totalSelected > 0)) {
+        if (totalSelected > 0) {
             if (monitor == null) {
                 monitor = new NullProgressMonitor();
             }
@@ -462,14 +462,16 @@ public abstract class ConvertProjectWizardPage
     		doRun(monitor, projectID);
     	else {
 	        Object[] selection = getCheckedElements();
-	        int      totalSelected = selection.length;
-	
-	        if ((selection != null) && (totalSelected > 0)) {
-	            if (monitor == null) {
-	                monitor = new NullProgressMonitor();
-	            }
-	            monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
-	            convertProjects(selection, bsId, monitor);
+	        if (selection != null) {
+	        	int      totalSelected = selection.length;
+
+	        	if (totalSelected > 0) {
+	        		if (monitor == null) {
+	        			monitor = new NullProgressMonitor();
+	        		}
+	        		monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
+	        		convertProjects(selection, bsId, monitor);
+	        	}
 	        }
     	}
     }
@@ -488,8 +490,8 @@ public abstract class ConvertProjectWizardPage
         monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), 
                           selected.length);
 		try {
-	        for (int i = 0; i < selected.length; i++) {
-	            IProject project = (IProject)selected[i];
+	        for (Object element : selected) {
+	            IProject project = (IProject)element;
     	        convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
         	}
 		} finally {
@@ -502,8 +504,8 @@ public abstract class ConvertProjectWizardPage
 		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), 
 		    selected.length);
 		try {
-			for (int i = 0; i < selected.length; i++) {
-			IProject project = (IProject)selected[i];
+			for (Object element : selected) {
+			IProject project = (IProject)element;
 			convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
 			}
 		} finally {

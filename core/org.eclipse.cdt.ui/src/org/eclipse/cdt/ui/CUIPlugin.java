@@ -636,12 +636,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
 		IWorkbench workbench= getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (int i= 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages= windows[i].getPages();
-			for (int x= 0; x < pages.length; x++) {
-				IEditorPart[] editors= pages[x].getDirtyEditors();
-				for (int z= 0; z < editors.length; z++) {
-					IEditorPart ep= editors[z];
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages= window.getPages();
+			for (IWorkbenchPage page : pages) {
+				IEditorPart[] editors= page.getDirtyEditors();
+				for (IEditorPart ep : editors) {
 					IEditorInput input= ep.getEditorInput();
 					if (!inputs.contains(input)) {
 						inputs.add(input);
@@ -659,12 +658,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
 		IWorkbench workbench= getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (int windowIndex= 0; windowIndex < windows.length; windowIndex++) {
-			IWorkbenchPage[] pages= windows[windowIndex].getPages();
-			for (int pageIndex= 0; pageIndex < pages.length; pageIndex++) {
-				IEditorReference[] references= pages[pageIndex].getEditorReferences();
-				for (int refIndex= 0; refIndex < references.length; refIndex++) {
-					IEditorPart editor= references[refIndex].getEditor(false);
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages= window.getPages();
+			for (IWorkbenchPage page : pages) {
+				IEditorReference[] references= page.getEditorReferences();
+				for (IEditorReference reference : references) {
+					IEditorPart editor= reference.getEditor(false);
 					if (editor != null)
 						result.add(editor);
 				}
@@ -909,10 +908,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public Shell getShell() {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
-		} else {
-			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
-			return windows[0].getShell();
 		}
+		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+		return windows[0].getShell();
 	}
 	
 }

@@ -234,8 +234,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				if (ent[0] != null)
 					if (dlg.check1) { // apply to all ?
 						ICConfigurationDescription[] cfgs = page.getCfgsEditable();
-						for (int k=0; k<cfgs.length; k++) 
-							cfgs[k].createExternalSetting(name2id(dlg.sel_langs, names_l), 
+						for (ICConfigurationDescription cfg2 : cfgs)
+							cfg2.createExternalSetting(name2id(dlg.sel_langs, names_l), 
 									name2id(dlg.sel_types, names_t), null, ent);
 					} else {
 						cfg.createExternalSetting(name2id(dlg.sel_langs, names_l), 
@@ -312,18 +312,18 @@ outer:
 		}
 	}
 
-	public static String[] name2id(String[] ein, Map names) {
+	public static String[] name2id(String[] ein, Map<String, String> names) {
 		if (ein != null)
-			for (int k=0; k<ein.length; k++) ein[k] = (String)names.get(ein[k]);
+			for (int k=0; k<ein.length; k++) ein[k] = names.get(ein[k]);
 		return ein;
 	}
 
-	public static String[] id2name(String[] ein, Map names) {
+	public static String[] id2name(String[] ein, Map<String, String> names) {
 		if (ein != null)
 			for (int i=0; i<ein.length; i++) {
-				Iterator it = names.keySet().iterator();
+				Iterator<String> it = names.keySet().iterator();
 				while (it.hasNext()) {
-					String s = (String) it.next();
+					String s = it.next();
 					if (ein[i].equals(names.get(s))) {
 						ein[i] = s;
 						break;
@@ -339,10 +339,10 @@ outer:
 		ICConfigurationDescription c2 = dst.getConfiguration();
 		c2.removeExternalSettings();
 		ICExternalSetting[] v = c1.getExternalSettings();
-		for (int i=0; i<v.length; i++)
-			c2.createExternalSetting(v[i].getCompatibleLanguageIds(), 
-				v[i].getCompatibleContentTypeIds(),
-				v[i].getCompatibleExtensions(), v[i].getEntries()); 
+		for (ICExternalSetting element : v)
+			c2.createExternalSetting(element.getCompatibleLanguageIds(), 
+				element.getCompatibleContentTypeIds(),
+				element.getCompatibleExtensions(), element.getEntries()); 
 	}
 
 	@Override
@@ -365,8 +365,7 @@ outer:
 				return IMG_MK;				
 			if ((data.entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0)
 				return IMG_WS;
-			else 
-				return IMG_FS;
+			return IMG_FS;
 		}
 		@Override
 		public String getText(Object element) {
@@ -393,8 +392,7 @@ outer:
 			if (data.entry.isBuiltIn()) return null;    // built in
 			if (data.entry.isReadOnly())                // read only
 				return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
-			else	                            // normal
-				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
+			return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 		}
 	}
 
@@ -422,8 +420,7 @@ outer:
 		protected String getValue() {
 			if (entry.getKind() == ICSettingEntry.MACRO) 
 				return entry.getValue();
-			else
-				return EMPTY_STR;
+			return EMPTY_STR;
 		} 
 		protected String getLangStr() { 
 			return getLabel(setting.getCompatibleLanguageIds(), names_l);
@@ -433,12 +430,12 @@ outer:
 		}
 	}
 	
-	static protected String getLabel(String[] lst, Map names) {
+	static protected String getLabel(String[] lst, Map<String, String> names) {
 		if (lst == null || lst.length == 0) return ALL;
 		if (lst.length > 1) return LIST;
-		Iterator it = names.keySet().iterator();
+		Iterator<String> it = names.keySet().iterator();
 		while (it.hasNext()) {
-			String s = (String)it.next();
+			String s = it.next();
 			if (names.get(s).equals(lst[0]))
 				return s;
 		}
@@ -446,7 +443,8 @@ outer:
 	}
 	static protected String getList(String[] lst) {
 		String s = EMPTY_STR;
-		for (int i=0; i<lst.length; i++) s = s + lst[i] + '\n';
+		for (String element : lst)
+			s = s + element + '\n';
 		return s;
 	}
 	static public Image getWspImage(boolean isWsp) {

@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 
 	protected ICOptionPage fCurrentBinaryParserPage;
-	protected Map fParserPageMap = null;
+	protected Map<String, BinaryParserPageConfiguration> fParserPageMap = null;
 
 	// Composite parent provided by the block.
 	protected Composite fCompositeParent;
@@ -62,7 +62,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	}
 
 	private void initializeParserPageMap() {
-		fParserPageMap = new HashMap(5);
+		fParserPageMap = new HashMap<String, BinaryParserPageConfiguration>(5);
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
@@ -128,7 +128,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	}
 
 	protected ICOptionPage getBinaryParserPage(String parserID) {
-		BinaryParserPageConfiguration configElement = (BinaryParserPageConfiguration) fParserPageMap.get(parserID);
+		BinaryParserPageConfiguration configElement = fParserPageMap.get(parserID);
 		if (configElement != null) {
 			try {
 				return configElement.getPage();

@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.swt.graphics.Color;
-
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
-
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.PlatformUI;
 
-public class DecoratingCLabelProvider extends DecoratingLabelProvider implements IColorProvider {
+public class DecoratingCLabelProvider extends DecoratingLabelProvider {
 	
 	/**
 	 * Decorating label provider for Java. Combines a JavaUILabelProvider

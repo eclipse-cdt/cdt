@@ -49,9 +49,9 @@ import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 public class CDTContextActivator implements IWindowListener, IPartListener2 {
 	private static CDTContextActivator sInstance= new CDTContextActivator();
 	
-	private Map fActivationPerOutline = new HashMap();
-	private Map fActivationPerNavigator= new HashMap();
-	private Collection fWindows= new HashSet();
+	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<ContentOutline, IContextActivation>();
+	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator= new HashMap<CommonNavigator, SelectionListener>();
+	private Collection<IWorkbenchWindow> fWindows= new HashSet<IWorkbenchWindow>();
 
 	
 	private CDTContextActivator() {
@@ -86,12 +86,12 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 	}
 
 	public void uninstall() {
-		for (Iterator iterator = fWindows.iterator(); iterator.hasNext();) {
-			IWorkbenchWindow window = (IWorkbenchWindow) iterator.next();
+		for (Iterator<IWorkbenchWindow> iterator = fWindows.iterator(); iterator.hasNext();) {
+			IWorkbenchWindow window = iterator.next();
 			unregister(window);
 		}
-		for (Iterator iterator = fActivationPerNavigator.values().iterator(); iterator.hasNext();) {
-			SelectionListener l= (SelectionListener) iterator.next();
+		for (Iterator<SelectionListener> iterator = fActivationPerNavigator.values().iterator(); iterator.hasNext();) {
+			SelectionListener l= iterator.next();
 			l.uninstall();
 		}
 	}
@@ -135,7 +135,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 			}
 		} 
 		else {
-			IContextActivation activation = (IContextActivation) fActivationPerOutline.remove(outline); 
+			IContextActivation activation = fActivationPerOutline.remove(outline); 
 			if (activation != null) {
 				// other outline page brought to front
 				IContextService ctxtService = (IContextService)outline.getViewSite().getService(IContextService.class);
@@ -194,7 +194,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 	}
 
 	private void onCommonNavigatorActivated(CommonNavigator part) {
-		SelectionListener l= (SelectionListener) fActivationPerNavigator.get(part);
+		SelectionListener l= fActivationPerNavigator.get(part);
 		if (l == null) {
 			l= new SelectionListener(part.getSite());
 			fActivationPerNavigator.put(part, l);

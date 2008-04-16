@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
  */
 public class TableLayoutComposite extends Composite {
 
-	private List columns= new ArrayList();
+	private List<ColumnLayoutData> columns= new ArrayList<ColumnLayoutData>();
 
 	/**
 	 * Creates a new <code>TableLayoutComposite</code>.
@@ -76,7 +76,7 @@ public class TableLayoutComposite extends Composite {
 		int width= 0;
 		int size= columns.size();
 		for (int i= 0; i < size; ++i) {
-			ColumnLayoutData layoutData= (ColumnLayoutData) columns.get(i);
+			ColumnLayoutData layoutData= columns.get(i);
 			if (layoutData instanceof ColumnPixelData) {
 				ColumnPixelData col= (ColumnPixelData) layoutData;
 				width += col.width;
@@ -109,7 +109,7 @@ public class TableLayoutComposite extends Composite {
 
 		// First calc space occupied by fixed columns
 		for (int i= 0; i < size; i++) {
-			ColumnLayoutData col= (ColumnLayoutData) columns.get(i);
+			ColumnLayoutData col= columns.get(i);
 			if (col instanceof ColumnPixelData) {
 				int pixels= ((ColumnPixelData) col).width;
 				widths[i]= pixels;
@@ -132,7 +132,7 @@ public class TableLayoutComposite extends Composite {
 			int rest= width - fixedWidth;
 			int totalDistributed= 0;
 			for (int i= 0; i < size; ++i) {
-				ColumnLayoutData col= (ColumnLayoutData) columns.get(i);
+				ColumnLayoutData col= columns.get(i);
 				if (col instanceof ColumnWeightData) {
 					ColumnWeightData cw= (ColumnWeightData) col;
 					// calculate weight as above
@@ -151,7 +151,7 @@ public class TableLayoutComposite extends Composite {
 			for (int i= 0; diff > 0; ++i) {
 				if (i == size)
 					i= 0;
-				ColumnLayoutData col= (ColumnLayoutData) columns.get(i);
+				ColumnLayoutData col= columns.get(i);
 				if (col instanceof ColumnWeightData) {
 					++widths[i];
 					--diff;

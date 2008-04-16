@@ -18,16 +18,16 @@ import org.eclipse.jface.viewers.ViewerFilter;
  */
 public class TypedCDTViewerFilter extends ViewerFilter {
 
-	private Class[] types;
+	private Class<?>[] types;
 
-	public TypedCDTViewerFilter(Class[] _types) { types= _types; }
+	public TypedCDTViewerFilter(Class<?>[] _types) { types= _types; }
 	/**
 	 * @see ViewerFilter#select
 	 */
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
-		for (int i= 0; i < types.length; i++) {
-			if (types[i].isInstance(element)) return true;
+		for (Class<?> type : types) {
+			if (type.isInstance(element)) return true;
 		}
 		return false;
 	}

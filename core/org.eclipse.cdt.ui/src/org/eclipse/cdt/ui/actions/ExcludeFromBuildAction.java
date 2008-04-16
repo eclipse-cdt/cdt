@@ -56,8 +56,8 @@ import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 public class ExcludeFromBuildAction 
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
-	protected ArrayList objects = null;
-	protected ArrayList cfgNames = null;
+	protected ArrayList<IResource> objects = null;
+	protected ArrayList<String> cfgNames = null;
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		objects = null;
@@ -86,10 +86,10 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 							ICConfigurationDescription[] cfgds = getCfgsRead(res);
 							if (cfgds == null || cfgds.length == 0) continue;
 							
-							if (objects == null) objects = new ArrayList();
+							if (objects == null) objects = new ArrayList<IResource>();
 							objects.add(res);
 							if (cfgNames == null) {
-								cfgNames = new ArrayList(cfgds.length);
+								cfgNames = new ArrayList<String>(cfgds.length);
 								for (int j=0; j<cfgds.length; j++) { 
 									if (!canExclude(res, cfgds[j])) {
 										cfgNames = null;
@@ -158,9 +158,9 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		dialog.setTitle(ActionMessages.getString("ExcludeFromBuildAction.1")); //$NON-NLS-1$
 		
 		boolean[] status = new boolean[cfgNames.size()];
-		Iterator it = objects.iterator();
+		Iterator<IResource> it = objects.iterator();
 		while(it.hasNext()) {
-			IResource res = (IResource)it.next();
+			IResource res = it.next();
 			ICConfigurationDescription[] cfgds = getCfgsRead(res);
 			IPath p = res.getFullPath();
 			for (int i=0; i<cfgds.length; i++) {
@@ -168,7 +168,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				if (b) status[i] = true;
 			}
 		}
-		ArrayList lst = new ArrayList();
+		ArrayList<String> lst = new ArrayList<String>();
 		for (int i=0; i<status.length; i++) 
 			if (status[i]) lst.add(cfgNames.get(i));
 		if (lst.size() > 0)
@@ -176,9 +176,9 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult(); // may be empty
-			Iterator it2 = objects.iterator();
+			Iterator<IResource> it2 = objects.iterator();
 			while(it2.hasNext()) {
-				IResource res = (IResource)it2.next();
+				IResource res = it2.next();
 				IProject p = res.getProject();
 				if (!p.isOpen()) continue;
 				// get writable description

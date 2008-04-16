@@ -11,11 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  */
@@ -66,6 +67,7 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 	/*
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class clas) {
 		if (clas == IWorkbenchAdapter.class)
 			return this;

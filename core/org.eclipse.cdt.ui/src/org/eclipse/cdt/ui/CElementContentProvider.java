@@ -22,7 +22,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
@@ -68,7 +67,7 @@ C model (<code>ICModel</code>)<br>
 
  * </pre>
  */
-public class CElementContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener, IInformationProvider, IInformationProviderExtension{
+public class CElementContentProvider extends BaseCElementContentProvider implements IElementChangedListener, IInformationProvider, IInformationProviderExtension{
 
 	/** Editor. */
     protected ITextEditor fEditor;
@@ -224,8 +223,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			return;
 	
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
-		for (int i= 0; i < affectedChildren.length; i++) {
-			processDelta(affectedChildren[i]);
+		for (ICElementDelta element2 : affectedChildren) {
+			processDelta(element2);
 		}
 	}
 
@@ -246,8 +245,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			return true;
 		}
 
-		for (int i= 0; i < deltas.length; i++) {
-			if (processResourceDelta(deltas[i], parent))
+		for (IResourceDelta delta : deltas) {
+			if (processResourceDelta(delta, parent))
 				return true;
 		}
 

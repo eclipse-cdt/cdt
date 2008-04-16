@@ -12,16 +12,13 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.Arrays;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.util.SelectionUtil;
-import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -30,6 +27,11 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
 /**
   */
@@ -128,7 +130,11 @@ public class CPathContainerSelectionPage extends WizardPage {
 	public IContainerDescriptor getSelected() {
 		if (fListViewer != null) {
 			ISelection selection= fListViewer.getSelection();
-			return (IContainerDescriptor) SelectionUtil.getSingleElement(selection);
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (ss.size() == 1) 
+					return (IContainerDescriptor) ss.getFirstElement();
+			}
 		}
 		return null;
 	}

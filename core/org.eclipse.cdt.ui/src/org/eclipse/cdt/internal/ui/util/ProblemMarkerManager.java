@@ -45,9 +45,9 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	 */
 	private static class ProjectErrorVisitor implements IResourceDeltaVisitor {
 
-		private HashSet fChangedElements;
+		private HashSet<IResource> fChangedElements;
 
-		public ProjectErrorVisitor(HashSet changedElements) {
+		public ProjectErrorVisitor(HashSet<IResource> changedElements) {
 			fChangedElements = changedElements;
 		}
 
@@ -78,13 +78,13 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		private boolean isErrorDelta(IResourceDelta delta) {
 			if ( (delta.getFlags() & IResourceDelta.MARKERS) != 0) {
 				IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
-				for (int i = 0; i < markerDeltas.length; i++) {
-					if (markerDeltas[i].isSubtypeOf(IMarker.PROBLEM)) {
-						int kind = markerDeltas[i].getKind();
+				for (IMarkerDelta markerDelta : markerDeltas) {
+					if (markerDelta.isSubtypeOf(IMarker.PROBLEM)) {
+						int kind = markerDelta.getKind();
 						if (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED)
 							return true;
-						int severity = markerDeltas[i].getAttribute(IMarker.SEVERITY, -1);
-						int newSeverity = markerDeltas[i].getMarker().getAttribute(IMarker.SEVERITY, -1);
+						int severity = markerDelta.getAttribute(IMarker.SEVERITY, -1);
+						int newSeverity = markerDelta.getMarker().getAttribute(IMarker.SEVERITY, -1);
 						if (newSeverity != severity)
 							return true;
 					}
@@ -104,7 +104,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	 * @see IResourceChangeListener#resourceChanged
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		HashSet changedElements = new HashSet();
+		HashSet<IResource> changedElements = new HashSet<IResource>();
 
 		try {
 			IResourceDelta delta = event.getDelta();
@@ -115,7 +115,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		}
 
 		if (!changedElements.isEmpty()) {
-			IResource[] changes = (IResource[])changedElements.toArray(new IResource[changedElements.size()]);
+			IResource[] changes = changedElements.toArray(new IResource[changedElements.size()]);
 			fireChanges(changes, true);
 		}
 
@@ -178,8 +178,8 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 
 				public void run() {
 					Object[] listeners = fListeners.getListeners();
-					for (int i = 0; i < listeners.length; i++) {
-						IProblemChangedListener curr = (IProblemChangedListener)listeners[i];
+					for (Object listener : listeners) {
+						IProblemChangedListener curr = (IProblemChangedListener)listener;
 						curr.problemsChanged(changes, markerChanged);
 					}
 				}

@@ -280,7 +280,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	
 	private static ICElement getElement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list= ((IStructuredSelection)sel).toList();
+			List<?> list= ((IStructuredSelection)sel).toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
 				if (element instanceof ICElement) {

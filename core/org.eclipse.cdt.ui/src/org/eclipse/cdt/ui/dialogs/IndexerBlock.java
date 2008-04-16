@@ -12,8 +12,8 @@
 package org.eclipse.cdt.ui.dialogs;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -75,7 +75,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	
 	private PreferenceScopeBlock    fPrefScopeBlock;
     private Combo 					fIndexersComboBox;
-    private HashMap 				fIndexerConfigMap;
+    private HashMap<String, IndexerConfig> 				fIndexerConfigMap;
 	private Composite 				fIndexerPageComposite;
     private AbstractIndexerPage 	fCurrentPage;
     private Properties				fCurrentProperties;
@@ -289,11 +289,12 @@ public class IndexerBlock extends AbstractCOptionPage {
 	private void initializeIndexerCombo() {
 		String[] names= new String[fIndexerConfigMap.size()];
 		int j= 0;
-		for (Iterator i = fIndexerConfigMap.values().iterator(); i.hasNext();) {
-			IndexerConfig config = (IndexerConfig) i.next();
+		for (IndexerConfig config : fIndexerConfigMap.values()) {
 			names[j++]= config.getName();
         }
-		Arrays.sort(names, Collator.getInstance());
+		@SuppressWarnings("unchecked")
+		final Comparator<Object> collator = Collator.getInstance();
+		Arrays.sort(names, collator);
 		fIndexersComboBox.setItems(names);
 	}
 
@@ -308,7 +309,9 @@ public class IndexerBlock extends AbstractCOptionPage {
 				ICConfigurationDescription config = configs[i];
 				names[i]= config.getName();
 			}
-			Arrays.sort(names, Collator.getInstance());
+			@SuppressWarnings("unchecked")
+			final Comparator<Object> collator = Collator.getInstance();
+			Arrays.sort(names, collator);
 			fBuildConfigComboBox.setItems(names);
 	        selectBuildConfigInCombo(prefs.getDefaultSettingConfiguration().getName());
 		}
@@ -411,12 +414,11 @@ public class IndexerBlock extends AbstractCOptionPage {
      * Adds all the contributed Indexer Pages to a map
      */
     private void initializeIndexerConfigMap() {
-        fIndexerConfigMap = new HashMap(5);        
+        fIndexerConfigMap = new HashMap<String, IndexerConfig>(5);        
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.getPluginId(), "IndexerPage"); //$NON-NLS-1$
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-        for (int i = 0; i < infos.length; i++) {
-        	final IConfigurationElement info= infos[i];
-            if (info.getName().equals(NODE_INDEXERUI)) { 
+        for (final IConfigurationElement info : infos) {
+        	if (info.getName().equals(NODE_INDEXERUI)) { 
             	final String id = info.getAttribute(ATTRIB_INDEXERID);
             	if (id != null) {
                 	IndexerConfig config= new IndexerConfig(info);
@@ -429,7 +431,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     }
   
     private String getIndexerName(String indexerID) {
-        IndexerConfig configElement= (IndexerConfig) fIndexerConfigMap.get(indexerID);
+        IndexerConfig configElement= fIndexerConfigMap.get(indexerID);
         if (configElement != null) {
             return configElement.getName();
         }
@@ -437,10 +439,9 @@ public class IndexerBlock extends AbstractCOptionPage {
     }
 
     private String getIndexerID(String indexerName) {
-    	for (Iterator i = fIndexerConfigMap.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
-			String id = (String) entry.getKey();
-			IndexerConfig config = (IndexerConfig) entry.getValue();
+    	for (Map.Entry<String, IndexerConfig> entry : fIndexerConfigMap.entrySet()) {
+			String id = entry.getKey();
+			IndexerConfig config = entry.getValue();
 			if (indexerName.equals(config.getName())) {
 				return id;
 			}
@@ -449,7 +450,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     }
     
     private AbstractIndexerPage getIndexerPage(String indexerID) {
-        IndexerConfig configElement= (IndexerConfig) fIndexerConfigMap.get(indexerID);
+        IndexerConfig configElement= fIndexerConfigMap.get(indexerID);
         if (configElement != null) {
             try {
                 return configElement.getPage();

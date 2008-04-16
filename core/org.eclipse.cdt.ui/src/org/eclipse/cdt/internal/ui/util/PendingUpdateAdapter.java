@@ -48,7 +48,8 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter) {
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter) {
         if (adapter == IWorkbenchAdapter.class)
             return this;
         return null;

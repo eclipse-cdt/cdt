@@ -149,7 +149,7 @@ public class CDTPropertyManager {
 			if (pages.contains(w)) { // Widget ?	
 				pages.remove(w); 
 			} else {                 // Property Page ?
-				Iterator it = pages.iterator();
+				Iterator<Object> it = pages.iterator();
 				while (it.hasNext()) {
 					Object ob = it.next();
 					if (ob != null && ob instanceof PropertyPage) {

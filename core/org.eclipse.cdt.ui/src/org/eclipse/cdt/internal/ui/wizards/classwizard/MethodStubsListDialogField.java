@@ -13,10 +13,6 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -30,7 +26,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 
-public class MethodStubsListDialogField extends CheckedListDialogField {
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+
+public class MethodStubsListDialogField extends CheckedListDialogField<IMethodStub> {
     
     // column properties
     private static final String CP_NAME = "name"; //$NON-NLS-1$
@@ -116,7 +118,7 @@ public class MethodStubsListDialogField extends CheckedListDialogField {
         }
     }
     
-    public MethodStubsListDialogField(String title, IListAdapter listAdapter) {
+    public MethodStubsListDialogField(String title, IListAdapter<IMethodStub> listAdapter) {
         super(listAdapter, null, new MethodStubsLabelProvider());
         setLabelText(title);
         
@@ -189,12 +191,12 @@ public class MethodStubsListDialogField extends CheckedListDialogField {
     }
 
     public IMethodStub[] getMethodStubs() {
-	    List allStubs = getElements();
-	    return (IMethodStub[]) allStubs.toArray(new IMethodStub[allStubs.size()]);
+	    List<IMethodStub> allStubs = getElements();
+	    return allStubs.toArray(new IMethodStub[allStubs.size()]);
     }
 
     public IMethodStub[] getCheckedMethodStubs() {
-	    List checkedStubs = getCheckedElements();
-	    return (IMethodStub[]) checkedStubs.toArray(new IMethodStub[checkedStubs.size()]);
+	    List<IMethodStub> checkedStubs = getCheckedElements();
+	    return checkedStubs.toArray(new IMethodStub[checkedStubs.size()]);
     }
 }

@@ -262,8 +262,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected boolean buttonIsEnabled(int i) {
 		if (buttons == null || buttons.length <= i ) 
 			return false;
-		else
-			return buttons[i].isEnabled();
+		return buttons[i].isEnabled();
 	}
 	
 	/**
@@ -362,13 +361,13 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void setupControl(Control c, int span, int mode) {
 		// although we use GridLayout usually,
 		// exceptions can occur: do nothing. 
-		if (span != 0) {
-			GridData gd = new GridData(mode);
-			gd.horizontalSpan = span;
-			c.setLayoutData(gd);
-		}
-		Composite p = c.getParent();
 		if (c != null) {
+			if (span != 0) {
+				GridData gd = new GridData(mode);
+				gd.horizontalSpan = span;
+				c.setLayoutData(gd);
+			}
+			Composite p = c.getParent();
 			c.setFont(p.getFont());
 		}
 	}
@@ -603,7 +602,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	private static Method getGrayEnabled() {
 		try {
-			Class cl = Class.forName("org.eclipse.swt.widgets.Button"); //$NON-NLS-1$
+			Class<?> cl = Class.forName("org.eclipse.swt.widgets.Button"); //$NON-NLS-1$
 			return cl.getMethod("setGrayed", new Class[] { boolean.class }); //$NON-NLS-1$
 		} catch (ClassNotFoundException e) {
 			return null;

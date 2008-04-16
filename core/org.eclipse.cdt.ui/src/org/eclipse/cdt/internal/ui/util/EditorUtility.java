@@ -157,35 +157,35 @@ public class EditorUtility {
 	}
 
 	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
-		if (!file.getProject().isAccessible()){
+		if (file == null) 
+			return null;
+		if (!file.getProject().isAccessible()) {
 			closedProject(file.getProject());
 			return null;
 		}
 
-		if (file != null) {
 		try {
-				if (!isLinked(file)) {
-					File tempFile = file.getRawLocation().toFile();
+			if (!isLinked(file)) {
+				File tempFile = file.getRawLocation().toFile();
 
-					if (tempFile != null){
-						String canonicalPath = null;
-						try {
-							canonicalPath = tempFile.getCanonicalPath();
-						} catch (IOException e1) {}
+				if (tempFile != null){
+					String canonicalPath = null;
+					try {
+						canonicalPath = tempFile.getCanonicalPath();
+					} catch (IOException e1) {}
 
-						if (canonicalPath != null){
-							IPath path = new Path(canonicalPath);
-							file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
-						}
+					if (canonicalPath != null){
+						IPath path = new Path(canonicalPath);
+						file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
 					}
 				}
+			}
 
-				IEditorInput input = getEditorInput(file);
-				if (input != null) {
-					return openInEditor(input, getEditorID(input, file), activate);
-				}
-			} catch (CModelException e) {}
-		}
+			IEditorInput input = getEditorInput(file);
+			if (input != null) {
+				return openInEditor(input, getEditorID(input, file), activate);
+			}
+		} catch (CModelException e) {}
 		return null;
 	}
 
@@ -199,8 +199,8 @@ public class EditorUtility {
 			path = path.removeLastSegments(1);
 			IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
 
-			for(int i=0; i<containers.length; i++) {
-				if (containers[i] instanceof IFolder && ((IFolder)containers[i]).isLinked()) {
+			for (IContainer container : containers) {
+				if (container instanceof IFolder && ((IFolder)container).isLinked()) {
 					return true;
 				}
 			}
@@ -438,8 +438,7 @@ public class EditorUtility {
 		IFile secondBestMatch= null;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IFile[] files= root.findFilesForLocation(location);
-		for (int i= 0; i < files.length; i++) {
-			IFile file= files[i];
+		for (IFile file : files) {
 			if (file.isAccessible()) {
 				if (project != null && file.getProject().equals(project)) {
 					bestMatch= file;
@@ -490,8 +489,7 @@ public class EditorUtility {
 		IFile secondBestMatch= null;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IFile[] files= root.findFilesForLocationURI(locationURI);
-		for (int i= 0; i < files.length; i++) {
-			IFile file= files[i];
+		for (IFile file : files) {
 			if (file.isAccessible()) {
 				if (project != null && file.getProject().equals(project)) {
 					bestMatch= file;

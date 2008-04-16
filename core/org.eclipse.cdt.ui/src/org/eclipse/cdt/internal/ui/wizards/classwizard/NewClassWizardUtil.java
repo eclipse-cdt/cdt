@@ -321,14 +321,14 @@ public class NewClassWizardUtil {
                     IScannerInfo info = provider.getScannerInformation(project);
                     if (info != null) {
                         String[] includePaths = info.getIncludePaths();
-                        List filteredTypes = new ArrayList();
+                        List<ITypeInfo> filteredTypes = new ArrayList<ITypeInfo>();
                         for (int i = 0; i < elements.length; ++i) {
                             ITypeInfo baseType = elements[i];
                             if (isTypeReachable(baseType, cProject, includePaths)) {
                                 filteredTypes.add(baseType);
                             }
                         }
-                        return (ITypeInfo[]) filteredTypes.toArray(new ITypeInfo[filteredTypes.size()]);
+                        return filteredTypes.toArray(new ITypeInfo[filteredTypes.size()]);
                     }
                 }
             }
@@ -386,7 +386,7 @@ public class NewClassWizardUtil {
 	 * {@link #SEARCH_MATCH_FOUND_EXACT} or
 	 * {@link #SEARCH_MATCH_NOTFOUND}.	 
 	 */
-	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, Class queryType) {
+	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, Class<?> queryType) {
 		IIndex index= null;
 		try {
 			if (project != null) {
@@ -421,7 +421,7 @@ public class NewClassWizardUtil {
 
 					//get the fully qualified name of this binding
 					String bindingFullName = CPPVisitor.renderQualifiedName(binding.getQualifiedName());
-					Class currentNodeType = binding.getClass();
+					Class<? extends ICPPBinding> currentNodeType = binding.getClass();
 					// full binding				
 					if (queryType.isAssignableFrom(currentNodeType)) {						
 						if (bindingFullName.equals(fullyQualifiedTypeName)) {
@@ -443,10 +443,9 @@ public class NewClassWizardUtil {
 					{						
 						if (bindingFullName.equals(fullyQualifiedTypeName))	{
 							return SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE;
-						} else {
-							// different type , same name , but different name space
-							sameNameDifferentTypeExists = true;
 						}
+						// different type , same name , but different name space
+						sameNameDifferentTypeExists = true;
 					}
 				}
 				if(sameTypeNameExists){

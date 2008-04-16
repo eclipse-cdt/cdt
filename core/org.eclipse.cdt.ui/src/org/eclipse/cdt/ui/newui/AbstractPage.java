@@ -61,7 +61,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -106,7 +105,6 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  */
 public abstract class AbstractPage extends PropertyPage 
 implements
-		IWorkbenchPropertyPage, // ext point 
 		IPreferencePageContainer, // dynamic pages
 		ICPropertyProvider // utility methods for tabs
 {
@@ -408,14 +406,13 @@ implements
 			}
 			cfgChanged(MultiItemsHolder.createCDescription(multiCfgs)); 
 			return;
-		} else {
-			String id1 = getResDesc() == null ? null : getResDesc().getId();
-			cfgIndex = selectionIndex;
-			ICConfigurationDescription newConfig = cfgDescs[selectionIndex];
-			String id2 = newConfig.getId();
-			if (id2 != null && !id2.equals(id1))
-				cfgChanged(newConfig);
 		}
+		String id1 = getResDesc() == null ? null : getResDesc().getId();
+		cfgIndex = selectionIndex;
+		ICConfigurationDescription newConfig = cfgDescs[selectionIndex];
+		String id2 = newConfig.getId();
+		if (id2 != null && !id2.equals(id1))
+			cfgChanged(newConfig);
 	}
 	
     @Override
@@ -455,9 +452,8 @@ implements
 	public boolean performOk() {
     	File f = CUIPlugin.getDefault().getStateLocation().append("apply_mode").toFile(); //$NON-NLS-1$
     	if (f.exists()) 
-        	return performSave(SAVE_MODE_APPLYOK); 
-        else 
-        	return performSave(SAVE_MODE_OK); 
+        	return performSave(SAVE_MODE_APPLYOK);
+		return performSave(SAVE_MODE_OK); 
         	
     }
     /**
@@ -506,20 +502,20 @@ implements
 				case SAVE_MODE_APPLYOK:
 					sendOK();
 					ICConfigurationDescription[] olds = CDTPropertyManager.getProjectDescription(AbstractPage.this, getProject()).getConfigurations();
-					for (int i=0; i<olds.length; i++) {
-						resd = getResDesc(olds[i]);
-						ICResourceDescription r = getResDesc(local_prjd.getConfigurationById(olds[i].getId()));
-						for (int j=0; j<CDTPropertyManager.getPagesCount(); j++) {
-							Object p = CDTPropertyManager.getPage(j);
-							if (p != null && p instanceof AbstractPage) { 
-								AbstractPage ap = (AbstractPage)p;
-								if (ap.displayedConfig) {
-									ap.forEach(ICPropertyTab.UPDATE, resd);
-									ap.forEach(ICPropertyTab.APPLY, r);
+					for (ICConfigurationDescription old : olds) {
+							resd = getResDesc(old);
+							ICResourceDescription r = getResDesc(local_prjd.getConfigurationById(old.getId()));
+							for (int j=0; j<CDTPropertyManager.getPagesCount(); j++) {
+								Object p = CDTPropertyManager.getPage(j);
+								if (p != null && p instanceof AbstractPage) { 
+									AbstractPage ap = (AbstractPage)p;
+									if (ap.displayedConfig) {
+										ap.forEach(ICPropertyTab.UPDATE, resd);
+										ap.forEach(ICPropertyTab.APPLY, r);
+									}
 								}
 							}
 						}
-					}
 					break;
 				case SAVE_MODE_APPLY:
 					forEach(ICPropertyTab.APPLY, local_cfgd);
@@ -827,9 +823,9 @@ implements
 	 */
 	protected void forEach(int m) { forEach(m, null); }
 	protected void forEach(int m, Object pars) {
-		Iterator it = itabs.iterator();
+		Iterator<InternalTab> it = itabs.iterator();
 		while(it.hasNext()) {
-			InternalTab tab = (InternalTab)it.next();
+			InternalTab tab = it.next();
 			if (tab != null) tab.tab.handleTabEvent(m, pars);
 		}
 	}
@@ -862,11 +858,11 @@ implements
 			
 			Arrays.sort(elements, CDTListComparator.getInstance());
 			
-			for (int k = 0; k < elements.length; k++) {
-				if (elements[k].getName().equals(ELEMENT_NAME)) {
-					if (loadTab(elements[k], parent)) return;
+			for (IConfigurationElement element2 : elements) {
+				if (element2.getName().equals(ELEMENT_NAME)) {
+					if (loadTab(element2, parent)) return;
 				} else {
-					System.out.println(UIMessages.getString("AbstractPage.13") + elements[k].getName()); //$NON-NLS-1$
+					System.out.println(UIMessages.getString("AbstractPage.13") + element2.getName()); //$NON-NLS-1$
 				}
 			}
 		}
@@ -906,17 +902,16 @@ implements
 			itabs.add(itab);
 			currentTab = page;
 			return true; // don't load other tabs
-		} else {  // tabbed page
-			String _name   = element.getAttribute(TEXT_NAME);
-			String _tip = element.getAttribute(TIP_NAME);
-
-			Composite _comp = new Composite(folder, SWT.NONE);
-			page.createControls(_comp, this);	    
-			InternalTab itab = new InternalTab(_comp, _name, _img, page, _tip);
-			itab.createOn(folder);
-			itabs.add(itab);
-			return false;
 		}
+		String _name   = element.getAttribute(TEXT_NAME);
+		String _tip = element.getAttribute(TIP_NAME);
+
+		Composite _comp = new Composite(folder, SWT.NONE);
+		page.createControls(_comp, this);	    
+		InternalTab itab = new InternalTab(_comp, _name, _img, page, _tip);
+		itab.createOn(folder);
+		itabs.add(itab);
+		return false;
 	}
 	
 	private Image getIcon(IConfigurationElement config) {
@@ -973,10 +968,10 @@ implements
 				for (int i=0; i<itabs.size(); i++) {
 					InternalTab itab = itabs.get(i);
 					TabItem ti = null;
-					for (int j=0; j<ts.length; j++) {
-						if (ts[j].isDisposed()) continue;
-						if (ts[j].getData() == itab.tab) {
-							ti = ts[j];
+					for (TabItem element2 : ts) {
+						if (element2.isDisposed()) continue;
+						if (element2.getData() == itab.tab) {
+							ti = element2;
 							break;
 						}
 					}
@@ -1056,8 +1051,7 @@ implements
 			return false; // unknown element
 		if (isForFile()) // only source files are applicable
 			return true; //CoreModel.isValidSourceUnitName(getProject(), internalElement.getName());
-		else
-			return true; // Projects and folders are always applicable
+		return true; // Projects and folders are always applicable
 	}
 
 	/**
@@ -1066,8 +1060,8 @@ implements
 	public static void updateViews(IResource res) {
 		if (res == null) return;  
 		IWorkbenchPartReference refs[] = CUIPlugin.getActiveWorkbenchWindow().getActivePage().getViewReferences();
-		for (int k = 0; k < refs.length; k++) {
-			IWorkbenchPart part = refs[k].getPart(false);
+		for (IWorkbenchPartReference ref : refs) {
+			IWorkbenchPart part = ref.getPart(false);
 			if (part != null && part instanceof IPropertyChangeListener)
 				((IPropertyChangeListener)part).propertyChange(new PropertyChangeEvent(res, PreferenceConstants.PREF_SHOW_CU_CHILDREN, null, null));
 		}

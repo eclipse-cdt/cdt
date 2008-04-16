@@ -216,10 +216,10 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			clone.remove(ids[i]);
 		}
 		// add remaining parsers (unchecked)
-		Iterator it = clone.keySet().iterator();
+		Iterator<String> it = clone.keySet().iterator();
 //		i = 0;
 		while (it.hasNext()) {
-			String s = (String)it.next();
+			String s = it.next();
 			data[i++] = clone.get(s);
 		}
 		tv.setInput(data);
@@ -238,9 +238,9 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
 			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
-			for (int i = 0; i < exts.length; i++) {
-				if (isExtensionVisible(exts[i])) {
-					configMap.put(exts[i].getUniqueIdentifier(), new BinaryParserConfiguration(exts[i]));
+			for (IExtension ext : exts) {
+				if (isExtensionVisible(ext)) {
+					configMap.put(ext.getUniqueIdentifier(), new BinaryParserConfiguration(ext));
 				}
 			}
 		}
@@ -251,22 +251,22 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getName().equals("parserPage")) { //$NON-NLS-1$
-				String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
-				fParserPageMap.put(id, new BinaryParserPageConfiguration(infos[i]));
+		for (IConfigurationElement info : infos) {
+			if (info.getName().equals("parserPage")) { //$NON-NLS-1$
+				String id = info.getAttribute("parserID"); //$NON-NLS-1$
+				fParserPageMap.put(id, new BinaryParserPageConfiguration(info));
 			}
 		}
 	}
 
 	private boolean isExtensionVisible(IExtension ext) {
  		IConfigurationElement[] elements = ext.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement[] children = elements[i].getChildren(ATTR_FILTER);
-			for (int j = 0; j < children.length; j++) {
-				String name = children[j].getAttribute(ATTR_NAME);
+		for (IConfigurationElement element : elements) {
+			IConfigurationElement[] children = element.getChildren(ATTR_FILTER);
+			for (IConfigurationElement element2 : children) {
+				String name = element2.getAttribute(ATTR_NAME);
 				if (name != null && name.equals(ATTR_NAME_VISIBILITY)) {
-					String value = children[j].getAttribute(ATTR_VALUE);
+					String value = element2.getAttribute(ATTR_VALUE);
 					if (value != null && value.equals(ATTR_VALUE_PRIVATE)) {
 						return false;
 					}
@@ -287,8 +287,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	protected void handleBinaryParserChanged() {
 		String[] enabled = getBinaryParserIDs();
 		ICOptionPage dynamicPage;
-		for (int i = 0; i < enabled.length; i++) { // create all enabled pages
-			dynamicPage = getBinaryParserPage(enabled[i]);
+		for (String element : enabled) { // create all enabled pages
+			dynamicPage = getBinaryParserPage(element);
 			
 			if (dynamicPage != null) {
 				if (dynamicPage.getControl() == null) {
@@ -350,11 +350,11 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	
 	private void informPages(boolean apply) {	
 		IProgressMonitor mon = new NullProgressMonitor();
-		Iterator it = fParserPageMap.values().iterator();
+		Iterator<BinaryParserPageConfiguration> it = fParserPageMap.values().iterator();
 		
 		while (it.hasNext()) {
 			try {
-				ICOptionPage dynamicPage = ((BinaryParserPageConfiguration)it.next()).getPage();
+				ICOptionPage dynamicPage = (it.next()).getPage();
 				if (dynamicPage.isValid() && dynamicPage.getControl() != null) {
 					if (apply)  
 						dynamicPage.performApply(mon);

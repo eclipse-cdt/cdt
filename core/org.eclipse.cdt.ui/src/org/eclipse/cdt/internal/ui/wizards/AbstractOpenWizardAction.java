@@ -12,9 +12,6 @@ package org.eclipse.cdt.internal.ui.wizards;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,9 +35,14 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.NewProjectAction;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+
 public abstract class AbstractOpenWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 
-	private Class[] fActivatedOnTypes;
+	private Class<?>[] fActivatedOnTypes;
 	private boolean fAcceptEmptySelection;
 	
 	/**
@@ -59,7 +61,7 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 	 *                         are of the given types. <code>null</code> will allow all types.
 	 * @param acceptEmptySelection Specifies if the action allows an empty selection
 	 */	
-	public AbstractOpenWizardAction(String label, Class[] activatedOnTypes, boolean acceptEmptySelection) {
+	public AbstractOpenWizardAction(String label, Class<?>[] activatedOnTypes, boolean acceptEmptySelection) {
 		super(label);
 		fActivatedOnTypes= activatedOnTypes;
 		fAcceptEmptySelection= acceptEmptySelection;
@@ -80,8 +82,8 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 	
 	private boolean isOfAcceptedType(Object obj) {
 		if (fActivatedOnTypes != null) {
-			for (int i= 0; i < fActivatedOnTypes.length; i++) {
-				if (fActivatedOnTypes[i].isInstance(obj)) {
+			for (Class<?> activatedOnType : fActivatedOnTypes) {
+				if (activatedOnType.isInstance(obj)) {
 					return true;
 				}
 			}
@@ -92,7 +94,7 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 	
 	
 	private boolean isEnabled(IStructuredSelection selection) {
-		Iterator iter= selection.iterator();
+		Iterator<?> iter= selection.iterator();
 		while (iter.hasNext()) {
 			Object obj= iter.next();
 			if (!isOfAcceptedType(obj) || !shouldAcceptElement(obj)) {

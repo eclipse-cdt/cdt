@@ -174,7 +174,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 						if (tu != null && tu.exists()) {
 							return getErrorTicksFromMarkers(tu.getResource(), IResource.DEPTH_ONE, (ISourceReference)element);
 						}
-					default:
+						break;
 				}
 			} else if (obj instanceof IResource) {
 				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null) | getTicks((IResource)obj);
@@ -347,8 +347,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		if (fListeners != null && !fListeners.isEmpty()) {
 			LabelProviderChangedEvent event= new ProblemsLabelChangedEvent(this, changedResources, isMarkerChange);
 			Object[] listeners= fListeners.getListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				((ILabelProviderListener) listeners[i]).labelProviderChanged(event);
+			for (Object listener : listeners) {
+				((ILabelProviderListener) listener).labelProviderChanged(event);
 			}
 		}
 	}
@@ -379,9 +379,9 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		if (prjd != null) { 
 			ICConfigurationDescription [] cf = prjd.getConfigurations();
 			if (cf == null) return 0;
-			for (int i=0; i<cf.length; i++) {
-				if (cf[i].isActive()) {
-					ICResourceDescription out = cf[i].getResourceDescription(path, true);
+			for (ICConfigurationDescription element : cf) {
+				if (element.isActive()) {
+					ICResourceDescription out = element.getResourceDescription(path, true);
 					if (out != null) result |= TICK_CONFIGURATION;
 				}
 			}

@@ -13,8 +13,6 @@ package org.eclipse.cdt.ui.wizards;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -74,8 +72,6 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	protected IConfigurationElement fConfigElement;
 	protected NewCProjectWizardPage fMainPage; 
 	protected IProject newProject;
-
-	List tabItemsList = new ArrayList();
 
 	public NewCProjectWizard() {
 		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC), 

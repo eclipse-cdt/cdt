@@ -26,7 +26,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
 
 public class SelectionProviderMediator implements ISelectionProvider {
-	private Map fProviders= new HashMap();
+	private Map<Control, ISelectionProvider> fProviders= new HashMap<Control, ISelectionProvider>();
 	private ISelectionProvider fActiveProvider = null;
 	private ISelectionChangedListener fSelectionChangedListener;
 	private FocusListener fFocusListener;
@@ -93,7 +93,7 @@ public class SelectionProviderMediator implements ISelectionProvider {
 	}
 
 	protected void onFocusGained(FocusEvent e) {
-		ISelectionProvider provider= (ISelectionProvider) fProviders.get(e.widget);
+		ISelectionProvider provider= fProviders.get(e.widget);
 		if (provider != null) {
 			fActiveProvider= provider;
 			fireSelectionChanged();

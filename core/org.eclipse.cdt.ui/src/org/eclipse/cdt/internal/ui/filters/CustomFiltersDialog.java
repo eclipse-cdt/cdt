@@ -65,7 +65,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	Button fEnableUserDefinedPatterns;
 	Text fUserDefinedPatterns;
 
-	Stack<Object> fFilterDescriptorChangeHistory;
+	Stack<FilterDescriptor> fFilterDescriptorChangeHistory;
 
 	
 	/**
@@ -91,7 +91,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fEnabledFilterIds= enabledFilterIds;
 
 		fBuiltInFilters= FilterDescriptor.getFilterDescriptors(fViewId);
-		fFilterDescriptorChangeHistory= new Stack<Object>();
+		fFilterDescriptorChangeHistory= new Stack<FilterDescriptor>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -212,7 +212,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 					if (fFilterDescriptorChangeHistory.contains(element)) {
 						fFilterDescriptorChangeHistory.remove(element);
 					}
-					fFilterDescriptorChangeHistory.push(element);
+					fFilterDescriptorChangeHistory.push((FilterDescriptor)element);
 				}
 			}});
 
@@ -237,8 +237,8 @@ public class CustomFiltersDialog extends SelectionDialog {
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(true);
 				fFilterDescriptorChangeHistory.clear();
-				for (int i= 0; i < fBuiltInFilters.length; i++) {
-					fFilterDescriptorChangeHistory.push(fBuiltInFilters[i]);
+				for (FilterDescriptor builtInFilter : fBuiltInFilters) {
+					fFilterDescriptorChangeHistory.push(builtInFilter);
 				}
 			}
 		};
@@ -253,8 +253,8 @@ public class CustomFiltersDialog extends SelectionDialog {
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(false);
 				fFilterDescriptorChangeHistory.clear();
-				for (int i= 0; i < fBuiltInFilters.length; i++)
-					fFilterDescriptorChangeHistory.push(fBuiltInFilters[i]);
+				for (FilterDescriptor builtInFilter : fBuiltInFilters)
+					fFilterDescriptorChangeHistory.push(builtInFilter);
 			}
 		};
 		deselectButton.addSelectionListener(listener);
@@ -324,8 +324,8 @@ public class CustomFiltersDialog extends SelectionDialog {
 	public String[] getEnabledFilterIds() {
 		Object[] result= getResult();
 		Set<String> enabledIds= new HashSet<String>(result.length);
-		for (int i= 0; i < result.length; i++)
-			enabledIds.add(((FilterDescriptor)result[i]).getId());
+		for (Object element : result)
+			enabledIds.add(((FilterDescriptor)element).getId());
 		return enabledIds.toArray(new String[enabledIds.size()]);
 	}
 
@@ -340,7 +340,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	 * @return a stack with the filter descriptor check history
 	 * @since 3.0
 	 */
-	public Stack<Object> getFilterDescriptorChangeHistory() {
+	public Stack<FilterDescriptor> getFilterDescriptorChangeHistory() {
 		return fFilterDescriptorChangeHistory;
 	}
 
@@ -348,10 +348,10 @@ public class CustomFiltersDialog extends SelectionDialog {
 		FilterDescriptor[] filterDescs= fBuiltInFilters;
 		List<FilterDescriptor> result= new ArrayList<FilterDescriptor>(filterDescs.length);
 		List<String> enabledFilterIds= Arrays.asList(fEnabledFilterIds);
-		for (int i= 0; i < filterDescs.length; i++) {
-			String id= filterDescs[i].getId();
+		for (FilterDescriptor filterDesc : filterDescs) {
+			String id= filterDesc.getId();
 			if (enabledFilterIds.contains(id))
-				result.add(filterDescs[i]);
+				result.add(filterDesc);
 		}
 		return result.toArray(new FilterDescriptor[result.size()]);
 	}

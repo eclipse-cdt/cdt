@@ -12,7 +12,6 @@ package org.eclipse.cdt.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -64,9 +63,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 	private static final String ATTR_VALUE_PRIVATE = "private"; //$NON-NLS-1$
 
-	protected CheckedListDialogField binaryList;
-	protected Map configMap;
-	protected List initialSelected;
+	protected CheckedListDialogField<BinaryParserConfiguration> binaryList;
+	protected Map<String, BinaryParserConfiguration> configMap;
+	protected List<BinaryParserConfiguration> initialSelected;
 
 	protected class BinaryParserConfiguration {
 
@@ -112,21 +111,21 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		/* 0 */CUIMessages.getString("BinaryParserBlock.button.up"), //$NON-NLS-1$
 				/* 1 */CUIMessages.getString("BinaryParserBlock.button.down")}; //$NON-NLS-1$
 
-		IListAdapter listAdapter = new IListAdapter() {
+		IListAdapter<BinaryParserConfiguration> listAdapter = new IListAdapter<BinaryParserConfiguration>() {
 
-			public void customButtonPressed(ListDialogField field, int index) {
+			public void customButtonPressed(ListDialogField<BinaryParserConfiguration> field, int index) {
 			}
 
-			public void selectionChanged(ListDialogField field) {
+			public void selectionChanged(ListDialogField<BinaryParserConfiguration> field) {
 				handleBinaryParserChanged();
 			}
 
-			public void doubleClicked(ListDialogField field) {
+			public void doubleClicked(ListDialogField<BinaryParserConfiguration> field) {
 			}
 
 		};
 
-		binaryList = new CheckedListDialogField(listAdapter, buttonLabels, new BinaryParserLabelProvider()) {
+		binaryList = new CheckedListDialogField<BinaryParserConfiguration>(listAdapter, buttonLabels, new BinaryParserLabelProvider()) {
 
 			@Override
 			protected int getListStyle() {
@@ -153,10 +152,10 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			configMap = new HashMap(exts.length);
-			for (int i = 0; i < exts.length; i++) {
-				if (isExtensionVisible(exts[i])) {
-					configMap.put(exts[i].getUniqueIdentifier(), new BinaryParserConfiguration(exts[i]));
+			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
+			for (IExtension ext : exts) {
+				if (isExtensionVisible(ext)) {
+					configMap.put(ext.getUniqueIdentifier(), new BinaryParserConfiguration(ext));
 				}
 			}
 		}
@@ -164,12 +163,12 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	private boolean isExtensionVisible(IExtension ext) {
  		IConfigurationElement[] elements = ext.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement[] children = elements[i].getChildren(ATTR_FILTER);
-			for (int j = 0; j < children.length; j++) {
-				String name = children[j].getAttribute(ATTR_NAME);
+		for (IConfigurationElement element : elements) {
+			IConfigurationElement[] children = element.getChildren(ATTR_FILTER);
+			for (IConfigurationElement element2 : children) {
+				String name = element2.getAttribute(ATTR_NAME);
 				if (name != null && name.equals(ATTR_NAME_VISIBILITY)) {
-					String value = children[j].getAttribute(ATTR_VALUE);
+					String value = element2.getAttribute(ATTR_VALUE);
 					if (value != null && value.equals(ATTR_VALUE_PRIVATE)) {
 						return false;
 					}
@@ -221,57 +220,55 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(CUIMessages.getString("BinaryParserBlock.settingBinaryParser"), 2); //$NON-NLS-1$
-		List parsers = binaryList.getElements();
-		final List selected = new ArrayList(); // must do this to get proper order.
+		List<BinaryParserConfiguration> parsers = binaryList.getElements();
+		final List<BinaryParserConfiguration> selected = new ArrayList<BinaryParserConfiguration>(); // must do this to get proper order.
 		for (int i = 0; i < parsers.size(); i++) {
 			if (binaryList.isChecked(parsers.get(i))) {
 				selected.add(parsers.get(i));
 			}
 		}
-		if (selected != null) {
-			if (getContainer().getProject() != null) {
-				ICDescriptorOperation op = new ICDescriptorOperation() {
+		if (getContainer().getProject() != null) {
+			ICDescriptorOperation op = new ICDescriptorOperation() {
 
-					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-						if (initialSelected == null || !selected.equals(initialSelected)) {
-							descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-							for (int i = 0; i < selected.size(); i++) {
-								descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID,
-										((BinaryParserConfiguration) selected.get(i)).getID());
-							}
-						}
-						monitor.worked(1);
-						// Give a chance to the contributions to save.
-						// We have to do it last to make sure the parser id
-						// is save
-						// in .cdtproject
+				public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+					if (initialSelected == null || !selected.equals(initialSelected)) {
+						descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 						for (int i = 0; i < selected.size(); i++) {
-							ICOptionPage page = getBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
-							if (page != null && page.getControl() != null) {
-								page.performApply(new SubProgressMonitor(monitor, 1));
-							}
+							descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID,
+									selected.get(i).getID());
 						}
 					}
-				};
-				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op, monitor);
-			} else {
-				if (initialSelected == null || !selected.equals(initialSelected)) {
-					Preferences store = getContainer().getPreferences();
-					if (store != null) {
-						store.setValue(CCorePlugin.PREF_BINARY_PARSER, arrayToString(selected.toArray()));
+					monitor.worked(1);
+					// Give a chance to the contributions to save.
+					// We have to do it last to make sure the parser id
+					// is save
+					// in .cdtproject
+					for (int i = 0; i < selected.size(); i++) {
+						ICOptionPage page = getBinaryParserPage(selected.get(i).getID());
+						if (page != null && page.getControl() != null) {
+							page.performApply(new SubProgressMonitor(monitor, 1));
+						}
 					}
 				}
-				monitor.worked(1);
-				// Give a chance to the contributions to save.
-				for (int i = 0; i < selected.size(); i++) {
-					ICOptionPage page = getBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
-					if (page != null && page.getControl() != null) {
-						page.performApply(new SubProgressMonitor(monitor, 1));
-					}
+			};
+			CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op, monitor);
+		} else {
+			if (initialSelected == null || !selected.equals(initialSelected)) {
+				Preferences store = getContainer().getPreferences();
+				if (store != null) {
+					store.setValue(CCorePlugin.PREF_BINARY_PARSER, arrayToString(selected.toArray()));
 				}
 			}
-			initialSelected = selected;
+			monitor.worked(1);
+			// Give a chance to the contributions to save.
+			for (int i = 0; i < selected.size(); i++) {
+				ICOptionPage page = getBinaryParserPage(selected.get(i).getID());
+				if (page != null && page.getControl() != null) {
+					page.performApply(new SubProgressMonitor(monitor, 1));
+				}
+			}
 		}
+		initialSelected = selected;
 		monitor.done();
 	}
 
@@ -279,23 +276,21 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 
-		List elements = new ArrayList();
+		List<BinaryParserConfiguration> elements = new ArrayList<BinaryParserConfiguration>();
 
 		if (getContainer().getProject() != null) {
 			try {
 				ICExtensionReference[] ref = CCorePlugin.getDefault().getBinaryParserExtensions(getContainer().getProject()); 
-				initialSelected = new ArrayList(ref.length);
-				for (int i = 0; i < ref.length; i++) {
-					if (configMap.get(ref[i].getID()) != null) {
-						initialSelected.add(configMap.get(ref[i].getID()));
-						elements.add(configMap.get(ref[i].getID()));
+				initialSelected = new ArrayList<BinaryParserConfiguration>(ref.length);
+				for (ICExtensionReference element : ref) {
+					if (configMap.get(element.getID()) != null) {
+						initialSelected.add(configMap.get(element.getID()));
+						elements.add(configMap.get(element.getID()));
 					}
 				}
 			} catch (CoreException e) {
 			}
-			Iterator iter = configMap.entrySet().iterator();
-			while (iter.hasNext()) {
-				Entry entry = (Entry) iter.next();
+			for (Entry<String, BinaryParserConfiguration> entry: configMap.entrySet()) {
 				if (!elements.contains(entry.getValue())) {
 					elements.add(entry.getValue());
 				}
@@ -313,17 +308,15 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 			if (id != null && id.length() > 0) {
 				String[] ids = parseStringToArray(id);
-				initialSelected = new ArrayList(ids.length);
-				for (int i = 0; i < ids.length; i++) {
-					if (configMap.get(ids[i]) != null) {
-						initialSelected.add(configMap.get(ids[i]));
-						elements.add(configMap.get(ids[i]));
+				initialSelected = new ArrayList<BinaryParserConfiguration>(ids.length);
+				for (String id2 : ids) {
+					if (configMap.get(id2) != null) {
+						initialSelected.add(configMap.get(id2));
+						elements.add(configMap.get(id2));
 					}
 				}
 			}
-			Iterator iter = configMap.entrySet().iterator();
-			while (iter.hasNext()) {
-				Entry entry = (Entry) iter.next();
+			for (Entry<String, BinaryParserConfiguration> entry: configMap.entrySet()) {
 				if (!elements.contains(entry.getValue())) {
 					elements.add(entry.getValue());
 				}
@@ -338,8 +331,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	}
 	private String arrayToString(Object[] array) {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < array.length; i++) {
-			buf.append(array[i].toString()).append(';');
+		for (Object element : array) {
+			buf.append(element.toString()).append(';');
 		}
 		return buf.toString();
 	}
@@ -347,11 +340,11 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	private String[] parseStringToArray(String syms) {
 		if (syms != null && syms.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
-			ArrayList list = new ArrayList(tok.countTokens());
+			ArrayList<String> list = new ArrayList<String>(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}
-			return (String[]) list.toArray(new String[list.size()]);
+			return list.toArray(new String[list.size()]);
 		}
 		return new String[0];
 	}
@@ -361,9 +354,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		String id = null;
 
 		// default current pages.
-		List selected = binaryList.getCheckedElements();
+		List<BinaryParserConfiguration> selected = binaryList.getCheckedElements();
 		for (int i = 0; i < selected.size(); i++) {
-			ICOptionPage page = getBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
+			ICOptionPage page = getBinaryParserPage(selected.get(i).getID());
 			if (page != null) {
 				page.performDefaults();
 			}
@@ -380,9 +373,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		selected.clear();
 		if (id != null) {
 			String[] ids = parseStringToArray(id);
-			for (int i = 0; i < ids.length; i++) {
-				if (configMap.get(ids[i]) != null) {
-					selected.add(configMap.get(ids[i]));
+			for (String id2 : ids) {
+				if (configMap.get(id2) != null) {
+					selected.add(configMap.get(id2));
 				}
 			}
 		}
@@ -396,9 +389,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	@Override
 	protected String getCurrentBinaryParserID() {
-		List list = binaryList.getSelectedElements();
+		List<BinaryParserConfiguration> list = binaryList.getSelectedElements();
 		if (list.size() > 0) {
-			BinaryParserConfiguration selected = (BinaryParserConfiguration) list.get(0);
+			BinaryParserConfiguration selected = list.get(0);
 			//if (binaryList.isChecked(selected)) {
 			//	return selected.getID();
 			//}
@@ -409,6 +402,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	@Override
 	protected String[] getBinaryParserIDs() {
-		return (String[]) configMap.keySet().toArray(new String[configMap.keySet().size()]);
+		return configMap.keySet().toArray(new String[configMap.keySet().size()]);
 	}
 }

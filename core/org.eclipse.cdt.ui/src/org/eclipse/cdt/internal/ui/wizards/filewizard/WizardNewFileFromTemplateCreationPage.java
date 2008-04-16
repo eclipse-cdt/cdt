@@ -117,14 +117,14 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 
 	protected void editTemplates() {
 		String prefPageId= CodeTemplatePreferencePage.PREF_ID;
-		Map data= null;
+		Map<String, String> data= null;
 		String templateName= null;
 		Template template= getSelectedTemplate();
 		if (template != null) {
 			templateName= template.getName();
 		}
 		if (templateName != null) {
-			data= new HashMap();
+			data= new HashMap<String, String>();
 			data.put(CodeTemplatePreferencePage.DATA_SELECT_TEMPLATE, templateName);
 		}
 		PreferenceDialog dialog= PreferencesUtil.createPreferenceDialogOn(getShell(), prefPageId, new String[] { prefPageId }, data);
@@ -250,7 +250,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			}
 		}
 		IContentType[] contentTypes= matcher.findContentTypesFor(fileName);
-		List result= new ArrayList(contentTypes.length * 2);
+		List<String> result= new ArrayList<String>(contentTypes.length * 2);
 		for (int i = 0; i < contentTypes.length; i++) {
 			IContentType contentType = contentTypes[i];
 			String id= contentType.getId();
@@ -271,7 +271,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 		if (result.isEmpty()) {
 			result.add(FileTemplateContextType.CONTENTTYPE_TEXT);
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 }

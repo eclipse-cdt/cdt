@@ -15,17 +15,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IResource;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Item;
-
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IViewerLabelProvider;
 import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Item;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Helper class for updating error markers and other decorators that work on resources.
@@ -38,14 +37,14 @@ public class ResourceToItemsMapper {
 	private static final int NUMBER_LIST_REUSE= 10;
 
 	// map from resource to item
-	private HashMap fResourceToItem;
-	private Stack fReuseLists;
+	private HashMap<IResource, Object> fResourceToItem;
+	private Stack<List<Item>> fReuseLists;
 	
 	private ContentViewer fContentViewer;
 
 	public ResourceToItemsMapper(ContentViewer viewer) {
-		fResourceToItem= new HashMap();
-		fReuseLists= new Stack();
+		fResourceToItem= new HashMap<IResource, Object>();
+		fReuseLists= new Stack<List<Item>>();
 		
 		fContentViewer= viewer;
 	}
@@ -60,9 +59,10 @@ public class ResourceToItemsMapper {
 		} else if (obj instanceof Item) {
 			updateItem((Item) obj);
 		} else { // List of Items
-			List list= (List) obj;
+			@SuppressWarnings("unchecked")
+			List<Item> list= (List<Item>) obj;
 			for (int k= 0; k < list.size(); k++) {
-				updateItem((Item) list.get(k));
+				updateItem(list.get(k));
 			}
 		}
 	}
@@ -114,13 +114,14 @@ public class ResourceToItemsMapper {
 				fResourceToItem.put(resource, item);
 			} else if (existingMapping instanceof Item) {
 				if (existingMapping != item) {
-					List list= getNewList();
-					list.add(existingMapping);
+					List<Item> list= getNewList();
+					list.add((Item) existingMapping);
 					list.add(item);
 					fResourceToItem.put(resource, list);
 				}
 			} else { // List			
-				List list= (List) existingMapping;
+				@SuppressWarnings("unchecked")
+				List<Item> list= (List<Item>) existingMapping;
 				if (!list.contains(item)) {
 					list.add(item);
 				}
@@ -140,7 +141,8 @@ public class ResourceToItemsMapper {
 			} else if (existingMapping instanceof Item) {
 				fResourceToItem.remove(resource);
 			} else { // List
-				List list= (List) existingMapping;
+				@SuppressWarnings("unchecked")
+				List<Item> list= (List) existingMapping;
 				list.remove(item);
 				if (list.isEmpty()) {
 					fResourceToItem.remove(list);
@@ -150,14 +152,14 @@ public class ResourceToItemsMapper {
 		}
 	}
 	
-	private List getNewList() {
+	private List<Item> getNewList() {
 		if (!fReuseLists.isEmpty()) {
-			return (List) fReuseLists.pop();
+			return fReuseLists.pop();
 		}
-		return new ArrayList(2);
+		return new ArrayList<Item>(2);
 	}
 	
-	private void releaseList(List list) {
+	private void releaseList(List<Item> list) {
 		if (fReuseLists.size() < NUMBER_LIST_REUSE) {
 			fReuseLists.push(list);
 		}

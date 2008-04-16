@@ -30,11 +30,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class AdaptingSelectionProvider implements ISelectionProvider, ISelectionChangedListener {
 
-	private Class fTargetType;
+	private Class<?> fTargetType;
 	private ListenerList fListenerList;
 	private ISelectionProvider fProvider;
 
-	public AdaptingSelectionProvider(Class targetType, ISelectionProvider provider) {
+	public AdaptingSelectionProvider(Class<?> targetType, ISelectionProvider provider) {
 		fProvider= provider;
 		fTargetType= targetType;
 		fListenerList= new ListenerList();
@@ -44,8 +44,8 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 		if (selection != null) {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss= (IStructuredSelection) selection;
-				ArrayList adapted= new ArrayList();
-				for (Iterator iter = ss.iterator(); iter.hasNext(); ) {
+				ArrayList<Object> adapted= new ArrayList<Object>();
+				for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
 					Object elem= adaptElem(iter.next());
 					if (elem != null) {
 						adapted.add(elem);
@@ -92,8 +92,8 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 	public void selectionChanged(SelectionChangedEvent event) {
 		SelectionChangedEvent event2= new SelectionChangedEvent(this, convertSelection(event.getSelection()));
 		Object[] listeners= fListenerList.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			ISelectionChangedListener l= (ISelectionChangedListener) listeners[i];
+		for (Object listener : listeners) {
+			ISelectionChangedListener l= (ISelectionChangedListener) listener;
 			l.selectionChanged(event2);
 		}
 	}

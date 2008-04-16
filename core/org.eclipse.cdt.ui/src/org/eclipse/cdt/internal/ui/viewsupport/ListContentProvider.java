@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.Viewer;
  * A specialized content provider to show a list of editor parts.
  */ 
 public class ListContentProvider implements IStructuredContentProvider {
-	List fContents;	
+	List<?> fContents;	
 
 	public ListContentProvider() {
 	}
@@ -32,7 +32,7 @@ public class ListContentProvider implements IStructuredContentProvider {
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof List) 
-			fContents= (List)newInput;
+			fContents= (List<?>)newInput;
 		else
 			fContents= null;
 		// we use a fixed set.

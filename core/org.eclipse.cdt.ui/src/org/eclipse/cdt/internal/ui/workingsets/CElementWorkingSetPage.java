@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -180,33 +179,33 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	public void finish() {
 		String workingSetName= fWorkingSetName.getText();
-		ArrayList elements= new ArrayList(10);
+		ArrayList<Object> elements= new ArrayList<Object>(10);
 		findCheckedElements(elements, fTree.getInput());
 		if (fWorkingSet == null) {
 			IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-			fWorkingSet= workingSetManager.createWorkingSet(workingSetName, (IAdaptable[])elements.toArray(new IAdaptable[elements.size()]));
+			fWorkingSet= workingSetManager.createWorkingSet(workingSetName, elements.toArray(new IAdaptable[elements.size()]));
 		} else {
 			// Add inaccessible resources
 			IAdaptable[] oldItems= fWorkingSet.getElements();
-			HashSet closedWithChildren= new HashSet(elements.size());
-			for (int i= 0; i < oldItems.length; i++) {
+			HashSet<IProject> closedWithChildren= new HashSet<IProject>(elements.size());
+			for (IAdaptable oldItem : oldItems) {
 				IResource oldResource= null;
-				if (oldItems[i] instanceof IResource) {
-					oldResource= (IResource)oldItems[i];
+				if (oldItem instanceof IResource) {
+					oldResource= (IResource)oldItem;
 				} else {
-					oldResource= (IResource)oldItems[i].getAdapter(IResource.class);
+					oldResource= (IResource)oldItem.getAdapter(IResource.class);
 				}
 				if (oldResource != null && oldResource.isAccessible() == false) {
 					IProject project= oldResource.getProject();
 					if (closedWithChildren.contains(project) || elements.contains(project)) {
-						elements.add(oldItems[i]);
+						elements.add(oldItem);
 						elements.remove(project);
 						closedWithChildren.add(project);
 					}
 				}
 			}
 			fWorkingSet.setName(workingSetName);
-			fWorkingSet.setElements((IAdaptable[]) elements.toArray(new IAdaptable[elements.size()]));
+			fWorkingSet.setElements(elements.toArray(new IAdaptable[elements.size()]));
 		}
 	}	
 
@@ -333,9 +332,8 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 					}
 				}
 				fTree.setCheckedElements(elements);
-				HashSet parents = new HashSet();
-				for (int i= 0; i < elements.length; i++) {
-					Object element= elements[i];
+				HashSet<Object> parents = new HashSet<Object>();
+				for (Object element : elements) {
 					if (isExpandable(element))
 						setSubtreeChecked(element, true, true);
 						
@@ -349,8 +347,8 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 						parents.add(parent);
 				}
 				
-				for (Iterator i = parents.iterator(); i.hasNext();)
-					updateObjectState(i.next(), true);
+				for (Object object : parents)
+					updateObjectState(object, true);
 			}
 		});
 	}
@@ -417,16 +415,15 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				fFirstCheck= false;
 				return;
 			}
-			else
-				errorMessage = WorkingSetMessages.getString("CElementWorkingSetPage.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
+			errorMessage = WorkingSetMessages.getString("CElementWorkingSetPage.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
 		}
 
 		fFirstCheck= false;
 
 		if (errorMessage == null && (fWorkingSet == null || newText.equals(fWorkingSet.getName()) == false)) {
 			IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
-			for (int i = 0; i < workingSets.length; i++) {
-				if (newText.equals(workingSets[i].getName())) {
+			for (IWorkingSet workingSet : workingSets) {
+				if (newText.equals(workingSet.getName())) {
 					errorMessage = WorkingSetMessages.getString("CElementWorkingSetPage.warning.workingSetExists"); //$NON-NLS-1$
 				}
 			}
@@ -446,13 +443,13 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @param checkedElements the output, list of checked elements
 	 * @param parent the parent to collect checked elements in
 	 */
-	private void findCheckedElements(List checkedElements, Object parent) {
+	private void findCheckedElements(List<Object> checkedElements, Object parent) {
 		Object[] children= fTreeContentProvider.getChildren(parent);
-		for (int i= 0; i < children.length; i++) {
-			if (fTree.getGrayed(children[i]))
-				findCheckedElements(checkedElements, children[i]);
-			else if (fTree.getChecked(children[i]))
-				checkedElements.add(children[i]);
+		for (Object element : children) {
+			if (fTree.getGrayed(element))
+				findCheckedElements(checkedElements, element);
+			else if (fTree.getChecked(element))
+				checkedElements.add(element);
 		}
 	}
 }

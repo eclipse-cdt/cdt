@@ -124,8 +124,8 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	public void updateBuildConfigMenuToolTip(IAction action){
 		String toolTipText = ActionMessages.getString("BuildActiveConfigMenuAction_defaultTooltip"); //$NON-NLS-1$
 		if (fProjects.size() == 1) {
-			Iterator projIter = fProjects.iterator();
-			IProject prj = (IProject)projIter.next();
+			Iterator<IProject> projIter = fProjects.iterator();
+			IProject prj = projIter.next();
 			if (prj != null){
 				ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
 				if (prjd != null) {

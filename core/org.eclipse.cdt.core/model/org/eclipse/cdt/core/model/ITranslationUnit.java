@@ -50,13 +50,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
 	 * Meaning: Skip headers even if they are not found in the index. 
-	 * Makes practically only sense in combination with {@link AST_SKIP_INDEXED_HEADERS}.
+	 * Makes practically only sense in combination with {@link #AST_SKIP_INDEXED_HEADERS}.
 	 */
 	public static final int AST_SKIP_NONINDEXED_HEADERS = 4;
 
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
-	 * A combination of {@link AST_SKIP_INDEXED_HEADERS} and {@link AST_SKIP_NONINDEXED_HEADERS}.
+	 * A combination of {@link #AST_SKIP_INDEXED_HEADERS} and {@link #AST_SKIP_NONINDEXED_HEADERS}.
 	 * Meaning: Don't parse header files at all, be they indexed or not. 
 	 * Macro definitions and bindings are taken from the index if available.
 	 */
@@ -376,22 +376,17 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	boolean isSourceUnit();
 
 	/**
-	 * True if the code is C
-	 * @return
+	 * Returns <code>true</code> if the code is C
 	 */
 	boolean isCLanguage();
 
 	/**
-	 * True if the code is C++
-	 * 
-	 * @return
+	 * Returns <code>true</code> if the code is C++
 	 */
 	boolean isCXXLanguage();
 
 	/**
-	 * True if assembly
-	 * 
-	 * @return
+	 * Returns <code>true</code> if the code is assembly
 	 */
 	boolean isASMLanguage();
 
@@ -426,12 +421,10 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * be removed from the interface.
 	 */
 	@Deprecated
-	Map parse();
+	Map<?,?> parse();
 
 	/**
 	 * Return the language for this translation unit.
-	 * 
-	 * @return
 	 */
 	ILanguage getLanguage() throws CoreException;
 	
@@ -497,12 +490,6 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	
 	/**
 	 * Return the completion node using the given index and parsing style at the given offset.
-	 * 
-	 * @param index
-	 * @param style
-	 * @param offset
-	 * @return
-	 * @throws CoreException
 	 */
 	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException;	
 }

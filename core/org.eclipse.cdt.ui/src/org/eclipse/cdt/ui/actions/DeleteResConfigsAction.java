@@ -52,8 +52,8 @@ import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 public class DeleteResConfigsAction 
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
-	protected ArrayList objects = null;
-	private   ArrayList outData = null;		
+	protected ArrayList<IResource> objects = null;
+	private   ArrayList<ResCfgData> outData = null;		
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		objects = null;
@@ -85,10 +85,10 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 							if (prjd == null) continue;
 							ICConfigurationDescription[] cfgds = prjd.getConfigurations();
 							if (cfgds == null || cfgds.length == 0) continue;
-							for (int j=0; j<cfgds.length; j++) {
-								ICResourceDescription rd = cfgds[j].getResourceDescription(path, true);
+							for (ICConfigurationDescription cfgd : cfgds) {
+								ICResourceDescription rd = cfgd.getResourceDescription(path, true);
 								if (rd != null) {
-									if (objects == null) objects = new ArrayList();
+									if (objects == null) objects = new ArrayList<IResource>();
 									objects.add(res);
 									break; // stop configurations scanning
 								}
@@ -119,9 +119,9 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected != null && selected.length > 0) {
-				for (int i = 0; i < selected.length; i++) {
-					((ResCfgData)selected[i]).delete();
-					AbstractPage.updateViews(((ResCfgData)selected[i]).res);
+				for (Object element : selected) {
+					((ResCfgData)element).delete();
+					AbstractPage.updateViews(((ResCfgData)element).res);
 				}
 			}
 		}
@@ -159,9 +159,9 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			public Object[] getElements(Object inputElement) {
 				if (outData != null) return outData.toArray();
 				
-				outData = new ArrayList();
-				List ls = (List)inputElement;
-				Iterator it = ls.iterator();
+				outData = new ArrayList<ResCfgData>();
+				List<?> ls = (List<?>)inputElement;
+				Iterator<?> it = ls.iterator();
 				IProject proj = null;
 				ICProjectDescription prjd = null;
 				ICConfigurationDescription[] cfgds = null;
@@ -175,10 +175,12 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 						prjd = CoreModel.getDefault().getProjectDescription(proj);
 						cfgds = prjd.getConfigurations();
 					}
-					for (int i=0; i< cfgds.length; i++) {
-						ICResourceDescription rd = cfgds[i].getResourceDescription(path, true);
-						if (rd != null) 
-							outData.add(new ResCfgData(res, prjd, cfgds[i], rd));
+					if (cfgds != null) {
+						for (ICConfigurationDescription cfgd : cfgds) {
+							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
+							if (rd != null) 
+								outData.add(new ResCfgData(res, prjd, cfgd, rd));
+						}
 					}
 				}
 				return outData.toArray();

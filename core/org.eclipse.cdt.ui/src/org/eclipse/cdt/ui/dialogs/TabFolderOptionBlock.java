@@ -43,7 +43,7 @@ public abstract class TabFolderOptionBlock {
 	private boolean bIsValid = true;
 
 	private Label messageLabel;
-	private ArrayList pages = new ArrayList();
+	private ArrayList<ICOptionPage> pages = new ArrayList<ICOptionPage>();
 	protected ICOptionContainer fParent;
 	private ICOptionPage fCurrentPage;
 
@@ -75,7 +75,7 @@ public abstract class TabFolderOptionBlock {
 		}
 	}
 
-	protected List getOptionPages() {
+	protected List<ICOptionPage> getOptionPages() {
 		return pages;
 	}
 
@@ -96,9 +96,9 @@ public abstract class TabFolderOptionBlock {
 		createFolder(composite);
 
 		addTabs();
-		setCurrentPage((ICOptionPage)pages.get(0));
+		setCurrentPage(pages.get(0));
 		initializingTabs = false;
-		String desc = ((ICOptionPage)pages.get(0)).getDescription();
+		String desc = pages.get(0).getDescription();
 		if (messageLabel != null && desc != null) {
 			messageLabel.setText(desc);
 		}
@@ -106,7 +106,7 @@ public abstract class TabFolderOptionBlock {
 	}
 
 	protected ICOptionPage getStartPage() {
-		return (ICOptionPage)pages.get(0);
+		return pages.get(0);
 	}
 
 	public int getPageIndex() {
@@ -153,9 +153,9 @@ public abstract class TabFolderOptionBlock {
 		}
 		monitor.beginTask("", pages.size()); //$NON-NLS-1$
 		try {
-			Iterator iter = pages.iterator();
+			Iterator<ICOptionPage> iter = pages.iterator();
 			while (iter.hasNext()) {
-				ICOptionPage tab = (ICOptionPage)iter.next();
+				ICOptionPage tab = iter.next();
 				try {
 					tab.performApply(new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
@@ -184,9 +184,9 @@ public abstract class TabFolderOptionBlock {
 		if (initializingTabs)
 			return;
 		boolean ok = true;
-		Iterator iter = pages.iterator();
+		Iterator<ICOptionPage> iter = pages.iterator();
 		while (iter.hasNext()) {
-			ICOptionPage tab = (ICOptionPage)iter.next();
+			ICOptionPage tab = iter.next();
 			ok = tab.isValid();
 			if (!ok) {
                 String errorMessage = tab.getErrorMessage();

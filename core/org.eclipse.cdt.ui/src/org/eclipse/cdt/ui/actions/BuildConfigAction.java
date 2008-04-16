@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.actions;
 
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.BuildAction;
 
@@ -28,7 +29,7 @@ public class BuildConfigAction extends ChangeConfigAction {
 	 * @param configName Build configuration name
 	 * @param accel Number to be used as accelerator
 	 */
-	public BuildConfigAction(HashSet projects, String configName, String displayName, int accel, BuildAction buildAction) {
+	public BuildConfigAction(HashSet<IProject> projects, String configName, String displayName, int accel, BuildAction buildAction) {
 		super(projects, configName, displayName, accel);
 		this.buildAction = buildAction;
 	}

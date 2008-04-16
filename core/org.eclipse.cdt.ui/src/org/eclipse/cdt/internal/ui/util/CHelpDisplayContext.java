@@ -70,7 +70,7 @@ public class CHelpDisplayContext implements IContext {
 
 	public CHelpDisplayContext(IContext context, final ITextEditor editor , String selected) throws CoreException {
 
-		List helpResources= new ArrayList();
+		List<IHelpResource> helpResources= new ArrayList<IHelpResource>();
 		
 		ICHelpInvocationContext invocationContext = new ICHelpInvocationContext() {
 
@@ -102,7 +102,7 @@ public class CHelpDisplayContext implements IContext {
 			}
 		}
 
-		fHelpResources= (IHelpResource[]) helpResources.toArray(new IHelpResource[helpResources.size()]);
+		fHelpResources= helpResources.toArray(new IHelpResource[helpResources.size()]);
 		if (fText == null || fText.length() == 0) {
 			if (context != null) {
 				fText= context.getText();

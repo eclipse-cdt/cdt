@@ -91,10 +91,10 @@ public class CDTPrefUtil {
 	}
 	public static void savePreferredTCs() {
 		if (preferredTCs == null) return; 
-		Iterator it = preferredTCs.iterator();
+		Iterator<String> it = preferredTCs.iterator();
 		StringBuffer b = new StringBuffer(); 
 		while (it.hasNext()) {
-			String s = (String)it.next();
+			String s = it.next();
 			if (s == null) continue; 
 			b.append(s);
 			b.append(DELIMITER);
@@ -216,19 +216,16 @@ public class CDTPrefUtil {
 			}
 			return lst.toArray();
 		}
-		else // DMODE_ALL
-		{
-			TreeSet<Object> lst = new TreeSet<Object>(cmp); // set, to avoid doubles
-			for (int i=0; i<input.length; i++) {
-				if (input[i] == null ||
-					input[i].length == 0)
-					continue;
-				for (int j=0; j<input[i].length; j++)
-					lst.add(input[i][j]);
-			}
-			s1 = lst.toArray();
-			Arrays.sort(s1, cmp);
-			return s1;
+		TreeSet<Object> lst = new TreeSet<Object>(cmp); // set, to avoid doubles
+		for (Object[] element : input) {
+			if (element == null ||
+				element.length == 0)
+				continue;
+			for (Object element2 : element)
+				lst.add(element2);
 		}
+		s1 = lst.toArray();
+		Arrays.sort(s1, cmp);
+		return s1;
 	}
 }

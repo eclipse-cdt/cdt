@@ -172,8 +172,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		try {
 			// find the first C project
 			IProject[] projects= fWorkspaceRoot.getProjects();
-			for (int i= 0; i < projects.length; i++) {
-				IProject proj= projects[i];
+			for (IProject proj : projects) {
 				if (proj.hasNature(CProjectNature.C_NATURE_ID) || proj.hasNature(CCProjectNature.CC_NATURE_ID)) {
 					projPath= proj.getFullPath().makeRelative().toString();
 					break;
@@ -475,7 +474,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 	// ------------- choose dialogs
 	
 	private IFolder chooseFolder(String title, String message, IPath initialPath) {	
-		Class[] acceptedClasses= new Class[] { IFolder.class };
+		Class<?>[] acceptedClasses= new Class<?>[] { IFolder.class };
 		ISelectionStatusValidator validator= new TypedElementSelectionValidator(acceptedClasses, false);
 		ViewerFilter filter= new TypedViewerFilter(acceptedClasses, null);	
 		

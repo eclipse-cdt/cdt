@@ -50,8 +50,8 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	private static String[] EMPTY = new String[0];
 	private Preferences fPrefs;
-	protected HashMap mapParsers = new HashMap();
-	private CheckedListDialogField fErrorParserList;
+	protected HashMap<String, String> mapParsers = new HashMap<String, String>();
+	private CheckedListDialogField<String> fErrorParserList;
 	protected boolean listDirty = false;
 
 	class FieldListenerAdapter implements IDialogFieldListener {
@@ -112,7 +112,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			 */
 			@Override
 			public String getText(Object element) {
-				String name = (String)mapParsers.get(element.toString());
+				String name = mapParsers.get(element.toString());
 				return name != null ? name : element.toString(); 
 			}
 		};
@@ -136,11 +136,11 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		String[] empty = new String[0];
 		if (parserIDs != null && parserIDs.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-			List list = new ArrayList(tok.countTokens());
+			List<String> list = new ArrayList<String>(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}
-			return (String[])list.toArray(empty);
+			return list.toArray(empty);
 		}
 		return empty;
 	}
@@ -233,15 +233,15 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	}
 
 	protected void updateListControl(String[] parserIDs) {
-		List checkedList = Arrays.asList(parserIDs);
+		List<String> checkedList = Arrays.asList(parserIDs);
 		fErrorParserList.setElements(checkedList);
 		fErrorParserList.setCheckedElements(checkedList);
 		if (checkedList.size() > 0) {
 			fErrorParserList.getTableViewer().setSelection(new StructuredSelection(checkedList.get(0)), true);
 		}
-		Iterator items = mapParsers.keySet().iterator();
+		Iterator<String> items = mapParsers.keySet().iterator();
 		while (items.hasNext()) {
-			String item = (String)items.next();
+			String item = items.next();
 			boolean found = false;
 			for (int i = 0; i < parserIDs.length; i++) {
 				if (item.equals(parserIDs[i])) {
@@ -275,7 +275,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 				CUIMessages.getString("AbstractErrorParserBlock.label.unselectAll") //$NON-NLS-1$
 		};
 
-		fErrorParserList = new CheckedListDialogField(null, buttonLabels, getLabelProvider());
+		fErrorParserList = new CheckedListDialogField<String>(null, buttonLabels, getLabelProvider());
 		fErrorParserList.setDialogFieldListener(getFieldListenerAdapter());
 		fErrorParserList.setLabelText(CUIMessages.getString("AbstractErrorParserBlock.label.errorParsers")); //$NON-NLS-1$
 		fErrorParserList.setUpButtonIndex(0);
@@ -297,9 +297,9 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 				monitor = new NullProgressMonitor();
 			}
 			monitor.beginTask(CUIMessages.getString("AbstractErrorParserBlock.task.setErrorParser"), 1); //$NON-NLS-1$
-			List elements = fErrorParserList.getElements();
+			List<String> elements = fErrorParserList.getElements();
 			int count = elements.size();
-			List list = new ArrayList(count);
+			List<Object> list = new ArrayList<Object>(count);
 			for (int i = 0; i < count; i++) {
 				Object obj = elements.get(i);
 				if (fErrorParserList.isChecked(obj)) {
@@ -307,7 +307,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 				}
 			}
 
-			String[] parserIDs = (String[])list.toArray(EMPTY);
+			String[] parserIDs = list.toArray(EMPTY);
 
 			if (project == null) {
 				//  Save to preferences

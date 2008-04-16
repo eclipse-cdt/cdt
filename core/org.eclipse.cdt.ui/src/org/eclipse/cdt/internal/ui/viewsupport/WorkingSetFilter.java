@@ -24,7 +24,7 @@ public class WorkingSetFilter {
     private static final Object ACCEPT = new Object();
     private static final Object REJECT = new Object();
 
-    private HashMap fResourceFilter= null;
+    private HashMap<IPath, Object> fResourceFilter= null;
 
     public synchronized boolean isPartOfWorkingSet(ICElement elem) {
         if (fResourceFilter == null) {
@@ -79,7 +79,7 @@ public class WorkingSetFilter {
         }
         else {
             IAdaptable[] input = workingSetFilter.getElements();
-            fResourceFilter = new HashMap();
+            fResourceFilter = new HashMap<IPath, Object>();
             for (int i = 0; i < input.length; i++) {
                 IAdaptable adaptable = input[i];
                 IResource res = (IResource) adaptable.getAdapter(IResource.class);

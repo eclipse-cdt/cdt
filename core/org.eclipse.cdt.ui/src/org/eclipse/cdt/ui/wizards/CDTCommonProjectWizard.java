@@ -14,8 +14,6 @@ package org.eclipse.cdt.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -66,8 +64,6 @@ implements IExecutableExtension, IWizardWithMemory
 	private URI lastProjectLocation = null;
 	private CWizardHandler savedHandler = null;
 
-	protected List localPages = new ArrayList(); // replacing Wizard.pages since we have to delete them
-	
 	public CDTCommonProjectWizard() {
 		this(UIMessages.getString("NewModelProjectWizard.0"),UIMessages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}

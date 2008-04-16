@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class TreeNavigator {
 	private Tree fTree;
-	private Class fDataClass;
+	private Class<?> fDataClass;
 
 	/**
 	 * Creates a tree navigator for the given tree. It allows for finding tree items.
@@ -28,7 +28,7 @@ public class TreeNavigator {
 	 * @param tree the tree to operate on
 	 * @param dataClass the required class for the data of the tree nodes, or <code>null</code>.
 	 */
-	public TreeNavigator(Tree tree, Class dataClass) {
+	public TreeNavigator(Tree tree, Class<?> dataClass) {
 		fTree= tree;
 		fDataClass= dataClass;
 	}

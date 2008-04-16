@@ -12,9 +12,10 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 
-import org.eclipse.cdt.ui.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 
 /**
@@ -24,7 +25,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @deprecated Use {@link AppearanceAwareLabelProvider} instead.
  */
 @Deprecated
-public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider implements IPropertyChangeListener {
+public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider {
 
 	/**
 	 * Constructor for StandardCElementLabelProvider.

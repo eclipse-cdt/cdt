@@ -30,8 +30,8 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
     private static final String DIALOG_SETTINGS = NewBaseClassSelectionDialog.class.getName();
     private static final int[] VISIBLE_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT };
     private static final int ADD_ID = IDialogConstants.CLIENT_ID + 1;
-	private List fTypeList;
-	private List fTypeListeners;
+	private List<ITypeInfo> fTypeList;
+	private List<ITypeSelectionListener> fTypeListeners;
     
 	public interface ITypeSelectionListener {
 	    void typeAdded(ITypeInfo baseClass);
@@ -45,8 +45,8 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
         setVisibleTypes(VISIBLE_TYPES);
         setFilter("*", true); //$NON-NLS-1$
 		setStatusLineAboveButtons(true);
-		fTypeList = new ArrayList();
-		fTypeListeners = new ArrayList();
+		fTypeList = new ArrayList<ITypeInfo>();
+		fTypeListeners = new ArrayList<ITypeSelectionListener>();
     }
     
     public void addListener(ITypeSelectionListener listener) {
@@ -60,15 +60,15 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
     
     private void notifyTypeAddedListeners(ITypeInfo type) {
         // first copy listeners in case one calls removeListener
-        List list = new ArrayList(fTypeListeners);
-        for (Iterator i = list.iterator(); i.hasNext(); ) {
-            ITypeSelectionListener listener = (ITypeSelectionListener) i.next();
+        List<ITypeSelectionListener> list = new ArrayList<ITypeSelectionListener>(fTypeListeners);
+        for (Iterator<ITypeSelectionListener> i = list.iterator(); i.hasNext(); ) {
+            ITypeSelectionListener listener = i.next();
             listener.typeAdded(type);
         }
     }
     
     public ITypeInfo[] getAddedTypes() {
-        return (ITypeInfo[])fTypeList.toArray(new ITypeInfo[fTypeList.size()]);
+        return fTypeList.toArray(new ITypeInfo[fTypeList.size()]);
     }
 
     /*

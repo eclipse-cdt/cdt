@@ -12,6 +12,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import java.util.Comparator;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -36,21 +52,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
+
 import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
 import org.eclipse.cdt.internal.ui.cview.LibraryRefContainer;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  *	A sorter to sort the file and the folders in the C viewer in the following order:
@@ -244,10 +248,12 @@ public class CElementSorter extends ViewerSorter {
 
 		// cat1 == cat2
 
+		@SuppressWarnings("unchecked")
+		final Comparator<Object> comparator = getComparator();
 		if (cat1 == PROJECTS) {
 			IWorkbenchAdapter a1= (IWorkbenchAdapter)((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
 			IWorkbenchAdapter a2= (IWorkbenchAdapter)((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
-			return getComparator().compare(a1.getLabel(e1), a2.getLabel(e2));
+			return comparator.compare(a1.getLabel(e1), a2.getLabel(e2));
 		}
 
 		if (cat1 == SOURCEROOTS) {
@@ -310,7 +316,7 @@ public class CElementSorter extends ViewerSorter {
 		} else {
 			name2 = e2.toString();
 		}
-		int result = getComparator().compare(name1, name2);
+		int result = comparator.compare(name1, name2);
 		if (result == 0 && (e1destructor != e2destructor)) {
 		    result = e1destructor ? 1 : -1;
 		}
@@ -326,14 +332,16 @@ public class CElementSorter extends ViewerSorter {
 	}
 
 	private int compareWithLabelProvider(Viewer viewer, Object e1, Object e2) {
-		if (viewer == null || !(viewer instanceof ContentViewer)) {
+		if (viewer instanceof ContentViewer) {
 			IBaseLabelProvider prov = ((ContentViewer) viewer).getLabelProvider();
 			if (prov instanceof ILabelProvider) {
 				ILabelProvider lprov= (ILabelProvider) prov;
 				String name1 = lprov.getText(e1);
 				String name2 = lprov.getText(e2);
 				if (name1 != null && name2 != null) {
-					return getComparator().compare(name1, name2);
+					@SuppressWarnings("unchecked")
+					final Comparator<Object> comparator = getComparator();
+					return comparator.compare(name1, name2);
 				}
 			}
 		}

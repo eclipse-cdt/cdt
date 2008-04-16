@@ -40,7 +40,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
     class ExpansionJob extends UIJob {
         
         private Object element;
-        private List parents = new ArrayList(); // top down
+        private List<Object> parents = new ArrayList<Object>(); // top down
         
         /**
          * Constucts a job to expand the given element.
@@ -62,7 +62,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
             }            
             synchronized (RemoteTreeViewer.this) {
                 boolean allParentsExpanded = true;
-                Iterator iterator = parents.iterator();
+                Iterator<Object> iterator = parents.iterator();
                 while (iterator.hasNext() && !monitor.isCanceled()) {
                     Object parent = iterator.next();
                     Widget item = findItem(parent);
@@ -109,7 +109,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
         
         private IStructuredSelection selection;
         private Object first;
-        private List parents = new ArrayList(); // top down
+        private List<Object> parents = new ArrayList<Object>(); // top down
         
         /**
          * Constucts a job to select the given element.
@@ -131,7 +131,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
             }
             synchronized (RemoteTreeViewer.this) {
                 boolean allParentsExpanded = true;
-                Iterator iterator = parents.iterator();
+                Iterator<Object> iterator = parents.iterator();
                 while (iterator.hasNext() && !monitor.isCanceled()) {
                     Object parent = iterator.next();
                     Widget item = findItem(parent);
@@ -327,7 +327,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
         }	    
     }
 
-    private void addAllParents(List list, Object element) {
+    private void addAllParents(List<Object> list, Object element) {
     	if (element instanceof IAdaptable) {
     		IAdaptable adaptable = (IAdaptable) element;
     		IWorkbenchAdapter adapter = (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);

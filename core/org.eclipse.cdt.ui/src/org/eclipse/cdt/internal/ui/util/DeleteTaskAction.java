@@ -42,9 +42,9 @@ public class DeleteTaskAction extends ActionDelegate implements IObjectActionDel
 				return;
 			}
 			try {
-				List list = selection.toList();
-				List listMarkers = new ArrayList();
-				Iterator iterator = list.iterator();
+				List<?> list = selection.toList();
+				List<IMarker> listMarkers = new ArrayList<IMarker>();
+				Iterator<?> iterator = list.iterator();
 				while (iterator.hasNext()) {
 					IMarker marker = (IMarker)iterator.next();
 					if (marker.isSubtypeOf(ICModelMarker.C_MODEL_PROBLEM_MARKER)

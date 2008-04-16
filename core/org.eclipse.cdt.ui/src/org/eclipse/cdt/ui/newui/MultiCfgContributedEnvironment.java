@@ -48,8 +48,8 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 				if (s1 == null)
 					s1 = AbstractPage.EMPTY_STR;
 				return(s0.compareTo(s1));
-			} else 
-				return 0;
+			}
+			return 0;
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 			if (any && (w != null))
 				return w;
 			// if (! any  &&  ! v==w)
-			if (! (any || v.equals(w)))
+			if (! (any || (v==null && w==null) || (v != null && v.equals(w))))
 				return null;
 		}
 		return v;
@@ -157,10 +157,9 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	private ICConfigurationDescription[] getCfs(ICConfigurationDescription des) {
 		if (isMulti && des instanceof ICMultiConfigDescription) {
 			return (ICConfigurationDescription[])((ICMultiConfigDescription)des).getItems();
-		} else {
-			mono[0] = des;
-			return mono;
 		}
+		mono[0] = des;
+		return mono;
 	}
 	
 	private int getDispMode(ICConfigurationDescription des) {

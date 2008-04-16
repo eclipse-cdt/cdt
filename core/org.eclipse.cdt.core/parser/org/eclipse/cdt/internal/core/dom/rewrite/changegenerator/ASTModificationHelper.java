@@ -34,22 +34,23 @@ public class ASTModificationHelper {
 	}
 
 	
-	@SuppressWarnings("unchecked")
-	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren){
+	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren, Class<T> clazz){
 		ArrayList<T> modifiedChildren = new ArrayList<T>(Arrays.asList(unmodifiedChildren));
 		for(T currentChild : unmodifiedChildren){
 			for(ASTModification childModification : modificationsForNode(currentChild)){
 				try{
-					T newNode = (T) childModification.getNewNode();
+					final T newNode = cast(childModification.getNewNode(), clazz);
 					switch(childModification.getKind()){
 					case REPLACE:
-						if(childModification.getNewNode() != null){
+						if (newNode != null) {
 							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), newNode);
 						}
 						modifiedChildren.remove(childModification.getTargetNode());
 						break;
 					case INSERT_BEFORE:
-						modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), newNode);
+						if (newNode != null) {
+							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), newNode);
+						}
 						break;
 					case APPEND_CHILD:
 						throw new UnhandledASTModificationException(childModification);
@@ -61,26 +62,42 @@ public class ASTModificationHelper {
 			} 
 		}
 
-		Class<?> componentType = unmodifiedChildren.getClass().getComponentType();
 		for(ASTModification parentModification : modificationsForNode(parent)){
 			if(parentModification.getKind() == ModificationKind.APPEND_CHILD){
 				IASTNode newNode = parentModification.getNewNode();
-				if(componentType.isAssignableFrom(newNode.getClass())){
-					modifiedChildren.add((T) newNode);
+				T newTNode= cast(newNode, clazz);
+				if (newTNode != null) {
+					modifiedChildren.add(newTNode);
 				}
-				else if(newNode instanceof ContainerNode){
+				else if (newNode instanceof ContainerNode){
 					ContainerNode nodeContainer = (ContainerNode) newNode;
 					for(IASTNode currentNode : nodeContainer.getNodes()){
-						if(componentType.isAssignableFrom(currentNode.getClass())){
-							modifiedChildren.add((T)currentNode);
+						T tnode= cast(currentNode, clazz);
+						if(tnode != null){
+							modifiedChildren.add(tnode);
 						}
 					}
 				}
 			}
 		}
 		
-		return modifiedChildren.toArray((T[]) Array.newInstance(componentType, 0));
+		return modifiedChildren.toArray(newArrayInstance(clazz, modifiedChildren.size()));
 	}
+
+
+	@SuppressWarnings("unchecked")
+	private <T> T[] newArrayInstance(Class<T> clazz, int size) {
+		return (T[]) Array.newInstance(clazz, size);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T cast(IASTNode node, Class<T> clazz) {
+		if (clazz.isInstance(node)){
+			return (T) node;
+		}
+		return null;
+	}
+
 
 	public List<ASTModification> modificationsForNode(
 			IASTNode targetNode) {

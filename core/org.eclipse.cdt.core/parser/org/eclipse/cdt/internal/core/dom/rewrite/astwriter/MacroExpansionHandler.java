@@ -62,7 +62,7 @@ public class MacroExpansionHandler {
 
 	protected boolean checkisMacroExpansionNode(IASTNode node, boolean write) {
 		IASTNodeLocation[] locs = node.getNodeLocations();
-		if(locs.length ==1) {
+		if (locs != null && locs.length ==1) {
 			if (locs[0] instanceof IASTMacroExpansionLocation) {
 				IASTMacroExpansionLocation macroNode = (IASTMacroExpansionLocation) locs[0];
 	

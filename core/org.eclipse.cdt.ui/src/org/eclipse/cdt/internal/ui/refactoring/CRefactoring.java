@@ -65,10 +65,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 public abstract class CRefactoring extends Refactoring {
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+	public static final String NEWLINE = "\n"; // mstodo //$NON-NLS-1$
 
 	protected String name = Messages.HSRRefactoring_name; 
 	protected IFile file;
-	private ISelection selection;
+	protected ISelection selection;
 	protected RefactoringStatus initStatus;
 	protected IASTTranslationUnit unit;
 	private IIndex fIndex;
@@ -353,6 +354,13 @@ public abstract class CRefactoring extends Refactoring {
 		}
 		return false;
 	}
+	
+	protected boolean isSelectedFile(ITextSelection textSelection, IASTNode node) {
+		if( isInSameFile(node) ) {
+			return isExpressionWhollyInSelection(textSelection, node);
+		}
+		return false;
+	}
 
 	protected MethodContext findContext(IASTNode node) {
 		boolean found = false;
@@ -398,6 +406,16 @@ public abstract class CRefactoring extends Refactoring {
 		AmbiguityFinder af = new AmbiguityFinder();
 		unit.accept(af);
 		return af.ambiguityFound();
+	}
+	
+	protected IASTSimpleDeclaration findSimpleDeclarationInParents(IASTNode node) {
+		while(node != null){
+			if (node instanceof IASTSimpleDeclaration) {
+				return (IASTSimpleDeclaration) node;
+			}
+			node = node.getParent();
+		}
+		return null;
 	}
 	
 	public void lockIndex() throws CoreException, InterruptedException {

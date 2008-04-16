@@ -14,6 +14,7 @@ package org.eclipse.cdt.ui.tests.refactoring;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.rename.RenameRegressionTests;
 import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
 
@@ -26,6 +27,7 @@ public class RefactoringTestSuite extends TestSuite {
 	public static Test suite() throws Exception {
 		TestSuite suite = new RefactoringTestSuite();
 		suite.addTest(RenameRegressionTests.suite());
+		suite.addTest(ExtractFunctionTestSuite.suite());
 		suite.addTest(RefactoringTester.suite("ExtractConstantRefactoringTests", "resources/refactoring/ExtractConstant.rts"));
 		suite.addTest(UtilTestSuite.suite());
 		return suite;

@@ -44,14 +44,14 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	protected void writeParameterDeclarations(
 			IASTStandardFunctionDeclarator funcDec,
 			IASTParameterDeclaration[] paraDecls) {	
-		IASTParameterDeclaration[] modifiedParameters = modificationHelper.createModifiedChildArray(funcDec, paraDecls);			
+		IASTParameterDeclaration[] modifiedParameters = modificationHelper.createModifiedChildArray(funcDec, paraDecls, IASTParameterDeclaration.class);			
 		super.writeParameterDeclarations(funcDec, modifiedParameters);
 		
 	}
 
 	@Override
 	protected void writePointerOperators(IASTDeclarator declarator,IASTPointerOperator[] unmodifiedPointerOperations) {
-		IASTPointerOperator[] modifiedPointer = modificationHelper.createModifiedChildArray(declarator, unmodifiedPointerOperations);
+		IASTPointerOperator[] modifiedPointer = modificationHelper.createModifiedChildArray(declarator, unmodifiedPointerOperations, IASTPointerOperator.class);
 		super.writePointerOperators(declarator, modifiedPointer);
 	}
 	
@@ -60,20 +60,20 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	@Override
 	protected void writeCtorChainInitializer(ICPPASTFunctionDeclarator funcDec,
 			ICPPASTConstructorChainInitializer[] ctorInitChain) {
-		ICPPASTConstructorChainInitializer[] modifiedChainInitializer = modificationHelper.createModifiedChildArray(funcDec, ctorInitChain);
+		ICPPASTConstructorChainInitializer[] modifiedChainInitializer = modificationHelper.createModifiedChildArray(funcDec, ctorInitChain, ICPPASTConstructorChainInitializer.class);
 		super.writeCtorChainInitializer(funcDec, modifiedChainInitializer);
 	}
 
 	@Override
 	protected void writeArrayModifiers(IASTArrayDeclarator arrDecl,
 			IASTArrayModifier[] arrMods) {
-		IASTArrayModifier[] modifiedModifiers = modificationHelper.createModifiedChildArray(arrDecl, arrMods);
+		IASTArrayModifier[] modifiedModifiers = modificationHelper.createModifiedChildArray(arrDecl, arrMods, IASTArrayModifier.class);
 		super.writeArrayModifiers(arrDecl, modifiedModifiers);
 	}
 
 	@Override
 	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions ) {	
-		IASTTypeId[] modifiedExceptions = modificationHelper.createModifiedChildArray(funcDec, exceptions);
+		IASTTypeId[] modifiedExceptions = modificationHelper.createModifiedChildArray(funcDec, exceptions, IASTTypeId.class);
 		super.writeExceptionSpecification(funcDec, modifiedExceptions);
 	}
 	
@@ -83,7 +83,7 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	protected void writeKnRParameterDeclarations(
 			ICASTKnRFunctionDeclarator knrFunct,
 			IASTDeclaration[] knrDeclarations) {
-		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(knrFunct, knrDeclarations);
+		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(knrFunct, knrDeclarations, IASTDeclaration.class);
 		
 		super.writeKnRParameterDeclarations(knrFunct, modifiedDeclarations);
 	}
@@ -91,7 +91,7 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	@Override
 	protected void writeKnRParameterNames(
 			ICASTKnRFunctionDeclarator knrFunct, IASTName[] parameterNames) {
-		IASTName[] modifiedNames = modificationHelper.createModifiedChildArray(knrFunct, parameterNames);
+		IASTName[] modifiedNames = modificationHelper.createModifiedChildArray(knrFunct, parameterNames, IASTName.class);
 		super.writeKnRParameterNames(knrFunct, modifiedNames);
 	}
 

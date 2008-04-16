@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	public static String CRefactoringActionGroup_menu;
 	public static String CRenameAction_label;
 	public static String ExtractConstantAction_label;
+	public static String ExtractFunctionAction_label;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

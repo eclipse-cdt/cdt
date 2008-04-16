@@ -1,0 +1,2139 @@
+//!ExtractFunctionRefactoringTest
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+    void exp(int & i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	//$++i;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & i)
+{
+    ++i;
+    help();
+}
+
+int A::foo()
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@.config
+filename=A.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+
+//!Extract Function first extracted statement with leading comment
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@main.cpp
+int main(){
+	
+	int i;
+	//$i= 7;$//
+	return i;
+}
+
+//=
+void exp(int & i)
+{
+    i = 7;
+}
+
+int main(){
+	
+	int i;
+    exp(i);
+	return i;
+}
+
+//@.config
+filename=main.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+
+//!Extract Function last extracted statement with trailling comment
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@main.cpp
+int main(){
+	
+	int i;
+	//$i= 7;$//
+	return i;
+}
+
+//=
+void exp(int & i)
+{
+    i = 7;
+}
+
+int main(){
+	
+	int i;
+    exp(i);
+	return i;
+}
+
+//@.config
+filename=main.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+
+//!ExtractFunctionRefactoringTest variable defined in scope
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	int exp();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}int A::foo()
+{
+	//$int i = 2;
+	++i;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::exp()
+{
+    int i = 2;
+    ++i;
+    help();
+    return i;
+}
+
+int A::foo()
+{
+	int i = exp();
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//!ExtractFunctionRefactoringTest with two variable defined in scope
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+fatalerror=true
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	//$int o = 1;
+	int i = 2;
+	++i;
+	o++;
+	help();$//
+	o++;
+	return i;
+}int A::help()
+{
+	return 42;
+}	
+
+//!ExtractFunctionRefactoringTest with named typed field
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	void foo();
+	B b;
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	void foo();
+	B b;
+	
+private:
+	int help();
+    void exp();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::foo()
+{
+	//$b = new B();
+	help();$//
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp()
+{
+    b = new B();
+    help();
+}
+
+void A::foo()
+{
+    exp();
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@B.h
+#ifndef B_H_
+#define B_H_
+
+class B
+{
+public:
+	B();
+	virtual ~B();
+};
+
+#endif /*B_H_*/
+
+//!ExtractFunctionRefactoringTest with named typed variable defined in scope
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	void foo();
+	B b;
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	void foo();
+	B b;
+	
+private:
+	int help();
+	void exp();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::foo()
+{
+	//$b = new B();
+	help();$//
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp()
+{
+    b = new B();
+    help();
+}
+
+void A::foo()
+{
+    exp();
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@B.h
+#ifndef B_H_
+#define B_H_
+
+class B
+{
+public:
+	B();
+	virtual ~B();
+};
+
+#endif /*B_H_*/
+
+//!ExtractFunctionRefactoringTest with ObjectStyleMacro
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	void exp(int & i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+#define ZWO 2
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	//$++i;
+	i += ZWO;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+#define ZWO 2
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & i)
+{
+    ++i;
+    i += ZWO;
+    help();
+}
+
+int A::foo()
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//!ExtractFunctionRefactoringTest with FunctionStyleMacro
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	void exp(int & i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+#define ADD(a,b) a + b + 2
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	//$++i;
+	i = ADD(i, 42);
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+#define ADD(a,b) a + b + 2
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & i)
+{
+    ++i;
+    i = ADD(i, 42);
+    help();
+}
+
+int A::foo()
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//!ExtractMethod with Pointer
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	void exp(int *& i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int* i = new int(2);
+	//$++*i;
+	help();$//
+	return *i;
+}
+
+int A::help()
+{
+	return 42;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int *& i)
+{
+    ++*i;
+    help();
+}
+
+int A::foo()
+{
+	int* i = new int(2);
+    exp(i);
+	return *i;
+}
+
+int A::help()
+{
+	return 42;
+}
+
+//!ExtractMethod with Pointer and Comment at the end
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	void exp(int *& i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int* i = new int(2);
+	//$++*i;
+	help();
+	//A end-comment$//
+	return *i;
+}
+
+int A::help()
+{
+	return 42;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int *& i)
+{
+    ++*i;
+    help();
+}
+
+int A::foo()
+{
+	int* i = new int(2);
+    exp(i);
+	//A end-comment
+	return *i;
+}
+
+int A::help()
+{
+	return 42;
+}
+
+//!ExtractMethod with Pointer and Comment
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	void exp(int *& i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	//A beautiful comment
+	int* i = new int(2);
+	//$++*i;
+	help();$//
+	return *i;
+}
+
+int A::help()
+{
+	return 42;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int *& i)
+{
+    ++*i;
+    help();
+}
+
+int A::foo()
+{
+	//A beautiful comment
+    int *i = new int(2);
+    exp(i);
+	return *i;
+}
+
+int A::help()
+{
+	return 42;
+}
+
+//!ExtractFunctionRefactoringTest with Return Value
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+replaceduplicates=true
+returnvalue=true
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	int exp(int i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	//$++i;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::exp(int i)
+{
+    ++i;
+    help();
+    return i;
+}
+
+int A::foo()
+{
+	int i = 2;
+    i = exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//!ExtractFunctionRefactoringTest with Return Value and Ref Parameter
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+replaceduplicates=true
+returnvalue=true
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	int exp(int i, int & b);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	int b = i;
+	//$++i;
+	i = i + b;
+	help();$//
+	++b;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::exp(int i, int & b)
+{
+    ++i;
+    i = i + b;
+    help();
+    return i;
+}
+
+int A::foo()
+{
+	int i = 2;
+	int b = i;
+    i = exp(i, b);
+	++b;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//!ExtractFunctionRefactoringTest with Return Value and Ref Parameter and some more not used aferwards
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+replaceduplicates=true
+returnvalue=true
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	int exp(int i, B *b, int y, float & x);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+	//$++i;
+	b->hello(y);
+	i = i + x;
+	help();$//
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::exp(int i, B *b, int y, float & x)
+{
+    ++i;
+    b->hello(y);
+    i = i + x;
+    help();
+    return i;
+}
+
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+    i = exp(i, b, y, x);
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//!ExtractFunctionRefactoringTest with Return Value take the second and Ref Parameter and some more not used aferwards
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+returnparameterindex=1
+returnvalue=true
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	float exp(int & i, B *b, int y, float x);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+	//$++i;
+	b->hello(y);
+	i = i + x;
+	help();$//
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+float A::exp(int & i, B *b, int y, float x)
+{
+    ++i;
+    b->hello(y);
+    i = i + x;
+    help();
+    return x;
+}
+
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+    x = exp(i, b, y, x);
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@B.h
+#ifndef B_H_
+#define B_H_
+
+class B
+{
+public:
+	B();
+	virtual ~B();
+	void hello(float y);
+};
+
+#endif /*B_H_*/
+
+//!ExtractFunctionRefactoringTest with Return Value and a lot Ref Parameter
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+replaceduplicates=true
+returnvalue=true
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	int exp(int i, B *& b, int & y, float & x);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+	//$++i;
+	b->hello(y);
+	i = i + x;
+	help();$//
+	b->hello(y);
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::exp(int i, B *& b, int & y, float & x)
+{
+    ++i;
+    b->hello(y);
+    i = i + x;
+    help();
+    return i;
+}
+
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+    i = exp(i, b, y, x);
+	b->hello(y);
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@B.h
+#ifndef B_H_
+#define B_H_
+
+class B
+{
+public:
+	B();
+	virtual ~B();
+	void hello(float y);
+};
+
+#endif /*B_H_*/
+//!ExtractMethod Bug #18 (problem with Qt's Q_FOREACH macro)
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+methodname=add_to_sum
+filename=main.cpp
+//@main.cpp
+#define for_each_int_in_array_with_index(list) for(int i = 0; i < sizeof(list) / sizeof(int); i++)
+
+struct Foreach
+{
+    int run()
+    {
+        int sum = 0;
+        int list [] = { 5, 6, 7 };
+        for_each_int_in_array_with_index(list)
+        {
+            //$sum += list[i];$//
+        }
+        return sum;
+    }
+};
+
+//=
+#define for_each_int_in_array_with_index(list) for(int i = 0; i < sizeof(list) / sizeof(int); i++)
+
+struct Foreach
+{
+    void add_to_sum(int & sum, int list[], int i)
+    {
+        sum += list[i];
+    }
+
+    int run()
+    {
+        int sum = 0;
+        int list [] = { 5, 6, 7 };
+        for_each_int_in_array_with_index(list)
+        {
+            add_to_sum(sum, list, i);
+        }
+        return sum;
+    }
+};
+
+//!ExtractFunctionRefactoringTest with Return Value take the second and Ref Parameter
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+returnparameterindex=1
+returnvalue=true
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+#include "B.h"
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+	B *exp(int & i, B *b, int & y, float & x);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+	//$++i;
+	b->hello(y);
+	i = i + x;
+	help();$//
+	b->hello(y);
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+B *A::exp(int & i, B *b, int & y, float & x)
+{
+    ++i;
+    b->hello(y);
+    i = i + x;
+    help();
+    return b;
+}
+
+int A::foo()
+{
+	int i = 2;
+	float x = i;
+	B* b = new B();
+	int y = x + i;
+    b = exp(i, b, y, x);
+	b->hello(y);
+	++x;
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@B.h
+#ifndef B_H_
+#define B_H_
+
+class B
+{
+public:
+	B();
+	virtual ~B();
+	void hello(float y);
+};
+
+#endif /*B_H_*/
+
+//!ExtractFunctionRefactoringTest protected visibility
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+protected:
+    void exp(int & i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	//$++i;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & i)
+{
+    ++i;
+    help();
+}
+
+int A::foo()
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@.config
+filename=A.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+visibility=protected
+
+//!ExtractFunctionRefactoringTest public visibility
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	void exp(int & i);
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	//$++i;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & i)
+{
+    ++i;
+    help();
+}
+
+int A::foo()
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@.config
+filename=A.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+visibility=public
+
+//!ExtractFunctionRefactoringTest const Method Bug # 46
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo() const;
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo() const;
+	
+private:
+	int help();
+    void exp(int & i) const;
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo() const
+{
+	int i = 2;
+	//$++i;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & i) const
+{
+    ++i;
+    help();
+}
+
+int A::foo() const
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@.config
+filename=A.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+
+//!don't return variables that aren't used 
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=main.h
+methodname=loop
+//@main.h
+
+void method()
+{
+	//$for (int var = 0; var < 100; ++var) {
+		if(var < 50)
+			continue;
+	}$//
+}
+//=
+
+void loop()
+{
+    for(int var = 0;var < 100;++var){
+        if(var < 50)
+            continue;
+
+    }
+}
+
+void method()
+{
+    loop();
+}
+//!don't extract code that contains 'return'
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=main.h
+fatalerror=true
+//@main.h
+
+void method()
+{
+	//$if(true)
+		return;$//
+	//unreachable
+}
+//!test if we don't allow to extract 'continue' Bug #53
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+fatalerror=true
+filename=A.h
+//@A.h
+
+void function()
+{
+	for (int var = 0; var < 100; ++var) {
+		//$if(var < 50)
+			continue;$//
+	}
+}
+
+//!ExtractMethod with Macros Bug #120 Extract Function generates superfluous characters
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=createSuite
+//@Test.cpp
+#define CUTE(name) cute::test((&name),(#name))
+
+void runSuite(){
+	//$cute::suite s;
+	s.push_back(CUTE(thisIsATest));
+	s.push_back(CUTE(testFuerRainer));$//
+	cute::ide_listener lis;
+	cute::makeRunner(lis)(s, "The Suite");
+}
+//=
+#define CUTE(name) cute::test((&name),(#name))
+
+
+cute::suite createSuite()
+{
+    cute::suite s;
+    s.push_back(CUTE(thisIsATest));
+    s.push_back(CUTE(testFuerRainer));
+    return s;
+}
+
+void runSuite(){
+	cute::suite s = createSuite();
+	cute::ide_listener lis;
+	cute::makeRunner(lis)(s, "The Suite");
+}
+//! Bug #124 Extract Function with a Macro call in selected code "forgets" the macro
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=runTest
+//@Test.cpp
+#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
+#define ASSERT(cond) ASSERTM(#cond, cond)
+
+void testFuerRainer(){
+        int i=int();
+        //$++i;
+        ASSERT (i);
+        --i;$//
+}
+
+//=
+#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
+#define ASSERT(cond) ASSERTM(#cond, cond)
+
+void runTest(int i)
+{
+    ++i;
+    ASSERT (i);
+    --i;
+}
+
+void testFuerRainer(){
+        int i=int();
+    runTest(i);
+}
+
+//! Bug #124 with comments Extract Function with a Macro call in selected code "forgets" the macro
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=runTest
+//@Test.cpp
+#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
+#define ASSERT(cond) ASSERTM(#cond, cond)
+
+void testFuerRainer(){
+        int i=int();
+        //$++i;
+        ASSERT (i);
+        --i;$//
+}
+
+//=
+#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
+#define ASSERT(cond) ASSERTM(#cond, cond)
+
+void runTest(int i)
+{
+    ++i;
+    ASSERT (i);
+    --i;
+}
+
+void testFuerRainer(){
+        int i=int();
+    runTest(i);
+}
+
+//! Bug #137 String Array problem in Extract Function
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=runTest
+//@Test.cpp
+#include <string>
+
+using namespace std;
+
+int const INITIAL_CAPACITY = 10;
+
+int main(){
+	int m_capacity;
+	//$m_capacity += INITIAL_CAPACITY;
+	string* newElements = new string[m_capacity];$//
+	newElements[0] = "s";
+}
+
+//=
+#include <string>
+
+using namespace std;
+
+int const INITIAL_CAPACITY = 10;
+
+
+string *runTest(int m_capacity)
+{
+    m_capacity += INITIAL_CAPACITY;
+    string *newElements = new string[m_capacity];
+    return newElements;
+}
+
+int main(){
+	int m_capacity;
+	string *newElements = runTest(m_capacity);
+	newElements[0] = "s";
+}
+

@@ -44,7 +44,7 @@ public class ModifiedASTStatementWriter extends StatementWriter {
 
 	@Override
 	protected IASTStatement[] getNestedStatements(IASTCompoundStatement compoundStatement) {
-		return modificationHelper.createModifiedChildArray(compoundStatement, compoundStatement.getStatements());
+		return modificationHelper.createModifiedChildArray(compoundStatement, compoundStatement.getStatements(), IASTStatement.class);
 	}
 	
 	

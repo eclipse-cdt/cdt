@@ -13,8 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.window.IShellProvider;
 
 /**
  * Base class for all refactoring runners.
@@ -26,12 +25,12 @@ public abstract class RefactoringRunner {
 
 	protected IFile file;
 	protected ISelection selection;
-	protected Shell shell;
+	protected IShellProvider shellProvider;
 
-	public RefactoringRunner(IFile file, ISelection selection) {
+	public RefactoringRunner(IFile file, ISelection selection, IShellProvider shellProvider) {
 		this.file = file;
 		this.selection = selection;
-		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		this.shellProvider= shellProvider;
 	}
 	
 	public abstract void run();

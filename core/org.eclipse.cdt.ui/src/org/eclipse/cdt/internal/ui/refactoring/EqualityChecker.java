@@ -9,23 +9,8 @@
  * Contributors: 
  * Institute for Software - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.refactoring.utils;
+package org.eclipse.cdt.internal.ui.refactoring;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTester;
-
-/**
- * @author Thomas Corbat
- *
- */
-public class UtilTestSuite extends TestSuite {
-
-	public static Test suite() throws Exception {
-		UtilTestSuite suite = new UtilTestSuite(); 
-		suite.addTest(IdentifierHelperTest.suite());
-		suite.addTest(RefactoringTester.suite("TranslationUnitHelperTest", "resources/refactoring/TranslationunitHelper.rts")); //$NON-NLS-1$ //$NON-NLS-2$
-		return suite;
-	}
+public interface EqualityChecker<T> {
+	boolean isEquals(T object1, T object2);
 }

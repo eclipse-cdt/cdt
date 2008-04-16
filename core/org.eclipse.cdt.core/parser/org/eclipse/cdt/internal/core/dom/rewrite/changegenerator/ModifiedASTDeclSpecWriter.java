@@ -31,7 +31,7 @@ public class ModifiedASTDeclSpecWriter extends DeclSpecWriter {
 	@Override
 	protected IASTDeclaration[] getMembers(
 			IASTCompositeTypeSpecifier compDeclSpec) {
-		return modificationHelper.createModifiedChildArray(compDeclSpec, compDeclSpec.getMembers());
+		return modificationHelper.createModifiedChildArray(compDeclSpec, compDeclSpec.getMembers(), IASTDeclaration.class);
 	}
 
 }

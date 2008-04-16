@@ -306,8 +306,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		ASTModificationHelper helper = new ASTModificationHelper(
 				modificationStore);
 
-		IASTDeclaration[] declarations = helper.createModifiedChildArray(tu, tu
-				.getDeclarations());
+		IASTDeclaration[] declarations = helper.createModifiedChildArray(tu, tu.getDeclarations(), IASTDeclaration.class);
 		for (IASTDeclaration currentDeclaration : declarations) {
 			currentDeclaration.accept(this);
 		}

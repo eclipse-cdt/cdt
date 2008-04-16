@@ -1151,6 +1151,13 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.refactor.extract.function"
+               label="%Refactoring.extractFunction.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.ExtractMethod"
+               retarget="true">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.refactor.extract.constant"
                label="%Refactoring.extractConstant.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
@@ -1606,6 +1613,11 @@
             contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.text.rename.element"/>
      <key
+            sequence="M2+M3+M"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.extract.function"/>
+     <key
             sequence="M3+C"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -1694,14 +1706,12 @@
 		<key
 			sequence="M1+F5"
 			commandId="org.eclipse.debug.ui.commands.RunLast"
-			contextId="org.eclipse.ui.globalScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 	   
 		<!-- MSVS StartWithoutDebugging -->
 		<key
 			sequence="F5"
 			commandId="org.eclipse.debug.ui.commands.DebugLast"
-			contextId="org.eclipse.ui.globalScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 	   
 		<!-- MSVS StepInto -->
@@ -1729,21 +1739,18 @@
 		<key
 			sequence="F9"
 			commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
-            contextId="org.eclipse.ui.globalScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 	   
 		<!-- MSVS RunToCursor -->
 		<key
 			sequence="M1+F10"
 			commandId="org.eclipse.debug.ui.commands.RunToLine"
-            contextId="org.eclipse.ui.globalScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 	   
 		<!-- MSVS Breakpoints -->
 		<key
 			sequence="M1+M3+B"
 			commandId="org.eclipse.debug.ui.BreakpointView"
-            contextId="org.eclipse.ui.globalScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 
 		<!-- Search Keys -->
@@ -1971,6 +1978,12 @@
             description="%ActionDefinition.extractConstant.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
             id="org.eclipse.cdt.ui.refactor.extract.constant">
+      </command>
+      <command
+            name="%ActionDefinition.extractFunction.name"
+            description="%ActionDefinition.extractFunction.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.extract.function">
       </command>
 	        
    </extension>

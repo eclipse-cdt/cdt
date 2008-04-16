@@ -46,7 +46,7 @@ A::~A()
 
 int A::foo()
 {
-	return //$42$//;
+	return //$42$//; //Hallo
 }
 
 void A::bar()
@@ -68,7 +68,7 @@ A::~A()
 
 int A::foo()
 {
-	return theAnswer;
+	return theAnswer; //Hallo
 }
 
 void A::bar()

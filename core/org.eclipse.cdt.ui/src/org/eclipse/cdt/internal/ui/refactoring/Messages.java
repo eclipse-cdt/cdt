@@ -38,6 +38,8 @@ public final class Messages extends NLS {
 	public static String HSRRefactoring_SelectionNotValid;
 	public static String HSRRefactoring_CantLoadTU;
 	public static String HSRRefactoring_Ambiguity;
+	public static String NodeContainer_Name;
+	public static String NodeContainer_Space;
 	public static String NO_FILE;
 
 	static {

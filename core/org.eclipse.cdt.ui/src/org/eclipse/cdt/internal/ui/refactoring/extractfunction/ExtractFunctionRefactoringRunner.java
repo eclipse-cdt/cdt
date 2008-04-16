@@ -9,49 +9,38 @@
  * Contributors: 
  * Institute for Software - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
+package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 /**
  * @author Emanuel Graf
  *
  */
-public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
+public class ExtractFunctionRefactoringRunner extends RefactoringRunner  {
 
-	public ExtractConstantRefactoringRunner(IFile file, ISelection selection, IShellProvider shellProvider) {
+	public ExtractFunctionRefactoringRunner(IFile file, ISelection selection, IShellProvider shellProvider) {
 		super(file, selection, shellProvider);
 	}
 
 	@Override
 	public void run() {
-		NameNVisibilityInformation info = new NameNVisibilityInformation();
-		CRefactoring refactoring = new ExtractConstantRefactoring(file,selection,info);
-		ExtractConstantRefactoringWizard wizard = new ExtractConstantRefactoringWizard(refactoring, info);
+		ExtractFunctionInformation info = new ExtractFunctionInformation();
+		
+		CRefactoring refactoring = new ExtractFunctionRefactoring(file,selection,info);
+		ExtractFunctionRefactoringWizard wizard = new ExtractFunctionRefactoringWizard(refactoring,info);
 		RefactoringWizardOpenOperation operator = new RefactoringWizardOpenOperation(wizard);
 		
 		try {
-			refactoring.lockIndex();
-			try {
-				operator.run(shellProvider.getShell(), refactoring.getName());
-			}
-			finally {
-				refactoring.unlockIndex();
-			}
+			operator.run(shellProvider.getShell(), refactoring.getName());
 		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		} catch (CoreException e) {
-			CUIPlugin.log(e);
+			//initial condition checking got canceled by the user.
 		}
 	}
 }

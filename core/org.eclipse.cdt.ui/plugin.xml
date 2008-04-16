@@ -1171,6 +1171,13 @@
                id="org.eclipse.cdt.ui.actions.ExtractConstant"
                retarget="true">
          </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.implement.method"
+               label="%Refactoring.implementMethod.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.ImplementMethod"
+               retarget="true">
+         </action>
       </actionSet>
       <actionSet
             label="%CSearchActionSet.label"
@@ -1995,6 +2002,12 @@
             description="%ActionDefinition.extractFunction.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
             id="org.eclipse.cdt.ui.refactor.extract.function">
+      </command>
+      <command
+            name="%ActionDefinition.implementMethod.name"
+            description="%ActionDefinition.implementMethod.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.implement.method">
       </command>
 	        
    </extension>

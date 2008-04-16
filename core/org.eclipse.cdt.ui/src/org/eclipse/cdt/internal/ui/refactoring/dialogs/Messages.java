@@ -27,6 +27,9 @@ public final class Messages extends NLS {
 	public static String ExtractInputPage_EnterName;
 	public static String ExtractInputPage_CheckName;
 	public static String VisibilitySelectionPanel_AccessModifier;
+	public static String ValidatingLabeledTextField_CantBeEmpty;
+	public static String ValidatingLabeledTextField_InvalidCharacters;
+	public static String ValidatingLabeledTextField_DuplicatedNames;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

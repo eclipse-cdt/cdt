@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	public static String ExtractConstantAction_label;
 	public static String ExtractFunctionAction_label;
 	public static String HideMethodAction_label;
+	public static String ImplementMethodAction_label;
 
 	static {
 		// initialize resource bundle

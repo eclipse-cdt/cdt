@@ -129,8 +129,11 @@ public class ChangeGenerator extends CPPASTVisitor {
 
 			synthTreatment(translationUnit);
 		}
-		sourceOffsets.put(translationUnit.getFileLocation().getFileName(),
-				Integer.valueOf(translationUnit.getFileLocation().getNodeOffset()));
+		final IASTFileLocation fileLocation = translationUnit.getFileLocation();
+		if (fileLocation != null) {
+			sourceOffsets.put(fileLocation.getFileName(),
+					Integer.valueOf(fileLocation.getNodeOffset()));
+		}
 		return super.visit(translationUnit);
 	}
 

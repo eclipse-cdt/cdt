@@ -111,6 +111,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String HIDE_METHOD= "org.eclipse.cdt.ui.refactor.hide.method"; //$NON-NLS-1$
 	
 	/**
+	 * Action definition ID of the refactor -> implement method action
+	 * (value <code>"org.eclipse.cdt.ui.refactor.implement.method"</code>).
+	 */
+	public static final String IMPLEMENT_METHOD= "org.eclipse.cdt.ui.refactor.implement.method"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID of the refactor -> undo action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.undo.action"</code>).
 	 */

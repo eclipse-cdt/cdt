@@ -70,6 +70,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "proto()");
+		expandTreeItem(tree, 0);
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("func"), 2);

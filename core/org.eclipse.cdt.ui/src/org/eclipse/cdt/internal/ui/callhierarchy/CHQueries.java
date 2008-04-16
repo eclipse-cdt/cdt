@@ -64,8 +64,8 @@ public class CHQueries {
 		if (calleeBinding != null) {
 			findCalledBy(index, calleeBinding, true, project, result);
 			IBinding[] overriddenBindings= getOverriddenBindings(index, calleeBinding);
-			for (int i = 0; i < overriddenBindings.length; i++) {
-				findCalledBy(index, overriddenBindings[i], false, project, result);
+			for (IBinding overriddenBinding : overriddenBindings) {
+				findCalledBy(index, overriddenBinding, false, project, result);
 			}
 		}
 		return cp.createNodes(node, result);
@@ -78,20 +78,21 @@ public class CHQueries {
 				final ICPPMethod m= (ICPPMethod) binding;
 				final char[] mname= m.getNameCharArray();
 				final ICPPClassType mcl= m.getClassOwner();
-				final IFunctionType mft= m.getType();
-				boolean isVirtual= m.isVirtual();
-				ICPPMethod[] allMethods= mcl.getMethods();
-				for (int i = 0; i < allMethods.length; i++) {
-					ICPPMethod method = allMethods[i];
-					if (CharArrayUtils.equals(mname, method.getNameCharArray()) && !mcl.isSameType(method.getClassOwner())) {
-						if (mft.isSameType(method.getType())) {
-							isVirtual= isVirtual || method.isVirtual();
-							result.add(method);
+				if (mcl != null) {
+					final IFunctionType mft= m.getType();
+					boolean isVirtual= m.isVirtual();
+					ICPPMethod[] allMethods= mcl.getMethods();
+					for (ICPPMethod method : allMethods) {
+						if (CharArrayUtils.equals(mname, method.getNameCharArray()) && !mcl.isSameType(method.getClassOwner())) {
+							if (mft.isSameType(method.getType())) {
+								isVirtual= isVirtual || method.isVirtual();
+								result.add(method);
+							}
 						}
 					}
-				}
-				if (isVirtual) {
-					return result.toArray(new IBinding[result.size()]);
+					if (isVirtual) {
+						return result.toArray(new IBinding[result.size()]);
+					}
 				}
 			} catch (DOMException e) {
 				// index bindings don't throw DOMExceptions
@@ -108,20 +109,20 @@ public class CHQueries {
 					final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
 					final char[] mname= m.getNameCharArray();
 					final ICPPClassType mcl= m.getClassOwner();
-					final IFunctionType mft= m.getType();
-					ICPPClassType[] subclasses= getSubClasses(index, mcl);
-					for (int i = 0; i < subclasses.length; i++) {
-						ICPPClassType subClass = subclasses[i];
-						ICPPMethod[] methods= subClass.getDeclaredMethods();
-						for (int j = 0; j < methods.length; j++) {
-							ICPPMethod method = methods[j];
-							if (CharArrayUtils.equals(mname, method.getNameCharArray()) &&
-									mft.isSameType(method.getType())) {
-								result.add(method);
+					if (mcl != null) {
+						final IFunctionType mft= m.getType();
+						ICPPClassType[] subclasses= getSubClasses(index, mcl);
+						for (ICPPClassType subClass : subclasses) {
+							ICPPMethod[] methods= subClass.getDeclaredMethods();
+							for (ICPPMethod method : methods) {
+								if (CharArrayUtils.equals(mname, method.getNameCharArray()) &&
+										mft.isSameType(method.getType())) {
+									result.add(method);
+								}
 							}
 						}
+						return result.toArray(new IBinding[result.size()]);
 					}
-					return result.toArray(new IBinding[result.size()]);
 				}
 			} catch (DOMException e) {
 				// index bindings don't throw DOMExceptions
@@ -153,8 +154,7 @@ public class CHQueries {
 		}
 
 		IIndexName[] names= index.findNames(classOrTypedef, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
-		for (int i = 0; i < names.length; i++) {
-			IIndexName indexName = names[i];
+		for (IIndexName indexName : names) {
 			if (indexName.isBaseSpecifier()) {
 				IIndexName subClassDef= indexName.getEnclosingDefinition();
 				if (subClassDef != null) {
@@ -174,13 +174,14 @@ public class CHQueries {
 			}
 			final char[] mname= m.getNameCharArray();
 			final ICPPClassType mcl= m.getClassOwner();
-			final IFunctionType mft= m.getType();
-			ICPPMethod[] allMethods= mcl.getMethods();
-			for (int i = 0; i < allMethods.length; i++) {
-				ICPPMethod method = allMethods[i];
-				if (CharArrayUtils.equals(mname, method.getNameCharArray()) && mft.isSameType(method.getType())) {
-					if (method.isVirtual()) {
-						return true;
+			if (mcl != null) {
+				final IFunctionType mft= m.getType();
+				ICPPMethod[] allMethods= mcl.getMethods();
+				for (ICPPMethod method : allMethods) {
+					if (CharArrayUtils.equals(mname, method.getNameCharArray()) && mft.isSameType(method.getType())) {
+						if (method.isVirtual()) {
+							return true;
+						}
 					}
 				}
 			}
@@ -193,8 +194,7 @@ public class CHQueries {
 	private static void findCalledBy(IIndex index, IBinding callee, boolean includeOrdinaryCalls, ICProject project, CalledByResult result) 
 			throws CoreException {
 		IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
-		for (int i = 0; i < names.length; i++) {
-			IIndexName rname = names[i];
+		for (IIndexName rname : names) {
 			if (includeOrdinaryCalls || rname.couldBePolymorphicMethodCall()) {
 				IIndexName caller= rname.getEnclosingDefinition();
 				if (caller != null) {
@@ -217,8 +217,7 @@ public class CHQueries {
 		IIndexName callerName= IndexUI.elementToName(index, caller);
 		if (callerName != null) {
 			IIndexName[] refs= callerName.getEnclosedNames();
-			for (int i = 0; i < refs.length; i++) {
-				IIndexName name = refs[i];
+			for (IIndexName name : refs) {
 				IBinding binding= index.findBinding(name);
 				if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
 					IBinding[] virtualOverriders= getOverridingBindings(index, binding);
@@ -229,8 +228,7 @@ public class CHQueries {
 					else {
 						ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
 						list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
-						for (int j = 0; j < virtualOverriders.length; j++) {
-							IBinding overrider = virtualOverriders[j];
+						for (IBinding overrider : virtualOverriders) {
 							list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));
 						}
 						defs= list.toArray(new ICElement[list.size()]);

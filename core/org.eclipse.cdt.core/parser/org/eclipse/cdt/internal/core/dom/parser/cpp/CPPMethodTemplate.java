@@ -50,8 +50,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
 		if( declarations != null ){
-			for( int i = 0; i < declarations.length; i++ ){
-			    IASTNode parent = declarations[i].getParent();
+			for (IASTName declaration : declarations) {
+			    IASTNode parent = declaration.getParent();
 			    while( !(parent instanceof IASTDeclaration) )
 			        parent = parent.getParent();
 
@@ -69,17 +69,17 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		ICPPClassScope clsScope = (ICPPClassScope) scope;
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(clsScope);
 		IASTDeclaration [] members = compSpec.getMembers();
-		for( int i = 0; i < members.length; i++ ){
-		    if( members[i] instanceof ICPPASTTemplateDeclaration ){
-		        IASTDeclaration decl = ((ICPPASTTemplateDeclaration)members[i]).getDeclaration();
+		for (IASTDeclaration member : members) {
+		    if( member instanceof ICPPASTTemplateDeclaration ){
+		        IASTDeclaration decl = ((ICPPASTTemplateDeclaration)member).getDeclaration();
 		        if( decl instanceof IASTSimpleDeclaration ){
 					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-					for( int j = 0; j < dtors.length; j++ ){
-						IASTName name = CPPVisitor.getMostNestedDeclarator( dtors[j] ).getName();
+					for (IASTDeclarator dtor : dtors) {
+						IASTName name = CPPVisitor.getMostNestedDeclarator( dtor ).getName();
 						if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
 							name.resolveBinding() == this )
 						{
-							return members[i];
+							return member;
 						}
 					}
 				} else if( decl instanceof IASTFunctionDefinition ){
@@ -87,7 +87,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
 						name.resolveBinding() == this )
 					{
-						return members[i];
+						return member;
 					}
 				}
 		    }
@@ -99,23 +99,19 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 	public int getVisibility() throws DOMException {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl == null ){
-			IScope scope = getScope();
-			if( scope instanceof ICPPTemplateScope)
-				scope = scope.getParent();
-			if( scope instanceof ICPPClassScope ){
-				ICPPClassType cls = ((ICPPClassScope)scope).getClassType();
-				if( cls != null )
-					return ( cls.getKey() == ICPPClassType.k_class ) ? ICPPASTVisiblityLabel.v_private : ICPPASTVisiblityLabel.v_public;
+			ICPPClassType cls = getClassOwner();
+			if (cls != null) {
+				return ( cls.getKey() == ICPPClassType.k_class ) ? ICPPASTVisiblityLabel.v_private : ICPPASTVisiblityLabel.v_public;
 			}
 			return ICPPASTVisiblityLabel.v_private;
 		}
 		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 		IASTDeclaration [] members = cls.getMembers();
 		ICPPASTVisiblityLabel vis = null;
-		for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof ICPPASTVisiblityLabel )
-				vis = (ICPPASTVisiblityLabel) members[i];
-			else if( members[i] == decl )
+		for (IASTDeclaration member : members) {
+			if( member instanceof ICPPASTVisiblityLabel )
+				vis = (ICPPASTVisiblityLabel) member;
+			else if( member == decl )
 				break;
 		}
 		if( vis != null ){
@@ -127,8 +123,14 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 	}
 	
 	public ICPPClassType getClassOwner() throws DOMException {
-		ICPPClassScope scope = (ICPPClassScope)getScope();
-		return scope.getClassType();
+		IScope scope= getScope();
+		while (scope instanceof ICPPTemplateScope) {
+			scope= scope.getParent();
+		}
+		if( scope instanceof ICPPClassScope ){
+			return ((ICPPClassScope)scope).getClassType();
+		}
+		return null;
 	}
 
     public boolean isVirtual() {

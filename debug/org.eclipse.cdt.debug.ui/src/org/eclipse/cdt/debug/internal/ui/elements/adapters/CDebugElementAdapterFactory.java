@@ -19,10 +19,14 @@ import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
+import org.eclipse.cdt.debug.core.model.IDisassemblyLine;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.CDisassemblyContextProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleMementoProvider;
+import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementAnnotationProvider;
+import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider;
+import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -41,6 +45,9 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
     private static IElementMementoProvider fgModuleMementoProvider = new ModuleMementoProvider();
 
     private static IDisassemblyContextProvider fgDisassemblyContextProvider = new CDisassemblyContextProvider();
+    private static IDocumentElementContentProvider fgDisassemblyContentProvider = new DisassemblyElementContentProvider();
+    private static IDocumentElementLabelProvider fgDisassemblyLabelProvider = new DisassemblyElementLabelProvider();
+    private static IDocumentElementAnnotationProvider fgDisassemblyAnnotationProvider = new DisassemblyElementAnnotationProvider();
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -97,6 +104,21 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
                 return fgDisassemblyContextProvider;
             }
         }
+        if ( adapterType.equals( IDocumentElementContentProvider.class ) ) {
+            if ( adaptableObject instanceof ICStackFrame ) {
+                return fgDisassemblyContentProvider;
+            }
+        }
+        if ( adapterType.equals( IDocumentElementLabelProvider.class ) ) {
+            if ( adaptableObject instanceof IDisassemblyLine ) {
+                return fgDisassemblyLabelProvider;
+            }
+        }
+        if ( adapterType.equals( IDocumentElementAnnotationProvider.class ) ) {
+            if ( adaptableObject instanceof IDisassemblyLine ) {
+                return fgDisassemblyAnnotationProvider;
+            }
+        }
     	return null;
 	}
 
@@ -109,6 +131,9 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 				IModelProxyFactory.class,
         		IElementMementoProvider.class,
         		IDisassemblyContextProvider.class,
+        		IDocumentElementContentProvider.class,
+                IDocumentElementLabelProvider.class,
+                IDocumentElementAnnotationProvider.class,
 			};
 	}
 }

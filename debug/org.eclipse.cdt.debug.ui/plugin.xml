@@ -1156,7 +1156,7 @@
             verticalRulerPreferenceValue="true">
       </specification>
       <specification
-            colorPreferenceValue="217,255,226"
+            colorPreferenceValue="198,219,174"
             annotationType="org.eclipse.cdt.debug.ui.currentDisassemblyIP"
             verticalRulerPreferenceValue="true"
             colorPreferenceKey="currentDisassemblyIPColor"
@@ -1172,7 +1172,7 @@
             overviewRulerPreferenceKey="currentDisassemblyIPOverviewRuler">
       </specification>
       <specification
-            colorPreferenceValue="217,255,226"
+            colorPreferenceValue="219,235,204"
             annotationType="org.eclipse.cdt.debug.ui.secondaryDisassemblyIP"
             verticalRulerPreferenceValue="true"
             colorPreferenceKey="secondaryDisassemblyIPColor"
@@ -1277,6 +1277,9 @@
          <adapter
                type="org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider">
          </adapter>
+         <adapter
+               type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider">
+         </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
@@ -1340,6 +1343,16 @@
          </adapter>
          <adapter
                type="org.eclipse.jface.viewers.ILabelDecorator">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.IDisassemblyLine"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementAnnotationProvider">
          </adapter>
       </factory>
    </extension>
@@ -1458,6 +1471,12 @@
             class="org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage"
             id="org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage"
             category="org.eclipse.cdt.debug.ui.CDebugPreferencePage">
+      </page>
+      <page
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.DisassemblyPreferencePage"
+            id="org.eclipse.cdt.debug.ui.disassemblyPreferencePge"
+            name="%DisassemblyPreferencePage.name">
       </page>
    </extension>
 

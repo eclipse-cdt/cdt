@@ -12,6 +12,9 @@
 package org.eclipse.cdt.debug.internal.core;
 
 import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider;
+import org.eclipse.cdt.debug.core.model.ICDebugElement;
+import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
+import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * org.eclipse.cdt.debug.internal.core.CDisassemblyContextProvider: 
@@ -23,14 +26,10 @@ public class CDisassemblyContextProvider implements IDisassemblyContextProvider 
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider#getDisassemblyContext(java.lang.Object)
      */
     public Object getDisassemblyContext( Object element ) {
-//        if ( element instanceof ICDebugElement ) {
-//            IDebugTarget target = ((ICDebugElement)element).getDebugTarget();
-//            try {
-//                return ((ICDebugTarget)target).getDisassembly();
-//            }
-//            catch( DebugException e ) {
-//            }
-//        }
+        if ( element instanceof ICDebugElement ) {
+            IDebugTarget target = ((ICDebugElement)element).getDebugTarget();
+            return ((CDebugTarget)target).getDisassemblyRetrieval();
+        }
         return null;
     }
 }

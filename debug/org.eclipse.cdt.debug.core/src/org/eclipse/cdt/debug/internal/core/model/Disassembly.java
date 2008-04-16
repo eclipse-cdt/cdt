@@ -122,6 +122,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 
 	public void dispose() {
 		getCDISession().getEventManager().removeEventListener( this );
+        CDebugCorePlugin.getDefault().getDisassemblyContextService().unregister( this );
 		for ( int i = 0; i < fBlocks.length; ++i )
 			if ( fBlocks[i] != null ) {
 				fBlocks[i].dispose();

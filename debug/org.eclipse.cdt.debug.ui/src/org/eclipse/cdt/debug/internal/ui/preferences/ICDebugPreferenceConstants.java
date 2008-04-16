@@ -39,4 +39,9 @@ public interface ICDebugPreferenceConstants {
     public static final String PREF_DISASM_SHOW_INSTRUCTIONS = ICDebugUIConstants.PLUGIN_ID + ".disassembly.showInstructions"; //$NON-NLS-1$
 
     public static final String PREF_DISASM_SHOW_SOURCE = ICDebugUIConstants.PLUGIN_ID + ".disassembly.showSource"; //$NON-NLS-1$
+
+    /**
+     * Specifies the conditions under which the disassembly editor will be activated
+     */
+    public static final String PREF_OPEN_DISASSEMBLY_MODE = ICDebugUIConstants.PLUGIN_ID + ".openDisassemblyMode"; //$NON-NLS-1$
 }

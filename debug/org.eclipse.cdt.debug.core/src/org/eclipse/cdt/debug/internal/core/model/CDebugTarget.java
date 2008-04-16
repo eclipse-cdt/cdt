@@ -170,10 +170,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 */
 	private ICDITargetConfiguration fConfig;
 
-	/**
-	 * The disassembly manager for this target.
-	 */
-	private Disassembly fDisassembly;
+    /**
+     * The disassembly manager for this target.
+     */
+    private Disassembly fDisassembly;
+
+    /**
+     * The new disassembly manager for this target.
+     */
+    private DisassemblyRetrieval fDisassemblyRetrieval;
 
 	/**
 	 * The module manager for this target.
@@ -1556,9 +1561,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getDisassembly()
 	 */
-	public IDisassembly getDisassembly() throws DebugException {
-		return fDisassembly;
-	}
+    public IDisassembly getDisassembly() throws DebugException {
+        return fDisassembly;
+    }
+
+    public DisassemblyRetrieval getDisassemblyRetrieval() {
+        return fDisassemblyRetrieval;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getSignals()
@@ -1584,12 +1593,16 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void createDisassembly() {
 		this.fDisassembly = new Disassembly( this );
+		this.fDisassemblyRetrieval = new DisassemblyRetrieval( this );
 	}
 
 	private void disposeDisassembly() {
-		if ( fDisassembly != null )
-			fDisassembly.dispose();
-		fDisassembly = null;
+        if ( fDisassembly != null )
+            fDisassembly.dispose();
+        fDisassembly = null;
+        if ( fDisassemblyRetrieval != null )
+            fDisassemblyRetrieval.dispose();
+        fDisassemblyRetrieval = null;
 	}
 
 	/* (non-Javadoc)

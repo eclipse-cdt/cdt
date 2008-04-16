@@ -21,7 +21,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
  * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyEditorPresentation: 
  * //TODO Add description.
  */
+@SuppressWarnings("restriction")
 public class DisassemblyEditorPresentation extends PresentationContext implements IDocumentPresentation {
+
+    public static final String PROPERTY_SHOW_INSTRUCTIONS = "PROPERTY_SHOW_INSTRUCTIONS"; //$NON-NLS-1$
+    public static final String PROPERTY_SHOW_SOURCE = "PROPERTY_SHOW_SOURCE"; //$NON-NLS-1$
+    public static final String PROPERTY_SHOW_ADDRESSES = "PROPERTY_SHOW_ADDRESSES"; //$NON-NLS-1$
+    public static final String PROPERTY_SHOW_LINE_NUMBERS = "PROPERTY_SHOW_LINE_NUMBERS"; //$NON-NLS-1$
 
     private boolean fShowInstructions = true;
     private boolean fShowSource = false;
@@ -31,24 +37,24 @@ public class DisassemblyEditorPresentation extends PresentationContext implement
 
     public DisassemblyEditorPresentation() {
         super( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR );
-        fShowInstructions = CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS );
-        fShowSource = CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE );
+        setProperty( PROPERTY_SHOW_INSTRUCTIONS, Boolean.valueOf( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS ) ) );
+        setProperty( PROPERTY_SHOW_SOURCE, Boolean.valueOf( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE ) ) );
     }
 
     public boolean showIntstructions() {
-        return fShowInstructions;
+        return ((Boolean)getProperty( PROPERTY_SHOW_INSTRUCTIONS )).booleanValue();
     }
 
     public void setShowIntstructions( boolean showIntstructions ) {
-        fShowInstructions = showIntstructions;
+        setProperty( PROPERTY_SHOW_INSTRUCTIONS, Boolean.valueOf( showIntstructions ) );
     }
 
     public boolean showSource() {
-        return fShowSource;
+        return ((Boolean)getProperty( PROPERTY_SHOW_SOURCE )).booleanValue();
     }
 
     public void setShowSource( boolean showSource ) {
-        fShowSource = showSource;
+        setProperty( PROPERTY_SHOW_SOURCE, Boolean.valueOf( showSource ) );
     }
 
     public boolean showAddresses() {

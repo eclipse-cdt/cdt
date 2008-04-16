@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerAction;
 import org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ToggleBreakpointRulerAction;
+import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyPane;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DocumentContentProvider;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.VirtualDocument;
@@ -31,6 +32,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -43,7 +46,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusableEditor, IDebugContextListener {
+public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusableEditor, IDebugContextListener, IPropertyChangeListener {
 
     private DisassemblyPane fDisassemblyPane;
 
@@ -73,10 +76,14 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
      */
+    @SuppressWarnings("restriction")
     @Override
     public void init( IEditorSite site, IEditorInput input ) throws PartInitException {
         setSite( site );
         setInput( input );
+        ((DisassemblyDocumentProvider)getDocumentProvider()).
+                               getDocumentPresentation( input ).
+                                   addPropertyChangeListener( this );
         DebugUITools.getDebugContextManager().addDebugContextListener( this );
     }
 
@@ -138,9 +145,13 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.WorkbenchPart#dispose()
      */
+    @SuppressWarnings("restriction")
     @Override
     public void dispose() {
         DebugUITools.getDebugContextManager().removeDebugContextListener( this );
+        ((DisassemblyDocumentProvider)getDocumentProvider()).
+                    getDocumentPresentation( getEditorInput() ).
+                        removePropertyChangeListener( this );
         getDocumentProvider().disconnect( getEditorInput() );
         fDisassemblyPane.dispose();
         super.dispose();
@@ -333,5 +344,12 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
         setAction( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT, action );
         action= new CBreakpointPropertiesRulerAction( this, ruler );
         setAction( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES, action );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+     */
+    public void propertyChange( PropertyChangeEvent event ) {
+        getViewer().refresh();
     }
 }

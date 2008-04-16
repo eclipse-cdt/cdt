@@ -63,7 +63,7 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
      
 
                     <Message ID="1013" Indicator="E">
-                          <LevelOne>Expand failed or canceled. Try again.</LevelOne>
+                          <LevelOne>Expand failed or cancelled. Try again.</LevelOne>
                           <LevelTwo>When expanding a node in the tree, and retrieving the resources, either an error occurred or you cancelled the operation. The expand is cancelled.</LevelTwo>
                     </Message>
                     <Message ID="1014" Indicator="E">
@@ -224,7 +224,7 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelTwo></LevelTwo>
                     </Message>
                     <Message ID="1067" Indicator="E">
-                          <LevelOne>Operation canceled.</LevelOne>		
+                          <LevelOne>Operation cancelled.</LevelOne>		
                           <LevelTwo></LevelTwo>
                     </Message>
 

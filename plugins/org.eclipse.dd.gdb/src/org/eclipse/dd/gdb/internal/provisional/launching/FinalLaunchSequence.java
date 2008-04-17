@@ -76,9 +76,15 @@ public class FinalLaunchSequence extends Sequence {
         		boolean useTerminal = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
         		
         		if (useTerminal) {
+        			String pytName = fCommandControl.getPtyName();
+        			if ( pytName != null ) {
             		fCommandControl.queueCommand(
-         				new MIInferiorTTYSet(fCommandControl.getControlDMContext(), fCommandControl.getPtyName()), 
+         				new MIInferiorTTYSet(fCommandControl.getControlDMContext(), pytName), 
      					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        			}
+        			else {
+        				requestMonitor.done();
+        			}
         		} else {
         			requestMonitor.done();
         		}

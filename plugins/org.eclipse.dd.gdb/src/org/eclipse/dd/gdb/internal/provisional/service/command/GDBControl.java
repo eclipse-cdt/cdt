@@ -263,7 +263,12 @@ public class GDBControl extends AbstractMIControl {
     }
     
     public String getPtyName() {
-    	return fPty.getSlaveName();
+    	if ( fPty != null ) {
+    		return fPty.getSlaveName();
+    	}
+    	else {
+    		return null;
+    	}
     }
         
     @DsfServiceEventHandler 

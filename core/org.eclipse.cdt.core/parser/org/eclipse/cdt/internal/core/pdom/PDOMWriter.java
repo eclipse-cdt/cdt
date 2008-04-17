@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -39,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -69,7 +70,7 @@ abstract public class PDOMWriter {
 	
 	private static class Symbols {
 		ArrayList<IASTName[]> fNames= new ArrayList<IASTName[]>();
-		ArrayList<IASTPreprocessorMacroDefinition> fMacros= new ArrayList<IASTPreprocessorMacroDefinition>();
+		ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<IASTPreprocessorStatement>();
 		ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
 	}
 	private boolean fShowProblems;
@@ -122,12 +123,7 @@ abstract public class PDOMWriter {
 	}
 			
 	/**
-	 * Extracts symbols from the given ast and adds them to the index. It will
-	 * make calls to 	  
-	 * {@link #needToUpdate(IIndexFileLocation)},
-	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)},
-	 * {@link #getLastModified(IIndexFileLocation)} and
-	 * {@link #findLocation(String)} to obtain further information.
+	 * Extracts symbols from the given ast and adds them to the index. 
 	 * 
 	 * When flushIndex is set to <code>false</code>, you must make sure to flush the 
 	 * index after your last write operation.
@@ -142,8 +138,8 @@ abstract public class PDOMWriter {
 			fShowSyntaxProblems= true;
 		}
 		final Map<IIndexFileLocation, Symbols> symbolMap= new HashMap<IIndexFileLocation, Symbols>();
-		for (int i = 0; i < ifls.length; i++) {
-			prepareInMap(symbolMap, ifls[i]);
+		for (IIndexFileLocation ifl : ifls) {
+			prepareInMap(symbolMap, ifl);
 		}
 		ArrayList<IStatus> stati= new ArrayList<IStatus>();
 
@@ -161,7 +157,7 @@ abstract public class PDOMWriter {
 		}
 		if (!stati.isEmpty()) {
 			String path= null;
-			if (ifls != null && ifls.length > 0) {
+			if (ifls.length > 0) {
 				path= ifls[ifls.length-1].getURI().getPath();
 			}
 			else {
@@ -218,11 +214,10 @@ abstract public class PDOMWriter {
 
 	private void resolveNames(final Map<IIndexFileLocation, Symbols> symbolMap, IIndexFileLocation[] ifls, ArrayList<IStatus> stati, IProgressMonitor pm) {
 		long start= System.currentTimeMillis();
-		for (int i=0; i<ifls.length; i++) {
+		for (IIndexFileLocation path : ifls) {
 			if (pm.isCanceled()) {
 				return;
 			}
-			IIndexFileLocation path= ifls[i];
 			Symbols symbols= symbolMap.get(path);
 
 			final ArrayList<IASTName[]> names= symbols.fNames;
@@ -277,39 +272,39 @@ abstract public class PDOMWriter {
 		final HashSet<IIndexFileLocation> contextIFLs= new HashSet<IIndexFileLocation>();
 		final IIndexFileLocation astIFL = fResolver.resolveASTPath(ast.getFilePath());
 		
-		// includes
 		int unresolvedIncludes= 0;
-		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
-		for (int i= 0; i < includes.length; i++) {
-			final IASTPreprocessorIncludeStatement include = includes[i];
-			final IASTFileLocation astLoc= include.getFileLocation();
-			final IIndexFileLocation sourceIFL= astLoc != null ? fResolver.resolveASTPath(astLoc.getFileName()) : astIFL; // command-line includes
-			final boolean updateSource= symbolMap.containsKey(sourceIFL);
-			if (updateSource) {
-				addToMap(symbolMap, sourceIFL, include);
-			}
-			if (include.isActive()) {
-				if (!include.isResolved()) {
-					unresolvedIncludes++;
+		IASTPreprocessorStatement[] stmts = ast.getAllPreprocessorStatements();
+		for (final IASTPreprocessorStatement stmt : stmts) {
+			// includes
+			if (stmt instanceof IASTPreprocessorIncludeStatement) {
+				IASTPreprocessorIncludeStatement include= (IASTPreprocessorIncludeStatement) stmt;
+
+				final IASTFileLocation astLoc= include.getFileLocation();
+				final IIndexFileLocation sourceIFL= astLoc != null ? fResolver.resolveASTPath(astLoc.getFileName()) : astIFL; // command-line includes
+				final boolean updateSource= symbolMap.containsKey(sourceIFL);
+				if (updateSource) {
+					addToMap(symbolMap, sourceIFL, include);
 				}
-				else if (updateSource) {
-					// the include was parsed, check if we want to update the included file in the index
-					final IIndexFileLocation targetIFL= fResolver.resolveASTPath(include.getPath());
-					if (symbolMap.containsKey(targetIFL) && contextIFLs.add(targetIFL)) {
-						contextIncludes.add(include);
+				if (include.isActive()) {
+					if (!include.isResolved()) {
+						unresolvedIncludes++;
+					}
+					else if (updateSource) {
+						// the include was parsed, check if we want to update the included file in the index
+						final IIndexFileLocation targetIFL= fResolver.resolveASTPath(include.getPath());
+						if (symbolMap.containsKey(targetIFL) && contextIFLs.add(targetIFL)) {
+							contextIncludes.add(include);
+						}
 					}
 				}
 			}
-		}
-		
-		// macros
-		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
-		for (int i2 = 0; i2 < macros.length; ++i2) {
-			IASTPreprocessorMacroDefinition macro = macros[i2];
-			IASTFileLocation sourceLoc = macro.getFileLocation();
-			if (sourceLoc != null) { // skip built-ins and command line macros
-				IIndexFileLocation path2 = fResolver.resolveASTPath(sourceLoc.getFileName());
-				addToMap(symbolMap, path2, macro);
+			// macros
+			else if (stmt instanceof IASTPreprocessorMacroDefinition || stmt instanceof IASTPreprocessorUndefStatement) {
+				IASTFileLocation sourceLoc = stmt.getFileLocation();
+				if (sourceLoc != null) { // skip built-ins and command line macros
+					IIndexFileLocation path2 = fResolver.resolveASTPath(sourceLoc.getFileName());
+					addToMap(symbolMap, path2, stmt);
+				}
 			}
 		}
 		
@@ -412,7 +407,7 @@ abstract public class PDOMWriter {
 			lists.fIncludes.add(thing);
 	}		
 
-	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location, IASTPreprocessorMacroDefinition thing) {
+	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location, IASTPreprocessorStatement thing) {
 		Symbols lists= map.get(location);
 		if (lists != null) 
 			lists.fMacros.add(thing);
@@ -439,10 +434,10 @@ abstract public class PDOMWriter {
 		file.setScannerConfigurationHashcode(configHash);
 		Symbols lists= symbolMap.get(location);
 		if (lists != null) {
-			IASTPreprocessorMacroDefinition[] macros= lists.fMacros.toArray(new IASTPreprocessorMacroDefinition[lists.fMacros.size()]);
+			IASTPreprocessorStatement[] macros= lists.fMacros.toArray(new IASTPreprocessorStatement[lists.fMacros.size()]);
 			IASTName[][] names= lists.fNames.toArray(new IASTName[lists.fNames.size()][]);
-			for (int j= 0; j<names.length; j++) {
-				final IASTName name= names[j][0];
+			for (IASTName[] name2 : names) {
+				final IASTName name= name2[0];
 				if (name != null) {
 					ASTInternal.setFullyResolved(name.getBinding(), true);
 				}

@@ -36,7 +36,8 @@ public interface IMacroBinding extends IBinding {
 	char[][] getParameterList();
 	
 	/**
-	 * Returns the expansion of this macro definition. For dynamic macros an exemplary image is returned.
+	 * Returns the expansion of this macro definition, or <code>null</code> if the definition is not
+	 * available. For dynamic macros an exemplary image is returned.
 	 * @since 5.0
 	 */
 	char[] getExpansion();
@@ -51,7 +52,8 @@ public interface IMacroBinding extends IBinding {
 	char[][] getParameterPlaceholderList();
 
 	/**
-	 * Returns the image of the expansion (also containing comments). For dynamic macros an exemplary image is returned.
+	 * Returns the image of the expansion (also containing comments), or <code>null</code> if the definition 
+	 * is not available. For dynamic macros an exemplary image is returned.
 	 * @since 5.0
 	 */
 	char[] getExpansionImage();

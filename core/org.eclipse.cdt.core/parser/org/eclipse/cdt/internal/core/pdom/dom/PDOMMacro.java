@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -56,12 +57,13 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 	
 	private static final int RECORD_SIZE = 34;  
 	private static final char[][] UNINITIALIZED= {};
+	private static final char[]   UNINITIALIZED1= {};
 
 	private final PDOM fPDOM;
 	private final int fRecord;
 
 	private char[][] fParameterList= UNINITIALIZED;
-	private char[] fExpansion;
+	private char[] fExpansion= UNINITIALIZED1;
 	private PDOMMacroContainer fContainer;
 	private PDOMMacroDefinitionName fDefinition;
 
@@ -70,36 +72,45 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 		fRecord = record;
 	}
 	
+	
 	public PDOMMacro(PDOM pdom, PDOMMacroContainer container, IASTPreprocessorMacroDefinition macro, PDOMFile file) throws CoreException {
-		final Database db= pdom.getDB();
-		
-		fPDOM = pdom;
-		fRecord = db.malloc(RECORD_SIZE);
-		fContainer= container;
-		
+		this(pdom, container, file, macro.getName());
+
 		final IASTName name = macro.getName();
-		final IASTFileLocation fileloc = name.getFileLocation();
 		final IMacroBinding binding= (IMacroBinding) name.getBinding();
 		final char[][] params= binding.getParameterList();
 		
-		db.putInt(fRecord + CONTAINER, container.getRecord());
-		db.putInt(fRecord + FILE, file.getRecord());
-		db.putInt(fRecord + EXPANSION, db.newString(binding.getExpansionImage()).getRecord());
-		db.putInt(fRecord + NAME_OFFSET, fileloc.getNodeOffset());
-		db.putShort(fRecord + NAME_LENGTH, (short) fileloc.getNodeLength());
-		
+		final Database db= pdom.getDB();
+		db.putInt(fRecord + EXPANSION, db.newString(binding.getExpansionImage()).getRecord());		
 		if (params != null) {
 			StringBuilder buf= new StringBuilder();
-			for (int i= 0; i < params.length; i++) {
-				buf.append(params[i]);
+			for (char[] param : params) {
+				buf.append(param);
 				buf.append(',');
 			}
 			db.putInt(fRecord + PARAMETERS, db.newString(buf.toString().toCharArray()).getRecord());
 		}
 		
-		fContainer.addDefinition(this);
+		container.addDefinition(this);
 	}
 	
+	public PDOMMacro(PDOM pdom, PDOMMacroContainer container, IASTPreprocessorUndefStatement undef, PDOMFile file) throws CoreException {
+		this(pdom, container, file, undef.getMacroName());
+	}
+
+	private PDOMMacro(PDOM pdom, PDOMMacroContainer container, PDOMFile file, IASTName name) throws CoreException {
+		final Database db= pdom.getDB();
+		fPDOM = pdom;
+		fRecord = db.malloc(RECORD_SIZE);
+		fContainer= container;
+
+		final IASTFileLocation fileloc = name.getFileLocation();
+		db.putInt(fRecord + CONTAINER, container.getRecord());
+		db.putInt(fRecord + FILE, file.getRecord());
+		db.putInt(fRecord + NAME_OFFSET, fileloc.getNodeOffset());
+		db.putShort(fRecord + NAME_LENGTH, (short) fileloc.getNodeLength());
+	}
+
 	public PDOM getPDOM() {
 		return fPDOM;
 	}
@@ -125,7 +136,10 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 			nextName.setPrevInContainer(prevName);
 
 		
-		getExpansionInDB().delete();
+		final IString expansion = getExpansionInDB();
+		if (expansion != null) {
+			expansion.delete();
+		}
 		final IString params = getParamListInDB();
 		if (params != null) {
 			params.delete();
@@ -142,7 +156,7 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 	private IString getExpansionInDB() throws CoreException {
 		Database db = fPDOM.getDB();
 		int rec = db.getInt(fRecord + EXPANSION);
-		return db.getString(rec);
+		return rec == 0 ? null : db.getString(rec);
 	}
 
 	private IString getParamListInDB() throws CoreException {
@@ -215,13 +229,21 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 		return fParameterList;
 	}
 
+	public boolean isMacroDefinition() throws CoreException {
+		if (fExpansion == UNINITIALIZED1) {
+			return fPDOM.getDB().getInt(fRecord + EXPANSION) != 0;
+		}
+		return fExpansion != null;
+	}
+
 	public char[] getExpansionImage() {
-		if (fExpansion == null) {
+		if (fExpansion == UNINITIALIZED1) {
 			try {
-				fExpansion= getExpansionInDB().getChars();
+				final IString expansionInDB = getExpansionInDB();
+				fExpansion= expansionInDB == null ? null : expansionInDB.getChars();
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fExpansion= new char[] {};
+				fExpansion= CharArrayUtils.EMPTY;
 			}
 		}
 		return fExpansion;
@@ -343,7 +365,10 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 		return null;
 	}
 
-	public IIndexFragmentName getDefinition() {
+	public IIndexFragmentName getDefinition() throws CoreException {
+		if (!isMacroDefinition()) {
+			return null;
+		}
 		if (fDefinition == null) {
 			fDefinition= new PDOMMacroDefinitionName(this);
 		}

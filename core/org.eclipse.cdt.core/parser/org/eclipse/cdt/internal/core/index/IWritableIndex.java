@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -72,7 +72,7 @@ public interface IWritableIndex extends IIndex {
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, 
 			int linkageID, IncludeInformation[] includes, 
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names,
+			IASTPreprocessorStatement[] macros, IASTName[][] names,
 			ASTFilePathResolver resolver) throws CoreException;
 
 	/**

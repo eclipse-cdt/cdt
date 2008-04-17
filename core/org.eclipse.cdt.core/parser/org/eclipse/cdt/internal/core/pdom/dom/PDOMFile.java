@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -225,21 +227,31 @@ public class PDOMFile implements IIndexFragmentFile {
 		pdom.getDB().putInt(record + FIRST_MACRO, rec);
 	}
 
-	public void addMacros(IASTPreprocessorMacroDefinition[] macros) throws CoreException {
+	public void addMacros(IASTPreprocessorStatement[] macros) throws CoreException {
 		assert getFirstMacro() == null;
 
 		PDOMMacro lastMacro= null;
 		final PDOMLinkage linkage = getLinkage();
-		for (int i = 0; i < macros.length; i++) {
-			IASTPreprocessorMacroDefinition macro = macros[i];
-			PDOMMacroContainer container= linkage.getMacroContainer(macro.getName().toCharArray());
-			PDOMMacro pdomMacro = new PDOMMacro(pdom, container, macro, this);
-			if (lastMacro == null) {
-				setFirstMacro(pdomMacro);
-			} else {
-				lastMacro.setNextMacro(pdomMacro);
+		for (IASTPreprocessorStatement stmt : macros) {
+			PDOMMacro pdomMacro= null;
+			if (stmt instanceof IASTPreprocessorMacroDefinition) {
+				IASTPreprocessorMacroDefinition macro= (IASTPreprocessorMacroDefinition) stmt;
+				PDOMMacroContainer container= linkage.getMacroContainer(macro.getName().toCharArray());
+				pdomMacro = new PDOMMacro(pdom, container, macro, this);
 			}
-			lastMacro= pdomMacro;
+			else if (stmt instanceof IASTPreprocessorUndefStatement) {
+				IASTPreprocessorUndefStatement undef= (IASTPreprocessorUndefStatement) stmt;
+				PDOMMacroContainer container= linkage.getMacroContainer(undef.getMacroName().toCharArray());
+				pdomMacro = new PDOMMacro(pdom, container, undef, this);
+			}
+			if (pdomMacro != null) {
+				if (lastMacro == null) {
+					setFirstMacro(pdomMacro);
+				} else {
+					lastMacro.setNextMacro(pdomMacro);
+				}
+				lastMacro= pdomMacro;
+			}
 		}
 	}
 
@@ -261,8 +273,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		HashMap<IASTName, PDOMName> nameCache= new HashMap<IASTName, PDOMName>();
 		PDOMName lastName= null;
 		PDOMMacroReferenceName lastMacroName= null;
-		for (int i = 0; i < names.length; i++) {
-			IASTName[] name = names[i];
+		for (IASTName[] name : names) {
 			if (name[0] != null) {
 				PDOMName caller= nameCache.get(name[1]);
 				IIndexFragmentName fname= createPDOMName(linkage, name[0], caller);
@@ -380,8 +391,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		assert getFirstInclude() == null;
 
 		PDOMInclude lastInclude= null;
-		for (int i = 0; i < includeInfos.length; i++) {
-			final IncludeInformation info= includeInfos[i];
+		for (final IncludeInformation info : includeInfos) {
 			final PDOMFile targetFile= (PDOMFile) info.fTargetFile;
 			
 			PDOMInclude pdomInclude = new PDOMInclude(pdom, info.fStatement, this, targetFile);
@@ -463,7 +473,9 @@ public class PDOMFile implements IIndexFragmentFile {
 			int nameOffset=  name.getNodeOffset();
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset+length) {
-					result.add(name.getDefinition());
+					if (name.isMacroDefinition()) {
+						result.add(name.getDefinition());
+					}
 				} else { 
 					break;
 				}

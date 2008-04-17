@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.index;
 import java.util.Collection;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
@@ -52,7 +52,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 */
 	void addFileContent(IIndexFragmentFile sourceFile, 
 			IncludeInformation[] includes,  
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException;
+			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.
@@ -69,7 +69,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	/**
 	 * Write the key, value mapping to the fragment properties. If a mapping for the
 	 * same key already exists, it is overwritten.
-	 * @param key a non-null property name
+	 * @param propertyName a non-null property name
 	 * @param value a value to associate with the key. may not be null.
 	 * @throws CoreException
 	 * @throws NullPointerException if key is null

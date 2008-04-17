@@ -99,9 +99,15 @@ public class IndexBugsTests extends BaseTestCase {
 		return fCProject.getProject();
 	}
 	
-    protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
-    	return TestSourceReader.getContentsForTest(
+    protected String[] getContentsForTest(int blocks) throws IOException {
+    	StringBuffer[] help= TestSourceReader.getContentsForTest(
     			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
+    	String[] result= new String[help.length];
+    	int i=0;
+    	for (StringBuffer buf : help) {
+			result[i++]= buf.toString();
+		}
+    	return result;
     }
     
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
@@ -141,9 +147,9 @@ public class IndexBugsTests extends BaseTestCase {
 		// because of fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=193779
 		// this test case passes. However https://bugs.eclipse.org/bugs/show_bug.cgi?id=154563
 		// remains to be fixed.
-		StringBuffer[] content= getContentsForTest(3);
+		String[] content= getContentsForTest(3);
 		
-		IFile file= createFile(getProject(), "header.h", content[0].toString());
+		IFile file= createFile(getProject(), "header.h", content[0]);
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
 		
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
@@ -157,7 +163,7 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 		
-		file.setContents(new ByteArrayInputStream(content[1].toString().getBytes()), true, false, NPM);
+		file.setContents(new ByteArrayInputStream(content[1].getBytes()), true, false, NPM);
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
 		
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
@@ -180,9 +186,9 @@ public class IndexBugsTests extends BaseTestCase {
 	// class B {};
 	// B var;
 	public void test173997_2() throws Exception {
-		StringBuffer[] content= getContentsForTest(2);
+		String[] content= getContentsForTest(2);
 		
-		IFile file= createFile(getProject(), "header.h", content[0].toString());
+		IFile file= createFile(getProject(), "header.h", content[0]);
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
 		
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
@@ -197,7 +203,7 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 		
-		file.setContents(new ByteArrayInputStream(content[1].toString().getBytes()), true, false, NPM);
+		file.setContents(new ByteArrayInputStream(content[1].getBytes()), true, false, NPM);
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
 		
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
@@ -220,7 +226,7 @@ public class IndexBugsTests extends BaseTestCase {
     //    void function162011(Class162011 x){};
     //  }
     public void testBug162011() throws Exception {
-		String content = getContentsForTest(1)[0].toString();
+		String content = getContentsForTest(1)[0];
 		String fileName = "bug162011.cpp";
 		String funcName = "function162011";
 
@@ -407,7 +413,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #define macro164500 2
 	public void test164500() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164500.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
@@ -417,12 +423,12 @@ public class IndexBugsTests extends BaseTestCase {
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexMacro[] macros= ifile.getMacros();
-			assertEquals(2, macros.length);
+			assertEquals(3, macros.length);
 			IIndexMacro m= macros[0];
 			assertEquals("1", new String(m.getExpansionImage()));
 			assertEquals("macro164500", new String(m.getName()));
 
-			m= macros[1];
+			m= macros[2];
 			assertEquals("2", new String(m.getExpansionImage()));
 			assertEquals("macro164500", new String(m.getName()));
 		}
@@ -441,7 +447,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String pname = "deleteTest"+System.currentTimeMillis();
 		ICProject cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
 		CProjectHelper.delete(cproject);
@@ -468,7 +474,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		ICProject cproject = CProjectHelper.createCCProject("moveTest", "bin", IPDOMManager.ID_FAST_INDEXER);
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
 
@@ -504,9 +510,9 @@ public class IndexBugsTests extends BaseTestCase {
 		ICProject cproject = CProjectHelper.createCCProject("seq1", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
-			StringBuffer[] testData = getContentsForTest(3);
-			IFile header= TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0].toString());
-			IFile referer= TestSourceReader.createFile(cproject.getProject(), "content.cpp", testData[1].toString());
+			String[] testData = getContentsForTest(3);
+			IFile header= TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0]);
+			IFile referer= TestSourceReader.createFile(cproject.getProject(), "content.cpp", testData[1]);
 			TestSourceReader.waitUntilFileIsIndexed(index, referer, INDEX_WAIT_TIME);
 
 			index.acquireReadLock();
@@ -520,7 +526,7 @@ public class IndexBugsTests extends BaseTestCase {
 				index.releaseReadLock();
 			}
 
-			InputStream in = new ByteArrayInputStream(testData[2].toString().getBytes()); 
+			InputStream in = new ByteArrayInputStream(testData[2].getBytes()); 
 			header.setContents(in, IResource.FORCE, null);
 			TestSourceReader.waitUntilFileIsIndexed(index, header, INDEX_WAIT_TIME);
 
@@ -544,7 +550,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// } S20070201;
 	public void test172454_1() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test172454.c", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
@@ -579,7 +585,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// } S20070201;
 	public void test172454_2() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test172454.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
@@ -615,7 +621,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// enum {e20070206};
 	public void test156671() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test156671.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
@@ -634,7 +640,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef int T20070213;
 	public void test173997() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test173997.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
@@ -691,7 +697,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// };
 	public void testFindBindingsWithPrefix() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "testFBWP.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
@@ -725,7 +731,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// class a { class b { class c { void f(); }; }; };
 	public void testFilterFindBindingsFQCharArray() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "testFilterFindBindingsFQCharArray.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
@@ -758,13 +764,13 @@ public class IndexBugsTests extends BaseTestCase {
 	// #include "../__bugsTest__/common.h"
 	// StructA_T gvar2;
 	public void testFileInMultipleFragments_bug192352() throws Exception {
-		StringBuffer[] contents= getContentsForTest(3);
+		String[] contents= getContentsForTest(3);
 		
 		ICProject p2 = CProjectHelper.createCCProject("__bugsTest_2_", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
-			IFile f1= TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0].toString());
-			IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
-			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[2].toString());
+			IFile f1= TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0]);
+			IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1]);
+			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[2]);
 			waitForIndexer();
 
 			IIndex index= CCorePlugin.getIndexManager().getIndex(new ICProject[]{fCProject, p2});
@@ -808,14 +814,14 @@ public class IndexBugsTests extends BaseTestCase {
 	// #endif
 	public void testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		StringBuffer[] contents= getContentsForTest(5);
-		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header1.h", contents[0].toString());
-		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "header2.h", contents[1].toString());
-		IFile f3= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[2].toString());
+		String[] contents= getContentsForTest(5);
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header1.h", contents[0]);
+		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "header2.h", contents[1]);
+		IFile f3= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[2]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IFile f4= TestSourceReader.createFile(fCProject.getProject(), "src2.cpp", contents[3].toString());
-		IFile f5= TestSourceReader.createFile(fCProject.getProject(), "src3.cpp", contents[4].toString());
+		IFile f4= TestSourceReader.createFile(fCProject.getProject(), "src2.cpp", contents[3]);
+		IFile f5= TestSourceReader.createFile(fCProject.getProject(), "src3.cpp", contents[4]);
 		waitForIndexer();
 		
 		IIndex index= indexManager.getIndex(fCProject);
@@ -849,7 +855,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//    globalVar++;
 	// }
 	public void testDependentProjectsWithFullIndexer_Bug197311() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		indexManager.setIndexerId(fCProject, IPDOMManager.ID_FULL_INDEXER);
 		ICProject p2 = CProjectHelper.createCCProject("bug197311", "bin", IPDOMManager.ID_FULL_INDEXER);
@@ -858,9 +864,9 @@ public class IndexBugsTests extends BaseTestCase {
 		pd.setReferencedProjects(refs);
 		p2.getProject().setDescription(pd, new NullProgressMonitor());
 		try {
-			IFile f1= TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0].toString());
-			IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
-			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[1].toString());
+			IFile f1= TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0]);
+			IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1]);
+			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[1]);
 			waitForIndexer();
 
 			IIndex index= indexManager.getIndex(p2, IIndexManager.ADD_DEPENDENCIES);
@@ -909,11 +915,11 @@ public class IndexBugsTests extends BaseTestCase {
 	//    MAC()= MAC(1) + MAC(1,2);
 	// }
 	public void testVariadicMacros_Bug200239_1() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
 		waitUntilFileIsIndexed(f1, INDEX_WAIT_TIME);
-		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
+		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1]);
 		waitForIndexer();
 
 		fIndex.acquireReadLock();
@@ -936,11 +942,11 @@ public class IndexBugsTests extends BaseTestCase {
 	//    GMAC()= GMAC(1) + GMAC(1,2);
 	// }
 	public void testVariadicMacros_Bug200239_2() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
 		waitUntilFileIsIndexed(f1, INDEX_WAIT_TIME);
-		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
+		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1]);
 		waitForIndexer();
 
 		fIndex.acquireReadLock();
@@ -959,9 +965,9 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef bug200553_A bug200553_B;
 	// typedef bug200553_B bug200553_A;
 	public void testTypedefRecursionCpp_Bug200553() throws Exception {
-		StringBuffer[] contents= getContentsForTest(1);
+		String[] contents= getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[0].toString());
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[0]);
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {
@@ -1010,9 +1016,9 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef bug200553_A bug200553_B;
 	// typedef bug200553_B bug200553_A;
 	public void testTypedefRecursionC_Bug200553() throws Exception {
-		StringBuffer[] contents= getContentsForTest(1);
+		String[] contents= getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "src.c", contents[0].toString());
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "src.c", contents[0]);
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {
@@ -1053,9 +1059,9 @@ public class IndexBugsTests extends BaseTestCase {
 	// #include "source.cpp"
 	// #endif
 	public void testIncludeSource_Bug199412() throws Exception {
-		StringBuffer[] contents= getContentsForTest(1);
+		String[] contents= getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[0].toString());
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[0]);
 		waitForIndexer();
 		
 		final ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path("source.cpp"));
@@ -1087,9 +1093,9 @@ public class IndexBugsTests extends BaseTestCase {
 	
 	// void func_209049(long long x);
 	public void testGPPTypes_Bug209049() throws Exception {
-		StringBuffer[] contents= getContentsForTest(1);
+		String[] contents= getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[0].toString());
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[0]);
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {
@@ -1109,11 +1115,11 @@ public class IndexBugsTests extends BaseTestCase {
 	//    staticInHeader();
 	// }
 	public void testStaticFunctionsInHeader_Bug180305() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents[1].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();
@@ -1136,11 +1142,11 @@ public class IndexBugsTests extends BaseTestCase {
 	//    int a= staticConstInHeader;
 	// }
 	public void testStaticVariableInHeader_Bug180305() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents[1].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();
@@ -1163,11 +1169,11 @@ public class IndexBugsTests extends BaseTestCase {
 	//    staticInHeader();
 	// }
 	public void testStaticFunctionsInHeaderC_Bug180305() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source1.c", contents[1].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "source1.c", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();
@@ -1190,11 +1196,11 @@ public class IndexBugsTests extends BaseTestCase {
 	//    int a= staticConstInHeader;
 	// }
 	public void testStaticVariableInHeaderC_Bug180305() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source1.c", contents[1].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "source1.c", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();
@@ -1214,10 +1220,10 @@ public class IndexBugsTests extends BaseTestCase {
 	
 	// #include "header.x"
 	public void testNonStandardSuffix_Bug205778() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		TestSourceReader.createFile(fCProject.getProject(), "header.x", contents[0].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "header.x", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();
@@ -1237,10 +1243,10 @@ public class IndexBugsTests extends BaseTestCase {
 	// };
 	// #include "MyClass_inline.h"
 	public void testAddingMemberBeforeContainer_Bug203170() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		TestSourceReader.createFile(fCProject.getProject(), "MyClass_inline.h", contents[0].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "MyClass_inline.h", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();
@@ -1268,17 +1274,48 @@ public class IndexBugsTests extends BaseTestCase {
 	//    a.b;
 	// }
 	public void testUnrelatedTypedef_Bug214146() throws Exception {
-		StringBuffer[] contents= getContentsForTest(3);
+		String[] contents= getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		TestSourceReader.createFile(fCProject.getProject(), "s1.cpp", contents[0].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "h1.h", contents[1].toString());
-		TestSourceReader.createFile(fCProject.getProject(), "s2.h", contents[2].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "s1.cpp", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "h1.h", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "s2.h", contents[2]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] bindings = fIndex.findBindings(new char[][] { "unrelated".toCharArray(),
 					"b".toCharArray() }, IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURENCES);
+			assertEquals(2, decls.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+
+	// #undef XXX
+	
+	// #define XXX
+	// #include "header.h"
+	// #ifdef XXX
+	//    int bug227088;
+	// #else
+	//    int ok;
+	// #endif
+	public void testUndefInHeader_Bug227088() throws Exception {
+		String[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "s1.cpp", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "s2.cpp", contents[1]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("bug227088".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(0, bindings.length);
+			bindings = fIndex.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, bindings.length);
 			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURENCES);
 			assertEquals(2, decls.length);

@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Represents a macro stored in the index.
+ * Represents a macro stored in the index. 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -37,7 +37,7 @@ public interface IIndexMacro extends IMacroBinding, IIndexBinding {
 	 * If available, return the file location for the macro definition of this macro,
 	 * otherwise return <code>null</code>.
 	 */
-	IASTFileLocation getFileLocation();
+	IASTFileLocation getFileLocation() throws CoreException;
 	
 	/**
 	 * Returns the file in which this macro is defined and belongs to.
@@ -47,7 +47,8 @@ public interface IIndexMacro extends IMacroBinding, IIndexBinding {
 
 	/**
 	 * Returns the name of the definition of this macro, or <code>null</code> if not available.
+	 * @throws CoreException 
 	 * @since 5.0
 	 */
-	IIndexName getDefinition();
+	IIndexName getDefinition() throws CoreException;
 }

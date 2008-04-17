@@ -782,10 +782,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     
     private void addMacroDefinition(IIndexMacro macro) {
     	try {
-    		PreprocessorMacro result= MacroDefinitionParser.parseMacroDefinition(macro.getNameCharArray(), macro.getParameterList(), macro.getExpansionImage());
-    		final IASTFileLocation loc= macro.getFileLocation();
-    		fLocationMap.registerMacroFromIndex(result, loc, -1);
-	    	fMacroDictionary.put(result.getNameCharArray(), result);
+    		final char[] expansionImage = macro.getExpansionImage();
+    		if (expansionImage == null) {
+    			// this is an undef
+    			fMacroDictionary.remove(macro.getNameCharArray());
+    		}
+    		else {
+    			PreprocessorMacro result= MacroDefinitionParser.parseMacroDefinition(macro.getNameCharArray(), macro.getParameterList(), expansionImage);
+    			final IASTFileLocation loc= macro.getFileLocation();
+    			fLocationMap.registerMacroFromIndex(result, loc, -1);
+    			fMacroDictionary.put(result.getNameCharArray(), result);
+    		}
     	}
     	catch (Exception e) {
     		fLog.traceLog("Invalid macro definition: '" + macro.getName() + "'");     //$NON-NLS-1$//$NON-NLS-2$

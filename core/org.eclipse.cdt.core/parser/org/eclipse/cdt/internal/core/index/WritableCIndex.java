@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.index;
 import java.util.Collection;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
@@ -60,15 +60,14 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 	public void setFileContent(IIndexFragmentFile file, int linkageID,
 			IncludeInformation[] includes,
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException {
+			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException {
 
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to update file of read-only fragment"; //$NON-NLS-1$
 		}
 		else {
-			for (int i = 0; i < includes.length; i++) {
-				IncludeInformation ii= includes[i];
+			for (IncludeInformation ii : includes) {
 				if (ii.fLocation != null) {
 					ii.fTargetFile= addFile(linkageID, ii.fLocation);
 				}

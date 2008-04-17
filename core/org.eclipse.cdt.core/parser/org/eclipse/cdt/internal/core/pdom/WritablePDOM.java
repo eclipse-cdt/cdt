@@ -14,12 +14,11 @@ package org.eclipse.cdt.internal.core.pdom;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -56,7 +55,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 
 	public void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes, 
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names, ASTFilePathResolver pathResolver) throws CoreException {
+			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver pathResolver) throws CoreException {
 		assert sourceFile.getIndexFragment() == this;
 		
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
@@ -113,7 +112,6 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	 * <b>A write-lock must be obtained before calling this method</b>
 	 * 
 	 * @param newConverter the converter to use to update internal file representations
-	 * @return a list of PDOMFiles for which the location converter returned null when queried for the new internal representation
 	 * @throws CoreException
 	 */
 	public void rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
@@ -131,8 +129,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 		clearFileIndex();
 		final List<PDOMFile> notConverted = new ArrayList<PDOMFile>();
-		for(Iterator<PDOMFile> i= pdomfiles.iterator(); i.hasNext(); ) {
-			PDOMFile file= i.next();
+		for (PDOMFile file : pdomfiles) {
 			String internalFormat = newConverter.toInternalFormat(file.getLocation());
 			if(internalFormat!=null) {
 				file.setInternalLocation(internalFormat);
@@ -144,8 +141,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 
 		// remove content where converter returns null
-		for(Iterator<PDOMFile> i = notConverted.iterator(); i.hasNext(); ) {
-			PDOMFile file = i.next();
+		for (PDOMFile file : notConverted) {
 			file.convertIncludersToUnresolved();
 			file.clear(null);
 		}

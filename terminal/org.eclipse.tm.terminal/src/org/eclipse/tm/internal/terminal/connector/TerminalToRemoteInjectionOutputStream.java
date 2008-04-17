@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
@@ -43,7 +43,7 @@ class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 		public void write(byte[] b, int off, int len) throws IOException {
 		}
 		/**
-		 * The injection into the normal stream ends. 
+		 * The injection into the normal stream ends.
 		 * @throws IOException
 		 */
 		public void close() throws IOException {
@@ -115,10 +115,10 @@ class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 		}
 	}
     /**
-     * There can only be one injection stream active at a time. You must call close on the 
+     * There can only be one injection stream active at a time. You must call close on the
      * returned output stream to end the injection.
      * @param interceptor This is used handle bytes sent while the injection stream is active.
-     * @return a output stream that can be used to write to the decorated stream. 
+     * @return a output stream that can be used to write to the decorated stream.
      * @throws IOException
      */
     public synchronized OutputStream grabOutput(Interceptor interceptor) throws IOException {

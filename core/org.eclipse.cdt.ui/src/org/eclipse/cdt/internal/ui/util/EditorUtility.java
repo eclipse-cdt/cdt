@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -157,7 +158,7 @@ public class EditorUtility {
 	}
 
 	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
-		if (file == null) 
+		if (file == null)
 			return null;
 		if (!file.getProject().isAccessible()) {
 			closedProject(file.getProject());
@@ -712,16 +713,12 @@ public class EditorUtility {
 		try {
 			IBuffer buffer = bin.getBuffer();
 			if (buffer != null) {
-				store = new EFSFileStorage (bin.getLocationURI());
+				store = new FileStorage (new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
 			}
 		} catch (CModelException e) {
 			// nothing;
 		}
 		return store;
-	}
-
-	public static IStorage getStorage(ITranslationUnit tu) {
-		return new EFSFileStorage (tu.getLocationURI());
 	}
 
 	/**

@@ -13,8 +13,8 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Dynamic system type provider extension.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
- * Martin Oberhuber (Wind River) - [186868] Fix IRSESystemType.testProperty() semantics 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * Martin Oberhuber (Wind River) - [186868] Fix IRSESystemType.testProperty() semantics
  * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  ********************************************************************************/
 package org.eclipse.rse.core;
@@ -31,11 +31,11 @@ import org.osgi.framework.Bundle;
 
 /**
  * Abstract base class holding core functionality of a system type.
- * 
+ *
  * Extenders must override {@link IRSESystemType#getSubsystemConfigurationIds()}
  * according to their strategy of finding subsystem configuration id's that
  * match their system type.
- * 
+ *
  * Extenders may override any other method.
  */
 public abstract class AbstractRSESystemType extends PlatformObject implements IRSESystemType {
@@ -46,22 +46,22 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 	protected String description = null;
 	protected Bundle definingBundle = null;
 	protected Map properties;
-	
+
 	/**
 	 * Default constructor.
 	 * Only subclasses may call this if set the id, name, label,
-	 * description and properties attributes themselves. 
+	 * description and properties attributes themselves.
 	 */
 	protected AbstractRSESystemType()
 	{
 		super();
 	}
-	
+
 	/**
 	 * Constructor for an object representing a system type.
 	 * @param id unique id of this system type. Must be system unique.
 	 * @param name a name of this system type to be used for internal checks.
-	 * @param label a user-visible label of this system type. 
+	 * @param label a user-visible label of this system type.
 	 *     May be <code>null</code> and falls back to the name in this case.
 	 * @param description a user-visible description of this system type.
 	 *     May be <code>null</code> and falls back to the label in this case.
@@ -79,7 +79,7 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 
 	/**
 	 * Checks whether two system types are the same.
-	 * 
+	 *
 	 * System types are considered the same if they have the same ID.
 	 */
 	public boolean equals(Object obj) {
@@ -91,7 +91,7 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 
 	/**
 	 * Returns the hashCode for this system type.
-	 * 
+	 *
 	 * The hashCode is the hashCode of its ID.
 	 */
 	public int hashCode() {
@@ -138,7 +138,7 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 	public Bundle getDefiningBundle() {
 		return definingBundle;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getProperty(java.lang.String)
 	 */
@@ -157,9 +157,11 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#isEnabled()
+	/**
+	 * Tests whether the system type is currently enabled.
+	 *
+	 * @see IRSESystemType#isEnabled()
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public boolean isEnabled() {
 		if (RSEPreferencesManager.getIsSystemTypeEnabled(this)) {

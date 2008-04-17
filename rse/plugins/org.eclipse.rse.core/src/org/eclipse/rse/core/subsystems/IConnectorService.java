@@ -3,13 +3,13 @@
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
@@ -46,7 +46,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * subsystems share a physical connection to the remote system. This sharing is
  * done using implementers of {@link IConnectorServiceManager} which are
  * returned by another getter method in SubSystem.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should subclass {@link AbstractConnectorService}
  *              instead.
@@ -300,7 +300,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * <b>It is the responsibility of the caller to set this value
 	 * back to false when the tool no longer needs to suppress
 	 * acquisition credentials.</b>
-	 * 
+	 *
 	 * @param suppress <code>true</code> if acquisition is to be suppressed.
 	 * <code>false</code> if acquisition is to be allowed.
 	 */
@@ -390,24 +390,28 @@ public interface IConnectorService extends IRSEModelObject {
 	boolean requiresUserId();
 
 	/**
-	 * Sets the attribute for this connector service instance that denies a password to be saved.
-	 * If the attribute has never been set it defaults to false. 
-	 * If set to true, it will clear any saved passwords for this system and not allow any further
-	 * passwords to be stored.
-	 * This property of a system is persistent from session to session, but is not sharable.
-	 * @param deny If true, forget any saved passwords and do not allow any others to be saved.
-	 * If false, allow passwords to be saved in the keychain.
-	 * @return the number of saved passwords removed by this operation.
-	 * This will always be zero if "deny" is false.
-	 * @since 3.0 org.eclipse.rse.core
+	 * Sets the attribute for this connector service instance that denies a
+	 * password to be saved. If the attribute has never been set it defaults to
+	 * false. If set to true, it will clear any saved passwords for this system
+	 * and not allow any further passwords to be stored. This property of a
+	 * system is persistent from session to session, but is not sharable.
+	 * 
+	 * @param deny If true, forget any saved passwords and do not allow any
+	 *            others to be saved. If false, allow passwords to be saved in
+	 *            the keyring.
+	 * @return the number of saved passwords removed by this operation. This
+	 *         will always be zero if "deny" is false.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public int setDenyPasswordSave(boolean deny);
 
 	/**
-	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this connector service.
-	 * If the value has never been set, this will return false.
+	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this
+	 * connector service. If the value has never been set, this will return
+	 * false.
+	 *
 	 * @return true if password saving is denied.
-	 * @since 3.0 org.eclipse.rse.core
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public boolean getDenyPasswordSave();
 

@@ -1,20 +1,20 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * David Dykstal (IBM) - 142806: refactoring persistence framework
- * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
+ * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType()
  * David Dykstal (IBM) - [189483] fix spelling in initialize/uninitialize method signatures
  * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
@@ -39,12 +39,12 @@ import org.eclipse.rse.core.model.RSEModelObject;
  * is returned from a subsystem object via getConnectorService(), and
  * it is used to maintain the connection to a particular set of subsystems.
  * <p>
- * This class implements the protocol for much of the 
+ * This class implements the protocol for much of the
  * standard bookkeeping for connector services including
  * server launchers (if none are required), event handling,
  * hosts, ports, addresses, descriptions, and registered subsystems.
  * Subclasses must concern themselves with actually authenticating and connecting.
- */ 
+ */
 public abstract class AbstractConnectorService extends RSEModelObject implements IConnectorService {
 
 	private Vector commListeners = new Vector(5);
@@ -84,7 +84,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		} else
 			return subsystem.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);
 	}
-	
+
 	/**
 	 * @return null, may be overriden
 	 * @see IConnectorService#getRemoteServerLauncher()
@@ -108,7 +108,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	public boolean supportsServerLaunchProperties() {
 		return false;
 	}
-	
+
 	/**
 	 * @return null, may be overridden
 	 * @see IConnectorService#getRemoteServerLauncherProperties()
@@ -131,7 +131,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	public final boolean hasRemoteServerLauncherProperties() {
 		return getRemoteServerLauncherProperties() != null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#addCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
 	 */
@@ -145,7 +145,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removeCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
 	 */
 	public final void removeCommunicationsListener(ICommunicationsListener listener) {
-		commListeners.remove(listener);		
+		commListeners.remove(listener);
 	}
 
 	/**
@@ -155,9 +155,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	final protected void fireCommunicationsEvent(int eventType) {
 		CommunicationsEvent e = new CommunicationsEvent(this, eventType);
 		Object[] items = commListeners.toArray();
-		for (int loop=0; loop < items.length; loop++) {		
+		for (int loop=0; loop < items.length; loop++) {
 			((ICommunicationsListener) items[loop]).communicationsStateChange(e);
-		}							
+		}
 	}
 
 	/* (non-Javadoc)
@@ -214,7 +214,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		{
 			if (_registeredSubSystems.size() == 0)
 			{
-				
+
 			}
 			else
 			{
@@ -230,9 +230,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 */
 	public final void registerSubSystem(ISubSystem ss) {
 		if (!_registeredSubSystems.contains(ss))
-		{    		
+		{
 			_registeredSubSystems.add(ss);
-		}   	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -255,7 +255,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	public final IRSEPersistableContainer getPersistableParent() {
 		return _host;
 	}
-	
+
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		List children = new ArrayList(20);
 		IServerLauncherProperties launcherProperties = getRemoteServerLauncherProperties();
@@ -298,7 +298,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		for (int i = 0; i < _registeredSubSystems.size(); i++)
 		{
 			ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);
-			ss.initializeSubSystem(monitor);    		
+			ss.initializeSubSystem(monitor);
 		}
 	}
 
@@ -310,7 +310,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		for (int i = 0; i < _registeredSubSystems.size(); i++)
 		{
 			ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);
-			ss.uninitializeSubSystem(monitor);    		
+			ss.uninitializeSubSystem(monitor);
 		}
 	}
 
@@ -385,7 +385,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * or disconnected.
 	 * Each subsystem needs to be informed so it can clear out any expansions.
 	 * This implementation does nothing.
-	 * Implementations should override and call {@link #reset()} 
+	 * Implementations should override and call {@link #reset()}
 	 * if there is internal state to reset.
 	 * @see IConnectorService#reset()
 	 */
@@ -394,9 +394,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 
 	/**
 	 * This implementation returns the connector service's port property.
-	 * Override if appropriate. 
+	 * Override if appropriate.
 	 * <br> This is called by the default implementation of
-	 * {@link #connect(IProgressMonitor)}, 
+	 * {@link #connect(IProgressMonitor)},
 	 * if #supportsServerLaunchProperties() is true.
 	 * @return the port used for connecting to the target
 	 */
@@ -418,7 +418,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * Disconnects from the target system.
 	 * Calls {@link #internalDisconnect(IProgressMonitor)}
 	 * and {@link #postDisconnect()}
-	 * @throws Exception if the disconnect fails 
+	 * @throws Exception if the disconnect fails
 	 */
 	public final void disconnect(IProgressMonitor monitor) throws Exception {
 		preDisconnect();
@@ -449,7 +449,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 */
 	protected void postDisconnect() {
 	}
-	
+
 	/**
 	 * Performs any tasks required immediately prior to disconnecting.
 	 * This implementation does nothing.
@@ -458,7 +458,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 */
 	protected void preDisconnect() {
 	}
-	
+
 	/**
 	 * Performs any tasks required immediately prior to connecting.
 	 * This implementation does nothing.
@@ -467,7 +467,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 */
 	protected void preConnect() {
 	}
-	
+
 	/**
 	 * Performs any tasks required immediately after connecting.
 	 * This implementation does nothing.
@@ -476,9 +476,13 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 */
 	protected void postConnect() {
 	}
-	
-    /* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.ISystem#setDenyPasswordSave(boolean)
+
+	/**
+	 * Sets the attribute for this connector service instance that denies a
+	 * password to be saved.
+	 *
+	 * @see IConnectorService#setDenyPasswordSave(boolean)
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public final int setDenyPasswordSave(boolean deny) {
 		IHost host = getHost();
@@ -488,8 +492,13 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.ISystem#getDenyPasswordSave()
+	/**
+	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this
+	 * connector service.
+	 *
+	 * @return <code>true</code> if password saving is denied.
+	 * @see IConnectorService#getDenyPasswordSave()
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public final boolean getDenyPasswordSave() {
 		IHost host = getHost();
@@ -499,6 +508,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		return result;
 	}
 
-	
+
 
 }

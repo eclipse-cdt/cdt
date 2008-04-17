@@ -1,17 +1,17 @@
 /********************************************************************************
  * Copyright (c) 2007, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 142806: refactoring persistence framework
- * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
+ * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType()
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 
-public abstract class AbstractDelegatingConnectorService implements IDelegatingConnectorService 
+public abstract class AbstractDelegatingConnectorService implements IDelegatingConnectorService
 {
 
 	protected IHost _host;
@@ -37,7 +37,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	{
 		_host = host;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IDelegatingConnectorService#getRealConnectorService()
 	 */
@@ -46,7 +46,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#addCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
 	 */
-	public void addCommunicationsListener(ICommunicationsListener listener) 
+	public void addCommunicationsListener(ICommunicationsListener listener)
 	{
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -54,7 +54,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 			conServ.addCommunicationsListener(listener);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.IPropertySetContainer#addPropertySet(org.eclipse.rse.core.model.IPropertySet)
 	 */
@@ -185,7 +185,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHomeDirectory()
 	 */
-	public String getHomeDirectory() 
+	public String getHomeDirectory()
 	{
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -198,7 +198,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHost()
 	 */
-	public IHost getHost() 
+	public IHost getHost()
 	{
 		return _host;
 	}
@@ -343,7 +343,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		if (conServ != null)
 		{
 			return conServ.getVersionReleaseModification();
-		}		
+		}
 		return null;
 	}
 
@@ -576,7 +576,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.setSuppressed(suppressSignonPrompt);			
+			conServ.setSuppressed(suppressSignonPrompt);
 		}
 	}
 
@@ -662,7 +662,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#saveUserId()
 	 */
@@ -673,7 +673,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 			conServ.saveUserId();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removeUserId()
 	 */
@@ -706,7 +706,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 			conServ.removePassword();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#wasRestored()
 	 */
@@ -718,7 +718,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
 	 */
@@ -730,7 +730,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresUserId()
 	 */
@@ -742,7 +742,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#isTainted()
 	 */
@@ -754,7 +754,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#setTainted(boolean)
 	 */
@@ -765,14 +765,14 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 			conServ.setTainted(flag);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableParent()
 	 */
 	public IRSEPersistableContainer getPersistableParent() {
 		return getHost();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableChildren()
 	 */
@@ -784,9 +784,13 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return IRSEPersistableContainer.NO_CHILDREN;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setDenyPasswordSave(boolean)
+
+	/**
+	 * Sets the attribute for this connector service instance that denies a
+	 * password to be saved.
+	 *
+	 * @see IConnectorService#setDenyPasswordSave(boolean)
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public int setDenyPasswordSave(boolean deny) {
 		int n = 0;
@@ -796,9 +800,14 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return n;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getDenyPasswordSave()
+
+	/**
+	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this
+	 * connector service. If the value has never been set, this will return
+	 * false.
+	 * 
+	 * @return true if password saving is denied.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public boolean getDenyPasswordSave() {
 		boolean result = false;

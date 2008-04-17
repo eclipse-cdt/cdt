@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -67,7 +68,9 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.ParserLogService;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
+import org.eclipse.cdt.internal.core.util.ICanceler;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -399,7 +402,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		// if factory is null, default factory must be used
 		if (factory == null) factory = BufferManager.getDefaultBufferManager();
 
-		// In order to be shared, working copies have to denote the same translation unit 
+		// In order to be shared, working copies have to denote the same translation unit
 		// AND use the same buffer factory.
 		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
 		Map sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
@@ -462,7 +465,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 		CModelManager manager = CModelManager.getDefault();
 
-		// In order to be shared, working copies have to denote the same translation unit 
+		// In order to be shared, working copies have to denote the same translation unit
 		// AND use the same buffer factory.
 		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
 		Map sharedWorkingCopies = manager.sharedWorkingCopies;
@@ -641,7 +644,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	/**
 	 * Parse the buffer contents of this element.
-	 * @param monitor 
+	 * @param monitor
 	 */
 	private void parseUsingCModelBuilder(Map newElements, boolean quickParseMode, IProgressMonitor monitor) {
 		try {
@@ -737,7 +740,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		
 		if (description == null) {
 			// TODO: Sometimes, CoreModel returns a null ICProjectDescription
-			// so for now, fall back to configuration-less language determination. 
+			// so for now, fall back to configuration-less language determination.
 			configuration = null;
 		} else {
 			configuration = description.getActiveConfiguration();
@@ -785,10 +788,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public IASTTranslationUnit getAST() throws CoreException {
-		return getAST(null, 0);
+		return getAST(null, 0, null);
 	}
 
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException {
+		return getAST(index, style, null);
+	}
+
+	public IASTTranslationUnit getAST(IIndex index, int style, IProgressMonitor monitor) throws CoreException {
 		ITranslationUnit configureWith = getSourceContextTU(index, style);
 		
 		IScannerInfo scanInfo= configureWith.getScannerInfo( (style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
@@ -814,7 +821,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				if (isSourceUnit()) {
 					options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 				}
-				return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, crf, index, options, ParserUtil.getParserLogService());
+				final IParserLogService log;
+				if (monitor instanceof ICanceler) {
+					log= new ParserLogService(DebugLogConstants.PARSER, (ICanceler)monitor);
+				} else {
+					log= ParserUtil.getParserLogService();
+				}
+				return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, crf, index, options, log);
 			}
 		}
 		return null;
@@ -941,8 +954,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 	
 	/**
-	 * Return the language of the context this file was parsed in. Works only after using 
-	 * {@link #getAST(IIndex, int)} with the flag {@link ITranslationUnit#AST_CONFIGURE_USING_SOURCE_CONTEXT}.
+	 * Return the language of the context this file was parsed in. Works only after using
+	 * {@link #getAST(IIndex, int, IProgressMonitor)} with the flag {@link ITranslationUnit#AST_CONFIGURE_USING_SOURCE_CONTEXT}.
 	 */
 	public ILanguage getLanguageOfContext() throws CoreException {
 		final ILanguage result= fLanguageOfContext;
@@ -1020,7 +1033,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 				// search for matching function
 				for (int i = 0; i < children.length; i++) {
-					if (elementType == children[i].getElementType() 
+					if (elementType == children[i].getElementType()
 							&& elementName.equals(children[i].getElementName())) {
 						assert children[i] instanceof IFunctionDeclaration;
 						String[] functionParams= ((IFunctionDeclaration)children[i]).getParameterTypes();
@@ -1036,7 +1049,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			case ICElement.C_TEMPLATE_UNION:
 				// search for matching template type
 				for (int i = 0; i < children.length; i++) {
-					if (elementType == children[i].getElementType() 
+					if (elementType == children[i].getElementType()
 							&& elementName.equals(children[i].getElementName())) {
 						assert children[i] instanceof ITemplate;
 						String[] templateParams= ((ITemplate)children[i]).getTemplateParameterTypes();
@@ -1050,7 +1063,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			default:
 				// search for matching element
 				for (int i = 0; i < children.length; i++) {
-					if (elementType == children[i].getElementType() 
+					if (elementType == children[i].getElementType()
 							&& elementName.equals(children[i].getElementName())) {
 						element= (CElement) children[i];
 						break;

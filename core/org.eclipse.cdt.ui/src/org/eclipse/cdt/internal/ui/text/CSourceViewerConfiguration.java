@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -86,6 +85,7 @@ import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 
+import org.eclipse.cdt.internal.core.model.ProgressMonitorAndCanceler;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
@@ -181,7 +181,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		}
 		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
-	}	
+	}
 	
 	/**
 	 * Returns the color manager for this configuration.
@@ -202,7 +202,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 
     /**
-     * Creates outline presenter. 
+     * Creates outline presenter.
      * @return Presenter with outline view.
      */
     public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
@@ -222,7 +222,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
     }
 
     /**
-     * Creates type hierarchy presenter. 
+     * Creates type hierarchy presenter.
      * @return Presenter with type hierarchy view.
      */
     public IInformationPresenter getHierarchyPresenter(ISourceViewer sourceViewer) {
@@ -321,7 +321,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	protected ICTokenScanner getSinglelineDocCommentScanner(IResource resource) {
 		if (fSinglelineDocCommentScanner == null) {
-			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getSinglelineConfiguration();		
+			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getSinglelineConfiguration();
 			fSinglelineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
 		}
 		return fSinglelineDocCommentScanner;
@@ -389,7 +389,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		ContentAssistPreference.configure(assistant, fPreferenceStore);
 		
-		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);		
+		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
@@ -428,13 +428,13 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fTextEditor != null) {
-			//Delay changed and non-incremental reconciler used due to 
+			//Delay changed and non-incremental reconciler used due to
 			//PR 130089
 			CCompositeReconcilingStrategy strategy=
 				new CCompositeReconcilingStrategy(sourceViewer, fTextEditor, getConfiguredDocumentPartitioning(sourceViewer));
 			MonoReconciler reconciler= new CReconciler(fTextEditor, strategy);
 			reconciler.setIsIncrementalReconciler(false);
-			reconciler.setProgressMonitor(new NullProgressMonitor());
+			reconciler.setProgressMonitor(new ProgressMonitorAndCanceler());
 			reconciler.setDelay(500);
 			return reconciler;
 		}
@@ -694,8 +694,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] { 	
-				IDocument.DEFAULT_CONTENT_TYPE, 
+		return new String[] {
+				IDocument.DEFAULT_CONTENT_TYPE,
 				ICPartitions.C_MULTI_LINE_COMMENT,
 				ICPartitions.C_SINGLE_LINE_COMMENT,
 				ICPartitions.C_STRING,
@@ -712,8 +712,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	@Override
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		
-		final MultiPassContentFormatter formatter = 
-			new MultiPassContentFormatter(getConfiguredDocumentPartitioning(sourceViewer), 
+		final MultiPassContentFormatter formatter =
+			new MultiPassContentFormatter(getConfiguredDocumentPartitioning(sourceViewer),
 				IDocument.DEFAULT_CONTENT_TYPE);
 		
 		formatter.setMasterStrategy(new CFormattingStrategy());
@@ -849,7 +849,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
             public IInformationControl createInformationControl(Shell parent) {
                 int shellStyle= SWT.RESIZE;
                 int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
-                return new COutlineInformationControl(parent, shellStyle, treeStyle);   
+                return new COutlineInformationControl(parent, shellStyle, treeStyle);
             }
         };
         return conrolCreator;
@@ -867,7 +867,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
             public IInformationControl createInformationControl(Shell parent) {
                 int shellStyle= SWT.RESIZE;
                 int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
-                return new THInformationControl(parent, shellStyle, treeStyle);   
+                return new THInformationControl(parent, shellStyle, treeStyle);
             }
         };
         return conrolCreator;

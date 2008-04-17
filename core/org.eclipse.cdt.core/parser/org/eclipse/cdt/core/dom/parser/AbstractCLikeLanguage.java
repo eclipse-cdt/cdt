@@ -40,6 +40,8 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.util.ICancelable;
+import org.eclipse.cdt.internal.core.util.ICanceler;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -47,7 +49,7 @@ import org.eclipse.core.runtime.CoreException;
  * for the DOM parser framework.
  * 
  * This class uses the template method pattern, derived classes need only implement
- * {@link AbstractCLikeLanguage#getScannerExtensionConfiguration()}, 
+ * {@link AbstractCLikeLanguage#getScannerExtensionConfiguration()},
  * {@link AbstractCLikeLanguage#getParserLanguage()} and
  * {@link AbstractCLikeLanguage#createParser(IScanner scanner, ParserMode parserMode,
  *                                           IParserLogService logService, IIndex index)}.
@@ -115,16 +117,33 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory codeReaderFactory, IIndex index, int options, IParserLogService log) throws CoreException {
 
-		IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
+		final IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
 		scanner.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
 		scanner.setComputeImageLocations((options & OPTION_NO_IMAGE_LOCATIONS) == 0);
 
-		ISourceCodeParser parser= createParser(scanner, log, index, false, options);
+		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);
+
+		// make parser cancelable by reconciler - http://bugs.eclipse.org/226682
+		ICanceler canceler= null;
+		if (log instanceof ICanceler) {
+			canceler= (ICanceler) log;
+			canceler.setCancelable(new ICancelable() {
+				public void cancel() {
+					scanner.cancel();
+					parser.cancel();
+				}});
+		}
 		
-		// Parse
-		IASTTranslationUnit ast= parser.parse();
-		ast.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
-		return ast;
+		try {
+			// Parse
+			IASTTranslationUnit ast= parser.parse();
+			ast.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
+			return ast;
+		} finally {
+			if (canceler != null) {
+				canceler.setCancelable(null);
+			}
+		}
 	}
 	
 

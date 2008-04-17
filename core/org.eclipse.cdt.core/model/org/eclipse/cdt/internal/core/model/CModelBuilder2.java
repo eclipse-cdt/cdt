@@ -76,6 +76,7 @@ import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
@@ -89,6 +90,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * @since 4.0
  */
 public class CModelBuilder2 implements IContributedModelBuilder {
+
+	private final static boolean DEBUG= Util.isActive(DebugLogConstants.MODEL);
 
 	private final TranslationUnit fTranslationUnit;
 	private final IProgressMonitor fProgressMonitor;
@@ -133,13 +136,19 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			else {
 				parseFlags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 			}
-			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, parseFlags);
-			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
-					+ fTranslationUnit.getElementName()
-					+ " mode="+ (quickParseMode ? "skip all " : "skip indexed ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
-					DebugLogConstants.MODEL, false);
-
+			
+			final IASTTranslationUnit ast;
+			try {
+				ast= fTranslationUnit.getAST(index, parseFlags, fProgressMonitor);
+				if (DEBUG) Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
+						+ fTranslationUnit.getElementName()
+						+ " mode="+ (quickParseMode ? "skip all " : "skip indexed ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
+						DebugLogConstants.MODEL, false);
+			} catch (ParseError e) {
+				checkCanceled();
+				throw e;
+			}
 			if (ast == null) {
 				return;
 			}
@@ -148,7 +157,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			startTime= System.currentTimeMillis();
 			buildModel(ast);
 			elementInfo.setIsStructureKnown(true);
-			Util.debugLog("CModelBuilder2: building " //$NON-NLS-1$
+			if (DEBUG) Util.debugLog("CModelBuilder2: building " //$NON-NLS-1$
 					+"children="+ fTranslationUnit.getElementInfo().internalGetChildren().size() //$NON-NLS-1$
 					+" time="+ (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					DebugLogConstants.MODEL, false);
@@ -171,7 +180,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private void checkCanceled() {
 		if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
-			Util.debugLog("CModelBuilder2: cancelled ", DebugLogConstants.MODEL, false); //$NON-NLS-1$
+			if (DEBUG) Util.debugLog("CModelBuilder2: cancelled ", DebugLogConstants.MODEL, false); //$NON-NLS-1$
 			throw new OperationCanceledException();
 		}
 	}
@@ -213,6 +222,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 
 		// sort by offset
+		@SuppressWarnings("unchecked")
 		final List<SourceManipulation> children= fTranslationUnit.getElementInfo().internalGetChildren();
 		Collections.sort(children, new Comparator<SourceManipulation>() {
 			public int compare(SourceManipulation o1, SourceManipulation o2) {
@@ -436,21 +446,18 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
-			} else {
-				return createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
 			}
+			return createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
 		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
-			} else {
-				return createElaboratedTypeDeclaration(parent, (IASTElaboratedTypeSpecifier)declSpecifier, isTemplate);
 			}
+			return createElaboratedTypeDeclaration(parent, (IASTElaboratedTypeSpecifier)declSpecifier, isTemplate);
 		} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
-			} else {
-				return createEnumeration(parent, (IASTEnumerationSpecifier)declSpecifier);
 			}
+			return createEnumeration(parent, (IASTEnumerationSpecifier)declSpecifier);
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
@@ -1076,7 +1083,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 *
 	 * @param element
 	 * @param astNode
-	 * @throws CModelException 
+	 * @throws CModelException
 	 */
 	private void setBodyPosition(SourceManipulation element, IASTNode astNode) throws CModelException {
 		setBodyPosition(element.getSourceManipulationInfo(), astNode);
@@ -1115,7 +1122,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 *
 	 * @param element
 	 * @param astName
-	 * @throws CModelException 
+	 * @throws CModelException
 	 */
 	private void setIdentifierPosition(SourceManipulation element, IASTName astName) throws CModelException {
 		setIdentifierPosition(element.getSourceManipulationInfo(), astName);

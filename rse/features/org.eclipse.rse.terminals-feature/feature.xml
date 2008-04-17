@@ -40,22 +40,22 @@
 
    <plugin
          id="org.eclipse.rse.subsystems.terminals.core"
-         download-size="0"
-         install-size="0"
+         download-size="7"
+         install-size="15"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.terminals.ssh"
-         download-size="0"
-         install-size="0"
+         download-size="7"
+         install-size="11"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.terminals.ui"
-         download-size="0"
-         install-size="0"
+         download-size="24"
+         install-size="51"
          version="0.0.0"
          unpack="false"/>
 

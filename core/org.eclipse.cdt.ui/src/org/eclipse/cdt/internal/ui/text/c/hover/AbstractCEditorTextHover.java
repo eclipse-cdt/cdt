@@ -67,9 +67,8 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 					&& offset >= selectedRange.x
 					&& offset <= selectedRange.x + selectedRange.y)
 				return new Region(selectedRange.x, selectedRange.y);
-			else {
-				return CWordFinder.findWord(textViewer.getDocument(), offset);
-			}
+			
+			return CWordFinder.findWord(textViewer.getDocument(), offset);
 		}
 		return null;
 	}

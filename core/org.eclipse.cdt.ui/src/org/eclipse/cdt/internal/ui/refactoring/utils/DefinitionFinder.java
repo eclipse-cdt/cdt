@@ -50,7 +50,6 @@ public class DefinitionFinder {
 		return DefinitionFinder.getDefinition(declarator.getName(), resolveBinding, file);
 	}
 
-	@SuppressWarnings("null") // Can't be null
 	public static IASTName getDefinition(IASTName methodName, IBinding bind, IFile file) throws CoreException {
 		TreeMap<String, IASTTranslationUnit> parsedFiles = new TreeMap<String, IASTTranslationUnit>();
 
@@ -60,7 +59,7 @@ public class DefinitionFinder {
 
 		try {
 			index.acquireReadLock();
-			pdomref = index.findDefinitions(bind);
+			pdomref= index.findDefinitions(bind);
 		} catch (InterruptedException e) {
 			IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 			CUIPlugin.log(status);
@@ -68,7 +67,7 @@ public class DefinitionFinder {
 			index.releaseReadLock();
 		}
 
-		if (pdomref == null || (pdomref != null && pdomref.length < 1)) {
+		if (pdomref==null || pdomref.length < 1) {
 			return null;
 		}
 

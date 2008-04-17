@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 public class CPathContainerDefaultPage extends NewElementWizardPage implements IPathEntryContainerPage {
 
 	private StringDialogField fEntryField;
-	private ArrayList fUsedPaths;
+	private ArrayList<IPath> fUsedPaths;
 
 	/**
 	 * Constructor for ClasspathContainerDefaultPage.
@@ -47,7 +47,7 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 		setDescription(CPathEntryMessages.getString("CPathContainerDefaultPage.description")); //$NON-NLS-1$
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 		
-		fUsedPaths= new ArrayList();
+		fUsedPaths= new ArrayList<IPath>();
 		
 		fEntryField= new StringDialogField();
 		fEntryField.setLabelText(CPathEntryMessages.getString("CPathContainerDefaultPage.path.label")); //$NON-NLS-1$

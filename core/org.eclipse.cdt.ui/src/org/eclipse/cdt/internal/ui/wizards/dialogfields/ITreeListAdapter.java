@@ -15,32 +15,32 @@ import org.eclipse.swt.events.KeyEvent;
 /**
  * Change listener used by <code>TreeListDialogField</code>
  */
-public interface ITreeListAdapter {
+public interface ITreeListAdapter<T> {
 	
 	/**
 	 * A button from the button bar has been pressed.
 	 */
-	void customButtonPressed(TreeListDialogField field, int index);
+	void customButtonPressed(TreeListDialogField<T> field, int index);
 	
 	/**
 	 * The selection of the list has changed.
 	 */	
-	void selectionChanged(TreeListDialogField field);
+	void selectionChanged(TreeListDialogField<T> field);
 
 	/**
 	 * The list has been double clicked
 	 */
-	void doubleClicked(TreeListDialogField field);
+	void doubleClicked(TreeListDialogField<T> field);
 
 	/**
 	 * A key has been pressed
 	 */
-	void keyPressed(TreeListDialogField field, KeyEvent event);
+	void keyPressed(TreeListDialogField<T> field, KeyEvent event);
 
-	Object[] getChildren(TreeListDialogField field, Object element);
+	Object[] getChildren(TreeListDialogField<T> field, Object element);
 
-	Object getParent(TreeListDialogField field, Object element);
+	Object getParent(TreeListDialogField<T> field, Object element);
 
-	boolean hasChildren(TreeListDialogField field, Object element);
+	boolean hasChildren(TreeListDialogField<T> field, Object element);
 
 }

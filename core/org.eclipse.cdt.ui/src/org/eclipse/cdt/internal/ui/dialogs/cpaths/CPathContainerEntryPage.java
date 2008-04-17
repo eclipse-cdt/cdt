@@ -14,18 +14,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,12 +25,26 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+
 public class CPathContainerEntryPage extends CPathBasePage {
 
-	private ListDialogField fCPathList;
+	private ListDialogField<CPElement> fCPathList;
 	private ICProject fCurrCProject;
 
-	private TreeListDialogField fContainersList;
+	private TreeListDialogField<CPElement> fContainersList;
 
 	private final int IDX_ADD = 0;
 
@@ -50,7 +52,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	private final int IDX_REMOVE = 3;
 	private final int IDX_EXPORT = 5;
 
-	public CPathContainerEntryPage(ListDialogField cPathList) {
+	public CPathContainerEntryPage(ListDialogField<CPElement> cPathList) {
 		super(CPathEntryMessages.getString("ContainerEntryPage.title")); //$NON-NLS-1$
 		fCPathList = cPathList;
 
@@ -65,7 +67,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		ContainersAdapter adapter = new ContainersAdapter();
 
-		fContainersList = new TreeListDialogField(adapter, buttonLabels, new CPElementLabelProvider());
+		fContainersList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fContainersList.setDialogFieldListener(adapter);
 		fContainersList.setLabelText(CPathEntryMessages.getString("ContainerEntryPage.libraries.label")); //$NON-NLS-1$
 
@@ -84,12 +86,12 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	private void updateLibrariesList() {
-		List cpelements = fCPathList.getElements();
-		List libelements = new ArrayList(cpelements.size());
+		List<CPElement> cpelements = fCPathList.getElements();
+		List<CPElement> libelements = new ArrayList<CPElement>(cpelements.size());
 
 		int nElements = cpelements.size();
 		for (int i = 0; i < nElements; i++) {
-			CPElement cpe = (CPElement)cpelements.get(i);
+			CPElement cpe = cpelements.get(i);
 			if (isEntryKind(cpe.getEntryKind())) {
 				libelements.add(cpe);
 			}
@@ -127,28 +129,28 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_CONTAINERS);
 	}
 
-	private class ContainersAdapter implements IDialogFieldListener, ITreeListAdapter {
+	private class ContainersAdapter implements IDialogFieldListener, ITreeListAdapter<CPElement> {
 
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
-		public void customButtonPressed(TreeListDialogField field, int index) {
+		public void customButtonPressed(TreeListDialogField<CPElement> field, int index) {
 			containerPageCustomButtonPressed(field, index);
 		}
 
-		public void selectionChanged(TreeListDialogField field) {
+		public void selectionChanged(TreeListDialogField<CPElement> field) {
 			containerPageSelectionChanged(field);
 		}
 
-		public void doubleClicked(TreeListDialogField field) {
+		public void doubleClicked(TreeListDialogField<CPElement> field) {
 			containerPageDoubleClicked(field);
 		}
 
-		public void keyPressed(TreeListDialogField field, KeyEvent event) {
+		public void keyPressed(TreeListDialogField<CPElement> field, KeyEvent event) {
 			containerPageKeyPressed(field, event);
 		}
 
-		public Object[] getChildren(TreeListDialogField field, Object element) {
+		public Object[] getChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElement) {
 				return ((CPElement)element).getChildren();
 			} else if (element instanceof CPElementGroup) {
@@ -157,7 +159,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			return EMPTY_ARR;
 		}
 
-		public Object getParent(TreeListDialogField field, Object element) {
+		public Object getParent(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementAttribute) {
 				return ((CPElementAttribute)element).getParent();
 			} else if (element instanceof CPElementGroup) {
@@ -166,7 +168,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			return null;
 		}
 
-		public boolean hasChildren(TreeListDialogField field, Object element) {
+		public boolean hasChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementGroup) {
 				return true;
 			} else if (element instanceof CPElement) {
@@ -206,8 +208,8 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		if (containers != null) {
 			int nElementsChosen = containers.length;
 			// remove duplicates
-			List cplist = fContainersList.getElements();
-			List elementsToAdd = new ArrayList(nElementsChosen);
+			List<CPElement> cplist = fContainersList.getElements();
+			List<CPElement> elementsToAdd = new ArrayList<CPElement>(nElementsChosen);
 
 			for (int i = 0; i < nElementsChosen; i++) {
 				CPElement curr = containers[i];
@@ -225,17 +227,17 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		}
 	}
 
-	protected void containerPageDoubleClicked(TreeListDialogField field) {
-		List selection = fContainersList.getSelectedElements();
+	protected void containerPageDoubleClicked(TreeListDialogField<?> field) {
+		List<?> selection = fContainersList.getSelectedElements();
 		if (canEdit(selection)) {
 			editEntry();
 		}
 	}
 
-	protected void containerPageKeyPressed(TreeListDialogField field, KeyEvent event) {
+	protected void containerPageKeyPressed(TreeListDialogField<?> field, KeyEvent event) {
 		if (field == fContainersList) {
 			if (event.character == SWT.DEL && event.stateMask == 0) {
-				List selection = field.getSelectedElements();
+				List<?> selection = field.getSelectedElements();
 				if (canRemove(selection)) {
 					removeEntry();
 				}
@@ -243,7 +245,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		}
 	}
 
-	private boolean canRemove(List selElements) {
+	private boolean canRemove(List<?> selElements) {
 		if (selElements.size() == 0) {
 			return false;
 		}
@@ -262,11 +264,11 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	private void removeEntry() {
-		List selElements = fContainersList.getSelectedElements();
+		List<?> selElements = fContainersList.getSelectedElements();
 		fContainersList.removeElements(selElements);
 	}
 
-	private boolean canExport(List selElements) {
+	private boolean canExport(List<?> selElements) {
 		if (selElements.size() == 0) {
 			return false;
 		}
@@ -285,7 +287,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	private void exportEntry() {
-		List selElements = fContainersList.getSelectedElements();
+		List<?> selElements = fContainersList.getSelectedElements();
 		if (selElements.size() == 0) {
 			return;
 		}
@@ -302,7 +304,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	 * Method editEntry.
 	 */
 	private void editEntry() {
-		List selElements = fContainersList.getSelectedElements();
+		List<?> selElements = fContainersList.getSelectedElements();
 		if (selElements.size() != 1) {
 			return;
 		}
@@ -349,13 +351,13 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	void containerPageSelectionChanged(DialogField field) {
-		List selElements = fContainersList.getSelectedElements();
+		List<?> selElements = fContainersList.getSelectedElements();
 		fContainersList.enableButton(IDX_EDIT, canEdit(selElements));
 		fContainersList.enableButton(IDX_REMOVE, canRemove(selElements));
 		fContainersList.enableButton(IDX_EXPORT, canExport(selElements));
 	}
 
-	private boolean canEdit(List selElements) {
+	private boolean canEdit(List<?> selElements) {
 		if (selElements.size() != 1) {
 			return false;
 		}
@@ -378,14 +380,14 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	private void updateCPathList() {
-		List projelements = fContainersList.getElements();
+		List<CPElement> projelements = fContainersList.getElements();
 
-		List cpelements = fCPathList.getElements();
+		List<CPElement> cpelements = fCPathList.getElements();
 		int nEntries = cpelements.size();
 		// backwards, as entries will be deleted
 		int lastRemovePos = nEntries;
 		for (int i = nEntries - 1; i >= 0; i--) {
-			CPElement cpe = (CPElement)cpelements.get(i);
+			CPElement cpe = cpelements.get(i);
 			int kind = cpe.getEntryKind();
 			if (isEntryKind(kind)) {
 				if (!projelements.remove(cpe)) {
@@ -429,7 +431,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	private IPathEntry[] getRawClasspath() {
 		IPathEntry[] currEntries = new IPathEntry[fCPathList.getSize()];
 		for (int i = 0; i < currEntries.length; i++) {
-			CPElement curr = (CPElement)fCPathList.getElement(i);
+			CPElement curr = fCPathList.getElement(i);
 			currEntries[i] = curr.getPathEntry();
 		}
 		return currEntries;
@@ -449,7 +451,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	 * @see BuildPathBasePage#getSelection
 	 */
 	@Override
-	public List getSelection() {
+	public List<?> getSelection() {
 		return fContainersList.getSelectedElements();
 	}
 
@@ -457,7 +459,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	 * @see BuildPathBasePage#setSelection
 	 */
 	@Override
-	public void setSelection(List selElements) {
+	public void setSelection(List<?> selElements) {
 		fContainersList.selectElements(new StructuredSelection(selElements));
 	}
 

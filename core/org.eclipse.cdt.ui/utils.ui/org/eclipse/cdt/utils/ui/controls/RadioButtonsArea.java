@@ -12,7 +12,6 @@
 package org.eclipse.cdt.utils.ui.controls;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -75,8 +74,8 @@ public class RadioButtonsArea extends Composite {
 	
 	@Override
 	public void setEnabled(boolean enabled) {
-		for( int i = 0; i < radioButtons.length; i++ ) {
-			radioButtons[i].setEnabled(enabled);
+		for (Button radioButton : radioButtons) {
+			radioButton.setEnabled(enabled);
 		}
 	}
 	
@@ -89,8 +88,7 @@ public class RadioButtonsArea extends Composite {
 	private boolean checkArray(String[][] table) {
 		if (table == null)
 			return false;
-		for (int i = 0; i < table.length; i++) {
-			String[] array = table[i];
+		for (String[] array : table) {
 			if (array == null || array.length != 2)
 				return false;
 		}
@@ -98,8 +96,7 @@ public class RadioButtonsArea extends Composite {
 	}
 
 	protected void fireSelectionEvent(SelectionEvent event) {
-		for(Iterator i = externalListeners.iterator(); i.hasNext(); ) {
-			SelectionListener s = (SelectionListener)i.next();
+		for (SelectionListener s : externalListeners) {
 			s.widgetSelected(event);
 		}
 	}
@@ -171,8 +168,7 @@ public class RadioButtonsArea extends Composite {
 	
 		if (this.value != null) {
 			boolean found = false;
-			for (int i = 0; i < radioButtons.length; i++) {
-				Button radio = radioButtons[i];
+			for (Button radio : radioButtons) {
 				boolean selection = false;
 				if (((String) radio.getData()).equals(this.value)) {
 					selection = true;

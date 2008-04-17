@@ -333,7 +333,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	}
 
 	public static IContainerDescriptor[] getDescriptors() {
-		ArrayList containers = new ArrayList();
+		ArrayList<IContainerDescriptor> containers = new ArrayList<IContainerDescriptor>();
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, ATT_EXTENSION);
 		if (extensionPoint != null) {
@@ -358,7 +358,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 				containers.add(defaultPage);
 			}
 		}
-		return (CPathContainerDescriptor[]) containers.toArray(new CPathContainerDescriptor[containers.size()]);
+		return containers.toArray(new CPathContainerDescriptor[containers.size()]);
 	}
 
 }

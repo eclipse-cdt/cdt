@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -32,7 +31,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
  * This gives a Label and Browse widget.
  */
 
-public class UIBrowseWidget extends UITextWidget implements ModifyListener {
+public class UIBrowseWidget extends UITextWidget {
 
 	/**
 	 * Browse Button of this widget.

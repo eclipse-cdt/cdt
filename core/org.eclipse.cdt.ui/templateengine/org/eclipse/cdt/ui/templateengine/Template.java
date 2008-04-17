@@ -72,7 +72,7 @@ public class Template extends TemplateCore {
 	public Map<String, UIWizardPage> getUIPages() {
 		if (pageMap == null) {
 			pageMap = new HashMap<String, UIWizardPage>();
-			List rootPropertyGrouplist = templateDescriptor.getPropertyGroupList();
+			List<Element> rootPropertyGrouplist = templateDescriptor.getPropertyGroupList();
 			
 			uiPagesProvider.clearOrderVector();
 	
@@ -81,7 +81,7 @@ public class Template extends TemplateCore {
 				// root is set to null
 				// before invoking createUIElementTree(...).
 				uiElementTreeBuilderManager.setUIElementTreeRootNull();
-				uiElementTreeBuilderManager.createUIElementTree(null, (Element) rootPropertyGrouplist.get(i));
+				uiElementTreeBuilderManager.createUIElementTree(null, rootPropertyGrouplist.get(i));
 				pageMap.putAll(uiPagesProvider.getWizardUIPages(uiElementTreeBuilderManager.getUIElementTreeRoot(), getValueStore()));
 			}
 		}
@@ -96,17 +96,17 @@ public class Template extends TemplateCore {
 //			pages.add(predatingPage);
 //		}
 		
-		Map templatePages = getUIPages();
-		List templatePagesOrderVector = getPagesOrderVector();
+		Map<String, UIWizardPage> templatePages = getUIPages();
+		List<String> templatePagesOrderVector = getPagesOrderVector();
 		if (templatePagesOrderVector.size() != 0) {
 			IWizardPage prevPage = predatingPage;
 
 			for (int i=0; i < templatePagesOrderVector.size(); i++) {
-				UIWizardPage page = (UIWizardPage) templatePages.get(templatePagesOrderVector.get(i));
+				UIWizardPage page = templatePages.get(templatePagesOrderVector.get(i));
 				pages.add(page);
 				page.setPreviousPage(prevPage);
 				if (i+1 < templatePagesOrderVector.size()) {
-					page.setNextPage((UIWizardPage) templatePages.get(templatePagesOrderVector.get(i+1)));
+					page.setNextPage(templatePages.get(templatePagesOrderVector.get(i+1)));
 				} else {
 					page.setNextPage(followingPage);
 				}
@@ -120,8 +120,7 @@ public class Template extends TemplateCore {
 		try {
 			IWizardPage prevPage = predatingPage;
 			IWizardDataPage[] extraPages = getExtraCreatedPages((IWorkbenchWizard)wizard, PlatformUI.getWorkbench(), null);
-			for (int i=0; i < extraPages.length; i++) {
-				IWizardDataPage page = extraPages[i];
+			for (IWizardDataPage page : extraPages) {
 				pages.add(page);
 				page.setPreviousPage(prevPage);
 				

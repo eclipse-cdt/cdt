@@ -13,7 +13,6 @@ package org.eclipse.cdt.ui.templateengine;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,13 +54,13 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	@Override
 	public final void addPages() {
 		IWizardPage[] pages = getPagesBeforeTemplatePages();
-		for(int i=0; i<pages.length; i++) {
-			addPageBeforeTemplatePages(pages[i]);
+		for (IWizardPage page : pages) {
+			addPageBeforeTemplatePages(page);
 		}
 		
 		pages = getPagesAfterTemplatePages();
-		for(int i=0; i<pages.length; i++) {
-			addPageAfterTemplatePages(pages[i]);
+		for (IWizardPage page : pages) {
+			addPageAfterTemplatePages(page);
 		}
 	}
 
@@ -130,8 +129,8 @@ public abstract class TemplateDrivenWizard extends Wizard {
 
 	@Override
 	public final boolean canFinish() {
-		for(Iterator i = pagesBeforeTemplatePages.iterator(); i.hasNext(); ) {
-			IWizardPage page = (IWizardPage) i.next();
+		for (IWizardPage wizardPage : pagesBeforeTemplatePages) {
+			IWizardPage page = wizardPage;
             if (!page.isPageComplete()) {
                 return false;
             }
@@ -139,14 +138,14 @@ public abstract class TemplateDrivenWizard extends Wizard {
         if (templatePages == null) {
         	return false;
         }
-        for(Iterator i = templatePages.values().iterator(); i.hasNext(); ) {
-        	IWizardPage page = (IWizardPage) i.next();
+        for (Object element : templatePages.values()) {
+        	IWizardPage page = (IWizardPage) element;
         	if (!page.isPageComplete()) {
                 return false;
             }
         }
-        for(Iterator i = pagesAfterTemplatePages.iterator(); i.hasNext(); ) {
-			IWizardPage page = (IWizardPage) i.next();
+        for (Object element : pagesAfterTemplatePages) {
+			IWizardPage page = (IWizardPage) element;
             if (!page.isPageComplete()) {
                 return false;
             }
@@ -177,11 +176,10 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	    if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
 	    	TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
 		    return false;
-	    } else {
-	    	String msg = Messages.getString("TemplateDrivenWizard.0"); //$NON-NLS-1$
-	    	TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
-		    return true;
 	    }
+		String msg = Messages.getString("TemplateDrivenWizard.0"); //$NON-NLS-1$
+		TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
+		return true;
 	}
 	
 	@Override

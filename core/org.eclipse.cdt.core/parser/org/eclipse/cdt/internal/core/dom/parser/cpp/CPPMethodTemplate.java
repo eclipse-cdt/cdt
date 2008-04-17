@@ -124,7 +124,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 	
 	public ICPPClassType getClassOwner() throws DOMException {
 		IScope scope= getScope();
-		while (scope instanceof ICPPTemplateScope) {
+		if (scope instanceof ICPPTemplateScope) {
 			scope= scope.getParent();
 		}
 		if( scope instanceof ICPPClassScope ){

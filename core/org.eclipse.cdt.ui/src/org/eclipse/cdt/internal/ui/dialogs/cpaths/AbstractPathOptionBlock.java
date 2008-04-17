@@ -13,19 +13,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +23,21 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
+
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock implements ICOptionContainer {
 
@@ -71,17 +73,17 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 *         returned must not be valid.
 	 */
 	public IPathEntry[] getRawCPath() throws CModelException{
-		List elements = getCPaths();
+		List<CPElement> elements = getCPaths();
 
 		IPathEntry[] entries = getCProject().getRawPathEntries();
-		List cpath = new ArrayList(elements.size() + entries.length);
+		List<IPathEntry> cpath = new ArrayList<IPathEntry>(elements.size() + entries.length);
 
 		int[] applyTypes = getAppliedFilteredTypes(); 
 		// create and set the paths
 		for (int i = 0; i < elements.size(); i++) {
-			CPElement entry = ((CPElement) elements.get(i));			
-			for(int j = 0; j < applyTypes.length; j++) {
-				if (entry.getEntryKind() == applyTypes[j]) {
+			CPElement entry = (elements.get(i));			
+			for (int applyType : applyTypes) {
+				if (entry.getEntryKind() == applyType) {
 					cpath.add(entry.getPathEntry());
 					break;
 				}
@@ -89,21 +91,21 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		}
 
 		// add entries which do not match type being applyed by the ui block
-		for(int i = 0; i < entries.length; i++) {
-			int pathType = entries[i].getEntryKind();
+		for (IPathEntry entrie : entries) {
+			int pathType = entrie.getEntryKind();
 			boolean found = false;
-			for(int j = 0; j < applyTypes.length; j++) {
-				if (pathType == applyTypes[j]) {
+			for (int applyType : applyTypes) {
+				if (pathType == applyType) {
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				cpath.add(entries[i]);
+				cpath.add(entrie);
 			}
 		}
 		
-		return (IPathEntry[]) cpath.toArray(new IPathEntry[cpath.size()]);
+		return cpath.toArray(new IPathEntry[cpath.size()]);
 	}
 
 	/**
@@ -120,7 +122,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 */
 	public void init(ICElement element, IPathEntry[] cpathEntries) {
 		setCElement(element);
-		List newCPath = null;
+		List<CPElement> newCPath = null;
 
 		if (cpathEntries == null) {
 			try {
@@ -132,7 +134,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		if (cpathEntries != null) {
 			newCPath = getFilteredElements(cpathEntries, getFilteredTypes());
 		} else {
-			newCPath = new ArrayList();
+			newCPath = new ArrayList<CPElement>();
 		}
 		initialize(element, newCPath);
 	}
@@ -140,12 +142,11 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	abstract protected int[] getFilteredTypes(); // path type which block would like access to
 	abstract protected int[] getAppliedFilteredTypes(); // path type which block modifies 
 
-	abstract protected void initialize(ICElement element, List cPaths);
+	abstract protected void initialize(ICElement element, List<CPElement> cPaths);
 
-	protected ArrayList getFilteredElements(IPathEntry[] cPathEntries, int[] types) {
-		ArrayList newCPath = new ArrayList();
-		for (int i = 0; i < cPathEntries.length; i++) {
-			IPathEntry curr = cPathEntries[i];
+	protected ArrayList<CPElement> getFilteredElements(IPathEntry[] cPathEntries, int[] types) {
+		ArrayList<CPElement> newCPath = new ArrayList<CPElement>();
+		for (IPathEntry curr : cPathEntries) {
 			if (contains(types, curr.getEntryKind())) {
 				newCPath.add(CPElement.createFromExisting(curr, getCElement()));
 			}
@@ -164,16 +165,16 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		return false;
 	}
 
-	abstract protected List getCPaths();
+	abstract protected List<CPElement> getCPaths();
 
 	private String getEncodedSettings() {
 		StringBuffer buf = new StringBuffer();
 		
-		List elements = getCPaths();
+		List<CPElement> elements = getCPaths();
 		int nElements = elements.size();
 		buf.append('[').append(nElements).append(']');
 		for (int i = 0; i < nElements; i++) {
-			CPElement elem = (CPElement) elements.get(i);
+			CPElement elem = elements.get(i);
 			elem.appendEncodedSettings(buf);
 		}
 		return buf.toString();
@@ -234,7 +235,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		super.setCurrentPage(page);
 		CPathBasePage newPage = (CPathBasePage) page;
 		if (fCurrPage != null) {
-			List selection = fCurrPage.getSelection();
+			List<?> selection = fCurrPage.getSelection();
 			if (!selection.isEmpty()) {
 				newPage.setSelection(selection);
 			}
@@ -252,11 +253,11 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	}
 
 	protected void updateBuildPathStatus() {
-		List elements = getCPaths();
+		List<CPElement> elements = getCPaths();
 		IPathEntry[] entries = new IPathEntry[elements.size()];
 
 		for (int i = elements.size() - 1; i >= 0; i--) {
-			CPElement currElement = (CPElement) elements.get(i);
+			CPElement currElement = elements.get(i);
 			entries[i] = currElement.getPathEntry();
 		}
 
@@ -288,7 +289,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		return fCurrPage;
 	}
 
-	protected void internalConfigureCProject(List cPathEntries, IProgressMonitor monitor) throws CoreException,
+	protected void internalConfigureCProject(List<CPElement> cPathEntries, IProgressMonitor monitor) throws CoreException,
 			InterruptedException {
 		// 10 monitor steps to go
 
@@ -296,14 +297,14 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		
 		IPathEntry[] entries = getCProject().getRawPathEntries();
 		
-		List cpath = new ArrayList(cPathEntries.size() + entries.length);
+		List<IPathEntry> cpath = new ArrayList<IPathEntry>(cPathEntries.size() + entries.length);
 
 		int[] applyTypes = getAppliedFilteredTypes(); 
 		// create and set the paths
 		for (int i = 0; i < cPathEntries.size(); i++) {
-			CPElement entry = ((CPElement) cPathEntries.get(i));			
-			for(int j = 0; j < applyTypes.length; j++) {
-				if (entry.getEntryKind() == applyTypes[j]) {
+			CPElement entry = (cPathEntries.get(i));			
+			for (int applyType : applyTypes) {
+				if (entry.getEntryKind() == applyType) {
 					IResource res = entry.getResource();
 					if ((res instanceof IFolder) && !res.exists()) {
 						CoreUtility.createFolder((IFolder) res, true, true, null);
@@ -315,22 +316,22 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		}
 
 		// add entries which do not match type being applyed by the ui block
-		for(int i = 0; i < entries.length; i++) {
-			int pathType = entries[i].getEntryKind();
+		for (IPathEntry entrie : entries) {
+			int pathType = entrie.getEntryKind();
 			boolean found = false;
-			for(int j = 0; j < applyTypes.length; j++) {
-				if (pathType == applyTypes[j]) {
+			for (int applyType : applyTypes) {
+				if (pathType == applyType) {
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				cpath.add(entries[i]);
+				cpath.add(entrie);
 			}
 		}
 		monitor.worked(1);
 
-		getCProject().setRawPathEntries((IPathEntry[]) cpath.toArray(new IPathEntry[cpath.size()]),
+		getCProject().setRawPathEntries(cpath.toArray(new IPathEntry[cpath.size()]),
 				new SubProgressMonitor(monitor, 7));
 	}
 

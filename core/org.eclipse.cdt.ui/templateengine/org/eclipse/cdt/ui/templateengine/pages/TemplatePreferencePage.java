@@ -88,7 +88,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	private int columnWidth = 100;
 	private int columnWeight = 50;
 	private String columnNames[];
-	private static List/*<Element>*/ sharedElementList;
+	private static List<Element> sharedElementList;
 	private int attrListSize;
 
 	private ColumnLayoutData columnLayouts[] = { new ColumnWeightData(columnWeight, columnWidth),
@@ -329,7 +329,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	private void addXMLDataIntoTable() {
 		for (int i = 0, l = sharedElementList.size(); i < l; i++) {
-			Element xmlElement = (Element) sharedElementList.get(i);
+			Element xmlElement = sharedElementList.get(i);
 			String name = xmlElement.getAttribute(TemplateEngineHelper.ID);
 			String value = xmlElement.getAttribute(TemplateEngineHelper.VALUE);
 
@@ -413,8 +413,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 			TableItem duplicateItems[] = table.getItems();
 			TableItem duplicateItem = null;
 
-			for (int nItems = 0; nItems < duplicateItems.length; nItems++) {
-				duplicateItem = duplicateItems[nItems];
+			for (TableItem duplicateItem2 : duplicateItems) {
+				duplicateItem = duplicateItem2;
 				String duplicateString = duplicateItem.getText();
 
 				if (duplicateString.equals(name)) {
@@ -453,7 +453,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 			int listSize = sharedElementList.size();
 			int i = 0;
 			while (i < listSize) {
-				Element xmlElement = (Element) sharedElementList.get(i++);
+				Element xmlElement = sharedElementList.get(i++);
 				attrListSize = xmlElement.getAttributes().getLength();
 			}
 		} catch (Exception exp) {

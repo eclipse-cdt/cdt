@@ -17,30 +17,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -54,21 +41,36 @@ import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+
 public class CPathOutputEntryPage extends CPathBasePage {
 
-	private ListDialogField fCPathList;
+	private ListDialogField<CPElement> fCPathList;
 	private ICProject fCurrCProject;
 	private IPath fProjPath;
 
 	private IWorkspaceRoot fWorkspaceRoot;
 
-	private TreeListDialogField fOutputList;
+	private TreeListDialogField<CPElement> fOutputList;
 
 	private final int IDX_ADD = 0;
 	private final int IDX_EDIT = 2;
 	private final int IDX_REMOVE = 3;
 
-	public CPathOutputEntryPage(ListDialogField cPathList) {
+	public CPathOutputEntryPage(ListDialogField<CPElement> cPathList) {
 		super(CPathEntryMessages.getString("OutputPathEntryPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("OutputPathEntryPage.description")); //$NON-NLS-1$
 
@@ -85,7 +87,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 				/* 3 = IDX_REMOVE */CPathEntryMessages.getString("OutputPathEntryPage.folders.remove.button") //$NON-NLS-1$
 		};
 
-		fOutputList = new TreeListDialogField(adapter, buttonLabels, new CPElementLabelProvider());
+		fOutputList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fOutputList.setDialogFieldListener(adapter);
 		fOutputList.setLabelText(CPathEntryMessages.getString("OutputPathEntryPage.folders.label")); //$NON-NLS-1$
 
@@ -108,11 +110,11 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	private void updateFoldersList() {
 
-		List folders = filterList(fCPathList.getElements());
+		List<CPElement> folders = filterList(fCPathList.getElements());
 		fOutputList.setElements(folders);
 
 		for (int i = 0; i < folders.size(); i++) {
-			CPElement cpe = (CPElement)folders.get(i);
+			CPElement cpe = folders.get(i);
 			IPath[] patterns = (IPath[])cpe.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fOutputList.expandElement(cpe, 3);
@@ -132,9 +134,9 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		fOutputList.setButtonsMinWidth(buttonBarWidth);
 
 		// expand
-		List elements = fOutputList.getElements();
+		List<CPElement> elements = fOutputList.getElements();
 		for (int i = 0; i < elements.size(); i++) {
-			CPElement elem = (CPElement)elements.get(i);
+			CPElement elem = elements.get(i);
 			IPath[] patterns = (IPath[])elem.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fOutputList.expandElement(elem, 3);
@@ -145,42 +147,42 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_OUTPUT);
 	}
 
-	private class OutputContainerAdapter implements ITreeListAdapter, IDialogFieldListener {
+	private class OutputContainerAdapter implements ITreeListAdapter<CPElement>, IDialogFieldListener {
 
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
-		public void customButtonPressed(TreeListDialogField field, int index) {
+		public void customButtonPressed(TreeListDialogField<CPElement> field, int index) {
 			outputPageCustomButtonPressed(field, index);
 		}
 
-		public void selectionChanged(TreeListDialogField field) {
+		public void selectionChanged(TreeListDialogField<CPElement> field) {
 			outputPageSelectionChanged(field);
 		}
 
-		public void doubleClicked(TreeListDialogField field) {
+		public void doubleClicked(TreeListDialogField<CPElement> field) {
 			outputPageDoubleClicked(field);
 		}
 
-		public void keyPressed(TreeListDialogField field, KeyEvent event) {
+		public void keyPressed(TreeListDialogField<CPElement> field, KeyEvent event) {
 			outputPageKeyPressed(field, event);
 		}
 
-		public Object[] getChildren(TreeListDialogField field, Object element) {
+		public Object[] getChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElement) {
 				return ((CPElement)element).getChildren();
 			}
 			return EMPTY_ARR;
 		}
 
-		public Object getParent(TreeListDialogField field, Object element) {
+		public Object getParent(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementAttribute) {
 				return ((CPElementAttribute)element).getParent();
 			}
 			return null;
 		}
 
-		public boolean hasChildren(TreeListDialogField field, Object element) {
+		public boolean hasChildren(TreeListDialogField<CPElement> field, Object element) {
 			return (element instanceof CPElement);
 		}
 
@@ -191,10 +193,10 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	}
 
-	protected void outputPageKeyPressed(TreeListDialogField field, KeyEvent event) {
+	protected void outputPageKeyPressed(TreeListDialogField<CPElement> field, KeyEvent event) {
 		if (field == fOutputList) {
 			if (event.character == SWT.DEL && event.stateMask == 0) {
-				List selection = field.getSelectedElements();
+				List<?> selection = field.getSelectedElements();
 				if (canRemove(selection)) {
 					removeEntry();
 				}
@@ -202,9 +204,9 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		}
 	}
 
-	protected void outputPageDoubleClicked(TreeListDialogField field) {
+	protected void outputPageDoubleClicked(TreeListDialogField<CPElement> field) {
 		if (field == fOutputList) {
-			List selection = field.getSelectedElements();
+			List<?> selection = field.getSelectedElements();
 			if (canEdit(selection)) {
 				editEntry();
 			}
@@ -214,8 +216,8 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	private boolean hasFolders(IContainer container) {
 		try {
 			IResource[] members = container.members();
-			for (int i = 0; i < members.length; i++) {
-				if (members[i] instanceof IContainer) {
+			for (IResource member : members) {
+				if (member instanceof IContainer) {
 					return true;
 				}
 			}
@@ -228,14 +230,14 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	protected void outputPageCustomButtonPressed(DialogField field, int index) {
 		if (field == fOutputList) {
 			if (index == IDX_ADD) {
-				List elementsToAdd = new ArrayList(10);
+				List<CPElement> elementsToAdd = new ArrayList<CPElement>(10);
 				IProject project = fCurrCProject.getProject();
 				if (project.exists()) {
 					if (hasFolders(project)) {
 						CPElement[] srcentries = openOutputContainerDialog(null);
 						if (srcentries != null) {
-							for (int i = 0; i < srcentries.length; i++) {
-								elementsToAdd.add(srcentries[i]);
+							for (CPElement srcentrie : srcentries) {
+								elementsToAdd.add(srcentrie);
 							}
 						}
 					} else {
@@ -251,14 +253,14 @@ public class CPathOutputEntryPage extends CPathBasePage {
 					}
 				}
 				if (!elementsToAdd.isEmpty()) {
-					HashSet modifiedElements = new HashSet();
+					HashSet<CPElement> modifiedElements = new HashSet<CPElement>();
 					askForAddingExclusionPatternsDialog(elementsToAdd, modifiedElements);
 
 					fOutputList.addElements(elementsToAdd);
 					fOutputList.postSetSelection(new StructuredSelection(elementsToAdd));
 
 					if (!modifiedElements.isEmpty()) {
-						for (Iterator iter = modifiedElements.iterator(); iter.hasNext();) {
+						for (Iterator<CPElement> iter = modifiedElements.iterator(); iter.hasNext();) {
 							Object elem = iter.next();
 							fOutputList.refresh(elem);
 							fOutputList.expandElement(elem, 3);
@@ -275,7 +277,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	}
 
 	private void editEntry() {
-		List selElements = fOutputList.getSelectedElements();
+		List<?> selElements = fOutputList.getSelectedElements();
 		if (selElements.size() != 1) {
 			return;
 		}
@@ -311,13 +313,13 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	}
 
 	protected void outputPageSelectionChanged(DialogField field) {
-		List selected = fOutputList.getSelectedElements();
+		List<?> selected = fOutputList.getSelectedElements();
 		fOutputList.enableButton(IDX_EDIT, canEdit(selected));
 		fOutputList.enableButton(IDX_REMOVE, canRemove(selected));
 	}
 
 	private void removeEntry() {
-		List selElements = fOutputList.getSelectedElements();
+		List<Object> selElements = fOutputList.getSelectedElements();
 		for (int i = selElements.size() - 1; i >= 0; i--) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
@@ -336,7 +338,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		}
 	}
 
-	private boolean canRemove(List selElements) {
+	private boolean canRemove(List<?> selElements) {
 		if (selElements.size() == 0) {
 			return false;
 		}
@@ -361,7 +363,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		return true;
 	}
 
-	private boolean canEdit(List selElements) {
+	private boolean canEdit(List<?> selElements) {
 		if (selElements.size() != 1) {
 			return false;
 		}
@@ -387,15 +389,15 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	}
 
 	private void updateCPathList() {
-		List srcelements = fOutputList.getElements();
+		List<CPElement> srcelements = fOutputList.getElements();
 
-		List cpelements = fCPathList.getElements();
+		List<CPElement> cpelements = fCPathList.getElements();
 		int nEntries = cpelements.size();
 		// backwards, as entries will be deleted
 		int lastRemovePos = nEntries;
 		int afterLastSourcePos = 0;
 		for (int i = nEntries - 1; i >= 0; i--) {
-			CPElement cpe = (CPElement)cpelements.get(i);
+			CPElement cpe = cpelements.get(i);
 			int kind = cpe.getEntryKind();
 			if (isEntryKind(kind)) {
 				if (!srcelements.remove(cpe)) {
@@ -439,7 +441,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		return null;
 	}
 
-	private void askForAddingExclusionPatternsDialog(List newEntries, Set modifiedEntries) {
+	private void askForAddingExclusionPatternsDialog(List<CPElement> newEntries, Set<CPElement> modifiedEntries) {
 		fixNestingConflicts(newEntries, fOutputList.getElements(), modifiedEntries);
 		if (!modifiedEntries.isEmpty()) {
 			String title = CPathEntryMessages.getString("OutputPathEntryPage.exclusion_added.title"); //$NON-NLS-1$
@@ -450,11 +452,11 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	private CPElement[] openOutputContainerDialog(CPElement existing) {
 
-		Class[] acceptedClasses = new Class[]{IProject.class, IFolder.class};
-		List existingContainers = getExistingContainers(null);
+		Class<?>[] acceptedClasses = new Class[]{IProject.class, IFolder.class};
+		List<IContainer> existingContainers = getExistingContainers(null);
 
 		IProject[] allProjects = fWorkspaceRoot.getProjects();
-		ArrayList rejectedElements = new ArrayList(allProjects.length);
+		ArrayList<IProject> rejectedElements = new ArrayList<IProject>(allProjects.length);
 		IProject currProject = fCurrCProject.getProject();
 		for (int i = 0; i < allProjects.length; i++) {
 			if (!allProjects[i].equals(currProject)) {
@@ -497,15 +499,15 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		return null;
 	}
 
-	private List getExistingContainers(CPElement existing) {
-		List res = new ArrayList();
-		List cplist = fOutputList.getElements();
+	private List<IContainer> getExistingContainers(CPElement existing) {
+		List<IContainer> res = new ArrayList<IContainer>();
+		List<CPElement> cplist = fOutputList.getElements();
 		for (int i = 0; i < cplist.size(); i++) {
-			CPElement elem = (CPElement)cplist.get(i);
+			CPElement elem = cplist.get(i);
 			if (elem != existing) {
 				IResource resource = elem.getResource();
 				if (resource instanceof IContainer) { // defensive code
-					res.add(resource);
+					res.add((IContainer) resource);
 				}
 			}
 		}
@@ -521,7 +523,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	 * @see BuildPathBasePage#getSelection
 	 */
 	@Override
-	public List getSelection() {
+	public List<Object> getSelection() {
 		return fOutputList.getSelectedElements();
 	}
 
@@ -529,7 +531,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	 * @see BuildPathBasePage#setSelection
 	 */
 	@Override
-	public void setSelection(List selElements) {
+	public void setSelection(List<?> selElements) {
 		fOutputList.selectElements(new StructuredSelection(selElements));
 	}
 

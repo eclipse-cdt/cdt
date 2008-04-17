@@ -69,7 +69,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	}
 	
 	
-	private ListDialogField fExclusionPatternList;
+	private ListDialogField<String> fExclusionPatternList;
 	private CPElement fCurrElement;
 	private IProject fCurrProject;
 	
@@ -98,7 +98,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 
 		ExclusionPatternAdapter adapter= new ExclusionPatternAdapter();
 
-		fExclusionPatternList= new ListDialogField(adapter, buttonLabels, new ExclusionPatternLabelProvider());
+		fExclusionPatternList= new ListDialogField<String>(adapter, buttonLabels, new ExclusionPatternLabelProvider());
 		fExclusionPatternList.setDialogFieldListener(adapter);
 		fExclusionPatternList.setLabelText(label);
 		fExclusionPatternList.setRemoveButtonIndex(IDX_REMOVE);
@@ -113,9 +113,9 @@ public class ExclusionPatternDialog extends StatusDialog {
 		
 		IPath[] pattern= (IPath[]) entryToEdit.getAttribute(CPElement.EXCLUSION);
 		
-		ArrayList elements= new ArrayList(pattern.length);
-		for (int i= 0; i < pattern.length; i++) {
-			elements.add(pattern[i].toString());
+		ArrayList<String> elements= new ArrayList<String>(pattern.length);
+		for (IPath element : pattern) {
+			elements.add(element.toString());
 		}
 		fExclusionPatternList.setElements(elements);
 		fExclusionPatternList.selectFirstElement();
@@ -141,7 +141,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 		return composite;
 	}
 	
-	protected void doCustomButtonPressed(ListDialogField field, int index) {
+	protected void doCustomButtonPressed(ListDialogField<String> field, int index) {
 		if (index == IDX_ADD) {
 			addEntry();
 		} else if (index == IDX_EDIT) {
@@ -151,27 +151,27 @@ public class ExclusionPatternDialog extends StatusDialog {
 		}
 	}
 	
-	protected void doDoubleClicked(ListDialogField field) {
+	protected void doDoubleClicked(ListDialogField<String> field) {
 		editEntry();
 	}
 	
-	protected void doSelectionChanged(ListDialogField field) {
-		List selected= field.getSelectedElements();
+	protected void doSelectionChanged(ListDialogField<String> field) {
+		List<String> selected= field.getSelectedElements();
 		fExclusionPatternList.enableButton(IDX_EDIT, canEdit(selected));
 	}
 	
-	private boolean canEdit(List selected) {
+	private boolean canEdit(List<String> selected) {
 		return selected.size() == 1;
 	}
 	
 	private void editEntry() {
 		
-		List selElements= fExclusionPatternList.getSelectedElements();
+		List<String> selElements= fExclusionPatternList.getSelectedElements();
 		if (selElements.size() != 1) {
 			return;
 		}
-		List existing= fExclusionPatternList.getElements();
-		String entry= (String) selElements.get(0);
+		List<String> existing= fExclusionPatternList.getElements();
+		String entry= selElements.get(0);
 		ExclusionPatternEntryDialog dialog= new ExclusionPatternEntryDialog(getShell(), entry, existing, fCurrElement);
 		if (dialog.open() == Window.OK) {
 			fExclusionPatternList.replaceElement(entry, dialog.getExclusionPattern());
@@ -179,7 +179,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	}
 	
 	private void addEntry() {
-		List existing= fExclusionPatternList.getElements();
+		List<String> existing= fExclusionPatternList.getElements();
 		ExclusionPatternEntryDialog dialog= new ExclusionPatternEntryDialog(getShell(), null, existing, fCurrElement);
 		if (dialog.open() == Window.OK) {
 			fExclusionPatternList.addElement(dialog.getExclusionPattern());
@@ -190,16 +190,16 @@ public class ExclusionPatternDialog extends StatusDialog {
 		
 	// -------- ExclusionPatternAdapter --------
 
-	private class ExclusionPatternAdapter implements IListAdapter, IDialogFieldListener {
-		public void customButtonPressed(ListDialogField field, int index) {
+	private class ExclusionPatternAdapter implements IListAdapter<String>, IDialogFieldListener {
+		public void customButtonPressed(ListDialogField<String> field, int index) {
 			doCustomButtonPressed(field, index);
 		}
 
-		public void selectionChanged(ListDialogField field) {
+		public void selectionChanged(ListDialogField<String> field) {
 			doSelectionChanged(field);
 		}
 
-		public void doubleClicked(ListDialogField field) {
+		public void doubleClicked(ListDialogField<String> field) {
 			doDoubleClicked(field);
 		}
 
@@ -218,7 +218,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	public IPath[] getExclusionPattern() {
 		IPath[] res= new IPath[fExclusionPatternList.getSize()];
 		for (int i= 0; i < res.length; i++) {
-			String entry= (String) fExclusionPatternList.getElement(i);
+			String entry= fExclusionPatternList.getElement(i);
 			res[i]= new Path(entry);
 		}
 		return res;
@@ -234,7 +234,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	}
 	
 	private void addMultipleEntries() {
-		Class[] acceptedClasses= new Class[] { IFolder.class, IFile.class };
+		Class<?>[] acceptedClasses= new Class<?>[] { IFolder.class, IFile.class };
 		ISelectionStatusValidator validator= new TypedElementSelectionValidator(acceptedClasses, true);
 		ViewerFilter filter= new TypedViewerFilter(acceptedClasses);
 
@@ -256,8 +256,8 @@ public class ExclusionPatternDialog extends StatusDialog {
 			Object[] objects= dialog.getResult();
 			int existingSegments= fCurrSourceFolder.getFullPath().segmentCount();
 			
-			for (int i= 0; i < objects.length; i++) {
-				IResource curr= (IResource) objects[i];
+			for (Object object : objects) {
+				IResource curr= (IResource) object;
 				IPath path= curr.getFullPath().removeFirstSegments(existingSegments).makeRelative();
 				String res;
 				if (curr instanceof IContainer) {

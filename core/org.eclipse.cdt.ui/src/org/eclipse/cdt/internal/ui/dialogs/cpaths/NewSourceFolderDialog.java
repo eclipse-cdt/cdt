@@ -12,12 +12,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,6 +25,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+
 public class NewSourceFolderDialog extends StatusDialog {
 
 	private SelectionButtonDialogField fUseProjectButton;
@@ -40,10 +41,10 @@ public class NewSourceFolderDialog extends StatusDialog {
 	private StatusInfo fContainerFieldStatus;
 
 	private IContainer fFolder;
-	private List fExistingFolders;
+	private List<IContainer> fExistingFolders;
 	private IProject fCurrProject;
 
-	public NewSourceFolderDialog(Shell parent, String title, IProject project, List existingFolders, CPElement entryToEdit) {
+	public NewSourceFolderDialog(Shell parent, String title, IProject project, List<IContainer> existingFolders, CPElement entryToEdit) {
 		super(parent);
 		setTitle(title);
 

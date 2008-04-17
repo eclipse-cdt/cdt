@@ -56,7 +56,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * 
 	 * @return List of child Elements for the given
 	 */
-	public List getPropertyGroupList() {
+	public List<Element> getPropertyGroupList() {
 		return templateDescriptor.getPropertyGroupList();
 	}
 
@@ -91,8 +91,8 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 */
 	private UIElement getUIWidget(Element element, UIAttributes uiAttributes) {
 		UIElement widgetElement= null;
-		String id= uiAttributes.get(InputUIElement.ID);
-		String type= uiAttributes.get(InputUIElement.TYPE);
+		String id= uiAttributes.get(UIElement.ID);
+		String type= uiAttributes.get(UIElement.TYPE);
 		
 		if (type == null || type.length()==0 ) {
 			return null;

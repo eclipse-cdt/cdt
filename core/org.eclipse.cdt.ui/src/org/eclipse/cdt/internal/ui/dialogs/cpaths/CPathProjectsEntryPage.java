@@ -13,19 +13,8 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -35,13 +24,27 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+
 public class CPathProjectsEntryPage extends CPathBasePage {
 
-	private CheckedListDialogField fProjectsList;
+	private CheckedListDialogField<CPElement> fProjectsList;
 	ICProject fCurrCProject;
-	private ListDialogField fCPathList;
+	private ListDialogField<CPElement> fCPathList;
 
-	public CPathProjectsEntryPage(ListDialogField cPathList) {
+	public CPathProjectsEntryPage(ListDialogField<CPElement> cPathList) {
 		super(CPathEntryMessages.getString("ProjectsEntryPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("ProjectsEntryPage.description")); //$NON-NLS-1$
 		ProjectsListListener listener = new ProjectsListListener();
@@ -49,7 +52,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		String[] buttonLabels = new String[] { /* 0 */CPathEntryMessages.getString("ProjectsEntryPage.projects.checkall.button"), //$NON-NLS-1$
 		/* 1 */CPathEntryMessages.getString("ProjectsEntryWorkbookPage.projects.uncheckall.button")}; //$NON-NLS-1$
 
-		fProjectsList = new CheckedListDialogField(null, buttonLabels, new CPElementLabelProvider());
+		fProjectsList = new CheckedListDialogField<CPElement>(null, buttonLabels, new CPElementLabelProvider());
 		fProjectsList.setDialogFieldListener(listener);
 		fProjectsList.setLabelText(CPathEntryMessages.getString("ProjectsEntryPage.projects.label")); //$NON-NLS-1$
 		fProjectsList.setCheckAllButtonIndex(0);
@@ -123,19 +126,19 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	void updateProjectsList(ICProject currCProject) {
 		ICModel cmodel = currCProject.getCModel();
 
-		List projects = new ArrayList();
-		final List checkedProjects = new ArrayList();
+		List<CPElement> projects = new ArrayList<CPElement>();
+		final List<CPElement> checkedProjects = new ArrayList<CPElement>();
 		try {
 			ICProject[] cprojects = cmodel.getCProjects();
 			
 			// a vector remembering all projects that dont have to be added anymore
-			List existingProjects = new ArrayList(cprojects.length);
+			List<IResource> existingProjects = new ArrayList<IResource>(cprojects.length);
 			existingProjects.add(currCProject.getProject());
 			
 			// add the projects-cpentries that are already on the C Path
-			List cpelements = fCPathList.getElements();
+			List<CPElement> cpelements = fCPathList.getElements();
 			for (int i = cpelements.size() - 1; i >= 0; i--) {
-				CPElement cpelem = (CPElement) cpelements.get(i);
+				CPElement cpelem = cpelements.get(i);
 				if (isEntryKind(cpelem.getEntryKind())) {
 					existingProjects.add(cpelem.getResource());
 					projects.add(cpelem);
@@ -143,8 +146,8 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 				}
 			}
 			
-			for (int i = 0; i < cprojects.length; i++) {
-				IProject proj = cprojects[i].getProject();
+			for (ICProject cproject : cprojects) {
+				IProject proj = cproject.getProject();
 				if (!existingProjects.contains(proj)) {
 					projects.add(new CPElement(fCurrCProject, IPathEntry.CDT_PROJECT, proj.getFullPath(), proj));
 				}
@@ -158,13 +161,13 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	}
 
 	void updateCPathList() {
-		List projelements = fProjectsList.getCheckedElements();
+		List<CPElement> projelements = fProjectsList.getCheckedElements();
 
 		boolean remove = false;
-		List pelements = fCPathList.getElements();
+		List<CPElement> pelements = fCPathList.getElements();
 		// backwards, as entries will be deleted
 		for (int i = pelements.size() - 1; i >= 0; i--) {
-			CPElement pe = (CPElement) pelements.get(i);
+			CPElement pe = pelements.get(i);
 			if (isEntryKind(pe.getEntryKind())) {
 				if (!projelements.remove(pe)) {
 					pelements.remove(i);
@@ -184,7 +187,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	 * @see BuildPathBasePage#getSelection
 	 */
 	@Override
-	public List getSelection() {
+	public List<CPElement> getSelection() {
 		return fProjectsList.getSelectedElements();
 	}
 
@@ -192,7 +195,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	 * @see BuildPathBasePage#setSelection
 	 */
 	@Override
-	public void setSelection(List selElements) {
+	public void setSelection(List<?> selElements) {
 		fProjectsList.selectElements(new StructuredSelection(selElements));
 	}
 

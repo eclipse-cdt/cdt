@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.wizard.IWizard;
@@ -79,21 +78,21 @@ class WizardNode implements IWizardNode {
 				IWizardPage[] wpages = null;
 				try {
 					wpages = parentPage.getPagesAfterTemplateSelection();
+					for (IWizardPage wpage : wpages) {
+						addPage(wpage);
+					}
 				} catch (Exception e) {
 				}
-				for(int i=0; i<wpages.length; i++) {
-					addPage(wpages[i]);
-				}
 				
-				Map/*<String, UIWizardPage>*/ pages = template.getUIPages();
-				for(Iterator i = template.getPagesOrderVector().iterator(); i.hasNext(); ){
-					String id = (String) i.next();
-					addPage((UIWizardPage) pages.get(id));
+				Map<String, UIWizardPage> pages = template.getUIPages();
+				for (Object element : template.getPagesOrderVector()) {
+					String id = (String) element;
+					addPage(pages.get(id));
 				}
 
 				wpages = parentPage.getPagesAfterTemplatePages();
-				for(int i=0; i<wpages.length; i++) {
-					addPage(wpages[i]);
+				for (IWizardPage wpage : wpages) {
+					addPage(wpage);
 				}
 			}
 			
@@ -103,8 +102,7 @@ class WizardNode implements IWizardNode {
 				finishPressed = true;
 				getContainer().updateButtons();
 				IWizardPage[] wpages = getPages();
-				for(int i=0; i<wpages.length; i++) {
-					IWizardPage page = wpages[i];
+				for (IWizardPage page : wpages) {
 					if (page instanceof UIWizardPage)
 						valueStore.putAll(((UIWizardPage) page).getPageData());
 				}
@@ -122,8 +120,7 @@ class WizardNode implements IWizardNode {
 				super.createPageControls(pageContainer);
 				parentPage.adjustTemplateValues(template);
 				IWizardPage[] wpages = getPages();
-				for(int i=0; i<wpages.length; i++) {
-					IWizardPage page = wpages[i];
+				for (IWizardPage page : wpages) {
 					if (page instanceof UIWizardPage)
 					((UIWizardPage) page).getComposite().getUIElement().setValues(template.getValueStore());
 				}

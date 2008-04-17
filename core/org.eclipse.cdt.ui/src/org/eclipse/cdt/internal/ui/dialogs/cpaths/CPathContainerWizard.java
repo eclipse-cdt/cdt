@@ -14,18 +14,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IProjectEntry;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IProjectEntry;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
+
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  */
@@ -122,12 +124,12 @@ public class CPathContainerWizard extends Wizard {
 		} else if (fEntryToEdit == null) { // new entry: show selection page as
 			// first page
 			IContainerDescriptor[] containers = CPathContainerDescriptor.getDescriptors();
-			List allContainers = new ArrayList(Arrays.asList(containers));
+			List<IContainerDescriptor> allContainers = new ArrayList<IContainerDescriptor>(Arrays.asList(containers));
 			if (fFilterType != null) {
 				allContainers.add(0, new ProjectContainerDescriptor(fFilterType));
 			}
 			fSelectionWizardPage = new CPathContainerSelectionPage(
-					(IContainerDescriptor[])allContainers.toArray(new IContainerDescriptor[0]));
+					allContainers.toArray(new IContainerDescriptor[0]));
 			addPage(fSelectionWizardPage);
 
 			// add as dummy, will not be shown
@@ -153,7 +155,6 @@ public class CPathContainerWizard extends Wizard {
 				containerPage = pageDesc.createPage();
 			} catch (CoreException e) {
 				handlePageCreationFailed(e);
-				containerPage = null;
 			}
 		}
 		if (containerPage == null) {
@@ -202,9 +203,9 @@ public class CPathContainerWizard extends Wizard {
 	}
 
 	private IContainerDescriptor findDescriptorPage(IContainerDescriptor[] containers, IPathEntry entry) {
-		for (int i = 0; i < containers.length; i++) {
-			if (containers[i].canEdit(entry)) {
-				return containers[i];
+		for (IContainerDescriptor container2 : containers) {
+			if (container2.canEdit(entry)) {
+				return container2;
 			}
 		}
 		return null;

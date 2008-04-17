@@ -35,7 +35,7 @@ public class ArchiveFileFilter extends ViewerFilter {
 
 	private static final String[] fgArchiveExtensions= { "a", "so", "dll" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-	private List fExcludes;
+	private List<IFile> fExcludes;
 	private boolean fRecursive;
 	
 	/**

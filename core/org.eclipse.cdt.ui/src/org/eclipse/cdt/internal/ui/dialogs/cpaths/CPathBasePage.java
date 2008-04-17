@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 public abstract class CPathBasePage extends AbstractCOptionPage {
 
@@ -30,20 +31,20 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 		super(title, image);
 	}
 
-	protected void fixNestingConflicts(List newEntries, List existingList, Set modifiedSourceEntries) {
-		ArrayList existing = new ArrayList(existingList);
+	protected void fixNestingConflicts(List<CPElement> newEntries, List<CPElement> existingList, Set<CPElement> modifiedSourceEntries) {
+		ArrayList<CPElement> existing = new ArrayList<CPElement>(existingList);
 		for (int i = 0; i < newEntries.size(); i++) {
-			CPElement curr = (CPElement) newEntries.get(i);
+			CPElement curr = newEntries.get(i);
 			addExclusionPatterns(curr, existing, modifiedSourceEntries);
 			// add the entry to the existing list so it can be analyse also.
 			existing.add(curr);
 		}
 	}
 
-	private void addExclusionPatterns(CPElement newEntry, List existing, Set modifiedEntries) {
+	private void addExclusionPatterns(CPElement newEntry, List<CPElement> existing, Set<CPElement> modifiedEntries) {
 		IPath entryPath = newEntry.getPath();
 		for (int i = 0; i < existing.size(); i++) {
-			CPElement curr = (CPElement) existing.get(i);
+			CPElement curr = existing.get(i);
 			if (curr.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				IPath currPath = curr.getPath();
 				if (currPath.isPrefixOf(entryPath) && !currPath.equals(entryPath)) {
@@ -61,18 +62,17 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 		}
 	}
 
-	public abstract List getSelection();
+	public abstract List<?> getSelection();
 
-	public abstract void setSelection(List selection);
+	public abstract void setSelection(List<?> selection);
 
 	public abstract boolean isEntryKind(int kind);
 
-	protected List filterList(List input) {
-		ArrayList filtered = new ArrayList();
+	protected List<CPElement> filterList(List<CPElement> cpelements) {
+		ArrayList<CPElement> filtered = new ArrayList<CPElement>();
 
-		List cpelements = input;
 		for (int i = 0; i < cpelements.size(); i++) {
-			CPElement cpe = (CPElement) cpelements.get(i);
+			CPElement cpe = cpelements.get(i);
 			if (isEntryKind(cpe.getEntryKind())) {
 				filtered.add(cpe);
 			}

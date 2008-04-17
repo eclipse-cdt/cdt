@@ -12,11 +12,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -24,11 +19,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+
 public class CPathOrderExportPage extends CPathBasePage {
 
-	private ListDialogField fCPathList;
+	private ListDialogField<?> fCPathList;
 	
-	public CPathOrderExportPage(ListDialogField cPathList) {
+	public CPathOrderExportPage(ListDialogField<?> cPathList) {
 		super(CPathEntryMessages.getString("OrderExportsPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("OrderExportsPage.description")); //$NON-NLS-1$
 		fCPathList = cPathList;
@@ -61,7 +62,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	 * @see BuildPathBasePage#getSelection
 	 */
 	@Override
-	public List getSelection() {
+	public List<?> getSelection() {
 		return fCPathList.getSelectedElements();
 	}
 
@@ -69,7 +70,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 	 * @see BuildPathBasePage#setSelection
 	 */
 	@Override
-	public void setSelection(List selElements) {
+	public void setSelection(List<?> selElements) {
 		fCPathList.selectElements(new StructuredSelection(selElements));
 	}
 

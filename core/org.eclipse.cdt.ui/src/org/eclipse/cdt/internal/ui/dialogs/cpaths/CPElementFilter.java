@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  */
 public class CPElementFilter extends ViewerFilter {
 
-	protected List fExcludes;
+	protected List<Object> fExcludes;
 	protected int[] fKind;
 	protected boolean fExportedOnly;
 	protected boolean fShowInherited;

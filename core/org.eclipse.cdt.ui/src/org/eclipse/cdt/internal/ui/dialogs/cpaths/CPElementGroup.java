@@ -26,19 +26,19 @@ public class CPElementGroup {
 	private CPElement parent;
 	private final int kind;
 	private IResource resource;
-	private Map childrenListMap;
-	private List childrenList;
+	private Map<Integer, List<CPElement>> childrenListMap;
+	private List<CPElement> childrenList;
 
 	public CPElementGroup(IResource resource) {
 		this.kind = -1;
 		this.resource = resource;
-		this.childrenListMap = new LinkedHashMap(2);
+		this.childrenListMap = new LinkedHashMap<Integer, List<CPElement>>(2);
 	}
 
 	public CPElementGroup(CPElement parent, int kind) {
 		this.parent = parent;
 		this.kind = kind;
-		this.childrenList = new ArrayList();
+		this.childrenList = new ArrayList<CPElement>();
 	}
 
 	public IResource getResource() {
@@ -77,24 +77,24 @@ public class CPElementGroup {
 	}
 
 	public int indexof(CPElement element) {
-		List children = getChildrenList(element.getEntryKind(), false);
+		List<CPElement> children = getChildrenList(element.getEntryKind(), false);
 		return children != null ? children.indexOf(element) : -1;
 	}
 	
 	public void addChild(CPElement element, int insertIndex) {
-		List children = getChildrenList(element.getEntryKind(), true);
+		List<CPElement> children = getChildrenList(element.getEntryKind(), true);
 		children.add(insertIndex, element);
 		element.setParent(this);
 	}
 	
 	public void addChild(CPElement element) {
-		List children = getChildrenList(element.getEntryKind(), true);
+		List<CPElement> children = getChildrenList(element.getEntryKind(), true);
 		int indx = children.indexOf(element);
 		if (indx == -1) {
 			indx = children.size();
 			if (element.getInherited() == null) {
 				for (int i = 0; i < children.size(); i++) {
-					CPElement next = (CPElement)children.get(i);
+					CPElement next = children.get(i);
 					if (next.getInherited() != null) {
 						indx = i;
 						break;
@@ -104,7 +104,7 @@ public class CPElementGroup {
 			children.add(indx, element);
 			element.setParent(this);
 		} else { // add element with closes matching resource path.
-			CPElement other = (CPElement)children.get(indx);
+			CPElement other = children.get(indx);
 			if (other.getInherited() != null && element.getInherited() != null) {
 				IPath otherPath = other.getInherited().getPath();
 				IPath elemPath = element.getInherited().getPath();
@@ -121,21 +121,21 @@ public class CPElementGroup {
 	public void setChildren(CPElement[] elements) {
 		if (elements.length > 0) {
 			if (childrenListMap != null) {
-				childrenListMap.put(new Integer(elements[0].getEntryKind()), new ArrayList(Arrays.asList(elements)));
+				childrenListMap.put(new Integer(elements[0].getEntryKind()), new ArrayList<CPElement>(Arrays.asList(elements)));
 			} else {
-				childrenList = new ArrayList(Arrays.asList(elements));
+				childrenList = new ArrayList<CPElement>(Arrays.asList(elements));
 			}
 		}
 	}
 
 	public void addChildren(CPElement[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			addChild(elements[i]);
+		for (CPElement element : elements) {
+			addChild(element);
 		}
 	}
 
 	public boolean removeChild(CPElement element) {
-		List children = getChildrenList(element.getEntryKind(), false);
+		List<CPElement> children = getChildrenList(element.getEntryKind(), false);
 		if (children == null) {
 			return false;
 		}
@@ -147,25 +147,25 @@ public class CPElementGroup {
 	}
 
 	public CPElement[] getChildren(int kind) {
-		List children = getChildrenList(kind, true);
-		return (CPElement[])children.toArray(new CPElement[children.size()]);
+		List<CPElement> children = getChildrenList(kind, true);
+		return children.toArray(new CPElement[children.size()]);
 	}
 
 	public CPElement[] getChildren() {
 		if (childrenList != null) {
-			return (CPElement[])childrenList.toArray(new CPElement[childrenList.size()]);
+			return childrenList.toArray(new CPElement[childrenList.size()]);
 		}
-		Collection lists = childrenListMap.values();
-		Iterator iter = lists.iterator();
-		List children = new ArrayList();
+		Collection<List<CPElement>> lists = childrenListMap.values();
+		Iterator<List<CPElement>> iter = lists.iterator();
+		List<CPElement> children = new ArrayList<CPElement>();
 		while (iter.hasNext()) {
-			children.addAll((List)iter.next());
+			children.addAll(iter.next());
 		}
-		return (CPElement[])children.toArray(new CPElement[children.size()]);
+		return children.toArray(new CPElement[children.size()]);
 	}
 
 	public boolean contains(CPElement element) {
-		List children = getChildrenList(element.getEntryKind(), false);
+		List<CPElement> children = getChildrenList(element.getEntryKind(), false);
 		if (children == null) {
 			return false;
 		}
@@ -173,7 +173,7 @@ public class CPElementGroup {
 	}
 
 	public void replaceChild(CPElement element, CPElement replaceWith) {
-		List children = getChildrenList(element.getEntryKind(), false);
+		List<CPElement> children = getChildrenList(element.getEntryKind(), false);
 		if (children == null) {
 			return;
 		}
@@ -184,14 +184,14 @@ public class CPElementGroup {
 		}
 	}
 
-	private List getChildrenList(int kind, boolean create) {
-		List children = null;
+	private List<CPElement> getChildrenList(int kind, boolean create) {
+		List<CPElement> children = null;
 		if (childrenList != null) {
 			children = childrenList;
 		} else {
-			children = (List)childrenListMap.get(new Integer(kind));
+			children = childrenListMap.get(new Integer(kind));
 			if (children == null && create) {
-				children = new ArrayList();
+				children = new ArrayList<CPElement>();
 				childrenListMap.put(new Integer(kind), children);
 			}
 		}

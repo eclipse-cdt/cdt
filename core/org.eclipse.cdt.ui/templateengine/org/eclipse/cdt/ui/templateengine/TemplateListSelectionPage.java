@@ -152,7 +152,7 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Template currentWizardSelection = null;
 		Object selectedObject = null;
-		Iterator iter = selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		if (iter.hasNext()) {
 			selectedObject = iter.next();
 			if (selectedObject instanceof Template)

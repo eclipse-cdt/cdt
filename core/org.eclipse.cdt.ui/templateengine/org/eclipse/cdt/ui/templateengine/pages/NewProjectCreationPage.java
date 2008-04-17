@@ -71,9 +71,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 				return false;
 			}
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	/**

@@ -13,10 +13,11 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+
+import org.eclipse.cdt.core.model.IPathEntry;
 
 public class CPElementSorter extends ViewerSorter {
 
@@ -64,21 +65,21 @@ public class CPElementSorter extends ViewerSorter {
 	@Override
 	public void sort(Viewer viewer, Object[] elements) {
 		// include paths and symbol definitions must not be sorted
-		List sort = new ArrayList(elements.length);
-		List includes = new ArrayList(elements.length);
-		List syms = new ArrayList(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof CPElement) {
-				CPElement element = (CPElement)elements[i];
-				if (element.getEntryKind() == IPathEntry.CDT_INCLUDE) {
-					includes.add(elements[i]);
-				} else if (element.getEntryKind() == IPathEntry.CDT_MACRO) {
-					syms.add(elements[i]);
+		List<Object> sort = new ArrayList<Object>(elements.length);
+		List<CPElement> includes = new ArrayList<CPElement>(elements.length);
+		List<CPElement> syms = new ArrayList<CPElement>(elements.length);
+		for (Object element : elements) {
+			if (element instanceof CPElement) {
+				CPElement cpelement = (CPElement)element;
+				if (cpelement.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+					includes.add(cpelement);
+				} else if (cpelement.getEntryKind() == IPathEntry.CDT_MACRO) {
+					syms.add(cpelement);
 				} else {
-					sort.add(elements[i]);
+					sort.add(cpelement);
 				}
 			} else {
-				sort.add(elements[i]);
+				sort.add(element);
 			}
 		}
 		System.arraycopy(sort.toArray(), 0, elements, 0, sort.size());

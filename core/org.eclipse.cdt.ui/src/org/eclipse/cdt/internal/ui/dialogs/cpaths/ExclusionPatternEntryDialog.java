@@ -53,9 +53,9 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 
 	private IContainer fCurrSourceFolder;
 	private String fExclusionPattern;
-	private List fExistingPatterns;
+	private List<String> fExistingPatterns;
 
-	public ExclusionPatternEntryDialog(Shell parent, String patternToEdit, List existingPatterns, CPElement entryToEdit) {
+	public ExclusionPatternEntryDialog(Shell parent, String patternToEdit, List<String> existingPatterns, CPElement entryToEdit) {
 		super(parent);
 		fExistingPatterns = existingPatterns;
 		if (patternToEdit == null) {
@@ -187,7 +187,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 	// ---------- util method ------------
 
 	private IPath chooseExclusionPattern() {
-		Class[] acceptedClasses = new Class[] { IFolder.class, IFile.class};
+		Class<?>[] acceptedClasses = new Class<?>[] { IFolder.class, IFile.class};
 		ISelectionStatusValidator validator = new TypedElementSelectionValidator(acceptedClasses, false);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 

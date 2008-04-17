@@ -52,7 +52,7 @@ import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 /**
  * A list with a button bar.
  * Typical buttons are 'Add', 'Remove', 'Up' and 'Down'.
- * List model is independend of widget creation.
+ * List model is independent of widget creation.
  * DialogFields controls are: Label, List and Composite containing buttons.
  */
 public class ListDialogField<T> extends DialogField {
@@ -676,7 +676,7 @@ public class ListDialogField<T> extends DialogField {
 	/**
 	 * Removes elements from the list.
 	 */		
-	public void removeElements(List<? extends T> elements) {
+	public void removeElements(List<?> elements) {
 		if (elements.size() > 0) {
 			fElements.removeAll(elements);
 			if (fTable != null) {

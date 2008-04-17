@@ -73,7 +73,7 @@ public class UIStringListWidget extends InputUIElement {
 		for (int i = 0; i < itemsList.size(); i++) {
 			itemString = itemString + itemsList.get(i) + "|"; //$NON-NLS-1$
 		}
-		retMap.put(uiAttributes.get(InputUIElement.ID), itemString);
+		retMap.put(uiAttributes.get(UIElement.ID), itemString);
 
 		return retMap;
 	}
@@ -84,8 +84,8 @@ public class UIStringListWidget extends InputUIElement {
 	 * @param valueMap
 	 */
 	@Override
-	public void setValues(Map valueMap) {
-		String items = (String) valueMap.get(uiAttributes.get(InputUIElement.ID));
+	public void setValues(Map<String, String> valueMap) {
+		String items = valueMap.get(uiAttributes.get(UIElement.ID));
 
 		if (items != null) {
 			items = items.trim();
@@ -115,7 +115,7 @@ public class UIStringListWidget extends InputUIElement {
 		gd.verticalIndent = 5;
 		label.setLayoutData(gd);
 
-		if (uiAttributes.get(InputUIElement.DESCRIPTION) != null){
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
 			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$, $NON-NLS-2$
 			label.setToolTipText(tipText);

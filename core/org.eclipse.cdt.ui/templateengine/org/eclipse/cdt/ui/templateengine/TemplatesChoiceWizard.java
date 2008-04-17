@@ -49,16 +49,16 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	@Override
 	public final void addPages() {		
 		IWizardPage[] pages = getPagesBeforeTemplatePages();
-		for(int i=0; i<pages.length; i++) {
-			addPage(pages[i]);
+		for (IWizardPage page : pages) {
+			addPage(page);
 		}
 
 		templateListSelectionPage = new TemplateListSelectionPage(this);
 		addPage(templateListSelectionPage);
 
 		pages = getPagesAfterTemplatePages();
-		for(int i=0; i<pages.length; i++) {
-			addPage(pages[i]);
+		for (IWizardPage page : pages) {
+			addPage(page);
 		}
 	}
 
@@ -132,13 +132,12 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
 			TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
 			return false;
-		} else {
-			if (DEBUG) {
-				String msg = Messages.getString("TemplatesChoiceWizard.3"); //$NON-NLS-1$
-				TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
-			}
-			return true;
 		}
+		if (DEBUG) {
+			String msg = Messages.getString("TemplatesChoiceWizard.3"); //$NON-NLS-1$
+			TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
+		}
+		return true;
 	}
 
 	/**
@@ -149,13 +148,13 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		Map<String, String> map = new HashMap<String, String>();
 
 		IWizardDataPage[] pages = getPagesBeforeTemplatePages();
-		for(int i=0; i<pages.length; i++) {
-			map.putAll(pages[i].getPageData());
+		for (IWizardDataPage page : pages) {
+			map.putAll(page.getPageData());
 		}
 
 		pages = getPagesAfterTemplateSelection();
-		for(int i=0; i<pages.length; i++) {
-			map.putAll(pages[i].getPageData());
+		for (IWizardDataPage page : pages) {
+			map.putAll(page.getPageData());
 		}
 
 		try {
@@ -163,13 +162,13 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		for(int i=0; i<pages.length; i++) {
-			map.putAll(pages[i].getPageData());
+		for (IWizardDataPage page : pages) {
+			map.putAll(page.getPageData());
 		}
 
 		pages = getPagesAfterTemplatePages();
-		for(int i=0; i<pages.length; i++) {
-			map.putAll(pages[i].getPageData());
+		for (IWizardDataPage page : pages) {
+			map.putAll(page.getPageData());
 		}
 
 		return map;

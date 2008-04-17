@@ -82,8 +82,8 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 		if (ensureHoverCreated()) {
 			if (fHover instanceof ITextHoverExtension2)
 				return ((ITextHoverExtension2) fHover).getHoverInfo2(textViewer, hoverRegion);
-			else
-				return fHover.getHoverInfo(textViewer, hoverRegion);
+			
+			return fHover.getHoverInfo(textViewer, hoverRegion);
 		}
 
 		return null;

@@ -12,11 +12,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -24,11 +19,18 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+
 public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implements IStatusChangeListener {
 
 	private CPathIncludeSymbolEntryBasePage fIncludeSymbols;
 
-	private List fCPaths;
+	private List<CPElement> fCPaths;
 
 	private Composite fComposite;
 
@@ -64,7 +66,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 	}
 
 	@Override
-	protected List getCPaths() {
+	protected List<CPElement> getCPaths() {
 		if (fIncludeSymbols != null) {
 			return fIncludeSymbols.getCPaths();
 		} 
@@ -82,7 +84,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 	}
 	
 	@Override
-	protected void initialize(ICElement element, List cPaths) {
+	protected void initialize(ICElement element, List<CPElement> cPaths) {
 		fCPaths = cPaths;
 
 		if (element instanceof ICProject) {

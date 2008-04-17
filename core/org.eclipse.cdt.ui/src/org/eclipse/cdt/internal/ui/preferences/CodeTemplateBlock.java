@@ -81,15 +81,15 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
  */
 public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	
-	private class CodeTemplateAdapter extends ViewerComparator implements ITreeListAdapter, IDialogFieldListener {
+	private class CodeTemplateAdapter extends ViewerComparator implements ITreeListAdapter<Object>, IDialogFieldListener {
 
 		private final Object[] NO_CHILDREN= new Object[0];
 
-		public void customButtonPressed(TreeListDialogField field, int index) {
+		public void customButtonPressed(TreeListDialogField<Object> field, int index) {
 			doButtonPressed(index, field.getSelectedElements());
 		}
 		
-		public void selectionChanged(TreeListDialogField field) {
+		public void selectionChanged(TreeListDialogField<Object> field) {
 			List<Object> selected= field.getSelectedElements();
 			field.enableButton(IDX_ADD, canAdd(selected));
 			field.enableButton(IDX_EDIT, canEdit(selected));
@@ -99,14 +99,14 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			updateSourceViewerInput(selected);
 		}
 
-		public void doubleClicked(TreeListDialogField field) {
+		public void doubleClicked(TreeListDialogField<Object> field) {
 			List<Object> selected= field.getSelectedElements();
 			if (canEdit(selected)) {
 				doButtonPressed(IDX_EDIT, selected);
 			}
 		}
 
-		public Object[] getChildren(TreeListDialogField field, Object element) {
+		public Object[] getChildren(TreeListDialogField<Object> field, Object element) {
 			if (element == COMMENT_NODE || element == CODE_NODE) {
 				return getCodeTemplatesOfCategory(element == COMMENT_NODE);
 			} else if (element == FILE_NODE) {
@@ -117,7 +117,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			return NO_CHILDREN;
 		}
 
-		public Object getParent(TreeListDialogField field, Object element) {
+		public Object getParent(TreeListDialogField<Object> field, Object element) {
 			if (element instanceof TemplatePersistenceData) {
 				TemplatePersistenceData data= (TemplatePersistenceData) element;
 				if (data.getTemplate().getName().endsWith(CodeTemplateContextType.COMMENT_SUFFIX)) {
@@ -133,7 +133,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			return null;
 		}
 
-		public boolean hasChildren(TreeListDialogField field, Object element) {
+		public boolean hasChildren(TreeListDialogField<Object> field, Object element) {
 			return (element == COMMENT_NODE || element == CODE_NODE || element == FILE_NODE || element instanceof TemplateContextType);
 		}
 
@@ -143,7 +143,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			}
 		}
 
-		public void keyPressed(TreeListDialogField field, KeyEvent event) {
+		public void keyPressed(TreeListDialogField<Object> field, KeyEvent event) {
 		}
 		
 		/*
@@ -301,7 +301,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	protected final static Object CODE_NODE= PreferencesMessages.CodeTemplateBlock_templates_code_node; 
 	protected final static Object FILE_NODE= PreferencesMessages.CodeTemplateBlock_templates_file_node; 
 
-	private TreeListDialogField fCodeTemplateTree;
+	private TreeListDialogField<Object> fCodeTemplateTree;
 	private SelectionButtonDialogField fGenerateComments;
 	
 	protected ProjectTemplateStore fTemplateStore;
@@ -335,7 +335,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			PreferencesMessages.CodeTemplateBlock_templates_exportall_button
 
 		};		
-		fCodeTemplateTree= new TreeListDialogField(adapter, buttonLabels, new CodeTemplateLabelProvider());
+		fCodeTemplateTree= new TreeListDialogField<Object>(adapter, buttonLabels, new CodeTemplateLabelProvider());
 		fCodeTemplateTree.setDialogFieldListener(adapter);
 		fCodeTemplateTree.setLabelText(PreferencesMessages.CodeTemplateBlock_templates_label);
 		fCodeTemplateTree.setViewerComparator(adapter);

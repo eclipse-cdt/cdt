@@ -13,7 +13,6 @@ package org.eclipse.cdt.utils.ui.controls;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -184,7 +183,7 @@ public class FileListControl {
 
 							dialog.setInitialSelection(container);
 
-							Class[] filteredResources = {IContainer.class, IProject.class};
+							Class<?>[] filteredResources = {IContainer.class, IProject.class};
 							dialog.addFilter(new TypedCDTViewerFilter(filteredResources));
 							dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
 			                dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
@@ -462,8 +461,8 @@ public class FileListControl {
 		if (list != null) {
 			list.removeAll();
 		}
-		for (int i = 0; i < listVal.length; i++) {
-			list.add(listVal[i]);
+		for (String element : listVal) {
+			list.add(element);
 		}
 		checkNotificationNeeded();
 	}
@@ -497,9 +496,8 @@ public class FileListControl {
 	}
 	
 	public void notifyListeners(String oldVal[], String newVal[]){
-		Iterator iter = listeners.iterator();
-		while(iter.hasNext()){
-			((IFileListChangeListener)iter.next()).fileListChanged(this,oldVal,newVal);
+		for (IFileListChangeListener listener: listeners) {
+			listener.fileListChanged(this,oldVal,newVal);
 		}
 	}
 	
@@ -673,7 +671,7 @@ public class FileListControl {
 					
 				
 				String newItem = null;
-				if (dialog.open() == InputDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					newItem = dialog.getValue();
 					
 					/* If newItem is a directory or file path we need to
@@ -781,7 +779,7 @@ public class FileListControl {
 		
 		// Prompt for value
 		SelectPathInputDialog dialog = new SelectPathInputDialog(getListControl().getShell(), title, message, initVal, null, browseType);
-		if (dialog.open() == SelectPathInputDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			input = dialog.getValue();
 		}
 		

@@ -12,8 +12,9 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.jface.resource.ImageDescriptor;
+
+import org.eclipse.cdt.core.model.ICElement;
 
 public abstract class CPathIncludeSymbolEntryBasePage extends CPathBasePage {
 
@@ -25,6 +26,6 @@ public abstract class CPathIncludeSymbolEntryBasePage extends CPathBasePage {
         super(title, image);
     }
 
-    public abstract void init(ICElement cElement, List cPaths);
-    public abstract List getCPaths();
+    public abstract void init(ICElement cElement, List<CPElement> cPaths);
+    public abstract List<CPElement> getCPaths();
 }

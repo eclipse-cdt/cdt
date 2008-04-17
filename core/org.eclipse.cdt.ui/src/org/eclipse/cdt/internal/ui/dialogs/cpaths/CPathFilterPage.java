@@ -42,8 +42,8 @@ public class CPathFilterPage extends WizardPage {
 
 	private CheckboxTableViewer viewer;
 	private IPathEntry fParentEntry;
-	private List fPaths;
-	private List fExclusions;
+	private List<IPathEntry> fPaths;
+	private List<?> fExclusions;
 	private ViewerFilter filter;
 	
 	protected ICElement fCElement;
@@ -118,7 +118,7 @@ public class CPathFilterPage extends WizardPage {
 
 	
 	private void createExlusions(boolean showExported) {
-		fExclusions = new ArrayList();
+		fExclusions = new ArrayList<Object>();
 		if (filter != null) {
 			viewer.removeFilter(filter);
 		}

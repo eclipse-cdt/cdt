@@ -12,22 +12,24 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IPathEntry;
+
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+
 public class CPathTabBlock extends AbstractPathOptionBlock {
 	
 	private final int[] pathTypes = {IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,IPathEntry.CDT_CONTAINER};
 
-	private ListDialogField fCPathList;
+	private ListDialogField<CPElement> fCPathList;
 
 	private CPathSourceEntryPage fSourcePage;
 	private CPathProjectsEntryPage fProjectsPage;
@@ -61,12 +63,12 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		};
 		BuildPathAdapter adapter = new BuildPathAdapter();
 
-		fCPathList = new ListDialogField(null, buttonLabels, null);
+		fCPathList = new ListDialogField<CPElement>(null, buttonLabels, null);
 		fCPathList.setDialogFieldListener(adapter);
 	}
 
 	@Override
-	protected List getCPaths() {
+	protected List<CPElement> getCPaths() {
 		return fCPathList.getElements();
 	}
 
@@ -104,7 +106,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	}
 
 	@Override
-	protected void initialize(ICElement element, List cPaths) {
+	protected void initialize(ICElement element, List<CPElement> cPaths) {
 
 		fCPathList.setElements(cPaths);
 
@@ -135,14 +137,14 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	public void updateCPathStatus() {
 		getPathStatus().setOK();
 
-		List elements = fCPathList.getElements();
+		List<CPElement> elements = fCPathList.getElements();
 
 		CPElement entryError = null;
 		int nErrorEntries = 0;
 		IPathEntry[] entries = new IPathEntry[elements.size()];
 
 		for (int i = elements.size() - 1; i >= 0; i--) {
-			CPElement currElement = (CPElement)elements.get(i);
+			CPElement currElement = elements.get(i);
 
 			entries[i] = currElement.getPathEntry();
 			if (currElement.getStatus().getSeverity() != IStatus.OK) {
@@ -154,7 +156,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		}
 
 		if (nErrorEntries > 0) {
-			if (nErrorEntries == 1) {
+			if (nErrorEntries == 1 && entryError != null) {
 				getPathStatus().setWarning(entryError.getStatus().getMessage());
 			} else {
 				getPathStatus().setWarning(CPathEntryMessages.getFormattedString("CPElement.status.multiplePathErrors", //$NON-NLS-1$

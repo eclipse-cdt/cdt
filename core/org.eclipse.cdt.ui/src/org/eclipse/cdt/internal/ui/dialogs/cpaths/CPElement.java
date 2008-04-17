@@ -13,6 +13,14 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -28,13 +36,6 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 
 public class CPElement {
 
@@ -57,7 +58,7 @@ public class CPElement {
 	private final IPath fPath;
 	private final ICProject fCProject;
 	private final IResource fResource;
-	private final ArrayList fChildren = new ArrayList(1);
+	private final ArrayList<Object> fChildren = new ArrayList<Object>(1);
 
 	private boolean fIsExported;
 
@@ -143,8 +144,8 @@ public class CPElement {
                         else {
                             entries = container.getPathEntries();
                         }
-						for (int i = 0; i < entries.length; i++) {
-							CPElement curr = createFromExisting(entries[i], fCProject);
+						for (IPathEntry entrie : entries) {
+							CPElement curr = createFromExisting(entrie, fCProject);
 							curr.createAttributeElement(PARENT_CONTAINER, this);
 							CPElementGroup group = new CPElementGroup(this, curr.getEntryKind());
 							int indx = fChildren.indexOf(group);
@@ -243,8 +244,8 @@ public class CPElement {
             case IPathEntry.CDT_MACRO_FILE :
 				IPath[] exclusion = (IPath[])getAttribute(EXCLUSION);
 				buf.append('[').append(exclusion.length).append(']');
-				for (int i = 0; i < exclusion.length; i++) {
-					appendEncodePath(exclusion[i], buf);
+				for (IPath element : exclusion) {
+					appendEncodePath(element, buf);
 				}
 				switch (fEntryKind) {
 					case IPathEntry.CDT_INCLUDE :
@@ -270,6 +271,7 @@ public class CPElement {
 						appendEncodePath(base, buf);
 						String symbol = (String)getAttribute(MACRO_NAME);
 						buf.append(symbol).append(';');
+						break;
                     case IPathEntry.CDT_MACRO_FILE :
                         baseRef = (IPath)getAttribute(BASE_REF);
                         appendEncodePath(baseRef, buf);
@@ -333,11 +335,14 @@ public class CPElement {
 
 	public void setParent(CPElementGroup group) {
 		CPElementAttribute attribute = findAttributeElement(PARENT);
-		if (attribute == null && group != null) {
-			createAttributeElement(PARENT, group);
-			return;
+		if (attribute == null) {
+			if (group != null) {
+				createAttributeElement(PARENT, group);
+			}
 		}
-		attribute.setValue(group);
+		else {
+			attribute.setValue(group);
+		}
 	}
 
 	public CPElementGroup getParent() {
@@ -399,7 +404,7 @@ public class CPElement {
 			//				return new Object[] { findAttributeElement(SOURCEATTACHMENT) };
 
 			case IPathEntry.CDT_CONTAINER : {
-				List list = new ArrayList();
+				List<Object> list = new ArrayList<Object>();
 				for (int i = 0; i < fChildren.size(); i++) {
 					Object curr = fChildren.get(i);
 					if (curr instanceof CPElementGroup) {
@@ -559,7 +564,7 @@ public class CPElement {
 							res = root.getFolder(path);
 						}
 					}
-					if (res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
+					if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
 						if (!fCProject.isOnSourceRoot(res)) {
 							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
 						}
@@ -576,7 +581,7 @@ public class CPElement {
                             res = root.getFolder(path);
                         }
                     }
-                    if (res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
+                    if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
                         if (!fCProject.isOnSourceRoot(res)) {
                             fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
                         }
@@ -593,7 +598,7 @@ public class CPElement {
 							res = root.getFolder(path);
 						}
 					}
-					if (res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
+					if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
 						if (!fCProject.isOnSourceRoot(res)) {
 							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
 						}
@@ -607,7 +612,7 @@ public class CPElement {
                             res = root.getFolder(path);
                         }
                     }
-                    if (res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
+                    if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
                         if (!fCProject.isOnSourceRoot(res)) {
                             fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
                         }

@@ -71,7 +71,7 @@ public class CASTWhileStatement extends CASTNode implements IASTWhileStatement, 
         if( condition != null ) if( !condition.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
 
-        if( action.shouldVisitExpressions ){
+        if( action.shouldVisitStatements ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;

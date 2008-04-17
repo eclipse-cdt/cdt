@@ -7,19 +7,19 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
@@ -38,7 +38,7 @@
  * David McKnight   (IBM)        - [208803] add exists() method
  * David McKnight   (IBM)        - [209375] download using copyRemoteResourcesToWorkspaceMultiple
  * Rupen Mardirossian (IBM)		 - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances
- * David McKnight   (IBM)        - [209660] need to check if remote encoding has changed before using cached file 
+ * David McKnight   (IBM)        - [209660] need to check if remote encoding has changed before using cached file
  * Xuan Chen        (IBM)        - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
@@ -48,7 +48,7 @@
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Xuan Chen        (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
- * Rupen Mardirossian (IBM)      - [210682] Copy collisions will use SystemCopyDialog now instead of renameDialog when there is a copy collision within the same connection 
+ * Rupen Mardirossian (IBM)      - [210682] Copy collisions will use SystemCopyDialog now instead of renameDialog when there is a copy collision within the same connection
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
@@ -196,7 +196,7 @@ public class SystemViewRemoteFileAdapter
 	private String xlatedSize = null;
 	private String xlatedCompressedSize = null;
 	private String xlatedExpandedSize = null;
-	
+
 	private static final Object[] EMPTY_LIST = new Object[0];
 	private boolean filesOnly, foldersOnly;
 	private SystemNewFileAction addNewFile;
@@ -213,7 +213,7 @@ public class SystemViewRemoteFileAdapter
 	private SystemReplaceWithEditionAction replaceEditionAction;
 	// FIXME shells now separate plugin
 	//private SystemCommandAction commandAction, shellAction;
-	
+
 	private SystemSearchAction searchAction;
 
 	private IEditorRegistry registry;
@@ -231,14 +231,14 @@ public class SystemViewRemoteFileAdapter
 	private static PropertyDescriptor[] uniquePropertyDescriptorArray = null;
 	private static PropertyDescriptor[] uniqueArchiveDescriptorArray = null;
 	private static PropertyDescriptor[] uniqueVirtualDescriptorArray = null;
-	
+
 	// MJB
 	private static PropertyDescriptor[] archiveDescriptorArray = null;
 	private static PropertyDescriptor[] virtualDescriptorArray = null;
 
 	static final String _uploadMessage = FileResources.MSG_UPLOADING_PROGRESS;
 	static final String _downloadMessage = FileResources.MSG_DOWNLOADING_PROGRESS;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -248,9 +248,9 @@ public class SystemViewRemoteFileAdapter
 		xlatedSize = FileResources.RESID_PROPERTY_FILE_SIZE_VALUE;
 		xlatedCompressedSize = FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_VALUE;
 		xlatedExpandedSize = FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_VALUE;
-			
+
 	}
-	
+
 	private IEditorRegistry getEditorRegistry()
 	{
 		if (registry == null)
@@ -280,21 +280,21 @@ public class SystemViewRemoteFileAdapter
 			filterString = filterString + " /ns"; //$NON-NLS-1$
 		else if (foldersOnly && (filterString != null) && (filterString.indexOf("/nf") == -1)) //$NON-NLS-1$
 			filterString = filterString + " /nf"; //$NON-NLS-1$
-		this.filterString = filterString;
+		super.setFilterString(filterString);
 	}
-	
+
 	/**
 	 * Get the current filter string being used to subset the list by.
 	 * Will be null unless setFilterString has previously been called.
 	 */
 	public String getFilterString()
 	{
-		return filterString;
+		return super.getFilterString();
 	}
 
 	/**
 	 * Returns any actions that should be contributed to the popup menu
-	 * for the given filter string object. 
+	 * for the given filter string object.
 	 * @param menu The menu to contribute actions to
 	 * @param selection The window's current selection.
 	 * @param shell Shell of viewer
@@ -309,7 +309,7 @@ public class SystemViewRemoteFileAdapter
 		boolean supportsSearch = true;
 		boolean supportsArchiveManagement = false;
 
-		// perf improvement... phil	
+		// perf improvement... phil
 		Object firstSelection = selection.getFirstElement();
 		IRemoteFile firstFile = null;
 		if ((firstSelection != null) && (firstSelection instanceof IRemoteFile))
@@ -318,7 +318,7 @@ public class SystemViewRemoteFileAdapter
 			elementType = firstFile.isDirectory() || firstFile.isRoot() ? 1 : 0;
 			isArchive = firstFile.isArchive();
 			canRead = firstFile.canRead();
-			
+
 			supportsSearch = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsSearch();
 			supportsArchiveManagement = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		}
@@ -327,7 +327,7 @@ public class SystemViewRemoteFileAdapter
 
 
 		if (isArchive)
-		{		    
+		{
 			Iterator elements = selection.iterator();
 			Object element = null;
 
@@ -376,15 +376,15 @@ public class SystemViewRemoteFileAdapter
 		else
 		{
 		    if (canRead)
-		    {		    	
-		    	// open 
+		    {
+		    	// open
 		    	String label = SystemResources.ACTION_CASCADING_OPEN_LABEL;
 		   	    String tooltip = SystemResources.ACTION_CASCADING_OPEN_TOOLTIP;
 		   		SystemEditFilesAction action = new SystemEditFilesAction(label, tooltip, shell);
 		   		menu.add(ISystemContextMenuConstants.GROUP_OPEN, action);
-		    	
+
 		   		// open with ->
-		   		
+
 				MenuManager submenu =
 					new MenuManager(FileResources.ResourceNavigator_openWith,
 						ISystemContextMenuConstants.GROUP_OPENWITH);
@@ -396,9 +396,9 @@ public class SystemViewRemoteFileAdapter
 				openWithMenu.updateSelection(selection);
 				submenu.add(openWithMenu);
 				menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
-				
-				
-				
+
+
+
 		    }
 		}
 
@@ -475,7 +475,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		IRemoteFile file = (IRemoteFile) element;
 		if (file.isFile() || file.isArchive()) // hack to show zips without folder icons
-		{			
+		{
 			return getEditorRegistry().getImageDescriptor(file.getName());
 		}
 		else
@@ -491,7 +491,7 @@ public class SystemViewRemoteFileAdapter
 					// so we have an empty open folder
 					Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
 					if (contents != null && contents.length == 0)
-						isOpen = true;											
+						isOpen = true;
 				}
 			}
 			if (file.isRoot())
@@ -510,7 +510,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		return getName(element);
 	}
-	
+
 	/**
 	 * Return the label for this object. Uses getName() on the remote file object.
 	 */
@@ -518,7 +518,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		return ((IRemoteFile) element).getLabel();
 	}
-	
+
 	/**
 	 * Return the name of this object, which may be different than the display text ({#link #getText(Object)}.
 	 * <p>
@@ -558,7 +558,7 @@ public class SystemViewRemoteFileAdapter
 	 * it's possible that the represented element will been seen to exist when on
 	 * a remote host it may not - that is because this call does not query the host.
 	 * Returns whether the remote file representation exists.
-	 * 
+	 *
 	 * @param element the element to check
 	 * @return true if the element exists
 	 *
@@ -572,7 +572,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Return the parent of this object
 	 */
@@ -597,7 +597,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		return internalGetChildren(element, null, monitor);
 	}
-	
+
 	/**
 	 * Return the children of this object.
 	 * If this is a folder or root, we list all child folders and files.
@@ -622,11 +622,11 @@ public class SystemViewRemoteFileAdapter
 			return ((RemoteFileRoot) file).getRootFiles();
 		}
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
-	
-		
+
+
 		/*
 		RemoteFileFilterString orgRffs = file.getFilterString();
-	
+
 
 		if (orgRffs != null)
 		{
@@ -657,7 +657,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				String filterString = filterObject.getFilterStrings()[0];
 				String separator = PathUtility.getSeparator(filterString);
-				
+
 				int sepIndex = filterString.lastIndexOf(separator);
 				if (sepIndex >= 0)
 				{
@@ -672,7 +672,8 @@ public class SystemViewRemoteFileAdapter
 		}
 		else
 		{
-		
+
+		String filterString = getFilterString();
 		if (foldersOnly)
 		{
 			if (filterString == null)
@@ -692,16 +693,16 @@ public class SystemViewRemoteFileAdapter
 			if (filterString == null)
 				filter = "*"; //$NON-NLS-1$
 			else
-				filter = filterString;	
+				filter = filterString;
 		}
 		}
-		
+
 		Object[] children = null;
-		
+
 		Viewer v = getViewer();
-		
+
 		if ((v != null) && (v instanceof SystemSearchTableView)) {
-		    
+
 		    SystemSearchTableView view = (SystemSearchTableView)v;
 		    Iterator iter = view.getResultSet().getSearchConfigurations();
 		    boolean hasSearchResults = false;
@@ -709,19 +710,19 @@ public class SystemViewRemoteFileAdapter
 		    {
 		    	IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)(iter.next());
 		    	String searchString = config.getSearchString().getTextString();
-		    
+
 		    	hasSearchResults = file.hasContents(RemoteSearchResultsContentsType.getInstance(), searchString);
-		    
-		    	if (hasSearchResults) 
+
+		    	if (hasSearchResults)
 		    	{
 		    		children = file.getContents(RemoteSearchResultsContentsType.getInstance(), searchString);
 		    		return children;
-		    	}		    	
+		    	}
 		    }
 		}
-	
+
 		boolean hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
-		    
+
 		if (hasChildren && !file.isStale())
 		{
 			children = file.getContents(RemoteChildrenContentsType.getInstance(), filter);
@@ -733,19 +734,19 @@ public class SystemViewRemoteFileAdapter
 			{
 			    if (monitor != null)
 			    {
-			        
+
 			        children = ss.resolveFilterString(file, filter, monitor);
 			    }
 			    else
 			    {
 			        children = ss.resolveFilterString(file, filter, new NullProgressMonitor());
 			    }
-			    
+
 				if ((children == null) || (children.length == 0))
 				{
 					children = EMPTY_LIST;
 				}
-				else 
+				else
 				{
 					if (children.length == 1 && children[0] instanceof SystemMessageObject)
 					{
@@ -753,7 +754,7 @@ public class SystemViewRemoteFileAdapter
 					}
 					else
 					{
-						children = filterChildren(children);	
+						children = filterChildren(children);
 					}
 				}
 
@@ -761,7 +762,7 @@ public class SystemViewRemoteFileAdapter
 			catch (InterruptedException exc)
 			{
 				children = new SystemMessageObject[1];
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ICommonMessageIds.MSG_EXPAND_CANCELLED,
 						IStatus.CANCEL, CommonMessages.MSG_EXPAND_CANCELLED);
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_CANCEL, element);
@@ -769,45 +770,45 @@ public class SystemViewRemoteFileAdapter
 			catch (Exception exc)
 			{
 				children = new SystemMessageObject[1];
-				
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ICommonMessageIds.MSG_EXPAND_FAILED,
-						IStatus.ERROR, 
+						IStatus.ERROR,
 						CommonMessages.MSG_EXPAND_FAILED);
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
 				SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
-			} // message already issued        
+			} // message already issued
 		}
 		file.markStale(false);
 		return children;
 	}
-	
+
 	private Object[] filterChildren(Object[] children) {
-		
+
 		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
-		
+
 		if (showHidden) {
 			return children;
 		}
 		else {
-			
+
 			ArrayList results = new ArrayList(children.length);
-		
+
 			for (int i = 0; i < children.length; i++) {
-			
+
 				if (children[i] instanceof IRemoteFile) {
 					IRemoteFile remoteFile = (IRemoteFile)(children[i]);
-				
+
 					if (!remoteFile.isHidden()) {
 						results.add(remoteFile);
 					}
 				}
 			}
-			
+
 			return results.toArray();
 		}
 	}
-	
+
 	/**
 	 * Return true if this object has children.
 	 * Since we can't predict the outcome of resolving the filter string, we return true.
@@ -816,7 +817,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		return internalHasChildren(element.getModelObject(), element.getFilterReference());
 	}
-	
+
 	/**
 	 * Return true if this object has children.
 	 * Since we can't predict the outcome of resolving the filter string, we return true.
@@ -825,17 +826,17 @@ public class SystemViewRemoteFileAdapter
 	{
 		return internalHasChildren(element, null);
 	}
-	
+
 	public boolean internalHasChildren(IAdaptable element, ISystemFilterReference filterReference)
 	{
 		IRemoteFile file = (IRemoteFile) element;
-		
+
 		if (!file.exists())
 			return false;
-		
+
 		boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		boolean hasChildren = false;
-		
+
 		String filter = "*"; //$NON-NLS-1$
 		if (filterReference != null)
 		{
@@ -844,7 +845,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				String filterString = filterObject.getFilterStrings()[0];
 				String separator = PathUtility.getSeparator(filterString);
-				
+
 				int sepIndex = filterString.lastIndexOf(separator);
 				if (sepIndex > 0)
 				{
@@ -852,7 +853,7 @@ public class SystemViewRemoteFileAdapter
 				}
 			}
 		}
-		
+
 		if (file instanceof IVirtualRemoteFile)
 		{
 			hasChildren = ((IVirtualRemoteFile)file).isVirtualFolder();
@@ -861,11 +862,11 @@ public class SystemViewRemoteFileAdapter
 		{
 			hasChildren = !file.isFile() || (file.isArchive() && supportsArchiveManagement);
 		}
-		
+
 		if (!hasChildren) {
-		    
+
 		    Viewer v = getViewer();
-		    
+
 		    if ((v != null) && (v instanceof SystemSearchTableView)) {
 
 			    SystemSearchTableView view = (SystemSearchTableView)v;
@@ -874,7 +875,7 @@ public class SystemViewRemoteFileAdapter
 			    {
 			    	IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)(iter.next());
 			    	String searchString = config.getSearchString().getTextString();
-		        
+
 		        	hasChildren = file.hasContents(RemoteSearchResultsContentsType.getInstance(), searchString);
 			    }
 		    }
@@ -884,7 +885,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		else
 		{
-			// check that the children are actually there			
+			// check that the children are actually there
 			//Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
 			hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
 			//if (!hasChildren && !file.isStale())
@@ -895,68 +896,68 @@ public class SystemViewRemoteFileAdapter
 		return hasChildren;
 	}
 
-	
+
 
 	public IPropertyDescriptor[] getUniquePropertyDescriptors()
 	{
-		
+
 		IRemoteFile file = null;
-		if (propertySourceInput instanceof IRemoteFile) 
+		if (propertySourceInput instanceof IRemoteFile)
 		{
 			file = (IRemoteFile) propertySourceInput;
-		
+
 			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
-		
+
 			boolean isArchive = file.isArchive() && supportsArchiveManagement;
 			boolean isVirtual = file instanceof IVirtualRemoteFile && supportsArchiveManagement;
 			boolean isRegular = !isArchive && !isVirtual;
-			
+
 			if (isRegular && uniquePropertyDescriptorArray == null ||
 			    isArchive && uniqueArchiveDescriptorArray == null ||
 			    isVirtual && uniqueVirtualDescriptorArray == null)
 			{
-				
+
 				int nbrOfArchiveProperties = 2;
 				int nbrOfVirtualProperties = 4;
 				int nbrOfProperties = 8;
 				if (isVirtual) nbrOfProperties += nbrOfVirtualProperties;
-				else if (isArchive) nbrOfProperties += nbrOfArchiveProperties; 
-	
+				else if (isArchive) nbrOfProperties += nbrOfArchiveProperties;
+
 				if (isRegular) uniquePropertyDescriptorArray = new PropertyDescriptor[nbrOfProperties];
 				else if (isVirtual) uniqueVirtualDescriptorArray = new PropertyDescriptor[nbrOfProperties];
 				else if (isArchive) uniqueArchiveDescriptorArray = new PropertyDescriptor[nbrOfProperties];
 				//PropertyDescriptor[] defaultProperties = (PropertyDescriptor[]) getDefaultDescriptors();
-	
+
 				int i = -1;
-	
+
 				// add our unique property descriptors...
 				//RSEUIPlugin plugin = RSEUIPlugin.getDefault();
-	
+
 				// classification
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
-				
+
 				// last modified
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
-	
+
 				// size
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
-						
+
 				// canonical path
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
-	
+
 				// file extension
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
-		
+
 				// file permissions
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
@@ -966,36 +967,36 @@ public class SystemViewRemoteFileAdapter
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
-				
+
 				// file group
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 
-				
+
 				if (isVirtual)
 				{
 					// add virtual property descriptors...
-					
+
 					// compressed size
 					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSEDSIZE, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION);
-				
+
 					// compression ratio
 					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION);
-				
+
 					// compression method
 					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL,  FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION);
-	
+
 					// comment
 					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMMENT, FileResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_LABEL,  FileResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_DESCRIPTION);
 				}
 				else if (isArchive)
 				{
 					// add archive property descriptors...
-					
+
 					// expanded size
 					uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE, FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL, FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION);
-				
+
 					// comment
 					uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_COMMENT, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_LABEL, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION);
 				}
@@ -1022,32 +1023,32 @@ public class SystemViewRemoteFileAdapter
 		//  TO 5 SECONDS, CONSIDERABLY SLOWING DOWN RESPONSE TIME TO THE POINT OF PAIN. TO FIX THIS,
 		//  WE HAVE MADE IT POSSIBLE FOR REMOTE FILE OBJECTS TO DECIDE TO SHOW ONLY A SUBSET OF THE
 		//  PROPERTIES, WHICH IFS FILES EXPLOIT. PHIL.
-		
+
 		IRemoteFile file = null;
 		if (propertySourceInput instanceof IRemoteFile) file = (IRemoteFile) propertySourceInput;
 		boolean isArchive = false;//file != null && file.isArchive();
-		
+
 		boolean isVirtual = file != null && file instanceof IVirtualRemoteFile;
 		boolean isRegular = !isArchive && !isVirtual;
-		
+
 		if (isRegular && propertyDescriptorArray == null ||//uniquePropertyDescriptorArray == null ||
 			isArchive && archiveDescriptorArray == null ||
 			isVirtual && virtualDescriptorArray == null)
-		{	
+		{
 			int nbrOfArchiveProperties = 2;
 			int nbrOfVirtualProperties = 4;
 			int nbrOfProperties = 12;
 			int nbrOfBriefProperties = 2;
 			if (debug)
 				nbrOfProperties += 7;
-			
+
 			if (isVirtual) nbrOfProperties += nbrOfVirtualProperties;
-			else if (isArchive) nbrOfProperties += nbrOfArchiveProperties; 
+			else if (isArchive) nbrOfProperties += nbrOfArchiveProperties;
 
 			if (isRegular) propertyDescriptorArray = new PropertyDescriptor[nbrOfProperties];
 			else if (isVirtual) virtualDescriptorArray = new PropertyDescriptor[nbrOfProperties];
-			else if (isArchive) archiveDescriptorArray = new PropertyDescriptor[nbrOfProperties];			
-			
+			else if (isArchive) archiveDescriptorArray = new PropertyDescriptor[nbrOfProperties];
+
 			briefPropertyDescriptorArray = new PropertyDescriptor[nbrOfBriefProperties];
 			int idx = -1;
 			int briefIdx = idx;
@@ -1068,7 +1069,7 @@ public class SystemViewRemoteFileAdapter
 			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
-			
+
 			// last modified
 			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL,FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
@@ -1083,7 +1084,7 @@ public class SystemViewRemoteFileAdapter
 			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
 			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
-			
+
 			// readonly
 			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, FileResources.RESID_PROPERTY_FILE_READONLY_LABEL, FileResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, FileResources.RESID_PROPERTY_FILE_READONLY_LABEL, FileResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
@@ -1108,13 +1109,13 @@ public class SystemViewRemoteFileAdapter
 			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
 			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
-			
+
 			// file group
 			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 
-			
+
 			if (debug)
 			{
 				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTREMOTEFILE"); //$NON-NLS-1$
@@ -1132,17 +1133,17 @@ public class SystemViewRemoteFileAdapter
 				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_EXISTS"); //$NON-NLS-1$
 				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_EXISTS"); //$NON-NLS-1$
 			}
-			
+
 			if (isVirtual)
 			{
 				// add virtual property descriptors...
-				
+
 				// compressed size
 				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSEDSIZE, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION);
-			
+
 				// compression ratio
 				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION);
-			
+
 				// compression method
 				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION);
 
@@ -1153,25 +1154,25 @@ public class SystemViewRemoteFileAdapter
 			else if (isArchive)
 			{
 				// add archive property descriptors...
-				
+
 				// expanded size
 				archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE, FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL,  FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION);
-			
+
 				// comment
 				archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_COMMENT, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_LABEL, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION);
 			}
-		
+
 		}
-		
+
 //		return propertyDescriptorArray;
 		// DKM - I've commented this out because it's too expensive to query archive properties during a folder query
 		// we need to come back to this and change this do work in a more performance-sensitive way
-		
+
 		//System.out.println("Inside end getPropertyDescriptors: "+propertyDescriptorArray.length);
 		if ((propertySourceInput instanceof IRemoteFile) && ((IRemoteFile) propertySourceInput).showBriefPropertySet())
 			return propertyDescriptorArray;
 		    //return briefPropertyDescriptorArray;
-		
+
 		else
 		{
 			if (isRegular) return propertyDescriptorArray;
@@ -1179,7 +1180,7 @@ public class SystemViewRemoteFileAdapter
 			else if (isArchive) return archiveDescriptorArray;
 			else return propertyDescriptorArray;
 		}
-		
+
 	}
 
 	/**
@@ -1199,16 +1200,16 @@ public class SystemViewRemoteFileAdapter
 	{
 		return getPropertyValue(key, true);
 	}
-	
-	
-	public Object getPropertyValue(Object key) 
+
+
+	public Object getPropertyValue(Object key)
 	{
 		String name = (String)key;
 		if (name.equals(ISystemPropertyConstants.P_NBRCHILDREN))
 		{
 			IRemoteFile file = (IRemoteFile) propertySourceInput;
 			{
-				ISystemContainer container = file;				
+				ISystemContainer container = file;
 				Object[] contents = container.getContents(RemoteChildrenContentsType.getInstance());
 				if (contents == null)
 					return "0"; //$NON-NLS-1$
@@ -1216,12 +1217,12 @@ public class SystemViewRemoteFileAdapter
 					return Integer.toString(contents.length);
 			}
 		}
- 		return super.getPropertyValue(key);	
+ 		return super.getPropertyValue(key);
 	}
 
 	/**
 	 * Returns the current value for the named property.
-	 * 
+	 *
 	 * @param property the name or key of the property as named by its property descriptor
 	 * @param formatted indication of whether to return the value in formatted or raw form
 	 * @return the current value of the given property
@@ -1260,7 +1261,7 @@ public class SystemViewRemoteFileAdapter
 				return file.exists() ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		}
-		// 
+		//
 		if (name.equals(ISystemPropertyConstants.P_FILE_LASTMODIFIED))
 		{
 			Date date = file.getLastModifiedDate();
@@ -1295,7 +1296,7 @@ public class SystemViewRemoteFileAdapter
 		else if (name.equals(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE))
 		{
 			if (!isVirtual || virtualFile == null) return new Long(0);
-			
+
 			if (formatted)
 			{
 				return sub(xlatedExpandedSize, MSG_SUB1, Long.toString(virtualFile.getExpandedSize()));
@@ -1338,7 +1339,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHostFilePermissions permissions = file.getPermissions();
 			if (permissions == null){
-				
+
 				if (getFilePermissions(file)){
 					return FileResources.MESSAGE_PENDING;
 				}
@@ -1353,7 +1354,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHostFilePermissions permissions = file.getPermissions();
 			if (permissions == null){
-				
+
 				if (getFilePermissions(file)){
 					return FileResources.MESSAGE_PENDING;
 				}
@@ -1368,7 +1369,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHostFilePermissions permissions = file.getPermissions();
 			if (permissions == null){
-				
+
 				if (getFilePermissions(file)){
 					return FileResources.MESSAGE_PENDING;
 				}
@@ -1432,18 +1433,18 @@ public class SystemViewRemoteFileAdapter
 		else
 			return null; //super.getPropertyValue(name);
 	}
-	
+
 	private boolean getFilePermissions(IRemoteFile file){
 		if (file instanceof IAdaptable){
 			final IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)file).getAdapter(IFilePermissionsService.class);
-			
+
 			if (service != null && (service.getCapabilities(file.getHostFile()) & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) != 0){
-				
+
 				final IRemoteFile rFile = file;
 				if (rFile.getHostFile() instanceof IHostFilePermissionsContainer){
 					((IHostFilePermissionsContainer)rFile.getHostFile()).setPermissions(new PendingHostFilePermissions());
 				}
-				
+
 				Job deferredFetch = new Job(NLS.bind(FileResources.MESSAGE_GETTING_PERMISSIONS, file.getAbsolutePath()))
 				{
 					public IStatus run(IProgressMonitor monitor){
@@ -1453,22 +1454,22 @@ public class SystemViewRemoteFileAdapter
 							service.getFilePermissions(rFile.getHostFile(), monitor);
 							ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 							registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));
-						}								
+						}
 						catch (Exception e)
-						{						
+						{
 						}
 						return Status.OK_STATUS;
 					}
 				};
 				deferredFetch.schedule();
-				
-				
+
+
 				return true; // query kicked off
 			}
-		}		
+		}
 		return false; // no query kicked off
 	}
-	
+
 
 	// Drag and Drop Implementation
 
@@ -1533,7 +1534,7 @@ public class SystemViewRemoteFileAdapter
 			else if (first instanceof ISystemFilterReference)
 			{
 				return true;
-			}	
+			}
 			else  // akh11: proposed modification -- 01/28/2005
 			{   // ask source adapter if it supports drop of its type on this target:
 				ISystemViewDropDestination adapter = 	(ISystemViewDropDestination)Platform.getAdapterManager().getAdapter(first,ISystemViewDropDestination.class);
@@ -1543,7 +1544,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		return false;
 	}
-		
+
 	/**
 	  * Return true if it is valid for the src object to be dropped in the target
 	  * @param src the object to drop
@@ -1589,7 +1590,7 @@ public class SystemViewRemoteFileAdapter
 				{
 					return true;
 				}
-		
+
 				else  // akh11: proposed modification -- 01/28/2005
 				{   // ask source adapter if it supports drop of its type on this target:
 					ISystemViewDropDestination adapter = 	(ISystemViewDropDestination)Platform.getAdapterManager().getAdapter(src,ISystemViewDropDestination.class);
@@ -1601,15 +1602,15 @@ public class SystemViewRemoteFileAdapter
 
 		return false;
 	}
-	
 
-	
+
+
 	/**
 	 * Performs a drag copy operation.  The source object is uploaded to a temporary location so that it can
-	 * later be dropped on another remote system.   
+	 * later be dropped on another remote system.
 	 * @param element the object which is being copied
 	 * @param sameSystem an indication whether a transfer is being made between the same types of systems.
-	 * @param monitor a progress monitor 
+	 * @param monitor a progress monitor
 	 * @return the temporary object that was created after the upload
 	 */
 	public Object doDrag(Object element, boolean sameSystem, IProgressMonitor monitor)
@@ -1629,7 +1630,7 @@ public class SystemViewRemoteFileAdapter
 			// if the src is an IResource, then this is our temp object
 			return element;
 		}
-		
+
 		return null;
 	}
 
@@ -1637,15 +1638,15 @@ public class SystemViewRemoteFileAdapter
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
 	 * Perform the drag on the given objects.  This default implementation simply iterates through the
 	 * set.  For optimal performance, this should be overridden.
-	 * 
+	 *
 	 * @param set the set of objects to copy
 	 * @param monitor the progress monitor
 	 * @return a temporary workspace copies of the object that was copied
-	 * 
+	 *
 	 */
 	public ISystemResourceSet doDrag(SystemRemoteResourceSet set, IProgressMonitor monitor)
 	{
-	
+
 		boolean supportsSearch = ((IRemoteFileSubSystemConfiguration)set.getSubSystem().getSubSystemConfiguration()).supportsSearch();
 		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 		if (!doSuperTransferProperty && supportsSearch)
@@ -1653,18 +1654,18 @@ public class SystemViewRemoteFileAdapter
 			SystemRemoteResourceSet flatSet = new SystemRemoteResourceSet(set.getSubSystem(), set.getAdapter());
 			long totalByteSize = getFlatRemoteResourceSet(set.getResourceSet(), flatSet, monitor);
 			flatSet.setByteSize(totalByteSize);
-			
+
 			if (monitor != null)
-			{	
+			{
 			    monitor.beginTask(_downloadMessage,  (int)totalByteSize);
 			    //monitor.done();
 			}
-			
+
 			try
 			{
-				//SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(flatSet, monitor);		
+				//SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(flatSet, monitor);
 				// for bug 209375, using multiple instead of single
-				SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.downloadResourcesToWorkspaceMultiple(flatSet, monitor);		
+				SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.downloadResourcesToWorkspaceMultiple(flatSet, monitor);
 				if (flatResult.hasMessage())
 				{
 					return flatResult;
@@ -1696,7 +1697,7 @@ public class SystemViewRemoteFileAdapter
 			return UniversalFileTransferUtility.downloadResourcesToWorkspace(set, monitor);
 		}
 	}
-	
+
 	/**
 	 * Helper method to get the local file subsystem.
 	 * @return the local file subsystem
@@ -1717,27 +1718,27 @@ public class SystemViewRemoteFileAdapter
 
 		return null;
 	}
-	
+
 	protected long getFlatRemoteResourceSet(List initialResources, SystemRemoteResourceSet flatSet, IProgressMonitor monitor)
 	{
 		long totalByteSize = 0;
 		List configList = new ArrayList();
-		
+
 		// create a search result set to contain all the results
 		IHostSearchResultSet searchSet = new HostSearchResultSet();
-		
+
 		IRemoteFileSubSystem subsys = (IRemoteFileSubSystem)flatSet.getSubSystem();
 		if (subsys instanceof FileServiceSubSystem)
 		{
 			FileServiceSubSystem ss = (FileServiceSubSystem)subsys;
-			
+
 			for (int i = 0; i < initialResources.size(); i++)
 			{
 				IRemoteFile remoteFile = (IRemoteFile)initialResources.get(i);
-				
+
 				// get all files within directory
 				if (remoteFile.isDirectory())
-				{		
+				{
 					SystemSearchString searchString = null;
 					if (ArchiveHandlerManager.isVirtual(remoteFile.getAbsolutePath()))
 					{
@@ -1749,30 +1750,30 @@ public class SystemViewRemoteFileAdapter
 					{
 						searchString = new SystemSearchString("*", false, false, "*", false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					
+
 					// create the configuration for this folder
 					IHostSearchResultConfiguration config = ss.createSearchConfiguration(searchSet, remoteFile, searchString);
-					
+
 					// kick off search for all files in the folder
 					subsys.search(config);
 					configList.add(config);
-				}			
+				}
 				else
 				{
 					flatSet.addResource(remoteFile);
 				}
-			}	
+			}
 		}
-	
-		
-		
+
+
+
 		SubProgressMonitor submonitor = null;
 		if (monitor != null)
 		{
 			submonitor = new SubProgressMonitor(monitor, configList.size());
 			submonitor.setTaskName(FileResources.RESID_SEARCH_MESSAGE_SEARCHING);
-	
-		}		
+
+		}
 		// accumulate results
 		for (int n = 0; n < configList.size(); n++)
 		{
@@ -1804,19 +1805,19 @@ public class SystemViewRemoteFileAdapter
 					}
 				}
 			}
-			
+
 			if (config.getStatus() == IHostSearchConstants.FINISHED)
-			{			
+			{
 				if (submonitor != null)
 					submonitor.worked(1);
 				Object[] results = config.getResults();
 				if (results == null || results.length == 0){
 					// make sure search is really done
 					System.out.println("waiting for results"); //$NON-NLS-1$
-					
+
 				}
-					
-				
+
+
 				for (int m = 0; m < results.length; m++)
 				{
 					Object result = results[m];
@@ -1825,14 +1826,14 @@ public class SystemViewRemoteFileAdapter
 						IRemoteFile file = (IRemoteFile)result;
 						flatSet.addResource(file);
 						totalByteSize += file.getLength();
-					}			
+					}
 				}
 			}
-		}	
+		}
 		//submonitor.done();
 		return totalByteSize;
 	}
-	
+
 	protected long getFlatWorkspaceResourceSet(List resources, SystemWorkspaceResourceSet flatSet, IProgressMonitor monitor)
 	{
 		long totalBytes = 0;
@@ -1852,16 +1853,16 @@ public class SystemViewRemoteFileAdapter
 				try
 				{
 					IResource[] members = container.members();
-					totalBytes += getFlatWorkspaceResourceSet(members, flatSet, monitor);					
+					totalBytes += getFlatWorkspaceResourceSet(members, flatSet, monitor);
 				}
 				catch (Exception e)
-				{					
+				{
 				}
 			}
 		}
 		return totalBytes;
 	}
-	
+
 	protected long getFlatWorkspaceResourceSet(IResource[] resources, SystemWorkspaceResourceSet flatSet, IProgressMonitor monitor)
 	{
 		long totalBytes = 0;
@@ -1881,18 +1882,18 @@ public class SystemViewRemoteFileAdapter
 				try
 				{
 					IResource[] members = container.members();
-					totalBytes += getFlatWorkspaceResourceSet(members, flatSet, monitor);					
+					totalBytes += getFlatWorkspaceResourceSet(members, flatSet, monitor);
 				}
 				catch (Exception e)
-				{					
+				{
 				}
 			}
 		}
 		return totalBytes;
 	}
-	
-	
-	
+
+
+
 	public static class RenameRunnable implements Runnable
 	{
 		private IRemoteFile _targetFileOrFolder;
@@ -1907,9 +1908,9 @@ public class SystemViewRemoteFileAdapter
 			_targetFileOrFolder = targetFileOrFolder;
 			_namesInUse=namesInUse;
 		}
-		
+
 		public void run() {
-			ValidatorFileUniqueName validator = null; 	
+			ValidatorFileUniqueName validator = null;
 			SystemRenameSingleDialog dlg;
 			if(_namesInUse!=null && _namesInUse.size()>0)
 			{
@@ -1925,13 +1926,13 @@ public class SystemViewRemoteFileAdapter
 			else
 				_newName = null;
 		}
-		
+
 		public String getNewName()
 		{
 			return _newName;
 		}
 	}
-	
+
 	/**
 	 *  Perform drop from the "fromSet" of objects to the "to" object
 	 * @param fromSet the source objects for the drop
@@ -1940,10 +1941,10 @@ public class SystemViewRemoteFileAdapter
 	 * @param sameSystem indication of whether the source and target are on the same system
 	 * @param srcType the type of objects to be dropped
 	 * @param monitor the progress monitor
-	 * 
+	 *
 	 * @return the set of new objects created from the drop
-	 * 
-	 */ 
+	 *
+	 */
 	public ISystemResourceSet doDrop(ISystemResourceSet fromSet, Object target, boolean sameSystemType, boolean sameSystem, int srcType, IProgressMonitor monitor)
 	{
 		SystemRemoteResourceSet resultSet = new SystemRemoteResourceSet(getSubSystem(target), this);
@@ -1952,7 +1953,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			fromSet = doDrag((SystemRemoteResourceSet)fromSet, monitor);
 		}
-		
+
 		if (target instanceof IRemoteFile)
 		{
 			IRemoteFile targetFolder = (IRemoteFile) target;
@@ -1972,7 +1973,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
 				String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
-				SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ISystemFileConstants.FILEMSG_SECURITY_ERROR,
 						IStatus.ERROR, msgTxt, msgDetails);
 				resultSet.setMessage(errorMsg);
@@ -1983,23 +1984,23 @@ public class SystemViewRemoteFileAdapter
 			{
 				return null;
 			}
-			
+
 			List set = fromSet.getResourceSet();
 			if (set.size() > 0)
 			{
 				if (fromSet instanceof SystemWorkspaceResourceSet)
-				{		
+				{
 					boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 					if (!doSuperTransferProperty)
 					{
 						SystemWorkspaceResourceSet flatFromSet = new SystemWorkspaceResourceSet();
 						long totalByteSize = getFlatWorkspaceResourceSet(fromSet.getResourceSet(), flatFromSet, monitor);
-						
+
 					    if (monitor != null)
-						{		
+						{
 					    	int size = (int)totalByteSize;
 						    monitor.beginTask(_uploadMessage, size);
-						}  
+						}
 						// back to hierarchy
 						resultSet = UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
 					}
@@ -2032,7 +2033,7 @@ public class SystemViewRemoteFileAdapter
 								String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
 								String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
 
-								SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+								SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 										ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
 										IStatus.ERROR, msgTxt, msgDetails);
 								resultSet.setMessage(thisMessage);
@@ -2045,20 +2046,20 @@ public class SystemViewRemoteFileAdapter
 				else if (fromSet instanceof SystemRemoteResourceSet)
 				{
 					SystemRemoteResourceSet rmtSet = (SystemRemoteResourceSet)fromSet;
-				
+
 					//ISystemDragDropAdapter srcAdapter = rmtSet.getAdapter();
 					ISubSystem srcSubSystem = rmtSet.getSubSystem();
-				
+
 					Object first = set.get(0);
 					if (first instanceof ISystemFilterReference)
-					{											
+					{
 						SystemWorkspaceResourceSet downloadedFilterResults = new SystemWorkspaceResourceSet();
 						for (int i = 0; i < set.size(); i++)
-						{	
+						{
 							ISystemFilterReference ref = (ISystemFilterReference)set.get(i);
 							SystemFilterReference filterReference = (SystemFilterReference) ref;
-	
-					
+
+
 							Object[] children = null;
 							try
 							{
@@ -2066,18 +2067,18 @@ public class SystemViewRemoteFileAdapter
 							}
 							catch (Exception e)
 							{
-							}	
-							
+							}
+
 							if (children != null)
 							{
 							for (int c = 0; c < children.length; c++)
 							{
 								Object child = children[c];
-	
+
 								if (child instanceof IAdaptable)
 								{
 									Object newSrc = child;
-	
+
 									if (srcSubSystem != targetFS)
 									{
 										ISystemDragDropAdapter cAdapter = (ISystemDragDropAdapter) ((IAdaptable) child).getAdapter(ISystemDragDropAdapter.class);
@@ -2092,13 +2093,13 @@ public class SystemViewRemoteFileAdapter
 											downloadedFilterResults.addResource(newSrc);
 										}
 									}
-								}										
+								}
 							}
 							}
 						}
-						
+
 						return doDrop(downloadedFilterResults, target, sameSystemType, srcSubSystem == targetFS, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
-							
+
 					}
 					else if (first instanceof IRemoteFile)
 					{
@@ -2107,17 +2108,17 @@ public class SystemViewRemoteFileAdapter
 						List toCopyBatch = new ArrayList();
 						List existing = new ArrayList();
 						boolean overwrite=false;
-						
+
 						for (int i = 0; i < set.size(); i++)
-						{	
-							IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);																									
+						{
+							IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);
 							if (!srcFileOrFolder.exists())
 							{
-								String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, 
-										srcFileOrFolder.getAbsolutePath(), 
+								String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND,
+										srcFileOrFolder.getAbsolutePath(),
 										srcFileOrFolder.getSystemConnection().getAliasName());
-								
-								SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+								SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 										ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
 										IStatus.ERROR, msgTxt);
 								resultSet.setMessage(errorMessage);
@@ -2132,19 +2133,19 @@ public class SystemViewRemoteFileAdapter
 								return resultSet;
 							}
 							*/
-			
-		
+
+
 							String name = srcFileOrFolder.getName();
-	
-							// same systemfor 
+
+							// same systemfor
 							if (sameSystem)
 							{
 								try
 								{
 									if (!targetFolder.getAbsolutePath().equals(srcFileOrFolder.getAbsolutePath()) && !targetFolder.getAbsolutePath().equals(srcFileOrFolder.getParentRemoteFile().getAbsolutePath()))
 									{
-								
-										// should be better doing a query for all in the set																					
+
+										// should be better doing a query for all in the set
 										IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name, monitor);
 										if (existingFileOrFolder.exists())
 										{
@@ -2154,7 +2155,7 @@ public class SystemViewRemoteFileAdapter
 											*/
 											existing.add(existingFileOrFolder);
 										}
-											
+
 										if (name != null)
 										{
 											//toCopy.add(srcFileOrFolder);
@@ -2165,7 +2166,7 @@ public class SystemViewRemoteFileAdapter
 										{
 											toCopyBatch.add(srcFileOrFolder);
 										}*/
-									}		
+									}
 								}
 								catch (Exception e)
 								{
@@ -2177,15 +2178,15 @@ public class SystemViewRemoteFileAdapter
 								//System.out.println("HOW DID I GET HERE?!!");
 							}
 						}
-						
-						
+
+
 						if(existing.size()>0)
 						{
 							CopyRunnable rr = new CopyRunnable(existing);
 							Display.getDefault().syncExec(rr);
 							overwrite = rr.getOk();
 						}
-						
+
 						//Following code for renaming dialog copying procedures is not required
 						/*if(existing.size()==0 || overwrite)
 						{
@@ -2195,30 +2196,30 @@ public class SystemViewRemoteFileAdapter
 								IRemoteFile srcFileOrFolder = (IRemoteFile)toCopy.get(x);
 								String name = (String)toCopyNames.get(x);
 
-								
+
 							SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPY_PROGRESS);
 							copyMessage.makeSubstitution(srcFileOrFolder.getName(), targetFolder.getName());
 							if (monitor != null)
 							{
 								monitor.beginTask(copyMessage.getLevelOneText(), 100);
 							}
-								 
+
 								try
 								{
 									if (targetFS.copy(srcFileOrFolder, targetFolder, name, monitor))
 									{
 										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
-										resultSet.addResource(copiedFile); 
+										resultSet.addResource(copiedFile);
 									}
 									else
 									{
 										// need a failed message here
 										String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getAbsolutePath());
 										String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
-									
-										
-									
-									SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+
+
+									SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 											ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
 											IStatus.ERROR, msgTxt, msgDetails);
 									resultSet.setMessage(msg);
@@ -2248,7 +2249,7 @@ public class SystemViewRemoteFileAdapter
 											String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
 											String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
 
-										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 												ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
 												IStatus.ERROR, msgTxt, msgDetails);
 										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
@@ -2269,7 +2270,7 @@ public class SystemViewRemoteFileAdapter
 								}
 							}
 						}*/
-						// deal with batch copies now 
+						// deal with batch copies now
 						if(existing.size()==0 || overwrite)
 						{
 							IRemoteFile[] srcFileOrFolders = new IRemoteFile[toCopyBatch.size()];
@@ -2311,7 +2312,7 @@ public class SystemViewRemoteFileAdapter
 											{
 												//This object has been deleted
 												resultSet.addResource(thisCopiedFile);
-											}	
+											}
 										}
 										if (resultSet.size() > 0)
 										{
@@ -2326,8 +2327,8 @@ public class SystemViewRemoteFileAdapter
 											}
 											String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
 											String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
-																				
-											SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+											SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 													ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
 													IStatus.ERROR, msgTxt, msgDetails);
 											SystemMessageDialog.displayErrorMessage(shell, thisMessage);
@@ -2348,7 +2349,7 @@ public class SystemViewRemoteFileAdapter
 								}
 							}
 						}
-					}						
+					}
 				}
 			}
 		}
@@ -2375,7 +2376,7 @@ public class SystemViewRemoteFileAdapter
 			src = doDrag(src, sameSystem, monitor);
 		}
 
-		
+
 		if (target instanceof IRemoteFile)
 		{
 			IRemoteFile targetFolder = (IRemoteFile) target;
@@ -2396,11 +2397,11 @@ public class SystemViewRemoteFileAdapter
 				String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
 				String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
 				SystemMessage errorMsg = null;
-				
-				errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+				errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ISystemFileConstants.FILEMSG_SECURITY_ERROR,
 						IStatus.ERROR, msgTxt, msgDetails);
-			
+
 				return errorMsg;
 			}
 
@@ -2416,7 +2417,7 @@ public class SystemViewRemoteFileAdapter
 				if (src instanceof String)
 				{
 					IRemoteFileSubSystem localFS = getLocalFileSubSystem();
-					
+
 					try
 					{
 						if (localFS != null) {
@@ -2441,10 +2442,10 @@ public class SystemViewRemoteFileAdapter
 					// noop for now
 				}
 			}
-						
-		
+
+
 			if (sourceType == SystemDNDTransferRunnable.SRC_TYPE_ECLIPSE_RESOURCE || sourceType == SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE)
-			{		
+			{
 				// Eclipse resource transfer
 				if (src instanceof IResource)
 				{
@@ -2452,7 +2453,7 @@ public class SystemViewRemoteFileAdapter
 					return UniversalFileTransferUtility.uploadResourceFromWorkspace(srcFileOrFolder, targetFolder, monitor, true);
 				}
 			}
-				
+
 
 			// RSE remote file transfer on same system
 			if (sourceType == SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE)
@@ -2507,21 +2508,21 @@ public class SystemViewRemoteFileAdapter
 						IRemoteFile srcFileOrFolder = (IRemoteFile) src;
 						if (!srcFileOrFolder.exists())
 						{
-							String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, 
-									srcFileOrFolder.getAbsolutePath(), 
+							String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND,
+									srcFileOrFolder.getAbsolutePath(),
 									srcFileOrFolder.getSystemConnection().getAliasName());
-							
-							SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+							SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 									ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
 									IStatus.ERROR, msgTxt);
-							return errorMessage;							
+							return errorMessage;
 						}
 
 						String msgTxt = NLS.bind(CommonMessages.MSG_COPY_PROGRESS, srcFileOrFolder.getName(), targetFolder.getAbsolutePath());
-						SystemMessage copyMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						SystemMessage copyMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 								ICommonMessageIds.MSG_COPY_PROGRESS,
 								IStatus.INFO, msgTxt);
-					
+
 
 						IRemoteFileSubSystem localFS = srcFileOrFolder.getParentRemoteFileSubSystem();
 
@@ -2547,14 +2548,14 @@ public class SystemViewRemoteFileAdapter
 									{
 										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
 										return copiedFile;
- 
+
 									}
 								}
 							}
 						}
 						else
 						{
-							
+
 							//System.out.println("how do we get here!??");
 
 							if (srcFileOrFolder.isFile())
@@ -2667,7 +2668,7 @@ public class SystemViewRemoteFileAdapter
 			IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName, new NullProgressMonitor());
 
 			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
-			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
+			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");
 			//RSEUIPlugin.logInfo("...target.exists()? "+tgtFileOrFolder.exists());
 			if (targetFileOrFolder.exists())
 			{
@@ -2695,7 +2696,7 @@ public class SystemViewRemoteFileAdapter
 		return !file.isRoot() && file.canRead();
 	}
 
-	
+
 	/**
 	 * Perform the delete action. Defers request to the remote file subsystem
 	 */
@@ -2704,7 +2705,7 @@ public class SystemViewRemoteFileAdapter
 		boolean ok;
 		IRemoteFile file = (IRemoteFile) element;
 		IRemoteFile parentFile = file.getParentRemoteFile();
-		
+
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
 		try
 		{
@@ -2717,10 +2718,10 @@ public class SystemViewRemoteFileAdapter
 					tmp.delete(false, null);
 				}
 				catch (Exception e)
-				{					
+				{
 				}
 			}
-			
+
 			/*
 
 			ISystemEditableRemoteObject editable = getEditableRemoteObject(file);
@@ -2749,7 +2750,7 @@ public class SystemViewRemoteFileAdapter
 			}
 			*/
 			ok = ss.delete(file, monitor);
-			
+
 			file.markStale(true);
 			parentFile.markStale(true);
 		}
@@ -2758,8 +2759,8 @@ public class SystemViewRemoteFileAdapter
 			ok = false;
 			String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
 			String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
-	
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ISystemFileConstants.FILEMSG_DELETE_FILE_FAILED,
 					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog.displayErrorMessage(shell, msg);
@@ -2792,11 +2793,11 @@ public class SystemViewRemoteFileAdapter
 						tmp.delete(false, null);
 					}
 					catch (Exception e)
-					{					
+					{
 					}
 				}
 				file.markStale(true);
-				parentFile.markStale(true);			
+				parentFile.markStale(true);
 			}
 			catch (Exception exc)
 			{
@@ -2804,8 +2805,8 @@ public class SystemViewRemoteFileAdapter
 				ok = false;
 				String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
 				String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
-				
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ISystemFileConstants.FILEMSG_DELETE_FILE_FAILED,
 						IStatus.ERROR, msgTxt, msgDetails);
 				SystemMessageDialog.displayErrorMessage(shell, msg);
@@ -2839,7 +2840,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				moveTempFileProperties(localResource, ss, newRemotePath);
 				localResource.move(newLocalPath, true, null);
-				
+
 			}
 			catch (Exception e)
 			{
@@ -2874,20 +2875,20 @@ public class SystemViewRemoteFileAdapter
 			{
 				SystemIFileProperties properties = new SystemIFileProperties(localFile);
 				properties.setRemoteFilePath(remotePath);
-				
+
 				Object editableObj = properties.getRemoteFileObject();
 				if (editableObj != null)
 				{
-					SystemEditableRemoteFile editable = (SystemEditableRemoteFile)editableObj;	
+					SystemEditableRemoteFile editable = (SystemEditableRemoteFile)editableObj;
 					// there's an in-memory editable, so change the associated remote file
 					IRemoteFile newRemoteFile = ss.getRemoteFileObject(remotePath, new NullProgressMonitor());
 					editable.setRemoteFile(newRemoteFile);
-				}				
+				}
 			}
 			catch (Exception e)
 			{
 			}
-			
+
 		}
 
 	}
@@ -2900,19 +2901,19 @@ public class SystemViewRemoteFileAdapter
 		boolean ok = true;
 		IRemoteFile file = (IRemoteFile) element;
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
-		
-			
+
+
 			String newRemotePath = file.getParentPath() + "/" + newName; //$NON-NLS-1$
 			IResource localResource = null;
 			if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist())
 			{
 				localResource = UniversalFileTransferUtility.getTempFileFor(file);
 			}
-					
+
 			ok = ss.rename(file, newName, monitor);
 			if (localResource != null && localResource.exists())
 			{
-				
+
 				IPath newLocalPath = localResource.getParent().getFullPath().append(newName);
 				moveTempResource(localResource, newLocalPath, ss, newRemotePath);
 			}
@@ -2930,10 +2931,10 @@ public class SystemViewRemoteFileAdapter
 //				SystemResourceChangeEvent event = new SystemResourceChangeEvent(file.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null);
 //				sr.fireEvent(event);
 //				//sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, file, file.getParentRemoteFile(), file.getParentRemoteFileSubSystem(), null, null);
-//			}		
+//			}
 //			file.markStale(true);
 			return ok;
-		
+
 	}
 
 	/**
@@ -2980,7 +2981,7 @@ public class SystemViewRemoteFileAdapter
 	 * Compare the name of the given element to the given new name to decide if they are equal.
 	 * Allows adapters to consider case and quotes as appropriate.
 	 * <p>
-	 * For Unix/Linux, returns the result of getName(element).equals(newName), which is to say, 
+	 * For Unix/Linux, returns the result of getName(element).equals(newName), which is to say,
 	 * it is a case sensitive compare. For windows, it is case insensitive (equalsIgnoreCase).
 	 */
 	public boolean namesAreEqual(Object element, String newName)
@@ -3011,7 +3012,7 @@ public class SystemViewRemoteFileAdapter
 
 	// --------------------------------------------------------------------
 	// METHODS PRESCRIBED BY THE ISYSTEMREMOTEELEMENT ADAPTER INTERFACE...
-	// --------------------------------------------------------------------	
+	// --------------------------------------------------------------------
 
 	/*
 	 * (non-Javadoc)
@@ -3045,7 +3046,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		return super.getSubSystem(element);
 	}
-	/** 
+	/**
 	 * Return the subsystem factory id that owns this remote object
 	 * The value must not be translated, so that property pages registered via xml can subset by it.
 	 */
@@ -3120,10 +3121,10 @@ public class SystemViewRemoteFileAdapter
 		return srcType;
 	}
 	/**
-	 * Some view has updated the name or properties of this remote object. As a result, the 
+	 * Some view has updated the name or properties of this remote object. As a result, the
 	 *  remote object's contents need to be refreshed. You are given the old remote object that has
 	 *  old data, and you are given the new remote object that has the new data. For example, on a
-	 *  rename the old object still has the old name attribute while the new object has the new 
+	 *  rename the old object still has the old name attribute while the new object has the new
 	 *  new attribute.
 	 * <p>
 	 * This is called by viewers like SystemView in response to rename and property change events.
@@ -3139,16 +3140,16 @@ public class SystemViewRemoteFileAdapter
 		{
 			RemoteFile oldFile = (RemoteFile)oldElement;
 			RemoteFile newFile = (RemoteFile)newElement;
-			
-			if (       (oldFile != newFile) 
-					&& (       (oldFile.isFile() && newFile.isFile()) 
+
+			if (       (oldFile != newFile)
+					&& (       (oldFile.isFile() && newFile.isFile())
 							|| (oldFile.isDirectory() && newFile.isDirectory()) )) {
 				oldFile.getHostFile().renameTo(newFile.getAbsolutePath());
 			}
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -3157,7 +3158,7 @@ public class SystemViewRemoteFileAdapter
 	 *  it is contained in.
 	 * <p>
 	 * The shell is required in order to set the cursor to a busy state if a remote trip is required.
-	 * 
+	 *
 	 * @return an IRemoteFile object for the parent
 	 */
 	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
@@ -3166,11 +3167,11 @@ public class SystemViewRemoteFileAdapter
 	}
 	/**
 	 * Given a remote object, return the unqualified names of the objects contained in that parent. This is
-	 *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not 
+	 *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not
 	 *  enough to just enumerate all the objects in the parent for this purpose, because duplicate
-	 *  names are allowed if the types are different, such as on iSeries. In this case return only 
+	 *  names are allowed if the types are different, such as on iSeries. In this case return only
 	 *  the names which should be used to do name-uniqueness validation on a rename operation.
-	 * 
+	 *
 	 * @return an array of all file and folder names in the parent of the given IRemoteFile object
 	 */
 	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
@@ -3208,17 +3209,17 @@ public class SystemViewRemoteFileAdapter
 		    return false;
 		}
 		/** FIXME commands now separate from this
-		else if (testAttribute(remoteFile, "classification", "*executable*") || 
+		else if (testAttribute(remoteFile, "classification", "*executable*") ||
 		    testAttribute(remoteFile, "classification", "*script") ||
 		    testAttribute(remoteFile, "classification", "symbolic link(script)*")
 		)
 		{
 		   // instead of opening in editor
 		    // attempt to execute it
-		   return RemoteCommandHelpers.runUniversalCommand(getShell(), remoteFile.getName(), remoteFile.getParentPath(), 
+		   return RemoteCommandHelpers.runUniversalCommand(getShell(), remoteFile.getName(), remoteFile.getParentPath(),
 		           remoteFile.getParentRemoteFileSubSystem().getCommandSubSystem());
-		}	
-		*/	
+		}
+		*/
 		else if (!remoteFile.isArchive() || !remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
 		{
 			// only handle double click if object is a file
@@ -3242,13 +3243,13 @@ public class SystemViewRemoteFileAdapter
 						DownloadAndOpenJob oJob = new DownloadAndOpenJob(editable, false);
 						oJob.schedule();
 					}
-					
+
 				}
 				catch (Exception e)
 				{
 				}
-			
-				
+
+
 			}
 			else if (remoteFile.isDirectory())
 			{
@@ -3264,7 +3265,7 @@ public class SystemViewRemoteFileAdapter
 			return false;
 		}
 	}
-	
+
 	private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)
 	{
 		// DY:  check if the file exists and is read-only (because it was previously opened
@@ -3272,15 +3273,15 @@ public class SystemViewRemoteFileAdapter
 		IFile file = editable.getLocalResource();
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		boolean newFile = !file.exists();
-	
+
 		// detect whether there exists a temp copy already
 		if (!newFile && file.exists())
 		{
 			// we have a local copy of this file, so we need to compare timestamps
-	
+
 			// get stored modification stamp
 			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
-	
+
 			// get updated remoteFile so we get the current remote timestamp
 			//remoteFile.markStale(true);
 			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
@@ -3290,33 +3291,33 @@ public class SystemViewRemoteFileAdapter
 			}
 			catch (Exception e)
 			{
-				
+
 			}
-	
+
 			// get the remote modified stamp
 			long remoteModifiedStamp = remoteFile.getLastModified();
-	
+
 			// get dirty flag
 			boolean dirty = properties.getDirty();
-	
+
 			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
-			
+
 			String remoteEncoding = remoteFile.getEncoding();
 			String storedEncoding = properties.getEncoding();
-			
+
 			boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
 
 			boolean usedBinary = properties.getUsedBinaryTransfer();
 			boolean isBinary = remoteFile.isBinary();
-			
-			return (!dirty && 
-					!remoteNewer && 
+
+			return (!dirty &&
+					!remoteNewer &&
 					usedBinary == isBinary &&
 					!encodingChanged);
 		}
 		return false;
 	}
-	
+
 	public boolean canEdit(Object element)
 	{
 		IRemoteFile remoteFile = (IRemoteFile) element;
@@ -3359,7 +3360,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		return null;
 	}
-	
+
 	public IFile getCachedCopy(IRemoteFile remoteFile) throws SystemMessageException
 	{
 		if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist())
@@ -3394,10 +3395,10 @@ public class SystemViewRemoteFileAdapter
 		}
 		return null;
 	}
-	
-	/** 
+
+	/**
 	 * From <samp>IActionFilter</samp>, it exposes properties for decorator and popupMenus extension points.
-	 * <p> 
+	 * <p>
 	 * <ol>
 	 * <li>name="name". The given value must match the name exactly or if ends with an asterisk the beginning must match.
 	 * (case sensitiveness depends on the subsystem)</li>
@@ -3432,57 +3433,57 @@ public class SystemViewRemoteFileAdapter
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
 	 */
 	public boolean testAttribute(Object target, String name, String value) {
-		
+
 		if (target instanceof IRemoteFile)
 		{
 			IRemoteFile tgt = (IRemoteFile) target;
-			
+
 			String inName = name.toLowerCase();
-			
-			
+
+
 			if (inName.equals("classification"))  //$NON-NLS-1$
 			{
 				String classification = tgt.getClassification();
-				
+
 				if (classification != null)
 				{
 					return StringCompare.compare(value, classification, true);
 				}
 			}
 			else if (inName.equals("name")) //$NON-NLS-1$
-			{		
+			{
 				boolean caseSensitive = tgt.getParentRemoteFileSubSystem().isCaseSensitive();
-				
+
 				String tgtName = getName(target);
 				String val = value;
-				
+
 				// if case does not matter, then lower case the compares
 				if (!caseSensitive) {
 					tgtName = tgtName.toLowerCase();
 					val = val.toLowerCase();
 				}
-				
+
 				// we have a wild card test, and * is the last character in the value
 				if (val.endsWith("*"))  { //$NON-NLS-1$
 					return tgtName.startsWith(val.substring(0, val.length()-1));
-				} 
+				}
 				else {
 					return val.equals(tgtName);
 				}
 			}
 			else if (inName.equals("absolutePath".toLowerCase())) { //$NON-NLS-1$
-				
+
 				boolean caseSensitive = tgt.getParentRemoteFileSubSystem().isCaseSensitive();
-				
+
 				String tgtPath = getAbsoluteName(target);
 				String val = value;
-				
+
 				// if case does not matter, then lower case the compares
 				if (!caseSensitive) {
 					tgtPath = tgtPath.toLowerCase();
 					val = val.toLowerCase();
 				}
-				
+
 				// we have a wild card test, and * is the last character in the value
 				if (val.endsWith("*"))  { //$NON-NLS-1$
 					return tgtPath.startsWith(val.substring(0, val.length()-1));
@@ -3492,21 +3493,21 @@ public class SystemViewRemoteFileAdapter
 				}
 			}
 			else if (inName.equals("extension")) { //$NON-NLS-1$
-				
+
 				boolean caseSensitive = tgt.getParentRemoteFileSubSystem().isCaseSensitive();
-				
+
 				String tgtExtension = tgt.getExtension();
-				
+
 				if (tgtExtension == null) {
 					return false;
 				}
-				
+
 				StringTokenizer st = new StringTokenizer(value, " \t\n\r\f,"); //$NON-NLS-1$
-				
+
 				String val = null;
-				
+
 				while (st.hasMoreTokens()) {
-				
+
 				    val = st.nextToken();
 
                     // if case does not matter, then lower case the compares
@@ -3514,7 +3515,7 @@ public class SystemViewRemoteFileAdapter
                         tgtExtension = tgtExtension.toLowerCase();
                         val = val.toLowerCase();
                     }
-                    
+
                     boolean match = false;
 
                     // we have a wild card test, and * is the last character in
@@ -3525,13 +3526,13 @@ public class SystemViewRemoteFileAdapter
                     else {
                         match = val.equals(tgtExtension);
                     }
-                    
+
                     // if there is a match, return true, otherwise check against next extension
                     if (match) {
                         return true;
                     }
 				}
-				
+
 				// return false if no match
 				return false;
 			}
@@ -3578,19 +3579,19 @@ public class SystemViewRemoteFileAdapter
 			else if (inName.equals("isarchive")) { //$NON-NLS-1$
 				return tgt.isArchive() && value.equals("true") || //$NON-NLS-1$
 					!tgt.isArchive() && value.equals("false");				 //$NON-NLS-1$
-			}			
+			}
 			else if (inName.equals("isvirtual"))  //$NON-NLS-1$
 			{
 				return tgt instanceof IVirtualRemoteFile && value.equals("true") || //$NON-NLS-1$
 					!(tgt instanceof IVirtualRemoteFile) && value.equals("false"); //$NON-NLS-1$
 			}
 			else if (inName.equals("isexecutable"))  //$NON-NLS-1$
-			{		
+			{
 				return tgt.isExecutable() && value.equals("true") || //$NON-NLS-1$
 				 !tgt.isExecutable() && value.equals("false"); //$NON-NLS-1$
 			}
 			else if (inName.equals("islink"))  //$NON-NLS-1$
-			{		
+			{
 				return tgt.isLink() && value.equals("true") || //$NON-NLS-1$
 				 !tgt.isLink() && value.equals("false"); //$NON-NLS-1$
 			}
@@ -3601,33 +3602,33 @@ public class SystemViewRemoteFileAdapter
 					if (tgt instanceof IAdaptable){
 						IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)tgt).getAdapter(IFilePermissionsService.class);
 						if (service != null){
-							
+
 							return (service.getCapabilities(tgt.getHostFile()) & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) != 0;
 						}
-					}				
+					}
 				}
 				return false;
 			}
 			else if (inName.equals("iscommandsubsystemexists")) { //$NON-NLS-1$
-				
+
 				boolean test = value.equals("true"); //$NON-NLS-1$
-				
+
 				ISubSystem subsystem = getSubSystem(tgt);
-				
+
 				if (subsystem != null) {
 					IHost host = subsystem.getHost();
 					ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-					
+
 					ISubSystem[] subsystems = registry.getSubSystems(host);
-					
+
 					for (int i = 0; i < subsystems.length; i++) {
 						ISubSystem temp = subsystems[i];
-						
+
 						if (temp instanceof IRemoteCmdSubSystem) {
 							return test;
 						}
 					}
-					
+
 					return !test;
 				}
 				else {
@@ -3635,10 +3636,10 @@ public class SystemViewRemoteFileAdapter
 				}
 			}
 		}
-		
+
 		return super.testAttribute(target, name, value);
 	}
-	
+
 	/*
 	 * Return whether deferred queries are supported.
 	 */
@@ -3646,7 +3647,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		return !subSys.getHost().getSystemType().isLocal();
 	}
-	
+
 
 	protected SystemFetchOperation getSystemFetchOperation(Object o, IElementCollector collector)
 	{

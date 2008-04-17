@@ -904,6 +904,7 @@ public final class CIndenter {
 				int pos= fPosition;
 				if (!skipScope())
 					fPosition= pos;
+				return skipToStatementStart(danglingElse, false);
 			case Symbols.TokenSEMICOLON:
 				// this is the 90% case: after a statement block
 				// the end of the previous statement / block previous.end
@@ -992,12 +993,14 @@ public final class CIndenter {
 				fPosition= offset;
 				fLine= line;
 				// else: fall through to default
+				return skipToPreviousListItemOrListStart();
 
 			case Symbols.TokenCOMMA:
 				// inside a list of some type
 				// easy if there is already a list item before with its own indentation - we just align
 				// if not: take the start of the list ( LPAREN, LBRACE, LBRACKET ) and either align or
 				// indent by list-indent
+				return skipToPreviousListItemOrListStart();
 			default:
 				// inside whatever we don't know about: similar to the list case:
 				// if we are inside a continued expression, then either align with a previous line that has indentation
@@ -1207,6 +1210,11 @@ public final class CIndenter {
 					if (isInBlock)
 						mayBeMethodBody= READ_PARENS;
 					// fall thru
+					pos= fPreviousPos;
+					if (skipScope())
+						break;
+					else
+						return pos;
 				case Symbols.TokenRBRACKET:
 				case Symbols.TokenGREATERTHAN:
 					pos= fPreviousPos;
@@ -1284,6 +1292,7 @@ public final class CIndenter {
 						return false;
 					}
 					// fall thru
+					continue;
 				case Symbols.TokenDOUBLECOLON:
 				case Symbols.TokenOTHER:
 					continue;
@@ -1495,10 +1504,14 @@ public final class CIndenter {
 						if (!isGenericStarter(getTokenContent()))
 							break;
 						// fall thru
+						if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
+							return true;
+						break;
 					case Symbols.TokenQUESTIONMARK:
 					case Symbols.TokenGREATERTHAN:
 						if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
 							return true;
+						break;
 				}
 				// <> are harder to detect - restore the position if we fail
 				fPosition= storedPosition;
@@ -1765,6 +1778,8 @@ public final class CIndenter {
 		switch (fToken) {
 			case Symbols.TokenRBRACE:
 				skipScope(); // and fall thru
+				skipToStatementStart(false, false);
+				return fToken == Symbols.TokenDO;
 			case Symbols.TokenSEMICOLON:
 				skipToStatementStart(false, false);
 				return fToken == Symbols.TokenDO;

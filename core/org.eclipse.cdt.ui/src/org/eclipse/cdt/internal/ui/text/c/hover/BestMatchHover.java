@@ -62,7 +62,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 			if (!PreferenceConstants.ID_BESTMATCH_HOVER.equals(hoverDescs[i].getId()))
 				fTextHoverSpecifications.add(hoverDescs[i]);
 		}
-	}	
+	}
 
 	private void checkTextHovers() {
 		if (fTextHoverSpecifications.size() == 0)
@@ -88,6 +88,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 
@@ -113,6 +114,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		

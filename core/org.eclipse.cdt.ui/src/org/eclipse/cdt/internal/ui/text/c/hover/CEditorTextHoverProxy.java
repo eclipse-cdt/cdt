@@ -64,6 +64,7 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (ensureHoverCreated())
@@ -77,6 +78,7 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 * @since 5.0
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		if (ensureHoverCreated()) {

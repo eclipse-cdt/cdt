@@ -104,6 +104,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	/*
 	 * @see IInformationProvider#getInformation(ITextViewer, IRegion)
 	 */
+	@SuppressWarnings("deprecation")
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		if (fImplementation != null) {
 			String s= fImplementation.getHoverInfo(textViewer, subject);

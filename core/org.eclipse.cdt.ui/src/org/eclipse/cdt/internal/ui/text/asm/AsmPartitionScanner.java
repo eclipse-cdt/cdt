@@ -82,7 +82,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	/** The length of the last returned token. */
 	private int fTokenLength;
 	
-	/** The state of the scanner. */	
+	/** The state of the scanner. */
 	private int fState;
 	/** The last significant character read. */
 	private int fLast;
@@ -247,7 +247,8 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 					if (fLast != BACKSLASH && fLast != BACKSLASH_CR && fLast != BACKSLASH_BACKSLASH) {
 						return postFix(fState);
 					}
-
+					consume();
+					continue;
 				default:
 					consume();
 					continue;
@@ -335,7 +336,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 				}
 			}
 
-			// states	 
+			// states
 	 		switch (fState) {
 	 		case CCODE:
  				if (fLast == NONE) {
@@ -408,7 +409,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 					}
 
 				case '"':
-					fLast= NONE; // ignore fLast				
+					fLast= NONE; // ignore fLast
 					if (fTokenLength > 0 ) {
 						return preFix(CCODE, STRING, NONE, 1);
 					} else {
@@ -431,7 +432,8 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 							break;
 						}
 					}
-					// fallthrough
+					consume();
+					break;
 				default:
 					consume();
 					break;
@@ -492,7 +494,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	
 				default:
 					consume();
-					break;			
+					break;
 				}
 				break;
 				
@@ -513,7 +515,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	
 				default:
 					consume();
-					break;			
+					break;
 				}
 				break;
 				
@@ -549,8 +551,8 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	 			}
 	 			break;
 	 		}
-		} 
- 	}		
+		}
+ 	}
 
 	private static final int getLastLength(int last) {
 		switch (last) {
@@ -571,19 +573,19 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 		case BACKSLASH_BACKSLASH:
 			return 2;
 
-		}	
+		}
 	}
 
 	private final void consume() {
 		fTokenLength++;
-		fLast= NONE;	
+		fLast= NONE;
 	}
 	
 	private final IToken postFix(int state) {
 		fTokenLength++;
 		fLast= NONE;
 		fState= CCODE;
-		fPrefixLength= 0;		
+		fPrefixLength= 0;
 		return fTokens[state];
 	}
 
@@ -635,7 +637,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 			// restart at beginning of partition
 			fState= CCODE;
 		} else {
-			fState= getState(contentType);			
+			fState= getState(contentType);
 		}
 
 		try {
@@ -653,7 +655,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 
 		fScanner.setRange(document, offset, length);
 		fTokenOffset= offset;
-		fTokenLength= 0;		
+		fTokenLength= 0;
 		fPrefixLength= 0;
 		fLast= NONE;
 		fState= CCODE;

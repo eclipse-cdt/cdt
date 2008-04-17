@@ -32,7 +32,7 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitions {
 
 	// states
-	private static final int CCODE= 0;	
+	private static final int CCODE= 0;
 	private static final int SINGLE_LINE_COMMENT= 1;
 	private static final int MULTI_LINE_COMMENT= 2;
 	private static final int CHARACTER= 3;
@@ -61,7 +61,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	/** The length of the last returned token. */
 	private int fTokenLength;
 	
-	/** The state of the scanner. */	
+	/** The state of the scanner. */
 	private int fState;
 	/** The last significant characters read. */
 	private int fLast;
@@ -214,6 +214,8 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					if (fLast != BACKSLASH && fLast != BACKSLASH_CR && fLast != BACKSLASH_BACKSLASH) {
 						return postFix(fState);
 					}
+					consume();
+					continue;
 
 				default:
 					consume();
@@ -298,7 +300,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 				}
 			}
 
-			// states	 
+			// states
 	 		switch (fState) {
 	 		case CCODE:
 				switch (ch) {
@@ -347,7 +349,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					}
 
 				case '"':
-					fLast= NONE; // ignore fLast				
+					fLast= NONE; // ignore fLast
 					if (fTokenLength > 0 ) {
 						return preFix(CCODE, STRING, NONE, 1);
 					} else {
@@ -371,6 +373,8 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 						}
 					}
 					// fallthrough
+					consume();
+					break;
 				default:
 					consume();
 					break;
@@ -410,7 +414,9 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 							break;
 						}
 					}
-					
+					consume();
+					break;
+
 				case '"':
 					if (fLast != BACKSLASH) {
 						fState= PREPROCESSOR_STRING;
@@ -457,7 +463,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	
 				default:
 					consume();
-					break;			
+					break;
 				}
 				break;
 				
@@ -484,7 +490,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 				
 	 		case STRING:
 	 			switch (ch) {
-				case '\"':	 			 			
+				case '\"':
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(STRING);
 
@@ -516,8 +522,8 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 			}
 	 			break;
 	 		}
-		} 
- 	}		
+		}
+ 	}
 
 	private static final int getLastLength(int last) {
 		switch (last) {
@@ -538,12 +544,12 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		case BACKSLASH_BACKSLASH:
 			return 2;
 
-		}	
+		}
 	}
 
 	private final void consume() {
 		fTokenLength++;
-		fLast= NONE;	
+		fLast= NONE;
 	}
 	
 	private final IToken postFix(int state) {
@@ -554,7 +560,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		fTokenLength++;
 		fLast= NONE;
 		fState= newState;
-		fPrefixLength= 0;		
+		fPrefixLength= 0;
 		return fTokens[interceptTokenState(state)];
 	}
 
@@ -625,7 +631,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 			// restart at beginning of partition
 			fState= CCODE;
 		} else {
-			fState= getState(contentType);			
+			fState= getState(contentType);
 		}
 
 		try {
@@ -649,7 +655,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		fDocument= document;
 		fScanner.setRange(document, offset, length);
 		fTokenOffset= offset;
-		fTokenLength= 0;		
+		fTokenLength= 0;
 		fPrefixLength= 0;
 		fLast= NONE;
 		fState= CCODE;
@@ -685,7 +691,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private int interceptTokenState(int proposedTokenState) {
 		if(fOwner!=null) {
 			switch(proposedTokenState) {
-			case MULTI_LINE_COMMENT: 
+			case MULTI_LINE_COMMENT:
 				if(fOwner.getMultilineConfiguration().isDocumentationComment(fDocument, fTokenOffset, fTokenLength))
 					return MULTI_LINE_DOC_COMMENT;
 				break;

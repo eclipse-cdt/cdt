@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -38,7 +37,6 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
 
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
@@ -126,7 +124,7 @@ public class CodeTemplateSourceViewerConfiguration extends SimpleCSourceViewerCo
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setInformationControlCreator(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true));
+				return new DefaultInformationControl(parent, false);
 			}
 		});
 

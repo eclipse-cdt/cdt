@@ -92,7 +92,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * @param persistBounds  flag indicating whether control size and location should be persisted
 	 */
 	public AbstractSourceViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds) {
-		super(parent, shellStyle, takeFocus, persistBounds, showViewMenu, false, null, null);
+		super(parent, shellStyle, takeFocus, persistBounds, persistBounds, showViewMenu, false, null, null);
 		fTextStyle= textStyle;
 		// Title and status text must be set to get the title label created, so force empty values here. 
 		if (hasHeader())
@@ -495,16 +495,14 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
 	 */
 	public boolean restoresLocation() {
-//		return getPersistLocation();
-		return getPersistBounds();
+		return getPersistLocation();
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
 	 */
 	public boolean restoresSize() {
-//		return getPersistSize();
-		return getPersistBounds();
+		return getPersistSize();
 	}
 
 	/*

@@ -211,12 +211,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
 		final IInformationProvider provider = new CElementContentProvider(getEditor());
-        presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
-        presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
-        presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
-        presenter.setInformationProvider(provider, ICPartitions.C_STRING);
-        presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
-        presenter.setInformationProvider(provider, ICPartitions.C_PREPROCESSOR);
+		String[] contentTypes= getConfiguredContentTypes(sourceViewer);
+		for (int i= 0; i < contentTypes.length; i++)
+			presenter.setInformationProvider(provider, contentTypes[i]);
         presenter.setSizeConstraints(50, 20, true, false);
         return presenter;
     }
@@ -231,12 +228,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
 		final IInformationProvider provider = new THInformationProvider(getEditor());
-        presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
-        presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
-        presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
-        presenter.setInformationProvider(provider, ICPartitions.C_STRING);
-        presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
-        presenter.setInformationProvider(provider, ICPartitions.C_PREPROCESSOR);
+		String[] contentTypes= getConfiguredContentTypes(sourceViewer);
+		for (int i= 0; i < contentTypes.length; i++)
+			presenter.setInformationProvider(provider, contentTypes[i]);
         presenter.setSizeConstraints(50, 20, true, false);
         return presenter;
     }
@@ -741,15 +735,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	@Override
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
-		return getInformationControlCreator(sourceViewer, true);
-	}
-	
-	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer, final boolean cutDown) {
-			return new IInformationControlCreator() {
+		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
-				return new DefaultInformationControl(parent, style, new HTMLTextPresenter(cutDown));
-				// return new HoverBrowserControl(parent);
+				return new DefaultInformationControl(parent, false);
 			}
 		};
 	}
@@ -766,9 +754,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	private IInformationControlCreator getInformationPresenterControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle= SWT.RESIZE | SWT.TOOL;
-				int style= SWT.V_SCROLL | SWT.H_SCROLL;
-				return new DefaultInformationControl(parent, shellStyle, style, new HTMLTextPresenter(false));
+				return new DefaultInformationControl(parent, true);
 			}
 		};
 	}
@@ -932,12 +918,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
 		final IInformationProvider provider = new CMacroExpansionInformationProvider(getEditor());
-        presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
-        presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
-        presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
-        presenter.setInformationProvider(provider, ICPartitions.C_STRING);
-        presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
-        presenter.setInformationProvider(provider, ICPartitions.C_PREPROCESSOR);
+		String[] contentTypes= getConfiguredContentTypes(sourceViewer);
+		for (int i= 0; i < contentTypes.length; i++)
+			presenter.setInformationProvider(provider, contentTypes[i]);
         presenter.setSizeConstraints(50, 20, true, false);
         return presenter;
 	}

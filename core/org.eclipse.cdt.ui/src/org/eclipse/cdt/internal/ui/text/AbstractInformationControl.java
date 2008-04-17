@@ -135,7 +135,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * @param showStatusField <code>true</code> iff the control has a status field at the bottom
 	 */
 	public AbstractInformationControl(Shell parent, int shellStyle, int treeStyle, String invokingCommandId, boolean showStatusField) {
-		super(parent, shellStyle, true, true, true, true, null, null);
+		super(parent, shellStyle, true, true, true, true, true, null, null);
 		fTreeStyle= treeStyle;
 		// Title and status text must be set to get the title label created, so force empty values here. 
 		if (hasHeader())
@@ -543,7 +543,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		 * the call to constrainShellSize in PopupDialog.open will still ensure that the shell is
 		 * entirely visible.
 		 */
-		if (!getPersistBounds() || getDialogSettings() == null)
+		if (!getPersistLocation() || getDialogSettings() == null)
 			getShell().setLocation(location);
 	}
 

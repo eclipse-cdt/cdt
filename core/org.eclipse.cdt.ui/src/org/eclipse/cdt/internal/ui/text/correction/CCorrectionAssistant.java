@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.correction;
@@ -52,7 +53,6 @@ import org.eclipse.cdt.internal.core.model.ASTCache;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 
 public class CCorrectionAssistant extends QuickAssistAssistant {
@@ -97,7 +97,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	private IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, new HTMLTextPresenter());
+				return new DefaultInformationControl(parent, false);
 			}
 		};
 	}

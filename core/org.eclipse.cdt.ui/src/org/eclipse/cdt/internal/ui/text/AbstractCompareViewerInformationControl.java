@@ -100,7 +100,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * @param persistBounds  flag indicating whether control size and location should be persisted
 	 */
 	public AbstractCompareViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds) {
-		super(parent, shellStyle | SWT.ON_TOP, takeFocus, persistBounds, showViewMenu, false, null, null);
+		super(parent, shellStyle | SWT.ON_TOP, takeFocus, persistBounds, persistBounds, showViewMenu, false, null, null);
 		fStyle= textStyle & ~(SWT.V_SCROLL | SWT.H_SCROLL);
 		// Title and status text must be set to get the title label created, so force empty values here. 
 		if (hasHeader())
@@ -467,16 +467,14 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
 	 */
 	public boolean restoresLocation() {
-//		return getPersistLocation();
-		return getPersistBounds();
+		return getPersistLocation();
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
 	 */
 	public boolean restoresSize() {
-//		return getPersistSize();
-		return getPersistBounds();
+		return getPersistSize();
 	}
 
 	/*

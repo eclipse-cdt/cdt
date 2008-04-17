@@ -22,7 +22,6 @@ import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -31,7 +30,6 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 
 /**
  * Abstract class for providing hover information for C
@@ -92,9 +90,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, SWT.NONE,
-						new HTMLTextPresenter(true),
-						getTooltipAffordanceString());
+				return new DefaultInformationControl(parent, getTooltipAffordanceString());
 			}
 		};
 	}
@@ -106,8 +102,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell shell) {
-				int style= SWT.V_SCROLL | SWT.H_SCROLL;
-				return new DefaultInformationControl(shell, SWT.RESIZE | SWT.TOOL, style, new HTMLTextPresenter(false));
+				return new DefaultInformationControl(shell, true);
 			}
 		};
 	}

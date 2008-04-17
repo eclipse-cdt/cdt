@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,23 +7,23 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Johann Draschwandtner (Wind River) - [227509][apidoc] Add note how to persist property sets
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 /**
- * A property set container is capable of containing property sets. This interface allows for the 
- * addition, retrieval, and deletion of property sets from the container. A property set may have only 
+ * A property set container is capable of containing property sets. This interface allows for the
+ * addition, retrieval, and deletion of property sets from the container. A property set may have only
  * one container.
  */
 public interface IPropertySetContainer {
-	
+
 	/**
 	 * Retrieves an array all property sets known to this container. It will return an empty array if this
 	 * container has property sets. The order of these property sets is not dictated by the interface.
@@ -40,26 +40,40 @@ public interface IPropertySetContainer {
 
 	/**
 	 * Creates a new property set of a particular name in this container.
-	 * If one already exists
-	 * by this name it is replaced with a new empty property set.
+	 *
+	 * If one already exists by this name, it is replaced with a new empty
+	 * property set.
+	 *
+	 * In order to have the property set persisted, the implementing class
+	 * should also implement {@link IRSEPersistableContainer}. The
+	 * {@link IRSEPersistableContainer#commit()} method must then be used to
+	 * commit any changes into persistent storage.
+	 *
 	 * @param name the name of the property set.
 	 * @return The property set.
 	 */
 	public IPropertySet createPropertySet(String name);
 
 	/**
-	 * Creates a new property set of a particular name and description in this container.
-	 * If one already exists
-	 * by this name it is replaced with a new empty property set.
+	 * Creates a new property set of a particular name and description in this
+	 * container. If one already exists by this name it is replaced with a new
+	 * empty property set.
+	 * 
+	 * In order to have the property set persisted, the implementing class
+	 * should also implement {@link IRSEPersistableContainer}. The
+	 * {@link IRSEPersistableContainer#commit()} method must then be used to
+	 * commit any changes into persistent storage.
+	 * 
 	 * @param name the name of the property set.
-	 * @param description the description (usually already localized) for this property set.
+	 * @param description the description (usually already localized) for this
+	 *            property set.
 	 * @return the newly created property set.
 	 */
 	public IPropertySet createPropertySet(String name, String description);
 
 	/**
 	 * Adds an existing property set to this container. If the property set already has a container
-	 * it is removed from that container and added to this one. If this container already 
+	 * it is removed from that container and added to this one. If this container already
 	 * has a property set by this name, this one replaces it.
 	 * @param set the property set to be added.
 	 * @return true if the property set was added.

@@ -6,6 +6,7 @@
  *
  * Contributors:
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
+ * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -29,6 +30,11 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSEInitListener;
 import org.eclipse.rse.core.IRSEModelInitializer;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemModelChangeEvent;
+import org.eclipse.rse.core.events.ISystemModelChangeEvents;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.logging.Logger;
 
 /**
@@ -170,8 +176,11 @@ public final class RSEInitJob extends Job {
 	 */
 	public IStatus run(IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;
-		// get and initialize the profile manager
-		RSECorePlugin.getTheSystemProfileManager();
+		// restore profiles
+		RSECorePlugin.getThePersistenceManager().restoreProfiles(5000);
+		ISystemProfile defaultProfile = SystemProfileManager.getDefault().getDefaultPrivateSystemProfile();
+		ISystemModelChangeEvent event = new SystemModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ALL_RELOADED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE, defaultProfile);
+		RSECorePlugin.getTheSystemRegistry().fireEvent(event);
 		modelPhase.done();
 		// instantiate and run initializers
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.rse.core.modelInitializers"); //$NON-NLS-1$
@@ -282,7 +291,7 @@ public final class RSEInitJob extends Job {
 		waitForCompletion(RSECorePlugin.INIT_ALL);
 		return getResult();
 	}
-
+	
 	/**
 	 * Wait for the completion of a particular phase
 	 * @param phase the phase to wait for

@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
  * David McKnight   (IBM)        - [199424] restoring memento state asynchronously
  * David McKnight   (IBM)        - [187711] Link with Editor handled by extension
+ * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -79,6 +80,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.core.RSEInitJob;
 import org.eclipse.rse.internal.ui.actions.SystemCascadingPreferencesAction;
 import org.eclipse.rse.internal.ui.actions.SystemCollapseAllAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceQualifyConnectionNamesAction;
@@ -404,14 +406,7 @@ public class SystemViewPart
 		// ----------------------
 		// Restore previous state
 		// ----------------------
-		Job initRSEJob = null;
-		Job[] jobs = Job.getJobManager().find(null);
-		for(int i=0; i<jobs.length; i++) {
-		    if ("Initialize RSE".equals(jobs[i].getName())) { //$NON-NLS-1$
-		    	initRSEJob = jobs[i];
-		        break;
-		    }
-		}
+		final RSEInitJob initRSEJob = RSEInitJob.getInstance();
 		if (initRSEJob == null) {
 			//Already initialized - Profiles are loaded, we can restore state right away without blocking
 			restoreInitialState();
@@ -419,12 +414,11 @@ public class SystemViewPart
 			//Wait until model fully restored, then fire a callback to restore state.
 			//Remember current display, since we're definitely on the display thread here
 			final Display display = Display.getCurrent();
-			final Job fInitRSEJob = initRSEJob;
 			Job waitForRestoreCompleteJob = new Job("WaitForRestoreComplete") { //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						//Wait for initRSEJob. 
-						fInitRSEJob.join();
+						initRSEJob.waitForCompletion();
 						//callback
 						display.asyncExec(new Runnable() {
 							public void run() {

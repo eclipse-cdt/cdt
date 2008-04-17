@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [202416] Protect against NPEs when importing DOM
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
+ * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -48,7 +49,6 @@ import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.RSECoreMessages;
-import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.persistence.dom.RSEDOMExporter;
 import org.eclipse.rse.internal.persistence.dom.RSEDOMImporter;
 import org.eclipse.rse.logging.Logger;
@@ -413,13 +413,11 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			try {
 				RSEDOM dom = provider.loadRSEDOM(profileName, new NullProgressMonitor());
 				if (dom != null) {
-					SystemProfileManager.getDefault().setRestoring(true);
 					profile = _importer.restoreProfile(dom);
 					if (profile!=null) {
 						profile.setPersistenceProvider(provider);
 						cleanTree(profile);
 					}
-					SystemProfileManager.getDefault().setRestoring(false);
 				}
 			} finally {
 				mutex.release();

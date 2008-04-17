@@ -21,6 +21,7 @@
  * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
+ * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -35,6 +36,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.internal.core.RSEInitJob;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 
@@ -45,8 +47,7 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 public class SystemProfileManager implements ISystemProfileManager {
 
 	private List _profiles = new ArrayList(10);
-	private static SystemProfileManager singleton = null;
-	private boolean restoring = false; 
+	private static SystemProfileManager singleton = new SystemProfileManager();
 	private boolean active = true;
 	private ISystemProfile defaultProfile = null;
 
@@ -62,24 +63,14 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @return (and create if necessary) the singleton instance of this class.
 	 */
 	public static SystemProfileManager getDefault() {
-		if (singleton == null) {
-			singleton = new SystemProfileManager();
-			RSECorePlugin.getThePersistenceManager().restoreProfiles(5000);
-			singleton.ensureDefaultPrivateProfile();
-			singleton.ensureDefaultTeamProfile();
-		}
 		return singleton;
 	}
-
+	
 	/**
 	 * Clear the default after a team synchronization say
 	 */
 	public static void clearDefault() {
-		singleton = null;
-	}
-	
-	public void setRestoring(boolean flag) {
-		restoring = flag;
+		singleton.forgetProfiles();
 	}
 	
 	/**
@@ -171,6 +162,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getSystemProfiles()
 	 */
 	public ISystemProfile[] getSystemProfiles() {
+		boolean restoring = !RSEInitJob.getInstance().isComplete(RSECorePlugin.INIT_ALL);
 		return getSystemProfiles(restoring);
 	}
 
@@ -409,6 +401,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getDefaultPrivateSystemProfile()
 	 */
 	public ISystemProfile getDefaultPrivateSystemProfile() {
+		ensureDefaultPrivateProfile();
 		return defaultProfile;
 	}
 
@@ -416,7 +409,9 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getDefaultTeamSystemProfile()
 	 */
 	public ISystemProfile getDefaultTeamSystemProfile() {
-		return getSystemProfile(RSEPreferencesManager.getDefaultTeamProfileName());
+		ensureDefaultTeamProfile();
+		ISystemProfile teamProfile = getSystemProfile(RSEPreferencesManager.getDefaultTeamProfileName());
+		return teamProfile;
 	}
 
 	/* (non-Javadoc)
@@ -494,6 +489,10 @@ public class SystemProfileManager implements ISystemProfileManager {
 			createDefaultPrivateProfile();
 		}
 		defaultProfile.setActive(true); // ensure that the default profile is active
+	}
+	
+	private void forgetProfiles() {
+		_profiles.clear();
 	}
 	
 	private void ensureDefaultTeamProfile() {

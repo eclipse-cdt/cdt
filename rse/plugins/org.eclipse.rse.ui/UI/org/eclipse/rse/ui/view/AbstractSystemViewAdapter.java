@@ -7,20 +7,20 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Uwe Stieber (Wind River) - Allow to extend action filter by dynamic system type providers.
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [189163] Update IActionFilter constants from subsystemFactory to subsystemConfiguration
- * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM)        - [208803] add exists() method
  * Xuan Chen        (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
@@ -92,12 +92,12 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 /**
  * Base class for adapters needed for the SystemView viewer.
- * It implements the ISystemViewElementAdapter interface. 
+ * It implements the ISystemViewElementAdapter interface.
  * @see AbstractSystemRemoteAdapterFactory
  */
 public abstract class AbstractSystemViewAdapter implements ISystemViewElementAdapter, IWorkbenchAdapter,
                                                            IDeferredWorkbenchAdapter
-{	
+{
 	// Static action filter per system type cache. Filled from testAttribute.
 	private final static Map ACTION_FILTER_CACHE = new HashMap();
 
@@ -108,11 +108,11 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			return false;
 		}
 	}
-	
+
 	//protected boolean isEditable = false;
-	
-	protected String filterString = null;
-	
+
+	private String filterString = null;
+
 	/**
 	 * Current viewer. Set by content provider
 	 */
@@ -138,24 +138,33 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	protected Object[] emptyList = new Object[0];
 	/**
-	 * For returning a msg object from getChildren. Will be an array with one item, 
-	 *  one of nullObject, canceledObject or errorObject
+	 * For returning a message object from getChildren. Will be an array with
+	 * one item, one of nullObject, cancelledObject or errorObject
 	 */
-	protected Object[] msgList   = new Object[1];	
+	protected Object[] msgList   = new Object[1];
 	/**
-	 * Frequently returned msg object from getChildren: "empty list"
-	 * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
+	 * Frequently returned message object from getChildren: "empty list"
+	 * 
+	 * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)}
+	 *             instead.
 	 */
 	protected SystemMessageObject nullObject     = null;
 	/**
-	 * Frequently returned msg object from getChildren: "operation cancelled"
+	 * Frequently returned message object from getChildren: "operation
+	 * cancelled"
+	 *
+	 * @since org.eclipse.rse.ui 3.0 renamed from canceledObject
+	 * @deprecated don't use this field.
 	 */
-	protected SystemMessageObject canceledObject = null;	
+	protected SystemMessageObject cancelledObject = null;
 	/**
-	 * Frequently returned msg object from getChildren: "operation ended in error"
+	 * Frequently returned message object from getChildren: "operation ended in
+	 * error"
+	 *
+	 * @deprecated don't use this field.
 	 */
-	protected SystemMessageObject errorObject    = null;		
-		
+	protected SystemMessageObject errorObject    = null;
+
     /**
      * Message substitution prefix: "&"
      */
@@ -173,17 +182,17 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * Delimiter for each object's key in a memento, used to persist tree view expansion state: "///"
      */
 	public static final String MEMENTO_DELIM = SystemViewPart.MEMENTO_DELIM;
-	
+
 	/**
 	 * A handy constant of "new String[0]"
 	 */
 	protected static final String[] EMPTY_STRING_LIST = new String[0];
-			
+
 	// -------------------
 	// default descriptors
 	// -------------------
 	private static PropertyDescriptor[] propertyDescriptorArray = null;
-	
+
 	// DKM: temporary memory caching stuff - we should replace this with something
 	//    more comprehensive later
 	/**
@@ -196,59 +205,64 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	protected Object   _lastSelected = null;
 
 	private Preferences fPrefStore = null;
-	
+
 	/**
 	 * Static constructor.
 	 */
 	static {
 		ACTION_FILTER_CACHE.clear();
 	}
-	
-	// ------------------------------------------------------------------ 	 
+
+	// ------------------------------------------------------------------
 	// Configuration methods, called by the label and content provider...
-	// ------------------------------------------------------------------ 	 
+	// ------------------------------------------------------------------
 
     /**
-     * <i>Configuration method. Typically called by content provider, viewer or action. Do not override.</i><br>
-     * Set the viewer that is driving this adapter
-     * Called by label and content provider.
-     */
+	 * <i>Configuration method. Typically called by content provider, viewer or
+	 * action. Do not override.</i><br>
+	 * Set the viewer that is driving this adapter Called by label and content
+	 * provider.
+	 */
     public final void setViewer(Viewer viewer)
     {
     	this.viewer = viewer;
-    }	
+    }
     /**
-     * <i>Configuration method. Typically called by content provider, viewer or action. Do not override.</i><br>
-     * Set the shell to be used by any method that requires it.
-     */
+	 * <i>Configuration method. Typically called by content provider, viewer or
+	 * action. Do not override.</i><br>
+	 * Set the shell to be used by any method that requires it.
+	 */
     public final void setShell(Shell shell)
     {
     	this.shell = shell;
-    }	
+    }
     /**
-     * <i>Configuration method. Typically called by content provider, viewer or action. Do not override.</i><br>
-     * Set the input object used to populate the viewer with the roots.
-     * May be used by an adapter to retrieve context-sensitive information.
-     * This is set by the Label and Content providers that retrieve this adapter.
-     */
+	 * <i>Configuration method. Typically called by content provider, viewer or
+	 * action. Do not override.</i><br>
+	 * Set the input object used to populate the viewer with the roots. May be
+	 * used by an adapter to retrieve context-sensitive information. This is set
+	 * by the Label and Content providers that retrieve this adapter.
+	 */
     public final void setInput(ISystemViewInputProvider input)
-    { 
+    {
     	this.input = input;
     }
 
-	// ------------------------------------------------------------------ 	 
+	// ------------------------------------------------------------------
 	// Getter methods, for use by subclasses and actions...
-	// ------------------------------------------------------------------ 	 
-	
+	// ------------------------------------------------------------------
+
     /**
-     * <i>Getter method. Callable by subclasses. Do not override.</i><br>
-     * Get the shell currently hosting the objects in this adapter
-     */
+	 * <i>Getter method. Callable by subclasses. Do not override.</i><br>
+	 * Get the shell currently hosting the objects in this adapter
+	 *
+	 * @noextend This method is not intended to be extended by clients.
+	 */
     public Shell getShell()
 	{
 		if (shell == null || shell.isDisposed() || !shell.isVisible() || !shell.isEnabled())
 		{
-			// get a new shell    			
+			// get a new shell
 			Shell[] shells = Display.getCurrent().getShells();
 			Shell lshell = null;
 			for (int i = 0; i < shells.length && lshell == null; i++)
@@ -265,12 +279,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		return shell;
 	}
 	/**
-     * <i>Getter method. Callable by subclasses. Do not override.</i><br>
-	 * Return the current viewer, as set via setViewer or its deduced from the 
+	 * <i>Getter method. Callable by subclasses. Do not override.</i><br>
+	 * Return the current viewer, as set via setViewer or its deduced from the
 	 * setInput input object if set. May be null so test it.
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	public Viewer getViewer()
-	{        
+	{
 		if (viewer == null)
 		{
 	      ISystemViewInputProvider ip = getInput();
@@ -283,16 +299,19 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	    	  IWorkbenchPart currentPart = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage().getActivePart();
 	    	  if (currentPart instanceof IRSEViewPart)
 	    	  {
-	    		return ((IRSEViewPart)currentPart).getRSEViewer();  
+	    		return ((IRSEViewPart)currentPart).getRSEViewer();
 	    	  }
 	      }
-	        
+
 		}
 	    return viewer;
 	}
 	/**
-     * <i>Getter method. Callable by subclasses. Do not override.</i><br>
-	 * Return the current viewer as an ISystemTree if it is one, or null otherwise
+	 * <i>Getter method. Callable by subclasses. Do not override.</i><br>
+	 * Return the current viewer as an ISystemTree if it is one, or null
+	 * otherwise
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected ISystemTree getCurrentTreeView()
 	{
@@ -304,21 +323,23 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	}
 
     /**
-     * <i>Getter method. Callable by subclasses. Do not override.</i><br>
-     * Get the input object used to populate the viewer with the roots.
-     * May be used by an adapter to retrieve context-sensitive information.
-     */
+	 * <i>Getter method. Callable by subclasses. Do not override.</i><br>
+	 * Get the input object used to populate the viewer with the roots. May be
+	 * used by an adapter to retrieve context-sensitive information.
+	 *
+	 * @noextend This method is not intended to be extended by clients.
+	 */
     public ISystemViewInputProvider getInput()
     {
     	return input;
     }
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses. You should override if not using AbstractResource.</i><br>
 	 * Returns the subsystem that contains this object. By default, if the
 	 *  given element is instanceof {@link org.eclipse.rse.core.subsystems.AbstractResource AbstractResource},
 	 *  it calls getSubSystem on it, else returns null.
-	 */ 
+	 */
 	public ISubSystem getSubSystem(Object element)
 	{
 		if (element instanceof AbstractResource)
@@ -326,17 +347,17 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		else if (element instanceof IContextObject)
 			return ((IContextObject)element).getSubSystem();
 		else
-		  return null;	
+		  return null;
 	}
-	
-	
+
+
 	/**
      * <i>Called by SystemView viewer. No need to override or call.</i><br>
 	 * Returns any framework-supplied remote object actions that should be contributed to the popup menu
 	 * for the given selection list. This does nothing if this adapter does not implement ISystemViewRemoteElementAdapter,
 	 * else it potentially adds menu items for "User Actions" and Compile", for example. It queries the subsystem
 	 * factory of the selected objects to determine if these actions are appropriate to add.
-	 * 
+	 *
 	 * @param menu The menu to contribute actions to
 	 * @param selection The window's current selection.
 	 * @param shell of viewer calling this. Most dialogs require a shell.
@@ -354,22 +375,22 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 				ISubSystemConfiguration ssf = ss.getSubSystemConfiguration();
 				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
 				adapter.addCommonRemoteActions(ssf, menu, selection, shell, menuGroup, ss);
-			}			
+			}
 		}
 
 	}
 
-	
+
 	/**
      * Add or remove custom actions dynamically to a context menu.
-     * 
-     * This method is called by the system viewers. Extenders may 
-     * override this method in order to modify the context menu 
+     *
+     * This method is called by the system viewers. Extenders may
+     * override this method in order to modify the context menu
      * shown for elements of the type they adapt to.
      * Unlike addCommonRemoteActions(), these contributions are for
      * any artifact in the RSE views and are contributed independently
      * of subsystem factories.
-	 * 
+	 *
 	 * @param menu The menu to contribute actions to
 	 * @param selection The window's current selection.
 	 * @param shell of viewer calling this. Most dialogs require a shell.
@@ -382,7 +403,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	}
 
 	/**
-	 * This is your opportunity to add actions to the popup menu for the given selection. 
+	 * This is your opportunity to add actions to the popup menu for the given selection.
 	 * <p>
 	 * To put your action into the given menu, use the menu's {@link org.eclipse.rse.ui.SystemMenuManager#add(String,org.eclipse.jface.action.IAction) add} method.
 	 * If you don't care where it goes within the popup, just pass the given <samp>menuGroup</samp> location id,
@@ -397,19 +418,19 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 *   <li>{@link org.eclipse.rse.ui.actions.SystemBaseDialogAction SystemBaseWizardAction}. For an action that presents a {@link org.eclipse.rse.ui.wizards.AbstractSystemWizard wizard}.
 	 *   <li>{@link org.eclipse.rse.ui.actions.SystemBaseSubMenuAction SystemBaseSubMenuAction}. For an action that cascades into a submenu with other actions.
 	 * </ul>
-	 * 
+	 *
 	 * @param menu the popup menu you can contribute to
 	 * @param selection the current selection in the calling tree or table view
 	 * @param parent the shell of the calling tree or table view
-	 * @param menuGroup the default menu group to place actions into if you don't care where they. Pass this to the SystemMenuManager {@link org.eclipse.rse.ui.SystemMenuManager#add(String,org.eclipse.jface.action.IAction) add} method. 
-	 * 
+	 * @param menuGroup the default menu group to place actions into if you don't care where they. Pass this to the SystemMenuManager {@link org.eclipse.rse.ui.SystemMenuManager#add(String,org.eclipse.jface.action.IAction) add} method.
+	 *
 	 * @see org.eclipse.rse.ui.view.ISystemViewElementAdapter#addActions(SystemMenuManager, IStructuredSelection, Shell, String)
 	 */
 	public abstract void addActions(SystemMenuManager menu,IStructuredSelection selection,Shell parent,String menuGroup);
-	
+
 	/**
      * <i><b>Abstract</b>. Must be overridden by subclasses.</i><br>
-	 * IWorkbenchAdapter method. Returns an image descriptor for the image. 
+	 * IWorkbenchAdapter method. Returns an image descriptor for the image.
 	 * More efficient than getting the image.
 	 * @param element The element for which an image is desired
 	 */
@@ -426,7 +447,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return getText(element);
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, but rarely needs to be.</i><br>
 	 * Return the name of this object, which may be different than the display text ({#link #getText(Object)}.
@@ -440,7 +461,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return getText(element);
 	}
-	
+
 	/**
      * <i>Internal use. Can be safely ignored.</i><br>
 	 * Return the name for this object. Unique requirement for IWorkbenchAdapter.
@@ -454,17 +475,17 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		}
 		return getText(element);
 	}
-	
+
 	/**
      * <i><b>Abstract</b>. Must be overridden by subclasses.</i><br>
 	 * Return the type label for this object.
 	 */
-	public abstract String getType(Object element);	
+	public abstract String getType(Object element);
 
 	/**
      * <i><b>Overridable</b> by subclasses, but rarely needs to be.</i><br>
 	 * Return the string to display in the status line when the given object is selected.
-	 * The default is: 
+	 * The default is:
 	 * <pre><samp>
 	 *   getType(): getName()
 	 * </pre></samp>
@@ -473,14 +494,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return getType(element) + ": " + getName(element); //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * Returns whether the specified element is represented as existing.  Note that
 	 * it's possible that the represented element will been seen to exist when on
 	 * a remote host it may not - that is because this call does not query the host.
 	 * By default, this method returns true - override this method to customize the
 	 * behavior
-	 * 
+	 *
 	 * @param element the element to check
 	 * @return true if the element exists
 	 *
@@ -489,8 +510,8 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return true;
 	}
-	
-	
+
+
 	/**
      * <i><b>Abstract</b>. Must be overridden by subclasses.</i><br>
 	 * Return the parent of this object. This is required by eclipse UI adapters, but
@@ -514,7 +535,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return hasChildren(element.getModelObject());
 	}
-	
+
 	/**
 	 * Implementation of IWorkbenchAdapter.getChildren().  Rather than overriding this, adapter implementors
 	 * should override the getChildren() methods that take a monitor.
@@ -523,37 +544,37 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return getChildren((IAdaptable)object, new NullProgressMonitor());
 	}
-	
-	
+
+
 	/**
      * This should be overridden by subclasses in order to provide
      * deferred query support via the Eclipse Jobs mechanism
 	 * Return the children of this object. Return null if children not supported.
 	 * @param element the model object to get children from
 	 * @param monitor the progress monitor
-	 * 
+	 *
 	 * @return the children of element
 	 */
 	public abstract Object[] getChildren(IAdaptable element, IProgressMonitor monitor);
-	
+
 	/**
      * This should be overridden by subclasses in order to provide
      * deferred query support via the Eclipse Jobs mechanism.  The context object is passed in
      * in place of the model object.  By default, we just fall back to the original mechanism
 	 * Return the children of this object. Return null if children not supported.
-	 * 
+	 *
 	 * This method should be overridden if your adapter supports context objects.  If not, this will
 	 * fall back to the model object version of the method.
 	 * @param monitor the progress monitor
 	 * @param element the context object that wrappers a model object, it's subsystem and filter reference
-	 * 
+	 *
 	 * @return the children of the model object within the context object that matches the containing filter reference criteria
 	 */
 	public Object[] getChildren(IContextObject element, IProgressMonitor monitor)
 	{
 		return getChildren(element.getModelObject(), monitor);
 	}
-	
+
 
 	/**
      * <i><b>Overridable</b> by subclasses, but rarely needs to be.</i><br>
@@ -563,13 +584,13 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     public Object[] getChildrenUsingExpandToFilter(Object element, String expandToFilter)
     {
     	return getChildren(element);
-    }	
-	
+    }
+
 	/**
      * <i>Callable by subclasses.</i><br>
 	 * Return the default descriptors for all system elements.
  	 */
-	protected static IPropertyDescriptor[] getDefaultDescriptors() 
+	protected static IPropertyDescriptor[] getDefaultDescriptors()
 	{
 		if (propertyDescriptorArray == null)
 		{
@@ -601,7 +622,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	    pd.setDescription(description);
 	    return pd;
 	}
-	
+
 
 	/**
      * <i>Needed by framework for property sheet. No need to call or override.</i><br>
@@ -609,7 +630,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
  	 *
  	 * @return a value that can be editted
  	 */
-	public Object getEditableValue() 
+	public Object getEditableValue()
 	{
 		return this;
 	}
@@ -618,12 +639,12 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * Returns the property descriptors defining what properties are seen in the property sheet.
 	 * By default returns descriptors for name, type and number-of-children only plus whatever
 	 *  is returned from internalGetPropertyDescriptors().
-	 * 
-	 * @return an array containing all descriptors.  
-	 * 
+	 *
+	 * @return an array containing all descriptors.
+	 *
 	 * @see #internalGetPropertyDescriptors()
 	 */
-	public IPropertyDescriptor[] getPropertyDescriptors() 
+	public IPropertyDescriptor[] getPropertyDescriptors()
 	{
 		IPropertyDescriptor[] addl = internalGetPropertyDescriptors();
 		if ((addl == null)	|| (addl.length==0))
@@ -636,11 +657,11 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			for (int idx=0; idx<defaults.length; idx++)
 			   all[allIdx++] = defaults[idx];
 			for (int idx=0; idx<addl.length; idx++)
-			   all[allIdx++] = addl[idx];			   
+			   all[allIdx++] = addl[idx];
 			return all;
 		}
-	}	
-	
+	}
+
 	/**
 	 * <i><b>Abstract</b>.<i><br>
 	 *  Implement this to return the property descriptors for the
@@ -658,24 +679,28 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 *  <li>{@link #resetPropertyValue(Object)}
 	 *  <li>{@link #setPropertyValue(Object,Object)}
 	 * </ul>
-	 * 
+	 *
 	 * @return an array containing all descriptors to be added to the default set of descriptors, or null
 	 *   if no additional properties desired.
 	 * @see #createSimplePropertyDescriptor(String, String, String)
 	 */
-	protected abstract IPropertyDescriptor[] internalGetPropertyDescriptors();	
-	
+	protected abstract IPropertyDescriptor[] internalGetPropertyDescriptors();
+
 
 	/**
-     * <i>Callable by subclasses. Do not override.</i><br>
+	 * <i>Callable by subclasses. Do not override.</i><br>
 	 * Returns the list of property descriptors that are unique for this
-	 * particular adapter - that is the difference between the default
-	 * property descriptors and the total list of property descriptors.
+	 * particular adapter - that is the difference between the default property
+	 * descriptors and the total list of property descriptors.
 	 * <p>
 	 * If internalGetPropertyDescriptors() returns non-null, then returns that,
-	 *  else computes the difference.
+	 * else computes the difference.
 	 * <p>
-	 * This is called by the table views like {@link org.eclipse.rse.ui.view.SystemTableView}.
+	 * This is called by the table views like
+	 * {@link org.eclipse.rse.ui.view.SystemTableView}.
+	 * </p>
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	public IPropertyDescriptor[] getUniquePropertyDescriptors()
 	{
@@ -683,21 +708,21 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		IPropertyDescriptor[] internalDescriptors = internalGetPropertyDescriptors();
 		if (internalDescriptors != null)
 			return internalDescriptors;
-		
+
 		IPropertyDescriptor[] allDescriptors = getPropertyDescriptors();
 		IPropertyDescriptor[] commonDescriptors = getDefaultDescriptors();
-		
+
 		int totalSize = allDescriptors.length;
 		int commonSize = commonDescriptors.length;
 		int uniqueSize = totalSize - commonSize;
-		
+
 		int uniqueIndex = 0;
-		
+
 		IPropertyDescriptor[] uniqueDescriptors = new IPropertyDescriptor[uniqueSize];
 		for (int i = 0; i < totalSize; i++)
 		{
 			IPropertyDescriptor descriptor = allDescriptors[i];
-			
+
 			boolean isUnique = true;
 			for (int j = 0; j < commonSize; j++)
 			{
@@ -705,19 +730,19 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 				if (descriptor == commonDescriptor)
 				{
 					isUnique = false;
-				}	
-			}	
-			
+				}
+			}
+
 			if (isUnique && uniqueSize > uniqueIndex)
 			{
 				uniqueDescriptors[uniqueIndex] = descriptor;
-				uniqueIndex++;	
+				uniqueIndex++;
 			}
 		}
-		
+
 		return uniqueDescriptors;
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
 	 * Similar to getPropertyValue(Object key) but takes an argument
@@ -728,7 +753,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * This is called by the table views in order to get values that can be sorted when the
 	 *  user clicks on the column heading. To support this for a numeric property say, return
 	 *  a Long/Integer object if false, versus returning string.
-	 * 
+	 *
 	 * @param key the name or key of the property as named by its property descriptor
 	 * @param formatted indication of whether to return the value in formatted or raw form
 	 * @return the current value of the given property
@@ -737,18 +762,18 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return getPropertyValue(key);
 	}
-		
+
 	/**
      * <i>Implemented. Do not override typically. See {@link #internalGetPropertyValue(Object)}.</i><br>
 	 * Returns the current value for the named property.<br>
 	 * By default handles ISystemPropertyConstants.P_TEXT, P_TYPE and P_NBRCHILDREN only, then defers to {@link #internalGetPropertyValue(Object)} for
 	 *  subclasses.
 	 * <br><b>Note</b>: you will need to reference <code>propertySourceInput</code>, which is the currently selected object. Just case it to what you expect the selected object's type to be.
-	 * 
+	 *
 	 * @param key	the name of the property as named by its property descriptor
 	 * @return the current value of the property
 	 */
-	public Object getPropertyValue(Object key) 
+	public Object getPropertyValue(Object key)
 	{
 		String name = (String)key;
 		if (name.equals(IBasicPropertyConstants.P_TEXT))
@@ -760,7 +785,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		{
 			ISystemTree tree = getSystemTree();
 			if (tree != null)
-			  	return Integer.toString(tree.getChildCount(propertySourceInput)); 
+			  	return Integer.toString(tree.getChildCount(propertySourceInput));
 			else
 			{
 			  	if ((viewer != null) && (viewer instanceof TreeViewer))
@@ -770,31 +795,31 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			}
 		}
 		else
- 		  return internalGetPropertyValue(key);	
+ 		  return internalGetPropertyValue(key);
 	}
 	/**
 	 * <i><b>Abstract</b>.<i><br>
 	 *  Implement this to return the property descriptors for the
 	 *  properties in the property sheet. This is beyond the Name, Type and NbrOfChildren
 	 *  properties which already implemented and done for you.
-	 * 
+	 *
 	 * @param key	the name of the property as named by its property descriptor
 	 * @return the current value of the property or null if not a known property.
 	 */
 	protected abstract Object internalGetPropertyValue(Object key);
-	
+
 
 	/**
 	 * Return the number of immediate children in the tree, for the given tree node
 	 * @deprecated this should be done in the SystemView only
 	 */
     private int getChildCount(TreeViewer viewer, Object element)
-	{		
+	{
 		if (viewer.getControl().isDisposed())
 		  return 0;
 		if (viewer.getExpandedState(element) == false)
 		  return 0;
-		
+
 		Widget w = findItemInTree(viewer, element);
 		if (w != null)
 		{
@@ -802,17 +827,17 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		    return ((TreeItem)w).getItemCount();
 		  else if (w instanceof Tree)
 		    return ((Tree)w).getItemCount();
-		}		
+		}
 		return 0;
 	}
 
     /** @deprecated this should be done in the SystemView only */
-    private Widget findItemInTree(TreeViewer tree, Object element) 
+    private Widget findItemInTree(TreeViewer tree, Object element)
     {
   	   Item[] items = getChildren(tree.getControl());
-	   if (items != null) 
+	   if (items != null)
 	   {
-		  for (int i= 0; i < items.length; i++) 
+		  for (int i= 0; i < items.length; i++)
 		  {
 			  Widget o = internalFindItem(tree.getTree(), items[i], element);
 			  if (o != null)
@@ -821,20 +846,20 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	   }
 	   return null;
     }
-    
+
     /** @deprecated this should be done in the SystemView only */
-    private Widget internalFindItem(Tree tree, Item parent, Object element) 
+    private Widget internalFindItem(Tree tree, Item parent, Object element)
     {
     	// compare with node
     	Object data= parent.getData();
-    	if (data != null) 
+    	if (data != null)
     	{
     		if (data.equals(element))
     			return parent;
     	}
     	// recurse over children
     	Item[] items= getChildren(parent);
-    	for (int i= 0; i < items.length; i++) 
+    	for (int i= 0; i < items.length; i++)
     	{
     		Item item= items[i];
     		Widget o = internalFindItem(tree, item, element);
@@ -845,7 +870,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     }
 
     /** @deprecated this should be done in the SystemView only */
-    private Item[] getChildren(Widget o) 
+    private Item[] getChildren(Widget o)
     {
     	if (o instanceof TreeItem)
     		return ((TreeItem) o).getItems();
@@ -853,7 +878,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     		return ((Tree) o).getItems();
     	return null;
     }
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses. Must be iff editable properties are supported.</i><br>
 	 * Returns whether the property value has changed from the default.
@@ -862,7 +887,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * @return	<code>true</code> if the value of the specified property has changed
 	 *			from its original default value; <code>false</code> otherwise.
 	 */
-	public boolean isPropertySet(Object key) 
+	public boolean isPropertySet(Object key)
 	{
 		return false;
 	}
@@ -871,50 +896,52 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * Resets the specified property's value to its default value.
 	 * Called on editable property when user presses reset button in property sheet viewer.
 	 * DOES NOTHING BY DEFAULT.
-	 * 
+	 *
 	 * @param 	key	the key identifying property to reset
 	 */
-	public void resetPropertyValue(Object key) 
+	public void resetPropertyValue(Object key)
 	{
 	}
 	/**
      * <i><b>Overridable</b> by subclasses. Must be iff editable properties are supported.</i><br>
 	 * Sets the named property to the given value.
 	 * Called after an editable property is changed by the user.
-	 * 
+	 *
 	 * DOES NOTHING BY DEFAULT.
-	 * 
+	 *
 	 * @param 	key	the key identifying property to reset
 	 * @param	value 	the new value for the property
 	 */
-	public void setPropertyValue(Object key, Object value) 
+	public void setPropertyValue(Object key, Object value)
 	{
-	}	
-	
+	}
+
 	/**
-     * <i>Called from adapter factories. Do not override.</i><br>
-	 * Set input object for property source queries. This <b>must</b> be called by your
-	 *  XXXAdaptorFactory before returning this adapter object.
+	 * <i>Called from adapter factories. Do not override.</i><br>
+	 * Set input object for property source queries. This <b>must</b> be called
+	 * by your XXXAdaptorFactory before returning this adapter object.
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	public void setPropertySourceInput(Object propertySourceInput)
 	{
 		this.propertySourceInput = propertySourceInput;
 	}
-  
+
     /**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
-     * User has double clicked on an object. If you want to do something special, 
-     *  do it and return true. Otherwise return false to have the viewer do the default behaviour.   
+     * User has double clicked on an object. If you want to do something special,
+     *  do it and return true. Otherwise return false to have the viewer do the default behaviour.
      */
     public boolean handleDoubleClick(Object element)
     {
     	return false;
     }
-     
+
 	// ------------------------------------------
 	// METHODS TO SUPPORT GLOBAL DELETE ACTION...
 	// ------------------------------------------
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
 	 * Return true if we should show the delete action in the popup for the given element.
@@ -925,7 +952,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	public boolean showDelete(Object element)
 	{
 		return true;
-	}	
+	}
 	/**
      * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
 	 * Return true if this object is deletable by the user. If so, when selected,
@@ -938,12 +965,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return false;
 	}
-	
+
 	/**
-     * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
-	 * Perform the delete action. By default does nothing. Override if your object is deletable.
-	 * Return true if this was successful. Return false if it failed and you issued a msg. 
-	 * Throw an exception if it failed and you want to use the generic msg.
+	 * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
+	 * Perform the delete action. By default does nothing. Override if your
+	 * object is deletable. Return true if this was successful. Return false if
+	 * it failed and you issued a message. Throw an exception if it failed and
+	 * you want to use the generic message.
+	 * 
 	 * @see #showDelete(Object)
 	 * @see #canDelete(Object)
 	 */
@@ -951,13 +980,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return false;
 	}
-	
+
 	/**
-     * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
-	 * Perform the delete action. By default just calls the doDelete method for each item in the resourceSet. 
-	 * Override if you wish to perform some sort of optimization for the batch delete.
-	 * Return true if this was successful. Return false if ANY delete op failed and a msg was issued. 
-	 * Throw an exception if ANY failed and you want to use the generic msg.
+	 * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
+	 * Perform the delete action. By default just calls the doDelete method for
+	 * each item in the resourceSet. Override if you wish to perform some sort
+	 * of optimization for the batch delete. Return true if this was successful.
+	 * Return false if ANY delete op failed and a message was issued. Throw an
+	 * exception if ANY failed and you want to use the generic message.
 	 */
 	public boolean doDeleteBatch(Shell shell, List resourceSet, IProgressMonitor monitor) throws Exception
 	{
@@ -968,12 +998,12 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		}
 		return ok;
 	}
-	
+
 
 	// ------------------------------------------
 	// METHODS TO SUPPORT COMMON RENAME ACTION...
 	// ------------------------------------------
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
 	 * Return true if we should show the rename action in the popup for the given element.
@@ -986,7 +1016,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	public boolean showRename(Object element)
 	{
 		return true;
-	}	
+	}
 	/**
      * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
 	 * Return true if this object is renamable by the user. If so, when selected,
@@ -1003,12 +1033,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return false;
 	}
-	
+
 	/**
-     * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
-	 * Perform the rename action. By default does nothing. Override if your object is renamable.
-	 * Return true if this was successful. Return false if it failed and you issued a msg. 
-	 * Throw an exception if it failed and you want to use the generic msg.
+	 * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
+	 * Perform the rename action. By default does nothing. Override if your
+	 * object is renamable. Return true if this was successful. Return false if
+	 * it failed and you issued a message. Throw an exception if it failed and
+	 * you want to use the generic message.
+	 * 
 	 * @return true if the rename was successful
 	 * @see #showRename(Object)
 	 * @see #canRename(Object)
@@ -1022,7 +1054,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	/**
      * <i><b>Overridable</b> by subclasses, and usually is iff canRename is.</i><br>
 	 * Return a validator for verifying the new name is correct.
-	 * If you return null, no error checking is done on the new name in the common rename dialog!! 
+	 * If you return null, no error checking is done on the new name in the common rename dialog!!
 	 * <p>
 	 * Used in the common rename dialogs, and only if you return true to {@link #canRename(Object)}.
 	 * <p>
@@ -1033,7 +1065,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     public ISystemValidator getNameValidator(Object element)
     {
     	return null;
-    }    		
+    }
 
     /**
      * <i><b>Overridable</b> by subclasses, and usually is iff canRename is.</i><br>
@@ -1042,12 +1074,12 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      *  To do this right, sometimes more than the raw name itself is required to do uniqueness checking.
      * <p>
      *  For example, two connections or filter pools can have the same name if they are
-     *  in different profiles. Two iSeries QSYS objects can have the same name if their object types 
-     *  are different. 
+     *  in different profiles. Two iSeries QSYS objects can have the same name if their object types
+     *  are different.
 	 * <p>
 	 * Used in the common rename dialogs, and only if you return true to {@link #canRename(Object)}.
      * <p>
-     * This method returns a name that can be used for uniqueness checking because it is qualified 
+     * This method returns a name that can be used for uniqueness checking because it is qualified
      *  sufficiently to make it unique.
      * <p>
      * By default, this simply returns the given name. It is overridden by child classes when appropriate.
@@ -1086,7 +1118,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	public boolean showRefresh(Object element)
 	{
 		return true;
-	}    
+	}
 
 	// ----------------------------------------------
 	// METHODS TO SUPPORT COMMON PROPERTIES ACTION...
@@ -1101,7 +1133,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	public boolean showProperties(Object element)
 	{
 		return true;
-	}    
+	}
 
 
 	// ------------------------------------------------------------
@@ -1109,7 +1141,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	// ------------------------------------------------------------
 	/**
      * <i><b>Overridable</b> by subclasses, and usually is NOT.</i><br>
-	 * Return true if we should show the <b>Go Into;</b> and <b>Open In New Window</b> 
+	 * Return true if we should show the <b>Go Into;</b> and <b>Open In New Window</b>
 	 * and <b>Go To</b> actions in the popup for the given element.
 	 * <p>
 	 * Only applicable for non-remote resources. Remote always show <b>Go To</b> only.
@@ -1119,21 +1151,21 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		if (element instanceof IAdaptable)
 			return hasChildren((IAdaptable)element);
 		return false;
-	}    
-	
+	}
+
 	/**
 	  * <i><b>Overridable</b> by subclasses, and usually is NOT.</i><br>
 	  * Return true if we should show the generic show in table action in the popup for the given element.
 	  */
 	public boolean showGenericShowInTableAction(Object element)
 	{
-		return true;	
+		return true;
 	}
 
-	
+
 	// ------------------------------------------
 	// METHODS TO SUPPORT COMMON DRAG AND DROP FUNCTION...
-	// ------------------------------------------	
+	// ------------------------------------------
 	/**
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
 	 *  Return true if this object can be copied to another location.  By default,
@@ -1148,7 +1180,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return false;
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
 	 *  Return true if this object can be copied to another location.  By default,
@@ -1160,12 +1192,12 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return false;
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
 	 *  Perform the drag on the given object. By default this does nothing
 	 *  and returns nothing.  Extenders supporting DnD are expected to implement
-	 *  this method to perform a copy to a temporary object, the return value. 
+	 *  this method to perform a copy to a temporary object, the return value.
 	 * @see #canDrag(Object)
 	 * @see #canDrop(Object)
 	 * @see #doDrop(Object,Object,boolean,boolean,IProgressMonitor)
@@ -1173,13 +1205,13 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	public Object doDrag(Object element, boolean sameSystemType, IProgressMonitor monitor)
 	{
-		return null;	
+		return null;
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
 	 * Return true if another object can be copied into this object.  By default
-	 * we return false.  Extenders may decide whether or not certain objects can 
+	 * we return false.  Extenders may decide whether or not certain objects can
 	 * accept other objects with this method.
 	 * @see #canDrag(Object)
 	 * @see #doDrag(Object,boolean,IProgressMonitor)
@@ -1188,19 +1220,19 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	public boolean canDrop(Object element)
 	{
-		return false;	
-		
+		return false;
+
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
 	 * Perform the drag on the given objects.  This default implementation simply iterates through the
 	 * set.  For optimal performance, this should be overridden.
-	 * 
+	 *
 	 * @param set the set of objects to copy
 	 * @param monitor the progress monitor
 	 * @return the set of objects as a result of the drag
-	 * 
+	 *
 	 */
 	public ISystemResourceSet doDrag(SystemRemoteResourceSet set, IProgressMonitor monitor)
 	{
@@ -1222,80 +1254,80 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * @param sameSystem indication of whether the source and target are on the same system
 	 * @param srcType the type of objects to be dropped
 	 * @param monitor the progress monitor
-	 * 
+	 *
 	 * @return the set of new objects created from the drop
-	 * 
-	 */ 
+	 *
+	 */
 	public ISystemResourceSet doDrop(ISystemResourceSet fromSet, Object to, boolean sameSystemType, boolean sameSystem, int srcType, IProgressMonitor monitor)
 	{
 		SystemRemoteResourceSet results = new SystemRemoteResourceSet(getSubSystem(to), this);
-		
+
 		List resources = fromSet.getResourceSet();
 		for (int i = 0; i < resources.size(); i++)
 		{
 			results.addResource(doDrop(resources.get(i), to, sameSystemType, sameSystem, srcType, monitor));
 		}
-		
+
 		return results;
 	}
-	
+
 	/**
-	 * Sets filter context for querying.  Override to provide specialized 
+	 * Sets filter context for querying.  Override to provide specialized
 	 * behaviour.
 	 */
 	public void setFilterString(String filterString)
 	{
 		this.filterString = filterString;
 	}
-	
+
 	/**
-	 * Gets filter context for querying.  Override to provide specialized 
+	 * Gets filter context for querying.  Override to provide specialized
 	 * behaviour.
 	 */
 	public String getFilterString()
 	{
 		return filterString;
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
-	 *  Perform drop from the "from" object to the "to" object.  By default this does 
+	 *  Perform drop from the "from" object to the "to" object.  By default this does
 	 *  nothing and we return false.   Extenders supporting DnD are expected to implement
-	 *  this method to perform a "paste" into an object.   
-	 * 
+	 *  this method to perform a "paste" into an object.
+	 *
 	 * @return the new object that was copied
-	 * 
+	 *
 	 * @see #canDrag(Object)
 	 * @see #doDrag(Object,boolean,IProgressMonitor)
 	 * @see #canDrop(Object)
 	 * @see #validateDrop(Object,Object,boolean)
-	 */ 
+	 */
 	public Object doDrop(Object from, Object to, boolean sameSystemType, boolean sameSystem, int srcType, IProgressMonitor monitor)
 	{
 		// for backward compatability
 		return doDrop(from, to, sameSystemType, sameSystem, monitor);
 	}
-	
+
 	/**
 	 * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
-	 *  Perform drop from the "from" object to the "to" object.  By default this does 
+	 *  Perform drop from the "from" object to the "to" object.  By default this does
 	 *  nothing and we return false.   Extenders supporting DnD are expected to implement
-	 *  this method to perform a "paste" into an object.   
-	 * 
+	 *  this method to perform a "paste" into an object.
+	 *
 	 * @return the new object that was copied
-	 * 
+	 *
 	 * @see #canDrag(Object)
 	 * @see #doDrag(Object,boolean,IProgressMonitor)
 	 * @see #canDrop(Object)
 	 * @see #validateDrop(Object,Object,boolean)
-	 * 
+	 *
 	 * @deprecated use doDrop(Object from, Object to, boolean sameSystemType, boolean sameSystem, int srcType, IProgressMonitor monitor) instead
-	 */ 
+	 */
 	public Object doDrop(Object from, Object to, boolean sameSystemType, boolean sameSystem,  IProgressMonitor monitor)
 	{
-		return null;	
+		return null;
 	}
-	  
+
     /**
      * <i><b>Overridable</b> by subclasses, and usually is iff drag and drop supported..</i><br>
      * Return true if it is valid for the src object to be dropped in the target. We return false by default.
@@ -1303,17 +1335,17 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * @param target the object which src is dropped in
      * @param sameSystem whether this is the same system or not
      * @return whether this is a valid operation
-     * 
+     *
 	 * @see #canDrag(Object)
 	 * @see #doDrag(Object,boolean,IProgressMonitor)
 	 * @see #canDrop(Object)
 	 * @see #doDrop(Object,Object,boolean,boolean,IProgressMonitor)
-     */ 
+     */
     public boolean validateDrop(Object src, Object target, boolean sameSystem)
     {
-    	return false;	
+    	return false;
     }
-    
+
 	public boolean validateDrop(ISystemResourceSet set, Object target, boolean sameSystem)
 	{
 		boolean valid = true;
@@ -1365,14 +1397,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 
     /**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
-     * Somtimes we don't want to remember an element's expansion state, such as for temporarily inserted 
+     * Somtimes we don't want to remember an element's expansion state, such as for temporarily inserted
      *  messages. In these cases return false from this method. The default is true
      */
     public boolean saveExpansionState(Object element)
     {
     	return true;
     }
-    
+
     /**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
      * Return true if this object is a "prompting" object that prompts the user when expanded.
@@ -1384,8 +1416,8 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     public boolean isPromptable(Object element)
     {
     	return (element instanceof ISystemPromptableObject);
-    } 
-    
+    }
+
     /**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
      * Return true if this object is remote.  In this case, the default is true.
@@ -1394,7 +1426,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     {
     	return true;
     }
-    
+
     /**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
      * Selection has changed in the Remote Systems view. Empty by default, but override if you need
@@ -1402,7 +1434,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      *  selection.
      * @param element - first selected object
      */
-    public void selectionChanged(Object element)    // d40615   
+    public void selectionChanged(Object element)    // d40615
     {
     }
 
@@ -1417,11 +1449,11 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 *       returns true if the hasChildren returns false.
 	 *  <li>name="connection". If the given value is "true", returns true if the subsystem is connected. If given "false",
 	 *       returns true if the subsystem is not connected.
-	 *  <li>name="offline". If the given value is "true", returns true if the subsystem is offline. If given "false", 
+	 *  <li>name="offline". If the given value is "true", returns true if the subsystem is offline. If given "false",
 	 *       returns true if the subsystem is offline.
 	 *  <li>name="systemType". The given value is a system type, and this returns true if this object's connection is of that
 	 *       type. You can specify multiple values by comma-separating them, and this returns if there is a match on any them.
-	 *  <li>name="subsystemConfigurationId". The given value is a subsystem factory Id, and this returns true if this object's 
+	 *  <li>name="subsystemConfigurationId". The given value is a subsystem factory Id, and this returns true if this object's
 	 *       subsystem is from that subsystem factory. For connections, returns false.
 	 *       You can specify multiple values by comma-separating them, and this returns if there is a match on any them.
 	 *  <li>name="subsystemConfigurationCategory". The given value is a subsystem category, and this returns true if this object's
@@ -1430,7 +1462,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * </ol>
 	 * <p>
 	 * If desired, override, and call super(), to support additional filter criteria for &lt;filter&gt;, &lt;enablement&gt; and &lt;visibility&gt;.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(Object, String, String)
 	 */
 	public boolean testAttribute(Object target, String name, String value)
@@ -1443,7 +1475,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 				// we have a wild card test, and * is the last character in the value
 				if (getName(target).startsWith(value.substring(0, value.length() - 1)))
 					return true;
-			} 
+			}
 			else
 				return value.equals(getName(target));
 		}
@@ -1460,14 +1492,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			  return ss.isConnected() ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 			else
 			  return false;
-		} 
+		}
 		else if (name.equalsIgnoreCase("offline")) //$NON-NLS-1$
-		{ 
+		{
 			ISubSystem ss = getSubSystem(target);
 			if (ss != null)
 			  return ss.isOffline() ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 			else
-			  return false;		    				
+			  return false;
 		}
 		else if (name.equalsIgnoreCase("systemType")) //$NON-NLS-1$
 		{
@@ -1476,16 +1508,16 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			if (ss == null)
 			{
 				if (!(target instanceof IHost))
-			      return false;	
-			    String connSysType = ((IHost)target).getSystemType().getName();		
-			    for (int idx=0; idx<values.length; idx++)			
+			      return false;
+			    String connSysType = ((IHost)target).getSystemType().getName();
+			    for (int idx=0; idx<values.length; idx++)
 			    {
 			    	if (connSysType.equals(values[idx]))
 			    	   return true;
 			    }
 			    return false;
 			}
-			for (int idx=0; idx<values.length; idx++)			
+			for (int idx=0; idx<values.length; idx++)
 			{
 			  if (ss.getHost().getSystemType().getName().equals(values[idx]))
 			    return true;
@@ -1499,16 +1531,16 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			if (ss == null)
 			{
 				if (!(target instanceof IHost))
-			      return false;	
-			    String connSysTypeId = ((IHost)target).getSystemType().getId();		
-			    for (int idx=0; idx<values.length; idx++)			
+			      return false;
+			    String connSysTypeId = ((IHost)target).getSystemType().getId();
+			    for (int idx=0; idx<values.length; idx++)
 			    {
 			    	if (connSysTypeId.equals(values[idx]))
 			    	   return true;
 			    }
 			    return false;
 			}
-			for (int idx=0; idx<values.length; idx++)			
+			for (int idx=0; idx<values.length; idx++)
 			{
 			  if (ss.getHost().getSystemType().getId().equals(values[idx]))
 			    return true;
@@ -1522,10 +1554,10 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			if (ss == null)
 			  return false;
 			String[] values = tokenize(value);
-			//System.out.println("Nbr of values: " + (values.length));			
-			//System.out.println("Comparing against: " + (ss.getParentSubSystemConfiguration().getId()));			
+			//System.out.println("Nbr of values: " + (values.length));
+			//System.out.println("Comparing against: " + (ss.getParentSubSystemConfiguration().getId()));
 			boolean ok = false;
-			for (int idx=0; !ok && (idx<values.length); idx++)			
+			for (int idx=0; !ok && (idx<values.length); idx++)
 			{
 			  if (ss.getSubSystemConfiguration().getId().equals(values[idx]))
 			    ok = true;
@@ -1539,7 +1571,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			if (ss == null)
 			  return false;
 			String[] values = tokenize(value);
-			for (int idx=0; idx<values.length; idx++)			
+			for (int idx=0; idx<values.length; idx++)
 			{
 			  if (ss.getSubSystemConfiguration().getCategory().equals(values[idx]))
 			    return true;
@@ -1550,7 +1582,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		{
 			return isRemote(target) ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		// Give the ISV's as the element owners/contributors the chance to extend the standard RSE action
 		// filters for their specific needs. We do this by trying to determine the system type from the
 		// target object and try to adapt the system type to an IActionFilter.
@@ -1573,7 +1605,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			ISystemFilterStringReference modelObject = (ISystemFilterStringReference)target;
 			if (modelObject.getProvider() != null) conn = ((ISubSystem)modelObject.getProvider()).getHost();
 		}
-		
+
 		if (conn != null) {
 			IRSESystemType systemType = conn.getSystemType();
 			if (systemType != null) {
@@ -1593,10 +1625,10 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 				if (actionFilter != null) return actionFilter.testAttribute(target, name, value);
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Break given comma-delimited string into tokens
 	 */
@@ -1611,14 +1643,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
                stringArray[idx] = (String)v.elementAt(idx);
             return stringArray;
 	}
-	
+
 	// --------------------------------------
 	// ISystemRemoteElementAdapter methods...
 	// We include these here so that if a BP
 	// creates a class that extends this one
 	// and implements the remote resource
 	// adapter interface, these methods will
-	// be already created, reducing work. 
+	// be already created, reducing work.
 	// These are low-usage methods.
 	// --------------------------------------
 	/**
@@ -1656,7 +1688,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return null;
 	}
-	
+
 	/**
      * <i><b>Overridable</b> by subclasses, and must be for editable objects.</i><br>
 	 * Indicates whether the specified object can be edited or not.
@@ -1665,12 +1697,12 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	public boolean canEdit(Object object)
 	{
-		return false;	
+		return false;
 	}
-	
+
 	// ------------------
 	// HELPER METHODS...
-	// ------------------	
+	// ------------------
     /**
      * <i>Callable by subclasses.</i><br>
      * Returns the implementation of ISystemViewElement for the given
@@ -1682,15 +1714,15 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * Should we allow clients to override this in order to provide an
      * optimized implementation for their models? But it's being called
      * by subclasses only anyways...
-     * 
+     *
      * @deprecated use SystemAdapterHelpers.getViewAdapter(o, getViewer()) instead
      */
-    protected ISystemViewElementAdapter getSystemViewElementAdapter(Object o) 
+    protected ISystemViewElementAdapter getSystemViewElementAdapter(Object o)
     {
         return SystemAdapterHelpers.getViewAdapter(o, getViewer());
         /*
     	ISystemViewElementAdapter adapter = null;
-    	if (!(o instanceof IAdaptable)) 
+    	if (!(o instanceof IAdaptable))
           adapter = (ISystemViewElementAdapter)Platform.getAdapterManager().getAdapter(o,ISystemViewElementAdapter.class);
         else
     	  adapter = (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
@@ -1703,7 +1735,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     	return adapter;
     	*/
     }
-    
+
     /**
      * <i>Callable by subclasses.</i><br>
      * Returns the implementation of ISystemRemoteElement for the given
@@ -1714,17 +1746,17 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * Should we allow clients to override this in order to provide an
      * optimized implementation for their models? But it's being called
      * by subclasses only anyways...
-     * 
+     *
      * @deprecated use SystemAdapterHelpers.getRemoteAdapter(o, getViewer()) instead
      */
-    protected ISystemRemoteElementAdapter getRemoteAdapter(Object o) 
+    protected ISystemRemoteElementAdapter getRemoteAdapter(Object o)
     {
     	// hmmm, any reason why we shouldn't do the following 2 lines of code for performance reasons?
 		//if (this instanceof ISystemRemoteElementAdapter)
 		//  return (ISystemRemoteElementAdapter)this;
         return SystemAdapterHelpers.getRemoteAdapter(o, getViewer());
         /*
-    	if (!(o instanceof IAdaptable)) 
+    	if (!(o instanceof IAdaptable))
           adapter = (ISystemRemoteElementAdapter)Platform.getAdapterManager().getAdapter(o,ISystemRemoteElementAdapter.class);
     	adapter = (ISystemRemoteElementAdapter)((IAdaptable)o).getAdapter(ISystemRemoteElementAdapter.class);
     	if ((adapter != null) && (adapter instanceof ISystemViewElementAdapter))
@@ -1734,7 +1766,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     	return adapter;
     	*/
     }
-    
+
 	/**
      * <i>Callable by subclasses.</i><br>
 	 * Do message variable substitution. Using you are replacing &1 (say) with
@@ -1760,106 +1792,124 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		if (lastHit >= 0)
 		  temp.append(msg.substring(lastHit));
 		return temp.toString();
-	}  		
-	
+	}
+
 	/**
-     * <i>Callable by subclasses. Do not override</i><br>
-	 * Return the current viewer as an ISystemTree if the viewer is set and
-	 *  it implements this interface (SystemView does). May be null so test it.
+	 * <i>Callable by subclasses. Do not override.</i><br>
+	 * Return the current viewer as an ISystemTree if the viewer is set and it
+	 * implements this interface (SystemView does). May be null so test it.
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected ISystemTree getSystemTree()
 	{
 		Viewer v = getViewer();
 	    if ((v != null) && (v instanceof ISystemTree))
 		  return (ISystemTree)v;
-		else 
+		else
 		  return null;
 	}
-	
+
 	/**
-     * <i>Callable by subclasses. Do not override</i><br>
+	 * <i>Callable by subclasses. Do not override</i><br>
 	 * Return "Yes" translated
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	public String getTranslatedYes()
 	{
 		if (xlatedYes == null)
 		  xlatedYes = SystemResources.TERM_YES;
 		return xlatedYes;
-	} 
+	}
 
 	/**
-     * <i>Callable by subclasses. Do not override</i><br>
+	 * <i>Callable by subclasses. Do not override.</i><br>
 	 * Return "No" translated
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected String getTranslatedNo()
 	{
 		if (xlatedNo == null)
 		  xlatedNo = SystemResources.TERM_NO;
 		return xlatedNo;
-	} 
+	}
 
 	/**
-     * <i>Callable by subclasses. Do not override</i><br>
+	 * <i>Callable by subclasses. Do not override.</i><br>
 	 * Return "True" translated
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected String getTranslatedTrue()
 	{
 		if (xlatedTrue == null)
 		  xlatedTrue = SystemResources.TERM_TRUE;
 		return xlatedTrue;
-	} 
+	}
 	/**
-     * <i>Callable by subclasses. Do not override</i><br>
+	 * <i>Callable by subclasses. Do not override.</i><br>
 	 * Return "False" translated
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected String getTranslatedFalse()
 	{
 		if (xlatedFalse == null)
 		  xlatedFalse = SystemResources.TERM_FALSE;
 		return xlatedFalse;
-	} 
+	}
 	/**
-     * <i>Callable by subclasses. Do not override</i><br>
+	 * <i>Callable by subclasses. Do not override.</i><br>
 	 * Return "Not application" translated
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected String getTranslatedNotApplicable()
 	{
 		if (xlatedNotApplicable == null)
 		  xlatedNotApplicable = SystemPropertyResources.RESID_TERM_NOTAPPLICABLE;
 		return xlatedNotApplicable;
-	} 
+	}
 	/**
-     * <i>Callable by subclasses. Do not override</i><br>
+	 * <i>Callable by subclasses. Do not override.</i><br>
 	 * Return "Not available" translated
+	 *
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected String getTranslatedNotAvailable()
 	{
 		if (xlatedNotAvailable == null)
 		  xlatedNotAvailable = SystemPropertyResources.RESID_TERM_NOTAVAILABLE;
 		return xlatedNotAvailable;
-	} 
-	
+	}
+
 	/**
-     * <i>Internal use. Do not override</i><br>
-     */
+	 * <i>Internal use. Do not override.</i>
+	 */
 	protected final void initMsgObjects()
 	{
 		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
-		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
+		cancelledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
 		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
 	}
-	
+
 	/**
 	 * <i>Callable by subclasses. Do not override</i><br>
-	 * In getChildren, return <samp>checkForEmptyList(children, parent, true/false)<.samp>
-	 * versus your array directly. This method checks for a null array which is
-	 * not allowed and replaces it with an empty array. 
-	 * If true is passed then it returns the "Empty list" message object if the array is null or empty
-	 * 
+	 * In getChildren, return <samp>checkForEmptyList(children, parent,
+	 * true/false)<.samp> versus your array directly. This method checks for a
+	 * null array which is not allowed and replaces it with an empty array. If
+	 * true is passed then it returns the "Empty list" message object if the
+	 * array is null or empty
+	 *
 	 * @param children The list of children.
 	 * @param parent The parent for the children.
-	 * @param returnNullMsg <code>true</code> if an "Empty List" message should be returned.
-	 * @return The list of children, a list with the "Empty List" message object or an empty list.
+	 * @param returnNullMsg <code>true</code> if an "Empty List" message
+	 *            should be returned.
+	 * @return The list of children, a list with the "Empty List" message object
+	 *         or an empty list.
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected Object[] checkForEmptyList(Object[] children, Object parent, boolean returnNullMsg) {
 		if ((children == null) || (children.length == 0)) {
@@ -1874,7 +1924,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 				return new Object[] {
 					new SystemMessageObject(
 						RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),
-						ISystemMessageObject.MSGTYPE_EMPTY, 
+						ISystemMessageObject.MSGTYPE_EMPTY,
 						parent)};
 			}
 		}
@@ -1882,13 +1932,16 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	}
 
     /**
-     * <i>Callable by subclasses. Do not override</i><br>
-     * In getChildren, return <samp>checkForNull(children, true/false)</samp> versus your array directly.
-     * This method checks for a null array which is not allowed and replaces it with an empty array.
-     * If true is passed then it returns the "Empty list" message object if the array is null or empty
-     * 
-     * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
-     */
+	 * <i>Callable by subclasses. Do not override.</i><br>
+	 * In getChildren, return <samp>checkForNull(children, true/false)</samp>
+	 * versus your array directly. This method checks for a null array which is
+	 * not allowed and replaces it with an empty array. If true is passed then
+	 * it returns the "Empty list" message object if the array is null or empty
+	 *
+	 * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)}
+	 *             instead.
+	 * @noextend This method is not intended to be extended by clients.
+	 */
     protected Object[] checkForNull(Object[] children, boolean returnNullMsg)
     {
 	   if ((children == null) || (children.length==0))
@@ -1908,45 +1961,51 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     }
 
     /**
-     * <i>Callable by subclasses. Do not override</i><br>
-     * Return the "Operation cancelled by user" msg as an object array so can be used to answer getChildren()
-     */
+	 * <i>Callable by subclasses. Do not override.</i><br>
+	 * Return the "Operation cancelled by user" message as an object array so
+	 * can be used to answer getChildren()
+	 */
     protected final Object[] getCancelledMessageObject()
-    {    	
-		 if (canceledObject == null)
+    {
+		 if (cancelledObject == null)
 		   initMsgObjects();
-		 msgList[0] = canceledObject;
+		 msgList[0] = cancelledObject;
 		 return msgList;
-    }    
+    }
     /**
-     * <i>Callable by subclasses. Do not override</i><br>
-     * Return the "Operation failed" msg as an object array so can be used to answer getChildren()
-     */
+	 * <i>Callable by subclasses. Do not override.</i><br>
+	 * Return the "Operation failed" message as an object array so can be used
+	 * to answer getChildren()
+	 */
     protected final Object[] getFailedMessageObject()
-    {    	
+    {
 		 if (errorObject == null)
 		   initMsgObjects();
 		 msgList[0] = errorObject;
 		 return msgList;
-    }    
+    }
     /**
-     * <i>Callable by subclasses. Do not override</i><br>
-     * Return the "Empty list" msg as an object array so can be used to answer getChildren()
-     * 
-     * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
-     */
+	 * <i>Callable by subclasses. Do not override.</i><br>
+	 * Return the "Empty list" message as an object array so can be used to
+	 * answer getChildren()
+	 * 
+	 * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)}
+	 *             instead.
+	 */
     protected final Object[] getEmptyMessageObject()
-    {    	
+    {
 		 if (nullObject == null)
 		   initMsgObjects();
 		 msgList[0] = nullObject;
 		 return msgList;
-    }    
-    
+    }
+
     /**
-     * <i>Callable by subclasses. Do not override</i><br>
-     * Get the first selected object of the given selection
-     */
+	 * <i>Callable by subclasses. Do not override.</i><br>
+	 * Get the first selected object of the given selection
+	 *
+	 * @noextend This method is not intended to be extended by clients.
+	 */
     protected Object getFirstSelection(IStructuredSelection selection)
     {
     	return selection.getFirstElement();
@@ -1961,12 +2020,12 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * these methods are for deferred fetch operations
-	 */	
-	
+	 */
+
 	/*
 	 * Return whether deferred queries are supported. By default
 	 * they are not supported.  Subclasses must override this to
@@ -1976,34 +2035,34 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 	    return false;
 	}
-	
-	
-	public void fetchDeferredChildren(Object o, IElementCollector collector, IProgressMonitor monitor) 
+
+
+	public void fetchDeferredChildren(Object o, IElementCollector collector, IProgressMonitor monitor)
 	{
 		SystemFetchOperation operation = null;
         monitor = Policy.monitorFor(monitor);
         String taskName = SystemViewResources.RESID_FETCHING;
         monitor.beginTask(taskName, 100);
         operation = getSystemFetchOperation(o, collector);
-        try 
+        try
         {
 			operation.run(Policy.subMonitorFor(monitor, 100));
-        } 
-        catch (InvocationTargetException e) 
+        }
+        catch (InvocationTargetException e)
         {
         	operation.setException(e);
-		} 
-        catch (InterruptedException e) 
+		}
+        catch (InterruptedException e)
 		{
 			// Cancelled by the user;
-		} 
-        finally 
+		}
+        finally
 		{
             monitor.done();
         }
     }
-	
-	
+
+
 	/**
 	 * Returns the SystemFetchOperation to be used in performing a query.  Adapters should override
 	 * this to provide customizations where appropriate.
@@ -2015,8 +2074,8 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 	    return new SystemFetchOperation(null, o, this, collector);
 	}
-	
-	
+
+
 	  /* (non-Javadoc)
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
      */
@@ -2025,15 +2084,15 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
         return true;
     }
 
-    public ISchedulingRule getRule(Object element) 
+    public ISchedulingRule getRule(Object element)
     {
     	if (element instanceof IContextObject)
     	{
     		element = ((IContextObject)element).getModelObject();
     	}
     	IAdaptable location = (IAdaptable)element;
-        return new SystemSchedulingRule(location); 
+        return new SystemSchedulingRule(location);
     }
-    
+
 
 }

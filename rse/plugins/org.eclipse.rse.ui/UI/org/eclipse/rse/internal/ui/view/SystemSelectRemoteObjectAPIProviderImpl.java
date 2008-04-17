@@ -580,7 +580,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	 	     children = subsystem.resolveFilterString(filterString, new NullProgressMonitor());	 	     
 		} catch (InterruptedException exc)
 		{
-		     if (canceledObject == null)
+		     if (cancelledObject == null)
 		       children = getCancelledMessageObject();
 		} catch (Exception exc)
 		{

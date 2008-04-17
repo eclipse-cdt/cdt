@@ -210,6 +210,16 @@
 			Includes Source.
         </td>
     </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All <img src="egg.gif" width=20 height=20></td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-wince-incubation-@buildId@.zip">RSE-terminals-incubation-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+			Integration of the TM Terminal Widget into RSE, such that an SSH Terminals
+			Subsystem is provided to show a tabbed view of Terminals similar to the 
+			Remote Command View. Requires TM Terminal View Plugin installed.
+			Includes Source.
+        </td>
+    </tr>
 </table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">

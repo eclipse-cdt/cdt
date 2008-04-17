@@ -8,7 +8,7 @@
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.terminals.ssh;
+package org.eclipse.rse.internal.subsystems.terminals.ssh;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;

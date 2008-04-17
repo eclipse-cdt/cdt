@@ -80,7 +80,7 @@ public class DisassemblyElementLabelProvider implements IDocumentElementLabelPro
                     sb.append( line.getLineNumber() );
                     sb.append( '\t' );
                 }
-                sb.append( line.getFile().getAbsolutePath() );
+                sb.append( line.getFile().getPath() );
                 update.setLabel( DisassemblyEditorPresentation.ATTR_LINE_LABEL, sb.toString() );
             }
         }

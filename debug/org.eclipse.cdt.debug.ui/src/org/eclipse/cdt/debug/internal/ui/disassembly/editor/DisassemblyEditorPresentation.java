@@ -29,9 +29,6 @@ public class DisassemblyEditorPresentation extends PresentationContext implement
     public static final String PROPERTY_SHOW_ADDRESSES = "PROPERTY_SHOW_ADDRESSES"; //$NON-NLS-1$
     public static final String PROPERTY_SHOW_LINE_NUMBERS = "PROPERTY_SHOW_LINE_NUMBERS"; //$NON-NLS-1$
 
-    private boolean fShowInstructions = true;
-    private boolean fShowSource = false;
-    
     private boolean fShowAddresses = true;
     private boolean fShowLineNumbers = true;
 

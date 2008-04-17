@@ -105,9 +105,11 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
         BigInteger address = null;
         if ( startAddress != null ) { 
             if ( getCurrentOffset() > offset ) {
+                // scrolling up
                 address = startAddress.subtract( BigInteger.valueOf( getMinInstructionSize() * (getCurrentOffset() - offset) ) ); 
             }
             else if ( getCurrentOffset() < offset ) {
+                // scrolling down
                 IDisassemblyInstruction next = getNextInstruction( startAddress, fLines );
                 if ( next != null )
                     address = next.getAdress().getValue();
@@ -157,10 +159,27 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
     }
     
     private IDisassemblyLine[] disassembleDown( BigInteger address, int lineCount, boolean mixed ) throws DebugException {
-        BigInteger endAddress = address.add( BigInteger.valueOf( lineCount * getMaxInstructionSize() ) );
-        if ( endAddress.compareTo( getGlobalEndAddress() ) > 0 )
-            endAddress = getGlobalEndAddress();
-        IDisassemblyLine[] lines = disassemble( address, endAddress, mixed );
+        BigInteger startAddress = address;
+        IDisassemblyLine[] lines = new IDisassemblyLine[0]; 
+        while( lines.length < lineCount ) {
+            BigInteger endAddress = address.add( BigInteger.valueOf( lineCount * getMaxInstructionSize() ) );
+            if ( endAddress.compareTo( getGlobalEndAddress() ) > 0 )
+                endAddress = getGlobalEndAddress();
+            lines = disassemble( address, endAddress, mixed );
+            IDisassemblyInstruction firstInstruction = getFirstInstruction( lines );
+            if ( firstInstruction == null )
+                break;
+            IDisassemblyInstruction lastInstruction = getLastInstruction( lines );
+            if ( lastInstruction == null )
+                break;
+            if ( startAddress.compareTo( firstInstruction.getAdress().getValue() ) < 0 ) {
+                lines = appendLines( disassemble( startAddress, firstInstruction.getAdress().getValue(), mixed ), lines );
+            }
+            startAddress = lastInstruction.getAdress().getValue();
+            if ( startAddress.compareTo( endAddress ) < 0 ) {
+                lines = appendLines( lines, disassemble( startAddress, endAddress, mixed ) );
+            }
+        }
         int size = Math.min( lineCount, lines.length );
         IDisassemblyLine[] result = new IDisassemblyLine[size];
         int start = getIndexForAddress( address, lines );
@@ -189,10 +208,12 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
             }
             if ( mixedInstructions != null ) {
                 for ( ICDIMixedInstruction mi : mixedInstructions ) {
-                    list.add( new DisassemblySourceLine( (CDebugTarget)getDebugTarget(), fBaseElement, mi ) );
                     ICDIInstruction[] instructions = mi.getInstructions();
-                    for ( ICDIInstruction i : instructions ) {
-                        list.add( new DisassemblyInstruction( (CDebugTarget)getDebugTarget(), fBaseElement, i ) );
+                    if ( instructions.length > 0 ) {
+                        list.add( new DisassemblySourceLine( (CDebugTarget)getDebugTarget(), fBaseElement, mi ) );
+                        for ( ICDIInstruction i : instructions ) {
+                            list.add( new DisassemblyInstruction( (CDebugTarget)getDebugTarget(), fBaseElement, i ) );
+                        }
                     }
                 }
             }
@@ -240,6 +261,22 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
         return ( index > 0 ) ? (IDisassemblyInstruction)lines[index - 1] : null;
     }
 
+    private IDisassemblyInstruction getFirstInstruction( IDisassemblyLine[] lines ) {
+        for ( IDisassemblyLine l : lines ) {
+            if ( l instanceof IDisassemblyInstruction )
+                return (IDisassemblyInstruction)l;
+        }
+        return null;
+    }
+
+    private IDisassemblyInstruction getLastInstruction( IDisassemblyLine[] lines ) {
+        for ( int i = lines.length - 1; i >= 0; --i ) {
+            if ( lines[i] instanceof IDisassemblyInstruction )
+                return (IDisassemblyInstruction)lines[i];
+        }
+        return null;
+    }
+
     private BigInteger getGlobalStartAddress() {
         return getAddressFactory().getZero().getValue();
     }
@@ -250,5 +287,15 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
 
     private IAddressFactory getAddressFactory() {
         return ((CDebugTarget)getDebugTarget()).getAddressFactory();
+    }
+
+    private IDisassemblyLine[] appendLines( IDisassemblyLine[] lines1, IDisassemblyLine[] lines2 ) {
+        List<IDisassemblyLine> list = new ArrayList<IDisassemblyLine>( lines1.length + lines2.length );
+        list.addAll( Arrays.asList( lines1 ) );
+        for ( IDisassemblyLine l : lines2 ) {
+            if ( !list.contains( l ) )
+                list.add( l );
+        }
+        return list.toArray( new IDisassemblyLine[list.size()] );
     }
 }

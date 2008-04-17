@@ -65,4 +65,19 @@ public class DisassemblySourceLine extends CDebugElement implements IDisassembly
     public String toString() {
         return fCDIMixedInstruction.getFileName() + ' ' + getLineNumber();
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals( Object obj ) {
+        if ( !(obj instanceof IDisassemblySourceLine) )
+            return false;
+        IDisassemblySourceLine other = (IDisassemblySourceLine)obj;
+        if ( !getFile().equals( other.getFile() ) )
+            return false;
+        if ( getLineNumber() != other.getLineNumber() )
+            return false;
+        return true;
+    }
 }

@@ -38,6 +38,6 @@ public class CDebugUIPreferenceInitializer extends AbstractPreferenceInitializer
 		CDebugPreferencePage.initDefaults( pstore );
         pstore.setDefault( ICDebugPreferenceConstants.PREF_OPEN_DISASSEMBLY_MODE, MessageDialogWithToggle.PROMPT );
         pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS, true );
-        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE, false );
+        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE, true );
 	}
 }

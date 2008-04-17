@@ -1683,20 +1683,19 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	public IAddressFactory getAddressFactory() {
-		if ( fAddressFactory == null ) {
-			if ( getExecFile() != null && getProject() != null ) {
-				IBinaryObject file;
-				file = getBinaryFile();
-				if (file != null) {
-					fAddressFactory = file.getAddressFactory();
-				}
+		if ( fAddressFactory == null ) {			
+			// Ask CDI plug-in for the default AddressFactory.
+			if (fCDITarget instanceof ICDIAddressFactoryManagement) {
+				fAddressFactory = ((ICDIAddressFactoryManagement) fCDITarget).getAddressFactory();
 			}
-			else {
-				// No binary file, possible when we do pure assembly level debug
-				// Without any binary file involved, ask CDI plugin for default
-				// AddressFactory, if any.
-				if (fCDITarget instanceof ICDIAddressFactoryManagement) {
-					fAddressFactory = ((ICDIAddressFactoryManagement) fCDITarget).getAddressFactory();
+			// And if that doesn't work, use the one from the file.
+			if ( fAddressFactory == null ){
+				if ( getExecFile() != null && getProject() != null ) {
+					IBinaryObject file;
+					file = getBinaryFile();
+					if (file != null) {
+						fAddressFactory = file.getAddressFactory();
+					}
 				}
 			}
 		}

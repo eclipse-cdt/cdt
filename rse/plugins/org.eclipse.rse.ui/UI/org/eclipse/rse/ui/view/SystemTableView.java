@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * Martin Oberhuber (Wind River) - [227516] [regression] Fix ArrayIndexOutOfBoundsException in TableView
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -558,6 +559,10 @@ public class SystemTableView
 							// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193329#c5
 							// https://bugs.eclipse.org/bugs/show_bug.cgi?id=187571
 							results.add(propertyValue.getClass());
+						} else {
+							// FIXME Fallback: Display property value as String,
+							// is this always possible?
+							results.add(String.class);
 						}
 					}
 					catch (Exception e)

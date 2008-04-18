@@ -70,7 +70,6 @@ public class ConditionalProcessGroup {
 	/**
 	 * Constructs a ConditionalProcess element from the supplied conditionElement (&lt;if&gt;) while building Process 
 	 * objects out of each of the element's &lt;process&gt; children.
-	 * @throws ProcessFailureException 
 	 */
 	public ConditionalProcessGroup(TemplateCore template, Element conditionElement, int id) {
 		this.id = "Condition " + id; //$NON-NLS-1$
@@ -117,7 +116,6 @@ public class ConditionalProcessGroup {
 	 * objects out of each of the supplied process elements (&lt;process&gt;). The condition in this case is evaluated to true.
 	 * 
 	 * This Constructor is expected to be used to evaluate all those process elements that are children of the template root element.
-	 * @throws ProcessFailureException 
 	 */
 	public ConditionalProcessGroup(TemplateCore template, Element[] processElements) {
 		id = "No Condition"; //$NON-NLS-1$

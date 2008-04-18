@@ -81,17 +81,15 @@ public class ProcessRunnerFactory {
 	}
 	
 	/**
-	 * Process Runners Factory instance.
-	 * @return
+	 * @return the singleton {@link ProcessRunnerFactory}
 	 */
 	public static ProcessRunnerFactory getDefault() {
 		return instance;
 	}
 
 	/**
-	 * Return the ProcessRunner based on the ProcessType.
 	 * @param processType
-	 * @return
+	 * @return the ProcessRunner based on the ProcessType.
 	 */
 	public ProcessRunner getProcessRunner(String processType) {
 		return processRunnerMap.get(processType);

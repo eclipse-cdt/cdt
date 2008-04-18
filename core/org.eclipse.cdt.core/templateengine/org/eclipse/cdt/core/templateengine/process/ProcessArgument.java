@@ -120,7 +120,7 @@ public class ProcessArgument {
 	}
 
 	/**
-	 * Adds the marcos based on the value.
+	 * Adds the macros based on the value.
 	 * @param value
 	 */
 	private void collectMacros(String value) {
@@ -223,8 +223,7 @@ public class ProcessArgument {
 	}
 
 	/**
-	 * Returns true if All macros are Expandable.
-	 * @return
+	 * @return true if All macros are Expandable.
 	 */
 	public boolean areAllMacrosExpandable() {
 		switch (type) {
@@ -311,8 +310,7 @@ public class ProcessArgument {
 	}
 
 	/**
-	 * Returns the Macros as Set.
-	 * @return   Set, contains the Macros.
+	 * @return the macros defined in the context of this argument
 	 */
 	public Set<String> getMacros() {
 		return macros;
@@ -371,7 +369,6 @@ public class ProcessArgument {
 	}
 	
 	/*
-	 *  (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

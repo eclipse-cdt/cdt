@@ -69,7 +69,6 @@ public class TemplateEngineHelper {
 	 */
 
 	public static File getSharedDefaultLocation(String sharedLocation) {
-
 		File sharedXMLFile = findLocation(sharedLocation);
 		return sharedXMLFile;
 	}
@@ -82,14 +81,11 @@ public class TemplateEngineHelper {
      * 
      * @since 4.0
 	 */
-
 	private static File findLocation(String fileLocation) {
-
 		Plugin plugin = CCorePlugin.getDefault();
 		IPath stateLoc = plugin.getStateLocation();
 		fileLocation = stateLoc.toString() + File.separator + fileLocation;
 		File file = new File(fileLocation);
-
 		return file;
 	}
 
@@ -97,36 +93,21 @@ public class TemplateEngineHelper {
 	 * Stores the shareddefaults xml file in
 	 * "${workspace}/.metadata/.plugins/${plugin.name}/shareddefaults.xml" path.
 	 * 
-	 * @param sharedLocation
-	 * @return sharedXMLFile
+	 * @param sharedLocation the relative path within the plug-in
+	 * @return a File object corresponding to the location within the plug-in
      * 
      * @since 4.0
 	 */
-
 	public static File storeSharedDefaultLocation(String sharedLocation) {
-
 		File sharedXMLFile = findLocation(sharedLocation);
-
 		try {
-			createNewFile(sharedXMLFile.getPath());
+			if(!sharedXMLFile.exists()) {
+				sharedXMLFile.createNewFile();
+			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			CCorePlugin.log(e);
 		}
 		return sharedXMLFile;
-	}
-
-	/**
-	 * This creates a new File, in the Absolute Path given as argument. The File
-	 * name will be part of the path argument.
-	 * 
-	 * @param aFileName,
-	 *            absoulute File path(including File name) to be created.
-     * 
-     * @since 4.0
-	 */
-	public static void createNewFile(String fileName) throws IOException {
-
-		(new File(fileName)).createNewFile();
 	}
 
 	/**
@@ -146,10 +127,8 @@ public class TemplateEngineHelper {
 	}
 
 	/**
-	 * given a String of the form $(ID), return ID.
-	 * 
 	 * @param markerString
-	 * @return
+	 * @return the first content of a region matching $(.*) e.g. given a String of the form "foo $(ID) bar", return ID.
      * 
      * @since 4.0
 	 */

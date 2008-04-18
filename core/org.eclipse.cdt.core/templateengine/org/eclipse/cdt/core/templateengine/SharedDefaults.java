@@ -75,11 +75,8 @@ public class SharedDefaults extends HashMap<String, String> {
 	private static SharedDefaults SHAREDDEFAULTS = new SharedDefaults();
 
 	/**
-	 * Returns static SharedDefaults Instance
-	 * 
-	 * @return
+	 * @return the shared SharedDefaults Instance
 	 */
-
 	public static SharedDefaults getInstance() {
 		return SHAREDDEFAULTS;
 	}

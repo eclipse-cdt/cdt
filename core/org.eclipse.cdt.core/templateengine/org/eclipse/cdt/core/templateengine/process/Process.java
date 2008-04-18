@@ -143,9 +143,9 @@ public class Process {
 	}
 	
 	/**
-	 * Constructor 
+     * Executes this process
 	 * @param monitor 
-	 * @return
+	 * @return the result of executing this process
 	 * @throws ProcessFailureException
 	 */
 	public IStatus process(IProgressMonitor monitor) throws ProcessFailureException {
@@ -175,8 +175,7 @@ public class Process {
 	}
 
 	/**
-	 * Returns the Macros.
-	 * @return
+	 * @return the macros defined in the context of this process
 	 */
 	public Set<String> getMacros() {
 		Set<String> set = null;

@@ -81,14 +81,14 @@ public class TemplateEngine {
 	}
 
 	/**
-	 * Returns the TemplateCore for the first template defined for the specified parameters, or null
-	 * if no such definition exists, or if there is an error initializing the template (the error will
-	 * be logged). 
+	 * Returns the first template defined for the specified parameters
 	 * @param projectType may not be null
 	 * @param toolChain may be null to indicate no tool-chain filtering
 	 * @param usageFilter a regex in java.util.regex.Pattern format, may be null to indicate no filtering
 	 * @see java.util.regex.Pattern
-	 * @return
+	 * @return the TemplateCore for the first template defined for the specified parameters, or null
+	 * if no such definition exists, or if there is an error initializing the template (the error will
+	 * be logged).
 	 */
 	public TemplateCore getFirstTemplate(String projectType, String toolChain, String usageFilter) {
 		TemplateInfo[] infos= getTemplateInfos(projectType, toolChain, usageFilter);
@@ -153,9 +153,7 @@ public class TemplateEngine {
 	}
 	
 	/**
-	 * return the SharedDefaults.
-	 * 
-	 * @return
+	 * @return the SharedDefaults.
 	 */
 	public static Map<String, String> getSharedDefaults() {
 		return SharedDefaults.getInstance().getSharedDefaultsMap();
@@ -170,7 +168,6 @@ public class TemplateEngine {
 	 * values of IDs in ValueStore, which are also present in PersistTrueIDs
 	 * vector.
 	 * @param template
-	 * @param aSharedValue
 	 */
 	public void updateSharedDefaults(TemplateCore template) {
 		Map<String, String> tobePersisted = new HashMap<String, String>();
@@ -333,8 +330,7 @@ public class TemplateEngine {
 	}
 
 	/**
-	 * Returns all TemplateInfo objects known to the TemplateEngine
-	 * @return
+	 * @return all TemplateInfo objects known to the TemplateEngine
 	 */
 	public TemplateInfo[] getTemplateInfos() {
 		List<TemplateInfo> infoList = new ArrayList<TemplateInfo>();
@@ -346,9 +342,7 @@ public class TemplateEngine {
 
 
 	/**
-	 * Getter for templateInfoMap
-	 * 
-	 * @return
+	 * @return the map from project-type ID's to all associated TemplateInfo instances
 	 */
 	public Map<String, List<TemplateInfo>> getTemplateInfoMap() {
 		return templateInfoMap;

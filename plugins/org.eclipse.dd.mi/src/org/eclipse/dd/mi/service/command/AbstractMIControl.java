@@ -716,9 +716,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		if ( fCommandQueue.size() > 0 ) {
             			CommandHandle comHandle = fCommandQueue.remove(0);
             			if ( comHandle != null ) {
-                        	processCommandQueued(comHandle);
-                        	processCommandSent(comHandle);
-                            fTxCommands.add(comHandle);
+            				processCommandSent(comHandle);
+            				fTxCommands.add(comHandle);
             			}
             		}
             	}

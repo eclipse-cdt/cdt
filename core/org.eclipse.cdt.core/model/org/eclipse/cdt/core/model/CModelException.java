@@ -11,9 +11,8 @@
 package org.eclipse.cdt.core.model;
 
  
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.internal.core.model.CModelStatus;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A checked exception representing a failure in the C model.
@@ -34,10 +33,9 @@ public class CModelException extends CoreException {
 	 * The exception contains a C-specific status object with severity
 	 * <code>IStatus.ERROR</code> and the given status code.
 	 *
-	 * @param exception the <code>Throwable</code>
+	 * @param e the {@link Throwable}
 	 * @param code one of the C-specific status codes declared in
 	 *   <code>ICModelStatusConstants</code>
-	 * @return the new C model exception
 	 * @see ICModelStatusConstants
 	 * @see org.eclipse.core.runtime.IStatus#ERROR
 	 */
@@ -51,7 +49,6 @@ public class CModelException extends CoreException {
 	 * <code>CModelException(exception,ICModelStatusConstants.CORE_EXCEPTION</code>.
 	 *
 	 * @param exception the <code>CoreException</code>
-	 * @return the new C model exception
 	 */
 	public CModelException(CoreException exception) {
 		this(new CModelStatus(exception));
@@ -61,7 +58,6 @@ public class CModelException extends CoreException {
 	 * Creates a C model exception for the given C-specific status object.
 	 *
 	 * @param status the C-specific status object
-	 * @return the new C model exception
 	 */
 	public CModelException(ICModelStatus status) {
 		super(status);

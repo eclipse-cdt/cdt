@@ -23,9 +23,6 @@ public interface IFunctionDeclaration extends IDeclaration {
 	 *
 	 * <p>For example, a source method declaring <code>"void f(int a) throw (x1, x2);"</code>,
 	 * would return the array <code>{"x1", "x2"}</code>.
-	 *
-	 * @exception CModelException if this element does not exist or if an
-	 *      exception occurs while accessing its corresponding resource.
 	 */
 	String[] getExceptions();
 
@@ -40,9 +37,6 @@ public interface IFunctionDeclaration extends IDeclaration {
 	 *
 	 * <p>For example, a method declared as <code>public void foo(String text, int length=9)</code>
 	 * would return the array <code>{"9"}</code>.
-	 *
-	 * @exception CModelException if this argument does not exist or if an
-	 *      exception occurs while accessing its corresponding resource.
 	 */
 	String getParameterInitializer(int pos);
 

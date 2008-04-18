@@ -27,7 +27,7 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	 * </p>
 	 * 
 	 * @return an array of non-C resources directly contained in this project
-	 * @exception JavaModelException if this element does not exist or if an
+	 * @exception CModelException if this element does not exist or if an
 	 *              exception occurs while accessing its corresponding resource
 	 */
 	Object[] getNonCResources() throws CModelException;
@@ -56,7 +56,6 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	/**
 	 * Returns the all the binaries of this container.
 	 * 
-	 * @return
 	 * @throws CModelException
 	 */
 	IBinary[] getBinaries() throws CModelException;
@@ -64,36 +63,26 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	/**
 	 * Return the binary for this name, it must be a
 	 * valid binary
-	 * This is a handle-only operation.  The celement
-	 * may or may not exist.
-	 * 
-	 * @return
-	 * @throws CModelException
+	 * This is a handle-only operation.  The container may or may not exist.
 	 */
 	IBinary getBinary(String name);
 
 	/**
 	 * Returns all the archive of this container
 	 * 
-	 * @return
 	 * @throws CModelException
 	 */
 	IArchive[] getArchives() throws CModelException;
 
 	/**
-	 * This is a handle-only operation.  The celement
+	 * This is a handle-only operation.  The container
 	 * may or may not exist.
-	 * 
-	 * @param file
-	 * @return
-	 * @throws CModelException
 	 */
 	IArchive getArchive(String name);
 
 	/**
 	 * Return al the child containers of this container.
 	 * 
-	 * @return
 	 * @throws CModelException
 	 */
 	ICContainer[] getCContainers() throws CModelException;

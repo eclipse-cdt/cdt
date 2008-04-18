@@ -13,7 +13,9 @@ package org.eclipse.cdt.core.settings.model;
 import java.util.Map;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
@@ -35,8 +37,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 
 	/**
 	 * returns the human-readable configuration description
-	 * 
-	 * @return
 	 */
 	String getDescription();
 	
@@ -45,13 +45,12 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * 
 	 * @param des
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	void setDescription(String des) throws WriteAccessException;
 	
 	/**
-	 * returns the project description this configuration belongsa to
-	 * @return
+	 * returns the project description this configuration belongs to
 	 */
 	ICProjectDescription getProjectDescription();
 	
@@ -59,7 +58,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * returns the "root" folder description
 	 * The root folder description is the default one used for the project root folder
 	 * The root folder description can not be null
-	 * @return
 	 */
 	ICFolderDescription getRootFolderDescription();
 	
@@ -67,7 +65,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * returns the complete set of folder descriptions defined for this configuration
 	 * The folder description is the settings holder for the specified folder
 	 * @see ICFolderDescription
-	 * @return
 	 */
 	ICFolderDescription[] getFolderDescriptions();
 
@@ -75,7 +72,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * returns the complete set of file descriptions defined for this configuration
 	 * The file description is the settings holder for the specified file
 	 * @see ICFileDescription
-	 * @return
 	 */
 	ICFileDescription[] getFileDescriptions();
 
@@ -85,7 +81,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @see ICResourceDescription
 	 * @see ICFileDescription
 	 * @see ICFolderDescription
-	 * @return
 	 */
 	ICResourceDescription[] getResourceDescriptions();
 
@@ -108,8 +103,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @param des
 	 * @throws CoreException
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
-	 * 
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	void removeResourceDescription(ICResourceDescription des) throws CoreException, WriteAccessException;
 	
@@ -117,10 +111,9 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * creates a new file description for the specified path
 	 * @param path project-relative file workspace path
 	 * @param base resource description from which settings will be coppied/inheritted 
-	 * @return
 	 * @throws CoreException
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	ICFileDescription createFileDescription(IPath path, ICResourceDescription base) throws CoreException, WriteAccessException;
 	
@@ -128,10 +121,9 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * creates a new folder description for the specified path
 	 * @param path project-relative folder workspace path
 	 * @param base resource description from which settings will be coppied/inheritted 
-	 * @return
 	 * @throws CoreException
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base) throws CoreException, WriteAccessException;
 	
@@ -147,9 +139,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	/**
 	 * This method should be used by the build system only for gettings
 	 * the build-system contributed CConfigurationData
-	 * @see org.eclipse.cdt.core.CConfigurationDataProvider extension point
-	 * @see CConfigurationDataProvider
-	 * @return
+	 * @see CConfigurationDataProvider and the org.eclipse.cdt.core.CConfigurationDataProvider extension point
 	 */
 	CConfigurationData getConfigurationData();
 	
@@ -159,8 +149,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * Active configuratiuon is the one that is built by default.
 	 * This configuration is returned by the {@link ICProjectDescription#getActiveConfiguration()} call
 	 * 
-	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * @throws WriteAccessException when the configuration description is read-only,
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	void setActive() throws WriteAccessException;
 	
@@ -168,33 +158,27 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * This method should be used by the build system only for updating
 	 * the build-system contributed CConfigurationData
 	 * 
-	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * @throws WriteAccessException when the configuration description is read-only,
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 * 
-	 * @see org.eclipse.cdt.core.CConfigurationDataProvider extension point
-	 * @see CConfigurationDataProvider
+	 * @see CConfigurationDataProvider and the extension point org.eclipse.cdt.core.CConfigurationDataProvider
 	 */
 	void setConfigurationData(String buildSystemId, CConfigurationData data) throws WriteAccessException;
 	
 	/**
 	 * returns whether or not the configuration description was modified
-	 * 
-	 * @return
 	 */
 	boolean isModified();
 	
 	/**
 	 * returns the target platform settings for this configuration
 	 * @see ICTargetPlatformSetting
-	 * 
-	 * @return
 	 */
 	ICTargetPlatformSetting getTargetPlatformSetting();
 	
 	/**
 	 * returns the source entries for this configuration
-	 * @see iCSourceEntry
-	 * @return 
+	 * @see ICSourceEntry
 	 */
 	ICSourceEntry[] getSourceEntries();
 	
@@ -205,8 +189,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * 
 	 * @param entries
 	 * 
-	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * @throws WriteAccessException when the configuration description is read-only,
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)} 
 	 */
 	void setSourceEntries(ICSourceEntry[] entries) throws CoreException, WriteAccessException;
 
@@ -216,8 +200,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * the map contains the project_name<->configuration_id associations
 	 * if the current configuration does not reference any other configurations,
 	 * empty map is returned
-	 * 
-	 * @return
 	 */
 	Map<String, String> getReferenceInfo();
 
@@ -229,7 +211,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @param refs
 	 * 
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	void setReferenceInfo(Map<String, String> refs) throws WriteAccessException;
 	
@@ -240,7 +222,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @see ICExternalSetting
 	 * @see #getReferenceInfo()
 	 * @see #setReferenceInfo(Map)
-	 * @return
 	 */
 	ICExternalSetting[] getExternalSettings();
 	
@@ -257,9 +238,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @param contentTypeIds
 	 * @param extensions
 	 * @param entries
-	 * @return
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	ICExternalSetting createExternalSetting(String languageIDs[],
 			String contentTypeIds[],
@@ -277,7 +257,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * 
 	 * @param setting
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	void removeExternalSetting(ICExternalSetting setting) throws WriteAccessException;
 
@@ -291,23 +271,19 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @see #getExternalSettings() 
 	 * 
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	void removeExternalSettings() throws WriteAccessException;
 	
 	/**
 	 * returns the build setting for this configuration
-	 * 
-	 * @return
-	 * 
 	 * @see ICBuildSetting
 	 */
 	ICBuildSetting getBuildSetting();
 	
 	/**
-	 * returns the Cdt variable contributor that represent infomration on the
-	 * CDT variables (Build Macros) contributed/usew with this contiguration 
-	 * @return
+	 * returns the CDT variable contributor that represent information on the
+	 * CDT variables (Build Macros) contributed/used with this configuration 
 	 * 
 	 * @see ICdtVariablesContributor
 	 */
@@ -317,10 +293,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * the get/setSettionsProperty methods allow to associate the session properties mechanism on the configuration level
 	 * session properties are not persisted and are not restored on the next eclipse session
 	 * the scope of configuration session properties is the current configuration description,
-	 * i.e. modifications to the properties are not applied untill the setProjectDescription call
-	 * 
-	 * @param name
-	 * @return
+	 * i.e. modifications to the properties are not applied until the setProjectDescription call
 	 */
 	Object getSessionProperty(QualifiedName name);
 
@@ -328,7 +301,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * the get/setSettionsProperty methods allow to associate the session properties mechanism on the configuration level
 	 * session properties are not persisted and are not restored on the next eclipse session
 	 * the scope of configuration session properties is the current configuration description,
-	 * i.e. modifications to the properties are not applied untill the setProjectDescription call
+	 * i.e. modifications to the properties are not applied until the setProjectDescription call
 	 * 
 	 * @param name
 	 * @param value
@@ -340,7 +313,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * 
 	 * @param name
 	 * @throws WriteAccessException when the configuration description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 */
 	void setName(String name) throws WriteAccessException;
 	
@@ -384,7 +357,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * 
 	 * @param ids the ids of externalSettinsProvider extensions
 	 * 
-	 * @see ICProjectDescriptionManager#updateExternalSettingsProviders(String[])
+	 * @see ICProjectDescriptionManager#updateExternalSettingsProviders(String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	void updateExternalSettingsProviders(String[] ids) throws WriteAccessException;
 	

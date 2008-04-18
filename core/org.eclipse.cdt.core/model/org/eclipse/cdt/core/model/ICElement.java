@@ -376,8 +376,6 @@ public interface ICElement extends IAdaptable {
 	 * in a resource.
 	 *
 	 * @return the underlying resource, or <code>null</code> if none
-	 * @exception CModelException if this element does not exist or if an
-	 *		exception occurs while accessing its underlying resource
 	 */
 	IResource getUnderlyingResource();
 
@@ -387,8 +385,6 @@ public interface ICElement extends IAdaptable {
 	 * a corresponding resource.
 	 *
 	 * @return the corresponding resource, or <code>null</code> if none
-	 * @exception CModelException if this element does not exist or if an
-	 *		exception occurs while accessing its resource
 	 */
 	IResource getResource();
 	/**

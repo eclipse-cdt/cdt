@@ -46,7 +46,7 @@ public interface ILanguageMappingChangeEvent {
 	 * 
 	 * @return a String corresponding to the full path to the file for which settings have changed if this
 	 * event's type is TYPE_FILE, or null otherwise.
-	 * @see getProject()
+	 * @see #getProject()
 	 * 
 	 * @since 4.0
 	 */
@@ -61,7 +61,7 @@ public interface ILanguageMappingChangeEvent {
 	 * In order to obtain the full context for the file it may be required that you also call getProject(),
 	 * as it is possible that this file may not live inside the workspace.
 	 * 
-	 * @see getProject()
+	 * @see #getProject()
 	 * 
 	 * @since 4.0
 	 */
@@ -80,9 +80,9 @@ public interface ILanguageMappingChangeEvent {
 	/**
 	 * Returns the type of even being reported.
 	 * @return the type of even being reported
-	 * @see TYPE_WORKSPACE
-	 * @see TYPE_PROJECT
-	 * @see TYPE_FILE
+	 * @see #TYPE_WORKSPACE
+	 * @see #TYPE_PROJECT
+	 * @see #TYPE_FILE
 	 * 
 	 * @since 4.0
 	 */

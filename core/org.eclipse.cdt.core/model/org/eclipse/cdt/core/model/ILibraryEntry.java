@@ -63,21 +63,17 @@ public interface ILibraryEntry extends IPathEntry {
 
 	/**
 	 * Return the base reference.
-	 * 
-	 * @return
 	 */
 	IPath getBaseReference();
 
 	/**
 	 * Return the library path.
-	 * @return
 	 */
 	IPath getLibraryPath();
 
 	/**
 	 * Returns the complete path, equivalent to:
 	 *   getBasepath().append(getPath());
-	 * @return
 	 */
 	IPath getFullLibraryPath();
 

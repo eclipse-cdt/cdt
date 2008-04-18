@@ -23,8 +23,6 @@ public interface IIncludeFileEntry extends IPathEntry {
 
 	/**
 	 * Return the includeFilePath with the base path.
-	 * 
-	 * @return
 	 */
 	IPath getFullIncludeFilePath();
 
@@ -36,8 +34,6 @@ public interface IIncludeFileEntry extends IPathEntry {
 
 	/**
 	 * Return the reference path
-	 * 
-	 * @return
 	 */
 	IPath getBaseReference();
 

@@ -26,10 +26,7 @@ package org.eclipse.cdt.core.model;
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
- * Instances can be created via the <code>CoreModel.newRegion</code>.
  * </p>
- *
- * @see CoreModel#newRegion()
  */
 public interface IRegion {
 	/**

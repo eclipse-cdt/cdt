@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.model;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -72,11 +71,11 @@ public class CoreModelUtil {
 		if (exclusionPatterns == null)
 			return false;
 		char[] path = resourcePath.toString().toCharArray();
-		for (int i = 0, length = exclusionPatterns.length; i < length; i++) {
-			if (prefixOfCharArray(exclusionPatterns[i], path)) {
+		for (char[] exclusionPattern : exclusionPatterns) {
+			if (prefixOfCharArray(exclusionPattern, path)) {
 				return true;
 			}
-			if (pathMatch(exclusionPatterns[i], path, true, '/')) {
+			if (pathMatch(exclusionPattern, path, true, '/')) {
 				return true;
 			}
 		}
@@ -547,8 +546,7 @@ public class CoreModelUtil {
 	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
 		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
 		if (files.length > 0) {
-			for (int i = 0; i < files.length; i++) {
-				IFile file = files[i];
+			for (IFile file : files) {
 				ITranslationUnit tu= findTranslationUnit(file);
 				if (tu != null) {
 					return tu;
@@ -584,8 +582,7 @@ public class CoreModelUtil {
 	public static ITranslationUnit findTranslationUnitForLocation(URI locationURI, ICProject preferredProject) throws CModelException {
 		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(locationURI);
 		if (files.length > 0) {
-			for (int i = 0; i < files.length; i++) {
-				IFile file = files[i];
+			for (IFile file : files) {
 				ITranslationUnit tu= findTranslationUnit(file);
 				if (tu != null) {
 					return tu;
@@ -684,17 +681,16 @@ public class CoreModelUtil {
 	 */
     
     public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable){
-    	List result = new ArrayList();
+    	List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
 
     	if(cfgDes != null) {
-    		Map map = cfgDes.getReferenceInfo();
+    		Map<String, String> map = cfgDes.getReferenceInfo();
     		if(map.size() != 0){
     			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     			CoreModel model = CoreModel.getDefault();
-    			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-    				Map.Entry entry = (Map.Entry)iter.next();
-    				String projName = (String)entry.getKey();
-    				String cfgId = (String)entry.getValue();
+    			for (Map.Entry<String,String> entry : map.entrySet()) {
+    				String projName = entry.getKey();
+    				String cfgId = entry.getValue();
     				IProject project = root.getProject(projName);
     				if(!project.exists())
     					continue;
@@ -715,7 +711,7 @@ public class CoreModelUtil {
     		}
     	}
     	
-    	return (ICConfigurationDescription[]) result.toArray(new ICConfigurationDescription[result.size()]);
+    	return result.toArray(new ICConfigurationDescription[result.size()]);
     }
     
     /**
@@ -730,24 +726,23 @@ public class CoreModelUtil {
      * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription, boolean)
      */
     public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
-    	List result = new ArrayList();
+    	List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
     	
     	if(cfgDes!=null) {
     		CoreModel core= CoreModel.getDefault();
     		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 
-    		for (int i=0; i<projects.length; i++) {
-    			IProject cproject= projects[i];
+    		for (IProject cproject : projects) {
     			ICProjectDescription prjDes= core.getProjectDescription(cproject, writable);
     			//in case this is not a CDT project the description will be null, so check for null
     			if(prjDes != null){
 	    			ICConfigurationDescription[] cfgDscs= prjDes.getConfigurations();
-	    			for(int j=0; j<cfgDscs.length; j++) {
-	    				ICConfigurationDescription[] references = getReferencedConfigurationDescriptions(cfgDscs[j], false);
-	    				for (int k=0; k<references.length; k++) {
-	    					if(references[k]!=null
-	    							&& references[k].getId().equals(cfgDes.getId())) {
-	    						result.add(cfgDscs[j]);
+	    			for (ICConfigurationDescription cfgDsc : cfgDscs) {
+	    				ICConfigurationDescription[] references = getReferencedConfigurationDescriptions(cfgDsc, false);
+	    				for (ICConfigurationDescription reference : references) {
+	    					if(reference!=null
+	    							&& reference.getId().equals(cfgDes.getId())) {
+	    						result.add(cfgDsc);
 	    						break;
 	    					}				
 	    				}
@@ -756,7 +751,7 @@ public class CoreModelUtil {
     		}
     	}
     	
-		return (ICConfigurationDescription[]) result.toArray(new ICConfigurationDescription[result.size()]);
+		return result.toArray(new ICConfigurationDescription[result.size()]);
 	}
     
     /**
@@ -767,16 +762,16 @@ public class CoreModelUtil {
 	public static String[] getBinaryParserIds(ICConfigurationDescription[] cfgs) {
 		if (cfgs ==  null || cfgs.length == 0) 
 			return null;
-		ArrayList pids = new ArrayList();
-		for (int i=0; i<cfgs.length; i++) {
-			ICTargetPlatformSetting tps = cfgs[i].getTargetPlatformSetting();
+		ArrayList<String> pids = new ArrayList<String>();
+		for (ICConfigurationDescription cfg : cfgs) {
+			ICTargetPlatformSetting tps = cfg.getTargetPlatformSetting();
 			String[] ids = tps.getBinaryParserIds();
 			for (int j = 0; j < ids.length; j++) {
 				if (!pids.contains(ids[j]))
 					pids.add(ids[j]);
 			}				
 		}
-		return (String[])pids.toArray(new String[pids.size()]);
+		return pids.toArray(new String[pids.size()]);
 	}
 
 	/**
@@ -787,8 +782,8 @@ public class CoreModelUtil {
 	public static void setBinaryParserIds(ICConfigurationDescription[] cfgs, String[] pids) {
 		if (cfgs ==  null || cfgs.length == 0)
 			return;
-		for (int i=0; i<cfgs.length; i++) {
-			cfgs[i].getTargetPlatformSetting().setBinaryParserIds(pids);
+		for (ICConfigurationDescription cfg : cfgs) {
+			cfg.getTargetPlatformSetting().setBinaryParserIds(pids);
 		}
 	}
 }

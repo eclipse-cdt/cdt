@@ -20,22 +20,16 @@ public interface IIncludeReference extends IParent, ICElement {
 
 	/**
 	 * Returns the pathEntry
-	 * 
-	 * @return
 	 */
 	IIncludeEntry getIncludeEntry();
 
 	/**
 	 * Return the affected path
-	 * @return
 	 */
 	IPath getAffectedPath();
 
 	/**
 	 * Return true if the path is on the include path Entry
-	 * 
-	 * @param path
-	 * @return
 	 */
 	boolean isOnIncludeEntry(IPath path);
 

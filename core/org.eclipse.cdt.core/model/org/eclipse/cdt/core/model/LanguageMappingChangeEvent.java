@@ -178,9 +178,9 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 	 * Sets the type of this event.  This type will be returned by getType().
 	 * 
 	 * @param type the type to set
-	 * @see ILanguageMappingChangeEvent.TYPE_WORKSPACE
-	 * @see ILanguageMappingChangeEvent.TYPE_PROJECT
-	 * @see ILanguageMappingChangeEvent.TYPE_FILE
+	 * @see ILanguageMappingChangeEvent#TYPE_WORKSPACE
+	 * @see ILanguageMappingChangeEvent#TYPE_PROJECT
+	 * @see ILanguageMappingChangeEvent#TYPE_FILE
 	 */
 	public void setType(int type) {
 		fType = type;

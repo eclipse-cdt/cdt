@@ -22,11 +22,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * A C project represents a view of a project resource in terms of C 
  * elements such as , ICContainer, ITranslationUnit ....
- * <code>CCore.create(project)</code>.
+ * <code>CoreModel.create(project)</code>.
  * </p>
  *
- * @see CCore#create(org.eclipse.core.resources.IProject)
- * @see IBuildEntry
+ * @see CoreModel#create(org.eclipse.core.resources.IProject)
  */
 public interface ICProject extends IParent, IOpenable, ICElement {
 
@@ -42,14 +41,12 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 
 	/**
 	 * Return the ArchiveContainer of this Project.
-	 * @return
 	 * @throws CModelException
 	 */
 	IArchiveContainer getArchiveContainer() throws CModelException;
 
 	/**
 	 * Return the BinaryContainer of this Project.
-	 * @return
 	 * @throws CModelException
 	 */
 	IBinaryContainer getBinaryContainer() throws CModelException;
@@ -66,11 +63,11 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 
 	/**
 	 * Returns all of the existing source roots that exist
-	 * on the pathentry, in the order they are defined by the ".cdtproject".
+	 * on the project, in the order they are defined by the ".cdtproject".
 	 *
 	 * @return all of the existing package fragment roots that exist
 	 * on the classpath
-	 * @exception JavaModelException if this element does not exist or if an
+	 * @exception CModelException if this element does not exist or if an
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	ISourceRoot[] getAllSourceRoots() throws CModelException;
@@ -90,26 +87,22 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	/**
 	 * Return the output entries.
 	 * 
-	 * @return
 	 * @throws CModelException
 	 */
 	public IOutputEntry[] getOutputEntries() throws CModelException;
 
 	/**
 	 * @param resource
-	 * @return
 	 */
 	boolean isOnOutputEntry(IResource resource);
 
 	/**
 	 * @param resource
-	 * @return
 	 */
 	boolean isOnSourceRoot(IResource resource);
 
 	/**
 	 * @param element
-	 * @return
 	 */
 	boolean isOnSourceRoot(ICElement element);
 
@@ -123,7 +116,6 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	/**
 	 * Return the include paths set on the project.
 	 * 
-	 * @return
 	 * @throws CModelException
 	 */
 	IIncludeReference[] getIncludeReferences() throws CModelException;
@@ -245,7 +237,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 * </p>
 	 * 
 	 * @return an array of non-C resources directly contained in this project
-	 * @exception JavaModelException if this element does not exist or if an
+	 * @exception CModelException if this element does not exist or if an
 	 *              exception occurs while accessing its corresponding resource
 	 */
 	Object[] getNonCResources() throws CModelException;

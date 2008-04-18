@@ -17,7 +17,6 @@ public interface ILibraryReference extends IParent, ICElement {
 	
 	/**
 	 * Return the pathEntry.
-	 * @return
 	 */
 	ILibraryEntry getLibraryEntry();
 }

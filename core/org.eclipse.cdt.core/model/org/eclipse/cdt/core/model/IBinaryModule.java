@@ -15,10 +15,5 @@ package org.eclipse.cdt.core.model;
  */
 public interface IBinaryModule extends IParent, IBinaryElement {
 
-	/**
-	 * 
-	 * @return
-	 * @throws CModelException
-	 */
 	IBinaryElement[] getBinaryElements() throws CModelException;
 }

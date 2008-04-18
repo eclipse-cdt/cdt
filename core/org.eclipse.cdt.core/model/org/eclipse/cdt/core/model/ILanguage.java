@@ -79,14 +79,6 @@ public interface ILanguage extends IAdaptable {
 	
 	/**
 	 * Return the AST completion node for the given offset.
-	 * 
-	 * @param reader
-	 * @param scanInfo
-	 * @param fileCreator
-	 * @param index
-	 * @param log
-	 * @param offset
-	 * @return
 	 * @throws CoreException
 	 */
 	public IASTCompletionNode getCompletionNode(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log, int offset) throws CoreException;

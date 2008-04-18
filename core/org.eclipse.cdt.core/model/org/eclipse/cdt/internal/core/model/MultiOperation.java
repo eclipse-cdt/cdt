@@ -14,11 +14,11 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -44,35 +44,35 @@ public abstract class MultiOperation extends CModelOperation {
 	 * Keyed by elements being processed, and
 	 * values are the corresponding destination parent.
 	 */
-	protected Map fParentElements;
+	protected Map<ICElement, ICElement> fParentElements;
 
 	/**
 	 * Table specifying insertion positions for elements being 
 	 * copied/moved/renamed. Keyed by elements being processed, and
 	 * values are the corresponding insertion point.
-	 * @see processElements(IProgressMonitor)
+	 * @see #processElements()
 	 */
-	protected Map fInsertBeforeElements= new HashMap(1);
+	protected Map<ICElement, ICElement> fInsertBeforeElements= new HashMap<ICElement, ICElement>(1);
 
 	/**
 	 * This table presents the data in <code>fRenamingList</code> in a more
 	 * convenient way.
 	 */
-	protected Map fRenamings;
+	protected Map<ICElement, String> fRenamings;
 
 	/**
 	 * Creates a new <code>MultiOperation</code>.
 	 */
 	protected MultiOperation(ICElement[] elementsToProcess, ICElement[] parentElements, boolean force) {
 		super(elementsToProcess, parentElements, force);
-		fParentElements = new HashMap(elementsToProcess.length);
+		fParentElements = new HashMap<ICElement, ICElement>(elementsToProcess.length);
 		if (elementsToProcess.length == parentElements.length) {
 			for (int i = 0; i < elementsToProcess.length; i++) {
 				fParentElements.put(elementsToProcess[i], parentElements[i]);
 			}
 		} else { //same destination for all elements to be moved/copied/renamed
-			for (int i = 0; i < elementsToProcess.length; i++) {
-				fParentElements.put(elementsToProcess[i], parentElements[0]);
+			for (ICElement elementsToProces : elementsToProcess) {
+				fParentElements.put(elementsToProces, parentElements[0]);
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 * Returns the parent of the element being copied/moved/renamed.
 	 */
 	protected ICElement getDestinationParent(ICElement child) {
-		return (ICElement)fParentElements.get(child);
+		return fParentElements.get(child);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 */
 	protected String getNewNameFor(ICElement element) {
 		if (fRenamings != null) {
-			return (String) fRenamings.get(element);
+			return fRenamings.get(element);
 		}
 		return null;
 	}
@@ -139,7 +139,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 */
 	private void initializeRenamings() {
 		if (fRenamingsList != null && fRenamingsList.length == fElementsToProcess.length) {
-			fRenamings = new HashMap(fRenamingsList.length);
+			fRenamings = new HashMap<ICElement, String>(fRenamingsList.length);
 			for (int i = 0; i < fRenamingsList.length; i++) {
 				if (fRenamingsList[i] != null) {
 					fRenamings.put(fElementsToProcess[i], fRenamingsList[i]);
@@ -172,11 +172,10 @@ public abstract class MultiOperation extends CModelOperation {
 		if (fDeltas != null) {
 			CElementDelta rootDelta = newCElementDelta();
 			boolean insertedTree = false;
-			for (int i = 0; i < fDeltas.length; i++) {
-				ICElementDelta delta = fDeltas[i];
+			for (ICElementDelta delta : fDeltas) {
 				ICElementDelta[] children = delta.getAffectedChildren();
-				for (int j = 0; j < children.length; j++) {
-					CElementDelta projectDelta = (CElementDelta) children[j];
+				for (ICElementDelta element : children) {
+					CElementDelta projectDelta = (CElementDelta) element;
 					rootDelta.insertDeltaTree(projectDelta.getElement(), projectDelta);
 					insertedTree = true;
 				}
@@ -204,10 +203,10 @@ public abstract class MultiOperation extends CModelOperation {
 		beginTask(getMainTaskName(), fElementsToProcess.length);
 		ICModelStatus[] errors = new ICModelStatus[3];
 		int errorsCounter = 0;
-		for (int i = 0; i < fElementsToProcess.length; i++) {
+		for (ICElement elementsToProces : fElementsToProcess) {
 			try {
-				verify(fElementsToProcess[i]);
-				processElement(fElementsToProcess[i]);
+				verify(elementsToProces);
+				processElement(elementsToProces);
 			} catch (CModelException jme) {
 				if (errorsCounter == errors.length) {
 					// resize
@@ -273,7 +272,7 @@ public abstract class MultiOperation extends CModelOperation {
 		if (destination == null || !destination.exists()) {
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, destination);
 		}
-		if (element.getElementType() == ICElement.C_UNIT) {
+		else if (element.getElementType() == ICElement.C_UNIT) {
 			IResource res = destination.getResource();
 			if (!(res instanceof IContainer)) {
 				error(ICModelStatusConstants.INVALID_DESTINATION, element);
@@ -307,7 +306,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 * its parent is the destination container of this <code>element</code>.
 	 */
 	protected void verifySibling(ICElement element, ICElement destination) throws CModelException {
-		ICElement insertBeforeElement = (ICElement) fInsertBeforeElements.get(element);
+		ICElement insertBeforeElement = fInsertBeforeElements.get(element);
 		if (insertBeforeElement != null) {
 			if (!insertBeforeElement.exists() || !insertBeforeElement.getParent().equals(destination)) {
 				error(ICModelStatusConstants.INVALID_SIBLING, insertBeforeElement);

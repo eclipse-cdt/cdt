@@ -28,7 +28,6 @@ public interface IMacroFileEntry extends IPathEntry {
 
 	/**
 	 * Return the base path.
-	 * @return
 	 */
 	IPath getBasePath();
 

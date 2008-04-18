@@ -354,7 +354,7 @@ public class CoreModel {
 	}
 
 	/**
-	 *  Return the registed content type id, for example:
+	 *  Return the registered content type id, for example:
 	 *  <ul>
 	 *  <li>CONTENT_TYPE_CHEADER
 	 *  <li>CONTENT_TYPE_CXXHEADER
@@ -363,7 +363,6 @@ public class CoreModel {
 	 *  <li>CONTENT_TYPE_ASMSOURCE
 	 *  </ul>
 	 *  or null is return if no id match the list
-	 * @param file
 	 * @return the know id or null
 	 */
 	public static String getRegistedContentTypeId(IProject project, String name) {
@@ -460,8 +459,7 @@ public class CoreModel {
 	 * is equivalent to <code>newContainerEntry(path,false)</code>.
 	 * <p>
 	 * 
-	 * @param containerPath
-	 *            the id of the container
+	 * @param id the id of the container
 	 * @return a new container entry
 	 *  
 	 */
@@ -649,14 +647,14 @@ public class CoreModel {
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
-	 * @param resoourcePath
+	 * @param resourcePath
 	 *            the affected project-relative resource path
 	 * @param basePath
 	 *            the base path of the includePath
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
-	 *            wheter this include path should be consider the system
+	 *            whether this include path should be consider the system
 	 *            include path
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
@@ -706,10 +704,6 @@ public class CoreModel {
 
 	/**
 	 * Creates a new entry of kind <code>CDT_INCLUDE_FILE</code>
-	 * 
-	 * @param resourcePath
-	 * @param includeFile
-	 * @return
 	 */
 	public static IIncludeFileEntry newIncludeFileEntry(IPath resourcePath, IPath includeFile) {
 		return newIncludeFileEntry(resourcePath, null, null, includeFile, null, false);
@@ -738,7 +732,7 @@ public class CoreModel {
 	/**
 	 * Creates and returns an entry kind <code>CDT_MACRO</code>
 	 * 
-	 * @param path
+	 * @param resourcePath
 	 *            the affected project-relative resource path
 	 * @param macroName
 	 *            the name of the macro
@@ -761,7 +755,6 @@ public class CoreModel {
 	 *            the value of the macro
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
-	 * @return
 	 */
 	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue, IPath[] exclusionPatterns) {
 		return newMacroEntry(resourcePath, macroName, macroValue, exclusionPatterns, false);
@@ -778,7 +771,6 @@ public class CoreModel {
 	 *            the value of the macro
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
-	 * @return
 	 */
 	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue, IPath[] exclusionPatterns, boolean isExported) {
 		return new MacroEntry(resourcePath, null, macroName, macroValue, exclusionPatterns, isExported);
@@ -793,7 +785,6 @@ public class CoreModel {
 	 *        the base reference path
 	 * @param macroName
 	 *            the name of the macro
-	 * @return IMacroEntry
 	 */
 	public static IMacroEntry newMacroRefEntry(IPath resourcePath, IPath baseRef, String macroName) {
 		return new MacroEntry(resourcePath, baseRef, macroName, null, APathEntry.NO_EXCLUSION_PATTERNS, false);
@@ -801,10 +792,6 @@ public class CoreModel {
 
 	/**
 	 * Creates an entry kind <code>CDT_MACRO_FILE</code>
-	 * 
-	 * @param resourcePath
-	 * @param macroFile
-	 * @return
 	 */
 	public static IMacroFileEntry newMacroFileEntry(IPath resourcePath, IPath macroFile) {
 		return newMacroFileEntry(resourcePath, null, null, macroFile, null, false);
@@ -821,7 +808,6 @@ public class CoreModel {
 	 *            the file path where the macros are define
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
-	 * @return
 	 */
 	public static IMacroFileEntry newMacroFileEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath macroFilePath, IPath[] exclusionPatterns, boolean isExported) {
 		return new MacroFileEntry(resourcePath, basePath, baseRef, macroFilePath, exclusionPatterns, isExported);
@@ -862,8 +848,7 @@ public class CoreModel {
 	 * 
 	 * @see PathEntryContainerInitializer
 	 * @see IPathEntryContainer
-	 * @see #setPathEntryContainer(IPath, ICProject[], IPathEntryContainer,
-	 *      IProgressMonitor)
+	 * @see #setPathEntryContainer(ICProject[], IPathEntryContainer, IProgressMonitor)
 	 */
 	public static IPathEntryContainer getPathEntryContainer(IPath containerPath, ICProject project) throws CModelException {
 		return pathEntryManager.getPathEntryContainer(containerPath, project);
@@ -892,13 +877,13 @@ public class CoreModel {
 	 * 
 	 * @param affectedProjects -
 	 *            the set of projects for which this container is being bound
-	 * @param newContainer -
+	 * @param container -
 	 *            the container for the affected projects
 	 * @param monitor
 	 *            a monitor to report progress
 	 * @throws CModelException
 	 * @see PathEntryContainerInitializer
-	 * @see #getPathEntryContainer(IPath, IJavaProject)
+	 * @see #getPathEntryContainer(IPath, ICProject)
 	 * @see IPathEntryContainer
 	 */
 	public static void setPathEntryContainer(ICProject[] affectedProjects, IPathEntryContainer container, IProgressMonitor monitor)
@@ -928,7 +913,7 @@ public class CoreModel {
 	 * specifies an empty pathentry.
 	 * <p>
 	 * 
-	 * @param entries
+	 * @param newEntries
 	 *            a list of entries
 	 * @param monitor
 	 *            the given progress monitor
@@ -1066,9 +1051,6 @@ public class CoreModel {
 
 	/**
 	 * Return the IPathEntryStore of the project.
-	 * 
-	 * @param project
-	 * @return
 	 * @throws CoreException
 	 */
 	public static IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
@@ -1110,7 +1092,6 @@ public class CoreModel {
 	 *  and during getResolvedPathEntries.
 	 *  <p>
 	 * @param cProject the given C project
-	 * @param PathEntry entries
 	 * @return a status object with code <code>IStatus.OK</code> if
 	 *		the entries location are compatible, otherwise a status 
 	 *		object indicating what is wrong with them
@@ -1308,8 +1289,7 @@ public class CoreModel {
 		if (cProject != null) {
 			try {
 				IPathEntry[] resolvedPE = CoreModel.getRawPathEntries(cProject);
-				for (int i = 0; i < resolvedPE.length; i++) {
-					IPathEntry pe = resolvedPE[i];
+				for (IPathEntry pe : resolvedPE) {
 					// first check all containers
 					if (pe.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 						IPathEntryContainer peContainer = CoreModel.getPathEntryContainer(
@@ -1344,7 +1324,7 @@ public class CoreModel {
 	}
 	
 	/**
-	 * this method is a full equivalent to {@link #createProjectDescription(IProject, boolean, false)}
+	 * this method is a full equivalent to <code>createProjectDescription(project, loadIfExists, false)</code>.
 	 * 
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
@@ -1398,7 +1378,7 @@ public class CoreModel {
 	 * @param des
 	 * @throws CoreException
 	 * 
-	 * @see {@link #getProjectDescription(IProject, boolean)}
+	 * @see #getProjectDescription(IProject, boolean)
 	 * @see #createProjectDescription(IProject, boolean)
 	 */
 	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
@@ -1454,18 +1434,14 @@ public class CoreModel {
 	}
 	
 	/**
-	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
-	 * @param project
-	 * @return
+	 * answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 */
 	public boolean isNewStyleProject(IProject project){
 		return descriptionManager.isNewStyleProject(project);
 	}
 
 	/**
-	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
-	 * @param des
-	 * @return
+	 * answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 */
 	public boolean isNewStyleProject(ICProjectDescription des){
 		return descriptionManager.isNewStyleProject(des);

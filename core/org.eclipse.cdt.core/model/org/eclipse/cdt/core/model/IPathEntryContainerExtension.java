@@ -37,7 +37,6 @@ public interface IPathEntryContainerExtension extends IPathEntryContainer {
 	 * Returns whether there are any path entries for the resource.
 	 * 
 	 * @param path Workspace relative path.
-	 * @return
 	 */
 	boolean isEmpty(IPath path);
 }

@@ -28,15 +28,11 @@ public interface IIncludeEntry extends IPathEntry {
 
 	/**
 	 * Return the includePath with the base path.
-	 * 
-	 * @return
 	 */
 	IPath getFullIncludePath();
 
 	/**
 	 * Return the reference path
-	 * 
-	 * @return
 	 */
 	IPath getBaseReference();
 

@@ -52,8 +52,6 @@ public interface ISourceReference {
 	/**
 	 * Returns the translation unit in which this member is declared, or <code>null</code>
 	 * if this member is not declared in a translation unit (for example, a binary type).
-	 * @return
-	 * @throws CModelException
 	 */
 	ITranslationUnit getTranslationUnit();
 }

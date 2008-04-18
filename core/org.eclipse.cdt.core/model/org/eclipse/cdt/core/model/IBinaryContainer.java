@@ -17,10 +17,5 @@ package org.eclipse.cdt.core.model;
  */
 public interface IBinaryContainer extends ICElement, IParent, IOpenable {
 
-	/**
-	 * 
-	 * @return
-	 * @throws CModelException
-	 */
 	public IBinary[] getBinaries() throws CModelException;
 }

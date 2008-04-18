@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * delete operations on multiple C elements.
  * </p>
  *
- * @see CCore#create(org.eclipse.core.resources.IWorkspaceRoot)
+ * @see CoreModel#create(org.eclipse.core.resources.IWorkspaceRoot)
  */
 public interface ICModel extends ICElement, IParent, IOpenable {
 	/**

@@ -19,22 +19,10 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface ISourceRoot extends ICContainer {
 
-	/**
-	 * @param resource
-	 * @return
-	 */
 	boolean isOnSourceEntry(IResource resource);
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	boolean isOnSourceEntry(IPath path);
 
-	/**
-	 * @param element
-	 * @return
-	 */
 	boolean isOnSourceEntry(ICElement element);
 
 }

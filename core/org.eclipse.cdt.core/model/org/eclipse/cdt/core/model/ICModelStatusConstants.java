@@ -59,8 +59,6 @@ public interface ICModelStatusConstants {
 	 * Status constant indicating that one or more elements
 	 * supplied do not exist. 
 	 * The element(s) can be retrieved using <code>getElements</code> on the status object.
-	 *
-	 * @see ICModelStatus#isDoesNotExist
 	 */
 	public static final int ELEMENT_DOES_NOT_EXIST = 969;
 
@@ -198,21 +196,21 @@ public interface ICModelStatusConstants {
 	/**
 	 * Status indicating that a C element could not be created because
 	 * the underlying resource is invalid.
-	 * @see CCore
+	 * @see CoreModel
 	 */
 	 public static final int INVALID_RESOURCE = 995;
 
 	/**
 	 * Status indicating that a C element could not be created because
 	 * the underlying resource is not of an appropriate type.
-	 * @see CCore
+	 * @see CoreModel
 	 */
 	 public static final int INVALID_RESOURCE_TYPE = 996;
 
 	/**
 	 * Status indicating that a C element could not be created because
 	 * the project owning underlying resource does not have the C nature.
-	 * @see CCore
+	 * @see CoreModel
 	 */
 	 public static final int INVALID_PROJECT = 997;
 

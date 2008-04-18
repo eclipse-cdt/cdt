@@ -63,7 +63,6 @@ public class PathEntryContainerChanged  {
 
 	/**
 	 * Type of change.
-	 * @return
 	 */
 	public int getType() {
 		return fType;
@@ -71,15 +70,13 @@ public class PathEntryContainerChanged  {
 
 	/**
 	 * whether or not the change affected the include paths
-	 * @return
 	 */
 	public boolean isIncludeChange() {
 		return (fType & INCLUDE_CHANGED) != 0;
 	}
 
 	/**
-	 * Whether or not the chage affected the macro entries
-	 * @return
+	 * Whether or not the change affected the macro entries
 	 */
 	public boolean isMacroChange() {
 		return (fType & MACRO_CHANGED) != 0;

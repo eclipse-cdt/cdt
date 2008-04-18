@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
@@ -472,4 +473,35 @@ public class AST2BaseTest extends BaseTestCase {
     		return name.resolveBinding();
     	}
     }
+
+	final protected IASTTranslationUnit parseAndCheckBindings( String code, ParserLanguage lang ) throws Exception {
+		return parseAndCheckBindings(code, lang, false);
+	}
+
+	final protected IASTTranslationUnit parseAndCheckBindings( String code, ParserLanguage lang, boolean useGnuExtensions) throws Exception {
+		IASTTranslationUnit tu = parse( code, lang, useGnuExtensions ); 
+		CNameCollector col = new CNameCollector();
+		tu.accept(col);
+		assertNoProblemBindings( col );
+		return tu;
+	}
+
+	final protected void assertNoProblemBindings(CNameCollector col) {
+		Iterator i = col.nameList.iterator();
+		while (i.hasNext()) {
+			IASTName n = (IASTName) i.next();
+			assertFalse(n.resolveBinding() instanceof IProblemBinding);
+		}
+	}
+
+	final protected void assertProblemBindings(CNameCollector col, int count) {
+		Iterator i = col.nameList.iterator();
+		int sum = 0;
+		while (i.hasNext()) {
+			IASTName n = (IASTName) i.next();
+			if (n.getBinding() instanceof IProblemBinding)
+				++sum;
+		}
+		assertEquals(count, sum);
+	}
 }

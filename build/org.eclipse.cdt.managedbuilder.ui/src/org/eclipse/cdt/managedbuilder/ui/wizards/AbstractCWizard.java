@@ -10,29 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.cdt.ui.wizards.CNewWizard;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
-import org.eclipse.cdt.utils.Platform;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 public abstract class AbstractCWizard extends CNewWizard {
 
-	private static final String os = Platform.getOS();
-	private static final String arch = Platform.getOSArch();
-	private static final String ALL = "all";  //$NON-NLS-1$
-	
 	protected static final Image IMG0 = CPluginImages.get(CPluginImages.IMG_OBJS_CFOLDER);
 	protected static final Image IMG1 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CAT);
 	protected static final Image IMG2 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_TOOL);
@@ -64,17 +56,7 @@ public abstract class AbstractCWizard extends CNewWizard {
 			return false;
 		
 		// Check for platform compatibility
-		ITargetPlatform tp = tc.getTargetPlatform();
-		if (tp != null) {
-			List<String> osList = Arrays.asList(tc.getOSList());
-			if (osList.contains(ALL) || osList.contains(os)) {
-				List<String> archList = Arrays.asList(tc.getArchList());
-				if (archList.contains(ALL) || archList.contains(arch))
-					return true; // OS and ARCH fits
-			}
-			return false; // OS or ARCH does not fit
-		}
-		return true; // No platform: nothing to check 
+		return ManagedBuildManager.isPlatformOk(tc);
 	}
 
 	/**

@@ -12,10 +12,17 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -23,8 +30,10 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
 import org.eclipse.cdt.ui.newui.INewCfgDialog;
 import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -59,6 +68,9 @@ public class NewCfgDialog implements INewCfgDialog {
 	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
 	private static final String DESCRIPTION = LABEL + ".description";	//$NON-NLS-1$
 	private static final String NULL = "[null]"; //$NON-NLS-1$	
+	private static final String SEPARATOR = " > "; //$NON-NLS-1$
+	private static final String ART = MBSWizardHandler.ARTIFACT;
+	private static final String NOT = UIMessages.getString("NewCfgDialog.3"); //$NON-NLS-1$
 	// Widgets
 	private Text configName;
 	private Text configDescription;
@@ -66,6 +78,10 @@ public class NewCfgDialog implements INewCfgDialog {
 	private Combo realConfigSelector;
 	private Button b_clone;
 	private Button b_real;	
+	private Button b_import;	
+	private Button b_importDef;	
+	private Combo importSelector;
+	private Combo importDefSelector;
 	private Label statusLabel;
 
 	/** Default configurations defined in the toolchain description */
@@ -76,6 +92,8 @@ public class NewCfgDialog implements INewCfgDialog {
 	private String newName;
 	private String newDescription;
 	private String title;
+	private Map<String, IConfiguration> imported;
+	private Map<String, IConfiguration> importedDef;
 	
 	protected Shell parentShell;
 
@@ -95,9 +113,14 @@ public class NewCfgDialog implements INewCfgDialog {
 				newDescription = configDescription.getText().trim();
 				if (b_clone.getSelection()) 
 					parentConfig = cfgds[cloneConfigSelector.getSelectionIndex()];
-				else  // real cfg
+				else if (b_real.getSelection()) // real cfg
 					parentConfig = rcfgs[realConfigSelector.getSelectionIndex()];
-				newConfiguration();
+				else if (b_import.getSelection())
+					parentConfig = getConfigFromName(importSelector.getText(), imported);
+				else if (b_importDef.getSelection())
+					parentConfig = getConfigFromName(importDefSelector.getText(), importedDef);
+				if (parentConfig != null)
+					newConfiguration();
 			} else {
 				newName = null;
 				newDescription = null;
@@ -257,6 +280,54 @@ public class NewCfgDialog implements INewCfgDialog {
 			if(extCfgs.length == 0)
 				b_real.setEnabled(false);
 
+			/* import */
+			b_import = new Button(group, SWT.RADIO);
+			b_import.setText(UIMessages.getString("NewCfgDialog.4")); //$NON-NLS-1$
+			gd = new GridData(GridData.BEGINNING);
+			b_import.setLayoutData(gd);
+			b_import.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setButtons();		
+				}
+			});	
+			importSelector = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+			importSelector.setFont(group.getFont());
+			importSelector.setItems(getImportItems());
+			importSelector.select(0);
+			importSelector.setVisibleItemCount(Math.min(10, importSelector.getItemCount()));
+			gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+			importSelector.setLayoutData(gd);
+			importSelector.setEnabled(false);
+			importSelector.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setButtons();		
+				}
+			});	
+
+			/* import predefined */
+			b_importDef = new Button(group, SWT.RADIO);
+			b_importDef.setText(UIMessages.getString("NewCfgDialog.5")); //$NON-NLS-1$
+			gd = new GridData(GridData.BEGINNING);
+			b_importDef.setLayoutData(gd);
+			b_importDef.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setButtons();		
+				}
+			});	
+			importDefSelector = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+			importDefSelector.setFont(group.getFont());
+			importDefSelector.setItems(getImportDefItems());
+			importDefSelector.select(0);
+			importDefSelector.setVisibleItemCount(Math.min(10, importDefSelector.getItemCount()));
+			gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+			importDefSelector.setLayoutData(gd);
+			importDefSelector.setEnabled(false);
+			importDefSelector.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setButtons();		
+				}
+			});	
+			
 			statusLabel = new Label(composite, SWT.CENTER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
@@ -304,9 +375,15 @@ public class NewCfgDialog implements INewCfgDialog {
 				statusLabel.setVisible(false);
 				if (b != null) b.setEnabled(true);
 			}
+			if (b_import.getSelection() && importSelector.getSelectionIndex() == 0)
+				b.setEnabled(false); 
+			if (b_importDef.getSelection() && importDefSelector.getSelectionIndex() == 0)
+				b.setEnabled(false); 
 			
 			cloneConfigSelector.setEnabled(b_clone.getSelection());
 			realConfigSelector.setEnabled(b_real.getSelection());
+			importSelector.setEnabled(b_import.getSelection());
+			importDefSelector.setEnabled(b_importDef.getSelection());
 		}
 	}
 
@@ -483,5 +560,61 @@ public class NewCfgDialog implements INewCfgDialog {
 		} catch (CoreException e) {
 			ManagedBuilderUIPlugin.log(e);
 		}
+	}
+	
+	private String[] getImportItems() {
+		imported = new HashMap<String, IConfiguration>();
+		if (des != null) {
+			IProject[] ps = des.getProject().getWorkspace().getRoot().getProjects();
+			for (IProject p : ps) {
+				ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false); 
+				if (prjd == null)
+					continue;
+				ICConfigurationDescription[] cfgs = prjd.getConfigurations();
+				if (cfgs == null || cfgs.length == 0) 
+					continue;
+				for (ICConfigurationDescription d : cfgs) {
+					IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(d);
+					if (cfg != null)
+						imported.put(p.getName() + SEPARATOR + d.getName(), cfg);
+				}
+			}
+		}
+		ArrayList<String> lst = new ArrayList<String>(imported.keySet());
+		Collections.sort(lst);
+		lst.add(0, NOT);
+		return lst.toArray(new String[lst.size()]);
+	}
+
+	private String[] getImportDefItems() {
+		importedDef = new HashMap<String, IConfiguration>();
+		IBuildPropertyManager bpm = ManagedBuildManager.getBuildPropertyManager();
+		IBuildPropertyType bpt = bpm.getPropertyType(ART);
+		for (IBuildPropertyValue v : bpt.getSupportedValues()) {
+			String id = v.getId();
+			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(ART, id, false);
+			if (tcs == null || tcs.length == 0) continue;
+			for (IToolChain tc : tcs) {
+				if (tc.isSystemObject() || tc.isAbstract() || ! tc.isSupported())
+					continue;
+				// prefix: "X" shown if toolchain is not supported by platform. 
+				String pre = ManagedBuildManager.isPlatformOk(tc) ? "  " : "X "; //$NON-NLS-1$ //$NON-NLS-2$
+				for (IConfiguration c : ManagedBuildManager.getExtensionConfigurations(tc, ART, id)) {
+					if (c.isSystemObject() || ! c.isSupported())
+						continue;
+					importedDef.put(pre + v.getName() + SEPARATOR + tc.getName() + SEPARATOR + c.getName(), c);
+				}
+			}
+		}
+		ArrayList<String> lst = new ArrayList<String>(importedDef.keySet());
+		Collections.sort(lst);
+		lst.add(0, NOT);
+		return lst.toArray(new String[lst.size()]);
+	}
+
+	private IConfiguration getConfigFromName(String s, Map<String, IConfiguration> imp) {
+		if (imp == null) 
+			return null;
+		return imp.get(s);
 	}
 }

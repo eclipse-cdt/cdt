@@ -186,6 +186,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 	
 	public static final String INTERNAL_BUILDER_ID = "org.eclipse.cdt.build.core.internal.builder";	//$NON-NLS-1$
 	
+	private static final String os = Platform.getOS();
+	private static final String arch = Platform.getOSArch();
+	private static final String ALL = "all";  //$NON-NLS-1$
+	
 	// This is the version of the manifest and project files
 	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(4, 0, 0);
 	private static final Version version = new Version(4, 0, 0);
@@ -4694,6 +4698,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	public static IToolChainModificationManager getToolChainModificationManager(){
 		return ToolChainModificationManager.getInstance();
+	}
+
+	// Check toolchain for platform compatibility
+	public static boolean isPlatformOk(IToolChain tc) {
+		ITargetPlatform tp = tc.getTargetPlatform();
+		if (tp != null) {
+			List<String> osList = Arrays.asList(tc.getOSList());
+			if (osList.contains(ALL) || osList.contains(os)) {
+				List<String> archList = Arrays.asList(tc.getArchList());
+				if (archList.contains(ALL) || archList.contains(arch))
+					return true; // OS and ARCH fits
+			}
+			return false; // OS or ARCH does not fit
+		}
+		return true; // no target platform - nothing to check.
 	}
 
 }

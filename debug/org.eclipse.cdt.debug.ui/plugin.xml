@@ -1354,6 +1354,16 @@
          <adapter
                type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementAnnotationProvider">
          </adapter>
+         <adapter
+               type="org.eclipse.cdt.debug.ui.disassembly.IElementToggleBreakpointAdapter">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.internal.core.model.DisassemblyRetrieval"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+         </adapter>
       </factory>
    </extension>
    <extension

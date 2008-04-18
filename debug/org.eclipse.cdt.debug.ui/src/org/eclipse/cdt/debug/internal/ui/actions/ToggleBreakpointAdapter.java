@@ -77,11 +77,17 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
         if ( part instanceof DisassemblyEditor && selection instanceof ITextSelection ) {
             DisassemblyEditor editor = (DisassemblyEditor)part;
             int lineNumber = ((ITextSelection)selection).getStartLine();
-            if ( lineNumber != -1 ) {
+            if ( lineNumber == -1 ) {
+                errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
+            }
+            else {
                 IEditorInput input = editor.getEditorInput();
                 if ( input != null ) {
                     VirtualDocument document = (VirtualDocument)editor.getDocumentProvider().getDocument( input );
-                    if ( document != null ) {
+                    if ( document == null ) {
+                        errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_1" ); //$NON-NLS-1$
+                    }
+                    else {
                         IPresentationContext presentationContext = document.getPresentationContext();
                         Object element = document.getElementAtLine( lineNumber );
                         if ( element != null ) {
@@ -90,6 +96,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
                                 adapter.toggleLineBreakpoints( presentationContext, element );
                             }
                         }
+                        return;
                     }
                 }
             }

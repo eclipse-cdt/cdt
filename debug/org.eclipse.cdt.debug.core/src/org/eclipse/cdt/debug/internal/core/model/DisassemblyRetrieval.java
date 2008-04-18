@@ -19,9 +19,15 @@ import java.util.List;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIBreakpointMovedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIBreakpointProblemEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -30,6 +36,7 @@ import org.eclipse.cdt.debug.core.model.IDisassemblyLine;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 
 public class DisassemblyRetrieval extends CDebugElement implements ICDIEventListener {
@@ -58,10 +65,38 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
      */
-    public void handleDebugEvents( ICDIEvent[] event ) {
-        // TODO Auto-generated method stub
+    public void handleDebugEvents( ICDIEvent[] events ) {
+        for ( ICDIEvent event : events ) {
+            Object source = event.getSource();
+            if ( (event instanceof ICDICreatedEvent
+                    || event instanceof ICDIChangedEvent
+                    || event instanceof ICDIDestroyedEvent
+                    || event instanceof ICDIBreakpointMovedEvent
+                    || event instanceof ICDIBreakpointProblemEvent )
+                  && source instanceof ICDILocationBreakpoint ) {
+                BigInteger address = ((ICDILocationBreakpoint)source).getLocator().getAddress();
+                if ( address != null ) {
+                    int index = getIndexForAddress( address, fLines );
+                    if ( index >= 0 ) {
+                        fireEvent( new DebugEvent( fLines[index], DebugEvent.CHANGE, DebugEvent.STATE ) );
+                    }
+                    if ( event instanceof ICDIBreakpointMovedEvent ) {
+                        address = ((ICDIBreakpointMovedEvent)event).getNewLocation().getAddress();
+                        if ( address != null ) {
+                            index = getIndexForAddress( address, fLines );
+                            if ( index >= 0 ) {
+                                fireEvent( new DebugEvent( fLines[index], DebugEvent.CHANGE, DebugEvent.STATE ) );
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.debug.core.model.IDisassemblyRetrieval#getInput()
+     */
     public Object getInput() {
         return fInput;
     }

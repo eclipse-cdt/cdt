@@ -15,6 +15,6 @@ package org.eclipse.cdt.debug.core.model;
  * org.eclipse.cdt.debug.core.model.IDisassemblyLine: 
  * //TODO Add description.
  */
-public interface IDisassemblyLine {
+public interface IDisassemblyLine extends ICDebugElement {
 
 }

@@ -78,9 +78,11 @@ public class DocumentContentProvider implements IModelChangedListener {
         }
         if ( !update.isCanceled() ) {
             disposeLineProxies();
+            fLineElements.clear();
             getDocument().setCurrentOffset( update.getOffset() );
             Object[] elements = update.getElements();
             for ( int i = 0; i < elements.length; ++i ) {
+                fLineElements.put( elements[i], Integer.valueOf( i ) );
                 installLineProxy( i, elements[i] );
                 getDocument().updateElement( getInput(), i, elements[i] );
             }
@@ -348,7 +350,6 @@ public class DocumentContentProvider implements IModelChangedListener {
             final IModelProxy proxy = modelProxyFactory.createModelProxy( element, getPresentationContext() );
             if ( proxy != null ) {
                 fLineProxies.add( index, proxy );
-                fLineElements.put( element, Integer.valueOf( index ) );
                 Job job = new Job( "Model Proxy installed notification job" ) {//$NON-NLS-1$
                     
                     /* (non-Javadoc)
@@ -407,7 +408,6 @@ public class DocumentContentProvider implements IModelChangedListener {
             proxy.dispose();
         }
         fLineProxies.clear();
-        fLineElements.clear();
     }
 
     protected VirtualSourceViewer getViewer() {

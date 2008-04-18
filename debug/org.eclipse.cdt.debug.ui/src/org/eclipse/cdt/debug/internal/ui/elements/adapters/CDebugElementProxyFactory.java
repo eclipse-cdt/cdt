@@ -14,7 +14,9 @@ package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
+import org.eclipse.cdt.debug.internal.core.model.DisassemblyRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModulesViewModelProxy;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -27,17 +29,22 @@ public class CDebugElementProxyFactory extends DefaultModelProxyFactory {
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
 	public IModelProxy createModelProxy( Object element, IPresentationContext context ) {
-		if ( IDebugUIConstants.ID_MODULE_VIEW.equals( context.getId() ) ) {
-			IModuleRetrieval mr = null;
-			if ( element instanceof IAdaptable ) {
-				ICDebugTarget target = (ICDebugTarget)((IAdaptable)element).getAdapter( ICDebugTarget.class );
-				if ( target != null )
-					mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
-			}
-			if ( mr != null ) {
-				return new ModulesViewModelProxy( mr );
-			}
-		}
-		return super.createModelProxy(element, context);
-	}
+        if ( IDebugUIConstants.ID_MODULE_VIEW.equals( context.getId() ) ) {
+            IModuleRetrieval mr = null;
+            if ( element instanceof IAdaptable ) {
+                ICDebugTarget target = (ICDebugTarget)((IAdaptable)element).getAdapter( ICDebugTarget.class );
+                if ( target != null )
+                    mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
+            }
+            if ( mr != null ) {
+                return new ModulesViewModelProxy( mr );
+            }
+        }
+        else if ( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR.equals( context.getId() ) ) {
+            if ( element instanceof DisassemblyRetrieval ) {
+                return new DisassemblyElementProxy( (DisassemblyRetrieval)element );
+            }
+        }
+        return super.createModelProxy( element, context );
+    }
 }

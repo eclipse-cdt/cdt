@@ -22,11 +22,13 @@ import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IDisassemblyLine;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.CDisassemblyContextProvider;
+import org.eclipse.cdt.debug.internal.core.model.DisassemblyRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleMementoProvider;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementAnnotationProvider;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelProvider;
+import org.eclipse.cdt.debug.ui.disassembly.IElementToggleBreakpointAdapter;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -48,6 +50,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
     private static IDocumentElementContentProvider fgDisassemblyContentProvider = new DisassemblyElementContentProvider();
     private static IDocumentElementLabelProvider fgDisassemblyLabelProvider = new DisassemblyElementLabelProvider();
     private static IDocumentElementAnnotationProvider fgDisassemblyAnnotationProvider = new DisassemblyElementAnnotationProvider();
+    private static IElementToggleBreakpointAdapter fgDisassemblyToggleBreakpointAdapter = new DisassemblyToggleBreakpointAdapter();
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -67,8 +70,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
                 return fgStackFrameContentProvider;
             }
 			if ( adaptableObject instanceof ICModule || 
-			     adaptableObject instanceof ICElement ) 
-			{
+			     adaptableObject instanceof ICElement ) {
 				return fgModuleContentProvider;
 			}
 		}
@@ -85,7 +87,9 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 			if ( adaptableObject instanceof IModuleRetrieval ) {
                 return fgDebugElementProxyFactory;
             }
-
+            if ( adaptableObject instanceof DisassemblyRetrieval ) {
+                return fgDebugElementProxyFactory;
+            }
 		}
         if ( adapterType.equals( IElementMementoProvider.class ) ) {
             if ( adaptableObject instanceof ICStackFrame ) {
@@ -119,6 +123,11 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
                 return fgDisassemblyAnnotationProvider;
             }
         }
+        if ( adapterType.equals( IElementToggleBreakpointAdapter.class ) ) {
+            if ( adaptableObject instanceof IDisassemblyLine ) {
+                return fgDisassemblyToggleBreakpointAdapter;
+            }
+        }
     	return null;
 	}
 
@@ -134,6 +143,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
         		IDocumentElementContentProvider.class,
                 IDocumentElementLabelProvider.class,
                 IDocumentElementAnnotationProvider.class,
+                IElementToggleBreakpointAdapter.class,
 			};
 	}
 }

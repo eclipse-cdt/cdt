@@ -17,7 +17,6 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassemblyInstruction;
-import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.DisassemblyRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyInstructionPointerAnnotation;

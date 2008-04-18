@@ -17,7 +17,9 @@ import org.eclipse.rse.ui.messages.ISystemMessageLine;
 
 /**
  * Message line interface implementation which forwards the calls
- * to the associated parent dialog page. 
+ * to the associated parent dialog page.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RSEDialogPageMessageLine implements ISystemMessageLine {
 	private final DialogPage page;

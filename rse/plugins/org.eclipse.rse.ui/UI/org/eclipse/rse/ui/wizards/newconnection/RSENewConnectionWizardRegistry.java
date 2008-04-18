@@ -27,6 +27,9 @@ import org.eclipse.rse.ui.wizards.registries.RSEAbstractWizardRegistry;
 
 /**
  * RSE New connection wizard registry implementation.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 	private final Map cache = new HashMap();

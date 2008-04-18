@@ -13,10 +13,6 @@ package org.eclipse.rse.ui.wizards.registries;
 /**
  * Common wizard category descriptor used by the <code>RSEAbstractWizardRegistry</code>
  * to handle wizard categories contributed via a wizard extension point.
- * <p>
- * The <code>IRSEWizardCategory</code> interface is based on <code>
- * org.eclipse.ui.wizards.IWizardCategory</code> interface which is
- * unfortunately marked as not intended to be implemented by clients!
  */
 public interface IRSEWizardCategory extends IRSEWizardRegistryElement {
 

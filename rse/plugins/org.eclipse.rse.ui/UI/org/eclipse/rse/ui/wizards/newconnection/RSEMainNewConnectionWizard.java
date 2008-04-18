@@ -48,6 +48,8 @@ import org.eclipse.ui.IWorkbench;
 
 /**
  * The New Connection wizard. This wizard allows users to create new RSE connections.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, ISelectionProvider {
 	/**

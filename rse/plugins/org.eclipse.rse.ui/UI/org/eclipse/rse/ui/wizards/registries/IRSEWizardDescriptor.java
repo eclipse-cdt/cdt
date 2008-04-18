@@ -16,10 +16,6 @@ import org.eclipse.swt.graphics.Image;
 /**
  * Common wizard descriptor used by the <code>RSEAbstractWizardRegistry</code>
  * to handle wizards contributed via a wizard extension point.
- * <p>
- * The <code>IRSEWizardDescriptor</code> interface is based on <code>
- * org.eclipse.ui.wizards.IWizardDescriptor</code> interface which is
- * unfortunately marked as not intended to be implemented by clients!
  */
 public interface IRSEWizardDescriptor extends IRSEWizardRegistryElement {
 

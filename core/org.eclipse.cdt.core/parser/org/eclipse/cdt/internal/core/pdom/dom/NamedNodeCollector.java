@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +32,6 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	private final boolean caseSensitive;
 	private IProgressMonitor monitor= null;
 	private int monitorCheckCounter= 0;
-	private boolean visitAnonymousClassTypes= false;
 	
 	private List<PDOMNamedNode> nodes = new ArrayList<PDOMNamedNode>();
 
@@ -62,11 +60,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	public void setMonitor(IProgressMonitor pm) {
 		monitor= pm;
 	}
-	
-	public void setVisitAnonymousClassTypes(boolean val) {
-		visitAnonymousClassTypes= val;
-	}
-	
+		
 	final public int compare(int record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
@@ -132,14 +126,6 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 			PDOMNamedNode pb= (PDOMNamedNode) node;
 			if (compare(pb.getDBName()) == 0) {
 				addNode(pb);
-			}
-			else if (visitAnonymousClassTypes) {
-				if (pb instanceof ICompositeType) {
-					char[] nchars= pb.getNameCharArray();
-					if (nchars.length > 0 && nchars[0] == '{') {
-						return true; // visit children
-					}
-				}
 			}
 		}
 		return false;	// don't visit children

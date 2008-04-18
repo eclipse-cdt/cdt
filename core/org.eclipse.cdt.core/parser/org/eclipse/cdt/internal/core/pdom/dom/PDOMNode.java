@@ -38,6 +38,8 @@ public abstract class PDOMNode implements IPDOMNode {
 	protected final PDOM pdom;
 	protected final int record;
 	
+	private int cachedParentRecord;
+	
 	protected PDOMNode(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
@@ -53,7 +55,8 @@ public abstract class PDOMNode implements IPDOMNode {
 		db.putInt(record + TYPE, getNodeType());
 		
 		// parent
-		db.putInt(record + PARENT, parent != null ? parent.getRecord() : 0);
+		cachedParentRecord= parent != null ? parent.getRecord() : 0;
+		db.putInt(record + PARENT, cachedParentRecord);
 	}
 
 	protected abstract int getRecordSize();
@@ -106,7 +109,10 @@ public abstract class PDOMNode implements IPDOMNode {
 	}
 	
 	public int getParentNodeRec() throws CoreException {
-		return pdom.getDB().getInt(record + PARENT);
+		if (cachedParentRecord != 0) {
+			return cachedParentRecord;
+		}
+		return cachedParentRecord= pdom.getDB().getInt(record + PARENT);
 	}
 	
 	public PDOMNode getParentNode() throws CoreException {

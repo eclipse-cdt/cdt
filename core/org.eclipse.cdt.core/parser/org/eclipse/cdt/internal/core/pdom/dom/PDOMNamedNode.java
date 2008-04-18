@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
@@ -66,13 +68,16 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	}
 	
 	public char[] getNameCharArray() throws CoreException {
-		if (fName == null) {
-			fName= getDBName().getChars();
-		}
-		return fName; 
+		if (fName != null)
+			return fName;
+		
+		return fName= getDBName().getChars();
 	}
 	
 	public boolean hasName(char[] name) throws CoreException {
+		if (fName != null)
+			return Arrays.equals(fName, name);
+			
 		return getDBName().equals(name);
 	}
 	

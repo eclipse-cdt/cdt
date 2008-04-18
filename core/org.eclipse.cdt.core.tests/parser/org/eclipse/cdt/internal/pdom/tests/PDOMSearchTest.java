@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.pdom.tests;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import junit.framework.Test;
@@ -51,6 +53,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		return suite(PDOMSearchTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("searchTests", true);
@@ -59,6 +62,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}
@@ -175,9 +179,13 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals("Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(cls1)));
 		methods = cls1.getDeclaredMethods();
 		assertEquals(3, methods.length);
+		Arrays.sort(methods, new Comparator<IBinding>() {
+			public int compare(IBinding o1, IBinding o2) {
+				return o1.getName().compareTo(o2.getName());
+			}});
 		assertEquals("Class2", methods[0].getName());
-		assertEquals("~Class2", methods[1].getName());
-		assertEquals("foo", methods[2].getName());
+		assertEquals("~Class2", methods[2].getName());
+		assertEquals("foo", methods[1].getName());
 
 		/** result #2 * */
 		ICPPMethod meth2 = (ICPPMethod) class2s[1];

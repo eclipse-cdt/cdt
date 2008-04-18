@@ -62,17 +62,18 @@ public class PDOMNodeLinkedList {
 		ListItem item = firstItem;
 		do {
 			PDOMNode node;
-			int record= item.getItem();
+			final int record= item.getItem();
 			if(record==0) {
 				if(!allowsNull) {
 					throw new NullPointerException();
 				}
 				node= null;
 			} else {
-				node= linkage.getNode(item.getItem());
+				node= linkage.getNode(record);
 			}
-			if (visitor.visit(node) && node!=null)
+			if (visitor.visit(node) && node != null) {
 				node.accept(visitor);
+			}
 			visitor.leave(node);
 			item = item.getNext();
 		} while (!item.equals(firstItem));

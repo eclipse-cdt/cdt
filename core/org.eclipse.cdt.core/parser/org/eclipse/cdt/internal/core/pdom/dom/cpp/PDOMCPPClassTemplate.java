@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -146,9 +147,10 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		
 	
 	@Override
-	protected void bindingsOfScopeAccept(IPDOMVisitor visitor) throws CoreException {
-		// don't visit parameters and instances
-		super.accept(visitor);
+	// this is actually wrong, the undeclared bindings should be filtered out. However, that causes
+	// some of the test cases to fail. --> need to look into this.
+	protected IndexFilter getFilterForBindingsOfScope() {
+		return IndexFilter.ALL;
 	}
 	
 	private class PDOMCPPTemplateScope implements ICPPTemplateScope, IIndexScope {

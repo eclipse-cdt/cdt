@@ -159,8 +159,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		public void run() {
 			try {
 				IType[] args = binding.getArguments();
-				for (int i = 0; i < args.length; i++) {
-					partial.addArgument(args[i]);
+				for (IType arg : args) {
+					partial.addArgument(arg);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -235,10 +235,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	public PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException {
 		// assign names to anonymous types.
 		binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
-		if (binding == null) {
+		if (binding == null) 
 			return null;
-		}
-
+		
+		final PDOMNode parent= getAdaptedParent(binding, true);
+		if (parent == null)
+			return null;
+		
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding != null) {
 			if (shouldUpdate(pdomBinding, fromName)) {
@@ -246,27 +249,17 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		} else {
 			try {
-				PDOMNode parent = getAdaptedParent(binding, true);
-				if (parent == null)
-					return null;
-				
 				if (binding instanceof ICPPSpecialization) {
 					IBinding specialized= ((ICPPSpecialization)binding).getSpecializedBinding();
-					PDOMBinding pdomSpecialized= adaptBinding(specialized);
-					if (pdomSpecialized == null) {
-						addBinding(specialized, null);
-					}
+					addBinding(specialized, null);
 				}
-				
-				pdomBinding = adaptBinding(binding);
-				if (pdomBinding == null) {
-					pdomBinding = addBinding(parent, binding);
-					if ((pdomBinding instanceof PDOMCPPClassInstance || pdomBinding instanceof PDOMCPPDeferredClassInstance) && binding instanceof ICPPClassType) {
-						// Add instantiated constructors to the index (bug 201174).
-						addConstructors(pdomBinding, (ICPPClassType) binding);
-						if(SemanticUtil.ENABLE_224364) {
-							addConversionOperators(pdomBinding, (ICPPClassType) binding);
-						}
+		
+				pdomBinding = addBinding(parent, binding);
+				if ((pdomBinding instanceof PDOMCPPClassInstance || pdomBinding instanceof PDOMCPPDeferredClassInstance) && binding instanceof ICPPClassType) {
+					// Add instantiated constructors to the index (bug 201174).
+					addConstructors(pdomBinding, (ICPPClassType) binding);
+					if(SemanticUtil.ENABLE_224364) {
+						addConversionOperators(pdomBinding, (ICPPClassType) binding);
 					}
 				}
 			} catch (DOMException e) {
@@ -473,8 +466,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			IScope scope = binding.getCompositeScope();
 			if (scope instanceof ICPPClassScope) {
 				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
-				for (int i = 0; i < implicit.length; i++) {
-					ICPPMethod method = implicit[i];
+				for (ICPPMethod method : implicit) {
 					PDOMBinding pdomBinding= adaptBinding(method);
 					if (pdomBinding == null) {
 						addBinding(type, method);
@@ -634,11 +626,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  					if (ib.isFileLocal()) {
  						return null;
  					}
- 					if (scope == null && binding instanceof ICPPInternalUnknownClassType) {
- 						return adaptBinding(((PDOMBinding) binding).getParentBinding());
- 					}
- 					// in an index the null scope represents global scope.
  					if (scope == null) {
+ 						if (binding instanceof ICPPInternalUnknownClassType) {
+ 							if (binding instanceof PDOMBinding) 
+ 								return addaptOrAddBinding(addParent, ((PDOMBinding) binding).getParentBinding());
+
+ 							// what if we have a composite binding??
+ 							return null;
+ 						}	
+
+ 						// in an index the null scope represents global scope.
  						return this;
  					}
  				}
@@ -653,9 +650,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  
  				if (scope instanceof IIndexScope) {
  					if (scope instanceof CompositeScope) { // we special case for performance
- 						return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
+ 						return addaptOrAddBinding(addParent, ((CompositeScope)scope).getRawScopeBinding());
  					} else {
- 						return adaptBinding(((IIndexScope) scope).getScopeBinding());
+ 						return addaptOrAddBinding(addParent, ((IIndexScope) scope).getScopeBinding());
  					}
  				}
  
@@ -694,21 +691,21 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  					}
  				}
  			}
- 			if (scopeBinding != null && scopeBinding != binding) {
- 				PDOMBinding scopePDOMBinding = null;
- 				if (addParent) {
- 					scopePDOMBinding = addBinding(scopeBinding, null);
- 				} else {
- 					scopePDOMBinding = adaptBinding(scopeBinding);
- 				}
- 				if (scopePDOMBinding != null)
- 					return scopePDOMBinding;
- 			}
+ 			if (scopeBinding != null && scopeBinding != binding) 
+ 				return addaptOrAddBinding(addParent, scopeBinding);
+ 			
  		} catch (DOMException e) {
  			throw new CoreException(Util.createStatus(e));
  		}
  		return null;
  	}
+
+	private PDOMBinding addaptOrAddBinding(boolean add, IBinding binding)	throws CoreException {
+		if (add) 
+			return addBinding(binding, null);
+
+		return adaptBinding(binding);
+	}
 
 	@Override
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {

@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006, 2007 Wind River Systems, Inc.
+# Copyright (c) 2006, 2008 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -14,10 +14,10 @@
 #:# Will build based on HEAD of all mapfiles, and update the testUpdates as well
 #:#
 #:# Usage:
-#:#    doit_irsbuild.sh {buildType} [buildId]
+#:#    doit_irsbuild.sh {buildType} [buildId] [maptag]
 #:# Examples:
 #:#    doit_irsbuild.sh R 1.0
-#:#    doit_irsbuild.sh S 1.0M5
+#:#    doit_irsbuild.sh S 1.0M5 S1_0M5
 #:#    doit_irsbuild.sh I
 
 #nothing we do should be hidden from the world
@@ -40,9 +40,12 @@ buildType=$1
 buildId=$2
 case x$buildType in
   xP|xN|xI|xS|xR) ok=1 ;;
-  xM) mapTag=R1_0_maintenance ; ok=1 ;;
+  xM) mapTag=R2_0_maintenance ; ok=1 ;;
   *) ok=0 ;;
 esac
+if [ "$3" != "" ]; then
+  mapTag=$3
+fi
 if [ $ok != 1 ]; then
   grep '^#:#' $0 | grep -v grep | sed -e 's,^#:#,,'
   cd ${curdir}
@@ -66,7 +69,8 @@ cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
 log=$HOME/ws2/log-${buildType}$stamp.txt
 touch $log
-cvs -q update -RPd >> $log 2>&1
+#cvs -q update -RPd >> $log 2>&1
+cvs -q update -r ${mapTag} -RPd >> $log 2>&1
 daystamp=`date +'%Y%m%d*%H'`
 
 echo "Running the builder..."

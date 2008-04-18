@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2007 Wind River Systems, Inc. and others.
+# Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -37,9 +37,9 @@ TOPMODULES="\
   org.eclipse.tm.core \
   org.eclipse.tm.core/discovery \
   org.eclipse.tm.core/terminal \
-  org.eclipse.tm.core/thirdparty \
   org.eclipse.tm.core/wince \
 "
+###  org.eclipse.tm.core/thirdparty \
 cvs co -l $TOPMODULES
 ##exit 0
 for topmod in $TOPMODULES ; do

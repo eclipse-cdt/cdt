@@ -158,8 +158,7 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 	}
 
 	/**
-	 * Tests whether the system type is currently enabled.
-	 *
+	 * {@inheritDoc}
 	 * @see IRSESystemType#isEnabled()
 	 * @since org.eclipse.rse.core 3.0
 	 */

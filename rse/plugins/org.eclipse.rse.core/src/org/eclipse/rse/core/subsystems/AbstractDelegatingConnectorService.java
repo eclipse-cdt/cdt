@@ -786,10 +786,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	}
 
 	/**
-	 * Sets the attribute for this connector service instance that denies a
-	 * password to be saved.
-	 *
-	 * @see IConnectorService#setDenyPasswordSave(boolean)
+	 * {@inheritDoc}
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public int setDenyPasswordSave(boolean deny) {
@@ -802,11 +799,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	}
 
 	/**
-	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this
-	 * connector service. If the value has never been set, this will return
-	 * false.
-	 * 
-	 * @return true if password saving is denied.
+	 * {@inheritDoc}
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public boolean getDenyPasswordSave() {

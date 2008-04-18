@@ -478,9 +478,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 
 	/**
-	 * Sets the attribute for this connector service instance that denies a
-	 * password to be saved.
-	 *
+	 * {@inheritDoc}
 	 * @see IConnectorService#setDenyPasswordSave(boolean)
 	 * @since org.eclipse.rse.core 3.0
 	 */
@@ -493,10 +491,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 
 	/**
-	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this
-	 * connector service.
-	 *
-	 * @return <code>true</code> if password saving is denied.
+	 * {@inheritDoc}
 	 * @see IConnectorService#getDenyPasswordSave()
 	 * @since org.eclipse.rse.core 3.0
 	 */

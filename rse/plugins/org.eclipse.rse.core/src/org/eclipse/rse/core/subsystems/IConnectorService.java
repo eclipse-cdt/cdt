@@ -85,21 +85,26 @@ public interface IConnectorService extends IRSEModelObject {
 	public boolean isConnected();
 
 	/**
-	 * Connects to the remote system.
-	 * @param monitor a monitor for tracking the progress and canceling a connect
-	 * operation.
-	 * @throws Exception an exception of there is a failure to connect.
-	 * Typically, this will be a {@link SystemMessageException}.
-	 * @since 3.0 throws an {@link OperationCanceledException} if the connect was cancelled by the user
+	 * Connect to the remote system.
+	 *
+	 * @param monitor a monitor for tracking the progress and canceling a
+	 *            connect operation.
+	 * @throws OperationCanceledException if the connect was cancelled by the
+	 *             user
+	 * @throws Exception if there is a failure connecting. Typically, this will
+	 *             be a {@link SystemMessageException}.
+	 * @since org.eclipse.rse.core 3.0 throws OperationCanceledException instead
+	 *        of InterruptedException
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
 
 	/**
-	 * Disconnects from the remote system.
-	 * @param monitor a monitor for tracking the progress and canceling a disconnect
-	 * operation.
-	 * @throws Exception an exception of the disconnect fails.
-	 *    Typically, this will be a {@link SystemMessageException}.
+	 * Disconnect from the remote system.
+	 *
+	 * @param monitor a monitor for tracking the progress and canceling a
+	 *            disconnect operation.
+	 * @throws Exception an exception of the disconnect fails. Typically, this
+	 *             will be a {@link SystemMessageException}.
 	 */
 	public void disconnect(IProgressMonitor monitor) throws Exception;
 
@@ -270,18 +275,19 @@ public interface IConnectorService extends IRSEModelObject {
 	public void clearCredentials();
 
 	/**
-	 * Acquire the credentials for this connector service.
-	 * Acquisition may be temporarily suppressed
-	 * by using the {@link #setSuppressed(boolean)}.
+	 * Acquire the credentials for this connector service. Acquisition may be
+	 * temporarily suppressed by using the {@link #setSuppressed(boolean)}.
 	 * <p>
-	 * Implementations may retain a remembered credentials or
-	 * use this to acquire the credentials using some implementation defined means.
+	 * Implementations may retain a remembered credentials or use this to
+	 * acquire the credentials using some implementation defined means.
 	 * <p>
-	 * Throws {@link OperationCanceledException} if acquisition of the
-	 * credentials is cancelled or is being suppressed.
-	 * @param refresh if true will force the connector service to discard
-	 * any remembered value and reacquire the credentials.
-	 * @since 3.0 throws OperationCanceledException instead of InterruptedException
+	 *
+	 * @param refresh if true will force the connector service to discard any
+	 *            remembered value and reacquire the credentials.
+	 * @throws OperationCanceledException if acquisition of the credentials is
+	 *             cancelled or is being suppressed.
+	 * @since org.eclipse.rse.core 3.0 throws OperationCanceledException instead
+	 *        of InterruptedException
 	 */
 	public void acquireCredentials(boolean refresh) throws OperationCanceledException;
 
@@ -395,7 +401,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * false. If set to true, it will clear any saved passwords for this system
 	 * and not allow any further passwords to be stored. This property of a
 	 * system is persistent from session to session, but is not sharable.
-	 * 
+	 *
 	 * @param deny If true, forget any saved passwords and do not allow any
 	 *            others to be saved. If false, allow passwords to be saved in
 	 *            the keyring.

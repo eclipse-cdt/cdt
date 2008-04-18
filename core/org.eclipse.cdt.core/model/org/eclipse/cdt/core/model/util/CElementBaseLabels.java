@@ -362,12 +362,11 @@ public class CElementBaseLabels {
 
 			String[] types = method.getParameterTypes();
 			
-			for (int i= 0; i < types.length; i++) {
-				if (i > 0) {
-					buf.append( COMMA_STRING );
-				}
-				
-				if (types != null) {
+			if (types != null) {
+				for (int i= 0; i < types.length; i++) {
+					if (i > 0) {
+						buf.append( COMMA_STRING );
+					}
 					buf.append( types[i] );
 				}
 			}
@@ -597,12 +596,11 @@ public class CElementBaseLabels {
 
 			String[] types = func.getParameterTypes();
 			
-			for (int i= 0; i < types.length; i++) {
-				if (i > 0) {
-					buf.append( COMMA_STRING );
-				}
-				
-				if (types != null) {
+			if (types != null) {
+				for (int i= 0; i < types.length; i++) {
+					if (i > 0) {
+						buf.append( COMMA_STRING );
+					}
 					buf.append( types[i] );
 				}
 			}
@@ -721,19 +719,18 @@ public class CElementBaseLabels {
 	private static void getFolderLabel(ICContainer container, int flags, StringBuffer buf) {
 		IResource resource= container.getResource();
 		boolean rootQualified= getFlag(flags, ROOT_QUALIFIED);
-		boolean referencedQualified= getFlag(flags, PROJECT_POST_QUALIFIED)
-			&& (container instanceof ISourceRoot && isReferenced((ISourceRoot)container))
-			&& resource != null;
 		if (rootQualified) {
 			buf.append(container.getPath().makeRelative().toString());
 		} else {
 			buf.append(container.getElementName());
-			if (referencedQualified) {
-				buf.append(CONCAT_STRING);
-				buf.append(resource.getProject().getName());
-			} else if (getFlag(flags, ROOT_POST_QUALIFIED)) {
-				buf.append(CONCAT_STRING);
-				buf.append(container.getParent().getElementName());
+			if (getFlag(flags, ROOT_QUALIFIED)) {
+				if (resource != null && container instanceof ISourceRoot && isReferenced((ISourceRoot)container)) {
+					buf.append(CONCAT_STRING);
+					buf.append(resource.getProject().getName());
+				} else {
+					buf.append(CONCAT_STRING);
+					buf.append(container.getParent().getElementName());
+				}
 			}
 		}
 	}
@@ -873,7 +870,6 @@ public class CElementBaseLabels {
 	/**
 	 * Returns the source root of <code>ICElement</code>. If the given
 	 * element is already a source root, the element itself is returned.
-	 * @see org.eclipse.cdt.internal.corext.util.CModelUtil
 	 */
 	public static ISourceRoot getSourceRoot(ICElement element) {
 		ICElement root = element;
@@ -893,7 +889,6 @@ public class CElementBaseLabels {
 	 * referenced. This means it is own by a different project but is referenced
 	 * by the root's parent. Returns <code>false</code> if the given root
 	 * doesn't have an underlying resource.
-	 * @see org.eclipse.cdt.internal.corext.util.CModelUtil
 	 */
 	public static boolean isReferenced(ISourceRoot root) {
 		IResource resource= root.getResource();

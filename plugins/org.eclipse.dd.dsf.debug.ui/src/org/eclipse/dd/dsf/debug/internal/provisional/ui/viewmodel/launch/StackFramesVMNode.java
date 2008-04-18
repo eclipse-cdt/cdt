@@ -200,7 +200,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                          * If columns are configured, call the protected methods to 
                          * fill in column values.  
                          */
-                        String[] localColumns = update.getPresentationContext().getColumns();
+                        String[] localColumns = update.getColumnIds();
                         if (localColumns == null) localColumns = new String[] { null };
                         
                         for (int i = 0; i < localColumns.length; i++) {

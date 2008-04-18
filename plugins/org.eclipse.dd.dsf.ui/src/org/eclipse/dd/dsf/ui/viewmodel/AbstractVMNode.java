@@ -89,7 +89,7 @@ abstract public class AbstractVMNode implements IVMNode {
             ((IChildrenCountUpdate)update).setChildCount(0);            
         } else if (update instanceof ILabelUpdate) {
             ILabelUpdate labelUpdate = (ILabelUpdate)update;
-            String[] columns = labelUpdate.getPresentationContext().getColumns();
+            String[] columns = labelUpdate.getColumnIds();
             for (int i = 0; i < (columns != null ? columns.length : 1); i++) {
                 labelUpdate.setLabel("...", i); //$NON-NLS-1$
             }

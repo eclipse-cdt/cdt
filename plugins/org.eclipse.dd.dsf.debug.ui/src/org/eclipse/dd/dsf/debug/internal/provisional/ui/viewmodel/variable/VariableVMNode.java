@@ -238,7 +238,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                              *  one or more variables at that given instance in time are not evaluatable. They
                              *  may be out of scope and will come back into scope later.
                              */
-                            String[] localColumns = update.getPresentationContext().getColumns();
+                            String[] localColumns = update.getColumnIds();
                             if (localColumns == null)
                                 localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
                             
@@ -266,7 +266,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         // processing flag so we know we have further work to do.  If there are more columns
                         // which need data extraction they need to be added in both "for" loops.
 
-                        String[] localColumns = update.getPresentationContext().getColumns();
+                        String[] localColumns = update.getColumnIds();
                         if (localColumns == null)
                             localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
                         

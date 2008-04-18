@@ -301,7 +301,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                      * which need data extraction they need to be added in both "for"
                      * loops.
                      */
-                    String[] localColumns = update.getPresentationContext().getColumns();
+                    String[] localColumns = update.getColumnIds();
                     if (localColumns == null) localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME }; 
                     
                     boolean weAreExtractingFormattedData = false;

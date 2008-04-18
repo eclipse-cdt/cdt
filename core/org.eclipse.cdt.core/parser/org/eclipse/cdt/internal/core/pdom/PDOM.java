@@ -256,8 +256,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = iter.next();
+		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
 			linkage.accept(visitor);
 		}
 	}
@@ -454,8 +453,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			monitor= new NullProgressMonitor();
 		}
 		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter, monitor);
-		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = iter.next();
+		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
 			if (filter.acceptLinkage(linkage)) {
 				try {
 					linkage.accept(finder);
@@ -475,8 +473,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			monitor= new NullProgressMonitor();
 		}
 		MacroContainerPatternCollector finder = new MacroContainerPatternCollector(this, pattern, monitor);
-		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = iter.next();
+		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
 			if (filter.acceptLinkage(linkage)) {
 				try {
 					linkage.getMacroIndex().accept(finder);
@@ -497,8 +494,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		ArrayList<PDOMBinding> result= new ArrayList<PDOMBinding>();
 		ArrayList<PDOMNamedNode> nodes= new ArrayList<PDOMNamedNode>();
-		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = iter.next();
+		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
 			if (filter.acceptLinkage(linkage)) {
 				nodes.add(linkage);
 				for (int i=0; i < names.length-1; i++) {
@@ -753,8 +749,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			findNamesForMyBinding(pdomBinding, options, names);
 			if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
 				PDOMBinding[] xlangBindings= getCrossLanguageBindings(binding);
-				for (int j = 0; j < xlangBindings.length; j++) {
-					findNamesForMyBinding(xlangBindings[j], options, names);
+				for (PDOMBinding xlangBinding : xlangBindings) {
+					findNamesForMyBinding(xlangBinding, options, names);
 				}
 			}
 		}
@@ -763,8 +759,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			findNamesForMyBinding(macroContainer, options, names);
 			if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
 				PDOMMacroContainer[] xlangBindings= getCrossLanguageBindings(macroContainer);
-				for (int j = 0; j < xlangBindings.length; j++) {
-					findNamesForMyBinding(xlangBindings[j], options, names);
+				for (PDOMMacroContainer xlangBinding : xlangBindings) {
+					findNamesForMyBinding(xlangBinding, options, names);
 				}
 			}
 		}
@@ -831,8 +827,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
-		for (Iterator<PDOMLinkage> iter= fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage= iter.next();
+		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
 			if (filter.acceptLinkage(linkage)) {
 				PDOMBinding[] bindings;
 				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
@@ -847,8 +842,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 				bindings= visitor.getBindings();
 
-				for (int j = 0; j < bindings.length; j++) {
-					result.add(bindings[j]);
+				for (PDOMBinding binding : bindings) {
+					result.add(binding);
 				}
 			}
 		}
@@ -857,8 +852,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
-		for (Iterator<PDOMLinkage> iter= fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage= iter.next();
+		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
 			if (filter.acceptLinkage(linkage)) {
 				PDOMBinding[] bindings;
 				BindingCollector visitor = new BindingCollector(linkage, name, filter, false, true);
@@ -873,8 +867,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 				bindings= visitor.getBindings();
 
-				for (int j = 0; j < bindings.length; j++) {
-					result.add(bindings[j]);
+				for (PDOMBinding binding : bindings) {
+					result.add(binding);
 				}
 			}
 		}
@@ -886,8 +880,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		MacroContainerCollector visitor = new MacroContainerCollector(this, prefix, isPrefix, isCaseSensitive);
 		visitor.setMonitor(monitor);
 		try {
-			for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-				PDOMLinkage linkage = iter.next();
+			for (PDOMLinkage linkage : fLinkageIDCache.values()) {
 				if (filter.acceptLinkage(linkage)) {
 					linkage.getMacroIndex().accept(visitor);
 				}
@@ -955,7 +948,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 			fResultCache.put(key, result);
 		}
 	}		
-	
+
+	public void removeCachedResult(Object key) {
+		synchronized(fResultCache) {
+			fResultCache.remove(key);
+		}
+	}		
+
 	public String createKeyForCache(int record, char[] name) {
 		return new StringBuilder(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
 	}

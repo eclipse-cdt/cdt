@@ -166,12 +166,12 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return IIndexCPPBindingConstants.CPPFUNCTION;
 	}
 	
-	public PDOMCPPParameter getFirstParameter() throws CoreException {
+	private PDOMCPPParameter getFirstParameter() throws CoreException {
 		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
 		return rec != 0 ? new PDOMCPPParameter(pdom, rec) : null;
 	}
 
-	public void setFirstParameter(PDOMCPPParameter param) throws CoreException {
+	private void setFirstParameter(PDOMCPPParameter param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
 		int rec = param != null ? param.getRecord() :  0;

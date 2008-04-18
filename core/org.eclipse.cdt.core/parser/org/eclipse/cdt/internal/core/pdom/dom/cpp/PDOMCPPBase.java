@@ -38,6 +38,8 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	protected final PDOM pdom;
 	protected final int record;
 	
+	private PDOMBinding fCachedBaseClass;
+	
 	public PDOMCPPBase(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
@@ -73,7 +75,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		return pdom.getDB().getByte(record + FLAGS);
 	}
 
-	public PDOMName getBaseClassSpecifierNameImpl() {
+	public PDOMName getBaseClassSpecifierName() {
 		try {
 			int rec = pdom.getDB().getInt(record + BASECLASS_SPECIFIER);
 			if (rec != 0) {
@@ -84,20 +86,19 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		}
 		return null;
 	}
-
-	public IName getBaseClassSpecifierName() {
-		return getBaseClassSpecifierNameImpl();
-	}
 	
 	public IBinding getBaseClass() {
+		if (fCachedBaseClass != null)
+			return fCachedBaseClass;
+		
 		try {
-			PDOMName name= getBaseClassSpecifierNameImpl();
+			PDOMName name= getBaseClassSpecifierName();
 			if (name != null) {
 				PDOMBinding b = name.getBinding();
 		    	while( b instanceof PDOMCPPTypedef && ((PDOMCPPTypedef)b).getType() instanceof PDOMBinding ){
 					b = (PDOMBinding) ((PDOMCPPTypedef)b).getType();
 		    	}
-		    	return b;
+		    	return fCachedBaseClass= b;
 			}				
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

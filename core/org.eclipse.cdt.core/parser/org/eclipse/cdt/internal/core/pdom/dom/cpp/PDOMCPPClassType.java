@@ -12,9 +12,10 @@
  *    Bryan Wilkinson (QNX)
  *    Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -41,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
@@ -73,6 +76,9 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 
+	private static final int CACHE_MEMBERS= 0;
+	private static final int CACHE_BASES = 1;
+
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)
 			throws CoreException {
 		super(pdom, parent, classType.getNameCharArray());
@@ -103,6 +109,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 	
 	public void addMember(PDOMNode member) throws CoreException {
+		pdom.removeCachedResult(record+CACHE_MEMBERS);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
 	}
@@ -117,7 +124,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return IIndexCPPBindingConstants.CPPCLASSTYPE;
 	}
 
-	public PDOMCPPBase getFirstBase() throws CoreException {
+	private PDOMCPPBase getFirstBase() throws CoreException {
 		int rec = pdom.getDB().getInt(record + FIRSTBASE);
 		return rec != 0 ? new PDOMCPPBase(pdom, rec) : null;
 	}
@@ -128,6 +135,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 
 	public void addBase(PDOMCPPBase base) throws CoreException {
+		pdom.removeCachedResult(record+CACHE_BASES);
 		PDOMCPPBase firstBase = getFirstBase();
 		base.setNextBase(firstBase);
 		setFirstBase(base);
@@ -161,12 +169,18 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 
 	public ICPPBase[] getBases() throws DOMException {
+		Integer key= record + 1;
+		ICPPBase[] bases= (ICPPBase[]) pdom.getCachedResult(key);
+		if (bases != null) 
+			return bases;
+		
 		try {
 			List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
 			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
 				list.add(base);
 			Collections.reverse(list);
-			ICPPBase[] bases = list.toArray(new ICPPBase[list.size()]);
+			bases = list.toArray(new ICPPBase[list.size()]);
+			pdom.putCachedResult(key, bases);
 			return bases;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -184,7 +198,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		try {
 			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
-			accept(methods);
+			cachedBindingsAccept(methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
 			return new ICPPMethod[0];
@@ -263,7 +277,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public ICPPField[] getDeclaredFields() throws DOMException {
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
-			accept(visitor);
+			cachedBindingsAccept(visitor);
 			return visitor.getFields();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -288,11 +302,38 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		try {
 			NestedClassCollector visitor = new NestedClassCollector();
-			accept(visitor);
+			cachedBindingsAccept(visitor);
 			return visitor.getNestedClasses();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ICPPClassType[0];
+		}
+	}
+
+	private void cachedBindingsAccept(IPDOMVisitor visitor) throws CoreException {
+		CharArrayMap<Object> map= getBindingMap();
+		for (Object obj : map.values()) {
+			if (obj instanceof List) {
+				for (Object binding : (List<?>)obj) {
+					if (binding instanceof IPDOMNode) {
+						final IPDOMNode node = (IPDOMNode) binding;
+						if (visitor.visit(node)) 
+							return;
+						visitor.leave(node);
+					}
+				}
+			}
+			else if (obj instanceof Object[]) {
+				Object[] array= (Object[]) obj;
+				for (Object binding : array) {
+					if (binding instanceof IPDOMNode) {
+						final IPDOMNode node = (IPDOMNode) binding;
+						if (visitor.visit(node)) 
+							return;
+						visitor.leave(node);
+					}
+				}
+			}
 		}
 	}
 
@@ -330,7 +371,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public ICPPConstructor[] getConstructors() throws DOMException {
 		PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
 		try {
-			accept(visitor);
+			cachedBindingsAccept(visitor);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -377,7 +418,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 				visitor.visit(this);
 			}
 			visitor.setVisitAnonymousClassTypes(true);
-			accept(visitor);
+			bindingsOfScopeAccept(visitor);
 			result= visitor.getBindings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -385,21 +426,73 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return result;
 	}
 	
-	private IBinding[] getBindingsViaCache(final char[] name) throws CoreException {
-		final String key = pdom.createKeyForCache(record, name);
-		IBinding[] result= (IBinding[]) pdom.getCachedResult(key);
-		if (result != null) {
-			return result;
+	/**
+	 * Return whether or not the nested binding should go into the cache.
+	 * @throws CoreException 
+	 * @since 5.0
+	 */
+	protected boolean isBindingOfScope(IBinding member) throws CoreException {
+		return IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(member);
+	}
+
+
+	IBinding[] getBindingsViaCache(final char[] name) throws CoreException {
+		CharArrayMap<Object> map = getBindingMap();		
+		Object result= map.get(name);
+		if (result instanceof IBinding[]) 
+			return (IBinding[]) result;
+		if (result instanceof List) {
+			final List<?> list = (List<?>) result;
+			final IBinding[] bresult= list.toArray(new IBinding[list.size()]);
+			map.put(name, bresult);
+			return bresult;
 		}
-		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, IndexFilter.ALL_DECLARED_OR_IMPLICIT, false, true);
-		if (getDBName().compare(name, true) == 0) {
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+
+	private CharArrayMap<Object> getBindingMap() throws CoreException {
+		final Integer key= record;
+		@SuppressWarnings("unchecked")
+		Reference<CharArrayMap<Object>> cached= (Reference<CharArrayMap<Object>>) pdom.getCachedResult(key);
+		CharArrayMap<Object> map= cached == null ? null : cached.get();
+		
+		if (map == null) {
+			// there is no cache, build it:
+			final CharArrayMap<Object> result= new CharArrayMap<Object>();
+			IPDOMVisitor visitor= new IPDOMVisitor() {
+				public boolean visit(IPDOMNode node) throws CoreException {
+					if (node instanceof IBinding) {
+						final IBinding binding= (IBinding) node;
+						final char[] nchars = binding.getNameCharArray();
+						if (nchars.length > 0 && isBindingOfScope(binding)) {
+							@SuppressWarnings("unchecked")
+							List<IBinding> list= (List<IBinding>) result.get(nchars);
+							if (list == null) {
+								list= new ArrayList<IBinding>();
+								result.put(nchars, list);
+							}
+							list.add(binding);
+							
+							if (binding instanceof ICompositeType && nchars[0] == '{') {
+								return true; // visit children
+							}
+						}
+					}
+					return false;
+				}
+				public void leave(IPDOMNode node){}
+			};
+			
 			visitor.visit(this);
+			bindingsOfScopeAccept(visitor);
+			map= result;
+			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
 		}
-		visitor.setVisitAnonymousClassTypes(true);
-		accept(visitor);
-		result = visitor.getBindings();
-		pdom.putCachedResult(key, result);
-		return result;
+		return map;
+	}
+
+	protected void bindingsOfScopeAccept(IPDOMVisitor visitor) throws CoreException {
+		this.accept(visitor);
 	}
 
 	public IBinding[] find(String name) throws DOMException {
@@ -419,11 +512,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 
 	public void removeBase(PDOMName pdomName) throws CoreException {
+		pdom.removeCachedResult(record+CACHE_BASES);
+
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase predecessor= null;
 		int nameRec= pdomName.getRecord();
 		while (base != null) {
-			PDOMName name = base.getBaseClassSpecifierNameImpl();
+			PDOMName name = base.getBaseClassSpecifierName();
 			if (name != null && name.getRecord() == nameRec) {
 				break;
 			}

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -36,11 +35,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -146,69 +143,12 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
 		return null;
 	}
+		
 	
 	@Override
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
-		try {
-		    if (getDBName().equals(name.toCharArray())) {
-		        if (CPPClassScope.isConstructorReference(name)) {
-		            return CPPSemantics.resolveAmbiguities(name, getConstructors());
-		        }
-	            //9.2 ... The class-name is also inserted into the scope of the class itself
-	            return this;
-		    }
-			
-			IndexFilter filter = new IndexFilter() {
-				@Override
-				public boolean acceptBinding(IBinding binding) {
-					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
-				}
-				@Override
-				public boolean acceptLinkage(ILinkage linkage) {
-					return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
-				}
-			};
-		    
-		    BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter,
-		    		false, true);
-			accept(visitor);
-			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-	
-	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
-			throws DOMException {
-		IBinding[] result = null;
-		try {
-			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
-					|| (prefixLookup && getDBName().comparePrefix(name.toCharArray(), false) == 0)) {
-				// 9.2 ... The class-name is also inserted into the scope of
-				// the class itself
-				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
-			}
-			IndexFilter filter = new IndexFilter() {
-				@Override
-				public boolean acceptBinding(IBinding binding) {
-					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
-				}
-				@Override
-				public boolean acceptLinkage(ILinkage linkage) {
-					return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
-				}
-			};
-			
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter,
-					prefixLookup, !prefixLookup);
-			accept(visitor);
-			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	protected void bindingsOfScopeAccept(IPDOMVisitor visitor) throws CoreException {
+		// don't visit parameters and instances
+		super.accept(visitor);
 	}
 	
 	private class PDOMCPPTemplateScope implements ICPPTemplateScope, IIndexScope {

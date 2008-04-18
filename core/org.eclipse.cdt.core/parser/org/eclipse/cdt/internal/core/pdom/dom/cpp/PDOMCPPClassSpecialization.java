@@ -115,7 +115,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		PDOMCPPBase predecessor= null;
 		int nameRec= pdomName.getRecord();
 		while (base != null) {
-			PDOMName name = base.getBaseClassSpecifierNameImpl();
+			PDOMName name = base.getBaseClassSpecifierName();
 			if (name != null && name.getRecord() == nameRec) {
 				break;
 			}
@@ -157,8 +157,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			if (pdomBases != null) {
 				ICPPBase[] result = null;
 				
-				for (int i = 0; i < pdomBases.length; i++) {
-					ICPPBase origBase = pdomBases[i];
+				for (ICPPBase origBase : pdomBases) {
 					ICPPBase specBase = (ICPPBase) ((ICPPInternalBase)origBase).clone();
 					IBinding origClass = origBase.getBaseClass();
 					if (origClass instanceof IType) {
@@ -271,8 +270,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		private ObjectMap specMap;
 		public SpecializationFinder(IBinding[] specialized) {
 			specMap = new ObjectMap(specialized.length);
-			for (int i = 0; i < specialized.length; i++) {
-				specMap.put(specialized[i], null);
+			for (IBinding element : specialized) {
+				specMap.put(element, null);
 			}
 		}
 		public boolean visit(IPDOMNode node) throws CoreException {

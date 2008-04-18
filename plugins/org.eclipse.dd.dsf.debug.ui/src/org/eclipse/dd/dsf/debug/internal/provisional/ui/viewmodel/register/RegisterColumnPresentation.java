@@ -32,13 +32,15 @@ public class RegisterColumnPresentation implements IColumnPresentation {
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
     public String[] getAvailableColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
+        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
     public String getHeader(String id) {
         if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
             return MessagesForRegisterVM.RegisterColumnPresentation_name; 
+        } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(id)) {
+            return MessagesForRegisterVM.RegisterColumnPresentation_type;
         } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(id)) {
             return MessagesForRegisterVM.RegisterColumnPresentation_value;
         } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(id)) {

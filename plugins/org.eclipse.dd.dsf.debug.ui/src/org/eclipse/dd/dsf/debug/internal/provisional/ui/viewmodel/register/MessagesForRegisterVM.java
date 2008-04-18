@@ -9,6 +9,8 @@ public class MessagesForRegisterVM extends NLS {
 
     public static String RegisterColumnPresentation_name;
 
+    public static String RegisterColumnPresentation_type;
+
     public static String RegisterColumnPresentation_value;
     static {
         // initialize resource bundle

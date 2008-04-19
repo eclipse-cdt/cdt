@@ -75,6 +75,6 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 	}
 
 	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
+		throw new PDOMNotImplementedError("In " + getClass().getCanonicalName()); //$NON-NLS-1$
 	}	
 }

@@ -50,9 +50,126 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBase {
 	public static class SingleProject extends IndexCPPTemplateResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
+		
+	    // template<typename _TpAllocator>
+	    // class Allocator {
+	    // public:
+	    //   typedef _TpAllocator& alloc_reference;
+	    //   template<typename _TpRebind>
+	    //   struct rebind {
+	    //     typedef Allocator<_TpRebind> other;
+	    //   };
+	    // };
+	    //
+	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+	    // class Vec {
+	    // public:
+	    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
+	    // };
+
+		// void f(Vec<int>::reference r) {}
+	    public void testRebindPattern_214017_1() throws Exception {
+	        IBinding b0= getBindingFromASTName("r)", 1);
+	        assertInstance(b0, ICPPVariable.class);
+			IType type = ((ICPPVariable) b0).getType();
+			type = SemanticUtil.getUltimateType(type, false);
+			assertInstance(type, IBasicType.class);
+			assertEquals("int", ASTTypeUtil.getType(type));
+	    }
+
+	    // template<typename _TpAllocator>
+	    // class Allocator {
+	    // public:
+	    //   typedef _TpAllocator& alloc_reference;
+	    //   template<typename _TpRebind>
+	    //   struct rebind {
+	    //     typedef Allocator<_TpRebind> other;
+	    //   };
+	    // };
+	    //
+	    // template<typename _TpBase, typename _AllocBase>
+	    // class VecBase {
+	    // public:
+	    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
+	    // };
+	    //
+	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+	    // class Vec : protected VecBase<_Tp, _Alloc> {
+	    // public:
+	    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+	    // };
+
+	    // void f(Vec<int>::reference r) {}
+	    public void testRebindPattern_214017_2() throws Exception {
+	        IBinding b0= getBindingFromASTName("r)", 1);
+	        assertInstance(b0, ICPPVariable.class);
+			IType type = ((ICPPVariable) b0).getType();
+			type = SemanticUtil.getUltimateType(type, false);
+			assertInstance(type, IBasicType.class);
+			assertEquals("int", ASTTypeUtil.getType(type));
+	    }
 	}
+	
 	public static class ProjectWithDepProj extends IndexCPPTemplateResolutionTest {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
+		
+	    // template<typename _TpAllocator>
+	    // class Allocator {
+	    // public:
+	    //   typedef _TpAllocator& alloc_reference;
+	    //   template<typename _TpRebind>
+	    //   struct rebind {
+	    //     typedef Allocator<_TpRebind> other;
+	    //   };
+	    // };
+	    //
+	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+	    // class Vec {
+	    // public:
+	    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
+	    // };
+
+		// void f(Vec<int>::reference r) {}
+	    public void _testRebindPattern_214017_1() throws Exception {
+	        IBinding b0= getBindingFromASTName("r)", 1);
+	        assertInstance(b0, ICPPVariable.class);
+			IType type = ((ICPPVariable) b0).getType();
+			type = SemanticUtil.getUltimateType(type, false);
+			assertInstance(type, IBasicType.class);
+			assertEquals("int", ASTTypeUtil.getType(type));
+	    }
+
+	    // template<typename _TpAllocator>
+	    // class Allocator {
+	    // public:
+	    //   typedef _TpAllocator& alloc_reference;
+	    //   template<typename _TpRebind>
+	    //   struct rebind {
+	    //     typedef Allocator<_TpRebind> other;
+	    //   };
+	    // };
+	    //
+	    // template<typename _TpBase, typename _AllocBase>
+	    // class VecBase {
+	    // public:
+	    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
+	    // };
+	    //
+	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+	    // class Vec : protected VecBase<_Tp, _Alloc> {
+	    // public:
+	    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+	    // };
+
+	    // void f(Vec<int>::reference r) {}
+	    public void _testRebindPattern_214017_2() throws Exception {
+	        IBinding b0= getBindingFromASTName("r)", 1);
+	        assertInstance(b0, ICPPVariable.class);
+			IType type = ((ICPPVariable) b0).getType();
+			type = SemanticUtil.getUltimateType(type, false);
+			assertInstance(type, IBasicType.class);
+			assertEquals("int", ASTTypeUtil.getType(type));
+	    }
 	}
 	
 	public static void addTests(TestSuite suite) {		
@@ -857,20 +974,21 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     // class Allocator {
     // public:
     //   typedef _TpAllocator& alloc_reference;
-    //   template<typename _TpRebind>
-    //   struct rebind {
-    //     typedef Allocator<_TpRebind> other;
-    //   };
     // };
-    //
+	//
+    // template<typename _TpRebind>
+    // struct rebind {
+    //   typedef Allocator<_TpRebind> other;
+    // };
+	//
     // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
     // class Vec {
     // public:
-    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
+    //   typedef typename rebind<_Tp>::other::alloc_reference reference;
     // };
 
 	// void f(Vec<int>::reference r) {}
-    public void _testRebindPattern_214017_1() throws Exception {
+    public void testTemplateTypedef_214447() throws Exception {
         IBinding b0= getBindingFromASTName("r)", 1);
         assertInstance(b0, ICPPVariable.class);
 		IType type = ((ICPPVariable) b0).getType();
@@ -879,49 +997,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("int", ASTTypeUtil.getType(type));
     }
 
-    // template<typename _TpAllocator>
-    // class Allocator {
-    // public:
-    //   typedef _TpAllocator& alloc_reference;
-    //   template<typename _TpRebind>
-    //   struct rebind {
-    //     typedef Allocator<_TpRebind> other;
-    //   };
-    // };
-    //
-    // template<typename _TpBase, typename _AllocBase>
-    // class VecBase {
-    // public:
-    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
-    // };
-    //
-    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-    // class Vec : protected VecBase<_Tp, _Alloc> {
-    // public:
-    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
-    // };
-    //
-    // class A {};
-
-    // void f(Vec<A>::reference r) {}
-    public void _testRebindPattern_214017_2() throws Exception {
-        IBinding b0= getBindingFromASTName("r)", 1);
-        assertInstance(b0, ICPPVariable.class);
-		IType type = ((ICPPVariable) b0).getType();
-		assertInstance(type, ICPPSpecialization.class);
-		ITypedef typedef = (ITypedef) type;
-		ICPPTemplateInstance scope = (ICPPTemplateInstance) typedef.getScope();
-		ObjectMap am = scope.getArgumentMap();
-		ObjectMap argumentMap = ((ICPPSpecialization) type).getArgumentMap();
-		ICPPClassType par1 = (ICPPClassType) argumentMap.getAt(0);  // A
-		ICPPTemplateInstance par2 = (ICPPTemplateInstance) argumentMap.getAt(1); // Allocator <> CPP_DEFERRED_CLASS_INSTANCE
-		IType[] par2Arguments = par2.getArguments();  // [_Tp CPP_TEMPLATE_TYPE_PARAMETER]
-		ObjectMap par2ArgumentMap = par2.getArgumentMap();
-		type = SemanticUtil.getUltimateType(type, false);
-		assertInstance(type, ICPPClassType.class);
-		assertEquals("A", ((ICPPClassType) type).getName());
-    }
-    
 	//	class A {}; class B {}; class X {};	
 	//	template<typename T>
 	//	class C {

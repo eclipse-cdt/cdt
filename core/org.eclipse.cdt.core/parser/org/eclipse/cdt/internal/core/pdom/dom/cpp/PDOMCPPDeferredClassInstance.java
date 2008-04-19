@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 		ICPPClassType, IPDOMMemberOwner, IIndexType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
@@ -84,7 +83,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	}
 	
 	public boolean isSameType(IType type) {
-        if( type instanceof PDOMNode ) {
+        if (type instanceof PDOMNode) {
 			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM() && node.getRecord() == getRecord()) {
 				return true;
@@ -94,12 +93,13 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 		ICPPClassTemplate classTemplate = (ICPPClassTemplate) getTemplateDefinition();
 		
 		//allow some fuzziness here.
-		if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType ){
+		if (type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType) {
 			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((ICPPDeferredTemplateInstance)type).getSpecializedBinding();
-			return (typeClass == classTemplate );
-		} else if( type instanceof ICPPClassTemplate && classTemplate == type ){
+			return typeClass == classTemplate;
+		} else if (type instanceof ICPPClassTemplate && classTemplate == type) {
 			return true;
-		} else if( type instanceof ICPPTemplateInstance && ((ICPPTemplateInstance)type).getTemplateDefinition() == classTemplate ){
+		} else if (type instanceof ICPPTemplateInstance &&
+				((ICPPTemplateInstance)type).getTemplateDefinition() == classTemplate) {
 			return true;
 		}
 		return false;
@@ -111,18 +111,18 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	
 	/**
 	 * @param argMap
-	 * @return
+	 * @return This class instance re-instantiated with resolved template arguments.
 	 */
 	public IType instantiate(ObjectMap argMap) {
 		IType[] arguments = getArguments();
 		
-		IType [] newArgs = new IType[ arguments.length ];
+		IType[] newArgs = new IType[arguments.length];
 		int size = arguments.length;
-		for( int i = 0; i < size; i++ ){
-			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap );
+		for (int i = 0; i < size; i++) {
+			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap);
 		}
 		
-		return (IType) ((ICPPInternalTemplateInstantiator)getTemplateDefinition()).instantiate( newArgs );
+		return (IType) ((ICPPInternalTemplateInstantiator) getTemplateDefinition()).instantiate(newArgs);
 	}
 	
 	public void addMember(PDOMNode member) throws CoreException {

@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmentBinding {
 	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
@@ -72,7 +71,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 * 
 	 * @param pdom
 	 * @param record
-	 * @return
+	 * @return <code>true</code> if the binding is orphaned.
 	 * @throws CoreException
 	 */
 	public static boolean isOrphaned(PDOM pdom, int record) throws CoreException {
@@ -189,10 +188,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	public IIndexScope getParent() {
 		try {
 			IBinding parent = getParentBinding();
-			if(parent instanceof IIndexScope) {
+			if (parent instanceof IIndexScope) {
 				return (IIndexScope) parent;
 			}
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 		}
 		return null;
@@ -201,10 +200,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	public final IIndexScope getScope() {
 		try {
 			IBinding parent = getParentBinding(); 
-			if(parent instanceof IIndexScope) {
+			if (parent instanceof IIndexScope) {
 				return (IIndexScope) parent;
 			}
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 		}
 		return null;
@@ -233,7 +232,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	public String toString() {
 		try {
 			return getName() + " " + getConstantNameForValue(getLinkageImpl(), getNodeType());  //$NON-NLS-1$
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			return getName() + " " + getNodeType();  //$NON-NLS-1$
 		}
 	}
@@ -242,7 +241,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 * For debug purposes only.
 	 * @param linkage
 	 * @param value
-	 * @return
+	 * @return String representation of <code>value</code>. 
 	 */
 	protected static String getConstantNameForValue(PDOMLinkage linkage, int value) {
 		Class<? extends PDOMLinkage> c= linkage.getClass();
@@ -250,16 +249,16 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		for (int i = 0; i < fields.length; i++) {
 			try {
 				fields[i].setAccessible(true);
-				if((fields[i].getModifiers() & Modifier.STATIC) != 0) {
-					if(int.class.equals(fields[i].getType())) {
+				if ((fields[i].getModifiers() & Modifier.STATIC) != 0) {
+					if (int.class.equals(fields[i].getType())) {
 						int fvalue= fields[i].getInt(null);
-						if(fvalue == value)
+						if (fvalue == value)
 							return fields[i].getName();
 					}
 				}
-			} catch(IllegalAccessException iae) {
+			} catch (IllegalAccessException iae) {
 				continue;
-			} catch(IllegalArgumentException iae) {
+			} catch (IllegalArgumentException iae) {
 				continue;
 			}
 		}
@@ -269,7 +268,9 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	/**
      * Convenience method to shorten subclass file length
      */
-	protected final void fail() { throw new PDOMNotImplementedError(); }
+	protected final void fail() {
+		throw new PDOMNotImplementedError("in " + getClass().getCanonicalName()); //$NON-NLS-1$
+	}
 	
 	public PDOMName getScopeName() {
 		try {
@@ -294,7 +295,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 				node = node.getParentNode();
 			}
 			return result.toArray(new String[result.size()]);
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 			return null;
 		}
@@ -305,7 +306,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	}
 
 	public boolean hasDefinition() throws CoreException {
-		return getFirstDefinition()!=null;
+		return getFirstDefinition() != null;
 	}
 
 	/**
@@ -332,7 +333,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 			do {
 				IString s0 = b0.getDBName(), s1 = b1.getDBName();
 				cmp = s0.compare(s1, true);
-				if(cmp==0) {
+				if (cmp == 0) {
 					int l1= b0.getLocalToFileRec();
 					int l2= b1.getLocalToFileRec();
 					if (l1 != l2) {
@@ -340,13 +341,13 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 					}
 					b0 = (PDOMBinding) b0.getParentBinding();
 					b1 = (PDOMBinding) b1.getParentBinding();
-					if(b0==null || b1==null) {
-						cmp = b0==b1 ? 0 : (b0==null ? -1 : 1);
+					if (b0 == null || b1 == null) {
+						cmp = b0 == b1 ? 0 : (b0 == null ? -1 : 1);
 					}
 				}
-			} while(cmp==0 && b1!=null && b0!=null);
+			} while(cmp == 0 && b1 != null && b0 != null);
 			return cmp;
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 			return -1;
 		}
@@ -356,7 +357,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 * Compares two PDOMBinding objects in accordance with 
 	 * {@link IIndexFragmentBindingComparator#compare(IIndexFragmentBinding, IIndexFragmentBinding)}
 	 * @param other
-	 * @return
+	 * @return comparison result, -1, 0, or 1.
 	 */
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp = comparePDOMBindingQNs(this, other);
@@ -412,7 +413,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return getBindings(name, resolve, prefix, null);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix, IIndexFileSet fileSet)
+			throws DOMException {
 		return null;
 	}
 }

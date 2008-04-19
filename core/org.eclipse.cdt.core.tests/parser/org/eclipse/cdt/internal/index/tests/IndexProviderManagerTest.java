@@ -316,18 +316,19 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	public void testIndexFactoryConfigurationUsage() throws Exception {
 		IIndex index;
 		
-		ICProject cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
-		IProject project= cproject.getProject();
-		
-		ICProjectDescription pd= core.getProjectDescription(project);
-		ICConfigurationDescription cfg1= newCfg(pd, "project", "config1");
-		ICConfigurationDescription cfg2= newCfg(pd, "project", "config2");
-		core.setProjectDescription(project, pd);
-		
-		index= CCorePlugin.getIndexManager().getIndex(cproject);
-		CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
-		
+		ICProject cproject = null;
 		try {
+			cproject = CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
+			IProject project= cproject.getProject();
+			
+			ICProjectDescription pd= core.getProjectDescription(project);
+			ICConfigurationDescription cfg1= newCfg(pd, "project", "config1");
+			ICConfigurationDescription cfg2= newCfg(pd, "project", "config2");
+			core.setProjectDescription(project, pd);
+			
+			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
+		
 			DPT.reset(DP1);
 			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());

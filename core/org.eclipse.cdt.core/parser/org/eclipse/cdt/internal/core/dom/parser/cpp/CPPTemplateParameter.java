@@ -86,7 +86,6 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
 	 */
 	public boolean isGloballyQualified() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -51,7 +52,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		ICPPClassType, ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
@@ -120,30 +120,31 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 	
 	public boolean isSameType(IType type) {
-        if( type instanceof PDOMNode ) {
+        if (type instanceof PDOMNode) {
 			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM() && node.getRecord() == getRecord()) {
 				return true;
 			}
         }
-        if( type instanceof ITypedef )
-            return ((ITypedef)type).isSameType( this );
-        if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType )
-        	return type.isSameType( this );  //the CPPDeferredClassInstance has some fuzziness
+        if (type instanceof ITypedef)
+            return ((ITypedef)type).isSameType(this);
+        if (type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType)
+        	return type.isSameType(this);  //the CPPDeferredClassInstance has some fuzziness
         
-        if( type instanceof ICPPTemplateInstance ){
+        if (type instanceof ICPPTemplateInstance) {
         	ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();
         	ICPPClassType ct2= (ICPPClassType) ((ICPPTemplateInstance)type).getTemplateDefinition();
-        	if(!ct1.isSameType(ct2))
+        	if (!ct1.isSameType(ct2))
         		return false;
         	
-        	ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)type).getArgumentMap();
-        	if( m1 == null || m2 == null || m1.size() != m2.size())
+        	ObjectMap m1 = getArgumentMap();
+        	ObjectMap m2 = ((ICPPTemplateInstance) type).getArgumentMap();
+        	if (m1 == null || m2 == null || m1.size() != m2.size())
         		return false;
-        	for( int i = 0; i < m1.size(); i++ ){
-        		IType t1 = (IType) m1.getAt( i );
-        		IType t2 = (IType) m2.getAt( i );
-        		if( t1 == null || ! t1.isSameType( t2 ) )
+        	for (int i = 0; i < m1.size(); i++) {
+        		IType t1 = (IType) m1.getAt(i);
+        		IType t2 = (IType) m2.getAt(i);
+        		if (t1 == null || !t1.isSameType(t2))
         			return false;
         	}
         	return true;
@@ -165,6 +166,11 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 	
+	@Override
+	public boolean isGloballyQualified() throws DOMException {
+		return ((ICPPBinding) getSpecializedBinding()).isGloballyQualified();
+	}
+
 	//ICPPClassType unimplemented
 	public IField findField(String name) throws DOMException { fail(); return null; }
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException { fail(); return null; }
@@ -211,8 +217,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 					result[i] = specialization;
 				} else {
 					result[i] = CPPTemplates.createSpecialization(
-							PDOMCPPClassInstance.this, (IBinding) specMap
-									.keyAt(i), getArgumentMap());
+							PDOMCPPClassInstance.this, (IBinding) specMap.keyAt(i), getArgumentMap());
 				}
 			}
 			return result;
@@ -220,7 +225,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 	
 	public IBinding[] find(String name) throws DOMException {
-		return CPPSemantics.findBindings( this, name, false );
+		return CPPSemantics.findBindings(this, name, false);
 	}
 	
 	@Override
@@ -228,14 +233,14 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 			throws DOMException {
 		try {			
 		    if (getDBName().equals(name.toCharArray())) {
-		        if (!CPPClassScope.isConstructorReference(name)){
+		        if (!CPPClassScope.isConstructorReference(name)) {
 		        	//9.2 ... The class-name is also inserted into the scope of the class itself
 		        	return this;
 		        }
 		    }
-			
-			IBinding[] specialized = ((ICPPClassType) getTemplateDefinition())
-					.getCompositeScope().getBindings(name, resolve, false);			
+
+		    IScope scope = ((ICPPClassType) getTemplateDefinition()).getCompositeScope();
+			IBinding[] specialized = scope.getBindings(name, resolve, false);			
 			SpecializationFinder visitor = new SpecializationFinder(specialized);
 			accept(visitor);
 			return CPPSemantics.resolveAmbiguities(name, visitor.getSpecializations());
@@ -246,7 +251,8 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 	
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
+			throws DOMException {
 		IBinding[] result = null;
 		try {
 			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
@@ -256,8 +262,8 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 					result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
 			}
 
-			IBinding[] specialized = ((ICPPClassType) getTemplateDefinition())
-					.getCompositeScope().getBindings(name, resolve, prefixLookup);
+		    IScope scope = ((ICPPClassType) getTemplateDefinition()).getCompositeScope();
+			IBinding[] specialized = scope.getBindings(name, resolve, prefixLookup);
 			SpecializationFinder visitor = new SpecializationFinder(specialized);
 			accept(visitor);
 			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getSpecializations());

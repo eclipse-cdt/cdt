@@ -6,19 +6,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexInternalTemplateParameter;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -28,10 +34,9 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
-		ICPPTemplateTypeParameter, IIndexType, IIndexInternalTemplateParameter {
+		ICPPTemplateTypeParameter, ICPPInternalUnknown, IIndexType, IIndexInternalTemplateParameter {
 
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;	
 	
@@ -88,7 +93,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 			ICPPTemplateTypeParameter ttp= (ICPPTemplateTypeParameter) type;
 			try {
 				char[][] ttpName= ttp.getQualifiedNameCharArray();
-				return hasQualifiedName(ttpName, ttpName.length-1);
+				return hasQualifiedName(ttpName, ttpName.length - 1);
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			}
@@ -113,5 +118,29 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 	}
 	
 	@Override
-	public Object clone() { fail();return null; }
+	public Object clone() { fail(); return null; }
+
+
+	public ICPPScope getUnknownScope() {
+		return null;
+	}
+
+	public IBinding resolveUnknown(ObjectMap argMap) { fail(); return null; }
+
+	public void addDeclaration(IASTNode node) {
+	}
+	
+	public void addDefinition(IASTNode node) {
+	}
+	
+	public IASTNode[] getDeclarations() {
+		return IASTNode.EMPTY_NODE_ARRAY;
+	}
+
+	public IASTNode getDefinition() {
+		return null;
+	}
+
+	public void removeDeclaration(IASTNode node) {
+	}
 }

@@ -108,8 +108,19 @@ public abstract class CPPUnknownBinding extends PlatformObject
             t = SemanticUtil.getUltimateType(t, false);
 	        if (t instanceof ICPPClassType) {
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
-	            if (s != null && ASTInternal.isFullyCached(s))
-	            	result = s.getBinding(name, true);
+	            if (s != null && ASTInternal.isFullyCached(s)) {
+	            	// If name did not come from an AST but was created just to encapsulate
+	            	// a simple identifier, we should not use getBinding method since it may
+	            	// lead to a NullPointerException.
+	            	if (name.getParent() != null) {
+	            		result = s.getBinding(name, true);
+	            	} else {
+		            	IBinding[] bindings = s.find(name.toString());
+		            	if (bindings != null && bindings.length > 0) {
+		            		result = bindings[0];
+		            	}
+	            	}
+	            }
 	        } else if (t instanceof ICPPInternalUnknown) {
 	            result = resolvePartially((ICPPInternalUnknown) t, argMap);
 	        }

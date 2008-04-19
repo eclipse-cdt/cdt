@@ -236,35 +236,37 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup);
 
 		final IASTTranslationUnit tu = name.getTranslationUnit();
-		IIndex index = tu.getIndex();
-		if (index != null) {
-			if (physicalNode instanceof IASTTranslationUnit) {
-				try {
-					IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT;
-					IBinding[] bindings = prefixLookup ?
-							index.findBindingsForPrefix(name.toCharArray(), true, filter, null) :
-							index.findBindings(name.toCharArray(), filter, null);
-					if (fileSet != null) {
-						bindings= fileSet.filterFileLocalBindings(bindings);
-					}
-					result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-			} else if (physicalNode instanceof ICPPASTNamespaceDefinition) {
-				ICPPASTNamespaceDefinition ns = (ICPPASTNamespaceDefinition) physicalNode;
-				try {
-					IIndexBinding binding = index.findBinding(ns.getName());
-					if (binding instanceof ICPPNamespace) {
-						ICPPNamespaceScope indexNs = ((ICPPNamespace)binding).getNamespaceScope();
-						IBinding[] bindings = indexNs.getBindings(name, resolve, prefixLookup);
+		if (tu != null) {
+			IIndex index = tu.getIndex();
+			if (index != null) {
+				if (physicalNode instanceof IASTTranslationUnit) {
+					try {
+						IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT;
+						IBinding[] bindings = prefixLookup ?
+								index.findBindingsForPrefix(name.toCharArray(), true, filter, null) :
+								index.findBindings(name.toCharArray(), filter, null);
 						if (fileSet != null) {
 							bindings= fileSet.filterFileLocalBindings(bindings);
 						}
 						result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
 					}
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
+				} else if (physicalNode instanceof ICPPASTNamespaceDefinition) {
+					ICPPASTNamespaceDefinition ns = (ICPPASTNamespaceDefinition) physicalNode;
+					try {
+						IIndexBinding binding = index.findBinding(ns.getName());
+						if (binding instanceof ICPPNamespace) {
+							ICPPNamespaceScope indexNs = ((ICPPNamespace)binding).getNamespaceScope();
+							IBinding[] bindings = indexNs.getBindings(name, resolve, prefixLookup);
+							if (fileSet != null) {
+								bindings= fileSet.filterFileLocalBindings(bindings);
+							}
+							result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+						}
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
 				}
 			}
 		}

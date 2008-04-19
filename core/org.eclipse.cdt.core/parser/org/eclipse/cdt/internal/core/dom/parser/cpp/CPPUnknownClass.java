@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  */
 public class CPPUnknownClass extends CPPUnknownBinding implements ICPPInternalUnknownClassType {
 
-
     public CPPUnknownClass(ICPPInternalUnknown scopeBinding, IASTName name) {
         super(scopeBinding, name);
     }

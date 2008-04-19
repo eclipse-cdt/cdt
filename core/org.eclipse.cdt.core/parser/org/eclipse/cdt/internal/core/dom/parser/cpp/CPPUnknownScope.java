@@ -11,10 +11,6 @@
  *     Bryan Wilkinson (QNX)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
-/*
- * Created on May 3, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -30,13 +26,12 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * @author aniefer
  */
-public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
+public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     private final ICPPInternalUnknown binding;
     private final IASTName scopeName;
     private CharArrayObjectMap map;
@@ -167,6 +162,13 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
 
 	public void addBinding(IBinding binding) {
 		// do nothing, this is part of template magic and not a normal scope
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope#getUnknownBinding()
+	 */
+	public ICPPInternalUnknown getScopeBinding() {
+		return binding;
 	}
 
 	/* (non-Javadoc)

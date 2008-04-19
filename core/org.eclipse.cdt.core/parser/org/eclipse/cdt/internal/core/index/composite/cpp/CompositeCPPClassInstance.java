@@ -23,11 +23,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPClassInstance extends CompositeCPPClassType implements
-ICPPClassType, IIndexType, ICPPTemplateInstance, ICPPSpecialization {
+public class CompositeCPPClassInstance extends CompositeCPPClassType
+		implements ICPPTemplateInstance, ICPPSpecialization {
 
 	public CompositeCPPClassInstance(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
@@ -37,12 +36,12 @@ ICPPClassType, IIndexType, ICPPTemplateInstance, ICPPSpecialization {
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		ICPPClassType specialized = (ICPPClassType) getSpecializedBinding();
 		ICPPMethod[] bindings = specialized.getDeclaredMethods();
-		for(int i=0; i<bindings.length; i++) {
+		for (int i = 0; i < bindings.length; i++) {
 			bindings[i]= (ICPPMethod) CPPTemplates.createSpecialization((ICPPScope)getScope(), (IIndexBinding) bindings[i], getArgumentMap());
 		}
 		return bindings;
 	}	
-	
+
 	public ObjectMap getArgumentMap() {	return TemplateInstanceUtil.getArgumentMap(cf, rbinding); }
 	public IBinding getSpecializedBinding() { return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
 	public IType[] getArguments() {	return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding); }

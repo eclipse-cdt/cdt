@@ -2338,7 +2338,7 @@ public class CPPSemantics {
 		return findBindings( scope, name.toCharArray(), qualified );
 	}
 	
-	public static IBinding[] findBindings( IScope scope, char []name, boolean qualified ) throws DOMException{
+	public static IBinding[] findBindings( IScope scope, char[] name, boolean qualified ) throws DOMException{
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName( name );
 	    astName.setParent( ASTInternal.getPhysicalNodeOfScope(scope));

@@ -56,4 +56,6 @@ public interface IIndexCPPBindingConstants {
 	 int CPP_FUNCTION_TYPE= IIndexBindingConstants.LAST_CONSTANT + 39;
 	 int GPPBASICTYPE = IIndexBindingConstants.LAST_CONSTANT + 40;
 	 int CPP_USING_DECLARATION= IIndexBindingConstants.LAST_CONSTANT + 41;
+	 int CPP_UNKNOWN_CLASS_TYPE= IIndexBindingConstants.LAST_CONSTANT + 42;
+	 int CPP_UNKNOWN_CLASS_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 43;
 }

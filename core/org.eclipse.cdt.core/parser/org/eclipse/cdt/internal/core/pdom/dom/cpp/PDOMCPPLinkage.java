@@ -71,7 +71,10 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -410,9 +413,17 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPFunction) {
 			pdomBinding = new PDOMCPPFunction(pdom, parent, (ICPPFunction) binding, true);
 		} else if (binding instanceof ICPPClassTemplate) {
-			pdomBinding= new PDOMCPPClassTemplate(pdom, parent, (ICPPClassTemplate) binding);
+			if (binding instanceof ICPPInternalUnknownClassInstance) {
+				pdomBinding= new PDOMCPPUnknownClassInstance(pdom, parent, (ICPPInternalUnknownClassInstance) binding);
+			} else {
+				pdomBinding= new PDOMCPPClassTemplate(pdom, parent, (ICPPClassTemplate) binding);
+			}
 		} else if (binding instanceof ICPPClassType) {
-			pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
+			if (binding instanceof ICPPInternalUnknown) {
+				pdomBinding= new PDOMCPPUnknownClassType(pdom, parent, (ICPPInternalUnknownClassType) binding);
+			} else {
+				pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
+			}
 		} else if (binding instanceof ICPPNamespaceAlias) {
 			pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, (ICPPNamespaceAlias) binding);
 		} else if (binding instanceof ICPPNamespace) {
@@ -488,6 +499,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					return CPP_DEFERRED_FUNCTION_INSTANCE;
 				} else if (binding instanceof ICPPClassType) {
 					return CPP_DEFERRED_CLASS_INSTANCE;
+				}
+			} else if (binding instanceof ICPPInternalUnknown) {
+				if (binding instanceof ICPPInternalUnknownClassInstance) {
+					return CPP_UNKNOWN_CLASS_INSTANCE;
+				} else if (binding instanceof ICPPInternalUnknownClassType) {
+					return CPP_UNKNOWN_CLASS_TYPE;
 				}
 			} else if (binding instanceof ICPPTemplateInstance) {
 				if (binding instanceof ICPPConstructor) {
@@ -594,6 +611,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding,
 					localToFileRec);
 		}
+		// TODO(sprigogin): Hack. There should be a better way to adapt unknown bindings.
+		if (parent instanceof ICPPInternalUnknown) {
+			if (binding instanceof ICPPInternalUnknownClassInstance) {
+				return new PDOMCPPUnknownClassInstance(getPDOM(), parent, (ICPPInternalUnknownClassInstance) binding);
+			} else if (binding instanceof ICPPInternalUnknownClassType) {
+				return new PDOMCPPUnknownClassType(getPDOM(), parent, (ICPPInternalUnknownClassType) binding);
+			}
+		}
 		if (parent instanceof IPDOMMemberOwner) {
 			int localToFileRec= getLocalToFileRec(parent, binding);
 			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec);
@@ -650,10 +675,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  
  				if (scope instanceof IIndexScope) {
  					if (scope instanceof CompositeScope) { // we special case for performance
- 						return addaptOrAddBinding(addParent, ((CompositeScope)scope).getRawScopeBinding());
- 					} else {
- 						return addaptOrAddBinding(addParent, ((IIndexScope) scope).getScopeBinding());
+ 						return addaptOrAddBinding(addParent, ((CompositeScope) scope).getRawScopeBinding());
  					}
+ 					return addaptOrAddBinding(addParent, ((IIndexScope) scope).getScopeBinding());
  				}
  
  				// the scope is from the ast
@@ -683,6 +707,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  				} else {
  					if (scope instanceof ICPPClassScope) {
  						scopeBinding = ((ICPPClassScope)scope).getClassType();
+ 					} else if (scope instanceof ICPPInternalUnknownScope) {
+ 						scopeBinding = ((ICPPInternalUnknownScope) scope).getScopeBinding();
  					} else {
  						IName scopeName = scope.getScopeName();
  						if (scopeName instanceof IASTName) {
@@ -691,16 +717,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  					}
  				}
  			}
- 			if (scopeBinding != null && scopeBinding != binding) 
+ 			if (scopeBinding != null && scopeBinding != binding) {
  				return addaptOrAddBinding(addParent, scopeBinding);
- 			
+ 			}
  		} catch (DOMException e) {
  			throw new CoreException(Util.createStatus(e));
  		}
  		return null;
  	}
 
-	private PDOMBinding addaptOrAddBinding(boolean add, IBinding binding)	throws CoreException {
+	private PDOMBinding addaptOrAddBinding(boolean add, IBinding binding) throws CoreException {
 		if (add) 
 			return addBinding(binding, null);
 
@@ -830,6 +856,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPClassInstance(pdom, record);
 		case CPP_DEFERRED_CLASS_INSTANCE:
 			return new PDOMCPPDeferredClassInstance(pdom, record);
+		case CPP_UNKNOWN_CLASS_TYPE:
+			return new PDOMCPPUnknownClassType(pdom, record);
+		case CPP_UNKNOWN_CLASS_INSTANCE:
+			return new PDOMCPPUnknownClassInstance(pdom, record);
 		case CPP_TEMPLATE_TYPE_PARAMETER:
 			return new PDOMCPPTemplateTypeParameter(pdom, record);
 // TODO other template parameter types

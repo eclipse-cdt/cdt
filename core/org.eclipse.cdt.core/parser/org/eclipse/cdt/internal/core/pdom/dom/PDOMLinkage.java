@@ -111,7 +111,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	/**
 	 * Returns the BTree for the nested bindings.
-	 * @return
 	 * @throws CoreException
 	 */
 	public BTree getNestedBindingsIndex() throws CoreException {
@@ -119,7 +118,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	@Override
-	@SuppressWarnings("hiding")
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
@@ -151,7 +149,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		getIndex().insert(child.getRecord());
 	}
 
-	@SuppressWarnings("hiding")
 	public PDOMNode getNode(int record) throws CoreException {
 		switch (PDOMNode.getNodeType(pdom, record)) {
 		case POINTER_TYPE:
@@ -296,12 +293,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	/**
 	 * Callback informing the linkage that a name is about to be deleted. This is
 	 * used to do additional processing, like removing inheritance relationships.
-	 * @param pdomName the name that was inserted into the linkage
-	 * @param name the name that caused the insertion
+	 * @param name the name that is about to be deleted
 	 * @throws CoreException 
 	 * @since 4.0
 	 */
-	public void onDeleteName(PDOMName nextName) throws CoreException {
+	public void onDeleteName(PDOMName name) throws CoreException {
 	}
 
 	/**

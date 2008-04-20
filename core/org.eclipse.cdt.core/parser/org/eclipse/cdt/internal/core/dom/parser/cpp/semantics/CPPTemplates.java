@@ -689,8 +689,8 @@ public class CPPTemplates {
 	}
 
 	/**
-	 * @param type
-	 * @param arguments
+	 * @param type a type to instantiate.
+	 * @param argMap a mapping between template parameters and the corresponding arguments.
 	 */
 	public static IType instantiateType(IType type, ObjectMap argMap) {
 		if (argMap == null)

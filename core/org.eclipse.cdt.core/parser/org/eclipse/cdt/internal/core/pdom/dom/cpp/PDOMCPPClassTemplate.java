@@ -149,6 +149,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	@Override
 	// this is actually wrong, the undeclared bindings should be filtered out. However, that causes
 	// some of the test cases to fail. --> need to look into this.
+	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=227967
 	protected IndexFilter getFilterForBindingsOfScope() {
 		return IndexFilter.ALL;
 	}

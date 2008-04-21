@@ -108,6 +108,50 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 			assertInstance(type, IBasicType.class);
 			assertEquals("int", ASTTypeUtil.getType(type));
 	    }
+
+	    // template<typename _TpAllocatorForward>
+	    // class Allocator;
+        //
+		// template<>
+		// class Allocator<void> {
+		// public:
+		//   template<typename _TpRebind>
+		//   struct rebind {
+		//	   typedef Allocator<_TpRebind> other;
+		//   };
+		// };
+	    //
+	    // template<typename _TpAllocator>
+	    // class Allocator {
+	    // public:
+	    //   typedef _TpAllocator& alloc_reference;
+	    //   template<typename _TpRebind>
+	    //   struct rebind {
+	    //     typedef Allocator<_TpRebind> other;
+	    //   };
+	    // };
+	    //
+	    // template<typename _TpBase, typename _AllocBase>
+	    // class VecBase {
+	    // public:
+	    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
+	    // };
+	    //
+	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+	    // class Vec : protected VecBase<_Tp, _Alloc> {
+	    // public:
+	    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+	    // };
+
+	    // void f(Vec<int>::reference r) {}
+	    public void _testRebindPattern_214017_3() throws Exception {
+	        IBinding b0= getBindingFromASTName("r)", 1);
+	        assertInstance(b0, ICPPVariable.class);
+			IType type = ((ICPPVariable) b0).getType();
+			type = SemanticUtil.getUltimateType(type, false);
+			assertInstance(type, IBasicType.class);
+			assertEquals("int", ASTTypeUtil.getType(type));
+	    }
 	}
 	
 	public static class ProjectWithDepProj extends IndexCPPTemplateResolutionTest {

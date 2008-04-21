@@ -87,7 +87,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 
 			// The file is not already in the workspace so try to create an external translation unit for it.
 			ISourceLookupDirector director = getDirector();
-			if (director != null)
+			if (director != null && file.exists() && file.isFile() )
 			{
 				ILaunchConfiguration launchConfiguration = director.getLaunchConfiguration();
 				if (launchConfiguration != null)

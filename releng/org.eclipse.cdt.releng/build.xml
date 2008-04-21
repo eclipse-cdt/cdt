@@ -392,6 +392,15 @@
 			<param name="tagmodule" value="org.eclipse.cdt/util/org.eclipse.cdt.util-feature"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn.ui"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn-feature"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/releng/org.eclipse.cdt.master"/>
 		</antcall>
 	</target>

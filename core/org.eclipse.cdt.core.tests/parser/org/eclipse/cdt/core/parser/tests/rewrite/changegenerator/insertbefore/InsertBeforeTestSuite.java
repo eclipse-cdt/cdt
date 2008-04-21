@@ -30,6 +30,7 @@ public class InsertBeforeTestSuite{
 		suite.addTest(ArrayModifierTest.suite());
 		suite.addTest(ExpressionTest.suite());
 		suite.addTest(ArraySizeExpressionTest.suite());
+		suite.addTest(AddDeclarationBug.suite());
 				
 		return suite;
 	}

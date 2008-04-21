@@ -233,7 +233,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 		int lastCommonPositionInSynthCode = codeComparer
 				.getLastCommonPositionInSynthCode();
 		int firstPositionOfCommonEndInSynthCode = codeComparer
-				.getFirstPositionOfCommonEndInSynthCode(lastCommonPositionInSynthCode);
+				.getFirstPositionOfCommonEndInSynthCode(lastCommonPositionInSynthCode, lastCommonPositionInOriginalCode);
 
 		int firstPositionOfCommonEndInOriginalCode = codeComparer
 				.getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInSynthCode);
@@ -444,35 +444,50 @@ public class ChangeGenerator extends CPPASTVisitor {
 			return originalCode.length() - lastCommonPosition;
 		}
 
-		public int getFirstPositionOfCommonEndInSynthCode(int limmit) {
+		public int getFirstPositionOfCommonEndInSynthCode(int limmit, int lastCommonPositionInOriginal) {
 
-			int lastCommonPosition = -1;
+			int lastCommonPosition = 0;
 			int originalCodePosition = -1;
 			int synthCodePosition = -1;
+			int korOffset = 0;
 
 			StringBuilder reverseOriginalCode = new StringBuilder(originalCode)
-					.reverse();
+			.reverse();
 			StringBuilder reverseSynthCode = new StringBuilder(synthCode)
-					.reverse();
+			.reverse();
 
 			do {
+				if (lastCommonPosition >= 0
+						&& lastCommonPositionInOriginal >= 0
+						&& originalCode.charAt(lastCommonPositionInOriginal
+								- korOffset) == reverseSynthCode
+								.charAt(lastCommonPosition)) {
+					++korOffset;
+				} else {
+					korOffset = 0;
+				}
 				lastCommonPosition = synthCodePosition;
 				originalCodePosition = nextInterrestingPosition(
 						reverseOriginalCode, originalCodePosition);
 				synthCodePosition = nextInterrestingPosition(reverseSynthCode,
 						synthCodePosition);
+
 			} while (originalCodePosition > -1
 					&& synthCodePosition > -1
 					&& synthCodePosition < synthCode.length() - limmit
 					&& reverseOriginalCode.charAt(originalCodePosition) == reverseSynthCode
-							.charAt(synthCodePosition));
+					.charAt(synthCodePosition));
 
 			if (lastCommonPosition < 0
 					|| lastCommonPosition >= synthCode.length()) {
 				return -1;
 			}
 
-			return synthCode.length() - lastCommonPosition;
+			if (korOffset > 0) {
+				--korOffset;
+			}
+
+			return synthCode.length() - lastCommonPosition + korOffset;
 		}
 
 		private int nextInterrestingPosition(StringBuilder code, int position) {
@@ -519,13 +534,15 @@ public class ChangeGenerator extends CPPASTVisitor {
 			int lastCommonPositionInSynth = getLastCommonPositionInSynthCode();
 			int firstOfCommonEndInOriginal = getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInSynth);
 			int lastCommonPositionInOriginal = getLastCommonPositionInOriginalCode();
-			int firstOfCommonEndInSynth = getFirstPositionOfCommonEndInSynthCode(lastCommonPositionInSynth);
+			int firstOfCommonEndInSynth = getFirstPositionOfCommonEndInSynthCode(
+					lastCommonPositionInSynth, lastCommonPositionInOriginal);
 
-			if ((firstOfCommonEndInSynth >= 0 ? firstOfCommonEndInOriginal
+			int i = (firstOfCommonEndInSynth >= 0 ? firstOfCommonEndInOriginal
 					: originalCode.length())
-					- lastCommonPositionInOriginal <= 0) {
+					- lastCommonPositionInOriginal;
+			if (i <= 0) {
 				String insertCode = synthCode.substring(
-						lastCommonPositionInSynth, firstOfCommonEndInSynth + 1);
+						lastCommonPositionInSynth, firstOfCommonEndInSynth);
 				InsertEdit iEdit = new InsertEdit(changeOffset
 						+ lastCommonPositionInOriginal, insertCode);
 				edit.addChild(iEdit);

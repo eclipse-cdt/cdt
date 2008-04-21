@@ -867,4 +867,35 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
+	//	#define INIT_PTR(PtrName)   (PtrName) = 0;
+	//	struct CCApp {
+	//	   int pIShell;
+	//	};
+	//
+	//	int main(void) {
+	//	   struct CCApp *pThis = 0;
+	//	   INIT_PTR(pTh/*cursor*/);
+	//	}
+	public void testCompletionInMacroArguments1_Bug200208() throws Exception {
+		final String[] expected= {"pThis"};
+		assertCompletionResults(expected);
+	}
+
+	//	#define INIT_PTR(PtrName)   (PtrName) = 0;
+	//	#define COPY_PTR(pTarget, pSource)   (pTarget) = (pSource)
+	//
+	//	struct CCApp {
+	//	   int pIShell;
+	//	};
+	//
+	//	int main(void) {
+	//	   struct CCApp *pThis = 0;
+	//
+	//	   INIT_PTR(pThis);
+	//     COPY_PTR(pThis->pIShell, pThis->pI/*cursor*/)
+	//	}
+	public void testCompletionInMacroArguments2_Bug200208() throws Exception {
+		final String[] expected= {"pIShell"};
+		assertCompletionResults(expected);
+	}
 }

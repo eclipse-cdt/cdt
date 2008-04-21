@@ -170,15 +170,25 @@ public class MacroExpander {
 		TokenSource input= new TokenSource(lexer, stopAtNewline);
 		TokenList firstExpansion= new TokenList();
 
-		firstExpansion.append(new ExpansionBoundary(macro, true));
-		expandOne(identifier, macro, forbidden, input, firstExpansion, null);
-		firstExpansion.append(new ExpansionBoundary(macro, false));
+		TokenList result;
+		try {
+			firstExpansion.append(new ExpansionBoundary(macro, true));
+			expandOne(identifier, macro, forbidden, input, firstExpansion, null);
+			firstExpansion.append(new ExpansionBoundary(macro, false));
 
-		input.prepend(firstExpansion);
-		
-		TokenList result= expandAll(input, forbidden, isPPCondition, null);
+			input.prepend(firstExpansion);
+
+			result= expandAll(input, forbidden, isPPCondition, null);
+		}
+		catch (CompletionInMacroExpansionException e) {
+			// for content assist in macro expansions, we return the list of tokens of the 
+			// parameter at the current cursor position and hope that they make sense if 
+			// they are inserted at the position of the expansion.
+			// For a better solution one would have to perform the expansion with artificial
+			// parameters and then check where the completion token ends up in the expansion.
+			result= e.getParameterTokens().cloneTokens();
+		}
 		postProcessTokens(result);
-		
 		return result;
 	}
 
@@ -455,11 +465,17 @@ public class MacroExpander {
         	case IToken.tEND_OF_INPUT:
         		assert nesting >= 0;
         		if (fCompletionMode) {
-        			t.setType(IToken.tCOMPLETION);
+            		if (idx < result.length) {
+            			throw new CompletionInMacroExpansionException(ORIGIN, t, result[idx]);
+            		}
         			throw new OffsetLimitReachedException(ORIGIN, null);
         		}
         		break loop;
         	case IToken.tCOMPLETION:
+        		if (idx < result.length) {
+        			result[idx].append(t);
+        			throw new CompletionInMacroExpansionException(ORIGIN, t, result[idx]);
+        		}
         		throw new OffsetLimitReachedException(ORIGIN, t);
         		
         	case Lexer.tNEWLINE:
@@ -840,13 +856,12 @@ public class MacroExpander {
 			case IToken.tCHAR:
 			case IToken.tLCHAR:
 				final char[] image= t.getCharImage();
-				for (int i = 0; i < image.length; i++) {
-					final char c = image[i];
-					if (c == '"' || c == '\\') {
-						buf.append('\\');
+				for (final char c : image) {
+						if (c == '"' || c == '\\') {
+							buf.append('\\');
+						}
+						buf.append(c);
 					}
-					buf.append(c);
-				}
 				space= false;
 				break;
 			
@@ -911,6 +926,12 @@ public class MacroExpander {
 			case CPreprocessor.tNOSPACE:
 				replacement.removeBehind(l);
 				continue;
+
+			case IToken.tCOMPLETION:
+				// we need to preserve the length of the completion token.
+				t.setOffset(offset, offset+t.getLength());
+				t.setNext(null);
+				return;
 			}
 			t.setOffset(offset, ++offset);
 			l= t;

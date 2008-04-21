@@ -241,7 +241,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (binding == null) 
 			return null;
 		
-		final PDOMNode parent= getAdaptedParent(binding, true);
+		final PDOMNode parent= adaptOrAddParent(true, binding);
 		if (parent == null)
 			return null;
 		
@@ -601,7 +601,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 */
 	@Override
 	public PDOMBinding doAdaptBinding(IBinding binding) throws CoreException {
-		PDOMNode parent = getAdaptedParent(binding, false);
+		PDOMNode parent = adaptOrAddParent(false, binding);
 		if (parent == this) {
 			int localToFileRec= getLocalToFileRec(null, binding);
 			return CPPFindBinding.findBinding(getIndex(), this, binding, localToFileRec);
@@ -638,7 +638,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 * </ul>
 	 * @throws CoreException
 	 */
- 	private final PDOMNode getAdaptedParent(IBinding binding, boolean addParent) throws CoreException {
+ 	private final PDOMNode adaptOrAddParent(boolean add, IBinding binding) throws CoreException {
  		try {
  			IBinding scopeBinding = null;
  			if (binding instanceof ICPPTemplateInstance) {
@@ -653,9 +653,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  					}
  					if (scope == null) {
  						if (binding instanceof ICPPInternalUnknownClassType) {
- 							if (binding instanceof PDOMBinding) 
- 								return addaptOrAddBinding(addParent, ((PDOMBinding) binding).getParentBinding());
-
+ 							if (binding instanceof PDOMBinding) {
+ 								return adaptOrAddBinding(add, ((PDOMBinding) binding).getParentBinding());
+ 							}
  							// what if we have a composite binding??
  							return null;
  						}	
@@ -675,9 +675,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  
  				if (scope instanceof IIndexScope) {
  					if (scope instanceof CompositeScope) { // we special case for performance
- 						return addaptOrAddBinding(addParent, ((CompositeScope) scope).getRawScopeBinding());
+ 						return adaptOrAddBinding(add, ((CompositeScope) scope).getRawScopeBinding());
  					}
- 					return addaptOrAddBinding(addParent, ((IIndexScope) scope).getScopeBinding());
+ 					return adaptOrAddBinding(add, ((IIndexScope) scope).getScopeBinding());
  				}
  
  				// the scope is from the ast
@@ -718,7 +718,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  				}
  			}
  			if (scopeBinding != null && scopeBinding != binding) {
- 				return addaptOrAddBinding(addParent, scopeBinding);
+ 				return adaptOrAddBinding(add, scopeBinding);
  			}
  		} catch (DOMException e) {
  			throw new CoreException(Util.createStatus(e));
@@ -726,10 +726,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  		return null;
  	}
 
-	private PDOMBinding addaptOrAddBinding(boolean add, IBinding binding) throws CoreException {
-		if (add) 
+	private PDOMBinding adaptOrAddBinding(boolean add, IBinding binding) throws CoreException {
+		if (add) {
 			return addBinding(binding, null);
-
+		}
 		return adaptBinding(binding);
 	}
 

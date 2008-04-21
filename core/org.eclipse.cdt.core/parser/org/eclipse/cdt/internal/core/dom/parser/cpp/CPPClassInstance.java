@@ -40,11 +40,9 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 public class CPPClassInstance extends CPPInstance implements ICPPClassType {
 	private CPPClassSpecializationScope instanceScope;
 
-
 	public CPPClassInstance(ICPPScope scope, IBinding decl, ObjectMap argMap, IType[] args) {
 		super(scope, decl, argMap, args);
 	}
-
 
 	public ICPPBase[] getBases() throws DOMException {
 		ICPPClassType cls = (ICPPClassType) getSpecializedBinding();

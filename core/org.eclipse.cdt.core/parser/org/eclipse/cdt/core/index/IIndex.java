@@ -58,7 +58,7 @@ public interface IIndex {
 	 */
 	final int FIND_DEFINITIONS  = 0x2;
 	/** 
-	 * Constant to search for all declarations including definitions.
+	 * Constant to search for references. This does not include declarations or definitions.
 	 */
 	final int FIND_REFERENCES   = 0x4;
 	/**
@@ -68,7 +68,7 @@ public interface IIndex {
 	 */
 	final int SEARCH_ACCROSS_LANGUAGE_BOUNDARIES= 0x8;
 	/** 
-	 * Constant to search for references. This does not include declarations or definitions.
+	 * Constant to search for all declarations including definitions.
 	 */
 	final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	/** 
@@ -380,7 +380,6 @@ public interface IIndex {
      * or for IBinding objects obtained direct from the AST.
 	 * @param binding
 	 * @return an IIndexBinding for this IIndex that is equivalent to the specified binding
-	 * @throws CoreException
 	 */
 	public IIndexBinding adaptBinding(IBinding binding);
 	

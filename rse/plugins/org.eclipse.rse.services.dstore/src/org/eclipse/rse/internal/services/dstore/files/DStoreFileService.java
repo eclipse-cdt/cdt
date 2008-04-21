@@ -744,7 +744,7 @@ long t1 = System.currentTimeMillis();
 		}
 
 	long t2 = System.currentTimeMillis();
-	System.out.println("time="+(t2 - t1)/1000);
+//	System.out.println("time="+(t2 - t1)/1000);
 		// now wait till we have all the bytes local
 		long localBytes = localFile.length();
 		long lastLocalBytes = 0;

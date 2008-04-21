@@ -57,14 +57,23 @@ public class CNavigatorLinkHelper implements ILinkHelper {
 	 */
 	public IStructuredSelection findSelection(IEditorInput input) {
 		IWorkingCopyManager mgr= CUIPlugin.getDefault().getWorkingCopyManager();
-		ICElement element= mgr.getWorkingCopy(input);
+		Object element= mgr.getWorkingCopy(input);
 		if (element == null) {
 			IFile file = ResourceUtil.getFile(input);
 			if (file != null && CoreModel.hasCNature(file.getProject())) {
 				element= CoreModel.getDefault().create(file);
 			}
 		} else {
-			element= ((IWorkingCopy) element).getOriginalElement();
+			ITranslationUnit tUnit= ((IWorkingCopy) element).getOriginalElement();
+			IFile file= (IFile) tUnit.getResource();
+			if (file != null) {
+				element= CoreModel.getDefault().create(file);
+				if (element == null) {
+					element= file;
+				}
+			} else {
+				element= tUnit;
+			}
 		}
 		return (element != null) ? new StructuredSelection(element) : StructuredSelection.EMPTY;
 	}

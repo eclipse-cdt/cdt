@@ -195,7 +195,6 @@ import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
@@ -1405,12 +1404,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 		else if (required == IShowInSource.class) {
 			ICElement ce= null;
-			try {
-				ce= SelectionConverter.getElementAtOffset(this);
-				if (ce instanceof ITranslationUnit) {
-					ce = null;
-				}
-			} catch (CModelException ex) {
+			ce= getElementAt(getSourceViewer().getSelectedRange().x, false);
+			if (ce instanceof ITranslationUnit) {
+				ce = null;
 			}
 			final ISelection selection= ce != null ? new StructuredSelection(ce) : null;
 			return new IShowInSource() {

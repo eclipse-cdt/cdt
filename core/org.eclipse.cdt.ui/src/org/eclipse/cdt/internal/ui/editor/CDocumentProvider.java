@@ -72,6 +72,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
@@ -111,7 +112,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
             		SpellingAnnotation.TYPE : INDEXER_ANNOTATION_TYPE);
 			if (problem instanceof IPersistableProblem)
 				fMarkerType= ((IPersistableProblem) problem).getMarkerType();
-			else 
+			else
 				fMarkerType= null;
 		}
 		
@@ -195,7 +196,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 		
 	/**
-	 * Internal structure for mapping positions to some value. 
+	 * Internal structure for mapping positions to some value.
 	 * The reason for this specific structure is that positions can
 	 * change over time. Thus a lookup is based on value and not
 	 * on hash value.
@@ -336,7 +337,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private boolean fIsActive= false;
 		
 		private ReverseMap fReverseMap= new ReverseMap();
-		private List<CMarkerAnnotation> fPreviouslyOverlaid= null; 
+		private List<CMarkerAnnotation> fPreviouslyOverlaid= null;
 		private List<CMarkerAnnotation> fCurrentlyOverlaid= new ArrayList<CMarkerAnnotation>();
 		
 		
@@ -422,7 +423,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		public void beginReporting() {
 			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state == null)
-				internalBeginReporting(false);				
+				internalBeginReporting(false);
 		}
 		
 		/*
@@ -509,7 +510,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				fCurrentlyOverlaid= new ArrayList<CMarkerAnnotation>();
 				
 				if (fGeneratedAnnotations.size() > 0) {
-					temporaryProblemsChanged= true;	
+					temporaryProblemsChanged= true;
 					removeAnnotations(fGeneratedAnnotations, false, true);
 					fGeneratedAnnotations.clear();
 				}
@@ -529,7 +530,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 							
 							try {
 								ProblemAnnotation annotation= new ProblemAnnotation(problem, fTranslationUnit);
-								overlayMarkers(position, annotation);								
+								overlayMarkers(position, annotation);
 								addAnnotation(annotation, position, false);
 								fGeneratedAnnotations.add(annotation);
 								
@@ -558,7 +559,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 					CMarkerAnnotation annotation= e.next();
 					annotation.setOverlay(null);
 				}
-			}			
+			}
 		}
 		
 		/**
@@ -592,7 +593,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * Tells this annotation model to collect temporary problems from now on.
 		 */
 		private void startCollectingProblems() {
-			fGeneratedAnnotations= new ArrayList<ProblemAnnotation>();  
+			fGeneratedAnnotations= new ArrayList<ProblemAnnotation>();
 		}
 		
 		/**
@@ -642,7 +643,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		@Override
 		@SuppressWarnings("unchecked")
-		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {				
+		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
 			super.addAnnotation(annotation, position, fireModelChanged);
 			
 			synchronized (getLockObject()) {
@@ -731,8 +732,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		
 		public void removeListener(IAnnotationModelListener listener) {
 			fListenerList.remove(listener);
-		}			
-	}		
+		}
+	}
 	
 	/** Preference key for temporary problems */
 	private final static String HANDLE_TEMPORARY_PROBLEMS= PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS;
@@ -740,10 +741,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/** Internal property changed listener */
 	private IPropertyChangeListener fPropertyListener;
 	/** Annotation model listener added to all created CU annotation models */
-	private GlobalAnnotationModelListener fGlobalAnnotationModelListener;	
+	private GlobalAnnotationModelListener fGlobalAnnotationModelListener;
 
 	/**
-	 *  
+	 * 
 	 */
 	public CDocumentProvider() {
 		super();
@@ -787,12 +788,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		if (element == null) {
 			// not in a source folder?
-			final IPath location= file.getLocation();
-			if (location != null) {
-				ICProject cproject= CoreModel.getDefault().create(file.getProject());
-				if (cproject != null) {
-					return CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
-				}
+			ICProject cproject= CoreModel.getDefault().create(file.getProject());
+			if (cproject != null) {
+				String contentTypeId= CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
+				return new TranslationUnit(cproject, file, contentTypeId);
 			}
 		}
 		return null;
@@ -937,7 +936,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		//-----------------------------------------------------------------------
 		//for people who do not want auto-modification of their files,
 		//this flag will prevent addition of a newline unless the user
-		//explicitly sets the preference thru Window -> Preferences -> C/C++ -> Editor 
+		//explicitly sets the preference thru Window -> Preferences -> C/C++ -> Editor
 		//  -> Appearance Tab -> Ensure newline end of file when saving
 		if (PreferenceConstants.getPreferenceStore().getBoolean(
 				PreferenceConstants.ENSURE_NEWLINE_AT_EOF)) {
@@ -948,8 +947,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			try {
 				// we have to ensure that the length of the last line is 0.
 				// this will also take care of empty files. empty files have
-				// only one line in them and the length of this one and only 
-				// line is 0. 
+				// only one line in them and the length of this one and only
+				// line is 0.
 				// Thus we do not need to append an extra line separator to
 				// empty files.
 				int lastLineLength = document.getLineLength(lastLineIndex);
@@ -959,10 +958,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				}
 			} catch (BadLocationException e) {
 			}
-		}		
+		}
 		
-		// Remove trailing whitespace when saving. Triggered by the flag 
-		// in Preferences -> C/C++ -> Editor 
+		// Remove trailing whitespace when saving. Triggered by the flag
+		// in Preferences -> C/C++ -> Editor
 		if (PreferenceConstants.getPreferenceStore().getBoolean(
 				PreferenceConstants.REMOVE_TRAILING_WHITESPACE)) {
 			try {
@@ -989,7 +988,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				}
 			} catch (BadLocationException e) {
 			}
-		}		
+		}
 		
 		final FileInfo info= getFileInfo(element);
 		if (info instanceof TranslationUnitInfo) {
@@ -1026,7 +1025,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	protected boolean isHandlingTemporaryProblems() {
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(HANDLE_TEMPORARY_PROBLEMS);
-	} 
+	}
 	
 	/**
 	 * Switches the state of problem acceptance according to the value in the preference store.

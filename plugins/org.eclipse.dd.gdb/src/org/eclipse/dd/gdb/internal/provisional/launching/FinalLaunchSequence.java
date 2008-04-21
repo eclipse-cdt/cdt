@@ -13,7 +13,6 @@ package org.eclipse.dd.gdb.internal.provisional.launching;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
@@ -25,28 +24,19 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
-import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
+import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
-import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.dd.mi.service.command.commands.MICommand;
-import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
-import org.eclipse.dd.mi.service.command.commands.MIExecRun;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
-import org.eclipse.dd.mi.service.command.commands.MIInferiorTTYSet;
-import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
-import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
-import org.eclipse.debug.core.DebugException;
 
 public class FinalLaunchSequence extends Sequence {
 
@@ -58,40 +48,12 @@ public class FinalLaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
             DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
             fCommandControl = tracker.getService(GDBControl.class);
+            if (fCommandControl == null) {
+        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain GDBControl service", null)); //$NON-NLS-1$
+            }
             tracker.dispose();
 
             requestMonitor.done();
-        }},
-    	/*
-    	 * Specify connection of inferior input/output with a terminal.
-    	 */
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	if (fSessionType == SessionType.ATTACH) {
-        		requestMonitor.done();
-        		return;
-        	}
-        	
-        	try {
-        		boolean useTerminal = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
-        		
-        		if (useTerminal) {
-        			String pytName = fCommandControl.getPtyName();
-        			if ( pytName != null ) {
-            		fCommandControl.queueCommand(
-         				new MIInferiorTTYSet(fCommandControl.getControlDMContext(), pytName), 
-     					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-        			}
-        			else {
-        				requestMonitor.done();
-        			}
-        		} else {
-        			requestMonitor.done();
-        		}
-        	} catch (CoreException e) {
-        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get terminal option", e)); //$NON-NLS-1$
-        		requestMonitor.done();
-        	}
         }},
     	/*
     	 * Source the gdbinit file specified in the launch
@@ -278,7 +240,6 @@ public class FinalLaunchSequence extends Sequence {
             	} else {
             		requestMonitor.done();
             	}
- 
             }
         },
         /* 
@@ -292,74 +253,12 @@ public class FinalLaunchSequence extends Sequence {
         	bpmService.startTrackingBreakpoints(fCommandControl.getGDBDMContext(), requestMonitor);
         }},
         /*
-         * If needed, insert breakpoint at main and run to it.
+         * Start the program.
          */
         new Step() {
-            private boolean fStopInMain = false;
-            private String fStopSymbol = null;
-
-            /**
-             * @return The return value actually indicates whether the get operation succeeded, 
-             * not whether to stop.
-             */
-            private boolean readStopAtMain(RequestMonitor requestMonitor) {
-                try {
-                    fStopInMain = fLaunch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
-                } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
-                    requestMonitor.done();
-                    return false;
-                }
-                return true;
-            }
-            
-            private boolean readStopSymbol(RequestMonitor requestMonitor) {
-                try {
-                    fStopSymbol = fLaunch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
-                } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.CONFIGURATION_INVALID, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
-                    requestMonitor.done();
-                    return false;
-                }                
-                return true;
-            }
-            
             @Override
             public void execute(final RequestMonitor requestMonitor) {
-            	if (fSessionType == SessionType.ATTACH) {
-            		requestMonitor.done();
-            		return;
-            	}
-
-            	final MICommand<MIInfo> execCommand;
-            	if (fSessionType == SessionType.REMOTE) {
-            		// When doing remote debugging, we use -exec-continue instead of -exec-run 
-            	    execCommand = new MIExecContinue((IContainerDMContext)fCommandControl.getControlDMContext());
-            	} else {
-            		execCommand = new MIExecRun((IContainerDMContext)fCommandControl.getControlDMContext(), new String[0]);	
-            	}
-            	
-                if (!readStopAtMain(requestMonitor)) return;
-                if (!fStopInMain) {
-                	// Just start the program.
-    				fCommandControl.queueCommand(execCommand, new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-                } else {
-                    if (!readStopSymbol(requestMonitor)) return;
-                
-                    // Insert a breakpoint at the requested stop symbol.
-                    fCommandControl.queueCommand(
-                    		new MIBreakInsert(
-                    				(IBreakpointsTargetDMContext)fCommandControl.getControlDMContext(), 
-                    				true, false, null, 0, fStopSymbol, 0), 
-                    				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
-                    			@Override
-                    			protected void handleSuccess() {
-
-                    				// After the break-insert is done, execute the -exec-run or -exec-continue command.
-                    				fCommandControl.queueCommand(execCommand, new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-                    			}
-                    		});
-                }
+            	fCommandControl.start(fLaunch, requestMonitor);
             }
         },
     };

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
@@ -28,6 +29,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate;
 import org.eclipse.dd.gdb.internal.ui.actions.DsfTerminateCommand;
+import org.eclipse.dd.gdb.internal.ui.actions.GdbRestartCommand;
 import org.eclipse.dd.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -67,6 +69,7 @@ public class GdbAdapterFactory
         final DsfStepReturnCommand fStepReturnCommand;
         final DsfSuspendCommand fSuspendCommand;
         final DsfResumeCommand fResumeCommand;
+        final GdbRestartCommand fRestartCommand;
         final DsfTerminateCommand fTerminateCommand;
         final IDebugModelProvider fDebugModelProvider;
         final DsfSuspendTrigger fSuspendTrigger;
@@ -89,6 +92,7 @@ public class GdbAdapterFactory
             fStepReturnCommand = new DsfStepReturnCommand(session);
             fSuspendCommand = new DsfSuspendCommand(session);
             fResumeCommand = new DsfResumeCommand(session);
+            fRestartCommand = new GdbRestartCommand(session, fLaunch);
             fTerminateCommand = new DsfTerminateCommand(session);
             fSuspendTrigger = new DsfSuspendTrigger(session, fLaunch);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
@@ -96,6 +100,7 @@ public class GdbAdapterFactory
             session.registerModelAdapter(IStepReturnHandler.class, fStepReturnCommand);
             session.registerModelAdapter(ISuspendHandler.class, fSuspendCommand);
             session.registerModelAdapter(IResumeHandler.class, fResumeCommand);
+            session.registerModelAdapter(IRestart.class, fRestartCommand);
             session.registerModelAdapter(ITerminateHandler.class, fTerminateCommand);
 
             fDebugModelProvider = new IDebugModelProvider() {
@@ -127,12 +132,14 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IStepReturnHandler.class);
             session.unregisterModelAdapter(ISuspendHandler.class);
             session.unregisterModelAdapter(IResumeHandler.class);
+            session.unregisterModelAdapter(IRestart.class);
             session.unregisterModelAdapter(ITerminateHandler.class);            
             fStepIntoCommand.dispose();
             fStepOverCommand.dispose();
             fStepReturnCommand.dispose();
             fSuspendCommand.dispose();
             fResumeCommand.dispose();
+            fRestartCommand.dispose();
             fTerminateCommand.dispose();
             fSuspendTrigger.dispose();
         }        

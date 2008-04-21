@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -38,8 +37,6 @@ import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
-import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
-import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -155,41 +152,22 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
         }
         
+        // The initializeControl method should be called after the GdbControl class has
+        // be initialized (in the ServicesLaunchSequence above.)  This is because it is the 
+        // GdbControl class that will trigger the launch cleanup through a GDBControl.ExitedEvent
         launch.initializeControl();
 
         // Add the CLI and "inferior" process objects to the launch.
-        final AtomicReference<AbstractCLIProcess> cliProcessRef = new AtomicReference<AbstractCLIProcess>();
-        final AtomicReference<MIInferiorProcess> inferiorProcessRef = new AtomicReference<MIInferiorProcess>();
-        try {
-            launch.getDsfExecutor().submit( new Callable<Object>() {
-                public Object call() throws CoreException {
-                    DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), launch.getSession().getId());
-                    GDBControl gdb = tracker.getService(GDBControl.class);
-                    if (gdb != null) {
-                        cliProcessRef.set(gdb.getCLIProcess());
-                        inferiorProcessRef.set(gdb.getInferiorProcess());
-                    }
-                    tracker.dispose();
-                    return null;
-                }
-            }).get();
-            launch.addProcess(DebugPlugin.newProcess(launch, cliProcessRef.get(), "gdb")); //$NON-NLS-1$
-            launch.addProcess(DebugPlugin.newProcess(launch, inferiorProcessRef.get(), exePath.lastSegment()));
-        } catch (InterruptedException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
-        } catch (ExecutionException e) {
-            throw (CoreException)e.getCause();
-        } catch (RejectedExecutionException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
-        }            
-        
+        launch.addCLIProcess("gdb"); //$NON-NLS-1$
+        launch.addInferiorProcess(exePath.lastSegment());
+
         // Create and invoke the final launch sequence to setup GDB
         final FinalLaunchSequence finalLaunchSequence;
         if (fSessionType == SessionType.ATTACH) {
         	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, pid);
         } else {
         	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, fSessionType);
-        	}
+        }
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
         	finalLaunchSequence.get();
@@ -332,7 +310,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         // the source lookup adapter.
         ISourceLocator locator = getSourceLocator(configuration);
         
-        return  new GdbLaunch(configuration, mode, locator);
+        return new GdbLaunch(configuration, mode, locator);
     }
 
     private ISourceLocator getSourceLocator(ILaunchConfiguration configuration) throws CoreException {

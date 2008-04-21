@@ -54,7 +54,6 @@ public class BaseTestCase {
 		// Setup information for the launcher
    		attrs.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, DEFAULT_TEST_APP);
 
-		attrs.put(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
 		attrs.put(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");

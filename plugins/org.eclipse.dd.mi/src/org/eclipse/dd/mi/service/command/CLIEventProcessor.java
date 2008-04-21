@@ -50,7 +50,7 @@ public class CLIEventProcessor
     implements ICommandListener, IEventListener
 {
     private final AbstractMIControl fCommandControl;
-    private final MIInferiorProcess fInferior;
+    private MIInferiorProcess fInferior;
     private final IContainerDMContext fContainerDmc;
     private final List<Object> fEventList = new LinkedList<Object>();
     
@@ -73,6 +73,10 @@ public class CLIEventProcessor
         fCommandControl.removeEventListener(this);        
     }
 
+    public void resetInferior(MIInferiorProcess inferior) {
+    	fInferior = inferior;
+    }
+    
     public void commandSent(ICommandToken token) {
         if (token.getCommand() instanceof CLICommand<?>) {
             processStateChanges( (CLICommand<?>)token.getCommand() );

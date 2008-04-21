@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -41,13 +43,20 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
+import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.CLIEventProcessor;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.MIRunControlEventProcessor;
+import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
+import org.eclipse.dd.mi.service.command.commands.MICommand;
+import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
+import org.eclipse.dd.mi.service.command.commands.MIExecRun;
 import org.eclipse.dd.mi.service.command.commands.MIGDBExit;
+import org.eclipse.dd.mi.service.command.commands.MIInferiorTTYSet;
+import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.debug.core.DebugException;
 import org.osgi.framework.BundleContext;
@@ -100,17 +109,15 @@ public class GDBControl extends AbstractMIControl {
     private AbstractCLIProcess fCLIProcess;
     private MIInferiorProcess fInferiorProcess = null;
     
-    boolean fUseTerminal;
     private PTY fPty;
     
-    public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType type, boolean useTerminal, int gdbLaunchTimeout) {
+    public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType type, int gdbLaunchTimeout) {
         super(session);
         fSessionType = type;
         fGdbPath = gdbPath;
         fExecPath = execPath;
         fGDBLaunchTimeout = gdbLaunchTimeout;
         fControlDmc = new GDBControlDMContext(session.getId(), getClass().getName() + ":" + ++fgInstanceCounter); //$NON-NLS-1$
-        fUseTerminal = useTerminal;
     }
 
     @Override
@@ -133,6 +140,7 @@ public class GDBControl extends AbstractMIControl {
                 new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
+                new InferiorInputOutputInitStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
             };
@@ -148,6 +156,7 @@ public class GDBControl extends AbstractMIControl {
         final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
                 new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new InferiorInputOutputInitStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new MonitorJobStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new GDBProcessStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
@@ -228,6 +237,136 @@ public class GDBControl extends AbstractMIControl {
             }
         );
     }
+    
+    /*
+     * This method does the necessary work to setup the input/output streams for the
+     * inferior process, by either preparing the PTY to be used, to simply leaving
+     * the PTY null, which indicates that the input/output streams of the CLI shoud
+     * be used instead; this decision is based on the type of session.
+     */
+    public void initInferiorInputOutput(final RequestMonitor requestMonitor) {
+    	if (fSessionType == SessionType.ATTACH || fSessionType == SessionType.REMOTE) {
+    		// These types do not use a PTY
+    		fPty = null;
+    		requestMonitor.done();
+    	} else {
+    		// These types always use a PTY
+    		try {
+    			fPty = new PTY();
+
+    			// Tell GDB to use this PTY
+    			queueCommand(
+    					new MIInferiorTTYSet(fControlDmc, fPty.getSlaveName()), 
+    					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+    						@Override
+    						protected void handleFailure() {
+    							// We were not able to tell GDB to use the PTY
+    							// so we won't use it at all.
+    			    			fPty = null;
+    			        		requestMonitor.done();
+    						}
+    					});
+    		} catch (IOException e) {
+    			fPty = null;
+        		requestMonitor.done();
+    		}
+    	}
+    }
+
+
+    public boolean canRestart() {
+    	if (fSessionType == SessionType.ATTACH) return false;
+    	
+    	// Before GDB6.8, the Linux gdbserver would restart a new
+    	// process when getting a -exec-run but the communication
+    	// with GDB had a bug and everything hung.
+    	// with GDB6.8 the program restarts properly one time,
+    	// but on a second attempt, gdbserver crashes.
+    	// So, lets just turn off the Restart for Remote debugging
+    	if (fSessionType == SessionType.REMOTE) return false;
+    	
+    	return true;
+    }
+
+     /*
+     * Start the program.
+     */
+    public void start(GdbLaunch launch, final RequestMonitor requestMonitor) {
+    	startOrRestart(launch, false, requestMonitor);
+    }
+
+    /*
+     * Before restarting the inferior, we must re-initialize its input/output streams
+     * and create a new inferior process object.  Then we can restart the inferior.
+     */
+    public void restart(final GdbLaunch launch, final RequestMonitor requestMonitor) {
+   		startOrRestart(launch, true, requestMonitor);
+    }
+
+    /*
+     * Insert breakpoint at entry if set, and start or restart the program.
+     */
+    protected void startOrRestart(final GdbLaunch launch, boolean restart, final RequestMonitor requestMonitor) {
+    	if (fSessionType == SessionType.ATTACH) {
+    		// When attaching to a running process, we do not need to set a breakpoint or
+    		// start the program; it is left up to the user.
+    		requestMonitor.done();
+    		return;
+    	}
+
+    	final MICommand<MIInfo> execCommand;
+    	if (fSessionType == SessionType.REMOTE) {
+    		// When doing remote debugging, we use -exec-continue instead of -exec-run 
+    		execCommand = new MIExecContinue(fControlDmc);
+    	} else {
+    		execCommand = new MIExecRun(fControlDmc, new String[0]);	
+    	}
+
+    	boolean stopInMain = false;
+    	try {
+    		stopInMain = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
+    	} catch (CoreException e) {
+    		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve stop at entry point boolean", e)); //$NON-NLS-1$
+    		requestMonitor.done();
+    		return;
+    	}
+
+    	if (!stopInMain) {
+    		// Just start the program.
+    		queueCommand(execCommand, new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+    	} else {
+    		String stopSymbol = null;
+    		try {
+    			stopSymbol = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+    		} catch (CoreException e) {
+    			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.CONFIGURATION_INVALID, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
+    			requestMonitor.done();
+    			return;
+    		}
+
+    		// Insert a breakpoint at the requested stop symbol.
+    		queueCommand(
+    				new MIBreakInsert(fControlDmc, true, false, null, 0, stopSymbol, 0), 
+    				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
+    					@Override
+    					protected void handleSuccess() {
+    						// After the break-insert is done, execute the -exec-run or -exec-continue command.
+    						queueCommand(execCommand, new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+    					}
+    				});
+    	}
+    }
+
+    /*
+     * This method creates a new inferior process object based on the current Pty or output stream.
+     */
+    public void createInferiorProcess() {
+    	if (fPty == null) {
+    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fProcess.getOutputStream());
+    	} else {
+    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fPty);
+    	}
+    }
 
     public boolean isConnected() {
         return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && fConnected;
@@ -249,6 +388,10 @@ public class GDBControl extends AbstractMIControl {
         return fInferiorProcess;
     }
     
+    public CLIEventProcessor getCLICommandProcessor() { 
+        return fCLICommandProcessor;
+    }
+    
     public boolean isGDBExited() { 
         return fMonitorJob != null && fMonitorJob.fExited; 
     }
@@ -260,15 +403,6 @@ public class GDBControl extends AbstractMIControl {
     public IPath getExecutablePath() { return fExecPath; }
         
     public void getInferiorProcessId(DataRequestMonitor<Integer> rm) {
-    }
-    
-    public String getPtyName() {
-    	if ( fPty != null ) {
-    		return fPty.getSlaveName();
-    	}
-    	else {
-    		return null;
-    	}
     }
         
     @DsfServiceEventHandler 
@@ -517,6 +651,20 @@ public class GDBControl extends AbstractMIControl {
             requestMonitor.done();
         }
     }
+    
+    protected class InferiorInputOutputInitStep extends InitializationShutdownStep {
+    	InferiorInputOutputInitStep(Direction direction) { super(direction); }
+
+        @Override
+        protected void initialize(final RequestMonitor requestMonitor) {
+        	initInferiorInputOutput(requestMonitor);
+        }
+
+        @Override
+        protected void shutdown(RequestMonitor requestMonitor) {
+            requestMonitor.done();
+        }
+    }
 
     protected class CommandProcessorsStep extends InitializationShutdownStep {
         CommandProcessorsStep(Direction direction) { super(direction); }
@@ -532,18 +680,8 @@ public class GDBControl extends AbstractMIControl {
                 return;
             }
 
-            if (fUseTerminal) {
-                try {
-                	fPty = new PTY();
-		    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fPty);
-			    } catch (IOException e) {
-			    }
-            }
+            createInferiorProcess();
             
-            // If !fUseTerminal or IOException was caught
-            if (fInferiorProcess == null)
-            	fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fProcess.getOutputStream());
-			
             fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc, fInferiorProcess);
             fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
 

@@ -22,12 +22,12 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 
 /**
  * Database encapsulates access to a flat binary format file with a memory-manager-like API for
@@ -100,7 +100,7 @@ public class Database {
 	 * @param location the local file path for the database 
 	 * @param cache the cache to be used optimization
 	 * @param version the version number to store in the database (only applicable for new databases)
-	 * @param permanentReadOnly whether this Database object will ever need writing to
+	 * @param openReadOnly whether this Database object will ever need writing to
 	 * @throws CoreException
 	 */
 	public Database(File location, ChunkCache cache, int version, boolean openReadOnly) throws CoreException {
@@ -247,9 +247,6 @@ public class Database {
 
 	/**
 	 * Allocate a block out of the database.
-	 * 
-	 * @param size
-	 * @return
 	 */ 
 	public int malloc(final int datasize) throws CoreException {
 		assert fExclusiveLock;
@@ -468,7 +465,6 @@ public class Database {
 	 * Closes the database. 
 	 * <p>
 	 * The behavior of any further calls to the Database is undefined
-	 * @throws IOException
 	 * @throws CoreException 
 	 */
 	public void close() throws CoreException {
@@ -605,8 +601,7 @@ public class Database {
 			}
 			if (!dirtyChunks.isEmpty()) {
 				markFileIncomplete();
-				for (Iterator<Chunk> it = dirtyChunks.iterator(); it.hasNext();) {
-					Chunk chunk = it.next();
+				for (Chunk chunk : dirtyChunks) {
 					if (chunk.fDirty) {
 						chunk.flush();
 					}
@@ -614,8 +609,7 @@ public class Database {
 
 				// only after the chunks are flushed we may unlock and release them.
 				synchronized (fCache) {
-					for (Iterator<Chunk> it = dirtyChunks.iterator(); it.hasNext();) {
-						Chunk chunk = it.next();
+					for (Chunk chunk : dirtyChunks) {
 						chunk.fLocked= false;
 						if (chunk.fCacheIndex < 0) {
 							fChunks[chunk.fSequenceNumber]= null;

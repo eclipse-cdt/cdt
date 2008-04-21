@@ -39,7 +39,6 @@ import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardCategory;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardRegistryElement;
@@ -113,11 +112,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				}
 
 				// Second, double check if the system type passed the viewer filter but is disabled.
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
-				if (adapter != null && !adapter.isEnabled(systemType)) {
-					return false;
-				}
-				
+				if (!systemType.isEnabled()) return false;
 			}
 			
 			// In all other cases, the element passes the filter

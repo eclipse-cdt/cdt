@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.wizards.newconnection.RSENewConnectionWizardSelectionPage;
 import org.eclipse.rse.ui.wizards.newconnection.RSENewConnectionWizardSelectionTreeElement;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -86,8 +85,7 @@ public class RSEWizardSelectionTreePatternFilter extends PatternFilter {
 			if (filter != null && !filter.select(viewer, null, element)) return false;
 
 			// Second, double check if the system type passed the viewer filter but is disabled.
-			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
-			if (adapter != null && !adapter.isEnabled(systemType)) return false;
+			if (!systemType.isEnabled()) return false;
 		}
 		
 		return super.isElementVisible(viewer, element);

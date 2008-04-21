@@ -85,3 +85,12 @@ feature@org.eclipse.cdt.util=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroo
 plugin@org.eclipse.cdt.mylyn=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn
 plugin@org.eclipse.cdt.mylyn.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn.ui
 feature@org.eclipse.cdt.mylyn=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn-feature
+
+! Mylyn build dependencies (not included in CDT feature but we need to check these out)
+plugin@org.eclipse.mylyn.context.core=R_2_3_2,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.mylyn/org.eclipse.mylyn.context.core
+plugin@org.eclipse.mylyn.context.ui=R_2_3_2,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.mylyn/org.eclipse.mylyn.context.ui
+plugin@org.eclipse.mylyn.monitor.core=R_2_3_2,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.mylyn/org.eclipse.mylyn.monitor.core
+plugin@org.eclipse.mylyn.monitor.ui=R_2_3_2,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.mylyn/org.eclipse.mylyn.monitor.ui
+plugin@org.eclipse.mylyn.resources.ui=R_2_3_2,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.mylyn/org.eclipse.mylyn.resources.ui
+plugin@org.eclipse.mylyn.tasks.core=R_2_3_2,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.mylyn/org.eclipse.mylyn.tasks.core
+plugin@org.eclipse.mylyn.tasks.ui=R_2_3_2,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.mylyn/org.eclipse.mylyn.tasks.ui

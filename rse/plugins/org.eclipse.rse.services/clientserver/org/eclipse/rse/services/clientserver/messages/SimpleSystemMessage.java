@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [219975] Fix SystemMessage#clone()
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [226773] [apidoc] Specify allowed namespaces for SimpleSystemMessage ID in the Javadoc
  ********************************************************************************/
 package org.eclipse.rse.services.clientserver.messages;
 
@@ -31,8 +32,23 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * parsing a message file.  This is part of the work to migrate away from the message
 	 * file stuff.
 	 * 
+	 * Clients can use either globally unique RSE message IDs or plugin-specific local IDs.  
+	 * 
+	 * RSE-global message IDs are of the form: RSE<subcomponent><number>  
+	 * 
+	 * The subcomponent is a single character:
+	 * <li>"G" for General</li> 
+	 * <li>"O" for Other</li>
+	 * <li>"F" for Files</li>
+	 * <li>"C" for Communications</li>
+	 * 
+	 * The number is a four digit number.
+	 * 
+	 * Plugin-specific local IDs need only be unique strings within a plugin that are not prefixed by "RSE".
+	 * The relative IDs are qualified by the specified plugin ID.
+	 * 
 	 * @param pluginId the id of the originating plugin
-	 * @param messageId the unique id of the message
+	 * @param messageId the RSE-global unique ID or plugin-specific local ID of the message
 	 * @param severity using IStatus severities
 	 * @param msg the message text
 	 */
@@ -45,8 +61,23 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * parsing a message file.  This is part of the work to migrate away from the message
 	 * file stuff.
 	 * 
+	 * Clients can use either globally unique RSE message IDs or plugin-specific local IDs.  
+	 * 
+	 * RSE-global message IDs are of the form: RSE<subcomponent><number>  
+	 * 
+	 * The subcomponent is a single character:
+	 * <li>"G" for General</li> 
+	 * <li>"O" for Other</li>
+	 * <li>"F" for Files</li>
+	 * <li>"C" for Communications</li>
+	 * 
+	 * The number is a four digit number.
+	 * 
+	 * Plugin-specific local IDs need only be unique strings within a plugin that are not prefixed by "RSE".
+	 * The relative IDs are qualified by the specified plugin ID.
+	 * 
 	 * @param pluginId the id of the originating plugin
-	 * @param messageId the unique id of the message
+	 * @param messageId the RSE-global unique ID or plugin-specific local ID of the message
 	 * @param severity using IStatus severities
 	 * @param msg the message text
 	 * @param msgDetails the message details
@@ -63,8 +94,24 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * parsing a message file.  This is part of the work to migrate away from the message
 	 * file stuff.
 	 * 
+	 * Clients can use either globally unique RSE message IDs or plugin-specific local IDs.  
+	 * 
+	 * RSE-global message IDs are of the form: RSE<subcomponent><number>  
+	 * 
+	 * The subcomponent is a single character:
+	 * <li>"G" for General</li> 
+	 * <li>"O" for Other</li>
+	 * <li>"F" for Files</li>
+	 * <li>"C" for Communications</li>
+	 * 
+	 * The number is a four digit number.
+	 * 
+	 * Plugin-specific local IDs need only be unique strings within a plugin that are not prefixed by "RSE".
+	 * The relative IDs are qualified by the specified plugin ID.
+	 * 
+	 * 
 	 * @param pluginId the id of the originating plugin
-	 * @param messageId the unique id of the message
+	 * @param messageId the RSE-global unique ID or plugin-specific local ID of the message
 	 * @param severity using IStatus severities
 	 * @param msg the message text
 	 * @param e an exception to convert into details

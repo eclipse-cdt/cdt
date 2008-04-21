@@ -20,7 +20,7 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 cd ..
 
 # Mylyn build dependencies
-set mylynTag=R_2_3_2
+export mylynTag=R_2_3_2
 mkdir -p mylyn
 cd mylyn
 cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \

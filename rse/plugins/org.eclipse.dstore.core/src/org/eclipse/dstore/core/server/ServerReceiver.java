@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * Noriaki Takatsu  (IBM) - [227905] prevent double invocations of finished in ConncetionEstablisher
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -74,6 +75,7 @@ public class ServerReceiver extends Receiver
 	
 	public void finish()
 	{
+		_dataStore.setConnected(false);
 	    super.finish();
 	    _connection.finished(this);
 	}

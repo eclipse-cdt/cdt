@@ -30,7 +30,7 @@ public:
 	
 private:
 	int help();
-	void exp(int & ii);
+    void exp(int & ii);
 };
 
 #endif /*A_H_*/

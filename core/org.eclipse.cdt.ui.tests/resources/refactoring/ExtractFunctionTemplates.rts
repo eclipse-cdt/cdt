@@ -2,7 +2,8 @@
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.cpp
 void test(){
-}template <typename T>
+}
+template <typename T>
 int tempFunct(){
 	
 	T i;
@@ -37,7 +38,8 @@ int tempFunct(){
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.cpp
 void test(){
-}template <typename T>
+}
+template <typename T>
 int tempFunct(T p){
 
 	//$++p;
@@ -66,7 +68,8 @@ int tempFunct(T p){
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.cpp
 void test(){
-}template <typename T>
+}
+template <typename T>
 int tempFunct(){
 
 	//$T p;

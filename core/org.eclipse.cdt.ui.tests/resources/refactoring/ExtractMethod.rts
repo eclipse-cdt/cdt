@@ -199,7 +199,8 @@ A::A()
 
 A::~A()
 {
-}int A::foo()
+}
+int A::foo()
 {
 	//$int i = 2;
 	++i;
@@ -428,7 +429,7 @@ public:
 	
 private:
 	int help();
-	void exp();
+    void exp();
 };
 
 #endif /*A_H_*/
@@ -525,7 +526,7 @@ public:
 	
 private:
 	int help();
-	void exp(int & i);
+    void exp(int & i);
 };
 
 #endif /*A_H_*/
@@ -619,7 +620,7 @@ public:
 	
 private:
 	int help();
-	void exp(int & i);
+    void exp(int & i);
 };
 
 #endif /*A_H_*/
@@ -713,7 +714,7 @@ public:
 	
 private:
 	int help();
-	void exp(int *& i);
+    void exp(int *& i);
 };
 
 #endif /*A_H_*/
@@ -984,7 +985,7 @@ public:
 	
 private:
 	int help();
-	int exp(int i);
+    int exp(int i);
 };
 
 #endif /*A_H_*/
@@ -1076,7 +1077,7 @@ public:
 	
 private:
 	int help();
-	int exp(int i, int & b);
+    int exp(int i, int & b);
 };
 
 #endif /*A_H_*/
@@ -1174,7 +1175,7 @@ public:
 	
 private:
 	int help();
-	int exp(int i, B *b, int y, float & x);
+    int exp(int i, B *b, int y, float & x);
 };
 
 #endif /*A_H_*/
@@ -1282,7 +1283,7 @@ public:
 	
 private:
 	int help();
-	float exp(int & i, B *b, int y, float x);
+    float exp(int & i, B *b, int y, float x);
 };
 
 #endif /*A_H_*/
@@ -1404,7 +1405,7 @@ public:
 	
 private:
 	int help();
-	int exp(int i, B *& b, int & y, float & x);
+    int exp(int i, B *& b, int & y, float & x);
 };
 
 #endif /*A_H_*/
@@ -1571,7 +1572,7 @@ public:
 	
 private:
 	int help();
-	B *exp(int & i, B *b, int & y, float & x);
+    B *exp(int & i, B *b, int & y, float & x);
 };
 
 #endif /*A_H_*/
@@ -1782,7 +1783,7 @@ public:
 	A();
 	virtual ~A();
 	int foo();
-	void exp(int & i);
+    void exp(int & i);
 	
 private:
 	int help();
@@ -2019,7 +2020,6 @@ void runSuite(){
 //=
 #define CUTE(name) cute::test((&name),(#name))
 
-
 cute::suite createSuite()
 {
     cute::suite s;
@@ -2122,7 +2122,6 @@ int main(){
 using namespace std;
 
 int const INITIAL_CAPACITY = 10;
-
 
 string *runTest(int m_capacity)
 {

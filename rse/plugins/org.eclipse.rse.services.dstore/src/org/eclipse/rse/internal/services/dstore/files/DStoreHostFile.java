@@ -354,10 +354,11 @@ public class DStoreHostFile implements IHostFile, IHostFilePermissionsContainer
 	{
 		if (attributes != null)
 		{
-			String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
-			if (str.length > index)
-			{
-				return str[index];
+			synchronized (attributes){
+				String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
+				if (str.length > index){
+					return str[index];
+				}
 			}
 		}
 		return null;

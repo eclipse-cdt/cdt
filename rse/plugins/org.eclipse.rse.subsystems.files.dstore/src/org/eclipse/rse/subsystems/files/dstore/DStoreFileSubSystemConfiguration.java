@@ -16,20 +16,18 @@
  * Kushal Munir (IBM) - [189352] Set whether file service is Unix-style system or not
  * David McKnight   (IBM)        - [206755] upload and download buffer should be in kbytes, not bytes
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * David McKnight     (IBM)    - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorServiceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.files.DStoreFileService;
 import org.eclipse.rse.internal.services.dstore.search.DStoreSearchService;
-import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreFileAdapter;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreFileSubSystemSearchResultConfiguration;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreLanguageUtilityFactory;
@@ -45,7 +43,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfiguration 
 {
@@ -135,17 +132,6 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 		DStoreFileService service = new DStoreFileService(connectorService, RemoteFileUtility.getSystemFileTransferModeRegistry());
 		service.setIsUnixStyle(isUnixStyle());
 
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		int downloadBufferSize = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
-		int uploadBufferSize = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
-		if (downloadBufferSize > 0)
-		{
-			service.setBufferDownloadSize(downloadBufferSize);
-		}
-		if (uploadBufferSize > 0)
-		{
-			service.setBufferUploadSize(uploadBufferSize);
-		}
 		return service;
 	}
 	

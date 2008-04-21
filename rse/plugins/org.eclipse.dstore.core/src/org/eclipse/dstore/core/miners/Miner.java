@@ -33,7 +33,7 @@ import org.eclipse.dstore.core.model.ISchemaExtender;
 import org.eclipse.dstore.core.server.SystemServiceManager;
  
 /**
- * Miner is the abstact base class of all DataStore extensions).  
+ * Miner is the abstract base class of all DataStore extensions).  
  * The DataStore framework knows how to load and route commands to miners
  * because it interfaces miners through the restricted set of interfaces declared here.
  * To add a new miner, developers must extend this class and implement the abstract methods declared here.
@@ -42,8 +42,6 @@ public abstract class Miner extends Handler
 implements ISchemaExtender
 {
 
-
-	public DataStore _dataStore;
 	public DataElement _minerElement;
 	public DataElement _minerData;
 	public DataElement _minerTransient;
@@ -203,8 +201,16 @@ implements ISchemaExtender
 	{
 		while (!_commandQueue.isEmpty())
 		{
-			DataElement cmd = (DataElement)_commandQueue.remove(0);
-			command(cmd);			
+			try
+			{	
+				DataElement cmd = (DataElement)_commandQueue.remove(0);
+				if (cmd != null){
+					command(cmd);			
+				}
+			}
+			catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 		waitForInput();
 	}
@@ -257,7 +263,7 @@ implements ISchemaExtender
 	 * @return the status of the command
 	 */
 	protected final DataElement command(DataElement command)
-	{
+	{		
 		String name = getCommandName(command);
 		DataElement status = getCommandStatus(command);
 

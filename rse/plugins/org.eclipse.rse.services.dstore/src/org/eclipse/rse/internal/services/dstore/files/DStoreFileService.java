@@ -41,6 +41,7 @@
  * David McKnight    (IBM)       - [220379] [api] Provide a means for contributing custom BIDI encodings
  * David McKnight    (IBM)       - [225573] [dstore] client not falling back to single operation when missing batch descriptors (due to old server)
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * David McKnight     (IBM)    - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -105,9 +106,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	protected org.eclipse.dstore.core.model.DataElement _uploadLogElement = null;
 	protected Map _fileElementMap;
 	protected Map _dstoreFileMap;
-
-	private int _bufferUploadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
-	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
 	private String remoteEncoding;
 
@@ -150,24 +148,34 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return ServiceResources.DStore_File_Service_Description;
 	}
 
+	/**
+	 * Set the buffer upload size
+	 * @param size the new size
+	 * 
+	 *  @deprecated no longer used - instead using the IDataStoreProvider
+	 */
 	public void setBufferUploadSize(int size)
 	{
-		_bufferUploadSize = size;
 	}
 
+	/**
+	 * Set the buffer download size
+	 * @param size the new size
+	 * 
+	 * @deprecated no longer used - instead using the IDataStoreProvider
+	 */
 	public void setBufferDownloadSize(int size)
 	{
-		_bufferDownloadSize = size;
 	}
 
 	protected int getBufferUploadSize()
 	{
-		return _bufferUploadSize;
+		return _dataStoreProvider.getBufferUploadSize();
 	}
 
 	protected int getBufferDownloadSize()
-	{
-		return _bufferDownloadSize;
+	{				
+		return _dataStoreProvider.getBufferDownloadSize();
 	}
 
 	protected String getMinerId()
@@ -702,7 +710,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		argList.add(bufferSizeElement);
 
 		DataElement subject = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));
-
+long t1 = System.currentTimeMillis();
 		DataElement status = ds.command(queryCmd, argList, subject);
 		if (status == null)
 		{
@@ -735,6 +743,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			return false;
 		}
 
+	long t2 = System.currentTimeMillis();
+	System.out.println("time="+(t2 - t1)/1000);
 		// now wait till we have all the bytes local
 		long localBytes = localFile.length();
 		long lastLocalBytes = 0;

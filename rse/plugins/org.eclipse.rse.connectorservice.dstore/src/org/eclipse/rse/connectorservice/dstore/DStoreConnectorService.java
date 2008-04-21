@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
+ * David McKnight     (IBM)    - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -81,6 +82,7 @@ import org.eclipse.rse.internal.connectorservice.dstore.Activator;
 import org.eclipse.rse.internal.connectorservice.dstore.ConnectorServiceResources;
 import org.eclipse.rse.internal.connectorservice.dstore.IConnectorServiceMessageIds;
 import org.eclipse.rse.internal.connectorservice.dstore.RexecDstoreServer;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
@@ -1457,6 +1459,27 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	
 	protected SystemMessage createSystemMessage(String msgId, int severity, String msg, String msgDetails) {
 		return new SimpleSystemMessage(Activator.PLUGIN_ID, msgId, severity, msg, msgDetails);
-	}	
+	}
+
+	
+	public int getBufferUploadSize()
+	{
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+
+		int value = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
+		if (value == 0)
+			value = IUniversalDataStoreConstants.BUFFER_SIZE;
+		return value;
+
+	}
+
+	public int getBufferDownloadSize()
+	{				
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		int value = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
+		if (value == 0)
+			value = IUniversalDataStoreConstants.BUFFER_SIZE;
+		return value;		
+	}
 }
 

@@ -167,7 +167,7 @@ public class XMLparser
 	 */
 	public void readFile(BufferedInputStream reader, int size, String path, String byteStreamHandlerId)
 	{
-	
+	/*
 		Runtime rt = Runtime.getRuntime();
 		//long totalMem = rt.totalMemory();
 		long freeMem = rt.freeMemory();
@@ -176,7 +176,7 @@ public class XMLparser
 		{
 			rt.gc();
 		}
-		
+		*/
 		if (_fileByteBuffer == null || _fileByteBuffer.length < size)
 		{
 			try 

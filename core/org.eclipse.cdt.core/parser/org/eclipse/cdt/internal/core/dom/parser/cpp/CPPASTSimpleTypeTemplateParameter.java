@@ -27,7 +27,6 @@ public class CPPASTSimpleTypeTemplateParameter extends CPPASTNode implements
     private IASTName name;
     private IASTTypeId typeId;
 
-
     public CPPASTSimpleTypeTemplateParameter() {
 	}
 
@@ -70,22 +69,22 @@ public class CPPASTSimpleTypeTemplateParameter extends CPPASTNode implements
     }
     
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
     	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
-		    switch( ((ICPPASTVisitor)action).visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+		    switch (((ICPPASTVisitor) action).visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default : break;
 	        }
 		}
         
-        if( name != null ) if( !name.accept( action ) ) return false;
-        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+        if (name != null) if (!name.accept(action)) return false;
+        if (typeId != null) if (!typeId.accept(action)) return false;
         
     	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
-    		switch( ((ICPPASTVisitor)action).leave( this ) ){
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
+    		switch (((ICPPASTVisitor) action).leave(this)) {
+    		case ASTVisitor.PROCESS_ABORT: return false;
+    		case ASTVisitor.PROCESS_SKIP: return true;
     		default : break;
     		}
     	}
@@ -93,8 +92,13 @@ public class CPPASTSimpleTypeTemplateParameter extends CPPASTNode implements
     }
 
 	public int getRoleForName(IASTName n) {
-		if( n == name )
+		if (n == name)
 			return r_declaration;
 		return r_unclear;
+	}
+
+	@Override
+	public String toString() {
+		return getName().toString();
 	}
 }

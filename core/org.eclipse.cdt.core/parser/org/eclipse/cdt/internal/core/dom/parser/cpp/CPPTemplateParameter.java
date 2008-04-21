@@ -65,7 +65,7 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope(getPrimaryDeclaration ());
+		return CPPVisitor.getContainingScope(getPrimaryDeclaration());
 	}
 
 	/* (non-Javadoc)

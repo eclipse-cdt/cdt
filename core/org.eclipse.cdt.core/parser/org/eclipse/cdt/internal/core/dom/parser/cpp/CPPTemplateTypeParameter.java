@@ -28,8 +28,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  */
 public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		ICPPTemplateTypeParameter, IType, ICPPInternalUnknown {
-    private ICPPScope unknownScope = null;
-    
+	private ICPPScope unknownScope;
 
 	public CPPTemplateTypeParameter(IASTName name) {
 		super(name);
@@ -58,7 +57,6 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		return null;
 	}
 
-
     public boolean isSameType(IType type) {
         if (type == this)
             return true;
@@ -66,7 +64,6 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
             return type.isSameType(this);
         return false;
     }
-
 
     public IBinding resolveUnknown(ObjectMap argMap) {
     	// Cannot do resolution here since the result is not necessarily a binding.

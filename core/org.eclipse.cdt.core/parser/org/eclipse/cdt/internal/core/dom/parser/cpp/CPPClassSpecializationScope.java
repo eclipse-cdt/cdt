@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternalScope {
 	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
 	final private ICPPSpecialization specialization;
-	
 
 	public CPPClassSpecializationScope(ICPPSpecialization specialization) {
 		this.specialization = specialization;
@@ -131,7 +130,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 
 	public IName getScopeName() {
 		if (specialization instanceof ICPPInternalBinding)
-			return (IASTName) ((ICPPInternalBinding)specialization).getDefinition();
+			return (IASTName) ((ICPPInternalBinding) specialization).getDefinition();
 		//TODO: get the scope name for non-internal bindings
 		return null;
 	}
@@ -201,6 +200,6 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	@Override
 	public String toString() {
 		IName name = getScopeName();
-		return name != null ? name.toString() : "<unnamed scope>"; //$NON-NLS-1$
+		return name != null ? name.toString() : String.valueOf(specialization);
 	}
 }

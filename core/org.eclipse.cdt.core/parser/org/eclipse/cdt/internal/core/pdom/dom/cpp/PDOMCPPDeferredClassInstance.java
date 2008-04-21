@@ -115,13 +115,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	 */
 	public IType instantiate(ObjectMap argMap) {
 		IType[] arguments = getArguments();
-		
-		IType[] newArgs = new IType[arguments.length];
-		int size = arguments.length;
-		for (int i = 0; i < size; i++) {
-			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap);
-		}
-		
+		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
 		return (IType) ((ICPPInternalTemplateInstantiator) getTemplateDefinition()).instantiate(newArgs);
 	}
 	

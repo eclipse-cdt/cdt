@@ -52,9 +52,18 @@ public class DebugUtil {
 				className, caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
 		
 		if(extraMessage != null)
-			message += ": " + extraMessage;//$NON-NLS-1$
+			message += ": " + extraMessage; //$NON-NLS-1$
 		
 		System.out.println(message);
 	}
+
+	public static String safeClassName(Object obj) {
+		return obj != null ? obj.getClass().getSimpleName() : "";  //$NON-NLS-1$
+	}
 	
+	public static String toStringWithClass(Object obj) {
+		return obj != null ?
+				String.valueOf(obj) + " " + obj.getClass().getSimpleName() : //$NON-NLS-1$
+				"null";  //$NON-NLS-1$
+	}
 }

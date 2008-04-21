@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * @author aniefer
  */
 public class CPPTypedefSpecialization extends CPPSpecialization implements ITypedef, ITypeContainer {
-    private IType type = null;
+    private IType type;
 
     /**
      * @param specialized

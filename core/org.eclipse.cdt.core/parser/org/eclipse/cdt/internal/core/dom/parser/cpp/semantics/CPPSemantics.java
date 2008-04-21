@@ -116,6 +116,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -153,30 +154,39 @@ public class CPPSemantics {
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  
 	public static final IType VOID_TYPE = new CPPBasicType(IBasicType.t_void, 0);
+
+	// Set to true for debugging.
+	public static boolean traceBindingResolution = false;
 	
-	static protected IBinding resolveBinding(IASTName name) {      
-		//1: get some context info off of the name to figure out what kind of lookup we want
+	static protected IBinding resolveBinding(IASTName name) {
+		if (traceBindingResolution) {
+			System.out.println("Resolving " + name); //$NON-NLS-1$
+		}
+		// 1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData(name, true);
 		
 		try {
-            //2: lookup
+            // 2: lookup
             lookup(data, name);
-        } catch (DOMException e1) {
-            data.problem = (ProblemBinding) e1.getProblem();
+        } catch (DOMException e) {
+            data.problem = (ProblemBinding) e.getProblem();
         }
 		
 		if (data.problem != null)
 		    return data.problem;
 		
-		//3: resolve ambiguities
+		// 3: resolve ambiguities
 		IBinding binding;
         try {
             binding = resolveAmbiguities(data, name);
-        } catch (DOMException e2) {
-            binding = e2.getProblem();
+        } catch (DOMException e) {
+            binding = e.getProblem();
         }
-        //4: post processing
+        // 4: post processing
 		binding = postResolution(binding, data);
+		if (traceBindingResolution) {
+			System.out.println("Resolved " + name + " to " + DebugUtil.toStringWithClass(binding)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return binding;
 	}
 

@@ -26,7 +26,7 @@ public class GdbAttachLaunchConfigurationTabGroup extends AbstractLaunchConfigur
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode)  {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-				new CMainTab(true),
+				new CMainTab(),
 				new CDebuggerTab(SessionType.ATTACH),
 				new SourceLookupTab(),
 				new CommonTab() 

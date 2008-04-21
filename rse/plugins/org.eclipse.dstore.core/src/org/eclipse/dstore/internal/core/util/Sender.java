@@ -61,13 +61,13 @@ public class Sender implements ISender
 		try
 		{
 			int bufferSize = _socket.getSendBufferSize() * 4;
-			System.out.println("buffer size = "+bufferSize);
+	//		System.out.println("buffer size = "+bufferSize);
 
 			_socket.setSendBufferSize(bufferSize);
 			_xmlGenerator.setBufferSize(bufferSize);
 			
 			int rbufferSize = _socket.getReceiveBufferSize() * 4;
-			System.out.println("rbuffer size = "+rbufferSize);
+	//		System.out.println("rbuffer size = "+rbufferSize);
 			_socket.setReceiveBufferSize(rbufferSize);
 		}
 		catch (SocketException e)

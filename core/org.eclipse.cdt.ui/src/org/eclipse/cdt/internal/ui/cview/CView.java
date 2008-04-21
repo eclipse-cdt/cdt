@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 /**
  * 
  * CView
- *  
+ * 
  */
 public class CView extends ViewPart implements ISetSelectionTarget, IPropertyChangeListener, IShowInTarget, IShowInTargetList {
 
@@ -256,7 +256,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Handles a key release in the viewer. Does nothing by default.
-	 *  
+	 * 
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
 		if (getActionGroup() != null) {
@@ -1007,7 +1007,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 					IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
 					ICElement e = (ICElement) o;
 					IResource res = e.getResource();
-					if (res != null) {
+					if (res != null && res.getLocation() != null) {
 						elementMem.putString(TAG_PATH, res.getLocation().toOSString());
 					}
 				}
@@ -1022,7 +1022,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 				if (elements[i] instanceof ICElement) {
 					ICElement e = (ICElement) elements[i];
 					IResource r = e.getResource();
-					if (r != null) {
+					if (r != null && r.getLocation() != null) {
 						IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
 						elementMem.putString(TAG_PATH, r.getLocation().toString());
 					}

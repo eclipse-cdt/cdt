@@ -8,9 +8,21 @@
 # Contributors:
 #     IBM Corporation - initial API and implementation
 #*******************************************************************************
-umask 0022
 
+# The CDT build script, set up the environment to run the build.xml ant script
+# We are running on build.eclipse.org
+
+# export display for running the tests
+export DISPLAY=:1
+
+# set up to use the Java 5 JRE
+export PATH=/opt/public/common/ibm-java2-ppc-50/bin:$PATH
+
+# make sure we're in the releng project dir 
 cd `dirname $0`
+
+# (TODO why is this here?)
+umask 0022
 
 # Checkout basebuilder to run the build
 mkdir -p tools
@@ -19,27 +31,6 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 	checkout -r M5_34 org.eclipse.releng.basebuilder
 cd ..
 
-# Mylyn build dependencies
-export mylynTag=R_2_3_2
-mkdir -p mylyn
-cd mylyn
-cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
-	checkout -r $mylynTag org.eclipse.mylyn/org.eclipse.mylyn.context.core
-cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
-	checkout -r $mylynTag org.eclipse.mylyn/org.eclipse.mylyn.context.ui
-cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
-	checkout -r $mylynTag org.eclipse.mylyn/org.eclipse.mylyn.monitor.core
-cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
-	checkout -r $mylynTag org.eclipse.mylyn/org.eclipse.mylyn.monitor.ui
-cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
-	checkout -r $mylynTag org.eclipse.mylyn/org.eclipse.mylyn.resources.ui
-cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
-	checkout -r $mylynTag org.eclipse.mylyn/org.eclipse.mylyn.tasks.core
-cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
-	checkout -r $mylynTag org.eclipse.mylyn/org.eclipse.mylyn.tasks.ui
-cd ..
-mkdir -p results/plugins
-mv mylyn/org.eclipse/mylyn/* results/plugins
-
+# Let's go!
 java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*

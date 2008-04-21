@@ -83,7 +83,7 @@ public class Conversions {
 				// [13.3.3.1.4]
 				
 				/*
-				 * is an lvalue (but is not a bit-field), and “cv1 T1” is reference-compatible with “cv2 T2,” 
+				 * is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
 				 */
 				// [13.3.3.1.4-1] direct binding
 				// [8.5.3-5]
@@ -93,7 +93,7 @@ public class Conversions {
 			} else if(T2 instanceof ICPPClassType && allowUDC) {
 				/*
 				 * or has a class type (i.e., T2 is a class type) and can be implicitly converted to
-				 * an lvalue of type “cv3 T3,” where “cv1 T1” is reference-compatible with “cv3 T3” 92)
+				 * an lvalue of type "cv3 T3," where "cv1 T1" is reference-compatible with "cv3 T3" 92)
 				 * (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
 				 * and choosing the best one through overload resolution (13.3)).
 				 */
@@ -150,7 +150,7 @@ public class Conversions {
 						cost.rank= Cost.IDENTITY_RANK;
 					} else {
 						// 5 - Otherwise
-						// Otherwise, a temporary of type “cv1 T1” is created and initialized from the initializer expression
+						// Otherwise, a temporary of type "cv1 T1" is created and initialized from the initializer expression
 						// using the rules for a non-reference copy initialization (8.5). The reference is then bound to the temporary.
 
 						// If T1 is reference-related to T2, cv1 must be the same cv-qualification as, or greater cvqualification
@@ -275,7 +275,7 @@ public class Conversions {
 	}
 
 	/**
-	 * [8.5.3] “cv1 T1” is reference-compatible with “cv2 T2” if T1 is reference-related
+	 * [8.5.3] "cv1 T1" is reference-compatible with "cv2 T2" if T1 is reference-related
 	 * to T2 and cv1 is the same cv-qualification as, or greater cv-qualification than, cv2.
 	 * Note this is not a symmetric relation.
 	 * @param cv1t1

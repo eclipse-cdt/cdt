@@ -14,17 +14,16 @@
  * Contributors:
  * David Dykstal (IBM) - [160403] filters should be connection private by default
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [226948] [api][regression] SystemNewFilterWizard.createNamePage() is no longer available
  *******************************************************************************/
 
-package org.eclipse.rse.internal.ui.filters.dialogs;
+package org.eclipse.rse.ui.filters.dialogs;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolSelectionValidator;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.filters.dialogs.ISystemNewFilterWizardConfigurator;
-import org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
 import org.eclipse.swt.events.ModifyEvent;

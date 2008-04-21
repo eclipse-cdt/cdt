@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [226948] [api][regression] SystemNewFilterWizard.createNamePage() is no longer available
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
@@ -36,7 +37,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.filters.dialogs.SystemNewFilterWizardNamePage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -330,7 +330,7 @@ public class SystemNewFilterWizard
 	 * By default, this page uses the wizard page title as set in setWizardPageTitle(...) or the constructor.
 	 * @return the wizard page prompting for the filter name and parent filter pool
 	 */
-	private SystemNewFilterWizardNamePage createNamePage()
+	protected SystemNewFilterWizardNamePage createNamePage()
 	{
 		namePage = new SystemNewFilterWizardNamePage(this, parentPool, configurator);
 	    return namePage;

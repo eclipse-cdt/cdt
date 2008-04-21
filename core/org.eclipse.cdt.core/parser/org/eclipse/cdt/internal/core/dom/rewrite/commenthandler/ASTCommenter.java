@@ -11,18 +11,21 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.OffsetHelper;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * This is the startpoint of the whole comment handling  process. The creation of the 
+ * This is the starting point of the entire comment handling  process. The creation of the 
  * NodeCommentMap is based on the IASTTranslationUnit. From this TranslationUnit the comments 
  * are extracted and skipped if they belong not to the same workspace. An ASTCommenterVisitor 
  * is initialized with this collection of comments. And the visit process can start. 
@@ -45,16 +48,25 @@ public class ASTCommenter {
 		if(transUnit== null) {
 			return new NodeCommentMap();
 		}
-		Vector<IASTComment> comments = getCommentsInWorkspace(transUnit);
+		ArrayList<IASTComment> comments = removeNotNeededComments(transUnit);		
 		if(comments == null || comments.size() == 0) {
 			return new NodeCommentMap();
 		}
 		return addCommentsToCommentMap(transUnit, comments);
 	}
 
-	private static Vector<IASTComment> getCommentsInWorkspace(IASTTranslationUnit tu) {
+	private static ArrayList<IASTComment> removeNotNeededComments(IASTTranslationUnit transUnit) {
+		ArrayList<IASTComment> comments = getCommentsInWorkspace(transUnit);
+		if (comments == null || comments.size() == 0) {
+			return null;
+		}
+		ArrayList<IASTComment> com = removeAllPreprocessorComments(transUnit, comments);
+		return com;
+	}
+
+	private static ArrayList<IASTComment> getCommentsInWorkspace(IASTTranslationUnit tu) {
 		IASTComment[] comments = tu.getComments();
-		Vector<IASTComment> commentsInWorksapce = new Vector<IASTComment>();
+		ArrayList<IASTComment> commentsInWorksapce = new ArrayList<IASTComment>();
 
 		if (comments == null || comments.length == 0) {
 			return null;
@@ -68,6 +80,27 @@ public class ASTCommenter {
 		return commentsInWorksapce;
 	}
 
+	private static ArrayList<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu, ArrayList<IASTComment> comments) {
+		IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
+		TreeMap<Integer,Object> treeOfPreProcessorLines = new TreeMap<Integer,Object>();
+
+		for (IASTPreprocessorStatement statement : preprocessorStatements) {
+			if (isInWorkspace(statement)) {
+				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement),null);
+			}
+		}
+
+		ArrayList<IASTComment> commentsInCode = new ArrayList<IASTComment>();
+		for (IASTComment comment : comments) {
+			int comStartLineNumber = OffsetHelper.getStartingLineNumber(comment);
+			if (treeOfPreProcessorLines.containsKey(comStartLineNumber)) {
+				continue;
+			}
+			commentsInCode.add(comment);
+		}
+		return commentsInCode;
+	}
+
 	private static boolean isInWorkspace(IASTNode node) {
 		IPath workspacePath = Platform.getLocation();
 		IPath nodePath = new Path(node.getContainingFilename());
@@ -75,7 +108,7 @@ public class ASTCommenter {
 	}
 
 	
-	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit rootNode,	Vector<IASTComment> comments){
+	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit rootNode,	ArrayList<IASTComment> comments){
 		NodeCommentMap commentMap = new NodeCommentMap();
 		CommentHandler commHandler = new CommentHandler(comments);
 

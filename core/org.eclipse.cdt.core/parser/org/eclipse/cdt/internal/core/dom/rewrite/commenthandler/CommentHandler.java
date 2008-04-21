@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 
@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
  */
 public class CommentHandler {
 
-	private final Vector<IASTComment> comments;
+	private final ArrayList<IASTComment> comments;
 	
-	public CommentHandler(Vector<IASTComment> comments) {
+	public CommentHandler(ArrayList<IASTComment> comments) {
 		super();
 		this.comments = comments;
 	}
@@ -40,6 +40,6 @@ public class CommentHandler {
 	}
 
 	public IASTComment getFirst() {
-		return comments.firstElement();
+		return comments.get(0);
 	}
 }

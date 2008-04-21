@@ -165,6 +165,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	/*
 	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractCompletionTest#setUpProjectContent(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
 		fProject= project;
 		String headerContent= readTaggedComment(HEADER_FILE_NAME);
@@ -180,6 +181,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	/*
 	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest#doCheckExtraResults()
 	 */
+	@Override
 	protected boolean doCheckExtraResults() {
 		return fCheckExtraResults;
 	}
@@ -1010,11 +1012,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	public static void deleteDir(File dir) {
 		File[] files = dir.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].isDirectory()) {
-				deleteDir(files[i]);
+		for (File file : files) {
+			if (file.isDirectory()) {
+				deleteDir(file);
 			} else {
-				files[i].delete();
+				file.delete();
 			}
 		}
 		dir.delete();
@@ -1022,8 +1024,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	private static void createIncludeFiles(File dir, String[] files) throws IOException {
 		Set<String> includeDirs= new HashSet<String>();
-		for (int i = 0; i < files.length; i++) {
-			File file = new File(dir, files[i]);
+		for (String file2 : files) {
+			File file = new File(dir, file2);
 			final File parentFile= file.getParentFile();
 			if (parentFile.getName().startsWith("sub")) {
 				if (!parentFile.exists()) {
@@ -1034,7 +1036,27 @@ public class CompletionTests extends AbstractContentAssistTest {
 			}
 			file.createNewFile();
 		}
-		TestScannerProvider.sIncludes= (String[]) includeDirs.toArray(new String[includeDirs.size()]);
+		TestScannerProvider.sIncludes= includeDirs.toArray(new String[includeDirs.size()]);
 	}
 
+	// void test() {
+	// int local;
+	// switch(loc/*cursor*/
+	public void testSwitchStatement() throws Exception {
+		final String[] expected= {
+				"local"
+		};
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+
+
+	// void test() {
+	// int local;
+	// while(loc/*cursor*/
+	public void testWhileStatement() throws Exception {
+		final String[] expected= {
+				"local"
+		};
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
 }

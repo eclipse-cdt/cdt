@@ -846,5 +846,25 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		};
 		assertCompletionResults(expected);
 	}
+	
+	// void test() {
+	// int local;
+	// switch(loc/*cursor*/
+	public void testSwitchStatement() throws Exception {
+		final String[] expected= {
+				"local"
+		};
+		assertCompletionResults(expected);
+	}
+	
+	// void test() {
+	// int local;
+	// while(loc/*cursor*/
+	public void testWhileStatement() throws Exception {
+		final String[] expected= {
+				"local"
+		};
+		assertCompletionResults(expected);
+	}
 
 }

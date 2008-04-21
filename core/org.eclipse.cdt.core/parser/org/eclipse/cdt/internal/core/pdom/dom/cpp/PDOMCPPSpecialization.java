@@ -40,7 +40,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 
 	private static final int ARGMAP_PARAMS = PDOMCPPBinding.RECORD_SIZE + 0;
 	private static final int ARGMAP_ARGS = PDOMCPPBinding.RECORD_SIZE + 4;
-	private static final int SIGNATURE_MEMENTO = PDOMCPPBinding.RECORD_SIZE + 8;
+	private static final int SIGNATURE_HASH = PDOMCPPBinding.RECORD_SIZE + 8;
 	private static final int SPECIALIZED = PDOMCPPBinding.RECORD_SIZE + 12;
 	
 	/**
@@ -75,8 +75,8 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 			}
 		}
 		try {
-			Integer memento = IndexCPPSignatureUtil.getSignatureMemento(spec);
-			pdom.getDB().putInt(record + SIGNATURE_MEMENTO, memento != null ? memento.intValue() : 0);
+			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(spec);
+			pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 		} catch (DOMException e) {
 		}
 	}
@@ -135,8 +135,8 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		return null;
 	}
 	
-	public int getSignatureMemento() throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
+	public int getSignatureHash() throws CoreException {
+		return pdom.getDB().getInt(record + SIGNATURE_HASH);
 	}
 		
 	private IType[] getArguments() {

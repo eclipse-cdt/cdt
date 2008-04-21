@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Determines the signatures and signature mementos for bindings that can have
+ * Determines the signatures and signature hashes for bindings that can have
  * siblings with the same name.
  * 
  * @author Bryan Wilkinson
@@ -153,29 +153,23 @@ public class IndexCPPSignatureUtil {
 	}
 	
 	/**
-	 * Gets the signature memento for the passed binding.
+	 * Gets the signature hash for the passed binding.
 	 * 
 	 * @param binding
 	 * @return the hash code of the binding's signature string
 	 * @throws CoreException
 	 * @throws DOMException
 	 */
-	public static Integer getSignatureMemento(IBinding binding) throws CoreException, DOMException {
+	public static Integer getSignatureHash(IBinding binding) throws CoreException, DOMException {
 		String sig = getSignature(binding);
-		return sig.length() == 0 ? null : new Integer(sig.hashCode());
-	}
-	
-	public static Integer getSignatureMemento(ICPPFunctionType type) throws DOMException {
-		String sig= getFunctionParameterString(type); 
 		return sig.length() == 0 ? null : new Integer(sig.hashCode());
 	}
 
 	/**
-	 * Compares two bindings for signature information. Signature information covers
+	 * @return compares two bindings for signature information. Signature information covers
 	 * function signatures, or template specialization/instance arguments.
 	 * @param a
 	 * @param b
-	 * @return
 	 */
 	public static int compareSignatures(IBinding a, IBinding b) {
 		try {

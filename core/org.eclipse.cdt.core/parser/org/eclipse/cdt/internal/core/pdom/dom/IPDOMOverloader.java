@@ -22,11 +22,9 @@ import org.eclipse.core.runtime.CoreException;
 public interface IPDOMOverloader {
 	
 	/**
-	 * Gets the signature memento for this PDOM element, which will be unique
+	 * @return the signature hash for this PDOM element, which will be unique
 	 * for all sibling IPDOMOverloaders with the same name.
-	 * 
-	 * @return
 	 * @throws CoreException
 	 */
-	public int getSignatureMemento() throws CoreException;
+	public int getSignatureHash() throws CoreException;
 }

@@ -42,8 +42,8 @@ public class CPPFindBinding extends FindBinding {
 				PDOMBinding binding1 = pdom.getBinding(record1);
 				PDOMBinding binding2 = pdom.getBinding(record2);
 				if(binding1 instanceof IPDOMOverloader && binding2 instanceof IPDOMOverloader) {
-					int ty1 = ((IPDOMOverloader)binding1).getSignatureMemento();
-					int ty2 = ((IPDOMOverloader)binding2).getSignatureMemento();
+					int ty1 = ((IPDOMOverloader)binding1).getSignatureHash();
+					int ty2 = ((IPDOMOverloader)binding2).getSignatureHash();
 					cmp = ty1 < ty2 ? -1 : (ty1 > ty2 ? 1 : 0);
 				}
 			}
@@ -53,11 +53,11 @@ public class CPPFindBinding extends FindBinding {
 
 	public static class CPPFindBindingVisitor extends FindBinding.DefaultFindBindingVisitor {
 		private final int fConstant;
-		private final int fSigMemento;
-		public CPPFindBindingVisitor(PDOM pdom, char[] name, int constant, int memento, int localToFile) {
+		private final int fSigHash;
+		public CPPFindBindingVisitor(PDOM pdom, char[] name, int constant, int hash, int localToFile) {
 			super(pdom, name, new int[] {constant}, localToFile);
 			fConstant= constant;
-			fSigMemento= memento;
+			fSigHash= hash;
 		}
 		
 		@Override
@@ -69,8 +69,8 @@ public class CPPFindBinding extends FindBinding {
 				if (c1 == c2) {
 					PDOMBinding binding = fPdom.getBinding(record);
 					if (binding instanceof IPDOMOverloader) {
-						c1 = ((IPDOMOverloader) binding).getSignatureMemento();
-						c2= fSigMemento;
+						c1 = ((IPDOMOverloader) binding).getSignatureHash();
+						c2= fSigHash;
 					}
 				}
 				cmp = c1 < c2 ? -1 : (c1 > c2 ? 1 : 0);
@@ -88,8 +88,8 @@ public class CPPFindBinding extends FindBinding {
 		protected boolean matches(PDOMBinding binding) throws CoreException {
 			if (super.matches(binding)) {
 				if (binding instanceof IPDOMOverloader) {
-					int ty1 = ((IPDOMOverloader)binding).getSignatureMemento();
-					return fSigMemento == ty1;
+					int ty1 = ((IPDOMOverloader)binding).getSignatureHash();
+					return fSigHash == ty1;
 				}
 			}
 			return false;
@@ -103,9 +103,9 @@ public class CPPFindBinding extends FindBinding {
 	}
 
 
-	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int ty2, int localToFileRec) 
+	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int sigHash, int localToFileRec) 
 			throws CoreException {
-		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, constant, ty2, localToFileRec);
+		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, constant, sigHash, localToFileRec);
 		try {
 			node.accept(visitor);
 		} catch(OperationCanceledException ce) {
@@ -115,25 +115,25 @@ public class CPPFindBinding extends FindBinding {
 
 
 	public static PDOMBinding findBinding(BTree btree, PDOMLinkage linkage, IBinding binding, int localToFileRec) throws CoreException {	
-		Integer memento= 0;
+		Integer hash= 0;
 		try {
-			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
+			hash = IndexCPPSignatureUtil.getSignatureHash(binding);
 		} catch (DOMException e) {
 		}
-		if(memento != null) {
-			return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), memento.intValue(), localToFileRec);
+		if(hash != null) {
+			return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec);
 		}
 		return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), new int [] {linkage.getBindingType(binding)}, localToFileRec);
 	}
 
 	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding, int localToFileRec) throws CoreException {
-		Integer memento = null;
+		Integer hash = null;
 		try {
-			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
+			hash = IndexCPPSignatureUtil.getSignatureHash(binding);
 		} catch (DOMException e) {
 		}
-		if(memento != null) {
-			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), memento.intValue(), localToFileRec);
+		if(hash != null) {
+			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec);
 		}
 		return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), new int[] {linkage.getBindingType(binding)}, localToFileRec);
 	}

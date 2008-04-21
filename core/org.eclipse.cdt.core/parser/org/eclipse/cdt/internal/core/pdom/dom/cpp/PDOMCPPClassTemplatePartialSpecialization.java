@@ -46,7 +46,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		PDOMCPPClassTemplate implements ICPPClassTemplatePartialSpecialization, ICPPSpecialization, IPDOMOverloader {
 	
 	private static final int ARGUMENTS = PDOMCPPClassTemplate.RECORD_SIZE + 0;
-	private static final int SIGNATURE_MEMENTO = PDOMCPPClassTemplate.RECORD_SIZE + 4;
+	private static final int SIGNATURE_HASH = PDOMCPPClassTemplate.RECORD_SIZE + 4;
 	private static final int PRIMARY = PDOMCPPClassTemplate.RECORD_SIZE + 8;
 	private static final int NEXT_PARTIAL = PDOMCPPClassTemplate.RECORD_SIZE + 12;
 	
@@ -63,8 +63,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		primary.addPartial(this);
 		
 		try {
-			Integer memento = IndexCPPSignatureUtil.getSignatureMemento(partial);
-			pdom.getDB().putInt(record + SIGNATURE_MEMENTO, memento != null ? memento.intValue() : 0);
+			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(partial);
+			pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -75,8 +75,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		super(pdom, bindingRecord);
 	}
 	
-	public int getSignatureMemento() throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
+	public int getSignatureHash() throws CoreException {
+		return pdom.getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
 	@Override
@@ -153,8 +153,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 			if(other instanceof PDOMCPPClassTemplatePartialSpecialization) {
 				try {
 					PDOMCPPClassTemplatePartialSpecialization otherSpec = (PDOMCPPClassTemplatePartialSpecialization) other;
-					int mySM = getSignatureMemento();
-					int otherSM = otherSpec.getSignatureMemento();
+					int mySM = getSignatureHash();
+					int otherSM = otherSpec.getSignatureHash();
 					return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
 				} catch(CoreException ce) {
 					CCorePlugin.log(ce);

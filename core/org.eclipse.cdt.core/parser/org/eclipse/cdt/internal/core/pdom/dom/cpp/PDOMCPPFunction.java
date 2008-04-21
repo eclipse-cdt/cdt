@@ -64,7 +64,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	/**
 	 * Offset of hash of parameter information to allow fast comparison
 	 */
-	private static final int SIGNATURE_MEMENTO = PDOMCPPBinding.RECORD_SIZE + 12;
+	private static final int SIGNATURE_HASH = PDOMCPPBinding.RECORD_SIZE + 12;
 	
 	/**
 	 * Offset of annotation information (relative to the beginning of the
@@ -82,8 +82,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		super(pdom, parent, function.getNameCharArray());
 		Database db = pdom.getDB();		
 		try {
-			Integer memento = IndexCPPSignatureUtil.getSignatureMemento(function);
-			pdom.getDB().putInt(record + SIGNATURE_MEMENTO, memento != null ? memento.intValue() : 0);
+			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
+			pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 			
 			if(setTypes) {
 				initData((ICPPFunctionType) function.getType(), function.getParameters());
@@ -144,12 +144,12 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return pft;
 	}
 	
-	public int getSignatureMemento() throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
+	public int getSignatureHash() throws CoreException {
+		return pdom.getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
-	public static int getSignatureMemento(PDOM pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
+	public static int getSignatureHash(PDOM pdom, int record) throws CoreException {
+		return pdom.getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
 	public PDOMCPPFunction(PDOM pdom, int bindingRecord) {
@@ -271,8 +271,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		if(b instanceof IPDOMOverloader) {
 			IPDOMOverloader bb= (IPDOMOverloader) b;
 			try {
-				int mySM = a.getSignatureMemento();
-				int otherSM = bb.getSignatureMemento();
+				int mySM = a.getSignatureHash();
+				int otherSM = bb.getSignatureHash();
 				return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
 			} catch(CoreException ce) {
 				CCorePlugin.log(ce);

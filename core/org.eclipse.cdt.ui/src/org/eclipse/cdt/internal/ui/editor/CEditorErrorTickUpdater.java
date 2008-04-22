@@ -72,12 +72,12 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 	 * @see IProblemChangedListener#problemsChanged(IResource[], boolean)
 	 */
 	public void problemsChanged(IResource[] resourcesChanged, boolean isMarkerChange) {
-		if (isMarkerChange) {
+		if (!isMarkerChange) {
 			return;
 		}
 		IEditorInput input= fCEditor.getEditorInput();
 		if (input != null) { // might run async, tests needed
-			ICElement celement= (ICElement) input.getAdapter(ICElement.class);
+			ICElement celement= fCEditor.getInputCElement();
 			if (celement != null) {
 				IResource resource= celement.getResource();
 				if (resource == null) {
@@ -91,7 +91,7 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 				}
 			}
 		}
-	}	
+	}
 			
 	public void updateEditorImage(ICElement celement) {
 		Image titleImage= fCEditor.getTitleImage();
@@ -113,7 +113,7 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 				}
 			});
 		}
-	}	
+	}
 		
 	public void dispose() {
 		fLabelProvider.dispose();

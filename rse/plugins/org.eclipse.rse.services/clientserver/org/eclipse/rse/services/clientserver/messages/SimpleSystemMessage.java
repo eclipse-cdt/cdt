@@ -34,13 +34,15 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * 
 	 * Clients can use either globally unique RSE message IDs or plugin-specific local IDs.  
 	 * 
-	 * RSE-global message IDs are of the form: RSE<subcomponent><number>  
+	 * RSE-global message IDs are of the form: RSE&lt;subcomponent&gt;&lt;number&gt;  
 	 * 
 	 * The subcomponent is a single character:
+	 * <ul>
 	 * <li>"G" for General</li> 
 	 * <li>"O" for Other</li>
 	 * <li>"F" for Files</li>
 	 * <li>"C" for Communications</li>
+	 * </ul>
 	 * 
 	 * The number is a four digit number.
 	 * 
@@ -63,13 +65,15 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * 
 	 * Clients can use either globally unique RSE message IDs or plugin-specific local IDs.  
 	 * 
-	 * RSE-global message IDs are of the form: RSE<subcomponent><number>  
+	 * RSE-global message IDs are of the form: RSE&lt;subcomponent&gt;&lt;number&gt;  
 	 * 
 	 * The subcomponent is a single character:
+	 * <ul>
 	 * <li>"G" for General</li> 
 	 * <li>"O" for Other</li>
 	 * <li>"F" for Files</li>
 	 * <li>"C" for Communications</li>
+	 * </ul>
 	 * 
 	 * The number is a four digit number.
 	 * 
@@ -96,13 +100,15 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * 
 	 * Clients can use either globally unique RSE message IDs or plugin-specific local IDs.  
 	 * 
-	 * RSE-global message IDs are of the form: RSE<subcomponent><number>  
+	 * RSE-global message IDs are of the form: RSE&lt;subcomponent&gt;&lt;number&gt;  
 	 * 
 	 * The subcomponent is a single character:
+	 * <ul>
 	 * <li>"G" for General</li> 
 	 * <li>"O" for Other</li>
 	 * <li>"F" for Files</li>
 	 * <li>"C" for Communications</li>
+	 * </ul>
 	 * 
 	 * The number is a four digit number.
 	 * 

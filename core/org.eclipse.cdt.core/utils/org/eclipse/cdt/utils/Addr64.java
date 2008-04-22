@@ -14,6 +14,7 @@ package org.eclipse.cdt.utils;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.internal.core.Messages;
 
 public class Addr64 implements IAddress {
 
@@ -31,32 +32,49 @@ public class Addr64 implements IAddress {
 	private final BigInteger address;
 
 	public Addr64(byte[] addrBytes) {
-		address = checkAddress(new BigInteger(1, addrBytes));
+		address = checkAddress(new BigInteger(1, addrBytes), true);
 	}
 
 	public Addr64(BigInteger rawaddress) {
-		address = checkAddress(rawaddress);
+		this(rawaddress, true);
+	}
+
+	public Addr64(BigInteger rawaddress, boolean truncate) {
+		address = checkAddress(rawaddress, truncate);
 	}
 
 	public Addr64(String addr) {
+		this(addr, true);
+	}
+
+	public Addr64(String addr, boolean truncate) {
 		addr = addr.toLowerCase();
 		if (addr.startsWith("0x")) { //$NON-NLS-1$
-			address = checkAddress(new BigInteger(addr.substring(2), 16));
+			address = checkAddress(new BigInteger(addr.substring(2), 16), truncate);
 		} else {
-			address = checkAddress(new BigInteger(addr, 10));
+			address = checkAddress(new BigInteger(addr, 10), truncate);
 		}
 	}
 
 	public Addr64(String addr, int radix) {
-		this(new BigInteger(addr, radix));
+		this(addr, radix, true);
 	}
 
-	private BigInteger checkAddress(BigInteger addr) {
+	public Addr64(String addr, int radix, boolean truncate) {
+		this(new BigInteger(addr, radix), truncate);
+	}
+
+	private BigInteger checkAddress(BigInteger addr, boolean truncate) {
 		if (addr.signum() == -1) {
 			throw new IllegalArgumentException("Invalid Address, must be positive value"); //$NON-NLS-1$
 		}
 		if (addr.bitLength() > 64 ) {
-			return addr.and(MAX.getValue()); // truncate
+			if (truncate) {
+				return addr.and(MAX.getValue()); // truncate
+			}
+			else {
+				throw (new NumberFormatException(Messages.Addr_valueOutOfRange));
+			}
 		}
 		return addr;
 	}

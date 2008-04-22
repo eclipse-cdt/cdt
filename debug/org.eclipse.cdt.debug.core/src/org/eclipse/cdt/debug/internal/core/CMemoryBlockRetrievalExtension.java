@@ -14,8 +14,10 @@ import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.core.IAddressFactory2;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -29,6 +31,7 @@ import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension;
 import org.eclipse.cdt.debug.internal.core.model.CStackFrame;
 import org.eclipse.cdt.debug.internal.core.model.CThread;
+import org.eclipse.cdt.internal.core.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -225,12 +228,24 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				
 				// See if the expression is a simple numeric value; if it is, we can avoid some costly
 				// processing (calling the backend to resolve the expression)
+				// Use IAddressFactory2 if possible to ensure we abort if the address
+				// is outside the factory's valid range
 				try {
 					IAddressFactory addrFactory = ((CDebugTarget)target).getAddressFactory();
-					String hexstr = addrFactory.createAddress(expression).toString(16);
+					String hexstr = null;
+					if (addrFactory instanceof IAddressFactory2) {
+						hexstr = ((IAddressFactory2)addrFactory).createAddress(expression, false).toString(16);
+					}
+					else {
+						hexstr = addrFactory.createAddress(expression).toString(16);
+					}
 					return new CMemoryBlockExtension((CDebugTarget)target, expression, new BigInteger(hexstr, 16));
 				} catch (NumberFormatException nfexc) {
-					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression
+					if (nfexc.getMessage().equals(Messages.Addr_valueOutOfRange)) {
+						throw nfexc; 
+					}
+					
+					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression					
 				}
 				
 				CStackFrame frame = getStackFrame( debugElement );
@@ -250,11 +265,11 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 							}
 						}
 						else {
-							msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.1" ), new String[] { expression } ); //$NON-NLS-1$
+							msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.1" ), (Object[])new String[] { expression } ); //$NON-NLS-1$
 						}
 					}
 					else {
-						msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.2" ), new String[] { expression } ); //$NON-NLS-1$
+						msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.2" ), (Object[])new String[] { expression } ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -263,7 +278,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 			msg = e.getMessage();
 		}
 		catch( NumberFormatException e ) {
-			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.0" ), new String[] { expression, address } ); //$NON-NLS-1$
+			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.0" ), (Object[])new String[] { expression, address } ); //$NON-NLS-1$
 		}
 		finally {
 			if (exp != null) {
@@ -319,7 +334,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 			}
 		}
 		catch( NumberFormatException e ) {
-			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.4" ), new String[] { address } ); //$NON-NLS-1$
+			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.4" ), (Object[])new String[] { address } ); //$NON-NLS-1$
 		}
 		throw new DebugException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, msg, null ) );
 	}

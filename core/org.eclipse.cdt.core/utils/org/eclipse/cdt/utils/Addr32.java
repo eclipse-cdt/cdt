@@ -14,6 +14,7 @@ package org.eclipse.cdt.utils;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.internal.core.Messages;
 
 public class Addr32 implements IAddress {
 
@@ -44,20 +45,37 @@ public class Addr32 implements IAddress {
 	}
 
 	public Addr32(long rawaddress) {
+		this(rawaddress, true);
+	}
+
+	public Addr32(long rawaddress, boolean truncate) {
 		if (rawaddress > MAX_ADDR || rawaddress < 0) {
-			rawaddress &= MAX_ADDR; // truncate
+			if (truncate) {
+				rawaddress &= MAX_ADDR; // truncate
+			}
+			else {
+				throw (new NumberFormatException(Messages.Addr_valueOutOfRange));
+			}
 		}
 		this.address = rawaddress;
 	}
 
 	public Addr32(String addr) {
-		this(Long.decode(addr).longValue());
+		this(addr, true);
+	}
+
+	public Addr32(String addr, boolean truncate) {
+		this(Long.decode(addr).longValue(), truncate);
 	}
 
 	public Addr32(String addr, int radix) {
-		this(Long.parseLong(addr, radix));
+		this (addr, radix, true);
 	}
 
+	public Addr32(String addr, int radix, boolean truncate) {
+		this(Long.parseLong(addr, radix), truncate);
+	}
+	
 	public IAddress add(BigInteger offset) {
 		return new Addr32(this.address + offset.longValue());
 	}

@@ -4081,8 +4081,8 @@ public final class DataStore
 		// which causes havoc for iSeries caching when switching between offline / online
 		//if (isVirtual())
 		//	flush();
-
-		_deRemover.finish();
+		if (_deRemover != null)
+			_deRemover.finish();
 
 		if (_tracingOn)
 		{

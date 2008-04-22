@@ -11,7 +11,12 @@
 
 package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IDisassemblyInstruction;
@@ -19,10 +24,14 @@ import org.eclipse.cdt.debug.core.model.IDisassemblySourceLine;
 import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorPresentation;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelProvider;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelUpdate;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
@@ -80,9 +89,58 @@ public class DisassemblyElementLabelProvider implements IDocumentElementLabelPro
                     sb.append( line.getLineNumber() );
                     sb.append( '\t' );
                 }
-                sb.append( line.getFile().getPath() );
+                sb.append( getSourceLineText( line ) );
                 update.setLabel( DisassemblyEditorPresentation.ATTR_LINE_LABEL, sb.toString() );
             }
         }
+    }
+
+    private String getSourceLineText( IDisassemblySourceLine line ) {
+        File file = line.getFile();
+        String text = MessageFormat.format( "File {0} not found.", file.getPath() );
+        ISourceLocator locator = line.getDebugTarget().getLaunch().getSourceLocator();
+        if ( locator instanceof ISourceLookupDirector ) {
+            ISourceLookupDirector director = (ISourceLookupDirector)locator;
+            Object sourceElement = director.getSourceElement( file.getPath() );
+            if ( sourceElement != null ) {
+                File lookupFile = null;
+                if ( sourceElement instanceof IFile ) {
+                    lookupFile = ((IFile)sourceElement).getLocation().toFile();
+                }
+                else if ( sourceElement instanceof IStorage ) {
+                    lookupFile = ((IStorage)sourceElement).getFullPath().toFile();
+                }
+                if ( lookupFile != null ) {
+                    try {
+                        text = readLine( lookupFile, line.getLineNumber() - 1 );
+                    }
+                    catch( IOException e ) {
+                        text = e.getLocalizedMessage();
+                    }
+                }
+            }            
+        }
+        return text;
+    }
+
+    private String readLine( File file, int lineNumber ) throws IOException {
+        FileReader fr = new FileReader( file );
+        BufferedReader br = new BufferedReader( fr );
+        
+        try {
+            int count = 0;
+            String result = null;
+            do {
+                result = br.readLine();
+                if ( count++ == lineNumber )
+                    return result;
+            } 
+            while( result != null );
+        }
+        finally {
+            br.close();
+        }
+        
+        throw new IOException( MessageFormat.format( "Line {0} doesn't exist in {1}.", Integer.valueOf( lineNumber ), file.getPath() ) );
     }
 }

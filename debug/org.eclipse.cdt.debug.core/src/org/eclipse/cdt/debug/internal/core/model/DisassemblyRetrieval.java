@@ -128,11 +128,13 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
             else {
                 fCurrentOffset += getDistance( fBaseElement, address );
             }
+            fFlags = flags;
             fBaseElement = address;
         }
     }
 
     public void retrieveDisassembly( Object input, Object base, int offset, int lineCount, boolean reveal, int flags ) throws DebugException {
+        fFlags = flags;
         boolean showInstructions = ( (flags & FLAGS_SHOW_INSTRUCTIONS) != 0 );
         boolean showSource = ( (flags & FLAGS_SHOW_SOURCE) != 0 );
         List<IDisassemblyLine> lines = new ArrayList<IDisassemblyLine>( lineCount );
@@ -195,24 +197,28 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
     
     private IDisassemblyLine[] disassembleDown( BigInteger address, int lineCount, boolean mixed ) throws DebugException {
         BigInteger startAddress = address;
-        IDisassemblyLine[] lines = new IDisassemblyLine[0]; 
-        while( lines.length < lineCount ) {
-            BigInteger endAddress = address.add( BigInteger.valueOf( lineCount * getMaxInstructionSize() ) );
+        IDisassemblyLine[] lines = new IDisassemblyLine[0];
+        BigInteger endAddress = startAddress;
+        if ( lines.length < lineCount && endAddress.compareTo( getGlobalEndAddress() ) < 0 ) {
+            endAddress = address.add( BigInteger.valueOf( lineCount * getMaxInstructionSize() ) );
             if ( endAddress.compareTo( getGlobalEndAddress() ) > 0 )
                 endAddress = getGlobalEndAddress();
             lines = disassemble( address, endAddress, mixed );
             IDisassemblyInstruction firstInstruction = getFirstInstruction( lines );
-            if ( firstInstruction == null )
-                break;
             IDisassemblyInstruction lastInstruction = getLastInstruction( lines );
-            if ( lastInstruction == null )
-                break;
-            if ( startAddress.compareTo( firstInstruction.getAdress().getValue() ) < 0 ) {
-                lines = appendLines( disassemble( startAddress, firstInstruction.getAdress().getValue(), mixed ), lines );
-            }
-            startAddress = lastInstruction.getAdress().getValue();
-            if ( startAddress.compareTo( endAddress ) < 0 ) {
-                lines = appendLines( lines, disassemble( startAddress, endAddress, mixed ) );
+            if ( firstInstruction != null && lastInstruction != null ) {
+                if ( startAddress.compareTo( firstInstruction.getAdress().getValue() ) < 0 ) {
+                    lines = appendLines( disassemble( startAddress, firstInstruction.getAdress().getValue(), mixed ), lines );
+                }
+                startAddress = lastInstruction.getAdress().getValue();
+                if ( startAddress.compareTo( endAddress ) < 0 ) {
+                    IDisassemblyLine[] extraLines = new IDisassemblyLine[0];
+                    while( extraLines.length == 0 && endAddress.compareTo( getGlobalEndAddress() ) < 0 ) {
+                        endAddress = endAddress.add( BigInteger.valueOf( getMaxInstructionSize() ) );
+                        extraLines = disassemble( startAddress, endAddress, mixed ); 
+                    }
+                    lines = appendLines( lines, extraLines );
+                }
             }
         }
         int size = Math.min( lineCount, lines.length );

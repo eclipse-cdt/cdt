@@ -150,31 +150,33 @@ public class DocumentContentProvider implements IModelChangedListener {
         Object newBase = update.getBaseElement();
         int newOffset = update.getOffset();
         VirtualDocument document = getDocument();
-        boolean needsUpdate = false;
-        if ( newBase != getBase() ) {
-            fBase = newBase;
-            disposeBaseProxy();
-            installBaseProxy( fBase );
-            needsUpdate = true;
-        }
-        if ( newOffset != document.getCurrentOffset() ) {
-            document.setCurrentOffset( newOffset );
-            needsUpdate = true;
-        }
-        if ( needsUpdate ) {
-            WorkbenchJob job = new WorkbenchJob( "refresh content" ) { //$NON-NLS-1$
-                
-                /* (non-Javadoc)
-                 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-                 */
-                @Override
-                public IStatus runInUIThread( IProgressMonitor monitor ) {
-                    getViewer().refresh( true );
-                    return Status.OK_STATUS;
-                }
-            };
-            job.setSystem( true );
-            job.schedule();
+        if ( document != null ) {
+            boolean needsUpdate = false;
+            if ( newBase != getBase() ) {
+                fBase = newBase;
+                disposeBaseProxy();
+                installBaseProxy( fBase );
+                needsUpdate = true;
+            }
+            if ( newOffset != document.getCurrentOffset() ) {
+                document.setCurrentOffset( newOffset );
+                needsUpdate = true;
+            }
+            if ( needsUpdate ) {
+                WorkbenchJob job = new WorkbenchJob( "refresh content" ) { //$NON-NLS-1$
+                    
+                    /* (non-Javadoc)
+                     * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+                     */
+                    @Override
+                    public IStatus runInUIThread( IProgressMonitor monitor ) {
+                        getViewer().refresh( true );
+                        return Status.OK_STATUS;
+                    }
+                };
+                job.setSystem( true );
+                job.schedule();
+            }
         }
     }
 

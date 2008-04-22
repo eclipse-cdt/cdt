@@ -4403,6 +4403,8 @@ public final class DataStore
      */
 	public void setClient(Client client)
 	{
+		// the most likely scenario here is that _client is null since
+		// setClient() is the only way to make the client not null
 		if (client != _client){
 			_client = client;
 			_userPreferencesDirectory = null;

@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -96,6 +97,7 @@ public class GdbLaunch extends Launch
 
     public DsfSession getSession() { return fSession; }
 
+    @ThreadSafeAndProhibitedFromDsfExecutor("getDsfExecutor()")
     public void addInferiorProcess(String label) throws CoreException {
     	try {
     		// Add the "inferior" process object to the launch.
@@ -120,6 +122,7 @@ public class GdbLaunch extends Launch
         }            
     }
     
+    @ThreadSafeAndProhibitedFromDsfExecutor("getDsfExecutor()")
     public void addCLIProcess(String label) throws CoreException {
         try {
             // Add the CLI process object to the launch.

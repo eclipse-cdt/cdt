@@ -331,6 +331,15 @@
 			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.platform-feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.gnu.build-feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.gnu.debug-feature"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt-feature"/>
 		</antcall>
 		<antcall target="tagone">

@@ -24,6 +24,11 @@ plugin@org.eclipse.cdt.doc.user=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvs
 plugin@org.eclipse.cdt.doc.isv=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.doc.isv
 
 plugin@org.eclipse.cdt=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt
+
+! CDT Features
+feature@org.eclipse.cdt.platform=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.platform-feature
+feature@org.eclipse.cdt.gnu.build=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gnu.build-feature
+feature@org.eclipse.cdt.gnu.debug=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gnu.debug-feature
 feature@org.eclipse.cdt=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt-feature
 
 ! Platform specific

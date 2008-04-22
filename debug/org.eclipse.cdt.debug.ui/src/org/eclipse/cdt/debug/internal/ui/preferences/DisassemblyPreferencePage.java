@@ -13,12 +13,10 @@ package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
@@ -38,7 +36,7 @@ public class DisassemblyPreferencePage extends FieldEditorPreferencePage impleme
      */
     @Override
     protected void createFieldEditors() {
-        
+/*        
         addField( new RadioGroupFieldEditor( 
                         ICDebugPreferenceConstants.PREF_OPEN_DISASSEMBLY_MODE,
                         "Open disassembly if source is not available", 
@@ -50,7 +48,7 @@ public class DisassemblyPreferencePage extends FieldEditorPreferencePage impleme
                         }, 
                         getFieldEditorParent(), 
                         true ) );
-        
+*/      
         Group group = ControlFactory.createGroup( getFieldEditorParent(), "Display settings", 1 );
         Composite spacer = ControlFactory.createComposite( group, 1 );
 

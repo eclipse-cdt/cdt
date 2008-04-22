@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.PointerTypeClone;
 
-public class CompositePointerType extends CompositeTypeContainer implements IPointerType, ITypeContainer {
+public class CompositePointerType extends CompositeTypeContainer implements IPointerType {
 	public CompositePointerType(IPointerType pointerType, ICompositesFactory cf) throws DOMException {
 		super((ITypeContainer) pointerType, cf);
 	}

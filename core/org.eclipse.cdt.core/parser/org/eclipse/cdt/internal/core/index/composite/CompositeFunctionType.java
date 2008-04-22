@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
-public class CompositeFunctionType extends CompositeType implements IFunctionType, IIndexType {
+public class CompositeFunctionType extends CompositeType implements IFunctionType {
 
 	public CompositeFunctionType(IFunctionType rtype, ICompositesFactory cf) {
 		super(rtype, cf);

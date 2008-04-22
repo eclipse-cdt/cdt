@@ -40,15 +40,14 @@ import org.eclipse.cdt.internal.core.index.composite.CompositeMacroContainer;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeQualifierType;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
-import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CCompositesFactory extends AbstractCompositeFactory implements ICompositesFactory {
+public class CCompositesFactory extends AbstractCompositeFactory {
 	
 	public CCompositesFactory(IIndex index) {
 		super(index);
 	}
 	
-	/* (non-Javadoc)
+	/* 
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
 	 */
 	public IIndexScope getCompositeScope(IIndexScope rscope) {
@@ -66,7 +65,7 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 		throw new CompositingNotImplementedError();
 	}
 
-	/* (non-Javadoc)
+	/* 
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
 	 */
 	public IType getCompositeType(IIndexType rtype) throws DOMException {
@@ -98,7 +97,7 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 	}
 
 
-	/* (non-Javadoc)
+	/* 
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	public IIndexBinding getCompositeBinding(IIndexFragmentBinding rbinding) {

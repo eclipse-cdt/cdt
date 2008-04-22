@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.QualifierTypeClone;
 
-public class CompositeQualifierType extends CompositeTypeContainer implements IQualifierType, ITypeContainer {
+public class CompositeQualifierType extends CompositeTypeContainer implements IQualifierType {
 	public CompositeQualifierType(IQualifierType qualifierType, ICompositesFactory cf) throws DOMException {
 		super((ITypeContainer) qualifierType, cf);
 	}

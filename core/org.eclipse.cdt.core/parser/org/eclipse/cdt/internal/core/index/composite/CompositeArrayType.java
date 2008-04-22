@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.ArrayTypeClone;
 
-public class CompositeArrayType extends CompositeTypeContainer implements IArrayType, ITypeContainer {
+public class CompositeArrayType extends CompositeTypeContainer implements IArrayType {
 	public CompositeArrayType(IArrayType arrayType, ICompositesFactory cf) {
 		super((ITypeContainer) arrayType, cf);
 	}

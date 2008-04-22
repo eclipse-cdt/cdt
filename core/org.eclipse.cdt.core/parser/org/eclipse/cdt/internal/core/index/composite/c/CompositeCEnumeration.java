@@ -14,12 +14,11 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCEnumeration extends CompositeCBinding implements IIndexBinding, IEnumeration, IIndexType {
+class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, IIndexType {
 	public CompositeCEnumeration(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}

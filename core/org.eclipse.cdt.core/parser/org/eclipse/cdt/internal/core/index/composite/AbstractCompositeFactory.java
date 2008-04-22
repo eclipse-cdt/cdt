@@ -77,9 +77,10 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 * context) which is equivalent to the specified binding. If no definition is found,
      * a declaration is returned if <code>allowDeclaration</code> is set, otherwise an
      * arbitrary binding is returned if available.
-	 * @param index
-	 * @param binding
-	 * @return
+	 * @param binding the binding to find a representative for
+	 * @param allowDeclaration whether declarations should be considered when a definition is
+	 * unavailable
+	 * @return the representative binding as defined above
 	 */
 	protected IIndexFragmentBinding findOneBinding(IBinding binding, boolean allowDeclaration) {
 		try{

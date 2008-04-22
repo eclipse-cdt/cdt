@@ -18,8 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction
-implements ICPPFunction, ICPPSpecialization {
+public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction implements ICPPSpecialization {
 
 	public CompositeCPPFunctionSpecialization(ICompositesFactory cf, ICPPFunction ft) {
 		super(cf, ft);

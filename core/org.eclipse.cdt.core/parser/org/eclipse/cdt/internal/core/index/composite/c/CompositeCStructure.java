@@ -15,12 +15,11 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCStructure extends CompositeCBinding implements IIndexBinding, ICompositeType, IIndexType {
+class CompositeCStructure extends CompositeCBinding implements ICompositeType, IIndexType {
 
 	public CompositeCStructure(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);

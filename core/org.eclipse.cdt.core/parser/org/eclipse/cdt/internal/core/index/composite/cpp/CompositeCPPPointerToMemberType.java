@@ -14,14 +14,15 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPPointerToMemberType extends CompositePointerType implements IIndexType, ICPPPointerToMemberType {
+class CompositeCPPPointerToMemberType extends CompositePointerType implements ICPPPointerToMemberType {
+	
 	CompositeCPPPointerToMemberType(ICompositesFactory cf, ICPPPointerToMemberType pointerToMemberType) throws DOMException {
 		super(pointerToMemberType, cf);
 	}
+	
 	public ICPPClassType getMemberOfClass() {
 		IIndexFragmentBinding rbinding = (IIndexFragmentBinding) ((ICPPPointerToMemberType) type).getMemberOfClass();
 		return (ICPPClassType)  cf.getCompositeBinding(rbinding);

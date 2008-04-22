@@ -70,8 +70,8 @@ public abstract class CompositeScope implements IIndexScope {
 	/**
 	 * For bindings that are not known statically to be index bindings, we must decide how to
 	 * process them by run-time type. This method processes a single binding accordingly.
-	 * @param binding
-	 * @return
+	 * @param binding a binding from the fragment layer
+	 * @return a suitable binding at the composite layer 
 	 */
 	protected final IBinding processUncertainBinding(IBinding binding) {
 		if(binding instanceof IIndexFragmentBinding) {
@@ -100,11 +100,13 @@ public abstract class CompositeScope implements IIndexScope {
 	 * @return a non-null IBinding[] 
 	 */
 	protected final IBinding[] processUncertainBindings(IBinding[] frgBindings) {
-		IBinding[] result= new IBinding[frgBindings==null ? 0 : frgBindings.length];
-		for(int i=0; i<result.length; i++) {
-			result[i]= processUncertainBinding(frgBindings[i]);
+		if(frgBindings != null) {
+			IBinding[] result= new IBinding[frgBindings.length];
+			for(int i=0; i<result.length; i++) {
+				result[i]= processUncertainBinding(frgBindings[i]);
+			}
 		}
-		return result;
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {

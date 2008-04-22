@@ -14,12 +14,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements
-	IIndexType, ICPPSpecialization {
-
+public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPSpecialization {
+	
 	public CompositeCPPClassSpecialization(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
 	}

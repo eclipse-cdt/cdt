@@ -164,7 +164,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 			if ( events[i] instanceof ICDIMemoryChangedEvent ) {
 				BigInteger[] addresses = ((ICDIMemoryChangedEvent)events[i]).getAddresses();
 				for ( int j = 0; j < addresses.length; ++j ) {
-					IAddress address = getAddressFactory().createAddress( addresses[i] );
+					IAddress address = getAddressFactory().createAddress( addresses[j] );
 					for ( int k = 0; k < fBlocks.length; ++k ) {
 						if ( fBlocks[k] != null && fBlocks[k].contains( address ) ) {
 							update = true;

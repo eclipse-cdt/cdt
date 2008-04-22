@@ -12,8 +12,8 @@ package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -98,20 +98,21 @@ public class GdbLaunch extends Launch
     public DsfSession getSession() { return fSession; }
 
     public void addInferiorProcess(String label) throws CoreException {
-        try {
-            // Add the "inferior" process object to the launch.
-            final AtomicReference<MIInferiorProcess> inferiorProcessRef = new AtomicReference<MIInferiorProcess>();
-            getDsfExecutor().submit( new Callable<Object>() {
-            	public Object call() throws CoreException {
-            		GDBControl gdb = fTracker.getService(GDBControl.class);
-            		if (gdb != null) {
-            			inferiorProcessRef.set(gdb.getInferiorProcess());
-            		}
-            		return null;
-            	}
-            }).get();
-            
-            DebugPlugin.newProcess(this, inferiorProcessRef.get(), label);
+    	try {
+    		// Add the "inferior" process object to the launch.
+    		Future<MIInferiorProcess> future = 
+    			getDsfExecutor().submit( new Callable<MIInferiorProcess>() {
+    				public MIInferiorProcess call() throws CoreException {
+    					GDBControl gdb = fTracker.getService(GDBControl.class);
+    					if (gdb != null) {
+    						return gdb.getInferiorProcess();
+    					}
+    					return null;
+    				}
+    			});
+    		MIInferiorProcess inferiorProc = future.get();
+
+            DebugPlugin.newProcess(this, inferiorProc, label);
         } catch (InterruptedException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
@@ -124,18 +125,19 @@ public class GdbLaunch extends Launch
     public void addCLIProcess(String label) throws CoreException {
         try {
             // Add the CLI process object to the launch.
-            final AtomicReference<AbstractCLIProcess> cliProcessRef = new AtomicReference<AbstractCLIProcess>();
-            getDsfExecutor().submit( new Callable<Object>() {
-            	public Object call() throws CoreException {
-            		GDBControl gdb = fTracker.getService(GDBControl.class);
-            		if (gdb != null) {
-            			cliProcessRef.set(gdb.getCLIProcess());
-            		}
-            		return null;
-            	}
-            }).get();
-            
-            DebugPlugin.newProcess(this, cliProcessRef.get(), label);
+    		Future<AbstractCLIProcess> future = 
+    			getDsfExecutor().submit( new Callable<AbstractCLIProcess>() {
+    				public AbstractCLIProcess call() throws CoreException {
+    					GDBControl gdb = fTracker.getService(GDBControl.class);
+    					if (gdb != null) {
+    						return gdb.getCLIProcess();
+    					}
+    					return null;
+    				}
+    			});
+    		AbstractCLIProcess cliProc = future.get();
+
+            DebugPlugin.newProcess(this, cliProc, label);
         } catch (InterruptedException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {

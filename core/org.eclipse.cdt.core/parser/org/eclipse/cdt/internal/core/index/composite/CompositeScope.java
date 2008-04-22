@@ -105,6 +105,7 @@ public abstract class CompositeScope implements IIndexScope {
 			for(int i=0; i<result.length; i++) {
 				result[i]= processUncertainBinding(frgBindings[i]);
 			}
+			return result;
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}

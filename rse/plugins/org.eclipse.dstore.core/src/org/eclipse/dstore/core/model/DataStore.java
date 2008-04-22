@@ -21,6 +21,7 @@
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [227881] [dstore][threaded] There is no chance to set client object for getUserPreferencesDirectory()
+ * Norikai Takatsu  (IBM) - [228156] [dstore] DataElementRemover thread doesn't terminate after a client disconnects the server
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -4081,6 +4082,7 @@ public final class DataStore
 		//if (isVirtual())
 		//	flush();
 
+		_deRemover.finish();
 
 		if (_tracingOn)
 		{

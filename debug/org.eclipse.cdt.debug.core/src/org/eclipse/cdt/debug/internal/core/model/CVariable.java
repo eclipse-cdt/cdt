@@ -39,6 +39,36 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IValue;
 
 /**
+ * A thin wrapper over the CVariable for injection into the CDI event manager's
+ * listener collection. We used to directly inject the CVariable, but that's
+ * problematic since CVariable overrides the equals() method to base the
+ * decision on the internal variable object. So if two CVariables were added to
+ * the listener list for the same underlying value, trying to later remove one
+ * of the listeners had a 50/50 chance of removing the wrong one.
+ * 
+ * How can you end up with two CVariables for the same internal variable on the
+ * listener list? Easy. 
+ * 1. View a register in the Registers view. 
+ * 2. Create a custom register group that contains the same register. 
+ * 3. Expand the custom register group 
+ * 4. Remove the custom register group 
+ * Step 4 removed the wrong CVariable from the listener list.
+ * 
+ */
+class VariableEventListener implements ICDIEventListener {
+	private CVariable fVar;
+	public VariableEventListener(CVariable var) {
+		fVar = var;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
+	 */
+	public void handleDebugEvents(ICDIEvent[] events) {
+		fVar.handleDebugEvents(events);
+	}
+};
+
+/**
  * Represents a variable in the CDI model.
  */
 public abstract class CVariable extends AbstractCVariable implements ICDIEventListener {
@@ -98,16 +128,22 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	private boolean fIsDisposed = false;
 
 	/**
+	 * Thin wrapper for instertion into the CDI event manager's listener list
+	 */
+	private VariableEventListener fEventListenerWrapper;
+
+	/**
 	 * Constructor for CVariable.
 	 */
 	protected CVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject ) {
 		super( parent );
+		fEventListenerWrapper = new VariableEventListener(this);
 		if ( cdiVariableObject != null ) {
 			setName( cdiVariableObject.getName() );
 			createOriginal( cdiVariableObject );
 		}
 		fIsEnabled = ( parent instanceof AbstractCValue ) ? ((AbstractCValue)parent).getParentVariable().isEnabled() : !isBookkeepingEnabled();
-		getCDISession().getEventManager().addEventListener( this );
+		getCDISession().getEventManager().addEventListener( fEventListenerWrapper );
 		if ( cdiVariableObject != null ) {
 			setInitialFormat();
 		}
@@ -118,13 +154,14 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 */
 	protected CVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject, String errorMessage ) {
 		super( parent );
+		fEventListenerWrapper = new VariableEventListener(this);
 		if ( cdiVariableObject != null ) {
 			setName( cdiVariableObject.getName() );
 			createOriginal( cdiVariableObject );
 		}
 		fIsEnabled = !isBookkeepingEnabled();
-		setStatus( ICDebugElementStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), new String[]{ errorMessage } ) ); //$NON-NLS-1$
-		getCDISession().getEventManager().addEventListener( this );
+		setStatus( ICDebugElementStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), (Object[])new String[]{ errorMessage } ) ); //$NON-NLS-1$
+		getCDISession().getEventManager().addEventListener( fEventListenerWrapper );
 		if ( cdiVariableObject != null ) {
 			setInitialFormat();
 		}		
@@ -612,7 +649,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	}
 
 	protected void internalDispose( boolean destroy ) {
-		getCDISession().getEventManager().removeEventListener( this );
+		getCDISession().getEventManager().removeEventListener( fEventListenerWrapper );
 		IInternalVariable iv = getOriginal();
 		if ( iv != null )
 			iv.dispose( destroy );

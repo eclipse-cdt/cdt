@@ -56,7 +56,7 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
         }
         if (getContext() == null) {
             fRequest.setStatus(makeError("Selected object does not support run control.", null));             //$NON-NLS-1$
-        } else if (getRunControl() == null) {
+        } else if (getRunControl() == null || getStepQueueMgr() == null) {
             fRequest.setStatus(makeError("Run Control not available", null)); //$NON-NLS-1$
         } else {
             doExecute();

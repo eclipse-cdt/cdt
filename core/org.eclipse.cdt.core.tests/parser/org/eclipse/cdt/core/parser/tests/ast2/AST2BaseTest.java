@@ -415,11 +415,14 @@ public class AST2BaseTest extends BaseTestCase {
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
 	}
 	
-	protected static void assertInstance(Object o, Class... cs) {
+	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
+		assertNotNull("Expected object of "+clazz.getName()+" but got a null value", o);
+		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
 		for(Class c : cs) {
 			assertNotNull("Expected object of "+c.getName()+" but got a null value", o);
 			assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
 		}
+		return clazz.cast(o);
 	}
 	
 	protected static void assertField(IBinding binding, String fieldName, String ownerName) throws DOMException {
@@ -456,7 +459,9 @@ public class AST2BaseTest extends BaseTestCase {
     		IBinding binding= binding(section, len);
     		assertTrue("ProblemBinding for name: "+section, !(binding instanceof IProblemBinding));
     		assertInstance(binding, type);
-    		assertInstance(binding, cs);
+    		for(Class c : cs) {
+    			assertInstance(binding, c);
+    		}
     		return type.cast(binding);
     	}
     	

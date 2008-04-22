@@ -15,15 +15,19 @@ import java.util.List;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -37,12 +41,17 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -1089,5 +1098,141 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		
 		assertEquals(foo1, foo2); assertEquals(foo2, foo3);
 		assertEquals(foo3, foo4);
+    }
+    
+    // template<typename T>
+    // class A {};
+    //
+    // class B {};
+    // 
+    // template<>
+    // class A<B> {};
+    
+    // class C {};
+    //
+    // A<B> ab;
+    // A<C> ac;
+    public void _testEnclosingScopes_a() throws Exception {
+    	ICPPSpecialization   b0= getBindingFromASTName("A<B>", 4, ICPPSpecialization.class, ICPPClassType.class);
+    	ICPPTemplateInstance b1= getBindingFromASTName("A<C>", 4, ICPPTemplateInstance.class, ICPPClassType.class);
+    	
+    	ICPPClassType sc0= assertInstance(b0.getSpecializedBinding(), ICPPClassType.class);
+    	ICPPClassType sc1= assertInstance(b1.getSpecializedBinding(), ICPPClassType.class);
+    	assertTrue(sc0.isSameType(sc1));
+    	
+    	IIndexScope sc2= assertInstance(sc0.getScope(), IIndexScope.class, ICPPTemplateScope.class);
+    	
+    	assertInstance(b0.getScope(), ICPPTemplateScope.class);
+    	
+    	assertNotSame(sc2, b0.getScope());
+    	assertEquals(sc2.getScopeBinding(), ((IIndexScope)b1.getScope()).getScopeBinding());
+    }
+    
+    // template<typename T>
+    // class A {
+    //    public:
+    //    class B {};
+    // };
+    //
+    // class C {}; class D {};
+    //
+    // template<>
+    // class A<C> {
+    //   public:
+    //   class B {};
+    // };
+    
+    // void refs() {
+    //    A<C>::B acb;
+    //    A<D>::B adb;
+    // }
+    public void testEnclosingScopes_b() throws Exception {
+    	ICPPClassType b0= getBindingFromASTName("B acb", 1, ICPPClassType.class);
+    	ICPPClassType b1= getBindingFromASTName("B adb", 1, ICPPClassType.class, ICPPSpecialization.class);
+    	ICPPClassType b2= getBindingFromASTName("A<C>", 4, ICPPClassType.class, ICPPSpecialization.class);
+    	
+    	ICPPClassType b3= (ICPPClassType) getIndex().findBindings("A".toCharArray(), new IndexFilter() {
+    		@Override
+    		public boolean acceptBinding(IBinding binding) throws CoreException {
+    			return !(binding instanceof ICPPSpecialization);
+    		}
+    	}, NPM)[0];
+    	
+    	ICPPClassType b4= (ICPPClassType) getIndex().findBindings(new char[][] {"A".toCharArray(), "B".toCharArray()}, new IndexFilter() {
+    		@Override
+    		public boolean acceptBinding(IBinding binding) throws CoreException {
+    			try {
+    				return !(binding.getScope() instanceof CPPClassSpecializationScope); //
+    			} catch(DOMException de) {
+    				CCorePlugin.log(de);
+    				return false;
+    			}
+    		}
+    	}, NPM)[0];
+    	
+    	assertFalse(b0 instanceof ICPPSpecialization);
+    	
+    	IIndexScope s0= (IIndexScope) b0.getScope(), s4= (IIndexScope) b4.getScope();
+    	IScope s1= b1.getScope();
+    	
+    	assertTrue(((IType)s0.getScopeBinding()).isSameType((IType)((IIndexScope)b2.getCompositeScope()).getScopeBinding()));
+    	ICPPClassScope cs1= assertInstance(s1, ICPPClassScope.class);
+    	assertInstance(cs1.getClassType(), ICPPClassType.class);
+    	assertInstance(cs1.getClassType(), ICPPTemplateInstance.class);
+    	assertTrue(((IType)s4.getScopeBinding()).isSameType( (IType) ((IIndexScope)b3.getCompositeScope()).getScopeBinding() ));
+    }
+    
+	// class A {};
+	// 
+	// template<typename T>
+	// class X {
+	// public:
+	//    class Y {
+	//    public:
+	//       class Z {};
+	//    };
+	// };
+	
+	// X<A>::Y::Z xayz;
+    public void _testEnclosingScopes_c() throws Exception {
+    	fakeFailForSingle();
+    	
+    	ICPPClassType b0= getBindingFromASTName("Y::Z x", 1, ICPPClassType.class);
+    	ICPPClassType b1= getBindingFromASTName("Z xayz", 1, ICPPClassType.class);
+    	
+    	IScope s0= b0.getScope(), s1= b1.getScope();
+    	
+    	ICPPClassScope cs0= assertInstance(s0, ICPPClassScope.class);
+    	assertInstance(cs0.getClassType(), ICPPClassType.class);
+    	assertInstance(cs0.getClassType(), ICPPSpecialization.class);
+    	
+    	ICPPClassScope cs1= assertInstance(s1, ICPPClassScope.class);
+    	assertInstance(cs1.getClassType(), ICPPClassType.class);
+    	assertInstance(cs1.getClassType(), ICPPSpecialization.class);    	
+    }
+    
+    // class A {}; class B {};
+    //
+    // template<typename T1, typename T2>
+    // class X {};
+    //
+    // template<typename T3>
+    // class X<T3, A> {
+    // public:
+    //     class N {};
+    // };
+    
+    // X<B,A>::N n;
+    public void _testEnclosingScopes_d() throws Exception {
+    	ICPPClassType b0= getBindingFromASTName("N n", 1, ICPPClassType.class, ICPPSpecialization.class);
+    	ICPPClassType b1= assertInstance(((ICPPSpecialization) b0).getSpecializedBinding(), ICPPClassType.class);
+    	
+    	ICPPClassScope s0= assertInstance(b0.getScope(), ICPPClassScope.class);
+    	assertInstance(s0.getClassType(), ICPPTemplateInstance.class);
+    	
+    	ICPPClassScope s1= assertInstance(b1.getScope(), ICPPClassScope.class);
+    	assertInstance(s1.getClassType(), ICPPTemplateDefinition.class);
+    	
+    	assertInstance(s1.getClassType().getScope(), ICPPTemplateScope.class);
     }
 }

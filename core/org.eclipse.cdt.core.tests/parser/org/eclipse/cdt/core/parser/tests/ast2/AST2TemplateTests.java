@@ -1299,6 +1299,130 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( ((ICPPSpecialization)f2).getSpecializedBinding(), f1 );
 	}
 	
+	// template<typename T>
+    // class A {};
+    //
+    // class B {};
+    // 
+    // template<>
+    // class A<B> {};
+    //
+    // class C {};
+    //
+    // A<B> ab;
+    // A<C> ac;
+    public void testEnclosingScopes_a() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	
+    	ICPPSpecialization   b0= ba.assertNonProblem("A<B>", 4, ICPPSpecialization.class, ICPPClassType.class);
+    	ICPPTemplateInstance b1= ba.assertNonProblem("A<C>", 4, ICPPTemplateInstance.class, ICPPClassType.class);
+    	
+    	ICPPClassType sc0= assertInstance(b0.getSpecializedBinding(), ICPPClassType.class);
+    	ICPPClassType sc1= assertInstance(b1.getSpecializedBinding(), ICPPClassType.class);
+    	assertTrue(sc0.isSameType(sc1));
+    	    	
+    	assertInstance(b0, ICPPSpecialization.class);
+    	assertInstance(b1, ICPPTemplateInstance.class);
+    	
+    	assertInstance(b0.getScope(), ICPPTemplateScope.class);
+    	
+    	IScope ts0= ((ICPPClassType) b0.getSpecializedBinding()).getScope();
+    	IScope ts1= ((ICPPClassType) b1.getSpecializedBinding()).getScope();
+    	
+    	assertInstance(ts0, ICPPTemplateScope.class);
+    	
+    	assertSame(ts0, ts1);
+    	assertNotSame(ts0, b0.getScope());
+    	assertSame(ts1, b1.getScope()); // a class instance exists in the same scope as the template its defined from
+    }
+    
+    // template<typename T>
+    // class A {
+    //    public:
+    //    class B {};
+    // };
+    //
+    // class C {}; class D {};
+    //
+    // template<>
+    // class A<C> {
+    //   public:
+    //   class B {};
+    // };
+    //
+    // void refs() {
+    //    A<C>::B acb;
+    //    A<D>::B adb;
+    // }
+    public void testEnclosingScopes_b() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	
+    	ICPPClassType b0= ba.assertNonProblem("B acb", 1, ICPPClassType.class);
+    	ICPPClassType b1= ba.assertNonProblem("B adb", 1, ICPPClassType.class, ICPPSpecialization.class);
+    	ICPPClassType b2= ba.assertNonProblem("A<C>", 4, ICPPClassType.class, ICPPSpecialization.class);
+    	ICPPClassType b3= ba.assertNonProblem("A {", 1, ICPPClassType.class, ICPPTemplateDefinition.class);
+    	ICPPClassType b4= ba.assertNonProblem("B {}", 1, ICPPClassType.class);
+    	
+    	assertFalse(b0 instanceof ICPPSpecialization);
+    	
+    	assertSame(b0.getScope(), b2.getCompositeScope());
+    	ICPPClassScope cs1= assertInstance(b1.getScope(), ICPPClassScope.class);
+    	assertInstance(cs1.getClassType(), ICPPTemplateInstance.class);
+    	assertSame(b4.getScope(), b3.getCompositeScope());
+    }
+	
+	// class A {};
+	// 
+	// template<typename T>
+	// class X {
+	// public:
+	//    class Y {
+	//    public:
+	//       class Z {};
+	//    };
+	// };
+	//
+	// X<A>::Y::Z xayz;
+    public void testEnclosingScopes_c() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	
+    	ICPPClassType b0= ba.assertNonProblem("Y::Z x", 1, ICPPClassType.class);
+    	ICPPClassType b1= ba.assertNonProblem("Z xayz", 1, ICPPClassType.class);
+    	
+    	ICPPClassScope cs0= assertInstance(b0.getScope(), ICPPClassScope.class);
+    	assertInstance(cs0.getClassType(), ICPPSpecialization.class);
+    	
+    	ICPPClassScope cs1= assertInstance(b1.getScope(), ICPPClassScope.class);
+    	assertInstance(cs1.getClassType(), ICPPSpecialization.class);    	
+    }
+    
+    // class A {}; class B {};
+    //
+    // template<typename T1, typename T2>
+    // class X {};
+    //
+    // template<typename T3>
+    // class X<T3, A> {
+    // public:
+    //     class N {};
+    // };
+    //
+    // X<B,A>::N n;
+    public void testEnclosingScopes_d() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	
+    	ICPPClassType b0= ba.assertNonProblem("N n", 1, ICPPClassType.class);
+    	ICPPClassType b1= ba.assertNonProblem("N {", 1, ICPPClassType.class);
+    	
+    	ICPPClassScope s0= assertInstance(b0.getScope(), ICPPClassScope.class);
+    	assertInstance(s0.getClassType(), ICPPTemplateInstance.class);
+    	
+    	ICPPClassScope s1= assertInstance(b1.getScope(), ICPPClassScope.class);
+    	assertInstance(s1.getClassType(), ICPPTemplateDefinition.class);
+    	
+    	ICPPTemplateScope s2= assertInstance(s1.getClassType().getScope(), ICPPTemplateScope.class);
+    }
+	
 	// template<class T> struct A {                              
 	//    void f(T);                                             
 	//    template<class X> void g(T,X);                         

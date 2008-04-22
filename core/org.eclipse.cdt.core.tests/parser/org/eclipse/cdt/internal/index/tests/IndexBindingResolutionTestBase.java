@@ -92,13 +92,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 *  <li> The binding associated with the name is null or a problem binding
      *  <li> The binding is not an instance of the specified class
 	 * </ul>
-	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @param section the code fragment to search for in the AST. The first occurrence of an identical section is used.
 	 * @param len the length of the specified section to use as a name. This can also be useful for distinguishing between
 	 * template names, and template ids.
+	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @return the associated name's binding
 	 */
-	protected <T> T getBindingFromASTName(Class<T> clazz, String section, int len) {
+	protected <T> T getBindingFromASTName(String section, int len, Class<T> clazz, Class ... cs) {
 		IASTName name= findName(section, len);
 		assertNotNull("name not found for \""+section+"\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
@@ -106,7 +106,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for "+name.getRawSignature(), binding);
 		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
-		assertInstance(binding, clazz);
+		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
 	
@@ -114,7 +114,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(Class, String, int)
 	 */
 	protected IBinding getBindingFromASTName(String section, int len) {
-		return getBindingFromASTName(IBinding.class, section, len);
+		return getBindingFromASTName(section, len, IBinding.class);
 	}
 
 	/**
@@ -173,9 +173,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertEquals(qn, CPPVisitor.renderQualifiedName(((ICPPClassType)ft.getParameterTypes()[index]).getQualifiedName()));
 	}
 
-	protected static void assertInstance(Object o, Class c) {
+	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {
 		assertNotNull(o);
-		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
+		for(Class c : cs) {
+			assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+		}
+		return clazz.cast(o);
 	}
 	
 	protected String readTaggedComment(final String tag) throws IOException {

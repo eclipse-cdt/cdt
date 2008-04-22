@@ -28,31 +28,11 @@ public class SimpleSystemMessage extends SystemMessage {
 	private String _messageId;
 
 	/**
-	 * Constructor for messages that use explicit Strings and severities.
+	 * Creates a String based System Message with severity and ID, but no
+	 * message details.
 	 *
-	 * This allows using the RSE Messaging Framework based on simple String
-	 * messages and IDs, rather than using XML Message files from
-	 * {@link SystemMessageFile} along with the
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#loadMessageFile()</code> and
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#getMessage()</code> methods.
-	 *
-	 * Clients can use either globally unique RSE message IDs or plugin-specific
-	 * local IDs. RSE-global message IDs are of the form:
-	 * RSE&lt;subcomponent&gt;&lt;number&gt;
-	 *
-	 * The subcomponent is a single character:
-	 * <ul>
-	 * <li>"G" for General</li>
-	 * <li>"O" for Other</li>
-	 * <li>"F" for Files</li>
-	 * <li>"C" for Communications</li>
-	 * </ul>
-	 *
-	 * The number is a four digit number.
-	 *
-	 * Plugin-specific local IDs need only be unique strings within a plugin
-	 * that are not prefixed by "RSE". The relative IDs are qualified by the
-	 * specified plugin ID.
+	 * See {@link #SimpleSystemMessage(String, String, int, String, String)} for
+	 * a detailed description.
 	 *
 	 * @param pluginId the id of the originating plugin
 	 * @param messageId the RSE-global unique ID or plugin-specific local ID of
@@ -65,38 +45,52 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	/**
-	 * Constructor for messages that use explicit Strings and severities.
-	 *
+	 * Creates a String based System Message with severity, ID and String
+	 * message details.
+	 * 
 	 * This allows using the RSE Messaging Framework based on simple String
 	 * messages and IDs, rather than using XML Message files from
 	 * {@link SystemMessageFile} along with the
 	 * <code>org.eclipse.rse.ui.SystemBasePlugin#loadMessageFile()</code> and
 	 * <code>org.eclipse.rse.ui.SystemBasePlugin#getMessage()</code> methods.
-	 *
+	 * 
 	 * Clients can use either globally unique RSE message IDs or plugin-specific
-	 * local IDs. RSE-global message IDs are of the form:
-	 * RSE&lt;subcomponent&gt;&lt;number&gt;
-	 *
-	 * The subcomponent is a single character:
+	 * local IDs. <b>RSE-global message IDs</b> are of the form:
+	 * RSE&lt;subcomponent&gt;&lt;number&gt;, where the subcomponent is a single
+	 * character:
 	 * <ul>
 	 * <li>"G" for General</li>
 	 * <li>"O" for Other</li>
 	 * <li>"F" for Files</li>
 	 * <li>"C" for Communications</li>
 	 * </ul>
-	 *
-	 * The number is a four digit number.
-	 *
-	 * Plugin-specific local IDs need only be unique strings within a plugin
-	 * that are not prefixed by "RSE". The relative IDs are qualified by the
-	 * specified plugin ID.
-	 *
+	 * and the number is a four digit number.
+	 * 
+	 * Some RSE-global message IDs are predefined in {@link ICommonMessageIds}.
+	 * When used in a SimpleSystemMessage, these common message IDs must be used
+	 * along with the matching message Strings from {@link CommonMessages}, in
+	 * order to be consistent to the user. For example:
+	 * 
+	 * <pre>
+	 * msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_COMM_AUTH_FAILED, IStatus.ERROR, CommonMessages.MSG_COMM_AUTH_FAILED, NLS.bind(
+	 * 		CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHost().getAliasName()));
+	 * </pre>
+	 * 
+	 * <b>Plugin-specific local IDs</b> are totally free to be defined by the
+	 * plugin that creates a specific message, as long as they are not prefixed
+	 * by "RSE". It is recommended that plugins define unique IDs for various
+	 * message situations, because this helps problem determination with end
+	 * users; but it is not a requirement. Local ID's are specific to the plugin
+	 * ID: relative IDs are qualified by the specified plugin ID, so they live
+	 * in the plugin ID namespace.
+	 * 
 	 * @param pluginId the id of the originating plugin
 	 * @param messageId the RSE-global unique ID or plugin-specific local ID of
 	 *            the message
 	 * @param severity using IStatus severities
-	 * @param msg the message text
-	 * @param msgDetails the message details
+	 * @param msg the message text to be logged or displayed to the user
+	 * @param msgDetails the message details with additional information to be
+	 *            displayed on request only
 	 */
 	public SimpleSystemMessage(String pluginId, String messageId, int severity, String msg, String msgDetails) {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, msgDetails);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
@@ -106,32 +100,11 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	/**
-	 * Constructor for messages that use explicit Strings and severities.
+	 * Creates a String based System Message with severity and ID, and an
+	 * Exception that will be converted into message details.
 	 *
-	 * This allows using the RSE Messaging Framework based on simple String
-	 * messages and IDs, rather than using XML Message files from
-	 * {@link SystemMessageFile} along with the
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#loadMessageFile()</code> and
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#getMessage()</code> methods.
-	 *
-	 * Clients can use either globally unique RSE message IDs or plugin-specific
-	 * local IDs. RSE-global message IDs are of the form:
-	 * RSE&lt;subcomponent&gt;&lt;number&gt;
-	 *
-	 * The subcomponent is a single character:
-	 * <ul>
-	 * <li>"G" for General</li>
-	 * <li>"O" for Other</li>
-	 * <li>"F" for Files</li>
-	 * <li>"C" for Communications</li>
-	 * </ul>
-	 *
-	 * The number is a four digit number.
-	 *
-	 * Plugin-specific local IDs need only be unique strings within a plugin
-	 * that are not prefixed by "RSE". The relative IDs are qualified by the
-	 * specified plugin ID.
-	 *
+	 * See {@link #SimpleSystemMessage(String, String, int, String, String)} for
+	 * a detailed description.
 	 *
 	 * @param pluginId the id of the originating plugin
 	 * @param messageId the RSE-global unique ID or plugin-specific local ID of
@@ -147,17 +120,14 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	/**
-	 * Constructor for messages that use explicit Strings and severities.
-	 *
-	 * This allows using the RSE Messaging Framework based on simple String
-	 * messages and IDs, rather than using XML Message files from
-	 * {@link SystemMessageFile} along with the
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#loadMessageFile()</code> and
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#getMessage()</code> methods.
+	 * Creates a String based System Message with a severity and plug-in ID, but
+	 * no global or plug-in specific message ID or detail message.
 	 *
 	 * This constructor does not supply a message id. It is preferred that a
 	 * message id is used since it allows easier identification of a unique
-	 * message.
+	 * message. See
+	 * {@link #SimpleSystemMessage(String, String, int, String, String)} for a
+	 * detailed description about messages and ID's.
 	 *
 	 * @param pluginId the id of the originating plugin
 	 * @param severity using IStatus severities
@@ -168,17 +138,14 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	/**
-	 * Constructor for messages that use explicit Strings and severities.
-	 *
-	 * This allows using the RSE Messaging Framework based on simple String
-	 * messages and IDs, rather than using XML Message files from
-	 * {@link SystemMessageFile} along with the
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#loadMessageFile()</code> and
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#getMessage()</code> methods.
+	 * Creates a String based System Message with a severity and plug-in ID as
+	 * well as message details, but no global or plug-in specific message ID.
 	 *
 	 * This constructor does not supply a message id. It is preferred that a
 	 * message id is used since it allows easier identification of a unique
-	 * message.
+	 * message. See
+	 * {@link #SimpleSystemMessage(String, String, int, String, String)} for a
+	 * detailed description about messages and ID's.
 	 *
 	 * @param pluginId the id of the originating plugin
 	 * @param severity using IStatus severities
@@ -192,17 +159,15 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	/**
-	 * Constructor for messages that use explicit Strings and severities.
-	 *
-	 * This allows using the RSE Messaging Framework based on simple String
-	 * messages and IDs, rather than using XML Message files from
-	 * {@link SystemMessageFile} along with the
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#loadMessageFile()</code> and
-	 * <code>org.eclipse.rse.ui.SystemBasePlugin#getMessage()</code> methods.
+	 * Creates a String based System Message with a severity and plug-in ID, as
+	 * well as an exception to convert into message details, but no global or
+	 * plug-in specific message ID.
 	 *
 	 * This constructor does not supply a message id. It is preferred that a
 	 * message id is used since it allows easier identification of a unique
-	 * message.
+	 * message. See
+	 * {@link #SimpleSystemMessage(String, String, int, String, String)} for a
+	 * detailed description about messages and ID's.
 	 *
 	 * @param pluginId the id of the originating plugin
 	 * @param severity using IStatus severities

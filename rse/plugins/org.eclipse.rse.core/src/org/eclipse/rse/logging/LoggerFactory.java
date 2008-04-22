@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.logging;
@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.Plugin;
  * Keep in mind that this factory class follows the singleton model.<br>
  * ie: once an instance of a Logger class for a given plugin is created, 
  * it will always be reused. 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class LoggerFactory {
 

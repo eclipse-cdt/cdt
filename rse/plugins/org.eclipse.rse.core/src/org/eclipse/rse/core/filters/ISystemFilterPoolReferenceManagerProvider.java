@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -30,6 +30,9 @@ package org.eclipse.rse.core.filters;
  * in order to fire events to update its GUI. So this interface captures those 
  * callbacks that done to the provider for every interesting event. Should you 
  * not care about these, supply empty shells for these methods.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The allowable implementations are already present in the framework.
  */
 public interface ISystemFilterPoolReferenceManagerProvider {
 	/**

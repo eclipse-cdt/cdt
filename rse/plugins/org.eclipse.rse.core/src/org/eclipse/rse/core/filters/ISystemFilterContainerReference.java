@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -31,6 +31,9 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * This interface captures those common methods, and both 
  * SystemFilterReference and SystemFilterPoolReference
  * implement this interface and hence these methods.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The allowable implementations are already present in the framework.
  */
 public interface ISystemFilterContainerReference {
 	/**

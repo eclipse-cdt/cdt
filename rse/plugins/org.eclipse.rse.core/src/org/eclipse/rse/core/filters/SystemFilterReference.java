@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -44,9 +45,9 @@ import org.eclipse.rse.internal.core.filters.SystemFilterStringReference;
  *       if it is possible for the same filter to show up in different places in 
  *       the tree, then we must create shadows for each place it shows up.
  * </ol>
- */
-/**
- * @lastgen class SystemFilterReferenceImpl extends SystemReferencingObjectImpl implements IAdaptable, SystemFilterReference, SystemReferencingObject {}
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * Use the factory method {@link #createSystemFilterReference(ISubSystem, ISystemFilterContainerReference, ISystemFilter, boolean)}.
  */
 public class SystemFilterReference extends SystemReferencingObject implements IAdaptable, ISystemFilterReference {
 	private SystemFilterContainerReferenceCommonMethods containerHelper = null;

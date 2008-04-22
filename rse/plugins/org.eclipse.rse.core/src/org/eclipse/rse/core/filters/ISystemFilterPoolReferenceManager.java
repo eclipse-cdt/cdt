@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -25,6 +25,9 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * a filter pool. This class builds on the parent class SystemPersistableReferenceManager,
  * offering convenience versions of the parent methods that are typed to the
  * classes in the filters framework.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The allowable implementations are already present in the framework.
  */
 public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableReferenceManager {
 	/**

@@ -6,6 +6,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *********************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -14,7 +15,8 @@ import org.eclipse.rse.internal.core.filters.SystemFilterSimple;
 
 /**
  * Utilities to be used in the construction and manipulation of filters.
- * @noextend
+ * @noextend This interface is not intended to be extended by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SystemFilterUtil {
 	

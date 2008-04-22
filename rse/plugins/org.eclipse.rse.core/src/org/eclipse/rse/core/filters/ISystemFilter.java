@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - cleanup format and javadoc
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -29,6 +30,9 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * Subsystems are responsible for interpreting the filters. Filters, in and
  * of themselves, provide no interpretation of themselves when applied
  * to the resources managed by a subsystem.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The allowable implementations already present in the framwork.
  */
 
 public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContainer, IRSEModelObject {

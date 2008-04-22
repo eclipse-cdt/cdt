@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -26,6 +27,7 @@ package org.eclipse.rse.core.filters;
  * <p>
  * This is all encapsulated in this interface. There is also a class offered
  * that implements all this and is populated via setters.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemFilterPoolWrapperInformation {
 

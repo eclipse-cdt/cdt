@@ -14,6 +14,7 @@
  * Contributors:
  * David Dykstal (IBM) - cleanup - format and javadoc
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -24,6 +25,9 @@ import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
 /**
  * This interface represents a system filter pool, which is a means of
  * grouping filters to be referenced together.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The allowable implementations are already present in the framework.
  */
 public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISystemFilterContainer, IRSEModelObject {
 

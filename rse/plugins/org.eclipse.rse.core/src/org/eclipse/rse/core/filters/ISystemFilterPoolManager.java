@@ -16,6 +16,7 @@
  * cleaned javadoc for renameSystemFilterPool
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -32,6 +33,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
  * filter related activity through a single point like this, we can ensure that
  * all changes are saved to disk, and events are fired properly.
  * 
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemFilterPoolManager extends IRSEPersistableContainer {

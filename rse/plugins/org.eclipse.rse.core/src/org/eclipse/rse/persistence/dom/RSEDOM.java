@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.persistence.dom;
@@ -22,6 +22,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 /**
  * This class is the root node of an RSE DOM.  Each
  * RSEDOM represents the properties of a profile to persist.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RSEDOM extends RSEDOMNode {
 

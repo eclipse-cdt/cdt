@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.core;
@@ -34,7 +34,9 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * A class with helper methods for working with the underlying Eclipse resources
- *  needed for filters, filter pools and filter pool managers.
+ * needed for filters, filter pools and filter pool managers.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SystemResourceHelpers implements FileFilter
 {

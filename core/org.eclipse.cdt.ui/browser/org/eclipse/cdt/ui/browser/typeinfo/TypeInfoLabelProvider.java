@@ -53,6 +53,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	private static final Image ENUM_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_ENUMERATION);
 	private static final Image FUNCTION_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION);
 	private static final Image VARIABLE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_VARIABLE);
+	private static final Image VARIABLE_LOCAL_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_LOCAL_VARIABLE);
 	private static final Image MACRO_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 	private static final Image UNKNOWN_TYPE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_UNKNOWN_TYPE);
 
@@ -90,7 +91,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 				buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope); 
 			}
 		} else if (isSet(SHOW_FULLY_QUALIFIED)) {
-			if (qualifiedName.isGlobal()) {
+			if (typeInfo.getCElementType() != ICElement.C_VARIABLE_LOCAL && qualifiedName.isGlobal()) {
 				buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope);
 				buf.append(' ');
 			}
@@ -226,6 +227,9 @@ public class TypeInfoLabelProvider extends LabelProvider {
 		
 		case ICElement.C_MACRO:
 			return MACRO_ICON;
+			
+		case ICElement.C_VARIABLE_LOCAL:
+			return VARIABLE_LOCAL_ICON;
 
 		default:
 			return UNKNOWN_TYPE_ICON;

@@ -17,9 +17,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.ITextSelection;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -36,11 +41,13 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 
 	private ITranslationUnit tu;
 	private ITextSelection selection;
+	private String searchText;
 	
 	public PDOMSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
 		super(scope, flags | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 		this.tu = tu;
 		this.selection = selection;
+		this.searchText= selection.getText();
 	}
 
 	@Override
@@ -50,9 +57,24 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 				if (ast != null) {
 					IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selection.getOffset(), selection.getLength());
 					if (searchName != null) {
-						IBinding binding = index.findBinding(searchName);
-						if (binding != null)
-							createMatches(index, binding);
+						searchText= searchName.toString();
+						IBinding binding= searchName.resolveBinding();
+						if (binding instanceof IProblemBinding == false) {
+							IScope scope= null;
+							try {
+								scope = binding.getScope();
+							} catch (DOMException e) {
+							}
+							if (scope instanceof ICPPBlockScope || scope instanceof ICFunctionScope) {
+								createLocalMatches(ast, binding);
+							}
+							else {
+								binding = index.findBinding(searchName);
+								if (binding != null) {
+									createMatches(index, binding);
+								}
+							}
+						}
 					}
 				}
 				return Status.OK_STATUS;
@@ -62,6 +84,6 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 
 	@Override
 	public String getLabel() {
-		return super.getLabel() + " " + selection.getText(); //$NON-NLS-1$
+		return super.getLabel() + " " + searchText; //$NON-NLS-1$
 	}
 }

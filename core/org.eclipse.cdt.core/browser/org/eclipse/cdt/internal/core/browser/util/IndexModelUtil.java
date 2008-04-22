@@ -24,8 +24,11 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -48,8 +51,8 @@ public class IndexModelUtil {
 	 */
 	public static boolean bindingHasCElementType(IBinding binding, int[] kinds) {
 		try {
-			for(int i=0; i<kinds.length; i++) {
-				switch(kinds[i]) {
+			for (int kind : kinds) {
+				switch(kind) {
 				case ICElement.C_STRUCT:
 					if (binding instanceof ICompositeType
 							&& ((ICompositeType)binding).getKey() == ICompositeType.k_struct)
@@ -133,7 +136,16 @@ public class IndexModelUtil {
 			elementType = ICElement.C_FUNCTION;
 		}
 		if (binding instanceof IVariable) {
-			elementType = ICElement.C_VARIABLE;
+			IScope scope= null;
+			try {
+				scope = binding.getScope();
+			} catch (DOMException e) {
+			}
+			if (scope instanceof ICPPBlockScope || scope instanceof ICFunctionScope) {
+				elementType= ICElement.C_VARIABLE_LOCAL;
+			} else {
+				elementType = ICElement.C_VARIABLE;
+			}
 		}
 		if (binding instanceof IEnumerator) {
 			elementType = ICElement.C_ENUMERATOR;
@@ -141,11 +153,14 @@ public class IndexModelUtil {
 		if (binding instanceof IMacroBinding || binding instanceof IIndexMacroContainer) {
 			elementType= ICElement.C_MACRO;
 		}
+		if (binding instanceof IParameter) {
+			elementType= ICElement.C_VARIABLE_LOCAL;
+		}
 		return elementType;
 	}
 
 	/**
-	 * Extract the parmaeter types of the given function as array of strings.
+	 * Extract the parameter types of the given function as array of strings.
 	 * @param function
 	 * @return the parameter types of the function
 	 * @throws DOMException

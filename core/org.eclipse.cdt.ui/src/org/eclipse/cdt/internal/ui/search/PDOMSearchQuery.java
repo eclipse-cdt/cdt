@@ -12,8 +12,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,7 +27,10 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -34,6 +40,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
+
 
 /**
  * @author Doug Schaefer
@@ -120,8 +129,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	}
 	
 	private void collectNames(IIndex index, IIndexName[] names) throws CoreException {
-		for (int i = 0; i < names.length; i++) {
-			IIndexName name = names[i];
+		for (IIndexName name : names) {
 			if (!filterName(name)) {
 				IASTFileLocation loc = name.getFileLocation();
 				IIndexBinding binding= index.findBinding(name);
@@ -136,6 +144,31 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		if (binding != null) {
 			IIndexName[] names= index.findNames(binding, flags);
 			collectNames(index, names);
+		}
+	}
+
+	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) {
+		if (binding != null) {
+			Set<IASTName> names= new HashSet<IASTName>();
+			names.addAll(Arrays.asList(ast.getDeclarationsInAST(binding)));
+			names.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
+			names.addAll(Arrays.asList(ast.getReferences(binding)));
+
+			for (IASTName name : names) {
+				if (   ((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration())
+					|| ((flags & FIND_DEFINITIONS) != 0 && name.isDefinition())
+					|| ((flags & FIND_REFERENCES) != 0 && name.isReference())) {
+					
+					ASTTypeInfo typeInfo= ASTTypeInfo.create(name);
+					if (typeInfo != null) {
+						ITypeReference ref= typeInfo.getResolvedReference();
+						if (ref != null) {
+							result.addMatch(new PDOMSearchMatch(
+									new TypeInfoSearchElement(typeInfo), ref.getOffset(), ref.getLength()));
+						}
+					}
+				}
+			}
 		}
 	}
 

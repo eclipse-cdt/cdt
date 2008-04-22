@@ -12,7 +12,6 @@ package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -100,7 +99,7 @@ public class GdbLaunch extends Launch
     public void addInferiorProcess(String label) throws CoreException {
     	try {
     		// Add the "inferior" process object to the launch.
-    		Future<MIInferiorProcess> future = 
+    		MIInferiorProcess inferiorProc = 
     			getDsfExecutor().submit( new Callable<MIInferiorProcess>() {
     				public MIInferiorProcess call() throws CoreException {
     					GDBControl gdb = fTracker.getService(GDBControl.class);
@@ -109,8 +108,7 @@ public class GdbLaunch extends Launch
     					}
     					return null;
     				}
-    			});
-    		MIInferiorProcess inferiorProc = future.get();
+    			}).get();
 
             DebugPlugin.newProcess(this, inferiorProc, label);
         } catch (InterruptedException e) {
@@ -125,7 +123,7 @@ public class GdbLaunch extends Launch
     public void addCLIProcess(String label) throws CoreException {
         try {
             // Add the CLI process object to the launch.
-    		Future<AbstractCLIProcess> future = 
+    		AbstractCLIProcess cliProc =
     			getDsfExecutor().submit( new Callable<AbstractCLIProcess>() {
     				public AbstractCLIProcess call() throws CoreException {
     					GDBControl gdb = fTracker.getService(GDBControl.class);
@@ -134,8 +132,7 @@ public class GdbLaunch extends Launch
     					}
     					return null;
     				}
-    			});
-    		AbstractCLIProcess cliProc = future.get();
+    			}).get();
 
             DebugPlugin.newProcess(this, cliProc, label);
         } catch (InterruptedException e) {

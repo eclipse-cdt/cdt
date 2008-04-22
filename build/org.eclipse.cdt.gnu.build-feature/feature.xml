@@ -17,4 +17,8 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import feature="org.eclipse.cdt.platform" version="5.0.0"/>
+   </requires>
+
 </feature>

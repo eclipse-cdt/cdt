@@ -171,6 +171,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private int templateCount = 0;
     private int functionBodyCount= 0;
     private int templateArgListCount= 0;
+	private int preventLogicalOperatorInTemplateID;
 
     protected CPPASTTranslationUnit translationUnit;
     
@@ -332,6 +333,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
+     * To disambiguate between logical expressions and template id's in some situations
+     * we forbid the usage of the logical operators '&&' or '||' within template ids. 
+     * @throws EndOfFileException
+     * @since 5.0
+     */
+    protected final ITokenDuple nameWithoutLogicalOperatorInTemplateID() throws BacktrackException, EndOfFileException {
+    	preventLogicalOperatorInTemplateID++;
+    	try {
+    		return name();
+    	}
+    	finally {
+    		preventLogicalOperatorInTemplateID--;
+    	}
+    }
+    /**
      * Parse a name. 
      * name  ::= ("::")? name2 ("::" name2)* 
      * name2 ::= IDENTIFER | template-id
@@ -415,7 +431,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     @Override
 	protected IASTExpression conditionalExpression() throws BacktrackException, EndOfFileException {
     	final IASTExpression expr= super.conditionalExpression();
-    	if (templateArgListCount > 0) {
+    	if (templateArgListCount > 0 && preventLogicalOperatorInTemplateID > 0) {
     		// bug 104706, don't allow usage of logical operators in template argument lists.
     		if (expr instanceof IASTConditionalExpression) {
 				final ASTNode node = (ASTNode) expr;
@@ -1744,7 +1760,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTName idExpression() throws EndOfFileException, BacktrackException {
         IASTName name = null;
         try {
-            name = createName(name());
+            name = createName(nameWithoutLogicalOperatorInTemplateID());
         } catch (BacktrackException bt) {
             IToken mark = mark();
             if (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER) {

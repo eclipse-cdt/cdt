@@ -1249,15 +1249,15 @@ public class AST2CPPTests extends AST2BaseTest {
 			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
 			int count=0;
-			for(int i=0; i<methods.length; i++)
-				count+= methods[i].getName().startsWith("~") ? 1 : 0;
+			for (ICPPMethod method : methods)
+				count+= method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 0, count);
 			
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
 			count=0;
-			for(int i=0; i<methods.length; i++)
-				count+= methods[i].getName().startsWith("~") ? 1 : 0;
+			for (ICPPMethod method : methods)
+				count+= method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 1, count);
 		}
 	}
@@ -1276,15 +1276,15 @@ public class AST2CPPTests extends AST2BaseTest {
 			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
 			int count=0;
-			for(int i=0; i<methods.length; i++)
-				count+= methods[i].getName().startsWith("~") ? 1 : 0;
+			for (ICPPMethod method : methods)
+				count+= method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 1, count);
 			
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
 			count=0;
-			for(int i=0; i<methods.length; i++)
-				count+= methods[i].getName().startsWith("~") ? 1 : 0;
+			for (ICPPMethod method : methods)
+				count+= method.getName().startsWith("~") ? 1 : 0;
 			assertEquals(line, 0, count);
 		}
 	}
@@ -1397,8 +1397,8 @@ public class AST2CPPTests extends AST2BaseTest {
 			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
 			int count=0;
-			for(int i=0; i<methods.length; i++) {
-				boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
+			for (ICPPMethod method : methods) {
+				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
 				count+= eq ? 1 : 0;
 			}
 			
@@ -1407,8 +1407,8 @@ public class AST2CPPTests extends AST2BaseTest {
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
 			count=0;
-			for(int i=0; i<methods.length; i++) {
-				boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
+			for (ICPPMethod method : methods) {
+				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
 				count+= eq ? 1 : 0;
 			}
 			
@@ -1430,8 +1430,8 @@ public class AST2CPPTests extends AST2BaseTest {
 			ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
 			assertNotNull(methods);
 			int count=0;
-			for(int i=0; i<methods.length; i++) {
-				boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
+			for (ICPPMethod method : methods) {
+				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
 				count+= eq ? 1 : 0;
 			}
 			
@@ -1440,8 +1440,8 @@ public class AST2CPPTests extends AST2BaseTest {
 			methods = A.getDeclaredMethods();
 			assertNotNull(methods);
 			count=0;
-			for(int i=0; i<methods.length; i++) {
-				boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
+			for (ICPPMethod method : methods) {
+				boolean eq= Arrays.equals(method.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
 				count+= eq ? 1 : 0;
 			}
 			
@@ -2284,8 +2284,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		// check the result
 		HashSet result= new HashSet();
-		for (int i = 0; i < bs.length; i++) {
-			IBinding binding = bs[i];
+		for (IBinding binding : bs) {
 			result.add(binding.getName());
 		}
 		assertTrue(result.contains("a1"));
@@ -5373,7 +5372,26 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertNonProblem("relayIndex >", 10);
 		bh.assertNonProblem("numRelays )", 9);
 	}
-	
+
+	//	template<typename A, typename B>
+	//	struct and_ : public integral_constant<bool, (A::value && B::value)> {
+	//	};
+	//	template<typename A, typename B>
+	//	struct or_ : public integral_constant<bool, (A::value || B::value)> {
+	//	};
+	//	template <class T> struct is_pod
+	//	 : integral_constant<bool, (is_integral<T>::value ||
+	//	                            is_floating_point<T>::value ||
+	//	                            is_pointer<T>::value)> { };
+	//
+	//	typedef base::integral_constant<bool,
+	//	    (base::has_trivial_copy<value_type>::value &&
+	//	    base::has_trivial_destructor<value_type>::value)>
+	//	    realloc_ok;
+	public void testTemplateIDAmbiguity_Bug228118() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP);
+	}
+
 	// namespace ns {
 	//    class cl {};
 	//    void func(cl c);

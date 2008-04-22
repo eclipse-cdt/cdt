@@ -66,7 +66,7 @@ class VariableEventListener implements ICDIEventListener {
 	public void handleDebugEvents(ICDIEvent[] events) {
 		fVar.handleDebugEvents(events);
 	}
-};
+}
 
 /**
  * Represents a variable in the CDI model.
@@ -570,14 +570,22 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		return !isOK();
 	}
 
-	protected void setChanged( boolean changed ) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#setChanged(boolean)
+	 */
+	@Override
+    protected void setChanged( boolean changed ) {
 		IInternalVariable iv = getCurrentInternalVariable();
 		if ( iv != null ) {
 			iv.setChanged( changed );
 		}
 	}
 
-	protected void resetValue() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#resetValue()
+	 */
+	@Override
+    protected void resetValue() {
 		IInternalVariable iv = getCurrentInternalVariable();
 		if ( iv != null ) {
 			resetStatus();
@@ -593,7 +601,8 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#dispose()
 	 */
-	public void dispose() {
+	@Override
+    public void dispose() {
 		// Hack: do not destroy local variables
 		internalDispose( false );
 		setDisposed( true );
@@ -608,7 +617,8 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * Compares the original internal variables.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean equals( Object obj ) {
+	@Override
+    public boolean equals( Object obj ) {
 		if ( obj instanceof CVariable ) {
 			// A disposed copy can be stored in the viewer. 
 			// false should be returned to force the viewer to 
@@ -641,7 +651,8 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#preserve()
 	 */
-	protected void preserve() {
+	@Override
+    protected void preserve() {
 		resetStatus();
 		IInternalVariable iv = getCurrentInternalVariable(); 
 		if ( iv != null )
@@ -707,7 +718,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	/**
 	 * suffix used to identify cast to array settings
 	 */
-	private final static String CAST_TO_ARRAY_SUFFIX = NAME_PART_SEPARATOR + "(cast_to_array)"; 
+	private final static String CAST_TO_ARRAY_SUFFIX = NAME_PART_SEPARATOR + "(cast_to_array)";  //$NON-NLS-1$
 
 	/** retrieve the identification for this variable.
 	 * @return a string identifying this variable, to be used to store settings

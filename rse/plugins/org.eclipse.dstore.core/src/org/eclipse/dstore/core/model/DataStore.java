@@ -4398,14 +4398,21 @@ public final class DataStore
 	
 	/**
      * This method is used to set the Client object for each user.
+     * The _client variable is null until setClient() is called.  After
+     * _client is set, it can not be changed.
+     * 
+     * This method should only be called once to associate a particular 
+     * client with a DataStore.  By default, the client for the user of 
+     * the DataStore process is set but, when there is an ISystemService,
+     * the daemon sets the client.
      * 
      * @param client the object of the Client class
      */
 	public void setClient(Client client)
 	{
-		// the most likely scenario here is that _client is null since
-		// setClient() is the only way to make the client not null
-		if (client != _client){
+		// if client is not null, then this method gets called once.
+		// subsequent calls will have no effect.
+		if (_client == null){
 			_client = client;
 			_userPreferencesDirectory = null;
 			getUserPreferencesDirectory();

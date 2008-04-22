@@ -1,15 +1,15 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
@@ -61,8 +61,8 @@ import org.eclipse.swt.widgets.TableItem;
  * This is a field type editor for the Remote Systems preference page,
  *   used for setting system type preferences.
  */
-public class SystemTypeFieldEditor extends FieldEditor 
-	implements ICellModifier, ITableLabelProvider, IStructuredContentProvider				
+public class SystemTypeFieldEditor extends FieldEditor
+	implements ICellModifier, ITableLabelProvider, IStructuredContentProvider
 {
 	private Table table;
 	private GridData tableData;
@@ -73,9 +73,9 @@ public class SystemTypeFieldEditor extends FieldEditor
     public static final char EACHVALUE_DELIMITER='+';
     private Hashtable keyValues;
     private IRSESystemType[] systemTypes;
-    
+
     private boolean enabledStateChanged = false;
-    
+
 	private static final int COLUMN_NAME = 0;
 	private static final int COLUMN_ENABLED = 1;
 	private static final int COLUMN_USERID = 2;
@@ -83,36 +83,37 @@ public class SystemTypeFieldEditor extends FieldEditor
 	private static final String P_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String P_DESC = "desc"; //$NON-NLS-1$
 	private static final String P_USERID = "userid"; //$NON-NLS-1$
-	private static final String columnHeaders[] = 
+	private static final String columnHeaders[] =
 	{
 		   SystemResources.RESID_PREF_SYSTYPE_COLHDG_NAME,
 		   SystemResources.RESID_PREF_SYSTYPE_COLHDG_ENABLED,
 		   SystemResources.RESID_PREF_SYSTYPE_COLHDG_USERID,
-		   SystemResources.RESID_PREF_SYSTYPE_COLHDG_DESC		   
+		   SystemResources.RESID_PREF_SYSTYPE_COLHDG_DESC
 	};
-	private static ColumnLayoutData columnLayouts[] = 
-	{		
+	private static ColumnLayoutData columnLayouts[] =
+	{
 		new ColumnWeightData(20,80,true),
 		new ColumnWeightData(20,15,true),
 		new ColumnWeightData(20,100,true),
-		new ColumnWeightData(55,280,true)		
+		new ColumnWeightData(55,280,true)
 	};
 	// give each column a property value to identify it
-	private static final String[] tableColumnProperties = 
+	private static final String[] tableColumnProperties =
 	{
 		P_NAME, P_ENABLED, P_USERID, P_DESC
 	};
-	
+
 	private static final boolean[] enabledStates = {Boolean.TRUE.booleanValue(), Boolean.FALSE.booleanValue()};
     private static final String[] enabledStateStrings = {Boolean.TRUE.toString(), Boolean.FALSE.toString()};
 
 	/**
 	 * Constructor
-	 * @param name
-	 * @param labelText
-	 * @param parent
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
 	 */
-	public SystemTypeFieldEditor(String name, String labelText, Composite parent) 
+	public SystemTypeFieldEditor(String name, String labelText, Composite parent)
 	{
 		super(name, labelText, parent);
 	}
@@ -120,7 +121,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
 	 */
-	protected void adjustForNumColumns(int numColumns) 
+	protected void adjustForNumColumns(int numColumns)
 	{
 		((GridData)table.getLayoutData()).horizontalSpan = numColumns;
 	}
@@ -128,13 +129,13 @@ public class SystemTypeFieldEditor extends FieldEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
 	 */
-	protected void doFillIntoGrid(Composite parent, int numColumns) 
+	protected void doFillIntoGrid(Composite parent, int numColumns)
 	{
-        table = createTable(parent);       
+        table = createTable(parent);
         ((GridData)table.getLayoutData()).horizontalSpan = numColumns;
         tableViewer = new TableViewer(table);
         createColumns();
-	    tableViewer.setColumnProperties(tableColumnProperties);        
+	    tableViewer.setColumnProperties(tableColumnProperties);
 	    tableViewer.setCellModifier(this);
 	    CellEditor editors[] = new CellEditor[columnHeaders.length];
 	    userIdCellEditor = new TextCellEditor(table);
@@ -145,20 +146,20 @@ public class SystemTypeFieldEditor extends FieldEditor
 
         tableViewer.setLabelProvider(this);
         tableViewer.setContentProvider(this);
-        tableViewer.setInput(new Object());        
+        tableViewer.setInput(new Object());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
 	 */
-	protected void doLoad() 
+	protected void doLoad()
 	{
     	if (systemTypes == null)
     		systemTypes = getSystemTypes(false);
-    	
+
 		String value = RSEPreferencesManager.getSystemTypeValues();
 		keyValues = null;
-		
+
 	    if ((value == null) || (value.length() == 0))
 	    {
     		keyValues = new Hashtable();
@@ -168,11 +169,11 @@ public class SystemTypeFieldEditor extends FieldEditor
 	    	keyValues = parseString(value);
 	    }
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
 	 */
-	protected void doLoadDefault() 
+	protected void doLoadDefault()
 	{
 		// when Defaults button pressed, we re-read the system types from disk
 		systemTypes = getSystemTypes(true);
@@ -183,7 +184,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doStore()
 	 */
-	protected void doStore() 
+	protected void doStore()
 	{
 		if (systemTypes != null)
 		{
@@ -198,7 +199,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
 	 */
-	public int getNumberOfControls() 
+	public int getNumberOfControls()
 	{
 		return 1;
 	}
@@ -214,46 +215,46 @@ public class SystemTypeFieldEditor extends FieldEditor
 
 	/*
 	 * @see FieldEditor.isValid().
-	 */	
-	public boolean isValid() 
+	 */
+	public boolean isValid()
 	{
 		return true;
 	}
-	
-	
+
+
 	// ----------------
 	// local methods...
 	// ----------------
 
-	private Table createTable(Composite parent) 
+	private Table createTable(Composite parent)
     {
-	   table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);	   
+	   table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
   	   table.setLinesVisible(true);
 	   tableData = new GridData();
 	   tableData.horizontalAlignment = GridData.FILL;
 	   tableData.grabExcessHorizontalSpace = true;
-	   tableData.widthHint = 410;        
+	   tableData.widthHint = 410;
 	   tableData.heightHint= 30;
 	   tableData.verticalAlignment = GridData.FILL;
 	   tableData.grabExcessVerticalSpace = true;
 	   table.setLayoutData(tableData);
-	   
+
 	   SystemWidgetHelpers.setHelp(table, RSEUIPlugin.HELPPREFIX+"systype_preferences"); //$NON-NLS-1$
 	   return table;
     }
-	
-    private void createColumns() 
+
+    private void createColumns()
     {
         TableLayout layout = new TableLayout();
         table.setLayout(layout);
         table.setHeaderVisible(true);
-	    for (int i = 0; i < columnHeaders.length; i++) 
+	    for (int i = 0; i < columnHeaders.length; i++)
 	    {
 		   layout.addColumnData(columnLayouts[i]);
 		   TableColumn tc = new TableColumn(table, SWT.NONE,i);
 		   tc.setResizable(columnLayouts[i].resizable);
 		   tc.setText(columnHeaders[i]);
-	    }    	
+	    }
     }
 
 	/**
@@ -279,7 +280,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		}
 		return keyValues;
 	}
-	
+
 	private static String makeString(char charOne, char charTwo)
 	{
 		StringBuffer s = new StringBuffer(2);
@@ -287,7 +288,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		s.append(charTwo);
 		return s.toString();
 	}
-	
+
 	/**
 	 * Convert hashtable of key-value pairs into a single string
 	 */
@@ -312,7 +313,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Retrieve an array of currently known system types.
 	 * @param restoreDefaults restore the default values for the system types
@@ -351,7 +352,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 	 */
 	public boolean canModify(Object element, String property)
-	{	
+	{
 		if (property.equals(P_ENABLED))
 		{
 			return true;
@@ -371,11 +372,11 @@ public class SystemTypeFieldEditor extends FieldEditor
 		IRSESystemType row = (IRSESystemType)element;
 		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(RSESystemTypeAdapter.class));
 		Object value = ""; //$NON-NLS-1$
-		
+
 		if (property.equals(P_NAME))
 			value = row.getLabel();
 		else if (property.equals(P_ENABLED))
-			value = (adapter.isEnabled(row) ? new Integer(0) : new Integer(1));
+			value = (row.isEnabled() ? new Integer(0) : new Integer(1));
 		else if (property.equals(P_USERID))
 			value = (adapter.getDefaultUserId(row) == null) ? "" : adapter.getDefaultUserId(row); //$NON-NLS-1$
 		else
@@ -383,7 +384,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 
 		return value;
 	}
-	
+
 	public boolean enabledStateChanged()
 	{
 		return enabledStateChanged;
@@ -394,22 +395,21 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 */
 	public void modify(Object element, String property, Object value)
 	{
-		IRSESystemType row = (IRSESystemType)(((TableItem)element).getData());			
-		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(RSESystemTypeAdapter.class));
+		IRSESystemType row = (IRSESystemType)(((TableItem)element).getData());
 
 		if (property.equals(P_ENABLED))
 		{
 		    Integer val = (Integer)value;
-			adapter.setIsEnabled(row, enabledStates[val.intValue()]);
+		    RSEPreferencesManager.setIsSystemTypeEnabled(row, enabledStates[val.intValue()]);
 			enabledStateChanged = true;
 		}
 		else if (property.equals(P_USERID))
 		{
-			adapter.setDefaultUserId(row, (String)value);			
+			RSEPreferencesManager.setDefaultUserId(row, (String) value);
 		}
 		else
 			return;
-		
+
 		keyValues.put(row.getId(), "");		 //$NON-NLS-1$
 		tableViewer.update(row, null);
 	}
@@ -432,15 +432,16 @@ public class SystemTypeFieldEditor extends FieldEditor
 	public String getColumnText(Object element, int columnIndex)
 	{
 		IRSESystemType currType = (IRSESystemType)element;
-		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(currType.getAdapter(RSESystemTypeAdapter.class));
 
 		if (columnIndex == COLUMN_NAME)
 			return currType.getLabel();
 		else if (columnIndex == COLUMN_ENABLED)
-			return Boolean.toString(adapter.isEnabled(currType));
-		else if (columnIndex == COLUMN_USERID)
+			return Boolean.toString(currType.isEnabled());
+		else if (columnIndex == COLUMN_USERID) {
+			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter) (currType.getAdapter(RSESystemTypeAdapter.class));
 			return (adapter.getDefaultUserId(currType)==null ? "" : adapter.getDefaultUserId(currType)); //$NON-NLS-1$
-		else 
+		}
+		else
 			return (currType.getDescription()==null ? "" : currType.getDescription()); //$NON-NLS-1$
 	}
 
@@ -455,7 +456,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property)
-	{	
+	{
 		return true;
 	}
 
@@ -469,7 +470,7 @@ public class SystemTypeFieldEditor extends FieldEditor
     // -------------------------------------
     // IStructuredContentProvider methods...
     // -------------------------------------
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
@@ -486,7 +487,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
 	}
-	
+
 	// ----------------
 	// Other methods...
 	// ----------------
@@ -539,15 +540,15 @@ public class SystemTypeFieldEditor extends FieldEditor
 //				// find this system type in the array...
 //				IRSESystemType matchingType = RSECorePlugin.getTheCoreRegistry().getSystemType(key);
 //				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(RSESystemTypeAdapter.class));
-//				
+//
 //				// update this system type's attributes as per preferences...
 //				{
 //					adapter.setIsEnabled(matchingType, attr1.equals("true")); //$NON-NLS-1$
 //					if (!attr2.equals("null")) //$NON-NLS-1$
 //						adapter.setDefaultUserId(matchingType, attr2);
 //				}
-//			}	    		    	
-//	    }    
+//			}
+//	    }
 //	    return keyValues;
 //    }
 }

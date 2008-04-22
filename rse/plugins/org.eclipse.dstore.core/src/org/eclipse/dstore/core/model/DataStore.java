@@ -20,6 +20,7 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * David McKnight   (IBM) - [227881] [dstore][threaded] There is no chance to set client object for getUserPreferencesDirectory()
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -4400,7 +4401,11 @@ public final class DataStore
      */
 	public void setClient(Client client)
 	{
-		_client = client;
+		if (client != _client){
+			_client = client;
+			_userPreferencesDirectory = null;
+			getUserPreferencesDirectory();
+		}
 	}
 	
 	/**

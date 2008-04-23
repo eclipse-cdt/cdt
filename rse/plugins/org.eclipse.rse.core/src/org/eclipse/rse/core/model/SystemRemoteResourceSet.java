@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2004, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -22,6 +23,10 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 
 
+/**
+ * An ISystemResourceSet containing remote resources.
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class SystemRemoteResourceSet extends AbstractSystemResourceSet
 {
 	private ISubSystem  				_subSystem;

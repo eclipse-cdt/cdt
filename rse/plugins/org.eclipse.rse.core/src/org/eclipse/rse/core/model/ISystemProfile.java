@@ -18,6 +18,7 @@
  *    cleaned javadoc for getFilterPools() 
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -37,7 +38,9 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
  * definitions to RSE. When made inactive, it those definition are no longer 
  * available for use.
  * <p>
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework.
  */
 public interface ISystemProfile extends IRSEModelObject {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
 
-/*
+/**
  * Common interface for representing different contents types of
- * artifacts that can be stored in an IRemoteContainer
+ * artifacts that can be stored in an IRemoteContainer.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemContentsType {
 	/*

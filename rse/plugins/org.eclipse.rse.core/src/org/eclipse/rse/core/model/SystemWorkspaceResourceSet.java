@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -21,6 +21,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 
+/**
+ * An ISystemResourceSet containing workspace resources.
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class SystemWorkspaceResourceSet extends AbstractSystemResourceSet {
 
 	public SystemWorkspaceResourceSet() {

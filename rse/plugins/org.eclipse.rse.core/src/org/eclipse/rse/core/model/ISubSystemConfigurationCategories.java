@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -20,6 +20,9 @@ package org.eclipse.rse.core.model;
 /**
  * Constants for pre-defined subsystem factory categories.
  * Use these in calls to {@link org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * This is a constant interface. The individual items should be referenced directly.
  */
 public interface ISubSystemConfigurationCategories {
 	/**

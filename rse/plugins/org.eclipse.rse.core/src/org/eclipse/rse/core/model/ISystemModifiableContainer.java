@@ -6,12 +6,16 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 /**
  * A modifiable container allows its contents to be set directly.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework.
  */
 public interface ISystemModifiableContainer extends ISystemContainer {
 	

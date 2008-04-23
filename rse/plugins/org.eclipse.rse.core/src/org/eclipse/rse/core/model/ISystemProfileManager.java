@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - [197036] added commitSystemProfile operation to interface
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -27,7 +28,9 @@ import org.eclipse.core.runtime.IStatus;
  * processing is not desired. If events are necessary then the system registry
  * should be used.
  * 
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework.
  */
 public interface ISystemProfileManager {
 

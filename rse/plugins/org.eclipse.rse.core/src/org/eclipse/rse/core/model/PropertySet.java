@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Added Javadoc.
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -30,6 +31,8 @@ import java.util.Set;
  * 
  * Not thread-safe since the underlying {@link java.util.HashMap} is 
  * not thread-safe.
+ * @noextend This class is not intended to be subclassed by clients.
+ * The standard extensions are included in the framework.
  */
 public class PropertySet extends RSEModelObject implements IPropertySet, IRSEModelObject, ILabeledObject, Observer {
 	

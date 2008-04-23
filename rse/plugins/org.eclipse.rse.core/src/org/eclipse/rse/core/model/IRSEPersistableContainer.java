@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - adding new persistence support
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -24,6 +25,10 @@ package org.eclipse.rse.core.model;
  * An example of this is the SytemFilterPoolManager, which is itself not persisted, but
  * has this interface since it can be reconstructed from its ordering and exists
  * in the parent chain from SystemFilterPool to SystemProfile.
+ * @noextend This interface is not intended to be extended by clients.
+ * The standard extensions are included in the framework. 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework. 
  */
 public interface IRSEPersistableContainer {
 	

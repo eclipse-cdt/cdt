@@ -27,6 +27,7 @@
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -63,6 +64,7 @@ import org.eclipse.rse.internal.core.RSECoreRegistry;
  * each active profile are worked with.
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework.
  */
 public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemViewInputProvider {
 

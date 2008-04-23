@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  * David Dykstal (IBM) - [197036] cleaned javddoc for getConnectorServices()
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -30,6 +31,9 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * An IHost holds information identifying a remote system. It also logically contains
  * ISubSystem objects, although this containment is achievable programmatically versus via 
  * object oriented containment.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework.
  */
 public interface IHost extends IAdaptable, IRSEModelObject {
 	

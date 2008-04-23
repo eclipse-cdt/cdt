@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -22,8 +23,9 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 
 /**
  * An interface used to drive properties into a subsystem during host creation.
- * @noimplement This is an internal interface for use in the framework. Potential clients should extend one of the 
- * subclasses.
+ * @noimplement This is an internal interface for use in the framework.
+ * Potential clients should extend one of the implementations
+ * or implement one of the extensions.
  */
 public interface ISubSystemConfigurator {
 

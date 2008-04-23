@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Added Javadoc.
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -31,6 +32,9 @@ import java.util.Map;
  * 
  * The key <code>"description"</code> is reserved for internal
  * use, to store the description of the Property set.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * Use {@link PropertySet} directly.
  */
 public interface IPropertySet extends IPropertySetContainer {
 	/** 

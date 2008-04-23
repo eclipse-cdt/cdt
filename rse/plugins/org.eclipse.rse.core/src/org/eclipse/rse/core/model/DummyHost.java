@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -21,6 +22,10 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
+/**
+ * A DummyHost is used as a placeholder during the construction of hosts by wizards.
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class DummyHost extends PlatformObject implements IHost
 {
 	protected String _hostName;

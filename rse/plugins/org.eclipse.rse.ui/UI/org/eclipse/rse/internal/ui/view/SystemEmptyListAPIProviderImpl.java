@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -28,7 +29,6 @@ import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
  */
 public class SystemEmptyListAPIProviderImpl 
        extends SystemAbstractAPIProvider
-       implements ISystemViewInputProvider
 {
 
 

@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -28,7 +29,9 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 
 
 /**
- * It all begins RIGHT HERE!
+ * A utility class, composed of static methods, that can be used to begin RSE processing.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SystemStartHere 
 {

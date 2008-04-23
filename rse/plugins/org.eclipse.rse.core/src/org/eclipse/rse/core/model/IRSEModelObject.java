@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,21 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 
+/**
+ * IRSEModelObject is the root type of all objects in the RSE model.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework. 
+ */
 public interface IRSEModelObject extends IPropertySetContainer, IRSEPersistableContainer {
+
 	String getName();
 
 	String getDescription();
+
 }

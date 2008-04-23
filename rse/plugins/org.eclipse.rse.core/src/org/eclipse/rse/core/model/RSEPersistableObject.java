@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,17 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
 package org.eclipse.rse.core.model;
 
+/**
+ * An object that keeps track of its persistable state: 
+ * whether it is dirty or not and whether or not
+ * any of its progeny are marked dirty.
+ * @noextend This class is not intended to be subclassed by clients.
+ * The standard extensions are included in the framework.
+ */
 public abstract class RSEPersistableObject implements IRSEPersistableContainer {
 
 	private boolean _isDirty = false;

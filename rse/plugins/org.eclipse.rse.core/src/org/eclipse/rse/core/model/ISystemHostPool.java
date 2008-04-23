@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [210534] Remove ISystemHostPool.getHostList() and setName()
  * David Dykstal (IBM) - [210537] removed exception signalling from this interface, no longer needed
+ * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -29,7 +30,9 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
  * that integrity of the host list is maintained even if multiple threads call
  * multiple methods in this interface concurrently.
  * </p>
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework.
  */
 public interface ISystemHostPool extends IRSEPersistableContainer {
 

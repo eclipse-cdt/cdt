@@ -113,5 +113,14 @@ public class C99CompleteParser2Tests extends CompleteParser2Tests {
 			//fail();
 		} catch(AssertionFailedError _) { }
 	}
+	
+	
+	@Override
+	public void testGNUASMExtension() throws Exception {
+		try {
+			super.testGNUASMExtension();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
 
 }

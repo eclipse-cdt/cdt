@@ -426,7 +426,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeConversionName() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		char[] chars = tokenListToNameCharArray(parser.getRuleTokens());
+		String rep = createStringRepresentation(parser.getRuleTokens());
+		char[] chars = rep.toCharArray();
+		
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		ICPPASTConversionName name = nodeFactory.newCPPConversionName(chars, typeId);
 		setOffsetAndLength(name);
@@ -445,8 +447,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
   	public void consumeDestructorName() {
   		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
   		
-  		// concatenate the '~' with the identifier token
-  		char[] chars = tokenListToNameCharArray(parser.getRuleTokens());
+  		char[] chars = ("~" + parser.getRightIToken()).toCharArray(); //$NON-NLS-1$
   		
   		IASTName name = nodeFactory.newName(chars);
   		setOffsetAndLength(name);
@@ -746,19 +747,14 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		for(IASTName name : reverseIterable(names))
 			qualifiedName.addName(name);
 		
-		// compute the signature, find the tokens that make up the name
-		List<IToken> nameTokens = tokenOffsetSubList(parser.getRuleTokens(), startOffset, endOffset);
-		StringBuilder sb = new StringBuilder();
-		IToken prev = null;
-		for(IToken t : nameTokens) {
-			if(needSpaceBetween(prev, t))
-				sb.append(' ');
-			sb.append(t.toString());
-			prev = t;
+		if(qualifiedName instanceof CPPASTQualifiedName) {
+			// compute the signature, find the tokens that make up the name
+			List<IToken> nameTokens = tokenOffsetSubList(parser.getRuleTokens(), startOffset, endOffset);
+			String signature = createStringRepresentation(nameTokens);
+			((CPPASTQualifiedName)qualifiedName).setSignature(signature);
 		}
-		((CPPASTQualifiedName)qualifiedName).setSignature(sb.toString());
 	
-		// there must be a dummy name in the AST after the last double colon, this happens with pointer to member 
+		// there must be a dummy name in the AST after the last double colon, this happens with pointer to member names
 		if(endsWithColonColon) {
 			IASTName dummyName = nodeFactory.newName();
 			setOffsetAndLength(dummyName, endOffset, 0);
@@ -769,7 +765,21 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
+	private static String createStringRepresentation(List<IToken> nameTokens) {
+		StringBuilder sb = new StringBuilder();
+		IToken prev = null;
+		for(IToken t : nameTokens) {
+			if(needSpaceBetween(prev, t))
+				sb.append(' ');
+			sb.append(t.toString());
+			prev = t;
+		}
+		return sb.toString();
+	}
+	
+	
 	private static boolean needSpaceBetween(IToken prev, IToken iter) {
+		// this logic was copied from BasicTokenDuple.createCharArrayRepresentation()
 		if(prev == null)
 			return false;
 		

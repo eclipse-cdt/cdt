@@ -309,24 +309,6 @@ public abstract class BuildASTParserAction {
 	}
 	
 	
-	
-	/**
-	 * Converts the given token list to a char[] suitable for
-	 * creating a name node. Spaces are discarded.
-	 */
-	protected static char[] tokenListToNameCharArray(List<IToken> tokens) {
-		StringBuilder sb = new StringBuilder(20); // longest operator name: operator delete[]
-		
-		for(IToken t : tokens)
-			sb.append(t.toString());
-		
-		int n = sb.length();
-		char[] cs = new char[n]; 
-		sb.getChars(0, n, cs, 0);
-		return cs;
-	}
-	
-	
 	/**
 	 * Finds the tokens in the given list that are between startOffset and endOffset.
 	 * Note, the offsets have to be exact.

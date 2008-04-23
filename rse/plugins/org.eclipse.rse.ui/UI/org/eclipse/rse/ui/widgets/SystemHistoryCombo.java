@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -45,13 +46,14 @@ import org.eclipse.swt.widgets.Group;
 
 /**
  * This re-usable widget is for a combox box that persists its history and
- *  allows the user to manipulate that history.
+ * allows the user to manipulate that history.
  * <p>
  * The composite is layed as follows:</p>
  * <pre><code>
  *   ______________v...
  * </code></pre>
  * @see #updateHistory()
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SystemHistoryCombo extends Composite implements ISystemCombo, TraverseListener, KeyListener
 {

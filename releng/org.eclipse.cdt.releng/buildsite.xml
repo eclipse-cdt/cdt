@@ -24,6 +24,9 @@
 	<feature id="org.eclipse.cdt.util" url="features/org.eclipse.cdt.util_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>
+	<feature id="org.eclipse.cdt.mylyn" url="features/org.eclipse.cdt.mylyn_@buildVersion@.jar" version="@buildVersion@">
+		<category name="CDT Optional Features"/>
+	</feature>
 	<feature id="org.eclipse.cdt.testing" url="features/org.eclipse.cdt.testing_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>

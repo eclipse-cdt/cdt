@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ * 	  IBM - Initial API and implementation
+ * 	  Mike Kucera - cleanup
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -20,12 +21,8 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public class ASTNodeProperty {
 
-	private String name = ""; //$NON-NLS-1$
+	private final String name;
 
-	/**
-	 * @param n
-	 *            name
-	 */
 	public ASTNodeProperty(String n) {
 		this.name = n;
 	}
@@ -39,17 +36,9 @@ public class ASTNodeProperty {
 	public String getName() {
 		return name;
 	}
-
-	/**
-	 * @param name
-	 *            The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 	
 	@Override
 	public String toString() {
-		return getName();
+		return name;
 	}
 }

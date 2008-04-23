@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
@@ -134,13 +134,16 @@ public class SystemRemoteEditManager
 			return remotePath;
 		}
 	}
-	
-	
+
+
 	/**
-	 * Return the path to use relative to the hostname in the RemoteSystemsTempFiles project for saving a local replica
+	 * Return the path to use relative to the hostname in the
+	 * RemoteSystemsTempFiles project for saving a local replica
+	 *
 	 * @param hostname the originating remote host
-	 * @param remotePath the file path on the system (i.e. Windows) 
-	 * @param subSystem the remote subsystem.  The subsystem may be null if none is available. 
+	 * @param remotePath the file path on the system (i.e. Windows)
+	 * @param subsystem the remote subsystem. The subsystem may be null if none
+	 *            is available.
 	 * @return the relative replica path
 	 */
 	public String getWorkspacePathFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
@@ -158,10 +161,12 @@ public class SystemRemoteEditManager
 
 	/**
 	 * Return the appropriate registered mapper for a host & path
-	 * @param hostname
-	 * @param remotePath
-	 * @param subsystem 
-	 * @return appropriate mapper 
+	 *
+	 * @param hostname the originating remote host
+	 * @param remotePath the file path on the system (i.e. Windows)
+	 * @param subsystem the remote subsystem. The subsystem may be null if none
+	 *            is available.
+	 * @return appropriate mapper
 	 */
 	public ISystemMountPathMapper getMountPathMapperFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
@@ -191,7 +196,7 @@ public class SystemRemoteEditManager
 
 		// Get reference to the plug-in registry
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		
+
 		// Get configured extenders
 		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "mountPathMappers"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -219,14 +224,14 @@ public class SystemRemoteEditManager
 
 		if ((editProject != null) && (editProject.exists()) && (editProject.isOpen()))
 			return true;
-		return false;		
+		return false;
 	}
 
 	/**
 	 * Get the project that in which all folders and files are held temporarily
 	 * for remote editing. Create the project if it doesn't exist already, and opens
 	 * it if it is not already open.
-	 * @return the project where all files should be stored during remote edit. 
+	 * @return the project where all files should be stored during remote edit.
 	 */
 	public IProject getRemoteEditProject()
 	{
@@ -239,7 +244,7 @@ public class SystemRemoteEditManager
 			try
 			{
 				/* no more java support
-				if (!editProject.hasNature(JavaCore.NATURE_ID)) 
+				if (!editProject.hasNature(JavaCore.NATURE_ID))
 				{
 				addJavaSupport(editProject);
 				}
@@ -253,7 +258,7 @@ public class SystemRemoteEditManager
 			}
 			catch (Exception e)
 			{
-			
+
 			}
 			return editProject;
 		}
@@ -280,16 +285,16 @@ public class SystemRemoteEditManager
 			try
 			{
 				// no java or c support - this needs to be contributed from elsewhere
-				if (!editProject.hasNature(JavaCore.NATURE_ID)) 
+				if (!editProject.hasNature(JavaCore.NATURE_ID))
 				{
 					addJavaSupport(editProject);
 				}
-			
+
 				if (!editProject.hasNature("org.eclipse.cdt.core.cnature"))
 				{
 					addCSupport(editProject);
 				}
-				
+
 			}
 			catch (CoreException e)
 			{
@@ -330,28 +335,27 @@ public class SystemRemoteEditManager
 
 			// copy all previous natures
 			for (int i = 0; i < natures.length; i++)
-			{				
+			{
 				newNatures[i] = natures[i];
 			}
-			
+
 
 			newNatures[newNatures.length - 1] = REMOTE_EDIT_PROJECT_NATURE_ID;
-			
+
 			description.setNatureIds(newNatures);
 			editProject.setDescription(description, null);
 			// editProject.setDefaultCharset(SystemEncodingUtil.ENCODING_UTF_8, new NullProgressMonitor());
-	
-			
+
+
 			// add java support
 			//addJavaSupport(editProject);
-			
+
 			// add c support
 			//addCSupport(editProject);
 			}
 		}
 		catch (CoreException e)
 		{
-			e.printStackTrace();
 			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
 		}
 		return editProject;
@@ -359,13 +363,13 @@ public class SystemRemoteEditManager
 /*
 	public void addCSupport(IProject editProject)
 	{
-	
+
 		try
 		{
 			IProjectDescription description = editProject.getDescription();
 			String[] natures = description.getNatureIds();
 			ICommand[] buildSpecs = description.getBuildSpec();
-		
+
 			String[] newNatures = new String[natures.length + 2];
 
 			// copy all previous natures
@@ -376,30 +380,30 @@ public class SystemRemoteEditManager
 
 			newNatures[newNatures.length - 2] = "org.eclipse.cdt.core.cnature";
 			newNatures[newNatures.length - 1] = "org.eclipse.cdt.core.ccnature";//CCProjectNature.CC_NATURE_ID;
-			
+
 			description.setNatureIds(newNatures);
-			
+
 			// make sure no build specs added
 			description.setBuildSpec(buildSpecs);
-			
+
 			editProject.setDescription(description, null);
 		}
 		catch (Exception e)
 		{
-			
+
 		}
 	}
 	*/
 	/*
 	public void addJavaSupport(IProject editProject)
 	{
-	
+
 		try
 		{
 			IProjectDescription description = editProject.getDescription();
 			String[] natures = description.getNatureIds();
 			ICommand[] buildSpecs = description.getBuildSpec();
-		
+
 			String[] newNatures = new String[natures.length + 1];
 
 			// copy all previous natures
@@ -409,22 +413,22 @@ public class SystemRemoteEditManager
 			}
 
 			newNatures[newNatures.length - 1] = JavaCore.NATURE_ID;
-			
+
 			description.setNatureIds(newNatures);
 			description.setBuildSpec(buildSpecs);
-			
-		
-			
+
+
+
 			editProject.setDescription(description, null);
 
 
 			IJavaProject proj = JavaCore.create(editProject);
 			IPath outputLocation = proj.getOutputLocation();
-			
-	
+
+
 			// classpath
 			IClasspathEntry[] classpath= new IClasspathEntry[1];
-			
+
 			IPath jdkLoc = new Path("org.eclipse.jdt.launching.JRE_CONTAINER");
 			ClasspathEntry jreEntry = new ClasspathEntry(
 					IPackageFragmentRoot.K_BINARY,
@@ -435,19 +439,19 @@ public class SystemRemoteEditManager
 					null, // source attachment
 					null, // source attachment root
 					null, // specific output folder
-					false); 
+					false);
 			classpath[0]=jreEntry;
-			
-			
+
+
 			proj.setRawClasspath(classpath, outputLocation, null);
-	
+
 			((JavaProject)proj).deconfigure();
-			
-		}	
-		catch (Exception e)				
+
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
-		}		
+		}
 	}
 	*/
 
@@ -462,7 +466,7 @@ public class SystemRemoteEditManager
 		// DKM - originally return null if it doesn't exist
 		// but looks like lots of calls reference this expected to get something back
 		// so I'll let project creation happen here
-		
+
 		return getRemoteEditProject().getLocation();
 	}
 
@@ -510,7 +514,7 @@ public class SystemRemoteEditManager
 		// if no project exists, then no file exists
 		if (!doesRemoteEditProjectExist())
 			return null;
-		
+
 		IProject project = getRemoteEditProject();
 
 		IFile result = getLeastRecentlyChangedFile(project, deletedList);
@@ -579,7 +583,7 @@ public class SystemRemoteEditManager
 					Object rmtObject = null;
 					try
 					{
-						rmtObject = subsystem.getObjectWithAbsoluteName(pathStr);
+						rmtObject = subsystem.getObjectWithAbsoluteName(pathStr, new NullProgressMonitor());
 					}
 					catch (Exception e)
 					{
@@ -621,7 +625,7 @@ public class SystemRemoteEditManager
 			// if no temp files project, not in use
 			if (!doesRemoteEditProjectExist())
 				return false;
-				
+
 			IWorkbenchWindow activeWindow = SystemBasePlugin.getActiveWorkbenchWindow();
 			IWorkbenchPage activePage = activeWindow.getActivePage();
 
@@ -695,13 +699,13 @@ public class SystemRemoteEditManager
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		boolean enableMaxSize = store.getBoolean(ISystemFilePreferencesConstants.LIMIT_CACHE);
 		if (enableMaxSize)
-		{	
+		{
 			int max = Integer.parseInt(ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE) * 1000000;
-			
+
 			// get the cache limit
 			try {
 				String maxSize = store.getString(ISystemFilePreferencesConstants.MAX_CACHE_SIZE);
-				
+
 				if (maxSize != null && !maxSize.equals("")) { //$NON-NLS-1$
 					max = Integer.parseInt(maxSize) * 1000000;
 				}
@@ -710,9 +714,9 @@ public class SystemRemoteEditManager
 				SystemBasePlugin.logError("Could not get max cache size", nfe); //$NON-NLS-1$
 				max = Integer.parseInt(ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE) * 1000000;
 			}
-			
+
 			try {
-				
+
 				//	get the current cache size
 				int currentSize = caculateCacheSize();
 				if (currentSize > max)
@@ -785,7 +789,7 @@ public class SystemRemoteEditManager
 		// no project exists, then nothing to refresh
 		if (!doesRemoteEditProjectExist())
 			return;
-			
+
 		try
 		{
 

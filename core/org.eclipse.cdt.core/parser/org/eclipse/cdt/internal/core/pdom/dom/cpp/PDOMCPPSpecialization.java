@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -19,11 +20,14 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -187,5 +191,25 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 			result.append(getNodeType());
 		}
 		return result.toString();
+	}
+	
+	@Override
+	public IIndexScope getScope() {
+		try {
+			IBinding parent= getParentBinding();
+			if(parent instanceof ICPPSpecialization && parent instanceof ICPPClassType) {
+				return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
+			} else {
+				IScope scope= getSpecializedBinding().getScope();
+				if(scope instanceof IIndexScope) {
+					return (IIndexScope) scope;
+				}
+			}
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		}
+		return null;
 	}
 }

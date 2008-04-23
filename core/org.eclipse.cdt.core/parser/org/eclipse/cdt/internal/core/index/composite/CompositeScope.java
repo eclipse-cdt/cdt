@@ -44,7 +44,7 @@ public abstract class CompositeScope implements IIndexScope {
 		this.rbinding = rbinding;
 	}
 	
-	final public IIndexScope getParent() {
+	public IIndexScope getParent() {
 		IIndexScope rscope = rbinding.getScope();
 		if(rscope!=null) {
 			return cf.getCompositeScope(rscope);

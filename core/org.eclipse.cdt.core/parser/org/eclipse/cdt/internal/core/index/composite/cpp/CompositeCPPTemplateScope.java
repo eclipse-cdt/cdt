@@ -18,13 +18,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPTemplateScope extends CompositeScope implements ICPPTemplateScope {
 	public CompositeCPPTemplateScope(ICompositesFactory cf,
 			ICPPTemplateScope rbinding) {
-		super(cf, (IIndexFragmentBinding) rbinding);
+		super(cf, (IIndexFragmentBinding) ((IIndexScope)rbinding).getScopeBinding());
 	}
 
 	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
@@ -49,5 +50,10 @@ public class CompositeCPPTemplateScope extends CompositeScope implements ICPPTem
 
 	public IIndexBinding getScopeBinding() {
 		return cf.getCompositeBinding(rbinding);
+	}
+	
+	@Override
+	public IIndexScope getParent() {
+		return (IIndexScope) rbinding;
 	}
 }

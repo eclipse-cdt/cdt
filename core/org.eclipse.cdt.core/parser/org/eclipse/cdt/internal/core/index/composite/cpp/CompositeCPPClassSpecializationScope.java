@@ -26,14 +26,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-/**
- *
- */
 public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope {
-
+	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
+	
 	public CompositeCPPClassSpecializationScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
@@ -44,12 +41,13 @@ public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope
 	
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
-		throw new CompositingNotImplementedError();
+		// Implicit methods shouldn't have implicit specializations
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
 	@Override
 	public IBinding[] find(String name) throws DOMException {
-		throw new CompositingNotImplementedError();
+		return CPPSemantics.findBindings(this, name, false);
 	}
 
 	@Override
@@ -77,8 +75,28 @@ public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope
 	}
 
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings) throws DOMException {
-		throw new CompositingNotImplementedError();
+	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
+			IIndexFileSet fileSet) throws DOMException {
+		char[] c = name.toCharArray();
+		IBinding[] result = null;
+		
+	    if ((!prefixLookup && CharArrayUtils.equals(c, specialization().getNameCharArray())) ||
+	    		(prefixLookup && CharArrayUtils.equals(specialization().getNameCharArray(), 0, c.length, c, true))) {
+	    	result = new IBinding[] { specialization() };
+	    }
+
+		ICPPClassType specialized = (ICPPClassType) specialization().getSpecializedBinding();
+		IScope classScope = specialized.getCompositeScope();
+		IBinding[] bindings = classScope != null ?
+				classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
+		
+		if (bindings != null) {
+			for (int i = 0; i < bindings.length; i++) {
+				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, getInstance(bindings[i]));
+			}
+		}
+
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	
 	private IBinding getInstance(IBinding binding) {
@@ -93,6 +111,4 @@ public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope
 		}
 		return null;
 	}
-	
-	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
 }

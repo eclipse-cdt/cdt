@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -295,5 +296,19 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
+	}
+	
+	
+	@Override
+	public final IIndexScope getScope() {
+		try {
+			IScope scope= getSpecializedBinding().getScope();
+			if(scope instanceof IIndexScope) {
+				return (IIndexScope) scope;
+			}
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
+		}
+		return null;
 	}
 }

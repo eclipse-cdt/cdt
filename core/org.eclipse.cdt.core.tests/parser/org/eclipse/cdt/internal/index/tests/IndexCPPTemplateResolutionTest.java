@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,64 +60,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public static class SingleProject extends IndexCPPTemplateResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
 		
-	    // template<typename _TpAllocator>
-	    // class Allocator {
-	    // public:
-	    //   typedef _TpAllocator& alloc_reference;
-	    //   template<typename _TpRebind>
-	    //   struct rebind {
-	    //     typedef Allocator<_TpRebind> other;
-	    //   };
-	    // };
-	    //
-	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-	    // class Vec {
-	    // public:
-	    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
-	    // };
-
-		// void f(Vec<int>::reference r) {}
-	    public void testRebindPattern_214017_1() throws Exception {
-	        IBinding b0= getBindingFromASTName("r)", 1);
-	        assertInstance(b0, ICPPVariable.class);
-			IType type = ((ICPPVariable) b0).getType();
-			type = SemanticUtil.getUltimateType(type, false);
-			assertInstance(type, IBasicType.class);
-			assertEquals("int", ASTTypeUtil.getType(type));
-	    }
-
-	    // template<typename _TpAllocator>
-	    // class Allocator {
-	    // public:
-	    //   typedef _TpAllocator& alloc_reference;
-	    //   template<typename _TpRebind>
-	    //   struct rebind {
-	    //     typedef Allocator<_TpRebind> other;
-	    //   };
-	    // };
-	    //
-	    // template<typename _TpBase, typename _AllocBase>
-	    // class VecBase {
-	    // public:
-	    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
-	    // };
-	    //
-	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-	    // class Vec : protected VecBase<_Tp, _Alloc> {
-	    // public:
-	    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
-	    // };
-
-	    // void f(Vec<int>::reference r) {}
-	    public void testRebindPattern_214017_2() throws Exception {
-	        IBinding b0= getBindingFromASTName("r)", 1);
-	        assertInstance(b0, ICPPVariable.class);
-			IType type = ((ICPPVariable) b0).getType();
-			type = SemanticUtil.getUltimateType(type, false);
-			assertInstance(type, IBasicType.class);
-			assertEquals("int", ASTTypeUtil.getType(type));
-	    }
-
 	    // template<typename _TpAllocatorForward>
 	    // class Allocator;
         //
@@ -165,64 +107,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	
 	public static class ProjectWithDepProj extends IndexCPPTemplateResolutionTest {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
-		
-	    // template<typename _TpAllocator>
-	    // class Allocator {
-	    // public:
-	    //   typedef _TpAllocator& alloc_reference;
-	    //   template<typename _TpRebind>
-	    //   struct rebind {
-	    //     typedef Allocator<_TpRebind> other;
-	    //   };
-	    // };
-	    //
-	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-	    // class Vec {
-	    // public:
-	    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
-	    // };
-
-		// void f(Vec<int>::reference r) {}
-	    public void _testRebindPattern_214017_1() throws Exception {
-	        IBinding b0= getBindingFromASTName("r)", 1);
-	        assertInstance(b0, ICPPVariable.class);
-			IType type = ((ICPPVariable) b0).getType();
-			type = SemanticUtil.getUltimateType(type, false);
-			assertInstance(type, IBasicType.class);
-			assertEquals("int", ASTTypeUtil.getType(type));
-	    }
-
-	    // template<typename _TpAllocator>
-	    // class Allocator {
-	    // public:
-	    //   typedef _TpAllocator& alloc_reference;
-	    //   template<typename _TpRebind>
-	    //   struct rebind {
-	    //     typedef Allocator<_TpRebind> other;
-	    //   };
-	    // };
-	    //
-	    // template<typename _TpBase, typename _AllocBase>
-	    // class VecBase {
-	    // public:
-	    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
-	    // };
-	    //
-	    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-	    // class Vec : protected VecBase<_Tp, _Alloc> {
-	    // public:
-	    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
-	    // };
-
-	    // void f(Vec<int>::reference r) {}
-	    public void _testRebindPattern_214017_2() throws Exception {
-	        IBinding b0= getBindingFromASTName("r)", 1);
-	        assertInstance(b0, ICPPVariable.class);
-			IType type = ((ICPPVariable) b0).getType();
-			type = SemanticUtil.getUltimateType(type, false);
-			assertInstance(type, IBasicType.class);
-			assertEquals("int", ASTTypeUtil.getType(type));
-	    }
 	}
 	
 	public static void addTests(TestSuite suite) {		
@@ -233,6 +117,64 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public IndexCPPTemplateResolutionTest() {
 		setStrategy(new ReferencedProject(true));
 	}
+	
+    // template<typename _TpAllocator>
+    // class Allocator {
+    // public:
+    //   typedef _TpAllocator& alloc_reference;
+    //   template<typename _TpRebind>
+    //   struct rebind {
+    //     typedef Allocator<_TpRebind> other;
+    //   };
+    // };
+    //
+    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+    // class Vec {
+    // public:
+    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
+    // };
+
+	// void f(Vec<int>::reference r) {}
+    public void testRebindPattern_214017_1() throws Exception {
+        IBinding b0= getBindingFromASTName("r)", 1);
+        assertInstance(b0, ICPPVariable.class);
+		IType type = ((ICPPVariable) b0).getType();
+		type = SemanticUtil.getUltimateType(type, false);
+		assertInstance(type, IBasicType.class);
+		assertEquals("int", ASTTypeUtil.getType(type));
+    }
+
+    // template<typename _TpAllocator>
+    // class Allocator {
+    // public:
+    //   typedef _TpAllocator& alloc_reference;
+    //   template<typename _TpRebind>
+    //   struct rebind {
+    //     typedef Allocator<_TpRebind> other;
+    //   };
+    // };
+    //
+    // template<typename _TpBase, typename _AllocBase>
+    // class VecBase {
+    // public:
+    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
+    // };
+    //
+    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+    // class Vec : protected VecBase<_Tp, _Alloc> {
+    // public:
+    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+    // };
+
+    // void f(Vec<int>::reference r) {}
+    public void testRebindPattern_214017_2() throws Exception {
+        IBinding b0= getBindingFromASTName("r)", 1);
+        assertInstance(b0, ICPPVariable.class);
+		IType type = ((ICPPVariable) b0).getType();
+		type = SemanticUtil.getUltimateType(type, false);
+		assertInstance(type, IBasicType.class);
+		assertEquals("int", ASTTypeUtil.getType(type));
+    }
 	
     //	class Str1 {
 	//	public:
@@ -1112,7 +1054,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     //
     // A<B> ab;
     // A<C> ac;
-    public void _testEnclosingScopes_a() throws Exception {
+    public void testEnclosingScopes_a() throws Exception {
     	ICPPSpecialization   b0= getBindingFromASTName("A<B>", 4, ICPPSpecialization.class, ICPPClassType.class);
     	ICPPTemplateInstance b1= getBindingFromASTName("A<C>", 4, ICPPTemplateInstance.class, ICPPClassType.class);
     	
@@ -1194,9 +1136,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// };
 	
 	// X<A>::Y::Z xayz;
-    public void _testEnclosingScopes_c() throws Exception {
-    	fakeFailForSingle();
-    	
+    public void testEnclosingScopes_c() throws Exception {
     	ICPPClassType b0= getBindingFromASTName("Y::Z x", 1, ICPPClassType.class);
     	ICPPClassType b1= getBindingFromASTName("Z xayz", 1, ICPPClassType.class);
     	
@@ -1223,7 +1163,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     // };
     
     // X<B,A>::N n;
-    public void _testEnclosingScopes_d() throws Exception {
+    public void testEnclosingScopes_d() throws Exception {
     	ICPPClassType b0= getBindingFromASTName("N n", 1, ICPPClassType.class, ICPPSpecialization.class);
     	ICPPClassType b1= assertInstance(((ICPPSpecialization) b0).getSpecializedBinding(), ICPPClassType.class);
     	

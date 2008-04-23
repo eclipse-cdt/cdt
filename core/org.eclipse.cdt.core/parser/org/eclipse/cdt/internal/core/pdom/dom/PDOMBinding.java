@@ -197,7 +197,13 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return null;
 	}
 	
-	public final IIndexScope getScope() {
+	/*
+	 * Most of the time, the parent node in the binding hierarchy is also the scope. For
+	 * some template bindings, this does not hold.
+	 * 
+	 * @see org.eclipse.cdt.internal.core.index.IIndexFragmentBinding#getScope()
+	 */
+	public IIndexScope getScope() {
 		try {
 			IBinding parent = getParentBinding(); 
 			if (parent instanceof IIndexScope) {
@@ -224,8 +230,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	@Override
 	abstract protected int getRecordSize(); // superclass's implementation is no longer valid
 	
-	/* For debug purposes only
-	 * (non-Javadoc)
+	/* For debug purposes only.
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

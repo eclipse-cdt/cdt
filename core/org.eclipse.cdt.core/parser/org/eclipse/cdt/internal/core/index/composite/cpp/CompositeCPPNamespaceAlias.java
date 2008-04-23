@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPNamespaceAlias {
@@ -23,11 +24,15 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 	}
 	
 	public IBinding[] getMemberBindings() throws DOMException {
-		fail(); return null;
+		IBinding[] result= ((ICPPNamespaceAlias)rbinding).getMemberBindings();
+		for(int i=0; i<result.length; i++) {
+			result[i]= cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+		}
+		return result;
 	}
 
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
-		fail(); return null;
+		return (ICPPNamespaceScope) cf.getCompositeScope((IIndexScope) ((ICPPNamespaceAlias)rbinding).getNamespaceScope());
 	}
 
 	public IBinding getBinding() {

@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -144,15 +143,6 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
 		return null;
 	}
-		
-	
-	@Override
-	// this is actually wrong, the undeclared bindings should be filtered out. However, that causes
-	// some of the test cases to fail. --> need to look into this.
-	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=227967
-	protected IndexFilter getFilterForBindingsOfScope() {
-		return IndexFilter.ALL;
-	}
 	
 	private class PDOMCPPTemplateScope implements ICPPTemplateScope, IIndexScope {
 		public IBinding[] find(String name) throws DOMException {
@@ -197,7 +187,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		}
 		
 		public IIndexScope getParent() {
-			return PDOMCPPClassTemplate.super.getParent();
+			return PDOMCPPClassTemplate.this.getParent();
 		}
 		
 		public ICPPTemplateDefinition getTemplateDefinition()
@@ -217,7 +207,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	private PDOMCPPTemplateScope scope;
 	
 	@Override
-	public IIndexScope getParent() {
+	public IIndexScope getScope() {
 		if (scope == null) {
 			scope = new PDOMCPPTemplateScope();
 		}

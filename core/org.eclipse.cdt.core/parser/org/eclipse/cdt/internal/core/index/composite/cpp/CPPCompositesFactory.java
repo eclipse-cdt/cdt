@@ -194,7 +194,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					}
 				} else if (binding instanceof ICPPTemplateDefinition) {
 					if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-						return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) binding);
+						return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) findOneBinding(binding));
 					} else if (binding instanceof ICPPClassType) {
 						return new CompositeCPPClassTemplateSpecialization(this, (ICPPClassType) binding);
 					} else if (binding instanceof ICPPConstructor) {

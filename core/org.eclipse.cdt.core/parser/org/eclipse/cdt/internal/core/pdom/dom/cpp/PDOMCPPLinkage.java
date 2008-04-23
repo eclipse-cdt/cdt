@@ -673,6 +673,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  					return null;
  				}
  
+ 				if (scope instanceof ICPPTemplateScope &&
+ 						!(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
+ 					scope = scope.getParent();
+ 					if (scope == null) {
+ 						return this;
+ 					}
+ 				}
+ 				
  				if (scope instanceof IIndexScope) {
  					if (scope instanceof CompositeScope) { // we special case for performance
  						return adaptOrAddBinding(add, ((CompositeScope) scope).getRawScopeBinding());
@@ -681,14 +689,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  				}
  
  				// the scope is from the ast
- 				if (scope instanceof ICPPTemplateScope &&
- 						!(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
- 					scope = scope.getParent();
- 					if (scope == null) {
- 						return null;
- 					}
- 				}
- 
  				while (scope instanceof ICPPNamespaceScope) {
  					IName name= scope.getScopeName();
  					if (name != null && name.toCharArray().length == 0) {

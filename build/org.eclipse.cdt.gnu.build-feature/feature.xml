@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.gnu.build"
       label="CDT GNU Toolchain Build Support"
-      version="5.0.0"
+      version="5.0.0.qualifier"
       provider-name="Eclipse.org">
 
    <description url="http://www.example.com/description">

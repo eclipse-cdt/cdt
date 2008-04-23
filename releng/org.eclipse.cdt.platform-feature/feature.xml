@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.platform"
       label="CDT Platform"
-      version="5.0.0"
+      version="5.0.0.qualifier"
       provider-name="Eclipse.org">
 
    <description url="http://www.example.com/description">

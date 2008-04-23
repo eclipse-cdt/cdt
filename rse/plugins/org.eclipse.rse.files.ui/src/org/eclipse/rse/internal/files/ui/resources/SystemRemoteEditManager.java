@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM) - [195285] mount path mapper changes
+ * David McKnight   (IBM)        - [228343] RSE unable to recover after RemoteSystemsTempfiles deletion
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
@@ -35,6 +36,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -304,11 +307,22 @@ public class SystemRemoteEditManager
 		{
 			if (editProject != null)
 			{
-			if (!editProject.exists())
-				editProject.create(null);
+				IProgressMonitor monitor = new NullProgressMonitor();
+				if (!editProject.exists())
+					editProject.create(monitor);
 
-			if (!editProject.isOpen())
-				editProject.open(null);
+				if (!editProject.isOpen()){
+					try {
+						editProject.open(monitor);
+					}
+					catch (CoreException e) {
+						// probably no .project file
+						// time to start again!
+						editProject.delete(true, monitor);
+						editProject.create(monitor);
+						editProject.open(monitor);
+					}
+				}
 
 			IProjectDescription description = editProject.getDescription();
 			String[] natures = description.getNatureIds();
@@ -337,6 +351,7 @@ public class SystemRemoteEditManager
 		}
 		catch (CoreException e)
 		{
+			e.printStackTrace();
 			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
 		}
 		return editProject;

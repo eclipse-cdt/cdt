@@ -320,20 +320,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 		// To Do
 
 		// Create the array and copy the elements over
-		int size = projectTypes != null ? 
-				projectTypes.size()	+ (definedTypes != null ? definedTypes.size() : 0) :
-				0;
+		int size = projectTypes != null ? projectTypes.size() : 0;
+		size += definedTypes != null ? definedTypes.size() : 0;
 
 		IProjectType[] types = new IProjectType[size];
 		
-		int n = 0;
-		for (int i = 0; i < projectTypes.size(); ++i)
-			types[n++] = (IProjectType)projectTypes.get(i);
+		if (size > 0) {	
+			int n = 0;
+			for (int i = 0; i < projectTypes.size(); ++i)
+				types[n++] = (IProjectType)projectTypes.get(i);
+			
+			if (definedTypes != null)
+				for (int i = 0; i < definedTypes.size(); ++i)
+					types[n++] = definedTypes.get(i);
+		}
 		
-		if (definedTypes != null)
-			for (int i = 0; i < definedTypes.size(); ++i)
-				types[n++] = definedTypes.get(i);
-				
 		return types;
 	}
 	

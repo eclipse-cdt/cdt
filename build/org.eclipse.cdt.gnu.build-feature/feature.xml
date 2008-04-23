@@ -22,6 +22,7 @@
       <import plugin="org.eclipse.cdt.managedbuilder.core" version="5.0.0" match="compatible"/>
       <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import feature="org.eclipse.cdt.platform" version="5.0.0.qualifier"/>
    </requires>
 
    <plugin

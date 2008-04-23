@@ -3,6 +3,9 @@
 	<category-def name="CDT Main Features" label="CDT Main Features"/>
 	<category-def name="CDT Optional Features" label="CDT Optional Features"/>
 	
+	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_@buildVersion@.jar" version="@buildVersion@">
+		<category name="CDT Main Features"/>
+	</feature>
 	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Main Features"/>
 	</feature>
@@ -28,6 +31,12 @@
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.testing" url="features/org.eclipse.cdt.testing_@buildVersion@.jar" version="@buildVersion@">
+		<category name="CDT Optional Features"/>
+	</feature>
+	<feature id="org.eclipse.cdt.gdb.build" url="features/org.eclipse.cdt.gdb.build_@buildVersion@.jar" version="@buildVersion@">
+		<category name="CDT Optional Features"/>
+	</feature>
+	<feature id="org.eclipse.cdt.gdb.debug" url="features/org.eclipse.cdt.gdb.debug_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>
 </site>

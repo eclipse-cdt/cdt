@@ -32,6 +32,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
 
@@ -300,7 +301,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		fColorManager= colorManager;
 		fPreferenceStore= preferenceStore;
 		if (fEditor != null) {
-			fConfiguration= new CSourceViewerConfiguration(colorManager, preferenceStore, editor, ICPartitions.C_PARTITIONING);
+			fConfiguration= new CSourceViewerScalableConfiguration(colorManager, preferenceStore, editor, ICPartitions.C_PARTITIONING);
 			fPresentationReconciler= (CPresentationReconciler) fConfiguration.getPresentationReconciler(sourceViewer);
 		} else {
 			fConfiguration= null;

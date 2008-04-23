@@ -367,6 +367,20 @@ public final class PreferencesMessages extends NLS {
 	public static String MarkOccurrencesConfigurationBlock_link_tooltip;
 	public static String MarkOccurrencesConfigurationBlock_markOccurrences;
 	public static String MarkOccurrencesConfigurationBlock_stickyOccurrences;
+	
+	public static String ScalabilityPreferencePage_description;
+	public static String ScalabilityPreferencePage_detection_label;
+	public static String ScalabilityPreferencePage_detection_group_label;
+	public static String ScalabilityPreferencePage_trigger_lines_label;
+	public static String ScalabilityPreferencePage_error;
+	public static String ScalabilityPreferencePage_scalabilityMode_group_label;
+	public static String ScalabilityPreferencePage_scalabilityMode_label;
+	public static String ScalabilityPreferencePage_reconciler_label;
+	public static String ScalabilityPreferencePage_syntaxColor_label;
+	public static String ScalabilityPreferencePage_contentAssist_label;
+	public static String ScalabilityPreferencePage_note;
+	public static String ScalabilityPreferencePage_preferenceOnlyForNewViews;
+
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, PreferencesMessages.class);

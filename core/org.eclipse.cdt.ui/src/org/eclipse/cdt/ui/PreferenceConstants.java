@@ -1301,6 +1301,66 @@ public class PreferenceConstants {
 	public static final String EDITOR_STICKY_OCCURRENCES= "stickyOccurrences"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether all scalability mode options should be turned on.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_ENABLE_ALL = "enableScalabilityOptions"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether the editor's reconciler is disabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_RECONCILER = "reconciler"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether syntax coloring is disabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_SYNTAX_COLOR = "syntaxColor"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether parser-based content assist proposals are disabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_PARSER_BASED_CONTENT_ASSIST = "cdtContentAssist"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether users should be notified if scalability mode should be turned on.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_ALERT = "detectScalability"; //$NON-NLS-1$
+	
+	/**
+	 * The size of the file that will trigger scalability mode
+	 * <p>
+	 * Value is of type <code>int</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_NUMBER_OF_LINES = "numberOfLines"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 *
 	 * @return the CDT-UI preference store
@@ -1481,6 +1541,14 @@ public class PreferenceConstants {
 		// mark occurrences
 		store.setDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
 		store.setDefault(PreferenceConstants.EDITOR_STICKY_OCCURRENCES, true);
+		
+		//Scalability
+		store.setDefault(PreferenceConstants.SCALABILITY_ALERT, true);
+		store.setDefault(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, 5000);
+		store.setDefault(PreferenceConstants.SCALABILITY_ENABLE_ALL, false);
+		store.setDefault(PreferenceConstants.SCALABILITY_RECONCILER, false);
+		store.setDefault(PreferenceConstants.SCALABILITY_SYNTAX_COLOR, false);
+		store.setDefault(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, false);
     }
 
 

@@ -43,6 +43,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -92,6 +95,7 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
@@ -116,6 +120,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -203,6 +208,7 @@ import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.CWordIterator;
@@ -1232,6 +1238,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	private TextViewerDragAdapter fTextViewerDragAdapter;
+	
+	/**
+	 * True if editor is opening a large file.
+	 * @since 5.0
+	 */
+	private boolean fEnableScalablilityMode = false;
 
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
@@ -1325,6 +1337,33 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		} else {
 			fBracketMatcher.configure(null);
 		}
+	
+		int lines = getDocumentProvider().getDocument(input).getNumberOfLines();
+		if (lines > getPreferenceStore().getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)) {
+			//Detecting if scalability mode should be turned on
+			fEnableScalablilityMode = true;
+			
+			//Alert users that scalability mode should be turned on
+			if (getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_ALERT)) {
+				MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+						Display.getCurrent().getActiveShell(), 
+						CEditorMessages.getString("Scalability.info"),  //$NON-NLS-1$
+						null, 
+						CEditorMessages.getString("Scalability.message"),  //$NON-NLS-1$
+						MessageDialog.INFORMATION, 
+						new String[] {IDialogConstants.OK_LABEL}, 0, 
+						CEditorMessages.getString("Scalability.reappear"),  //$NON-NLS-1$
+						false) {
+					@Override
+					protected void buttonPressed(int buttonId) {	
+						PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.SCALABILITY_ALERT, !getToggleState());
+						super.buttonPressed(buttonId);
+					}
+				};				
+				dialog.setBlockOnOpen(false);
+				dialog.open();				
+			}
+		}
 	}
 
 	/*
@@ -1337,7 +1376,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		SourceViewerConfiguration sourceViewerConfiguration= getSourceViewerConfiguration();
 		if (!(sourceViewerConfiguration instanceof CSourceViewerConfiguration)) {
 			CTextTools textTools= CUIPlugin.getDefault().getTextTools();
-			setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools.getColorManager(), store, this, ICPartitions.C_PARTITIONING));
+			setSourceViewerConfiguration(new CSourceViewerScalableConfiguration(textTools.getColorManager(), store, this, ICPartitions.C_PARTITIONING));
 		}
 
 		if (getSourceViewer() instanceof CSourceViewer)
@@ -1377,6 +1416,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
      * @return Outline page.
 	 */
 	public CContentOutlinePage getOutlinePage() {
+		if (isEnableScalablilityMode() && getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_RECONCILER))
+    		return null;
 		if (fOutlinePage == null) {
 			fOutlinePage = new CContentOutlinePage(this);
 			fOutlinePage.addSelectionChangedListener(this);
@@ -1556,6 +1597,17 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				IContentAssistant c = asv.getContentAssistant();
 				if (c instanceof ContentAssistant) {
 					ContentAssistPreference.changeConfiguration((ContentAssistant) c, getPreferenceStore(), event);
+				}
+				
+				//For Scalability
+				if (PreferenceConstants.SCALABILITY_RECONCILER.equals(property)) {
+						((SourceViewer)getSourceViewer()).unconfigure();
+						getSourceViewer().configure(getSourceViewerConfiguration());
+				}
+				
+				if (PreferenceConstants.SCALABILITY_SYNTAX_COLOR.equals(property)) {
+					((SourceViewer)getSourceViewer()).unconfigure();
+					getSourceViewer().configure(getSourceViewerConfiguration());
 				}
 			}
 		} finally {
@@ -3251,4 +3303,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		return new ChainedPreferenceStore(stores.toArray(new IPreferenceStore[stores.size()]));
 	}
 
+	/**
+	 * @return <code>true</code> if parser based Content Assist proposals are disabled.
+	 *
+	 * @since 5.0
+	 */
+	public boolean isParserBasedContentAssistDisabled() {
+		return getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST);
+	}
+	
+	/**
+	 * @return <code>true</code> if the number of lines in the file exceed
+	 * the line number for scalability mode in the preference.
+	 *
+	 * @since 5.0
+	 */
+	public boolean isEnableScalablilityMode() {
+		return fEnableScalablilityMode;
+	}
 }

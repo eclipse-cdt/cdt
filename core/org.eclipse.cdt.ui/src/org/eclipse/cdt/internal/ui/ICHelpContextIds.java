@@ -171,4 +171,6 @@ public interface ICHelpContextIds {
 
 	public static final String PATHENTRY_VARIABLES_PREFERENCE_PAGE= PREFIX + "pathentry_variables_preference_page_context"; //$NON-NLS-1$
 
+	public static final String SCALABILITY_PREFERENCE_PAGE = PREFIX + "scalability_preference_page_context"; //$NON-NLS-1$
+
 }

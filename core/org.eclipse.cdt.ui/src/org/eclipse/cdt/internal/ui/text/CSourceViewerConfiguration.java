@@ -107,35 +107,35 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
-	private ITextEditor fTextEditor;
+	protected ITextEditor fTextEditor;
 	/**
 	 * The document partitioning.
 	 */
-	private String fDocumentPartitioning;
+	protected String fDocumentPartitioning;
 	/**
 	 * The code scanner.
 	 */
-	private AbstractCScanner fCodeScanner;
+	protected AbstractCScanner fCodeScanner;
 	/**
 	 * The C multi-line comment scanner.
 	 */
-	private ICTokenScanner fMultilineDocCommentScanner;
+	protected ICTokenScanner fMultilineDocCommentScanner;
 	/**
 	 * The C single-line comment scanner.
 	 */
-	private ICTokenScanner fSinglelineDocCommentScanner;
+	protected ICTokenScanner fSinglelineDocCommentScanner;
 	/**
 	 * The C string scanner.
 	 */
-	private AbstractCScanner fStringScanner;
+	protected AbstractCScanner fStringScanner;
 	/**
 	 * The preprocessor scanner.
 	 */
-	private AbstractCScanner fPreprocessorScanner;
+	protected AbstractCScanner fPreprocessorScanner;
 	/**
 	 * The color manager.
 	 */
-	private IColorManager fColorManager;
+	protected IColorManager fColorManager;
 	
 	/**
 	 * Creates a new C source viewer configuration for viewers in the given editor
@@ -238,7 +238,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * Initializes the scanners.
 	 */
-	private void initializeScanners() {
+	protected void initializeScanners() {
 		fStringScanner= new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
 	}
 
@@ -397,7 +397,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return the settings
 	 * @since 4.0
 	 */
-	private IDialogSettings getSettings(String sectionName) {
+	protected IDialogSettings getSettings(String sectionName) {
 		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
 		if (settings == null)
 			settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
@@ -529,7 +529,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return the indent prefixes
 	 * @see #getIndentPrefixes(ISourceViewer, String)
 	 */
-	private String[] getIndentPrefixesForSpaces(int tabWidth) {
+	protected String[] getIndentPrefixesForSpaces(int tabWidth) {
 		String[] indentPrefixes= new String[tabWidth + 2];
 		indentPrefixes[0]= getStringWithSpaces(tabWidth);
 		
@@ -552,7 +552,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @param count	the space count
 	 * @return the string with the spaces
 	 */
-	private static String getStringWithSpaces(int count) {
+	protected static String getStringWithSpaces(int count) {
 		char[] spaceChars= new char[count];
 		Arrays.fill(spaceChars, ' ');
 		return new String(spaceChars);
@@ -563,7 +563,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * no ICProject could be determined
 	 * @return
 	 */
-	private ICProject getCProject() {
+	protected ICProject getCProject() {
 		ITextEditor editor= getEditor();
 		if (editor == null)
 			return null;
@@ -751,7 +751,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return an information control creator
 	 * @since 5.0
 	 */
-	private IInformationControlCreator getInformationPresenterControlCreator(ISourceViewer sourceViewer) {
+	protected IInformationControlCreator getInformationPresenterControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, true);
@@ -827,7 +827,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
      * Creates control for outline presentation in editor.
      * @return Control.
      */
-    private IInformationControlCreator getOutlineControlCreator() {
+    protected IInformationControlCreator getOutlineControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
             /**
              * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
@@ -845,7 +845,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
      * Creates control for outline presentation in editor.
      * @return Control.
      */
-    private IInformationControlCreator getHierarchyControlCreator() {
+    protected IInformationControlCreator getHierarchyControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
             /**
              * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
@@ -929,7 +929,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
      * Creates control for macro exploration in editor.
      * @return Control.
      */
-    private IInformationControlCreator getMacroExplorationControlCreator() {
+    protected IInformationControlCreator getMacroExplorationControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
             public IInformationControl createInformationControl(Shell parent) {
                 return new CMacroExpansionExplorationControl(parent);   

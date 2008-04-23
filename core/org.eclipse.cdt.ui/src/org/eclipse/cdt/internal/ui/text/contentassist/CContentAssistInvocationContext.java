@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 
@@ -61,7 +62,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * @param viewer the viewer used by the editor
 	 * @param offset the invocation offset
 	 * @param editor the editor that content assist is invoked in
-	 * @param isAutoActivated  inidicates whether content assist was auto-activated
+	 * @param isAutoActivated indicates whether content assist was auto-activated
 	 */
 	public CContentAssistInvocationContext(ITextViewer viewer, int offset, IEditorPart editor, boolean isCompletion, boolean isAutoActivated) {
 		super(viewer, offset);
@@ -111,6 +112,14 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	}
 		
 	public IASTCompletionNode getCompletionNode() {
+		
+		//for scalability
+		if (fEditor != null && fEditor instanceof CEditor) {
+			CEditor editor = (CEditor)fEditor;
+			if (editor.isEnableScalablilityMode() && editor.isParserBasedContentAssistDisabled())
+				return null;
+		}
+		
 		if (fCNComputed) return fCN;
 		
 		fCNComputed = true;

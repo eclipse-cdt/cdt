@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [218685] [api][breaking][dstore] Unable to connect when using SSL.
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)         - [221747] Default Connection Timeout is too high
+ * David McKnight  (IBM)         - [228334] [dstore] Default DataStore connection timeout is too short
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -64,7 +65,7 @@ public interface IUniversalDStoreConstants
     
         // Socket timeout preference
     public static final String RESID_PREF_SOCKET_TIMEOUT = RESID_PREF_PREFIX + "sockettimeout"; //$NON-NLS-1$
-    public static final int DEFAULT_PREF_SOCKET_TIMEOUT = 2000;
+    public static final int DEFAULT_PREF_SOCKET_TIMEOUT = 5000;
 
     public static final String RESID_PREF_DO_KEEPALIVE = RESID_PREF_PREFIX + "dokeepalive"; //$NON-NLS-1$
     public static final boolean DEFAULT_PREF_DO_KEEPALIVE = true;

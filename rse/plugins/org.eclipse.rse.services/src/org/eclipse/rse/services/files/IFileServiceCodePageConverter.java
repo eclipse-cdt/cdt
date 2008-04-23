@@ -22,7 +22,7 @@ import java.io.File;
  * This interface is used by the extension point 
  * It allows overriding the Universal File Subsystem translation of files, and results in 
  * binary transfer, with calls to the implementor to handle code page conversion.
- * @since 7.1
+ * @since org.eclipse.rse.services 3.0
  */
 public interface IFileServiceCodePageConverter {
 

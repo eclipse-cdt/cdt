@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -222,7 +222,12 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 	public ObjectMap getArgumentMap() {
 		try {
 			PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
-			ICPPTemplateParameter[] params = getTemplateParameters();
+			ICPPTemplateParameter[] params;
+			try {
+				params = getPrimaryClassTemplate().getTemplateParameters();
+			} catch (DOMException e) {
+				return ObjectMap.EMPTY_MAP;
+			}
 			NodeCollector argVisitor = new NodeCollector();
 			argList.accept(argVisitor);
 			IPDOMNode[] argNodes = argVisitor.getNodes();

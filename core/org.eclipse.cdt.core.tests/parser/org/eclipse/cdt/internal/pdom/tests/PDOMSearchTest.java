@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation.
+ * Copyright (c) 2007, 2008 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * 
  */
 public class PDOMSearchTest extends PDOMTestBase {
+	final Comparator<IBinding> BINDING_COMPARATOR = new Comparator<IBinding>() {
+		public int compare(IBinding o1, IBinding o2) {
+			return o1.getName().compareTo(o2.getName());
+		}};
+
 	protected ICProject project;	
 	protected PDOM pdom;
 	protected IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
@@ -152,6 +157,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		// fields
 		IBinding[] fields = class2.getFields();
 		assertEquals(2, fields.length);
+		Arrays.sort(fields, BINDING_COMPARATOR);
 		assertEquals("class1x", fields[0].getName());
 		assertEquals("class1y", fields[1].getName());
 
@@ -179,10 +185,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals("Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(cls1)));
 		methods = cls1.getDeclaredMethods();
 		assertEquals(3, methods.length);
-		Arrays.sort(methods, new Comparator<IBinding>() {
-			public int compare(IBinding o1, IBinding o2) {
-				return o1.getName().compareTo(o2.getName());
-			}});
+		Arrays.sort(methods, BINDING_COMPARATOR);
 		assertEquals("Class2", methods[0].getName());
 		assertEquals("~Class2", methods[2].getName());
 		assertEquals("foo", methods[1].getName());

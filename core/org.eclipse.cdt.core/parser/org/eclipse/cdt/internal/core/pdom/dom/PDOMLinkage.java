@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -178,48 +179,32 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return new FindBinding.NestedBindingsBTreeComparator(this);
 	}
 
-	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
-
-	public abstract PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException;
-
-	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
-		if (inputBinding == null || inputBinding instanceof IProblemBinding) {
-			return null;
+	protected boolean cannotAdapt(final IBinding inputBinding) throws CoreException {
+		if (inputBinding == null || inputBinding instanceof IProblemBinding || inputBinding instanceof IParameter) {
+			return true;
 		}
-
-		IBinding binding= inputBinding;
+		if (inputBinding instanceof PDOMBinding) {
+			PDOMBinding pdomBinding = (PDOMBinding) inputBinding;
+			if (pdomBinding.getPDOM() != getPDOM() && pdomBinding.isFileLocal()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected final PDOMBinding attemptFastAdaptBinding(final IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			// there is no guarantee, that the binding is from the same PDOM object.
 			PDOMBinding pdomBinding = (PDOMBinding) binding;
 			if (pdomBinding.getPDOM() == getPDOM()) {
 				return pdomBinding;
 			}
-			// if the binding is from another pdom it has to be adapted. However don't adapt file-local bindings
-			if (pdomBinding.isFileLocal()) {
-				return null;
-			}
 		}
-
-		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
-		if (result != null) {
-			return result;
-		}
-
-		// assign names to anonymous types.
-		binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
-		if (binding == null) {
-			return null;
-		}
-
-		result= doAdaptBinding(binding);
-		if (result != null) {
-			pdom.putCachedResult(inputBinding, result);
-		}
-		return result;
+		return (PDOMBinding) pdom.getCachedResult(binding);
 	}
+	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
+	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 
-	protected abstract PDOMBinding doAdaptBinding(IBinding binding) throws CoreException;
-	
 	final protected int getLocalToFileRec(PDOMNode parent, IBinding binding) throws CoreException {
 		int rec= 0;
 		if (parent instanceof PDOMBinding) {
@@ -391,4 +376,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		pdom.putCachedResult(key, null);
 		getMacroIndex().delete(container.getRecord());
 	}
+
+	/**
+	 * For debugging purposes, only.
+	 */
+	@Override
+	public String toString() {
+		return getLinkageName();
+	}
+	
+	
 }

@@ -1,16 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
-/*
- * Created on Apr 5, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -112,7 +109,12 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 	 */
 	public ObjectMap getArgumentMap() {
 		IType[] arg= getArguments();
-		ICPPTemplateParameter[] params = getTemplateParameters();
+		ICPPTemplateParameter[] params;
+		try {
+			params = getPrimaryClassTemplate().getTemplateParameters();
+		} catch (DOMException e) {
+			return ObjectMap.EMPTY_MAP;
+		}
 
 		ObjectMap map = new ObjectMap(params.length);
 		for (int i = 0; i < params.length; i++) {

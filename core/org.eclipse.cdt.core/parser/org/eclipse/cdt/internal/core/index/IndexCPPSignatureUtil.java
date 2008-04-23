@@ -6,10 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
@@ -20,15 +25,15 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -90,39 +95,73 @@ public class IndexCPPSignatureUtil {
 	 * @throws DOMException
 	 */
 	private static String getTemplateArgString(IType[] types, boolean qualifyTemplateParameters) throws CoreException, DOMException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append('<');
 		for (int i = 0; i < types.length; i++) {
 			if (i>0) {
 				buffer.append(',');
 			}
-			if (qualifyTemplateParameters && types[i] instanceof ICPPTemplateParameter) {
-				ICPPBinding parent = null;
-				if (types[i] instanceof IIndexInternalTemplateParameter) {
-					parent = ((IIndexInternalTemplateParameter)types[i]).getParameterOwner();
-				} else {
-					IName parentName = ((ICPPTemplateParameter)types[i]).getScope().getScopeName();
-					if (parentName instanceof IASTName) {
-						parent = (ICPPBinding)((IASTName)parentName).resolveBinding();
+			final IType type = types[i];
+			if (qualifyTemplateParameters && type instanceof ICPPTemplateParameter) {
+				List<IBinding> parents = new ArrayList<IBinding>();
+				IScope parentScope= ((ICPPTemplateParameter) type).getScope();
+				while (parentScope != null) {
+					if (parentScope instanceof IIndexScope) {
+						parents.add(((IIndexScope)parentScope).getScopeBinding());
+					}
+					else {
+						final IName scopeName = parentScope.getScopeName();
+						if (scopeName instanceof IASTName) {
+							parents.add(((IASTName) scopeName).resolveBinding());
+						}
+					}
+					parentScope= parentScope.getParent();
+					while (parentScope instanceof ICPPTemplateScope) {
+						parentScope= parentScope.getParent();
 					}
 				}
 				//identical template parameters from different templates must have unique signatures
-				if (parent != null) {
-					buffer.append(CPPVisitor.renderQualifiedName(parent.getQualifiedName()));
-					String sig = getSignature(parent);
-					if (sig != null)
-						buffer.append(sig);
-					buffer.append("::"); //$NON-NLS-1$
+				Collections.reverse(parents);
+				for (IBinding binding : parents) {
+					if (binding != null) {
+						buffer.append(binding.getNameCharArray());
+						if (binding instanceof ICPPTemplateDefinition) {
+							if (binding instanceof ICPPSpecialization) {
+								ICPPSpecialization spec= (ICPPSpecialization) binding;
+								appendTemplateParams(spec.getArgumentMap().keyArray(), buffer);
+								appendTemplateParams(spec.getArgumentMap().valueArray(), buffer);
+							}
+							else {
+								ICPPTemplateDefinition def= (ICPPTemplateDefinition) binding;
+								appendTemplateParams(def.getTemplateParameters(), buffer);
+							}
+						}
+						buffer.append("::"); //$NON-NLS-1$
+					}
 				}
-				buffer.append(((ICPPTemplateParameter)types[i]).getName());
+				buffer.append(((ICPPTemplateParameter)type).getName());
 			} else {
-				buffer.append(ASTTypeUtil.getType(types[i]));
+				buffer.append(ASTTypeUtil.getType(type));
 			}
 		}
 		buffer.append('>');
 		return buffer.toString();
 	}
 	
+	private static void appendTemplateParams(Object[] values, StringBuilder buffer) {
+		boolean needcomma= false;
+		buffer.append('<');
+		for (final Object val : values) {
+			if (val instanceof IType) {
+				if (needcomma)
+					buffer.append(',');
+				needcomma= true;
+				buffer.append(ASTTypeUtil.getType((IType) val));
+			}
+		}
+		buffer.append('>');
+	}
+
 	/**
 	 * Constructs a string in the format:
 	 *   (paramName1,paramName2,...)

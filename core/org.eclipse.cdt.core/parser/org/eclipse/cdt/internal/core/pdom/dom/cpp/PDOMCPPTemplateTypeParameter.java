@@ -1,18 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -26,25 +27,27 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexInternalTemplateParameter;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
  */
-class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
-		ICPPTemplateTypeParameter, ICPPInternalUnknown, IIndexType, IIndexInternalTemplateParameter {
+class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMemberOwner,
+		ICPPTemplateTypeParameter, ICPPInternalUnknown, IIndexType {
 
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;	
-	
+	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
+
 	/**
 	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
 	
 	public PDOMCPPTemplateTypeParameter(PDOM pdom, PDOMNode parent,
 			ICPPTemplateTypeParameter param) throws CoreException {
@@ -75,6 +78,22 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_TYPE_PARAMETER;
+	}
+	
+	@Override
+	public void addChild(PDOMNode member) throws CoreException {
+		addMember(member);
+	}
+	
+	public void addMember(PDOMNode member) throws CoreException {
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		list.addMember(member);
+	}
+
+	@Override
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		list.accept(visitor);
 	}
 	
 	public boolean isSameType(IType type) {

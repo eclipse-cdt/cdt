@@ -465,7 +465,7 @@ public class RSEPreferencesManager {
 	 * 
 	 * @return the boolean value indicating whether or not to create a local
 	 *         connection on a fresh workspace.
-	 * @since org.eclipse.rse.core 2.1
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static boolean getCreateLocalConnection() {
 		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
@@ -483,7 +483,7 @@ public class RSEPreferencesManager {
 	 * If true then all passwords that have been saved for this system type and host address are removed.
 	 * All passwords saved for the default system type and host address are also removed.
 	 * @return the number of passwords removed if deny was set to true
-	 * @since org.eclipse.rse.core 2.1
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static int setDenyPasswordSave(IRSESystemType systemType, String hostAddress, boolean deny) {
 		int result = 0;
@@ -504,7 +504,7 @@ public class RSEPreferencesManager {
 	 * @param systemType
 	 * @param hostAddress
 	 * @return true if saving of passwords is denied. false if saving is allowed.
-	 * @since org.eclipse.rse.core 2.1
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static boolean getDenyPasswordSave(IRSESystemType systemType, String hostAddress) {
 		Preferences preferences = RSECorePlugin.getDefault().getPluginPreferences();

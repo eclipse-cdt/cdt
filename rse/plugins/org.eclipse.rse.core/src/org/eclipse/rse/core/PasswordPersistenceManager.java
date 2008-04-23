@@ -60,7 +60,7 @@ public class PasswordPersistenceManager {
 	// Add return codes
 	public static final int RC_OK = 0;
 	public static final int RC_ALREADY_EXISTS = 1;
-	/** @since org.eclipse.rse.core 2.1 */
+	/** @since org.eclipse.rse.core 3.0 */
 	public static final int RC_DENIED = 2;
 	public static final int RC_ERROR = -1;
 
@@ -194,7 +194,7 @@ public class PasswordPersistenceManager {
 	 * @param systemType The system type of the host
 	 * @param hostName The IP address of the host in canonical format
 	 * @return the number of passwords removed from the keyring
-	 * @since org.eclipse.rse.core 2.1
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public int remove(IRSESystemType systemType, String hostName) {
 		Map passwords = getPasswordMap(systemType);

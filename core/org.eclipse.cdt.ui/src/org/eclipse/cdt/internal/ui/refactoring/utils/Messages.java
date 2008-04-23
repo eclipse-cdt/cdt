@@ -24,7 +24,6 @@ public final class Messages extends NLS {
 
 	public static String IdentifierHelper_isKeyword;
 	public static String IdentifierHelper_isValid;
-	public static String IdentifierHelper_quote;
 	public static String IdentifierHelper_leadingDigit;
 	public static String IdentifierHelper_emptyIdentifier;
 	public static String IdentifierHelper_illegalCharacter;

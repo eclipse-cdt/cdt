@@ -43,7 +43,6 @@ import org.eclipse.rse.internal.core.RSECoreMessages;
  * PasswordPersistenceManager manages the saving and retrieving of user ID /
  * passwords to the Eclipse keyring for registered system types.
  * 
- * @author yantzi
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients. Use
  *                the {@link #getInstance()} method to get the singleton
@@ -61,7 +60,7 @@ public class PasswordPersistenceManager {
 	// Add return codes
 	public static final int RC_OK = 0;
 	public static final int RC_ALREADY_EXISTS = 1;
-	/** @since org.eclipse.rse.core 3.0 */
+	/** @since org.eclipse.rse.core 2.1 */
 	public static final int RC_DENIED = 2;
 	public static final int RC_ERROR = -1;
 
@@ -195,7 +194,7 @@ public class PasswordPersistenceManager {
 	 * @param systemType The system type of the host
 	 * @param hostName The IP address of the host in canonical format
 	 * @return the number of passwords removed from the keyring
-	 * @since org.eclipse.rse.core 3.0
+	 * @since org.eclipse.rse.core 2.1
 	 */
 	public int remove(IRSESystemType systemType, String hostName) {
 		Map passwords = getPasswordMap(systemType);

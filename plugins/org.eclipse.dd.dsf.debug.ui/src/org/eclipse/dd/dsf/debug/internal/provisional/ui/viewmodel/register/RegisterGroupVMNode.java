@@ -287,16 +287,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return null;
     }
     
-    public int getExpressionLength(String expression) {
-        if (expression.startsWith("$$\"")) { //$NON-NLS-1$
-            int secondQuoteIdx = expression.indexOf('"', "$$\"".length()); //$NON-NLS-1$
-            if (secondQuoteIdx > 0) {
-                return secondQuoteIdx + 1;
-            }
-        } 
-        return -1;
-    }
-    
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if (event instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;

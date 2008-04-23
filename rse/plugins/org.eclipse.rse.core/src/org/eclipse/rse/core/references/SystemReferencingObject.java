@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
@@ -27,6 +28,8 @@ import org.eclipse.rse.internal.core.RSECoreMessages;
  * object in multiple places. To enable that, it is necessary not to
  * use the same physical object in each UI representation as the UI
  * will only know how to update/refresh the first one it finds.
+ * @noextend This class is not intended to be subclassed by clients.
+ * The standard extensions are included in the framework.
  */
 public abstract class SystemReferencingObject extends RSEModelObject implements IRSEReferencingObject {
 	private SystemReferencingObjectHelper helper = null;

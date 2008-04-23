@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
@@ -24,6 +25,8 @@ import org.eclipse.rse.core.model.RSEModelObject;
  * This type of class needs to support maintaining an in-memory list of
  * all who reference it so that list can be following on delete and
  * rename operations.
+ * @noextend This class is not intended to be subclassed by clients.
+ * The standard extensions are included in the framework.
  */
 public abstract class SystemReferencedObject extends RSEModelObject implements IRSEReferencedObject {
 

@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
  *******************************************************************************/
 
 package org.eclipse.rse.core.references;
@@ -21,6 +22,10 @@ import java.util.Vector;
 
 /**
  * The class should be used by subclasses of {@link SystemReferencedObject} by instantiating it and delegating to it.
+ * @noextend This class is not intended to be subclassed by clients.
+ * The standard extensions are included in the framework.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * The standard instances are created by the framework.
  */
 public class SystemReferencedObjectHelper {
 

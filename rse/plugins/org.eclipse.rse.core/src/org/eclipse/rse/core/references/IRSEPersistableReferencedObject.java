@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
@@ -19,6 +19,10 @@ package org.eclipse.rse.core.references;
 /**
  * This is an object that can have shadow (reference) objects, which simply
  * point to this object, and a copy of this object's unique name or key (for storing on disk).
+ * @noextend This interface is not intended to be extended by clients.
+ * The standard extensions are included in the framework.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * The standard implementations are included in the framework.
  */
 
 public interface IRSEPersistableReferencedObject extends IRSEReferencedObject, IRSEBasePersistableReferencedObject {

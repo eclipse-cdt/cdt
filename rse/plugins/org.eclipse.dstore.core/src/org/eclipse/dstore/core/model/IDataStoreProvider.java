@@ -20,21 +20,4 @@ package org.eclipse.dstore.core.model;
 public interface IDataStoreProvider
 {
 	public DataStore getDataStore();
-	
-	/**
-	 * Returns the upload buffer size preference.  To be used by Dstore 
-	 * services to determine buffer size when uploading.
-	 * 
-	 * @since 3.0
-	 */
-	public int getBufferUploadSize();
-	
-	/**
-	 * Returns the download buffer size preference.  To be used by
-	 * Dstore services to determine buffer size when downloading.
-	 * 
-	 * @since 3.0
-	 */
-	public int getBufferDownloadSize();
-	
 }

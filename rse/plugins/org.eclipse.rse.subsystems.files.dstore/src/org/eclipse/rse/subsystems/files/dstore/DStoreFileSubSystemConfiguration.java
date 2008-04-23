@@ -21,13 +21,19 @@
 
 package org.eclipse.rse.subsystems.files.dstore;
 
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorServiceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.files.DStoreFileService;
 import org.eclipse.rse.internal.services.dstore.search.DStoreSearchService;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreFileAdapter;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreFileSubSystemSearchResultConfiguration;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreLanguageUtilityFactory;
@@ -43,6 +49,7 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfiguration 
 {
@@ -128,10 +135,41 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	
 	public IFileService createFileService(IHost host)
 	{
+		final IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
-		DStoreFileService service = new DStoreFileService(connectorService, RemoteFileUtility.getSystemFileTransferModeRegistry());
+		final DStoreFileService service = new DStoreFileService(connectorService, RemoteFileUtility.getSystemFileTransferModeRegistry());
 		service.setIsUnixStyle(isUnixStyle());
+		
+		int dvalue = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
+		if (dvalue == 0)
+			dvalue = IUniversalDataStoreConstants.BUFFER_SIZE;
+		service.setBufferDownloadSize(dvalue);
+		
+		
+		int uvalue = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
+		if (uvalue == 0)
+			uvalue = IUniversalDataStoreConstants.BUFFER_SIZE;
+		service.setBufferUploadSize(uvalue);
+		
 
+ 		// Listen to preference changes
+		IPropertyChangeListener preferenceListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event){
+				String propertyName = event.getProperty();
+				if (propertyName.equals(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE)){
+					int value = Integer.parseInt((String)event.getNewValue());
+					service.setBufferDownloadSize(value);
+				}
+				else if (propertyName.equals(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE)){
+					int value = Integer.parseInt((String)event.getNewValue());
+					service.setBufferDownloadSize(value);
+				}
+			}
+		};
+		
+		Preferences pstore = RSEUIPlugin.getDefault().getPluginPreferences();
+		pstore.addPropertyChangeListener(preferenceListener);		
+		
 		return service;
 	}
 	

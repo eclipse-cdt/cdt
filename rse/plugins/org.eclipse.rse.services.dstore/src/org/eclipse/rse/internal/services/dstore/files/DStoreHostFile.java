@@ -350,7 +350,7 @@ public class DStoreHostFile implements IHostFile, IHostFilePermissionsContainer
 		return 0;
 	}
 	
-	protected static String getAttribute(String attributes, int index)
+	protected static  String getAttribute(String attributes, int index)
 	{
 		if (attributes != null)
 		{

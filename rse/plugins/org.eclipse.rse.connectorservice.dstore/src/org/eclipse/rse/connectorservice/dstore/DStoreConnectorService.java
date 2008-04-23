@@ -82,7 +82,6 @@ import org.eclipse.rse.internal.connectorservice.dstore.Activator;
 import org.eclipse.rse.internal.connectorservice.dstore.ConnectorServiceResources;
 import org.eclipse.rse.internal.connectorservice.dstore.IConnectorServiceMessageIds;
 import org.eclipse.rse.internal.connectorservice.dstore.RexecDstoreServer;
-import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
@@ -1461,25 +1460,5 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		return new SimpleSystemMessage(Activator.PLUGIN_ID, msgId, severity, msg, msgDetails);
 	}
 
-	
-	public int getBufferUploadSize()
-	{
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-
-		int value = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
-		if (value == 0)
-			value = IUniversalDataStoreConstants.BUFFER_SIZE;
-		return value;
-
-	}
-
-	public int getBufferDownloadSize()
-	{				
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		int value = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
-		if (value == 0)
-			value = IUniversalDataStoreConstants.BUFFER_SIZE;
-		return value;		
-	}
 }
 

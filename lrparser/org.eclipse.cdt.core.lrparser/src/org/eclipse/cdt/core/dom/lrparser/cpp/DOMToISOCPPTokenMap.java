@@ -20,13 +20,7 @@ import org.eclipse.cdt.core.parser.IToken;
  * Maps tokens types returned by CPreprocessor to token types
  * expected by the C++ parser.
  * 
- * TODO: Make token maps composable.
- * 
- * The idea would be to combine a DOM->C99 map with a C99->UPC map 
- * to get a DOM->UPC map.
- * 
  * @author Mike Kucera
- *
  */
 public class DOMToISOCPPTokenMap implements IDOMTokenMap {
 
@@ -35,6 +29,14 @@ public class DOMToISOCPPTokenMap implements IDOMTokenMap {
 	
 	private DOMToISOCPPTokenMap() {	
 		// just a private constructor
+	}
+	
+	public int getEOFTokenKind() {
+		return TK_EOF_TOKEN;
+	}
+	
+	public int getEOCTokenKind() {
+		return TK_EndOfCompletion;
 	}
 	
 	public int mapKind(IToken token) {
@@ -171,10 +173,5 @@ public class DOMToISOCPPTokenMap implements IDOMTokenMap {
 				return TK_Invalid;
 		}
 	}
-
 	
-	public int getEOFTokenKind() {
-		return TK_EOF_TOKEN;
-	}
-
 }

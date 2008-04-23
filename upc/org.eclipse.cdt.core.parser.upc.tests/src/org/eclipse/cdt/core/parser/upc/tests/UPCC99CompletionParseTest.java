@@ -20,7 +20,7 @@ public class UPCC99CompletionParseTest extends C99CompletionParseTest {
 	public UPCC99CompletionParseTest(String name) { super(name); }
 	
 	@Override
-	protected BaseExtensibleLanguage getLanguage() {
+	protected BaseExtensibleLanguage getC99Language() {
 		return UPCLanguage.getDefault();
 	}
 }

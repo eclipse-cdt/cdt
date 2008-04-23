@@ -34,6 +34,7 @@ public class C99ParserTestSuite extends TestSuite {
 		
 		// The majority of the content assist test are in the ui tests plugin
 		suite.addTestSuite(C99CompletionBasicTest.class);	
+		suite.addTestSuite(C99CompletionParseTest.class);
 		// this one still has a lot of failing tests though
 		suite.addTestSuite(C99SelectionParseTest.class);
 		

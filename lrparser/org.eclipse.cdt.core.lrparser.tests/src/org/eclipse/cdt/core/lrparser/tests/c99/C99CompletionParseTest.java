@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests.c99;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -29,11 +31,8 @@ import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
 
 /**
  * Reuse the completion parse tests from the old parser for now.
- * 
- * This test suite is specific to C99.
- * 
- * TODO run this against C++
  */
+@SuppressWarnings("nls")
 public class C99CompletionParseTest extends TestCase {
 
 	public C99CompletionParseTest() { }
@@ -41,31 +40,30 @@ public class C99CompletionParseTest extends TestCase {
 	
 
 	protected IASTCompletionNode parse(String code, int offset) throws Exception {
-		return ParseHelper.getCompletionNode(code, getLanguage(), offset);
+		return ParseHelper.getCompletionNode(code, getC99Language(), offset);
 	}
 
 
-	private static class BindingsComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			IBinding b1 = (IBinding)o1;
-			IBinding b2 = (IBinding)o2;
+	private static final Comparator<IBinding> BINDING_COMPARATOR = new Comparator<IBinding>() {
+		public int compare(IBinding b1, IBinding b2) {
 			return b1.getName().compareTo(b2.getName());
 		}
-	}
+	};
 	
-	private static BindingsComparator bindingsComparator  = new BindingsComparator();
-	
-	protected IBinding[] sortBindings(IBinding[] bindings) {
-		Arrays.sort(bindings, bindingsComparator);
-		return bindings;
-	}
 	
 	protected IBinding[] getBindings(IASTName[] names) {
-		return sortBindings(names[0].getCompletionContext().findBindings(names[0], true));
+		List<IBinding> bindings = new ArrayList<IBinding>();
+		
+		for(IASTName name : names)
+			for(IBinding binding : name.getCompletionContext().findBindings(name, true))
+				bindings.add(binding);
+
+		Collections.sort(bindings, BINDING_COMPARATOR);
+		return bindings.toArray(new IBinding[bindings.size()]);
 	}
 	
 	
-	protected BaseExtensibleLanguage getLanguage() {
+	protected BaseExtensibleLanguage getC99Language() {
 		return C99Language.getDefault();
 	}
 	
@@ -73,28 +71,26 @@ public class C99CompletionParseTest extends TestCase {
 	// First steal tests from CompletionParseTest
 	
 	
-	public void testCompletionStructField() throws Exception
-	{
-		StringBuffer sb = new StringBuffer();
-		sb.append( "int aVar; " ); //$NON-NLS-1$
-		sb.append( "struct D{ " ); //$NON-NLS-1$
-		sb.append( "   int aField1; " ); //$NON-NLS-1$
-		sb.append( "   int aField2; " ); //$NON-NLS-1$
-		sb.append( "}; " ); //$NON-NLS-1$
-		sb.append( "void foo(){" ); //$NON-NLS-1$
-		sb.append( "   struct D d; " ); //$NON-NLS-1$
-		sb.append( "   d.a " ); //$NON-NLS-1$
-		sb.append( "}\n" ); //$NON-NLS-1$
+	public void testCompletionStructField() throws Exception {
+		String code =
+			"int aVar; " +
+			"struct D{ " +
+			"   int aField1; " +
+			"   int aField2; " +
+			"}; " +
+			"void foo(){" +
+			"   struct D d; " +
+			"   d.a " +
+			"}\n";
 		
-		String code = sb.toString();
-		int index = code.indexOf( "d.a" ); //$NON-NLS-1$
+		int index = code.indexOf( "d.a" );
 		
 		IASTCompletionNode node = parse( code, index + 3 );				
 		assertNotNull( node );
 		
 		String prefix = node.getPrefix();
 		assertNotNull( prefix );
-		assertEquals( prefix, "a" ); //$NON-NLS-1$
+		assertEquals( prefix, "a" );
 		
 		IASTName[] names = node.getNames();
 		assertEquals(1, names.length); 
@@ -106,19 +102,17 @@ public class C99CompletionParseTest extends TestCase {
 		assertEquals("aField2", ((IField)bindings[1]).getName());
 	}
 	
-	public void testCompletionStructFieldPointer() throws Exception
-	{
-		StringBuffer sb = new StringBuffer();
-		sb.append("struct Cube {                       "); //$NON-NLS-1$
-		sb.append("   int nLen;                        "); //$NON-NLS-1$
-		sb.append("   int nWidth;                      "); //$NON-NLS-1$
-		sb.append("   int nHeight;                     "); //$NON-NLS-1$
-		sb.append("};                                  "); //$NON-NLS-1$
-		sb.append("int volume( struct Cube * pCube ) { "); //$NON-NLS-1$
-		sb.append("   pCube->SP                        "); //$NON-NLS-1$
+	public void testCompletionStructFieldPointer() throws Exception {
+		String code =
+			"struct Cube {                       " +
+			"   int nLen;                        " +
+			"   int nWidth;                      " +
+			"   int nHeight;                     " +
+			"};                                  " +
+			"int volume( struct Cube * pCube ) { " +
+			"   pCube->SP                        ";
 
-		String code = sb.toString();
-		IASTCompletionNode node = parse( code, code.indexOf("SP")); //$NON-NLS-1$
+		IASTCompletionNode node = parse( code, code.indexOf("SP"));
 		
 		IASTName[] names = node.getNames();
 		assertEquals(1, names.length); 
@@ -133,15 +127,14 @@ public class C99CompletionParseTest extends TestCase {
 	
 	
 	public void testCompletionParametersAsLocalVariables() throws Exception{
-		StringBuffer sb = new StringBuffer();
-		sb.append( "int foo( int aParameter ){" ); //$NON-NLS-1$
-		sb.append( "   int aLocal;" ); //$NON-NLS-1$
-		sb.append( "   if( aLocal != 0 ){" );		 //$NON-NLS-1$
-		sb.append( "      int aBlockLocal;" ); //$NON-NLS-1$
-		sb.append( "      a \n" ); //$NON-NLS-1$
+		String code =
+			"int foo( int aParameter ){" +
+			"   int aLocal;" +
+			"   if( aLocal != 0 ){" +
+			"      int aBlockLocal;" +
+			"      a \n";
 		
-		String code = sb.toString();
-		int index = code.indexOf( " a " ); //$NON-NLS-1$
+		int index = code.indexOf( " a " );
 		
 		IASTCompletionNode node = parse( code, index + 2 );
 		assertNotNull( node );
@@ -149,7 +142,7 @@ public class C99CompletionParseTest extends TestCase {
 		assertEquals("a", node.getPrefix()); //$NON-NLS-1$
 		
 		IASTName[] names = node.getNames();
-		assertEquals(1, names.length); 
+		assertEquals(2, names.length); 
 		
 		IBinding[] bindings = getBindings(names);
 		
@@ -160,13 +153,12 @@ public class C99CompletionParseTest extends TestCase {
 	}
 	
 	
-	public void testCompletionTypedef() throws Exception{
-		StringBuffer sb = new StringBuffer();
-		sb.append( "typedef int Int; "); //$NON-NLS-1$
-		sb.append( "InSP" ); //$NON-NLS-1$
+	public void testCompletionTypedef() throws Exception {
+		String code =
+			"typedef int Int; " +
+			"InSP";
 		
-		String code = sb.toString();
-		int index = code.indexOf( "SP" ); //$NON-NLS-1$
+		int index = code.indexOf( "SP" );
 		
 		IASTCompletionNode node = parse( code, index );
 		assertNotNull(node);
@@ -182,17 +174,14 @@ public class C99CompletionParseTest extends TestCase {
 		assertEquals("Int", ((ITypedef)bindings[0]).getName());
 	}
 	
-	public void testCompletion() throws Exception
-	{
-		StringBuffer sb = new StringBuffer();
-		sb.append("#define GL_T 0x2001\n"); //$NON-NLS-1$
-		sb.append("#define GL_TRUE 0x1\n"); //$NON-NLS-1$
-		sb.append("typedef unsigned char   GLboolean;\n"); //$NON-NLS-1$
-		sb.append("static GLboolean should_rotate = GL_T"); //$NON-NLS-1$
+	public void testCompletion() throws Exception {
+		String code =
+			"#define GL_T 0x2001\n" +
+			"#define GL_TRUE 0x1\n" +
+			"typedef unsigned char   GLboolean;\n" +
+			"static GLboolean should_rotate = GL_T";
 		
-		String code = sb.toString();
-		
-		int index = code.indexOf("= GL_T"); //$NON-NLS-1$
+		int index = code.indexOf("= GL_T");
 		
 		IASTCompletionNode node = parse( code, index + 6);
 		assertNotNull(node);
@@ -203,16 +192,15 @@ public class C99CompletionParseTest extends TestCase {
 		assertEquals(1, names.length); 
 	}
 	
-	public void testCompletionInTypeDef() throws Exception{
-		StringBuffer sb = new StringBuffer();
-		sb.append( "struct A {  int name;  };  \n" ); //$NON-NLS-1$
-		sb.append( "typedef struct A * PA;     \n" ); //$NON-NLS-1$
-		sb.append( "int main() {               \n" ); //$NON-NLS-1$
-		sb.append( "   PA a;                   \n" ); //$NON-NLS-1$
-		sb.append( "   a->SP                   \n" ); //$NON-NLS-1$
-		sb.append( "}                          \n" ); //$NON-NLS-1$
+	public void testCompletionInTypeDef() throws Exception {
+		String code =
+			"struct A {  int name;  };  \n" +
+			"typedef struct A * PA;     \n" +
+			"int main() {               \n" +
+			"   PA a;                   \n" +
+			"   a->SP                   \n" +
+			"}                          \n";
 		
-		String code = sb.toString();
 		int index = code.indexOf("SP"); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index );
@@ -229,20 +217,18 @@ public class C99CompletionParseTest extends TestCase {
 	}
 	
 	
-	public void _testCompletionFunctionCall() throws Exception
-	{
-		StringBuffer sb = new StringBuffer();
-		sb.append( "struct A {  	     \n" ); //$NON-NLS-1$ 
-		sb.append( "   int f2;  		 \n" ); //$NON-NLS-1$
-		sb.append( "   int f4;           \n" ); //$NON-NLS-1$
-		sb.append( "};                   \n" ); //$NON-NLS-1$
-		sb.append( "const A * foo(){}    \n" ); //$NON-NLS-1$
-		sb.append( "void main( )         \n" ); //$NON-NLS-1$
-		sb.append( "{                    \n" ); //$NON-NLS-1$
-		sb.append( "   foo()->SP         \n" ); //$NON-NLS-1$
+	public void _testCompletionFunctionCall() throws Exception {
+		String code =
+			"struct A {  	      \n" +
+			"   int f2;  		  \n" +
+			"   int f4;           \n" +
+			"};                   \n" +
+			"const A * foo(){}    \n" +
+			"void main( )         \n" +
+			"{                    \n" +
+			"   foo()->SP         \n";
 		
-		String code = sb.toString();
-		int index = code.indexOf( "SP" ); //$NON-NLS-1$
+		int index = code.indexOf( "SP" );
 		
 		IASTCompletionNode node = parse( code, index );
 		assertNotNull( node );
@@ -259,13 +245,12 @@ public class C99CompletionParseTest extends TestCase {
 	
 	
 	public void _testCompletionSizeof() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append( "int f() {\n" ); //$NON-NLS-1$
-		sb.append( "short blah;\n" ); //$NON-NLS-1$
-		sb.append( "int x = sizeof(bl" ); //$NON-NLS-1$
+		String code =
+			"int f() {\n" +
+			"short blah;\n" +
+			"int x = sizeof(bl";
 		
-		String code = sb.toString();
-		int index = code.indexOf( "of(bl" ); //$NON-NLS-1$
+		int index = code.indexOf( "of(bl" );
 		
 		IASTCompletionNode node = parse( code, index + 5);
 		assertNotNull( node );
@@ -281,11 +266,10 @@ public class C99CompletionParseTest extends TestCase {
 	
 	
 	public void testCompletionForLoop() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append( "int f() {\n" ); //$NON-NLS-1$
-		sb.append( " int biSizeImage = 5;\n" ); //$NON-NLS-1$
-		sb.append( "for (int i = 0; i < bi " ); //$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"int f() {\n" +
+			" int biSizeImage = 5;\n" +
+			"for (int i = 0; i < bi ";
 		
 		int index = code.indexOf("< bi");
 		
@@ -388,7 +372,7 @@ public class C99CompletionParseTest extends TestCase {
 		IASTName[] names = node.getNames();
 		assertEquals(1, names.length); 
 		
-		assertEquals("#", node.getPrefix());
+		//assertEquals("#", node.getPrefix());
 	}
 	
 	public void testCompletionPreprocessorMacro() throws Exception {
@@ -408,6 +392,7 @@ public class C99CompletionParseTest extends TestCase {
 		assertEquals(1, names.length); 
 		assertEquals("A", node.getPrefix());
 	}
+	
 	
 	
 	public void testCompletionInsidePreprocessorDirective() throws Exception {

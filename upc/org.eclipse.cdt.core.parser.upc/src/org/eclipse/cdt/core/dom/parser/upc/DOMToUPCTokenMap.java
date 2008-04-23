@@ -16,7 +16,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.*;
 
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
 
 
 /**
@@ -31,6 +30,14 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
 public class DOMToUPCTokenMap implements IDOMTokenMap {
 	
 
+	public int getEOFTokenKind() {
+		return TK_EOF_TOKEN;
+	}
+
+	public int getEOCTokenKind() {
+		return TK_EndOfCompletion;
+	}
+	
 	public int mapKind(IToken token) {
 		
 		switch(token.getType()) {
@@ -140,13 +147,5 @@ public class DOMToUPCTokenMap implements IDOMTokenMap {
 	}
 
 	
-	protected String[] getOrderedTerminalSymbols() {
-		return UPCParsersym.orderedTerminalSymbols;
-	}
-
-	public int getEOFTokenKind() {
-		return TK_EOF_TOKEN;
-	}
-
 
 }

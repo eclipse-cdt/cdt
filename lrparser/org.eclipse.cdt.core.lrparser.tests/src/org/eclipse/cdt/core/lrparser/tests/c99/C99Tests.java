@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * @author Mike Kucera
  *
  */
+@SuppressWarnings({ "nls", "restriction" })
 public class C99Tests extends AST2Tests {
 
     public static TestSuite suite() {
@@ -42,7 +43,7 @@ public class C99Tests extends AST2Tests {
 	
 	 
     @Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
     	return ParseHelper.parse(code, language, expectNoProblems);
     }
@@ -85,7 +86,8 @@ public class C99Tests extends AST2Tests {
     	parseAndCheckBindings(code, ParserLanguage.C);
     }
     
-    public void testBug192009_implicitInt() throws Exception {
+
+	public void testBug192009_implicitInt() throws Exception {
     	String code = "main() { int x; }";
     	IASTTranslationUnit tu = parse(code, ParserLanguage.C, false, true);
     	
@@ -102,7 +104,8 @@ public class C99Tests extends AST2Tests {
     
     
 	
-    public void testBug93980() { // some wierd gcc extension I think
+    @Override
+	public void testBug93980() { // some wierd gcc extension I think
 		try {
 			super.testBug93980();
 			fail();
@@ -110,6 +113,7 @@ public class C99Tests extends AST2Tests {
 	}
 	
 	
+	@Override
 	public void testBug95866() { // gcc extension
 		try {
 			super.testBug95866();
@@ -118,6 +122,7 @@ public class C99Tests extends AST2Tests {
 	}
 	
 	
+	@Override
 	public void testBug80171() throws Exception {  // implicit int not supported
 		try {
 			super.testBug80171();
@@ -126,6 +131,7 @@ public class C99Tests extends AST2Tests {
     }
 	
 	
+	@Override
 	public void testBug196468_emptyArrayInitializer() {  // empty array initializer is a gcc extension
 		try {
 			super.testBug196468_emptyArrayInitializer();
@@ -134,6 +140,7 @@ public class C99Tests extends AST2Tests {
 	}
 	
 	
+	@Override
 	public void testBug75340() { // not legal c99
 		try {
 			super.testBug75340();
@@ -142,6 +149,7 @@ public class C99Tests extends AST2Tests {
 	}
 	
 	
+	@Override
 	public void test92791() { // I think the test is wrong, the second code snippet contains a redeclaration
 		try {
 			super.test92791();
@@ -151,6 +159,7 @@ public class C99Tests extends AST2Tests {
 
 	
 	
+	@Override
 	public void testBug192165() { // gcc extension: typeof
 		try {
 			super.testBug192165();
@@ -160,10 +169,94 @@ public class C99Tests extends AST2Tests {
 	
 	
 	
+	@Override
 	public void testBug191450_attributesInBetweenPointers() { // gcc extension: attributes
 		try {
 			super.testBug191450_attributesInBetweenPointers();
 			fail();
 		} catch(Throwable _) { }
 	}
+
+	@Override
+	public void testOmittedPositiveExpression_Bug212905() throws Exception {
+		try {
+			super.testOmittedPositiveExpression_Bug212905();
+			fail();
+		} catch(Throwable _) { }
+	}
+
+	@Override
+	public void testRedefinedGCCKeywords_Bug226112() throws Exception {
+		try {
+			super.testRedefinedGCCKeywords_Bug226112();
+			fail();
+		} catch(Throwable _) { }
+	}
+ 
+	@Override
+	public void testASMLabels_Bug226121() throws Exception {
+		try {
+			super.testASMLabels_Bug226121();
+			fail();
+		} catch(Throwable _) { }
+	}
+
+	@Override
+	public void testCompoundStatementExpression_Bug226274() throws Exception {
+		try {
+			super.testCompoundStatementExpression_Bug226274();
+			fail();
+		} catch(Throwable _) { }
+	}	
+	
+	
+	
+	// GCC extensions
+	@Override
+	public void testTypeofUnaryExpression_Bug226492() throws Exception {
+		try {
+			super.testTypeofUnaryExpression_Bug226492();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	@Override
+	public void testTypeofExpression_Bug226492() throws Exception {
+		try {
+			super.testTypeofExpression_Bug226492();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	@Override
+	public void testTypeofExpressionWithAttribute_Bug226492() throws Exception {
+		try {
+			super.testTypeofExpressionWithAttribute_Bug226492();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	@Override
+	public void testCaseRange_Bug211882() throws Exception {
+		try {
+			super.testCaseRange_Bug211882();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	@Override
+	public void testAttributeInElaboratedTypeSpecifier_Bug227085() throws Exception {
+		try {
+			super.testAttributeInElaboratedTypeSpecifier_Bug227085();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	@Override
+	public void testRestrictReference_Bug227110() throws Exception {
+		try {
+			super.testRestrictReference_Bug227110();
+			fail();
+		} catch(Throwable _) { }
+	}	
 }

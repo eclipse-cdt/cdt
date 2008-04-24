@@ -60,15 +60,8 @@ public class Sender implements ISender
 		_xmlGenerator = new XMLgenerator(_dataStore);
 		try
 		{
-			int bufferSize = _socket.getSendBufferSize() * 4;
-	//		System.out.println("buffer size = "+bufferSize);
-
-			_socket.setSendBufferSize(bufferSize);
+			int bufferSize = _socket.getSendBufferSize();
 			_xmlGenerator.setBufferSize(bufferSize);
-			
-			int rbufferSize = _socket.getReceiveBufferSize() * 4;
-	//		System.out.println("rbuffer size = "+rbufferSize);
-			_socket.setReceiveBufferSize(rbufferSize);
 		}
 		catch (SocketException e)
 		{

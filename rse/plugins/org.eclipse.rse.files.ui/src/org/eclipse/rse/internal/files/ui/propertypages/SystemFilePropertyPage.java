@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
+ * Xuan Chen        (IBM)        - [228707] get NPE when click ok on the properties page of an I5/OS IFS file
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -352,11 +353,16 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	 * @return the currently selected encoding.
 	 */
 	protected String getSelectedEncoding() {
-		if (defaultEncodingButton.getSelection()) {
+		if (null != defaultEncodingButton && defaultEncodingButton.getSelection()) {
 			return defaultEncoding;
 		}
-
-		return otherEncodingCombo.getText();
+		
+		if (otherEncodingCombo != null)
+		{
+			return otherEncodingCombo.getText();
+		}
+		
+		return null;
 	}
 
 	/**

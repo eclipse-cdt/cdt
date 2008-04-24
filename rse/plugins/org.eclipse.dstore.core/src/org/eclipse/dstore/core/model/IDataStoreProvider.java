@@ -11,7 +11,6 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * David McKnight     (IBM)    - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;

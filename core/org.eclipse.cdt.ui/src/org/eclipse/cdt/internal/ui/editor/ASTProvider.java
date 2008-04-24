@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,15 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
@@ -212,6 +215,7 @@ public final class ASTProvider {
 	private ASTCache fCache= new ASTCache();
 	private ActivationListener fActivationListener;
 	private IWorkbenchPart fActiveEditor;
+	private long fTimeStamp;
 
 	/**
 	 * Returns the C plug-in's AST provider.
@@ -252,6 +256,7 @@ public final class ASTProvider {
 		}
 		synchronized (this) {
 			fActiveEditor= editor;
+			fTimeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 			fCache.setActiveElement((ITranslationUnit)cElement);
 		}
 	}
@@ -278,6 +283,20 @@ public final class ASTProvider {
 			return;
 		Assert.isTrue(cElement instanceof ITranslationUnit);
 		fCache.aboutToBeReconciled((ITranslationUnit)cElement);
+		fTimeStamp= getCurrentModificationStamp();
+	}
+
+	private synchronized long getCurrentModificationStamp() {
+		long timeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
+		if (fActiveEditor instanceof ITextEditor) {
+			ITextEditor textEditor= (ITextEditor) fActiveEditor;
+			IDocument document= textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
+			if (document instanceof IDocumentExtension4) {
+				IDocumentExtension4 docExt= (IDocumentExtension4) document;
+				timeStamp= docExt.getModificationStamp();
+			}
+		}
+		return timeStamp;
 	}
 
 	/**
@@ -305,10 +324,15 @@ public final class ASTProvider {
 	public IStatus runOnAST(ICElement cElement, WAIT_FLAG waitFlag, IProgressMonitor monitor,
 			ASTCache.ASTRunnable astRunnable) {
 		Assert.isTrue(cElement instanceof ITranslationUnit);
-		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive((ITranslationUnit)cElement)) {
+		boolean isActive= isActive((ITranslationUnit)cElement);
+		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return Status.CANCEL_STATUS;
+		}
+		long currentStamp= getCurrentModificationStamp();
+		if (isActive && fTimeStamp != currentStamp) {
+			fCache.disposeAST();
+			fTimeStamp= currentStamp;
 		}
 		return fCache.runOnAST((ITranslationUnit)cElement, waitFlag != WAIT_NO, monitor, astRunnable);
 	}
 }
-

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,9 +52,9 @@ public final class IndentManipulation {
 	 * @param ch the given character
 	 * @return Returns <code>true</code> if this the character is a line delimiter character, <code>false</code> otherwise
 	 */
-	public static boolean isLineDelimiterChar(char ch) { 
+	public static boolean isLineDelimiterChar(char ch) {
 		return ch == '\n' || ch == '\r';
-	}	
+	}
 	
 	/**
 	 * Returns the indentation of the given line in indentation units. Odd spaces are
@@ -173,7 +173,7 @@ public final class IndentManipulation {
 
 	
 	/**
-	 * Removes the given number of indentation units from a given line. If the line 
+	 * Removes the given number of indentation units from a given line. If the line
 	 * has less than the given indent, all the available indentation is removed.
 	 * If <code>indentsToRemove <= 0</code> the line is returned.
 	 *
@@ -212,7 +212,7 @@ public final class IndentManipulation {
 			} else {
 				// Assert.isTrue(false, "Line does not have requested number of indents");
 				start= i;
-				break; 
+				break;
 			}
 			if (spaceEquivalents == spaceEquivalentsToRemove) {
 				start= i + 1;
@@ -288,7 +288,7 @@ public final class IndentManipulation {
 					buf.append(line);
 				} else { // no new line after last line
 					buf.append(lineDelim);
-					buf.append(newIndentString); 
+					buf.append(newIndentString);
 					buf.append(trimIndent(line, indentUnitsToRemove, tabWidth, indentWidth));
 				}
 			}
@@ -326,13 +326,13 @@ public final class IndentManipulation {
 			throw new IllegalArgumentException();
 		}
 		
-		ArrayList result= new ArrayList();
+		ArrayList<ReplaceEdit> result= new ArrayList<ReplaceEdit>();
 		try {
 			ILineTracker tracker= new DefaultLineTracker();
 			tracker.set(source);
 			int nLines= tracker.getNumberOfLines();
 			if (nLines == 1)
-				return (ReplaceEdit[])result.toArray(new ReplaceEdit[result.size()]);
+				return result.toArray(new ReplaceEdit[result.size()]);
 			for (int i= 1; i < nLines; i++) {
 				IRegion region= tracker.getLineInformation(i);
 				int offset= region.getOffset();
@@ -348,7 +348,7 @@ public final class IndentManipulation {
 		} catch (BadLocationException cannotHappen) {
 			// can not happen
 		}
-		return (ReplaceEdit[])result.toArray(new ReplaceEdit[result.size()]);
+		return result.toArray(new ReplaceEdit[result.size()]);
 	}
 	
 	/*
@@ -382,14 +382,14 @@ public final class IndentManipulation {
 	
 	/**
 	 * Returns the tab width as configured in the given map.
-	 * <p>Use {@link org.eclipse.jdt.core.IJavaProject#getOptions(boolean)} to get the most current project options.</p>
+	 * <p>Use {@link org.eclipse.cdt.core.model.ICProject#getOptions(boolean)} to get the most current project options.</p>
 	 * 
 	 * @param options the map to get the formatter settings from.
 	 * 
 	 * @return the tab width
 	 * @exception IllegalArgumentException if the given <code>options</code> is null
 	 */
-	public static int getTabWidth(Map options) {
+	public static int getTabWidth(Map<String, String> options) {
 		if (options == null) {
 			throw new IllegalArgumentException();
 		}
@@ -398,14 +398,14 @@ public final class IndentManipulation {
 	
 	/**
 	 * Returns the tab width as configured in the given map.
-	 * <p>Use {@link org.eclipse.jdt.core.IJavaProject#getOptions(boolean)} to get the most current project options.</p>
+	 * <p>Use {@link org.eclipse.cdt.core.model.ICProject#getOptions(boolean)} to get the most current project options.</p>
 	 * 
 	 * @param options the map to get the formatter settings from
 	 * 
 	 * @return the indent width
 	 * @exception IllegalArgumentException if the given <code>options</code> is null
 	 */
-	public static int getIndentWidth(Map options) {
+	public static int getIndentWidth(Map<String, String> options) {
 		if (options == null) {
 			throw new IllegalArgumentException();
 		}
@@ -417,9 +417,9 @@ public final class IndentManipulation {
 		return tabWidth;
 	}
 	
-	private static int getIntValue(Map options, String key, int def) {
+	private static int getIntValue(Map<String, String> options, String key, int def) {
 		try {
-			return Integer.parseInt((String) options.get(key));
+			return Integer.parseInt(options.get(key));
 		} catch (NumberFormatException e) {
 			return def;
 		}

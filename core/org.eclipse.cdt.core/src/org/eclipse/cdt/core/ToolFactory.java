@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.cdt.core;
 import java.util.Map;
 
 import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -27,19 +28,19 @@ import org.eclipse.core.runtime.Platform;
 public class ToolFactory {
 
 	/**
-	 * Create an instance of a code formatter. A code formatter implementation can be contributed via the 
-	 * extension point "org.eclipse.cdt.core.CodeFormatter". If unable to find a registered extension, the factory 
+	 * Create an instance of a code formatter. A code formatter implementation can be contributed via the
+	 * extension point "org.eclipse.cdt.core.CodeFormatter". If unable to find a registered extension, the factory
 	 * will default to using the default code formatter.
 	 * @param options - the options map to use for formatting with the code formatter. Recognized options
-	 * 	are documented on <code>DefaultCodeFormatterConstants</code>. If set to <code>null</code>, then use 
+	 * 	are documented on <code>DefaultCodeFormatterConstants</code>. If set to <code>null</code>, then use
 	 * 	the current settings from <code>CCorePlugin.getOptions()</code>.
 	 * @return an instance of either a contributed the built-in code formatter
 	 * @see CodeFormatter
 	 * @see DefaultCodeFormatterConstants
 	 * @see CCorePlugin#getOptions()
 	 */
-	public static CodeFormatter createCodeFormatter(Map options){
-		if (options == null) 
+	public static CodeFormatter createCodeFormatter(Map<String, ?> options){
+		if (options == null)
 			options = CCorePlugin.getOptions();
 		String formatterID = (String)options.get(CCorePreferenceConstants.CODE_FORMATTER);
 		String extID = CCorePlugin.FORMATTER_EXTPOINT_ID;
@@ -73,15 +74,15 @@ public class ToolFactory {
 	 * Create an instance of the built-in code formatter.
 	 * 
 	 * @param options - the options map to use for formatting with the default code formatter. Recognized options
-	 * 	are documented on <code>DefaultCodeFormatterConstants</code>. If set to <code>null</code>, then use 
+	 * 	are documented on <code>DefaultCodeFormatterConstants</code>. If set to <code>null</code>, then use
 	 * 	the current settings from <code>CCorePlugin.getOptions()</code>.
 	 * @return an instance of the built-in code formatter
 	 * @see CodeFormatter
 	 * @see DefaultCodeFormatterConstants
 	 * @see CCorePlugin#getOptions()
 	 */
-	public static CodeFormatter createDefaultCodeFormatter(Map options){
-		if (options == null) 
+	public static CodeFormatter createDefaultCodeFormatter(Map<String, ?> options){
+		if (options == null)
 			options = CCorePlugin.getOptions();
 		return new CCodeFormatter(options);
 	}

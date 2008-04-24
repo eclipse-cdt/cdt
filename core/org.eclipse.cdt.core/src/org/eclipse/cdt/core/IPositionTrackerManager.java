@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core;
 
@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * An interface to manage the position tracking. It allows for mapping character 
+ * An interface to manage the position tracking. It allows for mapping character
  * offsets from a file previously stored on disk to the offset in the current document
  * for the file.
  * 
@@ -35,7 +35,7 @@ public interface IPositionTrackerManager {
      * Returns the position converter suitable for mapping character offsets of the
      * given translation unit to the current version of it.
      * 
-     * @param file a file for which the position adapter is requested.
+     * @param tu a translation unit for which the position adapter is requested.
      * @param timestamp identifies the version of the file stored on disk.
      * @return the requested position converter or <code>null</code>.
      */
@@ -52,11 +52,11 @@ public interface IPositionTrackerManager {
     
     /**
      * Returns the position tracker suitable for mapping character offsets of the
-     * given external file/timestamp to the current version of it. <p> 
+     * given external file/timestamp to the current version of it. <p>
      * The method can be used for resources by supplying the <b>full path</b>. However,
      * it does not work if you supply the location of a resource.
      * 
-     * @param externalLocationOrFullPath an external location for which the position adapter is requested.
+     * @param fullPathOrExternalLocation an external location for which the position adapter is requested.
      * @param timestamp identifies the version of the file stored on disk.
      * @return the requested position converter or <code>null</code>.
      */

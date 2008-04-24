@@ -81,7 +81,7 @@ public class HideMethodRefactoring extends CRefactoring {
 		this.methodToMove = getDeclaration(name);
 
 		if(this.methodToMove == null) {
-			initStatus.addFatalError(Messages.HideMethodRefactoring_NoMethodNameSeleceted); 
+			initStatus.addFatalError(Messages.HideMethodRefactoring_NoMethodNameSelected); 
 			return initStatus;
 		}
 		sm.worked(1);

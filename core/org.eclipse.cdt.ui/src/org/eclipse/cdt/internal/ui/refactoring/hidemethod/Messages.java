@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.hsrrefactoring.hidemethod.messages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.hidemethod.messages";//$NON-NLS-1$
 
 	private Messages() {
 		// Do not instantiate
@@ -23,7 +23,7 @@ public final class Messages extends NLS {
 
 	public static String HideMethodRefactoring_HIDE_METHOD;
 	public static String HideMethodRefactoring_NoNameSelected;
-	public static String HideMethodRefactoring_NoMethodNameSeleceted;
+	public static String HideMethodRefactoring_NoMethodNameSelected;
 	public static String HideMethodRefactoring_CanOnlyHideMethods;
 	public static String HideMethodRefactoring_FILE_CHANGE_TEXT;
 	public static String HideMethodRefactoring_BAD_TYPE;

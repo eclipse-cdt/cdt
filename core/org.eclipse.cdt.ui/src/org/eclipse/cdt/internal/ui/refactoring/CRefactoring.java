@@ -73,7 +73,7 @@ public abstract class CRefactoring extends Refactoring {
 	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 	public static final String NEWLINE = "\n";  //$NON-NLS-1$
 
-	protected String name = Messages.HSRRefactoring_name; 
+	protected String name = Messages.Refactoring_name; 
 	protected IFile file;
 	protected Region region;
 	protected RefactoringStatus initStatus;
@@ -102,7 +102,7 @@ public abstract class CRefactoring extends Refactoring {
 
 		this.initStatus=new RefactoringStatus();
 		if (this.file == null || region == null) {
-			initStatus.addFatalError(Messages.HSRRefactoring_SelectionNotValid);  
+			initStatus.addFatalError(Messages.Refactoring_SelectionNotValid);  
 		}
 	}
 
@@ -167,7 +167,7 @@ public abstract class CRefactoring extends Refactoring {
 		
 		private void addWarningToState() {
 			if(!problemFound){
-				status.addWarning(Messages.HSRRefactoring_CompileErrorInTU); 
+				status.addWarning(Messages.Refactoring_CompileErrorInTU); 
 				problemFound = true;
 			}
 		}
@@ -225,23 +225,23 @@ public abstract class CRefactoring extends Refactoring {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
-		sm.subTask(Messages.HSRRefactoring_PM_LoadTU); 
+		sm.subTask(Messages.Refactoring_PM_LoadTU); 
 		if(isProgressMonitorCanceld(sm, initStatus)) {
 			return initStatus;
 		}
 		if(!loadTranslationUnit(initStatus, sm.newChild(8))){
-			initStatus.addError(Messages.HSRRefactoring_CantLoadTU);  
+			initStatus.addError(Messages.Refactoring_CantLoadTU);  
 		}
 		if(isProgressMonitorCanceld(sm, initStatus)) {
 			return initStatus;
 		}
-		sm.subTask(Messages.HSRRefactoring_PM_CheckTU); 
+		sm.subTask(Messages.Refactoring_PM_CheckTU); 
 		translationUnitHasProblem();
 		if(translationUnitIsAmbiguous()) {
-			initStatus.addError(Messages.HSRRefactoring_Ambiguity); 
+			initStatus.addError(Messages.Refactoring_Ambiguity); 
 		}
 		sm.worked(2);
-		sm.subTask(Messages.HSRRefactoring_PM_InitRef); 
+		sm.subTask(Messages.Refactoring_PM_InitRef); 
 		sm.done();
 		return initStatus;
 	}
@@ -249,7 +249,7 @@ public abstract class CRefactoring extends Refactoring {
 	protected boolean isProgressMonitorCanceld(IProgressMonitor sm,
 			RefactoringStatus initStatus2) {
 		if(sm.isCanceled()) {
-			initStatus2.addFatalError(Messages.HSRRefactoring_CanceledByUser); 
+			initStatus2.addFatalError(Messages.Refactoring_CanceledByUser); 
 			return true;
 		}
 		return false;
@@ -283,13 +283,13 @@ public abstract class CRefactoring extends Refactoring {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 10);
 		if (file != null) {
 			try {
-				subMonitor.subTask(Messages.HSRRefactoring_PM_ParseTU);
+				subMonitor.subTask(Messages.Refactoring_PM_ParseTU);
 				unit = loadTranslationUnit(file);
 				subMonitor.worked(2);
 				if(isProgressMonitorCanceld(subMonitor, initStatus)) {
 					return true;
 				}
-				subMonitor.subTask(Messages.HSRRefactoring_PM_MergeComments); 
+				subMonitor.subTask(Messages.Refactoring_PM_MergeComments); 
 
 				subMonitor.worked(8);
 			} catch (CoreException e) {

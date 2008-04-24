@@ -196,7 +196,7 @@ public class NodeContainer {
 
 		@Override
 		public String toString() {
-			return Messages.NodeContainer_Name + name + Messages.NodeContainer_Space + isDeclarationInScope(); 
+			return Messages.NodeContainer_Name + name + ' ' + isDeclarationInScope(); 
 		}
 
 		public boolean isReference() {

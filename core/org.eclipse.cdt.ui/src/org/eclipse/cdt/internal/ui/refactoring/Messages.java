@@ -23,23 +23,22 @@ public final class Messages extends NLS {
 
 	public static String DeleteFileChange_0;
 	public static String DeleteFileChange_1;
-	public static String HSRRefactoring_name;
-	public static String HSRRefactoring_PM_LoadTU;
-	public static String HSRRefactoring_PM_CheckTU;
-	public static String HSRRefactoring_PM_InitRef;
-	public static String HSRRefactoring_PM_ParseTU;
-	public static String HSRRefactoring_PM_MergeComments;
-	public static String HSRRefactoring_CanceledByUser;
-	public static String HSRRefactoring_CompileErrorInTU;
+	public static String Refactoring_name;
+	public static String Refactoring_PM_LoadTU;
+	public static String Refactoring_PM_CheckTU;
+	public static String Refactoring_PM_InitRef;
+	public static String Refactoring_PM_ParseTU;
+	public static String Refactoring_PM_MergeComments;
+	public static String Refactoring_CanceledByUser;
+	public static String Refactoring_CompileErrorInTU;
 	public static String AddDeclarationNodeToClassChange_AddDeclaration;
 	public static String CreateFileChange_CreateFile;
 	public static String CreateFileChange_UnknownLoc;
 	public static String CreateFileChange_FileExists;
-	public static String HSRRefactoring_SelectionNotValid;
-	public static String HSRRefactoring_CantLoadTU;
-	public static String HSRRefactoring_Ambiguity;
+	public static String Refactoring_SelectionNotValid;
+	public static String Refactoring_CantLoadTU;
+	public static String Refactoring_Ambiguity;
 	public static String NodeContainer_Name;
-	public static String NodeContainer_Space;
 	public static String NO_FILE;
 
 	static {

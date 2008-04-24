@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import java.io.Reader;
 import java.util.HashMap;
 
 /**
- * A C/C++ lexical scanner, which does no preprocessing, 
+ * A C/C++ lexical scanner, which does no preprocessing,
  * but tokenizes preprocessor directives, whitespace and comments.
  *
  * @since 4.0
@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class SimpleScanner {
 
 	private static final int EOFCHAR= -1;
-	protected static HashMap fgKeywords= new HashMap();
+	protected static HashMap<String, Integer> fgKeywords= new HashMap<String, Integer>();
 
     protected Token fCurrentToken;
 	protected ScannerContext fContext;
@@ -263,20 +263,20 @@ public class SimpleScanner {
 	            if (c == 'e' || c == 'E') {
 	                if (!floatingPoint)
 	                    floatingPoint = true;
-	                // exponent type for floating point 
+	                // exponent type for floating point
 	                c = getChar();
 	
-	                // optional + or - 
+	                // optional + or -
 	                if (c == '+' || c == '-') {
 	                    c = getChar();
 	                }
 	
-	                // digit sequence of exponent part 
+	                // digit sequence of exponent part
 	                while ((c >= '0' && c <= '9')) {
 	                    c = getChar();
 	                }
 	
-	                // optional suffix 
+	                // optional suffix
 	                if (c == 'l' || c == 'L' || c == 'f' || c == 'F') {
 	                    c = getChar();
 	                }
@@ -621,7 +621,7 @@ public class SimpleScanner {
 	                matchCharLiteral();
 	                return newToken(Token.tCHAR);
 	                    
-	            case '"': 
+	            case '"':
 	                if (fTokenBuffer.length() > 1) {
 	                    if (fPreprocessorToken==0) {
 	                        fPreprocessorToken= categorizePreprocessor(fTokenBuffer);
@@ -653,7 +653,7 @@ public class SimpleScanner {
 	                    }
 	                    fPreprocessorToken= 0;
 	                    return result;
-	                } 
+	                }
 	                if (next == '*') {
 	                    if (fTokenBuffer.length() > 2) {
 	                        ungetChar(next);
@@ -682,7 +682,7 @@ public class SimpleScanner {
 	    ungetChar(c);
 	    Token result= null;
 	    if (fTokenBuffer.length() > 0) {
-	        result= newPreprocessorToken();         
+	        result= newPreprocessorToken();
 	    }
 	    fPreprocessorToken= 0;
 	    return result;
@@ -698,7 +698,7 @@ public class SimpleScanner {
 	            c = getChar();
 	        }
 	        if (c == '/') {
-	            // we need to peek ahead at the next character to see if 
+	            // we need to peek ahead at the next character to see if
 	            // this is a comment or not
 	            int next = getChar();
 	            if (next == '/') {

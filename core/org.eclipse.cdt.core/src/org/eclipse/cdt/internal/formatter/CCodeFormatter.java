@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -38,7 +39,7 @@ import org.eclipse.text.edits.TextEdit;
 public class CCodeFormatter extends CodeFormatter {
 
 	private DefaultCodeFormatterOptions preferences;
-	private Map options;
+	private Map<String, ?> options;
 
 	public CCodeFormatter() {
 		this(DefaultCodeFormatterOptions.getDefaultSettings());
@@ -48,14 +49,14 @@ public class CCodeFormatter extends CodeFormatter {
 		this(preferences, null);
 	}
 
-	public CCodeFormatter(DefaultCodeFormatterOptions defaultCodeFormatterOptions, Map options) {
+	public CCodeFormatter(DefaultCodeFormatterOptions defaultCodeFormatterOptions, Map<String, ?> options) {
 		setOptions(options);
 		if (defaultCodeFormatterOptions != null) {
 			preferences.set(defaultCodeFormatterOptions.getMap());
 		}
 	}
 
-	public CCodeFormatter(Map options) {
+	public CCodeFormatter(Map<String, ?> options) {
 		this(null, options);
 	}
 
@@ -102,10 +103,17 @@ public class CCodeFormatter extends CodeFormatter {
 	}
 
 	@Override
-	public void setOptions(Map options) {
+	public void setOptions(Map<String, ?> options) {
 		if (options != null) {
 			this.options= options;
-			preferences= new DefaultCodeFormatterOptions(options);
+			Map<String, String> formatterPrefs= new HashMap<String, String>(options.size());
+			for (String key : options.keySet()) {
+				Object value= options.get(key);
+				if (value instanceof String) {
+					formatterPrefs.put(key, (String) value);
+				}
+			}
+			preferences= new DefaultCodeFormatterOptions(formatterPrefs);
 		} else {
 			this.options= CCorePlugin.getOptions();
 			preferences= DefaultCodeFormatterOptions.getDefaultSettings();
@@ -149,7 +157,7 @@ public class CCodeFormatter extends CodeFormatter {
 				} catch (CoreException exc) {
 					throw new AbortFormatting(exc);
 				}
-				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, this.options, offset, length);
+				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, offset, length);
 				edit= codeFormatter.format(source, ast);
 				IStatus status= codeFormatter.getStatus();
 				if (!status.isOK()) {
@@ -174,7 +182,7 @@ public class CCodeFormatter extends CodeFormatter {
 			IASTTranslationUnit ast;
 			try {
 				ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null, ParserUtil.getParserLogService());
-				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, this.options, offset, length);
+				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, offset, length);
 				edit= codeFormatter.format(source, ast);
 			} catch (CoreException exc) {
 				throw new AbortFormatting(exc);

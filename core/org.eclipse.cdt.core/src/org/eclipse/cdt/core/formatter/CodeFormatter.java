@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public abstract class CodeFormatter {
 	 */
 	public static final int K_MULTI_LINE_COMMENT = 0x20;
 
-	/** 
+	/**
 	 * Format <code>source</code>,
 	 * and returns a text edit that correspond to the difference between the given string and the formatted string.
 	 * It returns null if the given string cannot be formatted.
@@ -74,11 +74,10 @@ public abstract class CodeFormatter {
 	 * 
 	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
 	 * 		  K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN
-	 * @param file - file associated with this source (null if no file is associated)
 	 * @param source the document to format
 	 * @param offset the given offset to start recording the edits (inclusive).
 	 * @param length the given length to stop recording the edits (exclusive).
-	 * @param indentationLevel the initial indentation level, used 
+	 * @param indentationLevel the initial indentation level, used
 	 *      to shift left/right the entire source fragment. An initial indentation
 	 *      level of zero or below has no effect.
 	 * @param lineSeparator the line separator to use in formatted source,
@@ -92,7 +91,7 @@ public abstract class CodeFormatter {
 	/**
 	 * @param options - general formatter options
 	 */
-	public abstract void setOptions(Map options);
+	public abstract void setOptions(Map<String, ?> options);
   
   /**
    * Answers the string that corresponds to the indentation to the given indentation level or an empty string

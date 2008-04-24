@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -202,7 +201,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private MultiStatus fStatus;
 
 
-	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map<String, String> settings, int offset, int length) {
+	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, int offset, int length) {
 		localScanner = new Scanner() {
 			@Override
 			public Token nextToken() {
@@ -241,7 +240,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (DEBUG) return failedToFormat(e);
 		}
 		if (DEBUG){
-			System.out.println("Formatting time: " + (System.currentTimeMillis() - startTime));  //$NON-NLS-1$
+			System.out.println("Formatting time: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
 		}
 		return scribe.getRootEdit();
 	}
@@ -434,11 +433,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			// declarator
 			final IASTDeclarator declarator= node.getDeclarator();
-			boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
-			if (needSpace) {
-				scribe.space();
-			}
 			if (declarator != null) {
+				boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
+				if (needSpace) {
+					scribe.space();
+				}
 				declarator.accept(this);
 			}
 		} finally {
@@ -662,11 +661,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			// declarator
 			final IASTDeclarator declarator= node.getAbstractDeclarator();
-			boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
-			if (needSpace) {
-				scribe.space();
-			}
 			if (declarator != null) {
+				boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
+				if (needSpace) {
+					scribe.space();
+				}
 				declarator.accept(this);
 			}
 		} finally {
@@ -1592,9 +1591,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (align.fSpaceAfterOpeningParen) {
 				scribe.space();
 			}
-			final int continuationIndentation= 
-				align.fContinuationIndentation >= 0 
-					? align.fContinuationIndentation 
+			final int continuationIndentation=
+				align.fContinuationIndentation >= 0
+					? align.fContinuationIndentation
 					: preferences.continuation_indentation;
 			Alignment listAlignment = scribe.createAlignment(
 					"listElements_"+align,//$NON-NLS-1$
@@ -2355,7 +2354,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		IASTExpression condExpr= node.getConditionExpression();
 		if (condExpr instanceof IASTProblemExpression) {
 			scribe.skipToToken(Token.tRPAREN);
-		} else { 
+		} else {
 			condExpr.accept(this);
 		}
 		scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_if);

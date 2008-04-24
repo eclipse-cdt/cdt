@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class Alignment {
 	public int chunkStartIndex;
 	public int chunkKind;
 
-	// break management	
+	// break management
 	public int originalIndentationLevel;
 	public int breakIndentationLevel;
 	public int shiftBreakIndentationLevel;
@@ -49,7 +49,7 @@ public class Alignment {
 
 	public Scribe scribe;
 	
-	/* 
+	/*
 	 * Alignment modes
 	 */
 	public static final int M_FORCE = 1; // if bit set, then alignment will be non-optional (default is optional)
@@ -80,14 +80,14 @@ public class Alignment {
 	 */
 	public static final int M_ONE_PER_LINE_SPLIT = 32+16; // one fragment per line
 
-	/** 
+	/**
 	 * foobar(<ul>
 	 * <li>     #fragment1, </li>
 	 * <li>     #fragment2, </li>
 	 * <li>     #fragment3, </li>
 	 * <li>     #fragment4, </li>
 	 * </ul>
-	 */ 
+	 */
 	public static final int M_NEXT_SHIFTED_SPLIT = 64; // one fragment per line, subsequent are indented further
 
 	/** foobar(#fragment1, <ul>
@@ -102,7 +102,7 @@ public class Alignment {
 	//64+32+16
 	
 	// mode controlling column alignments
-	/** 
+	/**
 	 * <table BORDER COLS=4 WIDTH="100%" >
 	 * <tr><td>#fragment1A</td>            <td>#fragment2A</td>       <td>#fragment3A</td>  <td>#very-long-fragment4A</td></tr>
 	 * <tr><td>#fragment1B</td>            <td>#long-fragment2B</td>  <td>#fragment3B</td>  <td>#fragment4B</td></tr>
@@ -171,7 +171,7 @@ public class Alignment {
 		// check for forced alignments
 		if ((this.mode & M_FORCE) != 0) {
 			couldBreak();
-		}					
+		}
 	}
 	
 	public boolean checkChunkStart(int kind, int startIndex, int sourceRestart) {
@@ -232,7 +232,7 @@ public class Alignment {
 			 *     #AAAAA, #BBBBB,
 			 *     #CCCC);
 			 */
-			case M_COMPACT_FIRST_BREAK_SPLIT : 
+			case M_COMPACT_FIRST_BREAK_SPLIT :
 				if (this.fragmentBreaks[0] == NONE) {
 					this.fragmentBreaks[0] = BREAK;
 					this.fragmentIndentations[0] = this.breakIndentationLevel;
@@ -251,12 +251,12 @@ public class Alignment {
 			 *  foo(#AAAAA, #BBBBB,
 			 *     #CCCC);
 			 */
-			case M_COMPACT_SPLIT : 
+			case M_COMPACT_SPLIT :
 				i = this.fragmentIndex;
 				do {
 					if (this.fragmentBreaks[i] == NONE) {
 						this.fragmentBreaks[i] = BREAK;
-						this.fragmentIndentations[i] = this.breakIndentationLevel;						
+						this.fragmentIndentations[i] = this.breakIndentationLevel;
 						return wasSplit = true;
 					}
 				} while (--i >= 0);
@@ -270,7 +270,7 @@ public class Alignment {
 			 */
 			case M_NEXT_SHIFTED_SPLIT :
 				if (this.fragmentBreaks[0] == NONE) {
-					this.fragmentBreaks[0] = BREAK;					
+					this.fragmentBreaks[0] = BREAK;
 					this.fragmentIndentations[0] = this.breakIndentationLevel;
 					for (i = 1; i < this.fragmentCount; i++){
 						this.fragmentBreaks[i] = BREAK;
@@ -294,12 +294,13 @@ public class Alignment {
 					}
 					return wasSplit = true;
 				}
+				break;
 			/*  # aligned fragment
 			 *  foo(#AAAAA,
 			 *      #BBBBB,
 			 *      #CCCC);
 			 */
-			case M_NEXT_PER_LINE_SPLIT : 
+			case M_NEXT_PER_LINE_SPLIT :
 				if (this.fragmentBreaks[0] == NONE) {
 					if (this.fragmentCount > 1
 							&& this.fragmentBreaks[1] == NONE) {
@@ -314,7 +315,7 @@ public class Alignment {
 					}
 				}
 				break;
-		}		
+		}
 		return false; // cannot split better
 	}
 	
@@ -347,14 +348,14 @@ public class Alignment {
 		if (this.fragmentIndentations[this.fragmentIndex] > 0) {
 			this.scribe.indentationLevel = this.fragmentIndentations[this.fragmentIndex];
 		}
-	}					
+	}
 
 	// test whether this is an 'indent-on-column' type alignment and aligns on the given column
 	public boolean isIndentOnColumn(int column) {
 		return (mode & M_INDENT_ON_COLUMN) != 0 && breakIndentationLevel == column - 1;
 	}
 
-	// reset fragment indentation/break status	
+	// reset fragment indentation/break status
 	public void reset() {
 
 		if (fragmentCount > 0){
@@ -365,8 +366,8 @@ public class Alignment {
 		// check for forced alignments
 		if ((mode & M_FORCE) != 0) {
 			couldBreak();
-		}		
-	}		
+		}
+	}
 
 	public void toFragmentsString(StringBuffer buffer){
 		// default implementation
@@ -387,7 +388,7 @@ public class Alignment {
 				.append(this.enclosing.name)
 				.append('>');
 		}
-		buffer.append('\n');	
+		buffer.append('\n');
 
 		for (int i = 0; i < this.fragmentCount; i++){
 			buffer
@@ -401,7 +402,7 @@ public class Alignment {
 				.append(this.fragmentIndentations[i])
 				.append(">\n");	//$NON-NLS-1$
 		}
-		buffer.append('\n');	
+		buffer.append('\n');
 		return buffer.toString();
 	}
 	

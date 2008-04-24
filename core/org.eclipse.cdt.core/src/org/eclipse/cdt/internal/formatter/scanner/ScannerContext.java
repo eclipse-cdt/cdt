@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import java.util.Stack;
 public class ScannerContext {
 	private Reader fReader;
 	private int fOffset;
-	private Stack fUndo = new Stack();
+	private Stack<Integer> fUndo = new Stack<Integer>();
 
 	public ScannerContext() {
 	}
@@ -69,7 +69,7 @@ public class ScannerContext {
 	 * @return int
 	 */
 	public final int popUndo() {
-		return ((Integer)fUndo.pop()).intValue();
+		return fUndo.pop().intValue();
 	}
 
 	/**

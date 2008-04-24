@@ -11,20 +11,26 @@
 package org.eclipse.cdt.core.dom.parser.upc;
 
 
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.*;
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCNoCastExpressionParser;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCSizeofExpressionParser;
 
 
 /**
@@ -33,23 +39,61 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
  */
 public class UPCParserAction extends C99BuildASTParserAction {
 	
-	private final UPCASTNodeFactory nodeFactory;
+	private UPCASTNodeFactory nodeFactory;
 	
-		
+	
+	/**
+	 * TODO why is the nodeFactory passed as an argument
+	 * @param nodeFactory
+	 * @param parser
+	 * @param tu
+	 */
 	public UPCParserAction(UPCASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
 		super(nodeFactory, parser, tu);
 		this.nodeFactory = nodeFactory;
+		nodeFactory.setUseC99SizeofExpressions();
 	}
 	
 	
 	@Override 
 	protected boolean isCompletionToken(IToken token) {
-		return token.getKind() == UPCParsersym.TK_Completion;
+		return token.getKind() == TK_Completion;
 	}
-	
+		
+	@Override
+	protected IParser getExpressionStatementParser() {
+		return new UPCExpressionStatementParser(parser.getOrderedTerminalSymbols());
+	}
+
+	@Override
+	protected IParser getNoCastExpressionParser() {
+		return new UPCNoCastExpressionParser(parser.getOrderedTerminalSymbols());
+	}
+
+	@Override
+	protected IParser getSizeofExpressionParser() {
+		return new UPCSizeofExpressionParser(parser.getOrderedTerminalSymbols());
+	}
+
+
 	/**************************************************************************************
 	 * Semantic actions
 	 **************************************************************************************/
+	
+
+	public void consumeExpressionUnarySizeofOperator(int upcOp) {
+		nodeFactory.setUseUPCSizeofExpressions(upcOp);
+		super.consumeExpressionUnaryOperator(IASTUnaryExpression.op_sizeof);
+		nodeFactory.setUseC99SizeofExpressions();
+	}
+	
+	
+	public void consumeExpressionSizeofTypeId(int upcOp) {
+		nodeFactory.setUseUPCSizeofExpressions(upcOp);
+		super.consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);
+		nodeFactory.setUseC99SizeofExpressions();
+	}
+
 	
 	
 	/**
@@ -165,13 +209,13 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 */
 	protected void setTokenSpecifier(IUPCASTDeclSpecifier node, IToken token) {
 		switch(token.getKind()) {
-			case UPCParsersym.TK_relaxed:
+			case TK_relaxed:
 				node.setReferenceType(IUPCASTDeclSpecifier.rt_relaxed);
 				break;
-			case UPCParsersym.TK_strict:
+			case TK_strict:
 				node.setReferenceType(IUPCASTDeclSpecifier.rt_strict);
 				break;
-			case UPCParsersym.TK_shared:
+			case TK_shared:
 				node.setSharedQualifier(IUPCASTDeclSpecifier.sh_shared_default_block_size);
 				break;
 			default:

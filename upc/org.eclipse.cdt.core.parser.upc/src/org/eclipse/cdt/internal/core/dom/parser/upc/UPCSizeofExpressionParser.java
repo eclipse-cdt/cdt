@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.dom.parser.upc.UPCASTNodeFactory;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 
 public class UPCSizeofExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -1274,19 +1274,19 @@ public UPCSizeofExpressionParser(String[] mapFrom) {  // constructor
             //
             // Rule 311:  unary_expression ::= upc_localsizeof unary_expression
             //
-            case 311: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_localsizeof);            break;
+            case 311: { action.   consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_localsizeof);            break;
             }  
   
             //
             // Rule 312:  unary_expression ::= upc_blocksizeof unary_expression
             //
-            case 312: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_blocksizeof);            break;
+            case 312: { action.   consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_blocksizeof);            break;
             }  
   
             //
             // Rule 313:  unary_expression ::= upc_elemsizeof unary_expression
             //
-            case 313: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_elemsizeof);            break;
+            case 313: { action.   consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_elemsizeof);            break;
             }  
   
             //

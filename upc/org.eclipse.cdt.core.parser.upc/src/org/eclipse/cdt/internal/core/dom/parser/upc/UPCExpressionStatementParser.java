@@ -30,9 +30,8 @@ import org.eclipse.cdt.core.dom.parser.upc.UPCASTNodeFactory;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 
-@SuppressWarnings("all")
 public class UPCExpressionStatementParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
     private static ParseTable prs = new UPCExpressionStatementParserprs();
@@ -1281,37 +1280,37 @@ public UPCExpressionStatementParser(String[] mapFrom) {  // constructor
             //
             // Rule 312:  unary_expression ::= upc_localsizeof unary_expression
             //
-            case 312: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_localsizeof);            break;
+            case 312: { action.   consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_localsizeof);            break;
             }  
   
             //
             // Rule 313:  unary_expression ::= upc_localsizeof ( type_name )
             //
-            case 313: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_localsizeof);            break;
+            case 313: { action.   consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_localsizeof);            break;
             }  
   
             //
             // Rule 314:  unary_expression ::= upc_blocksizeof unary_expression
             //
-            case 314: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_blocksizeof);            break;
+            case 314: { action.   consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_blocksizeof);            break;
             }  
   
             //
             // Rule 315:  unary_expression ::= upc_blocksizeof ( type_name )
             //
-            case 315: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_blocksizeof);            break;
+            case 315: { action.   consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_blocksizeof);            break;
             }  
   
             //
             // Rule 316:  unary_expression ::= upc_elemsizeof unary_expression
             //
-            case 316: { action.   consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_elemsizeof);            break;
+            case 316: { action.   consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_elemsizeof);            break;
             }  
   
             //
             // Rule 317:  unary_expression ::= upc_elemsizeof ( type_name )
             //
-            case 317: { action.   consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_elemsizeof);            break;
+            case 317: { action.   consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_elemsizeof);            break;
             }  
   
             //

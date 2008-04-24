@@ -40,11 +40,11 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTTypeIdSizeofExpression;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
 
-
+@SuppressWarnings("nls")
 public class UPCLanguageExtensionTests extends TestCase {
 
 	public UPCLanguageExtensionTests() {
@@ -73,15 +73,15 @@ public class UPCLanguageExtensionTests extends TestCase {
 	}
 	
 	
+	
 	public void testUPCSharedDeclarations1() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("shared int a [100+THREADS];\n");//$NON-NLS-1$
-		sb.append("shared [] int b [THREADS];\n");//$NON-NLS-1$
-		sb.append("shared [90] int c [10];\n");//$NON-NLS-1$
-		sb.append("shared [*] int d [];\n");//$NON-NLS-1$
-		sb.append("relaxed int x;");//$NON-NLS-1$
-		sb.append("strict int y;");//$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"shared int a [100+THREADS];\n" +
+			"shared [] int b [THREADS];\n" +
+			"shared [90] int c [10];\n" +
+			"shared [*] int d [];\n" +
+			"relaxed int x;" +
+			"strict int y;";
 		
 		IASTTranslationUnit tu = parseAndCheckBindings(code);
 		IScope globalScope = tu.getScope();
@@ -103,7 +103,7 @@ public class UPCLanguageExtensionTests extends TestCase {
 		assertEquals(1, declarators.length);
 		IASTArrayDeclarator declarator_a = (IASTArrayDeclarator) declarators[0];
 		IASTName name_a = declarator_a.getName();
-		assertEquals("a", name_a.toString());//$NON-NLS-1$
+		assertEquals("a", name_a.toString());
 		IASTArrayModifier[] array_modifiers = declarator_a.getArrayModifiers();
 		assertNotNull(array_modifiers);
 		assertEquals(1, array_modifiers.length);
@@ -123,7 +123,7 @@ public class UPCLanguageExtensionTests extends TestCase {
 		assertEquals(1, declarators.length);
 		IASTArrayDeclarator declarator_b = (IASTArrayDeclarator) declarators[0];
 		IASTName name_b = declarator_b.getName();
-		assertEquals("b", name_b.toString());//$NON-NLS-1$
+		assertEquals("b", name_b.toString());
 		array_modifiers = declarator_b.getArrayModifiers();
 		assertNotNull(array_modifiers);
 		assertEquals(1, array_modifiers.length);
@@ -143,7 +143,7 @@ public class UPCLanguageExtensionTests extends TestCase {
 		assertEquals(1, declarators.length);
 		IASTArrayDeclarator declarator_c = (IASTArrayDeclarator) declarators[0];
 		IASTName name_c = declarator_c.getName();
-		assertEquals("c", name_c.toString());//$NON-NLS-1$
+		assertEquals("c", name_c.toString());
 		array_modifiers = declarator_c.getArrayModifiers();
 		assertNotNull(array_modifiers);
 		assertEquals(1, array_modifiers.length);
@@ -161,7 +161,7 @@ public class UPCLanguageExtensionTests extends TestCase {
 		assertEquals(1, declarators.length);
 		IASTArrayDeclarator declarator_d = (IASTArrayDeclarator) declarators[0];
 		IASTName name_d = declarator_d.getName();
-		assertEquals("d", name_d.toString());//$NON-NLS-1$
+		assertEquals("d", name_d.toString());
 		array_modifiers = declarator_d.getArrayModifiers();
 		assertNotNull(array_modifiers);
 		assertEquals(1, array_modifiers.length);
@@ -197,10 +197,9 @@ public class UPCLanguageExtensionTests extends TestCase {
 	
 	
 	public void testUPCSharedDeclarations2() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("int x = 10;");//$NON-NLS-1$
-		sb.append("shared [x] int a [];\n");//$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"int x = 10;" +
+			"shared [x] int a [];\n";
 		
 		IASTTranslationUnit tu = parseAndCheckBindings(code);
 		IScope globalScope = tu.getScope();
@@ -229,15 +228,14 @@ public class UPCLanguageExtensionTests extends TestCase {
 	
 	
 	public void testUPCForall1() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("int main() {\n");//$NON-NLS-1$
-		sb.append("    int i;\n");//$NON-NLS-1$
-		sb.append("    shared float *a;\n");//$NON-NLS-1$
-		sb.append("    upc_forall(i=0; i<N; i++; &a[i]) { \n");//$NON-NLS-1$
-		sb.append("        a[i] = 99; \n");//$NON-NLS-1$
-		sb.append("    } \n");//$NON-NLS-1$
-		sb.append("}\n");//$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"int main() {\n" +
+			"    int i;\n" +
+			"    shared float *a;\n" +
+			"    upc_forall(i=0; i<N; i++; &a[i]) { \n" +
+			"        a[i] = 99; \n" +
+			"    } \n" +
+			"}\n";
 		
 		IASTTranslationUnit tu = parse(code);
 		
@@ -312,14 +310,13 @@ public class UPCLanguageExtensionTests extends TestCase {
 	 * Test a declaration inside a upc_forall definition.
 	 */
 	public void testUPCForall2() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("int main() {\n");//$NON-NLS-1$
-		sb.append("    shared float *a;\n");//$NON-NLS-1$
-		sb.append("    upc_forall(int i=0; i<N; i++; &a[i]) { \n");//$NON-NLS-1$
-		sb.append("        a[i] = 99; \n");//$NON-NLS-1$
-		sb.append("    } \n");//$NON-NLS-1$
-		sb.append("}\n");//$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"int main() {\n" +
+			"    shared float *a;\n" +
+			"    upc_forall(int i=0; i<N; i++; &a[i]) { \n" +
+			"        a[i] = 99; \n" +
+			"    } \n" +
+			"}\n";
 		
 		IASTTranslationUnit tu = parse(code);
 		
@@ -386,12 +383,11 @@ public class UPCLanguageExtensionTests extends TestCase {
 	 * Test 'continue' inside upc_forall
 	 */
 	public void testUPCForall3() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("int main() {\n");//$NON-NLS-1$
-		sb.append("    upc_forall(int i=0; i<N; i++; continue) { \n");//$NON-NLS-1$
-		sb.append("    } \n");//$NON-NLS-1$
-		sb.append("}\n");//$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"int main() {\n" +
+			"    upc_forall(int i=0; i<N; i++; continue) { \n" +
+			"    } \n" +
+			"}\n";
 		
 		IASTTranslationUnit tu = parse(code);
 		
@@ -412,17 +408,16 @@ public class UPCLanguageExtensionTests extends TestCase {
 	
 	
 	public void testUPCSynchronizationStatment() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("int main() {\n");//$NON-NLS-1$
-		sb.append("    upc_notify 1;\n");//$NON-NLS-1$
-		sb.append("    upc_notify;\n");//$NON-NLS-1$
-		sb.append("    upc_wait 1;\n");//$NON-NLS-1$
-		sb.append("    upc_wait;\n");//$NON-NLS-1$
-		sb.append("    upc_barrier 1;\n");//$NON-NLS-1$
-		sb.append("    upc_barrier;\n");//$NON-NLS-1$
-		sb.append("    upc_fence;\n");//$NON-NLS-1$
-		sb.append("}\n");//$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"int main() {\n" +
+			"    upc_notify 1;\n" +
+			"    upc_notify;\n" +
+			"    upc_wait 1;\n" +
+			"    upc_wait;\n" +
+			"    upc_barrier 1;\n" +
+			"    upc_barrier;\n" +
+			"    upc_fence;\n" +
+			"}\n";
 		
 		IASTTranslationUnit tu = parse(code);
 		
@@ -466,18 +461,17 @@ public class UPCLanguageExtensionTests extends TestCase {
 	}
 	
 	public void testUPCSizeofExpressions() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("int main() {\n");//$NON-NLS-1$
-		sb.append("    sizeof(int); \n");//$NON-NLS-1$
-		sb.append("    sizeof x; \n");//$NON-NLS-1$
-		sb.append("    upc_localsizeof(int); \n");//$NON-NLS-1$
-		sb.append("    upc_localsizeof x; \n");//$NON-NLS-1$
-		sb.append("    upc_blocksizeof(int); \n");//$NON-NLS-1$
-		sb.append("    upc_blocksizeof x; \n");//$NON-NLS-1$
-		sb.append("    upc_elemsizeof(int); \n");//$NON-NLS-1$
-		sb.append("    upc_elemsizeof x; \n");//$NON-NLS-1$
-		sb.append("}\n");//$NON-NLS-1$
-		String code = sb.toString();
+		String code =
+			"int main() {\n" +
+			"    sizeof(int); \n" +
+			"    sizeof x; \n" +
+			"    upc_localsizeof(int); \n" +
+			"    upc_localsizeof x; \n" +
+			"    upc_blocksizeof(int); \n" +
+			"    upc_blocksizeof x; \n" +
+			"    upc_elemsizeof(int); \n" +
+			"    upc_elemsizeof x; \n" +
+			"}\n";
 		
 		IASTTranslationUnit tu = parse(code);
 		
@@ -489,29 +483,57 @@ public class UPCLanguageExtensionTests extends TestCase {
 		IASTStatement[] body = ((IASTCompoundStatement)main.getBody()).getStatements();
 		assertEquals(8, body.length);
 		
-		IASTTypeIdExpression idexpr = (IASTTypeIdExpression)((IASTExpressionStatement)body[0]).getExpression();
+		@SuppressWarnings("unused")
+		IASTTypeIdExpression cidexpr = (IASTTypeIdExpression)((IASTExpressionStatement)body[0]).getExpression();
 		
 		IASTUnaryExpression cexpr = (IASTUnaryExpression)((IASTExpressionStatement)body[1]).getExpression();
 		assertEquals(IASTUnaryExpression.op_sizeof, cexpr.getOperator());
 		
-		IUPCASTUnaryExpression expr;
+		IUPCASTUnarySizeofExpression expr;
+		IUPCASTTypeIdSizeofExpression idexpr;
 		
-		idexpr = (IUPCASTTypeIdExpression)((IASTExpressionStatement)body[2]).getExpression();
-		assertEquals(IUPCASTUnaryExpression.op_upc_localsizeof, idexpr.getOperator());
+		idexpr = (IUPCASTTypeIdSizeofExpression)((IASTExpressionStatement)body[2]).getExpression();
+		assertEquals(IASTTypeIdExpression.op_sizeof, idexpr.getOperator());
+		assertEquals(IUPCASTTypeIdSizeofExpression.upc_localsizeof, idexpr.getUPCSizeofOperator());
 		
-		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[3]).getExpression();
-		assertEquals(IUPCASTUnaryExpression.op_upc_localsizeof, expr.getOperator());
+		expr = (IUPCASTUnarySizeofExpression)((IASTExpressionStatement)body[3]).getExpression();
+		assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
+		assertEquals(IUPCASTUnarySizeofExpression.upc_localsizeof, expr.getUPCSizeofOperator());
 		
-		idexpr = (IUPCASTTypeIdExpression)((IASTExpressionStatement)body[4]).getExpression();
-		assertEquals(IUPCASTUnaryExpression.op_upc_blocksizeof, idexpr.getOperator());
+		idexpr = (IUPCASTTypeIdSizeofExpression)((IASTExpressionStatement)body[4]).getExpression();
+		assertEquals(IASTTypeIdExpression.op_sizeof, idexpr.getOperator());
+		assertEquals(IUPCASTTypeIdSizeofExpression.upc_blocksizeof, idexpr.getUPCSizeofOperator());
 		
-		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[5]).getExpression();
-		assertEquals(IUPCASTUnaryExpression.op_upc_blocksizeof, expr.getOperator());
+		expr = (IUPCASTUnarySizeofExpression)((IASTExpressionStatement)body[5]).getExpression();
+		assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
+		assertEquals(IUPCASTUnarySizeofExpression.upc_blocksizeof, expr.getUPCSizeofOperator());
 		
-		idexpr = (IUPCASTTypeIdExpression)((IASTExpressionStatement)body[6]).getExpression();
-		assertEquals(IUPCASTUnaryExpression.op_upc_elemsizeof, idexpr.getOperator());
+		idexpr = (IUPCASTTypeIdSizeofExpression)((IASTExpressionStatement)body[6]).getExpression();
+		assertEquals(IASTTypeIdExpression.op_sizeof, idexpr.getOperator());
+		assertEquals(IUPCASTTypeIdSizeofExpression.upc_elemsizeof, idexpr.getUPCSizeofOperator());
 		
-		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[7]).getExpression();
-		assertEquals(IUPCASTUnaryExpression.op_upc_elemsizeof, expr.getOperator());
+		expr = (IUPCASTUnarySizeofExpression)((IASTExpressionStatement)body[7]).getExpression();
+		assertEquals(IASTUnaryExpression.op_sizeof, expr.getOperator());
+		assertEquals(IUPCASTUnarySizeofExpression.upc_elemsizeof, expr.getUPCSizeofOperator());
+	}
+	
+	
+	public void testUPCSizeofExpressionsDisambiguate() throws Exception {
+		String code =
+			"int foo() {" +
+			"	typedef int t;" +
+			"   int x;" +
+			"   upc_blocksizeof(t);" +
+			"   upc_blocksizeof(x);" +
+			"}";
+		
+		IASTTranslationUnit tu = parse(code);
+		
+		IASTDeclaration[] declarations = tu.getDeclarations();		
+		IASTFunctionDefinition main = (IASTFunctionDefinition) declarations[0];
+		IASTStatement[] body = ((IASTCompoundStatement)main.getBody()).getStatements();
+		
+		assertTrue(((IASTExpressionStatement)body[2]).getExpression() instanceof IUPCASTTypeIdSizeofExpression);
+		assertTrue(((IASTExpressionStatement)body[3]).getExpression() instanceof IUPCASTUnarySizeofExpression);
 	}
 }

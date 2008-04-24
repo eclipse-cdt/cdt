@@ -65,17 +65,17 @@ literal
 -- causes ambiguities because of no type information, solution is SGLR
 unary_expression
     ::= 'upc_localsizeof' unary_expression
-          /. $Build  consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_localsizeof); $EndBuild ./
+          /. $Build  consumeExpressionUnarySizeofOperator(IUPCASTUnaryExpression.upc_localsizeof); $EndBuild ./
       | 'upc_localsizeof' '(' type_name ')'
-          /. $Build  consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_localsizeof); $EndBuild ./
+          /. $Build  consumeExpressionSizeofTypeId(IUPCASTUnaryExpression.upc_localsizeof); $EndBuild ./
       | 'upc_blocksizeof' unary_expression
-          /. $Build  consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_blocksizeof); $EndBuild ./
+          /. $Build  consumeExpressionUnarySizeofOperator(IUPCASTUnaryExpression.upc_blocksizeof); $EndBuild ./
       | 'upc_blocksizeof' '(' type_name ')'
-          /. $Build  consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_blocksizeof); $EndBuild ./
+          /. $Build  consumeExpressionSizeofTypeId(IUPCASTUnaryExpression.upc_blocksizeof); $EndBuild ./
       | 'upc_elemsizeof'  unary_expression
-          /. $Build  consumeExpressionUnaryOperator(IUPCASTUnaryExpression.op_upc_elemsizeof); $EndBuild ./
+          /. $Build  consumeExpressionUnarySizeofOperator(IUPCASTUnaryExpression.upc_elemsizeof); $EndBuild ./
       | 'upc_elemsizeof'  '(' type_name ')'
-          /. $Build  consumeExpressionTypeId(IUPCASTUnaryExpression.op_upc_elemsizeof); $EndBuild ./
+          /. $Build  consumeExpressionSizeofTypeId(IUPCASTUnaryExpression.upc_elemsizeof); $EndBuild ./
       
       
 -----------------------------------------------------------------------------------

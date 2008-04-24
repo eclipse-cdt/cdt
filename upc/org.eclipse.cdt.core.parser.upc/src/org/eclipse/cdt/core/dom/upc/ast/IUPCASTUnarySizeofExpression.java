@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,17 @@ package org.eclipse.cdt.core.dom.upc.ast;
 
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
-public interface IUPCASTUnaryExpression extends IASTUnaryExpression {
+public interface IUPCASTUnarySizeofExpression extends IASTUnaryExpression {
 
-	public final int op_upc_localsizeof = op_last + 1;
+	public final int upc_localsizeof = 1;
 	
-	public final int op_upc_blocksizeof = op_last + 2;
+	public final int upc_blocksizeof = 2;
 	
-	public final int op_upc_elemsizeof  = op_last + 3;
+	public final int upc_elemsizeof  = 3;
+	
+	
+	public int getUPCSizeofOperator();
+
+	public void setUPCSizeofOperator(int upcSizeofOperator);
 	
 }

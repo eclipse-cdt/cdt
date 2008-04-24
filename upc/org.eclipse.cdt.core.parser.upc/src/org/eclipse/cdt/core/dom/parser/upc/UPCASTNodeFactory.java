@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
@@ -24,7 +25,6 @@ import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTEnumerationSpecifier;
@@ -32,9 +32,9 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTForallStatement;
 import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTKeywordExpression;
 import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTSynchronizationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTTypeIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTTypeIdSizeofExpression;
 import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTTypedefNameSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTUnaryExpression;
+import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTUnarySizeofExpression;
 
 
 /**
@@ -49,19 +49,43 @@ public class UPCASTNodeFactory extends C99ASTNodeFactory {
 
 	public static final UPCASTNodeFactory DEFAULT_INSTANCE = new UPCASTNodeFactory();
 	
+	private boolean useUPCSizeofExpressions = false;
+	private int currentUPCSizofExpressionOperator = 0;
+	
+	
+	public void setUseUPCSizeofExpressions(int op) {
+		useUPCSizeofExpressions = true;
+		currentUPCSizofExpressionOperator = op;
+	}
+	
+	public void setUseC99SizeofExpressions() {
+		useUPCSizeofExpressions = false;
+	}
+	
+	
 	
 	@Override
 	public IASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId) {
-		return new UPCASTTypeIdExpression(operator, typeId);
-	}
-
-	public IUPCASTKeywordExpression newKeywordExpression(int keywordKind) {
-		return new UPCASTKeywordExpression(keywordKind);
+		if(useUPCSizeofExpressions) {
+			assert operator == IASTTypeIdExpression.op_sizeof;
+			return new UPCASTTypeIdSizeofExpression(currentUPCSizofExpressionOperator, typeId);
+		}
+		
+		return super.newTypeIdExpression(operator, typeId);
 	}
 	
 	@Override
-	public IUPCASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand) {
-		return new UPCASTUnaryExpression(operator, operand);
+	public IASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand) {
+		if(useUPCSizeofExpressions) {
+			assert operator == IASTUnaryExpression.op_sizeof;
+			return new UPCASTUnarySizeofExpression(currentUPCSizofExpressionOperator, operand);
+		}
+		
+		return super.newUnaryExpression(operator, operand);
+	}
+	
+	public IUPCASTKeywordExpression newKeywordExpression(int keywordKind) {
+		return new UPCASTKeywordExpression(keywordKind);
 	}
 	
 	public IUPCASTSynchronizationStatement newSyncronizationStatment(IASTExpression barrierExpression, int statmentKind) {

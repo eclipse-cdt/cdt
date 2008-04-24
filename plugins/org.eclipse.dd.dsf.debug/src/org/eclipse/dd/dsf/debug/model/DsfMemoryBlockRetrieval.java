@@ -102,9 +102,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	    // DSF stuff
         fModelId = modelId;
 
-        // FIXME: Currently memory contexts are differentiated by sessionID
-        // so there is no way to guarantee the memory blocks will be reinstated
-        // in the correct memory space.
+        // FIXME: (Bug228573) Currently memory contexts are differentiated by
+        // sessionID so there is no way to guarantee the memory blocks will be
+        // reinstated in the correct memory space.
         // Need a way to create deterministically the context ID from a unique
         // target, ideally from the launch configuration (or derived from it).
         // For the time being, just put some constant. This will work until we
@@ -240,7 +240,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		}
 		    
         // Process the block list specific to this memory context
-        // FIXME: We only process the first entry...
+        // FIXME: (Bug228573) We only process the first entry...
 	    if (root.getAttribute(ATTR_EXPRESSION_LIST_CONTEXT).equals(fContextString)) {
             List<IMemoryBlock> blocks = new ArrayList<IMemoryBlock>();
             NodeList expressionList = root.getChildNodes();
@@ -262,7 +262,8 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	    }
 	}
 
-    // FIXME: Each retrieval overwrites the previous one :-(
+    // FIXME: (Bug228573) Each retrieval overwrites the previous one :-(
+	
     // In theory, we should make this a Job since we are writing to the file system.
 	// However, this would cause the same racing condition as Bug228308. Finally, we
 	// don't care too much about the UI responsiveness since we are in the process of

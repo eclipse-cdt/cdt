@@ -272,7 +272,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
     @DsfServiceEventHandler 
     public void eventDispatched(MIGDBExitEvent e) {
-		// TODO: Remove the installed breakpoints from the back-end
     }
 
 	///////////////////////////////////////////////////////////////////////////

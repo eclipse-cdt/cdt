@@ -35,8 +35,6 @@ public class MILogActionEnabler implements ILogActionEnabler {
     public MILogActionEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
         fExecutor = executor;
         fServiceTracker = serviceTracker;
-        // FIXME: Although it looks optimistic, we know it works
-        // How can we guarantee that it always will?
         fContext = (IBreakpointsTargetDMContext) context;
     }
 

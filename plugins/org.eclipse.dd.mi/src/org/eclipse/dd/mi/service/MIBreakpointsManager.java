@@ -1186,7 +1186,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         // Identify the platform breakpoint
         final ICBreakpoint breakpoint = findPlatformBreakpoint(number);
 
-        // FIXME: Temporary hack to have a context
+        // FIXME: (Bug228703) Temporary hack to have a context
         Object[] contexts = fTargetBPs.keySet().toArray();
         final IBreakpointsTargetDMContext context = (IBreakpointsTargetDMContext) contexts[0];
 
@@ -1195,7 +1195,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             { setSystem(true); }
             @Override
             protected IStatus run(IProgressMonitor monitor) {
-                // FIXME: Rename MyAdaptableType to something more relevant
                 fBreakpointActionManager.executeActions(breakpoint, new BreakpointActionAdapter(getExecutor(), getServicesTracker(), context));
                 return Status.OK_STATUS;
             };
@@ -1204,10 +1203,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
     // Helper function to locate the platform breakpoint corresponding
     // to the target breakpoint/watchpoint that was just hit
-    // FIXME: Need a way to identify the correct context where the BP was hit
-    // because it impacts the action (expression evaluation and resume delay).
-    // This means that the Breakpoint/WatchpointHitEvent will need to
-    // provide some extra info...
+
+    // FIXME: (Bug228703) Need a way to identify the correct context where the BP was hit
     private ICBreakpoint findPlatformBreakpoint(int targetBreakpointID) {
         Set<IBreakpointsTargetDMContext> targets = fTargetBPs.keySet();
         for (IBreakpointsTargetDMContext target : targets) {

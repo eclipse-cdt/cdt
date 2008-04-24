@@ -21,7 +21,6 @@ import org.eclipse.dd.dsf.service.DsfServicesTracker;
 
 public class MIResumeActionEnabler implements IResumeActionEnabler {
 
-    @SuppressWarnings("unused")
     private final DsfExecutor fExecutor;
     private final DsfServicesTracker fServiceTracker;
     private final IExecutionDMContext fContext;
@@ -29,8 +28,6 @@ public class MIResumeActionEnabler implements IResumeActionEnabler {
     public MIResumeActionEnabler(DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
         fExecutor = executor;
         fServiceTracker = serviceTracker;
-        // FIXME: Although it looks optimistic, we know it works
-        // How can we guarantee that it always will?
         fContext = (IExecutionDMContext) context;
     }
 

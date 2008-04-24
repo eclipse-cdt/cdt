@@ -3950,4 +3950,12 @@ public class AST2Tests extends AST2BaseTest {
         assertInstance(col.getName(2).resolveBinding(), ICPPNamespace.class);
         assertInstance(col.getName(3).resolveBinding(), ICPPClassType.class);
     }
+    
+    // int f(x) {
+    //    return 0;
+    // }
+    public void testBug228422_noKnrParam() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	parse(buffer.toString(), ParserLanguage.C, false );
+    }
 }

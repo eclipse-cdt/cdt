@@ -1952,10 +1952,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
                     // count the number of K&R C parameters (0 K&R C parameters
                     // essentially means it's not K&R C)
-                    if( !knr )
+                    if( !knr && supportKnRC)
                         numKnRCParms = countKnRCParms();
 					
-                    if (supportKnRC && numKnRCParms > 0) { // KnR C parameters were found so
+                    if (numKnRCParms > 0) { // KnR C parameters were found so
                         // handle the declarator accordingly
                         parmNames = new IASTName[numKnRCParms];
                         parmDeclarations = new IASTDeclaration[numKnRCParms];

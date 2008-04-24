@@ -7,15 +7,15 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * David McKnight   (IBM)        - [202822] need to enable spiriting on the server side
  * David McKnight   (IBM)        - [199565] taking out synchronize for internalConnect
  * David McKnight   (IBM)        - [205986] attempt SSL before non-SSL for daemon connect
@@ -29,7 +29,6 @@
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
- * David McKnight     (IBM)    - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -115,13 +114,13 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 			_dataStore = dataStore;
 		}
-		
+
 		public void run()
 		{
 			if (_dataStore.isDoSpirit()) _dataStore.queryServerSpiritState();
 		}
 	}
-	
+
 	private ClientConnection clientConnection = null;
 	private ConnectionStatusListener _connectionStatusListener = null;
 	private IServerLauncher starter = null;
@@ -132,7 +131,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	private transient DataElement installInfo = null;
 	private transient DataElement clientIP = null;
 	private static String DSTORE_PACKAGE = "org.eclipse.dstore.core"; //$NON-NLS-1$
-	
+
 	private Exception connectException;
 	private class ShowConnectMessage implements Runnable
 	{
@@ -141,45 +140,45 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 			_msg = msg;
 		}
-		
+
 		public void run()
 		{
 			SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), _msg);
 			dlg.open();
 		}
 	}
-	
+
 	/**
 	 * Constructor when we don't have a subsystem yet.
-	 * Call setSubSystem after. 
+	 * Call setSubSystem after.
 	 */
 	public DStoreConnectorService(String name, String description, IHost host)
 	{
 		super(name, description, host, 0);
 	}
-	
-	
-	
+
+
+
 	/*
 	 * Set the subsystem, when its not known at constructor time
 	 *
 	public void setSubSystem(SubSystem ss)
 	{
 		super.setSubSystem(ss);
-		setDaemonLaunchEnabled((SubSystemImpl)ss, false);		    	
+		setDaemonLaunchEnabled((SubSystemImpl)ss, false);
 	}*/
-	
-	
+
+
 	public int getServerVersion()
 	{
 		return clientConnection.getServerVersion();
 	}
-	
+
 	public int getServerMinor()
 	{
 		return clientConnection.getServerMinor();
 	}
-	
+
 	/**
 	 * Retrieve the value of a property which is contained in the environment miners
 	 * system info child.  Currently supported properties:
@@ -281,13 +280,13 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		dataStore.runRemoteClassInstance(instance);
 		return true;
 	}
-	
+
 	/**
 	 * Return the location where the RSE server is installed
 	 * @return the server install location
 	 */
 	public String getServerInstallPath()
-	{		
+	{
 	    if (clientConnection != null)
 	    {
 	    	if (installInfo == null)
@@ -302,7 +301,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 
 	/**
 	 * Return the Client IP that the RSE server is connected to.  When connected,
-	 * the client IP is obtained from the server-side.   When not-connected, 
+	 * the client IP is obtained from the server-side.   When not-connected,
 	 * the fall back is to get the IP locally (note that the IP obtained locally
 	 * may be not be what you want when using VPN).
 	 * @return the client ip
@@ -310,21 +309,21 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	public String getClientIP()
 	{
 	    if (clientConnection != null && clientConnection.isConnected())
-	    {	        
+	    {
 	        if (clientIP == null)
-	        {	        
+	        {
 	        	DataStore ds = clientConnection.getDataStore();
 	        	clientIP = ds.queryClientIP();
 	        }
 	        return clientIP.getAttribute(DE.A_SOURCE);
 	    }
-	    
+
 	    // fall back to getting local machine ip address
 	    // this may be incorrect for the server in certain cases
 	    // like over VPN
 	    return RSECorePlugin.getLocalMachineIPAddress();
 	}
-	
+
 	/**
 	 * Return the temp directory of the remote system for the current user, if available.
 	 */
@@ -332,7 +331,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	{
 		return getSystemInfoProperty("temp.dir"); //$NON-NLS-1$
 	}
-	
+
 	protected int getSocketTimeOutValue()
 	{
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
@@ -368,10 +367,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				{
 					clientConnection.disconnect();
 				}
-				
+
 //				 Fire comm event to signal state changed
 				notifyDisconnection();
-				
+
 				clientConnection = null;
 				// DKM - no need to clear uid cache
 				clearPassword(false, true); // clear in-memory password
@@ -380,7 +379,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				installInfo = null;
 				clientIP = null;
 
-				
+
 			}
 		}
 		catch (Exception exc)
@@ -388,25 +387,25 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			throw new java.lang.reflect.InvocationTargetException(exc);
 		}
 	}
-	
+
 	private IRemoteServerLauncher getDStoreServerLauncher()
 	{
 		IServerLauncherProperties sl = getRemoteServerLauncherProperties();
 		//System.out.println("in UniversalSystem#getServerLauncher: sl = "+sl);
 		if (sl != null && sl instanceof IRemoteServerLauncher)
-		{			
+		{
 			return (IRemoteServerLauncher)sl;
-		}	
+		}
 		else
 			//return ((SubSystemConfigurationImpl)ss.getParentSubSystemConfiguration()).getDefaultIBMServerLauncher(ss);
-			return null; // should never happen!		
+			return null; // should never happen!
 	}
 
 	protected void setPluginPathProperty()
 	{
 		Bundle bundle = RSEUIPlugin.getDefault().getBundle();
 		URL pluginsURL = bundle.getEntry("/"); //$NON-NLS-1$
-	
+
 		try
 		{
 			String path = FileLocator.resolve(pluginsURL).getPath();
@@ -422,7 +421,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 		}
 	}
-	
+
 	private String getDStorePath(String pluginDir, String version)
 	{
 			File dstorePath = new File(pluginDir + "/" + DSTORE_PACKAGE + "_" + version); //$NON-NLS-1$  //$NON-NLS-2$
@@ -431,79 +430,79 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				// might be in workspace
 				dstorePath = new File(pluginDir + "/" + DSTORE_PACKAGE); //$NON-NLS-1$
 			}
-	
+
 		return dstorePath.getAbsolutePath();
 	}
-	
+
 //	/**
-//	 * Specify if you support connecting to a running daemon  
+//	 * Specify if you support connecting to a running daemon
 //	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
-//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
-//	 */	
+//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
+//	 */
 //	public void setDaemonLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
 //		enableServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL, enable);
 //	}
 
 //	/**
-//	 * Return if you support connecting to a running daemon  
-//	 * @deprecated Use instead {@link #isEnabledServerLaunchType(ISubSystem, ServerLaunchType)} 
+//	 * Return if you support connecting to a running daemon
+//	 * @deprecated Use instead {@link #isEnabledServerLaunchType(ISubSystem, ServerLaunchType)}
 //	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
-//	 */		
+//	 */
 //	public boolean getDaemonLaunchEnabled(SubSystem subsystemImpl) {
-//		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL); 
+//		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL);
 //	}
 
 //	/**
-//	 * Specify if you support remotely launching a server script 
-//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)} 
-//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
-//	 */		
+//	 * Specify if you support remotely launching a server script
+//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
+//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
+//	 */
 //	public void setRexecLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
 //		enableServerLaunchType(subsystemImpl, ServerLaunchType.REXEC_LITERAL, enable);
 //	}
 
 	/**
-	 * Return if you support remotely launching a server script 
-	 * @deprecated Use instead {@link #isServerLaunchTypeEnabled(ISubSystem, ServerLaunchType)} 
+	 * Return if you support remotely launching a server script
+	 * @deprecated Use instead {@link #isServerLaunchTypeEnabled(ISubSystem, ServerLaunchType)}
 	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
-	 */			
+	 */
 	public boolean getRexecLaunchEnabled(SubSystem subsystemImpl) {
 		return isServerLaunchTypeEnabled(subsystemImpl, ServerLaunchType.REXEC_LITERAL);
 	}
 
 //	/**
-//	 * Specify if you support connecting to a server already running 
-//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)} 
-//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
-//	 */			
+//	 * Specify if you support connecting to a server already running
+//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
+//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
+//	 */
 //	public void setNoLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
 //		enableServerLaunchType(subsystemImpl, ServerLaunchType.RUNNING_LITERAL, enable);
 //	}
 
 	/**
-	 * Return if you support connecting to a server already running 
-	 * @deprecated Use instead {@link #isServerLaunchTypeEnabled(ISubSystem, ServerLaunchType)} 
-	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
-	 */			
+	 * Return if you support connecting to a server already running
+	 * @deprecated Use instead {@link #isServerLaunchTypeEnabled(ISubSystem, ServerLaunchType)}
+	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
+	 */
 	public boolean getNoLaunchEnabled(SubSystem subsystemImpl) {
 		return isServerLaunchTypeEnabled(subsystemImpl, ServerLaunchType.RUNNING_LITERAL);
-	}	
-	
+	}
+
 	/**
 	 * Return the remote server launcher, which implements IServerLauncher.
-	 * This is called by the default implementation of connect, if 
+	 * This is called by the default implementation of connect, if
 	 * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties returns true.
 	 */
 	public IServerLauncher getRemoteServerLauncher()
 	{
-		
+
 		if (starter == null)
 		  starter = new RexecDstoreServer();
 		((RexecDstoreServer)starter).setClientConnection(clientConnection);
 		((RexecDstoreServer)starter).setSocketTimeoutValue(getSocketTimeOutValue());
 		return starter;
 	}
-	
+
 	public IServerLauncherProperties getRemoteServerLauncherProperties() {
 		return _remoteServerLauncherProperties;
 	}
@@ -513,9 +512,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 			_remoteServerLauncherProperties = newRemoteServerLauncher;
 			setDirty(true);
-		}		
+		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
 	 */
@@ -524,10 +523,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	    if (isConnected()) {
 	        return;
 	    }
-	    
+
 		// set A_PLUGIN_PATH so that dstore picks up the property
 		setPluginPathProperty();
-		
+
 		// Fire comm event to signal state about to change
 		fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
 
@@ -541,8 +540,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 
 //		ISubSystem ss = getPrimarySubSystem();
 		getPrimarySubSystem();
-		IRemoteServerLauncher serverLauncher = getDStoreServerLauncher(); 
-		
+		IRemoteServerLauncher serverLauncher = getDStoreServerLauncher();
+
 		ServerLaunchType serverLauncherType = null;
 		boolean autoDetectSSL = true;
 		if (serverLauncher != null)
@@ -556,22 +555,22 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		}
 
 		//long t1 = System.currentTimeMillis();
-		SystemMessage msg = null;	
+		SystemMessage msg = null;
 		boolean launchFailed = false;
 
 		// get Socket Timeout Value Preference
 		int timeout = getSocketTimeOutValue();
-		
+
 		if (serverLauncherType == ServerLaunchType.REXEC_LITERAL)
-		{	
+		{
 			if (monitor != null)
 			{
 				String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_REXEC;
-				monitor.subTask(cmsg);	
+				monitor.subTask(cmsg);
 			}
-			
+
 			SystemSignonInformation info = getSignonInformation();
-			
+
 			// GC: - if failed to get a connection in another way, try
 			// starting the datastore server with rexec
 			IServerLauncher starter = getRemoteServerLauncher();
@@ -581,17 +580,17 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			else setSSLProperties(isUsingSSL());
 
 			int iServerPort = launchUsingRexec(info, serverLauncher, monitor);
-			
+
 			if(iServerPort != 0)
-			{				
+			{
 				clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
-				
+
 				if (monitor != null)
 				{
 					String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
 					monitor.subTask(cmsg);
 				}
-				
+
 				// connect to launched server
 				connectStatus = clientConnection.connect(null, timeout);
 				if (!connectStatus.isConnected() && connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) && autoDetectSSL)
@@ -630,11 +629,11 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			if (monitor != null)
 			{
 				String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_DAEMON;
-				monitor.subTask(cmsg);		
+				monitor.subTask(cmsg);
 			}
 
 			// DY:  getLocalUserId() may return null for Windows connections because
-			// we no longer prompt for userid / pwd.  But for other connections the userid 
+			// we no longer prompt for userid / pwd.  But for other connections the userid
 			// should be the same as the one stored in the password info (and for Windows
 			// this will be the temp remoteuser userid.
 			//launchStatus = clientConnection.launchServer(getLocalUserId(), getPassword(getPasswordInformation()));
@@ -643,21 +642,21 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			{
 				System.out.println("password info = null!"); //$NON-NLS-1$
 			}
-			
+
 			int daemonPort = 0;
 			if (serverLauncher != null)
 				daemonPort = serverLauncher.getDaemonPort();
-			
+
 			/* String daemonPortStr = getSubSystem().getVendorAttribute("Remote", "DAEMON_PORT");
 			if (daemonPortStr != null && daemonPortStr.length() > 0)
 			{
 				daemonPort = Integer.parseInt(daemonPortStr);
 			}*/
-			
+
 			// 205986]  FIRST TRY SSL, THEN NON-SECURE!
 			boolean usedSSL = true;
 			setSSLProperties(true);
-			
+
 			launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
 			if (!launchStatus.isConnected() && !clientConnection.isKnownStatus(launchStatus.getMessage()))
 			{
@@ -666,7 +665,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				{
 					List certs = launchStatus.getUntrustedCertificates();
 					if (certs != null && certs.size() > 0)
-					{	
+					{
 						ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
 						if (provider != null)
 						{
@@ -681,16 +680,16 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 							}
 						}
 					}
-					
+
 				}
-				
+
 				if (setSSLProperties(false))
 				{
 					usedSSL = false;
 					launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
 				}
 			}
-			
+
 			if (!launchStatus.isConnected())
 			{
 				String launchMsg = launchStatus.getMessage();
@@ -715,14 +714,14 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 							pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
 							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_INVALID;
 						}
-						
+
 						SystemMessage message = createSystemMessage(msgId,IStatus.ERROR, pmsg, pmsgDetails);
 						getCredentialsProvider().repairCredentials(message);
 						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
 						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
 						launchMsg = launchStatus.getMessage();
 					}
-					if (newCredentials != null) 
+					if (newCredentials != null)
 					{
 						info = newCredentials;
 					}
@@ -735,12 +734,12 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				else if (launchMsg != null && isPortOutOfRange(launchMsg))
 				{
 					launchFailed = true;
-					
+
 
 					int colonIndex = launchMsg.indexOf(':');
 					String portRange = launchMsg.substring(colonIndex + 1);
-					
-					String pmsg =NLS.bind(ConnectorServiceResources.MSG_PORT_OUT_RANGE, portRange);		
+
+					String pmsg =NLS.bind(ConnectorServiceResources.MSG_PORT_OUT_RANGE, portRange);
 					SystemMessage message = createSystemMessage(IConnectorServiceMessageIds.MSG_PORT_OUT_RANGE, IStatus.ERROR, pmsg);
 
 					ShowConnectMessage msgAction = new ShowConnectMessage(message);
@@ -766,17 +765,17 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				// connect to launched server
 				connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
 				Throwable conE = connectStatus.getException();
-				if (!connectStatus.isConnected() && 
+				if (!connectStatus.isConnected() &&
 						(connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) ||
-						 conE instanceof SSLException 
-						 )		
+						 conE instanceof SSLException
+						 )
 						)
 				{
 					if (conE instanceof SSLHandshakeException)
 					{
 						List certs = connectStatus.getUntrustedCertificates();
 						if (certs != null && certs.size() > 0)
-						{	
+						{
 							ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
 							if (provider != null)
 							{
@@ -791,7 +790,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 								}
 							}
 						}
-						
+
 					}
 					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 					if (!launchStatus.isConnected())
@@ -807,7 +806,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					}
 				}
 				if (!connectStatus.isConnected() && connectStatus.isSLLProblem())
-				{					
+				{
 					importCertsAndReconnect(connectStatus, monitor);
 					return;
 				}
@@ -823,7 +822,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			else
 			{
 				connectStatus = new ConnectionStatus(false);
-				
+
 				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
 				connectStatus.setMessage(cmsg);
 			}
@@ -832,7 +831,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 			if (monitor != null)
 			{
-				String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort()); 
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
 				monitor.subTask(cmsg);
 			}
 			// connection directly
@@ -868,7 +867,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			{
 				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_USING_SSL, getHostName());
 				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_USING_SSL, IStatus.INFO, cmsg);
-				
+
 				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_SSL);
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
@@ -880,8 +879,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			else if (!clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
 			{
 				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
-				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);			
-			
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
+
 				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
@@ -890,46 +889,46 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					throw new InterruptedException();
 				}
 			}
-	
+
 			DataStore dataStore = clientConnection.getDataStore();
 
 			_connectionStatusListener = new ConnectionStatusListener(dataStore.getStatus(), this);
 			dataStore.getDomainNotifier().addDomainListener(_connectionStatusListener);
-			
-		
-			
+
+
+
 			// DKM: dataStore needs a miners location
 			//		for now, I'll use dstore.miners as default location
-			//		(I've inserted the universal miner in it's minerFile.dat file)		
+			//		(I've inserted the universal miner in it's minerFile.dat file)
 
 			// DY:  defect 46811 The minerFile.dat does not exist in this directory which causes a
-			// java.io.FileNotFoundException to be printed to the console (not very 
+			// java.io.FileNotFoundException to be printed to the console (not very
 			// encouraging for the end user.)  So I'm setting it to the current directory (.)
 			// which should be where the code is run from
 			//dataStore.addMinersLocation("org.eclipse.dstore.miners");
-			
-			
+
+
 			StatusMonitor statusMonitor = StatusMonitorFactory.getInstance().getStatusMonitorFor(this, dataStore);
-			
+
 			if (launchStatus != null && launchStatus.isConnected())
 			{
 				//dataStore.showTicket(launchStatus.getTicket()); // send security token to server, this must be done first
 				DataElement ticket = dataStore.createTicket(launchStatus.getTicket());
 				dataStore.queryShowTicket(ticket);
-				//statusMonitor.waitForUpdate(ticketStatus);					
+				//statusMonitor.waitForUpdate(ticketStatus);
 			}
 			else
 			{
 				dataStore.showTicket(null);
 			}
-			
+
 	      //  if (dataStore.isDoSpirit()) dataStore.queryServerSpiritState();
 			StartSpiritThread thread = new StartSpiritThread(dataStore);
 			thread.start();
 
 			// Fire comm event to signal state changed
 			fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
-			
+
 			// is there a warning message?
 			String message = connectStatus.getMessage();
 			if (message != null)
@@ -938,7 +937,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				{
 					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING, getHostName());
 					String cmsgDetail = ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING_DETAILS;
-					
+
 					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CLIENT_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
 
 				}
@@ -946,19 +945,19 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				{
 					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING, getHostName());
 					String cmsgDetail = ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING_DETAILS;
-					
+
 					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_SERVER_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
 				}
-				
+
 				if (store.getBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER)){
 					DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, false);
-					Display.getDefault().syncExec(msgAction);			
+					Display.getDefault().syncExec(msgAction);
 				}
 			}
-			
+
 			// register the classloader for this plugin with the datastore
 			dataStore.registerLocalClassLoader(getClass().getClassLoader());
-	        
+
 			int serverVersion = getServerVersion();
 			if (serverVersion >= 8 || (serverVersion == 7 && getServerMinor() >= 1))
 			{
@@ -967,15 +966,15 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 
 				// this preference is set on the server side
 				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false", true); //$NON-NLS-1$  //$NON-NLS-2$
-				
+
 				if (serverVersion >= 8){ // keepalive preferences
 					boolean doKeepalive = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);
-					
+
 					int keepaliveResponseTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
 					if (keepaliveResponseTimeout == 0){ // use the default
 						keepaliveResponseTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
 					}
-					
+
 					int socketTimeout =  store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
 					if (socketTimeout == 0){ // use the default
 						socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
@@ -988,18 +987,18 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				}
 			}
 			else
-			{						
+			{
 				dataStore.addMinersLocation("."); //$NON-NLS-1$
 				// older servers initialized in one shot
 				dataStore.getSchema();
-		 
+
 		         // Initialzie the miners
 		         if (monitor != null)
 		         {
 		        	 String imsg = ConnectorServiceResources.MSG_INITIALIZING_SERVER;
 		            monitor.subTask(imsg);
 		         }
-		         DataElement initStatus = dataStore.initMiners();	         
+		         DataElement initStatus = dataStore.initMiners();
 		         statusMonitor.waitForUpdate(initStatus);
 			}
 			//long t2 = System.currentTimeMillis();
@@ -1013,10 +1012,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		    	if (launchStatus.isSLLProblem())
 				{
 					launchStatus.getException();
-					
+
 					List certs = launchStatus.getUntrustedCertificates();
 					if (certs.size() > 0)
-					{	
+					{
 						ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
 						if (provider != null)
 						{
@@ -1025,7 +1024,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 								internalConnect(monitor);
 								return;
 							}
-						}				
+						}
 					}
 					else
 					{
@@ -1033,9 +1032,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						String cmsgDetails = ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION_DETAILS;
 						msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_SSL_EXCEPTION, IStatus.ERROR, cmsg, cmsgDetails);
 					}
-				} 	
+				}
 		    }
-		    
+
 		    // if daemon launch failed (SSL or otherwise)
 			if (launchFailed && launchStatus != null)
 			{
@@ -1044,7 +1043,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				{
 					Throwable exception = launchStatus.getException();
 					String fmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, getHostName(), ""+serverLauncher.getDaemonPort()); //$NON-NLS-1$
-										
+
 					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, IStatus.ERROR, fmsg, exception);
 				}
 				else if (launchMsg != null && launchMsg.indexOf(IDataStoreConstants.AUTHENTICATION_FAILED) != -1)
@@ -1053,11 +1052,11 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				    {
 				        clearPassword(true, true);
 				    }
-				
+
 					// Display error message
 					String msgTxt = CommonMessages.MSG_COMM_AUTH_FAILED;
 					String msgDetails = NLS.bind(CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHostName());
-					
+
 					msg = createSystemMessage(ICommonMessageIds.MSG_COMM_AUTH_FAILED, IStatus.ERROR, msgTxt, msgDetails);
 
 					DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
@@ -1086,7 +1085,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						throw connectException;
 					}
 
-					// Try to connect again.  This is a recursive call, but will only 
+					// Try to connect again.  This is a recursive call, but will only
 					// call if the user presses OK on the password prompt dialog, otherwise
 					// it will continue and return
 					internalConnect(monitor);
@@ -1109,9 +1108,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 							msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
 							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_EXPIRED;
 						}
-					
+
 						SystemMessage message = createSystemMessage(msgId, IStatus.ERROR, msgTxt, msgDetails);
-						
+
 						getCredentialsProvider().repairCredentials(message);
 						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
 						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
@@ -1129,7 +1128,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 //						launchStatus = changePassword(clientConnection, getPasswordInformation(), serverLauncher, monitor, newPasswordInfo.newPassword);
 //						launchMsg = launchStatus.getMessage();
 //					}
-//					if (newPasswordInfo != null) 
+//					if (newPasswordInfo != null)
 //					{
 //						setPassword(getPasswordInformation().getUserid(), newPasswordInfo.newPassword, newPasswordInfo.savePassword);
 //					}
@@ -1140,27 +1139,27 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 //					}
 				}
 				else if (launchMsg != null)
-				{					
+				{
 					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED, getHostName(), clientConnection.getPort());
 					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED, IStatus.ERROR, msgTxt, launchMsg);
 				}
 			}
-			
+
 			// if connection failed for known reason
 			else if (connectStatus != null && !connectStatus.isConnected())
 			{
 				if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_SERVER_UPDATE))
 				{
-					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE, getHostName());	
+					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE, getHostName());
 					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE_DETAILS;
-					
+
 					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_UPDATE, IStatus.ERROR, msgTxt, msgDetails);
 				}
 				else if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_PROTOCOL))
 				{
-					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL, getHostName());	
+					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL, getHostName());
 					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL_DETAILS;
-					
+
 					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_PROTOCOL, IStatus.ERROR, msgTxt, msgDetails);
 				}
 				else
@@ -1173,7 +1172,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					}
 				}
 			}
-			
+
 			// if connect failed for unknown reason
 			else if (connectStatus == null)
 			{
@@ -1194,9 +1193,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 
 			clientConnection.disconnect();
 			clientConnection = null;
-			
+
 			// yantzi: artemis 6.0, check for invalid login (user ID / pwd) and reprompt for signon information
-			if (msg != null && 
+			if (msg != null &&
 					// tODO use ID or something instead of string
 					msg.getLevelOneText().startsWith(NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, getHostName())))
 			{
@@ -1204,7 +1203,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			    {
 			        clearPassword(true, true);
 			    }
-				
+
 				DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
 				Display.getDefault().syncExec(msgAction);
 
@@ -1231,39 +1230,39 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					throw connectException;
 				}
 
-				// Try to connect again.  This is a recursive call, but will only 
+				// Try to connect again.  This is a recursive call, but will only
 				// call if the user presses OK on the password prompt dialog, otherwise
 				// it will continue and return
 				internalConnect(monitor);
-				
+
 				// we are connected from recursive so continue
-				return; 
+				return;
 			}
 
 			throw new SystemMessageException(msg);
 		}
 	}
-	
+
 	protected boolean isPortOutOfRange(String message)
 	{
 		return message.indexOf(IDataStoreConstants.PORT_OUT_RANGE) != -1;
 	}
-	
+
 	protected boolean isPasswordExpired(String message)
 	{
 		return message.indexOf(IDataStoreConstants.PASSWORD_EXPIRED) != -1;
 	}
-	
+
 	protected boolean isNewPasswordInvalid(String message)
 	{
 		return message.indexOf(IDataStoreConstants.NEW_PASSWORD_INVALID) != -1;
 	}
-	
+
 	protected void importCertsAndReconnect(ConnectionStatus connectStatus, IProgressMonitor monitor) throws Exception
 	{
 		List certs = connectStatus.getUntrustedCertificates();
 		if (certs != null && certs.size() > 0)
-		{	
+		{
 			ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
 			if (provider != null)
 			{
@@ -1279,28 +1278,28 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			}
 		}
 	}
-	
+
 	protected int launchUsingRexec(SystemSignonInformation info, IServerLauncherProperties serverLauncherProperties, IProgressMonitor monitor) throws Exception
 	{
 		IServerLauncher starter = getRemoteServerLauncher();
 		starter.setSignonInformation(info);
 		starter.setServerLauncherProperties(serverLauncherProperties);
 
-		String serverPort = (String)starter.launch(monitor);	
+		String serverPort = (String)starter.launch(monitor);
 		if (monitor.isCanceled())
 		{
 			SystemMessage msg = createSystemMessage(ICommonMessageIds.MSG_OPERATION_CANCELLED, IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED);
 			throw new SystemMessageException(msg);
 		}
-		
+
 		int iServerPort = 0;
 		if (serverPort != null)
 		{
-			iServerPort = Integer.parseInt(serverPort);		
+			iServerPort = Integer.parseInt(serverPort);
 		}
 		return iServerPort;
 	}
-	
+
 	protected boolean setSSLProperties(boolean enable)
 	{
 		ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
@@ -1308,7 +1307,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 			String keyStore = provider.getKeyStorePath();
 			String password = provider.getKeyStorePassword();
-			
+
 			ISSLProperties properties = new ClientSSLProperties(enable, keyStore, password);
 			clientConnection.setSSLProperties(properties);
 			return true;
@@ -1316,15 +1315,15 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		else return false;
 	}
 
-	
-	
+
+
 	protected boolean promptForTrusting( X509Certificate cert)
 	{
 		return true;
 	}
-	
-	
-	/* 
+
+
+	/*
 	 * Launch a DataStore server using a daemon.   This method can be overridden if a custom implementation is required.
 	 * The default implementation uses the daemon client that is built into ClientConnection.
 	 */
@@ -1332,9 +1331,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	 {
 	     return launchServer(clientConnection, info, daemonPort, monitor, 0);
 	 }
-	 
-	 
-	/* 
+
+
+	/*
 	 * Launch a DataStore server using a daemon.   This method can be overridden if a custom implementation is required.
 	 * The default implementation uses the daemon client that is built into ClientConnection.
 	 */
@@ -1352,10 +1351,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	 {
 		 return null;
 	 }
-	 
+
 	 /**
 	  * Change the password on a remote system and optionally remain connected to it. Subclasses must implement this
-	  * method if they wish to 
+	  * method if they wish to
 	  * @param clientConnection The connection on which the password must be changed
 	  * @param info The old SystemSignonInformation, including the old password.
 	  * @param serverLauncherProperties The properties of the server launcher used to connect to the server. Use this object to get the type of serverlauncher, if your implementation varies depending on the type.
@@ -1371,7 +1370,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	 {
 		 return new ConnectionStatus(false, IDataStoreConstants.AUTHENTICATION_FAILED);
 	 }
-	 
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isConnected()
 	 */
@@ -1414,7 +1413,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		}
 	}
 
-	public boolean supportsRemoteServerLaunching() 
+	public boolean supportsRemoteServerLaunching()
 	{
 		return true;
 	}
@@ -1446,16 +1445,25 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		}
 		return result;
 	}
-	
 
+
+	/**
+	 * @since org.eclipse.rse.connectorservice.dstore 3.0
+	 */
 	protected SystemMessage createSystemMessage(String msgId, int severity, String msg) {
 		return createSystemMessage(msgId, severity, msg, (String)null);
 	}
-	
+
+	/**
+	 * @since org.eclipse.rse.connectorservice.dstore 3.0
+	 */
 	protected SystemMessage createSystemMessage(String msgId, int severity, String msg, Throwable e) {
 		return new SimpleSystemMessage(Activator.PLUGIN_ID, msgId, severity, msg, e);
 	}
-	
+
+	/**
+	 * @since org.eclipse.rse.connectorservice.dstore 3.0
+	 */
 	protected SystemMessage createSystemMessage(String msgId, int severity, String msg, String msgDetails) {
 		return new SimpleSystemMessage(Activator.PLUGIN_ID, msgId, severity, msg, msgDetails);
 	}

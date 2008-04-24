@@ -46,143 +46,44 @@ import org.eclipse.core.runtime.Path;
  * It will currenly use the mi implementation.
  *  
  */
-public class BreakpointTests extends TestCase {
+public class BreakpointTests extends AbstractDebugTest {
 
-	IWorkspace workspace;
-	IWorkspaceRoot root;
-	static ICProject testProject = null;
-	NullProgressMonitor monitor;
-	static ICDISession session = null;
-	static ICDITarget targets[] = null;
-
-	/**
-	 * Constructor for BreakpointTests
-	 * 
-	 * @param name
-	 */
-	public BreakpointTests(String name) {
-		super(name);
-		/***********************************************************************
-		 * The tests assume that they have a working workspace and workspace
-		 * root object to use to create projects/files in, so we need to get
-		 * them setup first.
-		 */
-		workspace = ResourcesPlugin.getWorkspace();
-		root = workspace.getRoot();
-		monitor = new NullProgressMonitor();
-		if (workspace == null)
-			fail("Workspace was not setup"); //$NON-NLS-1$
-		if (root == null)
-			fail("Workspace root was not setup"); //$NON-NLS-1$
-
-	}
-
-	/**
-	 * Sets up the test fixture.
-	 * 
-	 * Called before every test case method.
-	 * 
-	 * Example code test the packages in the project
-	 * "com.qnx.tools.ide.cdt.core"
-	 */
-	protected static void oneTimeSetUp() throws CoreException, InvocationTargetException, IOException {
-		ResourcesPlugin.getWorkspace().getDescription().setAutoBuilding(false);
-		/***********************************************************************
-		 * Create a new project and import the test source.
-		 */
-		Path imputFile = new Path("resources/debugTest.zip"); //$NON-NLS-1$
-		testProject = CProjectHelper.createCProjectWithImport("filetest", imputFile); //$NON-NLS-1$
-		if (testProject == null)
-			fail("Unable to create project"); //$NON-NLS-1$
-		/* Build the test project.. */
-
-		testProject.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
-	}
-
-	/**
-	 * Tears down the test fixture.
-	 * 
-	 * Called after every test case method.
-	 */
-	protected void tearDown() throws CoreException {
-		if (targets != null) {
-			try {
-				targets[0].terminate();
-				targets = null;
-			} catch (CDIException e) {
-			}
-		}
-		if (session != null) {
-			try {
-				session.terminate();
-				session = null;
-			} catch (CDIException e) {
-			}
-		}
-	}
-
-	/**
-	 * Tears down the test fixture.
-	 * 
-	 * Called after every test case method.
-	 */
-	protected static void oneTimeTearDown() throws CoreException {
-		if (targets != null) {
-			try {
-				targets[0].terminate();
-			} catch (CDIException e) {
-			}
-		}
-		if (session != null) {
-			try {
-				session.terminate();
-			} catch (CDIException e) {
-			}
-		}
-		CProjectHelper.delete(testProject);
-
-	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(BreakpointTests.class);
-		/***********************************************************************
-		 * Create a wrapper suite around the test suite we created above to
-		 * allow us to only do the general setup once for all the tests. This is
-		 * needed because the creation of the source and target projects takes a
-		 * long time and we really only need to do it once. We could do the
-		 * setup in the constructor, but we need to be able to remove everything
-		 * when we are done.
-		 */
-		TestSetup wrapper = new TestSetup(suite) {
-
-			protected void setUp() throws FileNotFoundException, IOException, InterruptedException, InvocationTargetException,
-					CoreException {
-				oneTimeSetUp();
-			}
-
-			protected void tearDown() throws FileNotFoundException, IOException, CoreException {
-				oneTimeTearDown();
-			}
-		};
-		return (wrapper);
+		return new DebugTestWrapper(BreakpointTests.class) {};
 	}
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		createDebugSession();
+		assertNotNull(currentTarget);
+		currentTarget.deleteAllBreakpoints();
+		pause();
+	}
+	@Override
+	protected void tearDown() throws Exception {
+		/* clean up the session */
+		targets[0].terminate();
+		int x = 0;
+		while ((!targets[0].isTerminated()) && (x < 30)) {
+			Thread.sleep(100);
+		}
+		if (!targets[0].isTerminated())
+			targets[0].terminate();
+		super.tearDown();
+	}
+
 
 	/***************************************************************************
 	 * A couple tests to make sure setting breakpoints on functions works as
 	 * expected.
 	 */
 	public void testFunctionBreak() throws CoreException, MIException, IOException, CDIException, InterruptedException {
-		ICDISession session;
-		ICDITarget cdiTarget;
+		
+		ICDITarget cdiTarget = currentTarget;
 		ICDIFunctionLocation location;
 		boolean caught = false;
-		session = CDebugHelper.createSession("main", testProject); //$NON-NLS-1$
-		assertNotNull(session);
-		ICDITarget[] targets = session.getTargets();
-		assertNotNull(targets);
-		assertTrue(targets.length > 0);
-		cdiTarget = targets[0];
-		assertNotNull(cdiTarget);
+
 
 		/***********************************************************************
 		 * Create a break point on a generic function
@@ -250,19 +151,10 @@ public class BreakpointTests extends TestCase {
 		ICDILocator locator = targets[0].getCurrentThread().getStackFrames()[0].getLocator();
 		assertTrue(locator.getLineNumber() == 6);
 		assertTrue(locator.getFunction().equals("func1")); //$NON-NLS-1$
-		assertTrue(locator.getFile().equals("main.c")); //$NON-NLS-1$
+		assertTrue(locator.getFile().endsWith("main.c")); //$NON-NLS-1$
 
-		/* clean up the session */
-		targets[0].terminate();
-		int x = 0;
-		while ((!targets[0].isTerminated()) && (x < 30)) {
-			Thread.sleep(100);
-		}
-		if (!targets[0].isTerminated())
-			targets[0].terminate();
-		session.terminate();
-		session = null;
-		targets = null;
+
+
 
 	}
 
@@ -271,16 +163,10 @@ public class BreakpointTests extends TestCase {
 	 * expected.
 	 */
 	public void testLineBreak() throws CoreException, MIException, IOException, CDIException, InterruptedException {
-		ICDITarget cdiTarget;
+		ICDITarget cdiTarget = currentTarget;
 		ICDILineLocation location;
 		boolean caught = false;
-		session = CDebugHelper.createSession("main", testProject);
-		assertNotNull(session);
-		ICDITarget[] targets = session.getTargets();
-		assertNotNull(targets);
-		assertTrue(targets.length > 0);
-		cdiTarget = targets[0];
-		assertNotNull(cdiTarget);
+
 
 		/***********************************************************************
 		 * Create a break point in a generic function
@@ -376,12 +262,7 @@ public class BreakpointTests extends TestCase {
 		ICDILocator locator = targets[0].getCurrentThread().getStackFrames()[0].getLocator();
 		assertTrue(locator.getLineNumber() == 7);
 		assertTrue(locator.getFunction().equals("func1"));
-		assertTrue(locator.getFile().equals("main.c"));
-
-		/* clean up the session */
-		session.terminate();
-		session = null;
-		targets = null;
+		assertTrue(locator.getFile().endsWith("main.c"));
 
 	}
 
@@ -389,17 +270,11 @@ public class BreakpointTests extends TestCase {
 	 * A couple tests to make sure getting breakpoints works as expected
 	 */
 	public void testGetBreak() throws CoreException, MIException, IOException, CDIException {
-		ICDITarget cdiTarget;
+		ICDITarget cdiTarget = currentTarget;
 		ICDIFunctionLocation location;
 		ICDIBreakpoint[] breakpoints;
 		ICDILocationBreakpoint curbreak;
-		session = CDebugHelper.createSession("main", testProject);
-		assertNotNull(session);
-		ICDITarget[] targets = session.getTargets();
-		assertNotNull(targets);
-		assertTrue(targets.length > 0);
-		cdiTarget = targets[0];
-		assertNotNull(cdiTarget);
+
 
 		/***********************************************************************
 		 * Make sure initially we don't have any breakpoints
@@ -466,9 +341,6 @@ public class BreakpointTests extends TestCase {
 
 		cdiTarget.deleteAllBreakpoints();
 
-		/* clean up the session */
-		session.terminate();
-		session = null;
 
 	}
 
@@ -476,19 +348,11 @@ public class BreakpointTests extends TestCase {
 	 * A couple tests to make sure deleting breakpoints works as expected
 	 */
 	public void testDelBreak() throws CoreException, MIException, IOException, CDIException {
-		ICDITarget cdiTarget;
+		ICDITarget cdiTarget = currentTarget;
 		ICDIFunctionLocation location;
 		ICDILocator savedLocation;
 		ICDIBreakpoint[] breakpoints, savedbreakpoints;
 		ICDILocationBreakpoint curbreak;
-
-		session = CDebugHelper.createSession("main", testProject);
-		assertNotNull(session);
-		ICDITarget[] targets = session.getTargets();
-		assertNotNull(targets);
-		assertTrue(targets.length > 0);
-		cdiTarget = targets[0];
-		assertNotNull(cdiTarget);
 
 		/* Make sure initially we don't have any breakpoints */
 		breakpoints = cdiTarget.getBreakpoints();
@@ -626,10 +490,6 @@ public class BreakpointTests extends TestCase {
 		breakpoints = cdiTarget.getBreakpoints();
 		assertTrue(breakpoints.length == 0);
 
-		/* clean up the session */
-		session.terminate();
-		session = null;
-
 	}
 
 	/***************************************************************************
@@ -638,13 +498,7 @@ public class BreakpointTests extends TestCase {
 	 */
 	public void testCondBreak() throws CoreException, MIException, IOException, CDIException, InterruptedException {
 		boolean caught = false;
-		session = CDebugHelper.createSession("main", testProject);
-		assertNotNull(session);
-		ICDITarget[] targets = session.getTargets();
-		assertNotNull(targets);
-		assertTrue(targets.length > 0);
-		ICDITarget cdiTarget = targets[0];
-		assertNotNull(cdiTarget);
+		ICDITarget cdiTarget = currentTarget;
 
 		/***********************************************************************
 		 * Create a break point on a generic function with an empty condition
@@ -714,22 +568,11 @@ public class BreakpointTests extends TestCase {
 		ICDILocator locator = frame.getLocator();
 		assertTrue(locator.getLineNumber() == 23);
 		assertTrue(locator.getFunction().equals("main"));
-		assertTrue(locator.getFile().equals("main.c"));
+		assertTrue(locator.getFile().endsWith("main.c"));
 		/* Get the value of a and and make sure it is 11 */
 		assertTrue(targets[0].evaluateExpressionToString(frame, "a"), targets[0].evaluateExpressionToString(frame, "a").equals("11"));
 
-		/* clean up the session */
-		session.terminate();
-		session = null;
-		targets = null;
-
 	}
 
-	void pause() {
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-	}
 
 }

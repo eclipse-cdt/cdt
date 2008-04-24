@@ -39,7 +39,7 @@ public class WinCEConnectorService extends BasicConnectorService implements IRap
   
   protected void internalConnect(IProgressMonitor monitor) throws Exception {
     fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
-    Rapi.CoInitializeEx(0, Rapi.COINIT_MULTITHREADED);
+    Rapi.initialize(Rapi.COINIT_MULTITHREADED);
     desktop = IRapiDesktop.getInstance();
     enumDevices = desktop.enumDevices();
     device = enumDevices.next();

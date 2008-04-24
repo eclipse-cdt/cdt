@@ -81,16 +81,16 @@ public final class Rapi {
   public static final int COINIT_SPEED_OVER_MEMORY = 0x8;
 
   /**
-	 * Initializes the library, the clients must call this method before any
-	 * other. The meaning of the <code>init</code> parameter and the returned
-	 * value is platform dependent. On Win32 platforms this method is directly
-	 * mapped to <code>CoInitializeEx</code>.
-	 *
-	 * @param init on Win32 it is either {@link #COINIT_APARTMENTTHREADED} or
-	 *            {@link #COINIT_MULTITHREADED}
-	 * @return on Win32 this is the returned value from
-	 *         <code>CoInitializeEx</code>
-	 */
+   * Initializes the library, the clients must call this method before any
+   * other. The meaning of the <code>init</code> parameter and the returned
+   * value is platform dependent. On Win32 platforms this method is directly
+   * mapped to <code>CoInitializeEx</code>.
+   *
+   * @param init on Win32 it is either {@link #COINIT_APARTMENTTHREADED} or
+   *            {@link #COINIT_MULTITHREADED}
+   * @return on Win32 this is the returned value from
+   *         <code>CoInitializeEx</code>
+   */
   public static final int initialize(int init) {
   	return CoInitializeEx(0, init);
   }
@@ -106,21 +106,21 @@ public final class Rapi {
   /**
    * Initializes the COM library.
    */
-  public static final native int CoInitializeEx(int pvReserved, int dwCoInit);
+  static final native int CoInitializeEx(int pvReserved, int dwCoInit);
 
   /**
    * Closes the COM library on the current thread.
    */
-  public static final native void CoUninitialize();
+  static final native void CoUninitialize();
 
   /**
-	 * Sets the first element of the specified array with the address of a newly
-	 * instantiated <code>IRAPIDesktop</code> native interface.
-	 * 
-	 * @param pIRAPIDesktop an array with one element
-	 * @return {@link #NOERROR} if the function succeeds; otherwise an error
-	 *         code
-	 */
+   * Sets the first element of the specified array with the address of a newly
+   * instantiated <code>IRAPIDesktop</code> native interface.
+   * 
+   * @param pIRAPIDesktop an array with one element
+   * @return {@link #NOERROR} if the function succeeds; otherwise an error
+   *         code
+   */
   final static native int CreateRapiDesktop(int[] pIRAPIDesktop);
 
 

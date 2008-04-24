@@ -37,7 +37,7 @@ public class RapiExamples {
 	 * Initialize the underlying natives.
 	 */
 	public void initRapi() {
-	  Rapi.CoInitializeEx(0, Rapi.COINIT_MULTITHREADED);
+	  Rapi.initialize(Rapi.COINIT_MULTITHREADED);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class RapiExamples {
 		if (session != null) {
 			session.release();
 		}
-		Rapi.CoUninitialize();
+		Rapi.uninitialize();
 	}
 
 	/**

@@ -31,7 +31,7 @@ public class RapiTestCase extends TestCase {
     enumDevices = null;
     device = null;
     session = null;
-    Rapi.CoInitializeEx(0, Rapi.COINIT_MULTITHREADED);
+    Rapi.initialize(Rapi.COINIT_MULTITHREADED);
   }
 
   protected void tearDown() throws Exception {
@@ -48,7 +48,7 @@ public class RapiTestCase extends TestCase {
     if (session != null) {
       session.release();
     }
-    Rapi.CoUninitialize();
+    Rapi.uninitialize();
   }
 
 }

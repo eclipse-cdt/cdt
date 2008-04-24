@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.core.runtime.CoreException;
 
@@ -105,36 +104,26 @@ public class IndexCPPSignatureUtil {
 			if (qualifyTemplateParameters && type instanceof ICPPTemplateParameter) {
 				List<IBinding> parents = new ArrayList<IBinding>();
 				IScope parentScope= ((ICPPTemplateParameter) type).getScope();
+				IBinding lastBinding= null;
 				while (parentScope != null) {
-					if (parentScope instanceof IIndexScope) {
-						parents.add(((IIndexScope)parentScope).getScopeBinding());
-					}
-					else {
-						final IName scopeName = parentScope.getScopeName();
-						if (scopeName instanceof IASTName) {
-							parents.add(((IASTName) scopeName).resolveBinding());
+					IBinding binding = getBindingForScope(parentScope);
+					if (binding != null) {
+						// template definitions are returned as binding for template scope and
+						// the class/function scope.
+						if (!binding.equals(lastBinding)) { 
+							parents.add(lastBinding= binding);
 						}
 					}
 					parentScope= parentScope.getParent();
-					while (parentScope instanceof ICPPTemplateScope) {
-						parentScope= parentScope.getParent();
-					}
 				}
-				//identical template parameters from different templates must have unique signatures
+				//identical template parameters from different template specializations must have unique signatures
 				Collections.reverse(parents);
 				for (IBinding binding : parents) {
 					if (binding != null) {
 						buffer.append(binding.getNameCharArray());
-						if (binding instanceof ICPPTemplateDefinition) {
-							if (binding instanceof ICPPSpecialization) {
-								ICPPSpecialization spec= (ICPPSpecialization) binding;
-								appendTemplateParams(spec.getArgumentMap().keyArray(), buffer);
-								appendTemplateParams(spec.getArgumentMap().valueArray(), buffer);
-							}
-							else {
-								ICPPTemplateDefinition def= (ICPPTemplateDefinition) binding;
-								appendTemplateParams(def.getTemplateParameters(), buffer);
-							}
+						if (binding instanceof ICPPSpecialization) {
+							ICPPSpecialization spec= (ICPPSpecialization) binding;
+							appendTemplateArgs(spec.getArgumentMap().valueArray(), buffer);
 						}
 						buffer.append("::"); //$NON-NLS-1$
 					}
@@ -147,8 +136,22 @@ public class IndexCPPSignatureUtil {
 		buffer.append('>');
 		return buffer.toString();
 	}
+
+	private static IBinding getBindingForScope(IScope parentScope) throws DOMException {
+		IBinding binding= null;
+		if (parentScope instanceof IIndexScope) {
+			binding= ((IIndexScope)parentScope).getScopeBinding();
+		}
+		else {
+			final IName scopeName = parentScope.getScopeName();
+			if (scopeName instanceof IASTName) {
+				binding= ((IASTName) scopeName).resolveBinding();
+			}
+		}
+		return binding;
+	}
 	
-	private static void appendTemplateParams(Object[] values, StringBuilder buffer) {
+	private static void appendTemplateArgs(Object[] values, StringBuilder buffer) {
 		boolean needcomma= false;
 		buffer.append('<');
 		for (final Object val : values) {

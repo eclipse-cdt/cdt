@@ -561,7 +561,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * Returns the ICProject associated with this CSourceViewerConfiguration, or null if
 	 * no ICProject could be determined
-	 * @return
+	 * @return the ICProject or <code>null</code>
 	 */
 	protected ICProject getCProject() {
 		ITextEditor editor= getEditor();
@@ -636,7 +636,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
 		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 		int stateMasks[]= new int[hoverDescs.length];
-		int stateMasksLength= 0;		
+		int stateMasksLength= 0;
 		for (CEditorTextHoverDescriptor hoverDesc : hoverDescs) {
 			if (hoverDesc.isEnabled()) {
 				int j= 0;
@@ -932,7 +932,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
     protected IInformationControlCreator getMacroExplorationControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
             public IInformationControl createInformationControl(Shell parent) {
-                return new CMacroExpansionExplorationControl(parent);   
+                return new CMacroExpansionExplorationControl(parent);
             }
         };
         return conrolCreator;

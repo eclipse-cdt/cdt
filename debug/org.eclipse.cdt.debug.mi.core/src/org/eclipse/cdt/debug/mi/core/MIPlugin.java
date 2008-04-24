@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
@@ -33,9 +34,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
@@ -63,6 +66,8 @@ public class MIPlugin extends Plugin {
 
 	// GDB command
 	private static final String GDB = "gdb"; //$NON-NLS-1$
+
+	private static final int INTERNAL_ERROR = 42;
 
 	/**
 	 * The singleton command factory manager.
@@ -589,5 +594,32 @@ public class MIPlugin extends Plugin {
 			fCommandFactoryManager = new CommandFactoryManager();
 		}
 		return fCommandFactoryManager;
+	}
+
+	/**
+	 * Log internal error
+	 * @param string - error message
+	 */
+	public static void log(String string) {
+		log(new Status( IStatus.ERROR, getUniqueIdentifier(), string));
+	}
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status
+	 *            status to log
+	 */
+	public static void log( IStatus status ) {
+		getDefault().getLog().log( status );
+	}
+
+	/**
+	 * Logs an internal error with the specified throwable
+	 * 
+	 * @param e
+	 *            the exception to be logged
+	 */
+	public static void log( Throwable e ) {
+		log( new Status( IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal Error", e ) ); //$NON-NLS-1$
 	}
 }

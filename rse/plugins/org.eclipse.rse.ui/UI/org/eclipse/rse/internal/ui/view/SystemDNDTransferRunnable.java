@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David McKnight   (IBM)        - [228587] [dnd] NPE From Refresh on Copy/Paste
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -662,7 +663,15 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				        doRefresh = true;
 				    }
 				    ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)src).getAdapter(ISystemViewElementAdapter.class);
-				    oldNames[t] = adapter.getAbsoluteName(src);
+				    if (adapter != null){
+				    	oldNames[t] = adapter.getAbsoluteName(src);
+				    }
+				    else if (src instanceof IResource){ // could be an eclipse resource
+				    	oldNames[t] = ((IResource)src).getFullPath().toOSString();
+				    }
+				    else {
+				    	oldNames[t] = ""; // source resource unknown //$NON-NLS-1$
+				    }
 				}
 				
 				if (_originatingViewer instanceof TreeViewer)

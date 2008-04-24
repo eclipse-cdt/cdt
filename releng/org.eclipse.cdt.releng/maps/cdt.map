@@ -30,6 +30,7 @@ feature@org.eclipse.cdt.platform=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cv
 feature@org.eclipse.cdt.gnu.build=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gnu.build-feature
 feature@org.eclipse.cdt.gnu.debug=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gnu.debug-feature
 feature@org.eclipse.cdt=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt-feature
+feature@org.eclipse.cdt-feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt-feature
 
 ! Platform specific
 fragment@org.eclipse.cdt.core.aix=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.aix

@@ -640,7 +640,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			SystemSignonInformation info = getSignonInformation();
 			if (info == null)
 			{
-				System.out.println("password info = null!"); //$NON-NLS-1$
+				SystemBasePlugin.logError("password info = null!"); //$NON-NLS-1$
 			}
 
 			int daemonPort = 0;
@@ -757,7 +757,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				if (monitor != null)
 				{
 					if (clientConnection == null){
-						System.out.println("client connection is null!");
+						SystemBasePlugin.logError("client connection is null!"); //$NON-NLS-1$
 					}
 					String pmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
 					monitor.subTask(pmsg);

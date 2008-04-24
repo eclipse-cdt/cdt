@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
@@ -44,17 +45,19 @@ public class ProcessList implements IProcessList {
 		Bundle bundle = Platform.getBundle(CCorePlugin.PLUGIN_ID);
 
 		try {
-			URL url = Platform.find(bundle, new Path("$os$/listtasks.exe")); //$NON-NLS-1$
-			url = Platform.resolve(url);
-			String path = url.getFile();
-			File file = new File(path);
-			if (file.exists()) {
-				command = file.getCanonicalPath();
-				if (command != null) {
-					p = ProcessFactory.getFactory().exec(command);
-					in = p.getInputStream();
-					InputStreamReader reader = new InputStreamReader(in);
-					return parseListTasks(reader);
+			URL url = FileLocator.find(bundle, new Path("$os$/listtasks.exe"), null); //$NON-NLS-1$
+			if (url != null) {
+				url = FileLocator.resolve(url);
+				String path = url.getFile();
+				File file = new File(path);
+				if (file.exists()) {
+					command = file.getCanonicalPath();
+					if (command != null) {
+						p = ProcessFactory.getFactory().exec(command);
+						in = p.getInputStream();
+						InputStreamReader reader = new InputStreamReader(in);
+						return parseListTasks(reader);
+					}
 				}
 			}
 		} catch (IOException e) {

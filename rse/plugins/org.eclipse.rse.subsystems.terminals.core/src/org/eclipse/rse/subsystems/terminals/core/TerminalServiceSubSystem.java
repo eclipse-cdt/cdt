@@ -6,12 +6,15 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.terminals.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -86,6 +89,30 @@ public final class TerminalServiceSubSystem extends SubSystem implements
         Display.getDefault().asyncExec(new Refresh(this));
     }
 
+    public void removeChild(String terminalTitle) {
+        if (children != null) {
+            TerminalElement element = getChild(terminalTitle);
+            if (element != null){
+                children.remove(element);
+                if (children == null) {
+                    getConnectorService().removeCommunicationsListener(this);
+                }
+                Display.getDefault().asyncExec(new Refresh(this));
+            }
+        }
+        
+    }
+    public TerminalElement getChild(String terminalTitle) {
+        if (children != null) {
+            Iterator iterator = children.iterator();
+            while (iterator.hasNext()){
+                TerminalElement element = (TerminalElement)iterator.next();
+                if (element.getName().equals(terminalTitle))
+                    return element;
+            }
+        }
+        return null;
+    }
     public Object[] getChildren() {
         if (children != null)
             return children.toArray();
@@ -107,21 +134,15 @@ public final class TerminalServiceSubSystem extends SubSystem implements
         case CommunicationsEvent.AFTER_DISCONNECT:
             // no longer listen
             getConnectorService().removeCommunicationsListener(this);
-            // if (_cmdShells != null) _cmdShells.clear();
-            // if (_envVars != null) _envVars.clear();
-            // _defaultShell = null;
-
             break;
 
         case CommunicationsEvent.BEFORE_DISCONNECT:
         case CommunicationsEvent.CONNECTION_ERROR:
-            // remove all shells
-            // saveShellState(_cmdShells);
-            // if (getShells().length > 0)
-            // {
-            // Display.getDefault().asyncExec(new CancelAllShells());
-            // // cancelAllShells();
-            // }
+            Display.getDefault().asyncExec(new Runnable(){
+                public void run() {
+                    cancelAllTerminals();
+                }
+            });
             break;
         default:
             break;
@@ -132,5 +153,38 @@ public final class TerminalServiceSubSystem extends SubSystem implements
     public boolean isPassiveCommunicationsListener() {
         return true;
     }
+    public void cancelAllTerminals() {
+        if (children == null || children.size() == 0)
+            return;
 
+        for (int i = children.size() - 1; i >= 0; i--) {
+            TerminalElement element = (TerminalElement) children.get(i);
+
+            try {
+                removeTerminalElement(element);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        children.clear();
+        Display.getDefault().asyncExec(new Refresh(this));
+
+    }
+
+    private void removeTerminalElement(TerminalElement element) {
+        element.getTerminalShell().exit();
+        ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+        registry.fireEvent(new SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, null));
+    }
+    public void initializeSubSystem(IProgressMonitor monitor) {
+        super.initializeSubSystem(monitor);
+        getConnectorService().addCommunicationsListener(this);
+    }
+
+    public void uninitializeSubSystem(IProgressMonitor monitor) {
+        getConnectorService().removeCommunicationsListener(this);
+        super.uninitializeSubSystem(monitor);
+    }
 }

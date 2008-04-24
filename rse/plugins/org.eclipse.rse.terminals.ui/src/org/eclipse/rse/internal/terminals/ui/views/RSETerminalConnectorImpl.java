@@ -6,6 +6,7 @@
  *
  * Contributors:
  * Anna Dushistova (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo (MontaVista)      - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -84,6 +85,10 @@ public class RSETerminalConnectorImpl extends TerminalConnectorImpl {
 
     public void setTerminalHostShell(ITerminalShell shell) {
         this.shell = shell;
+    }
+
+    public ITerminalShell getTerminalHostShell() {
+        return shell;
     }
 
 }

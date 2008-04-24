@@ -7,24 +7,28 @@
  * Contributors:
  * Yu-Fen Kuo (MontaVista)      - initial API and implementation
  * Anna Dushistova (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo (MontaVista)      - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  ********************************************************************************/
 package org.eclipse.rse.subsystems.terminals.core.elements;
 
 import org.eclipse.rse.core.subsystems.AbstractResource;
+import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
 
 public class TerminalElement extends AbstractResource {
     private String name;
-
-    public String getName() {
-        return name;
-    }
+    private ITerminalShell terminalShell;
 
     public TerminalElement(String name,
             ITerminalServiceSubSystem terminalServiceSubSystem) {
         super(terminalServiceSubSystem);
         this.name = name;
     }
+    
+    public String getName() {
+        return name;
+    }
+
 
     public String toString() {
         return getName();
@@ -32,13 +36,27 @@ public class TerminalElement extends AbstractResource {
 
     public boolean equals(Object obj) {
         if (obj instanceof TerminalElement) {
-            return name.equals(((TerminalElement) obj).getName());
+            if (obj == this)
+                return true;
+            return name.equals(((TerminalElement) obj).getName())
+                    && terminalShell == ((TerminalElement) obj)
+                            .getTerminalShell();
         }
         return super.equals(obj);
     }
 
     public int hashCode() {
-        return name.hashCode();
+        if (terminalShell != null)
+            return terminalShell.hashCode() + name.hashCode();
+        return name.hashCode() ;
+    }
+
+    public ITerminalShell getTerminalShell() {
+        return terminalShell;
+    }
+
+    public void setTerminalShell(ITerminalShell terminalShell) {
+        this.terminalShell = terminalShell;
     }
 
 }

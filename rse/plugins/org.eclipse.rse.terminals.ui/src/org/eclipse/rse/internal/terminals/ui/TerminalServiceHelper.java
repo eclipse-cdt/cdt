@@ -6,6 +6,7 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  ********************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui;
@@ -17,10 +18,15 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.services.terminals.ITerminalShell;
+import org.eclipse.rse.internal.terminals.ui.views.RSETerminalConnector;
+import org.eclipse.rse.internal.terminals.ui.views.TerminalViewTab;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 
 public class TerminalServiceHelper {
 
@@ -49,7 +55,8 @@ public class TerminalServiceHelper {
         ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
         ISubSystem[] subsystems = systemRegistry.getSubSystems(connection);
         for (int i = 0; i < subsystems.length; i++) {
-            if ("ssh.terminals".equals(subsystems[i].getSubSystemConfiguration().getId())) {
+            if ("ssh.terminals".equals(subsystems[i]
+                    .getSubSystemConfiguration().getId())) {
                 ITerminalServiceSubSystem subSystem = (ITerminalServiceSubSystem) subsystems[i];
                 return subSystem;
             }
@@ -82,10 +89,36 @@ public class TerminalServiceHelper {
     public static void removeTerminalElementFromHost(CTabItem item, IHost host) {
         ITerminalServiceSubSystem terminalServiceSubSystem = getTerminalSubSystem(host);
         if (terminalServiceSubSystem != null) {
-            TerminalElement element = new TerminalElement(item.getText(),
-                    terminalServiceSubSystem);
+            TerminalElement element = terminalServiceSubSystem.getChild(item.getText());
             terminalServiceSubSystem.removeChild(element);
         }
 
+    }
+
+    public static void updateTerminalShellForTerminalElement(CTabItem item) {
+        Object data = item.getData();
+        if (data instanceof IHost){
+            IHost host = (IHost) data;
+            ITerminalServiceSubSystem terminalServiceSubSystem = TerminalServiceHelper.getTerminalSubSystem(host);
+            TerminalElement element = terminalServiceSubSystem.getChild(item.getText());
+            if (element != null){
+                ITerminalShell terminalShell = getTerminalShellFromTab(item);
+                if (element.getTerminalShell() != terminalShell){
+                    element.setTerminalShell(terminalShell);
+                }
+            }
+        }
+    }
+    private static ITerminalShell getTerminalShellFromTab(CTabItem item) {
+        ITerminalShell terminalShell = null;
+        ITerminalViewControl terminalViewControl = (ITerminalViewControl) item
+                .getData(TerminalViewTab.DATA_KEY_CONTROL);
+        ITerminalConnector terminalConnector = terminalViewControl
+                .getTerminalConnector();
+        if (terminalConnector instanceof RSETerminalConnector) {
+            RSETerminalConnector rseTerminalConnector = (RSETerminalConnector) terminalConnector;
+            terminalShell = rseTerminalConnector.getTerminalHostShell();
+        }
+        return terminalShell;
     }
 }

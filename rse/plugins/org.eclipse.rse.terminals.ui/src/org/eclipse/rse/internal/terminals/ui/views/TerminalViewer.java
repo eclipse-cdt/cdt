@@ -21,6 +21,7 @@
  * Radoslav Gerganov(ProSyst)    - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  * Yu-Fen Kuo       (MontaVista) - Adapted from SystemCommandsViewPart
  * Anna Dushistova  (MontaVista) - Adapted from SystemCommandsViewPart
+ * Yu-Fen Kuo (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -32,9 +33,11 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -103,8 +106,12 @@ public class TerminalViewer extends ViewPart implements ISelectionListener,
     }
 
     public void systemResourceChanged(ISystemResourceChangeEvent event) {
-        // TODO Auto-generated method stub
-
+        if (event.getType() == ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED) {
+            Object source = event.getSource();
+            if (source instanceof TerminalElement) {
+                tabFolder.disposePageFor(((TerminalElement) source).getName());
+            }
+        }
     }
 
     public Shell getShell() {

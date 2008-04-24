@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  * Yu-Fen Kuo      (MontaVista)  - Adapted from CommandsViewWorkbook
  * Anna Dushistova (MontaVista)  - Adapted from CommandsViewWorkbook
+ * Yu-Fen Kuo      (MontaVista)  - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -23,8 +24,15 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.terminals.ui.TerminalServiceHelper;
+import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
+import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystem;
+import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -38,6 +46,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.actions.TerminalAction;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionClearAll;
@@ -203,7 +212,6 @@ public class TerminalViewTab extends Composite implements ITerminalListener,
                     ;
             }
             item.setData(DATA_KEY_CONTROL, terminalControl);
-
         }
         item.setControl(c);
         tabFolder.setSelection(item);
@@ -361,12 +369,50 @@ public class TerminalViewTab extends Composite implements ITerminalListener,
                 .getAdapter(ISystemViewElementAdapter.class);
         if (va != null) {
             updateWithUniqueTitle(va.getName(root), titem);
+            setTabImage(root, titem);
+        }
+    }
+    private void setTabImage(IAdaptable root, CTabItem titem) {
+        ISystemViewElementAdapter va = (ISystemViewElementAdapter) root
+                .getAdapter(ISystemViewElementAdapter.class);
+        if (va != null) {
+            if (root instanceof IHost){
+                ITerminalServiceSubSystem terminalServiceSubSystem = TerminalServiceHelper.getTerminalSubSystem((IHost)root);
+                TerminalElement element = terminalServiceSubSystem.getChild(titem.getText());
+                if (element != null){
+                    va =  (ISystemViewElementAdapter) element.getAdapter(ISystemViewElementAdapter.class);
+                    titem.setImage(va.getImageDescriptor(element).createImage());
+                    return;
+                }
+            }
+            
             titem.setImage(va.getImageDescriptor(root).createImage());
         }
     }
+    public void setState(final TerminalState state) {
+        if (state == TerminalState.CLOSED || state == TerminalState.CONNECTED){
+            Display.getDefault().asyncExec(new Runnable(){
+                public void run() {
+                    CTabItem item = tabFolder.getSelection();
+                    if (item != null && !item.isDisposed()){
+                        Object data = item.getData();
+                        if (data instanceof IHost){
+                            IHost host = (IHost)data;
+                            final ITerminalServiceSubSystem terminalServiceSubSystem = TerminalServiceHelper.getTerminalSubSystem(host);         
 
-    public void setState(TerminalState state) {
-        // terminalControl.setState(state);
+                            if (state == TerminalState.CONNECTED)
+                                TerminalServiceHelper.updateTerminalShellForTerminalElement(item);
+                            
+                            setTabImage(host, item);
+                            ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+                            registry.fireEvent(new SystemResourceChangeEvent(terminalServiceSubSystem,
+                                    ISystemResourceChangeEvents.EVENT_REFRESH, terminalServiceSubSystem));
+                        }
+                    }
+                }                   
+            });
+        }
+
     }
 
     public void setTerminalTitle(String title) {
@@ -386,12 +432,12 @@ public class TerminalViewTab extends Composite implements ITerminalListener,
 
     public void onTerminalConnect() {
         // TODO Auto-generated method stub
-
+        
     }
 
     public void onTerminalDisconnect() {
         // TODO Auto-generated method stub
-
+        
     }
 
     public void onTerminalFontChanged() {

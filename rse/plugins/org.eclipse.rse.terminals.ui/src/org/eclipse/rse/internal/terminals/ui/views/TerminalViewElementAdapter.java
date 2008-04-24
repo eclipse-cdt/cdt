@@ -27,6 +27,7 @@
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * Yu-Fen Kuo      (MontaVista)  - Adopted from SystemViewRemoteOutputAdapter
  * Anna Dushistova (MontaVista)  - Adopted from SystemViewRemoteOutputAdapter
+ * Yu-Fen Kuo      (MontaVista)  - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  *******************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.internal.terminals.ui.Activator;
 import org.eclipse.rse.internal.terminals.ui.actions.RemoveTerminalAction;
 import org.eclipse.rse.internal.terminals.ui.actions.ShowInTerminalViewAction;
@@ -101,9 +103,17 @@ public class TerminalViewElementAdapter extends AbstractSystemViewAdapter
     }
 
     public ImageDescriptor getImageDescriptor(Object element) {
-        // TODO different image for different state?
+        if (element instanceof TerminalElement){
+            TerminalElement terminalElement = (TerminalElement)element;
+            ITerminalShell terminalShell = terminalElement.getTerminalShell();
+            if (terminalShell != null){
+                if (terminalShell.isActive())
+                    return Activator.getDefault().getImageDescriptor(
+                            Activator.ICON_ID_TERMINAL_SUBSYSTEM_LIVE);
+            }
+        }
         return Activator.getDefault().getImageDescriptor(
-                Activator.ICON_ID_TERMINAL_SUBSYSTEM_LIVE);
+                Activator.ICON_ID_TERMINAL_SUBSYSTEM);
     }
 
     public Object getParent(Object element) {

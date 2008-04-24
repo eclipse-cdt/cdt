@@ -40,6 +40,12 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeListener {
 
+	private static final String P_COLUMN_ORDER_KEY_EXE = "columnOrderKeyEXE"; //$NON-NLS-1$
+	private static final String P_SORTED_COLUMN_INDEX_KEY_EXE = "sortedColumnIndexKeyEXE"; //$NON-NLS-1$
+	private static final String P_COLUMN_SORT_DIRECTION_KEY_EXE = "columnSortDirectionKeyEXE"; //$NON-NLS-1$
+	private static final String P_VISIBLE_COLUMNS_KEY_EXE = "visibleColumnsKeyEXE"; //$NON-NLS-1$
+
+	
 	/**
 	 * Handles dropping executable files into the view
 	 */
@@ -85,7 +91,6 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 		executablesView.getSite().setSelectionProvider(this);
 
 		createColumns();
-		initializeSorter();
 
 		setInput(ExecutablesManager.getExecutablesManager());
 
@@ -143,89 +148,20 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 
 	}
 
-	/**
-	 * Initialize column ordering and sorting
-	 */
-	private void initializeSorter() {
-		byte orderType = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_TYPE_EXE).byteValue();
-		switch (orderType) {
-		case ExecutablesView.NAME:
-			column_order[ExecutablesView.NAME] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_EXE).intValue();
-			column_order[ExecutablesView.PROJECT] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.PROJECT:
-			column_order[ExecutablesView.PROJECT] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_EXE).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.LOCATION:
-			column_order[ExecutablesView.LOCATION] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_EXE).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.PROJECT] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.SIZE:
-			column_order[ExecutablesView.SIZE] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_EXE).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.PROJECT] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.MODIFIED:
-			column_order[ExecutablesView.MODIFIED] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_EXE).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.PROJECT] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		default:
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.PROJECT] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-		}
-
-		ViewerComparator comparator = getViewerComparator(orderType);
-		setComparator(comparator);
-		if (orderType == ExecutablesView.NAME)
-			setColumnSorting(nameColumn, column_order[ExecutablesView.NAME]);
-		else if (orderType == ExecutablesView.PROJECT)
-			setColumnSorting(projectColumn, column_order[ExecutablesView.PROJECT]);
-		else if (orderType == ExecutablesView.LOCATION)
-			setColumnSorting(locationColumn, column_order[ExecutablesView.LOCATION]);
-		else if (orderType == ExecutablesView.SIZE)
-			setColumnSorting(projectColumn, column_order[ExecutablesView.SIZE]);
-		else if (orderType == ExecutablesView.MODIFIED)
-			setColumnSorting(locationColumn, column_order[ExecutablesView.MODIFIED]);
-	}
-
 	@Override
 	protected ViewerComparator getViewerComparator(int sortType) {
 		if (sortType == ExecutablesView.PROJECT) {
-			return new ExecutablesViewerComparator(sortType, column_order[ExecutablesView.PROJECT]) {
+			return new ExecutablesViewerComparator(sortType, column_sort_order[ExecutablesView.PROJECT]) {
 				@SuppressWarnings("unchecked") //$NON-NLS-1$
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					Executable entry1 = (Executable) e1;
 					Executable entry2 = (Executable) e2;
 					return getComparator().compare(entry1.getProject().getName(), entry2.getProject().getName())
-							* column_order[ExecutablesView.PROJECT];
+							* column_sort_order[ExecutablesView.PROJECT];
 				}
 			};
 		}
-		return new ExecutablesViewerComparator(sortType, column_order[sortType]);
+		return new ExecutablesViewerComparator(sortType, column_sort_order[sortType]);
 	}
 
 	/*
@@ -248,4 +184,29 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 		refreshJob.schedule();
 	}
 
+	@Override
+	protected String getColumnOrderKey() {
+		return P_COLUMN_ORDER_KEY_EXE;
+	}
+
+	@Override
+	protected String getSortedColumnIndexKey() {
+		return P_SORTED_COLUMN_INDEX_KEY_EXE;
+	}
+
+	@Override
+	protected String getSortedColumnDirectionKey() {
+		return P_COLUMN_SORT_DIRECTION_KEY_EXE;
+	}
+
+	@Override
+	protected String getVisibleColumnsKey() {
+		return P_VISIBLE_COLUMNS_KEY_EXE;
+	}
+
+	@Override
+	protected String getDefaultVisibleColumnsValue() {
+		// default visible columns
+		return "1,1,1,0,0,0"; //$NON-NLS-1$
+	}
 }

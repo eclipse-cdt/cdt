@@ -48,6 +48,12 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class SourceFilesViewer extends BaseViewer implements ISourceLookupParticipant {
 
+	private static final String P_COLUMN_ORDER_KEY_SF = "columnOrderKeySF"; //$NON-NLS-1$
+	private static final String P_SORTED_COLUMN_INDEX_KEY_SF = "sortedColumnIndexKeySF"; //$NON-NLS-1$
+	private static final String P_COLUMN_SORT_DIRECTION_KEY_SF = "columnSortDirectionKeySF"; //$NON-NLS-1$
+	private static final String P_VISIBLE_COLUMNS_KEY_SF = "visibleColumnsKeySF"; //$NON-NLS-1$
+
+
 	TreeColumn originalLocationColumn;
 	private Tree sourceFilesTree;
 
@@ -68,8 +74,6 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 				openSourceFile(event);
 			}
 		});
-
-		initializeSorter();
 
 		// We implement ISourceLookupParticipant so we can listen for changes to
 		// source lookup as this viewer shows both original and remapped
@@ -163,7 +167,7 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 
 	protected ViewerComparator getViewerComparator(int sortType) {
 		if (sortType == ExecutablesView.ORG_LOCATION) {
-			return new ExecutablesViewerComparator(sortType, column_order[ExecutablesView.ORG_LOCATION]) {
+			return new ExecutablesViewerComparator(sortType, column_sort_order[ExecutablesView.ORG_LOCATION]) {
 
 				@SuppressWarnings("unchecked") //$NON-NLS-1$
 				public int compare(Viewer viewer, Object e1, Object e2) {
@@ -173,75 +177,13 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 						Executable exe = (Executable) getInput();
 						String originalLocation1 = exe.getOriginalLocation(entry1);
 						String originalLocation2 = exe.getOriginalLocation(entry2);
-						return getComparator().compare(originalLocation1, originalLocation2) * column_order[ExecutablesView.ORG_LOCATION];
+						return getComparator().compare(originalLocation1, originalLocation2) * column_sort_order[ExecutablesView.ORG_LOCATION];
 					}
 					return super.compare(viewer, e1, e2);
 				}
 			};
 		} else
-			return new ExecutablesViewerComparator(sortType, column_order[sortType]);
-	}
-
-	private void initializeSorter() {
-		byte orderType = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_TYPE_SF).byteValue();
-		switch (orderType) {
-		case ExecutablesView.NAME:
-			column_order[ExecutablesView.NAME] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_SF).intValue();
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.ORG_LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.LOCATION:
-			column_order[ExecutablesView.LOCATION] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_SF).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.ORG_LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.ORG_LOCATION:
-			column_order[ExecutablesView.ORG_LOCATION] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_SF).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.SIZE:
-			column_order[ExecutablesView.SIZE] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_SF).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.ORG_LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		case ExecutablesView.MODIFIED:
-			column_order[ExecutablesView.MODIFIED] = getExecutablesView().getMemento().getInteger(ExecutablesView.P_ORDER_VALUE_SF).intValue();
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.ORG_LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-			break;
-		default:
-			column_order[ExecutablesView.MODIFIED] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.NAME] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.SIZE] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.ORG_LOCATION] = ExecutablesView.DESCENDING;
-			column_order[ExecutablesView.TYPE] = ExecutablesView.DESCENDING;
-		}
-
-		ViewerComparator comparator = getViewerComparator(orderType);
-		setComparator(comparator);
-		if (orderType == ExecutablesView.NAME)
-			setColumnSorting(nameColumn, column_order[ExecutablesView.NAME]);
-		else if (orderType == ExecutablesView.LOCATION)
-			setColumnSorting(locationColumn, column_order[ExecutablesView.LOCATION]);
-		else if (orderType == ExecutablesView.ORG_LOCATION)
-			setColumnSorting(originalLocationColumn, column_order[ExecutablesView.ORG_LOCATION]);
+			return new ExecutablesViewerComparator(sortType, column_sort_order[sortType]);
 	}
 
 	public void dispose() {
@@ -273,4 +215,29 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		refreshJob.schedule();
 	}
 
+	@Override
+	protected String getColumnOrderKey() {
+		return P_COLUMN_ORDER_KEY_SF;
+	}
+
+	@Override
+	protected String getSortedColumnIndexKey() {
+		return P_SORTED_COLUMN_INDEX_KEY_SF;
+	}
+
+	@Override
+	protected String getSortedColumnDirectionKey() {
+		return P_COLUMN_SORT_DIRECTION_KEY_SF;
+	}
+
+	@Override
+	protected String getVisibleColumnsKey() {
+		return P_VISIBLE_COLUMNS_KEY_SF;
+	}
+
+	@Override
+	protected String getDefaultVisibleColumnsValue() {
+		// default visible columns
+		return "1,1,0,0,0,0"; //$NON-NLS-1$
+	}
 }

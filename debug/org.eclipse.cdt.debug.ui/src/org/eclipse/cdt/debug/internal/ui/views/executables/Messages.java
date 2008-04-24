@@ -7,7 +7,6 @@ public class Messages extends NLS {
 	public static String ExecutablesContentProvider_FetchingExecutables;
 	public static String ExecutablesView_Columns;
 	public static String ExecutablesView_ConfigureColumns;
-	public static String ExecutablesView_DefaultColumns;
 	public static String ExecutablesView_ExeData;
 	public static String ExecutablesView_ExeLocation;
 	public static String ExecutablesView_ExeName;

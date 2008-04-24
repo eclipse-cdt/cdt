@@ -60,7 +60,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 				path = new File(path).getCanonicalPath();
 			} catch (IOException e1) {
 			}
-			if (!executableExists(path)) {
+			if (!ExecutablesManager.getExecutablesManager().executableExists(Path.fromOSString(path))) {
 				if (!checkProject) {
 					// See if the default project exists
 					String defaultProjectName = "Executables";
@@ -92,7 +92,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 							store = store.getChild(newProjectHandle.getName());
 							for (String deleteName : ignoreList) {
 								IFileStore projFile = store.getChild(deleteName);
-								projFile.delete(EFS.NONE, monitor);
+								projFile.delete(EFS.NONE, null);
 							}
 							exeProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, null, DEBUG_PROJECT_ID);
 						} catch (OperationCanceledException e) {
@@ -107,17 +107,11 @@ public class StandardExecutableImporter implements IExecutableImporter {
 				importExecutable(exeProject, path);
 			}
 			monitor.worked(1);
+			if (monitor.isCanceled()) {
+				break;
+			}
 		}
 		monitor.done();
-	}
-
-	private boolean executableExists(String path) {
-		Executable[] executables = ExecutablesManager.getExecutablesManager().getExecutables();
-		for (Executable executable : executables) {
-			if (executable.getPath().toOSString().equals(path))
-				return true;
-		}
-		return false;
 	}
 
 	private void importExecutable(IProject exeProject, String path) {

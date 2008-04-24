@@ -68,23 +68,16 @@ public class ExecutablesView extends ViewPart {
 	 * the list of visible columns.
 	 */
 
-	public static final String P_ORDER_TYPE_EXE = "orderTypeEXE"; //$NON-NLS-1$
-	public static final String P_ORDER_VALUE_EXE = "orderValueEXE"; //$NON-NLS-1$
-	public static final String P_ORDER_TYPE_SF = "orderTypeSF"; //$NON-NLS-1$
-	public static final String P_ORDER_VALUE_SF = "orderValueSF"; //$NON-NLS-1$
-	public static final String P_VISIBLE_COLUMNS = "visibleColumns"; //$NON-NLS-1$
-
 	/**
 	 * Constants for the columns.
 	 */
-
 	public final static int NAME = 0x0;
 	public final static int PROJECT = 0x1;
 	public final static int LOCATION = 0x2;
-	public final static int ORG_LOCATION = 0x3;
-	public final static int SIZE = 0x4;
-	public final static int MODIFIED = 0x5;
-	public final static int TYPE = 0x6;
+	public final static int SIZE = 0x3;
+	public final static int MODIFIED = 0x4;
+	public final static int TYPE = 0x5;
+	public final static int ORG_LOCATION = 0x6;
 
 	/**
 	 * Constants for the column sort order.
@@ -130,7 +123,6 @@ public class ExecutablesView extends ViewPart {
 	/**
 	 * Not all the columns are visible by default. Here are the ones that are.
 	 */
-	private String defaultVisibleColumns = Messages.ExecutablesView_DefaultColumns;
 	private TreeColumn[] allColumns = new TreeColumn[columnNames.length];
 
 	/**
@@ -261,6 +253,8 @@ public class ExecutablesView extends ViewPart {
 		allColumns[10] = sourceFilesViewer.modifiedColumn;
 		allColumns[11] = sourceFilesViewer.typeColumn;
 
+		readSettings();
+
 		createActions();
 
 		// When the selection changes in the executables list
@@ -279,13 +273,7 @@ public class ExecutablesView extends ViewPart {
 			}
 		});
 
-		// Initialize the list of visible columns
-		if (memento.getString(P_VISIBLE_COLUMNS).length() > 0) {
-			String[] visibleColumns = memento.getString(P_VISIBLE_COLUMNS).split(","); //$NON-NLS-1$
-			setVisibleColumns(visibleColumns);
-		} else {
-			setVisibleColumns(defaultVisibleColumns.split(",")); //$NON-NLS-1$
-		}
+		executablesViewer.packColumns();
 		sourceFilesViewer.packColumns();
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, EXECUTABLES_VIEW_CONTEXT);
@@ -296,14 +284,6 @@ public class ExecutablesView extends ViewPart {
 		for (int i = 0; i < columnNames.length; i++) {
 			makeColumnVisible(visibleNames.contains(columnNames[i]), allColumns[i]);
 		}
-
-		StringBuffer visibleColumns = new StringBuffer();
-		for (int i = 0; i < ids.length; i++) {
-			if (i > 0)
-				visibleColumns.append(","); //$NON-NLS-1$
-			visibleColumns.append(ids[i]);
-		}
-		memento.putString(P_VISIBLE_COLUMNS, visibleColumns.toString());
 	}
 
 	private void makeColumnVisible(boolean visible, TreeColumn column) {
@@ -423,52 +403,22 @@ public class ExecutablesView extends ViewPart {
 		else
 			this.memento = memento;
 		super.init(site, memento);
-		readSettings();
 	}
 
 	private Preferences getViewPreferences() {
 		return CDebugUIPlugin.getDefault().getPluginPreferences();
 	}
 
-	private void initializeMemento() {
-		memento.putInteger(P_ORDER_VALUE_EXE, DESCENDING);
-		memento.putInteger(P_ORDER_TYPE_EXE, NAME);
-		memento.putInteger(P_ORDER_VALUE_SF, DESCENDING);
-		memento.putInteger(P_ORDER_TYPE_SF, NAME);
-		memento.putString(P_VISIBLE_COLUMNS, defaultVisibleColumns);
-	}
-
 	private void readSettings() {
-		Preferences p = getViewPreferences();
-		if (p == null) {
-			initializeMemento();
-			return;
-		}
-		try {
-			int order = p.getInt(P_ORDER_VALUE_EXE);
-			memento.putInteger(P_ORDER_VALUE_EXE, order == 0 ? DESCENDING : order);
-			memento.putInteger(P_ORDER_TYPE_EXE, p.getInt(P_ORDER_TYPE_EXE));
-			order = p.getInt(P_ORDER_VALUE_SF);
-			memento.putInteger(P_ORDER_VALUE_SF, order == 0 ? DESCENDING : order);
-			memento.putInteger(P_ORDER_TYPE_SF, p.getInt(P_ORDER_TYPE_SF));
-			memento.putString(P_VISIBLE_COLUMNS, p.getString(P_VISIBLE_COLUMNS));
-		} catch (NumberFormatException e) {
-			memento.putInteger(P_ORDER_TYPE_EXE, NAME);
-			memento.putInteger(P_ORDER_VALUE_EXE, DESCENDING);
-			memento.putInteger(P_ORDER_TYPE_SF, NAME);
-			memento.putInteger(P_ORDER_VALUE_SF, DESCENDING);
-		}
+		Preferences prefs = getViewPreferences();
+		getExecutablesViewer().restoreColumnSettings(prefs);
+		getSourceFilesViewer().restoreColumnSettings(prefs);
 	}
 
 	private void writeSettings() {
-		Preferences preferences = getViewPreferences();
-		int order = memento.getInteger(P_ORDER_VALUE_EXE).intValue();
-		preferences.setValue(P_ORDER_VALUE_EXE, order == 0 ? DESCENDING : order);
-		preferences.setValue(P_ORDER_TYPE_EXE, memento.getInteger(P_ORDER_TYPE_EXE).intValue());
-		order = memento.getInteger(P_ORDER_VALUE_SF).intValue();
-		preferences.setValue(P_ORDER_VALUE_SF, order == 0 ? DESCENDING : order);
-		preferences.setValue(P_ORDER_TYPE_SF, memento.getInteger(P_ORDER_TYPE_SF).intValue());
-		preferences.setValue(P_VISIBLE_COLUMNS, memento.getString(P_VISIBLE_COLUMNS));
+		Preferences prefs = getViewPreferences();
+		getExecutablesViewer().saveColumnSettings(prefs);
+		getSourceFilesViewer().saveColumnSettings(prefs);
 	}
 
 	@Override
@@ -491,10 +441,6 @@ public class ExecutablesView extends ViewPart {
 	public void dispose() {
 		ExecutablesManager.getExecutablesManager().removeExecutablesChangeListener(executablesViewer);
 		super.dispose();
-	}
-
-	public IMemento getMemento() {
-		return memento;
 	}
 
 }

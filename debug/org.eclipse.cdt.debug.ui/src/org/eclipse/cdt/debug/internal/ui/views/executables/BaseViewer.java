@@ -11,12 +11,14 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
@@ -32,7 +34,7 @@ abstract class BaseViewer extends TreeViewer {
 	protected TreeColumn typeColumn;
 
 	private static final int NUM_COLUMNS = 7;
-	int column_order[] = new int[NUM_COLUMNS];
+	int column_sort_order[] = new int[NUM_COLUMNS];
 
 	private ExecutablesView executablesView;
 
@@ -45,12 +47,10 @@ abstract class BaseViewer extends TreeViewer {
 		}
 
 		public void widgetSelected(SelectionEvent e) {
-			column_order[selector] *= -1;
-			ViewerComparator comparator = getViewerComparator(selector);
-			setComparator(comparator);
-			executablesView.getMemento().putInteger(ExecutablesView.P_ORDER_VALUE_SF, column_order[selector]);
-			executablesView.getMemento().putInteger(ExecutablesView.P_ORDER_TYPE_SF, selector);
-			setColumnSorting((TreeColumn) e.getSource(), column_order[selector]);
+			setComparator(getViewerComparator(selector));
+			getTree().setSortColumn((TreeColumn) e.getSource());
+			getTree().setSortDirection(column_sort_order[selector] == ExecutablesView.ASCENDING ? SWT.UP : SWT.DOWN);
+			column_sort_order[selector]  *= -1;
 		}
 
 	}
@@ -58,6 +58,11 @@ abstract class BaseViewer extends TreeViewer {
 	public BaseViewer(ExecutablesView view, Composite parent, int style) {
 		super(parent, style);
 		executablesView = view;
+		
+		// default all columns sort order to ascending
+		for (int i=0; i<NUM_COLUMNS; i++) {
+			column_sort_order[i] = ExecutablesView.ASCENDING;
+		}
 	}
 
 	public ExecutablesView getExecutablesView() {
@@ -74,11 +79,90 @@ abstract class BaseViewer extends TreeViewer {
 		}
 	}
 
-	protected void setColumnSorting(TreeColumn column, int order) {
-		getTree().setSortColumn(column);
-		getTree().setSortDirection(order == ExecutablesView.ASCENDING ? SWT.UP : SWT.DOWN);
+	protected void saveColumnSettings(Preferences preferences) {
+		Tree tree = getTree();
+		
+		// save the column order
+		String columnOrder = ""; //$NON-NLS-1$
+		for (int index : tree.getColumnOrder()) {
+			columnOrder += ","; //$NON-NLS-1$
+			columnOrder += Integer.toString(index);
+		}
+		// trim the leading comma
+		columnOrder = columnOrder.substring(1);
+		preferences.setValue(getColumnOrderKey(), columnOrder);
+
+		// save which column was sorted and in which direction
+		TreeColumn sortedColumn = tree.getSortColumn();
+		for (int i=0; i<tree.getColumnCount(); i++) {
+			if (sortedColumn.equals(tree.getColumn(i))) {
+				preferences.setValue(getSortedColumnIndexKey(), i);
+				preferences.setValue(getSortedColumnDirectionKey(), tree.getSortDirection());
+				break;
+			}
+		}
+		
+		// save the visible state of each columns (1 is visible, 0 is not)
+		String visibleColumns = ""; //$NON-NLS-1$
+		for (int i=0; i<tree.getColumnCount(); i++) {
+			if (tree.getColumn(i).getWidth() > 0) {
+				visibleColumns += ",1"; //$NON-NLS-1$
+			} else {
+				visibleColumns += ",0"; //$NON-NLS-1$
+			}
+		}
+		// trim the leading comma
+		visibleColumns = visibleColumns.substring(1);
+		preferences.setValue(getVisibleColumnsKey(), visibleColumns);
 	}
+	
+	protected void restoreColumnSettings(Preferences preferences) {
+		Tree tree = getTree();
 
+		// restore the column order
+		String columnOrder = preferences.getString(getColumnOrderKey());
+		if (columnOrder.length() > 0) {
+			String[] columns = columnOrder.split(","); //$NON-NLS-1$
+			int[] columnNumbers = new int[columns.length];
+			for (int i=0; i<columns.length; i++) {
+				columnNumbers[i] = Integer.parseInt(columns[i]);
+			}
+			tree.setColumnOrder(columnNumbers);
+		}
+		
+		// restore the sorted column
+		int sortedColumnIndex = preferences.getInt(getSortedColumnIndexKey());
+		int sortedColumnDirection = preferences.getInt(getSortedColumnDirectionKey());
+		tree.setSortColumn(tree.getColumn(sortedColumnIndex));
+		tree.setSortDirection(sortedColumnDirection == 0 ? SWT.UP : sortedColumnDirection);
+
+		setComparator(getViewerComparator(sortedColumnIndex));
+
+		// remember the sort order for the column
+		column_sort_order[sortedColumnIndex] = sortedColumnDirection == SWT.UP ? ExecutablesView.ASCENDING : ExecutablesView.DESCENDING;
+		
+		// restore the visible state of each columns (1 is visible, 0 is not)
+		String visibleColumns = preferences.getString(getVisibleColumnsKey());
+		if (visibleColumns.length() <= 0) {
+			visibleColumns = getDefaultVisibleColumnsValue();
+		}
+		String[] columns = visibleColumns.split(","); //$NON-NLS-1$
+		for (int i=0; i<columns.length; i++) {
+			if (columns[i].equals("0")) {
+				tree.getColumn(i).setWidth(0);
+			}
+		}
+	}
+	
 	abstract protected ViewerComparator getViewerComparator(int sortType);
+	
+	abstract protected String getColumnOrderKey();
+	
+	abstract protected String getSortedColumnIndexKey();
+	
+	abstract protected String getSortedColumnDirectionKey();
+	
+	abstract protected String getVisibleColumnsKey();
 
+	abstract protected String getDefaultVisibleColumnsValue();
 }

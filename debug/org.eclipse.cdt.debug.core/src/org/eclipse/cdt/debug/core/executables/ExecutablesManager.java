@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -38,7 +39,8 @@ public class ExecutablesManager extends PlatformObject {
 	private List<IExecutableProvider> executableProviders = Collections.synchronizedList(new ArrayList<IExecutableProvider>());
 	private List<IExecutableImporter> executableImporters = Collections.synchronizedList(new ArrayList<IExecutableImporter>());
 	private boolean refreshNeeded = true;
-
+	private boolean tempDisableRefresh = false;
+	
 	private Job refreshJob = new Job("Get Executables") {
 
 		@Override
@@ -95,6 +97,10 @@ public class ExecutablesManager extends PlatformObject {
 	}
 
 	public IStatus refreshExecutables(IProgressMonitor monitor) {
+		if (tempDisableRefresh) {
+			return Status.OK_STATUS;
+		}
+
 		ArrayList<Executable> oldList = executables;
 		executables = new ArrayList<Executable>();
 		synchronized (executableProviders) {
@@ -139,13 +145,24 @@ public class ExecutablesManager extends PlatformObject {
 	}
 
 	public void importExecutables(String[] fileNames, IProgressMonitor monitor) {
-		synchronized (executableImporters) {
-			monitor.beginTask("Import Executables", executableImporters.size());
-			for (IExecutableImporter importer : executableImporters) {
-				importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
+		try {
+			synchronized (executableImporters) {
+				tempDisableRefresh = true;
+
+				monitor.beginTask("Import Executables", executableImporters.size());
+				for (IExecutableImporter importer : executableImporters) {
+					importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
+					if (monitor.isCanceled()) {
+						break;
+					}
+				}
 			}
-			monitor.done();
+		} finally {
+			tempDisableRefresh = false;
 		}
+		
+		refreshExecutables(monitor);
+		monitor.done();
 	}
 
 	public ISourceFileRemapping[] getSourceFileRemappings() {
@@ -167,6 +184,14 @@ public class ExecutablesManager extends PlatformObject {
 
 	public boolean refreshNeeded() {
 		return refreshNeeded;
+	}
+	
+	public boolean executableExists(IPath exePath) {
+		for (Executable executable : executables) {
+			if (executable.getPath().equals(exePath))
+				return true;
+		}
+		return false;
 	}
 
 }

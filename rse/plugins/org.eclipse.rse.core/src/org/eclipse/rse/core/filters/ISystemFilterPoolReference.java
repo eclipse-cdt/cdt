@@ -24,7 +24,6 @@ import org.eclipse.rse.core.references.IRSEPersistableReferencingObject;
  * level, while subsystems contain references to one or more pools. A pool can be referenced
  * by multiple connections. Pools don't go away until explicitly deleted by the user, regardless
  * of their reference count.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The allowable implementations are already present in the framework.
  */

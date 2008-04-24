@@ -31,7 +31,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * An IHost holds information identifying a remote system. It also logically contains
  * ISubSystem objects, although this containment is achievable programmatically versus via 
  * object oriented containment.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

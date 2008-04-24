@@ -28,7 +28,6 @@ import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
  *  than a string, and its up to each consumer to know what to do with it. Generally,
  *  a filter string edit pane is designed to prompt the user for the contents of the 
  *  string in a domain-friendly way.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The allowable implementations are already present in the framework.
  */

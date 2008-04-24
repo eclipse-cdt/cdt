@@ -25,7 +25,6 @@ import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
 /**
  * This interface represents a system filter pool, which is a means of
  * grouping filters to be referenced together.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The allowable implementations are already present in the framework.
  */

@@ -33,7 +33,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
  * filter related activity through a single point like this, we can ensure that
  * all changes are saved to disk, and events are fired properly.
  * 
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemFilterPoolManager extends IRSEPersistableContainer {

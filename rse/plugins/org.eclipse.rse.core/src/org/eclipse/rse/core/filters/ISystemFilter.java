@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - cleanup format and javadoc
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
@@ -26,13 +26,13 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**
  * A filter consists of filter strings and may be contained in a filter pool.
- * Filter pools are referenced by subsystems.
- * Subsystems are responsible for interpreting the filters. Filters, in and
- * of themselves, provide no interpretation of themselves when applied
- * to the resources managed by a subsystem.
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
- * The allowable implementations already present in the framwork.
+ * Filter pools are referenced by subsystems. Subsystems are responsible for
+ * interpreting the filters. Filters, in and of themselves, provide no
+ * interpretation of themselves when applied to the resources managed by a
+ * subsystem.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients. The
+ *              allowable implementations already present in the framework.
  */
 
 public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContainer, IRSEModelObject {
@@ -456,7 +456,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * If this filter can contain child filters this will return the list of
 	 * children.
 	 * </p>
-	 * 
+	 *
 	 * @return the value of the '<em>Nested Filters</em>' containment
 	 *         reference list.
 	 * @see org.eclipse.rse.core.filters.ISystemFilter#getParentFilter
@@ -488,7 +488,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Returns the value of the '<em><b>Strings</b></em>' containment
 	 * reference list.
-	 * 
+	 *
 	 * @return the value of the '<em>Strings</em>' containment reference
 	 *         list.
 	 * @since org.eclipse.rse.core 3.0

@@ -31,7 +31,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * This interface captures those common methods, and both 
  * SystemFilterReference and SystemFilterPoolReference
  * implement this interface and hence these methods.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The allowable implementations are already present in the framework.
  */

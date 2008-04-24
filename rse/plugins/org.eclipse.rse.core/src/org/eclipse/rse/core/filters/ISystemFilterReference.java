@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
@@ -23,11 +23,11 @@ import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**
- * Represents a shadow or reference to a system filter.
- * Such references are only transient, not savable to disk.
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
- * The allowable implementations are already present in the framework.
+ * Represents a shadow or reference to a system filter. Such references are only
+ * transient, not savable to disk.
+ *
+ * @noimplement This interface is not intended to be implemented by clients. The
+ *              allowable implementations are already present in the framework.
  */
 public interface ISystemFilterReference extends IRSEReferencingObject, ISystemFilterContainerReference, ISystemContainer {
 	/**

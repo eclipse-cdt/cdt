@@ -22,7 +22,6 @@ import org.eclipse.rse.core.model.IRSEPersistableContainer;
 /**
  * Filter containers are any objects that contain filters.
  * This includes filter pools and filters themselves.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The allowable implementations are already present in the framework.
  */

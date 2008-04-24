@@ -22,7 +22,6 @@ import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 /**
  * Represents a reference to a filter string.
  * Needed so the UI can show the same filter string multiple times.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The allowable implementations are already present in the framework.
  */

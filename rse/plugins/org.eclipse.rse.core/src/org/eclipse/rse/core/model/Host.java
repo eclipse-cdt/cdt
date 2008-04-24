@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Kevin Doyle (IBM) - [203365] Profile should not be saved as a result of file transfer
+ * David Dykstal (IBM) - [225911] Exception received after deleting a profile containing a connection
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -181,14 +182,16 @@ public class Host extends RSEModelObject implements IHost {
 	 * @see org.eclipse.rse.core.model.IHost#getSystemProfileName()
 	 */
 	public String getSystemProfileName() {
-		if (pool == null)
-			return null;
-		else {
+		String result = null;
+		if (_profile != null) {
+			result = _profile.getName();
+		} else if (pool != null) {
 			ISystemProfile profile = pool.getSystemProfile();
-			if (profile != null)
-				return profile.getName();
-			else return null;
+			if (profile != null) {
+				result =  profile.getName();
+			}
 		}
+		return result;
 	}
 
 	/**

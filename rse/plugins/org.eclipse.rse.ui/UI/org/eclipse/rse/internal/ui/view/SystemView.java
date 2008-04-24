@@ -51,6 +51,7 @@
  * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
  * David McKnight   (IBM)        - [224380] system view should only fire property sheet update event when in focus
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David Dykstal (IBM) - [225911] Exception received after deleting a profile containing a connection
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1951,40 +1952,49 @@ public class SystemView extends SafeTreeViewer
 				break;
 
 			case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
-				if (debug) logDebugMsg("SV event: EVENT_DELETE_MANY "); //$NON-NLS-1$
+				if (debug) {
+					logDebugMsg("SV event: EVENT_DELETE_MANY "); //$NON-NLS-1$
+				}
 				multiSource = _event.getMultiSource();
 				// are we a secondary perspective, and our input or parent of our input was deleted?
 				if (affectsInput(multiSource)) {
 					close();
 					return Status.OK_STATUS;
 				}
-				if (parent != null)
+				if (parent != null) {
 					parentItem = findItem(parent);
-				else {
+				} else {
 					// find first parentItem for source
-					if (multiSource != null && multiSource.length > 0){
+					if (multiSource != null && multiSource.length > 0) {
 						Widget sitem = findItem(multiSource[0]);
-						if (sitem instanceof TreeItem)
-						{
+						if (sitem instanceof TreeItem) {
 							parentItem = ((TreeItem)sitem).getParentItem();
-							if (parentItem == null)
-							{
+							if (parentItem == null) {
 								parentItem = ((TreeItem)sitem).getParent();
 							}
 						}
 					}						
 				}
-					
-				if (parentItem == null) return Status.OK_STATUS;
-				if ((parentItem instanceof Item) && !getExpanded((Item) parentItem))
+				if (parentItem == null) {
+					return Status.OK_STATUS;
+				}
+				if ((parentItem instanceof Item) && !getExpanded((Item) parentItem)) {
 					refresh(parent); // flush memory
-				else if (parentItem instanceof Tree) {
-					if (_originatingViewer != null) _originatingViewer.remove(multiSource);
+				} else if (parentItem instanceof Tree) {
+					if (_originatingViewer != null) {
+						_originatingViewer.remove(multiSource);
+					}
 				} else {
 					wasSelected = isSelectedOrChildSelected(multiSource);
-					if (wasSelected) clearSelection();
-					if (_originatingViewer != null) _originatingViewer.remove(multiSource);
-					if (wasSelected) setSelection(parent != null ? new StructuredSelection(parent) : null, true);
+					if (wasSelected) {
+						clearSelection();
+					}
+					if (_originatingViewer != null) {
+						_originatingViewer.remove(multiSource);
+					}
+					if (wasSelected) {
+						setSelection(parent != null ? new StructuredSelection(parent) : null, true);
+					}
 				}
 				break;
 			/* Now done below in systemRemoteResourceChanged
@@ -5704,12 +5714,7 @@ public class SystemView extends SafeTreeViewer
 		
 		ISystemViewElementAdapter adapter = getViewAdapter(parentObject);
 		ISystemViewElementAdapter targetAdapter = getViewAdapter(remoteObject);
-		
-		if (adapter == null)
-		{
-			System.out.println("adapter is null for "+parentObject);
-			return;
-		}
+		Assert.isNotNull(adapter, "adapter is null for " + parentObject); //$NON-NLS-1$
 		ISubSystem ss = adapter.getSubSystem(parentObject);
 		String parentName = adapter.getAbsoluteName(parentObject);
 		String remoteObjectName = targetAdapter.getAbsoluteName(remoteObject);

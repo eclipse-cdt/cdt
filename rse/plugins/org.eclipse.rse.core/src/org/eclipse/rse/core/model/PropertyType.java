@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - added javadoc, minor changes
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
@@ -19,11 +19,10 @@
 package org.eclipse.rse.core.model;
 
 /**
- * The standard implementation of {@link IPropertyType}.
+ * The standard implementation of {@link IPropertyType}. Use the static factory
+ * methods to return instances.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- * The constructors are private.
- * Use the static factory methods to return instances.
  */
 public class PropertyType implements IPropertyType {
 
@@ -39,7 +38,7 @@ public class PropertyType implements IPropertyType {
 	private PropertyType(int type) {
 		_type = type;
 	}
-	
+
 	/**
 	 * Returns an instance of boolean property type.
 	 * @return IPropertyType
@@ -47,7 +46,7 @@ public class PropertyType implements IPropertyType {
 	public static IPropertyType getBooleanPropertyType() {
 		return _booleanPropertyType;
 	}
-	
+
 	/**
 	 * Returns an instance of integer property type.
 	 * @return IPropertyType
@@ -66,7 +65,7 @@ public class PropertyType implements IPropertyType {
 
 	/**
 	 * Returns an instance of enum property type.
-	 * @param values String[] array of allowed enumerator values. 
+	 * @param values String[] array of allowed enumerator values.
 	 * @return IPropertyType
 	 */
 	public static IPropertyType getEnumPropertyType(String[] values) {

@@ -25,7 +25,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 /**
  * This interface is refers to a collection of any type of resources.  The resources
  * may be remote RSE resources, or local workspace resources. 
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * Extend {@link AbstractSystemResourceSet} instead.
  */

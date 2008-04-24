@@ -19,7 +19,6 @@ package org.eclipse.rse.core.model;
 
 /**
  * This interface represents a message we wish to display as child node in the tree view.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
@@ -23,9 +23,11 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 
 /**
  * An interface used to drive properties into a subsystem during host creation.
+ * 
  * @noimplement This is an internal interface for use in the framework.
- * Potential clients should extend one of the implementations
- * or implement one of the extensions.
+ *              Potential clients should extend one of the implementations or
+ *              implement one of the extensions.
+ * @since org.eclipse.rse.core 3.0
  */
 public interface ISubSystemConfigurator {
 
@@ -33,7 +35,7 @@ public interface ISubSystemConfigurator {
 	 * Return the subsystem configuration associated with these properties.
 	 */
 	public ISubSystemConfiguration getSubSystemConfiguration();
-	
+
 	/**
 	 * Apply the values herein to a subsystem.
 	 * @param ss the subystem to be affected.

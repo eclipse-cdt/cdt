@@ -25,8 +25,6 @@ package org.eclipse.rse.core.model;
  * An example of this is the SytemFilterPoolManager, which is itself not persisted, but
  * has this interface since it can be reconstructed from its ordering and exists
  * in the parent chain from SystemFilterPool to SystemProfile.
- * @noextend This interface is not intended to be extended by clients.
- * The standard extensions are included in the framework. 
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework. 
  */

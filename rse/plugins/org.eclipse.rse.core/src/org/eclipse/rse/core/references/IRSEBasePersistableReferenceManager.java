@@ -48,8 +48,6 @@ package org.eclipse.rse.core.references;
  * and restore methods. If using MOF, and the containment of the manager class is modelled in
  * your own containing class, this will happen automatically when you use mof to save
  * your containing class instance.
- * @noextend This interface is not intended to be extended by clients.
- * The standard extensions are included in the framework.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

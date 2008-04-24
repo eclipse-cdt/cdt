@@ -19,7 +19,6 @@ package org.eclipse.rse.core.model;
 
 /**
  * Property types are used to type instances of {@link IProperty}.  
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * Use {@link PropertyType} directly.
  */

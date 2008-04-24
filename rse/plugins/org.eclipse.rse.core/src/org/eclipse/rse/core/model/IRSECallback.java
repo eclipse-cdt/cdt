@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Implement this class to create callbacks.
- * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRSECallback {
 

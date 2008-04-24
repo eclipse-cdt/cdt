@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
@@ -18,23 +18,24 @@
 package org.eclipse.rse.core.model;
 
 /**
- * Constants for pre-defined subsystem factory categories.
- * Use these in calls to {@link org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
- * @noextend This interface is not intended to be extended by clients.
+ * Constants for predefined subsystem factory categories. Use these in calls to
+ * {@link org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
- * This is a constant interface. The individual items should be referenced directly.
+ *              This is a constant interface. The individual items should be
+ *              referenced directly.
  */
 public interface ISubSystemConfigurationCategories {
 	/**
-	 * Job subsystems 
+	 * Job subsystems
 	 */
 	public static final String SUBSYSTEM_CATEGORY_JOBS = "jobs"; //$NON-NLS-1$
 	/**
-	 * File subsystems 
+	 * File subsystems
 	 */
 	public static final String SUBSYSTEM_CATEGORY_FILES = "files"; //$NON-NLS-1$
 	/**
-	 * Command subsystems 
+	 * Command subsystems
 	 */
 	public static final String SUBSYSTEM_CATEGORY_CMDS = "commands"; //$NON-NLS-1$
 

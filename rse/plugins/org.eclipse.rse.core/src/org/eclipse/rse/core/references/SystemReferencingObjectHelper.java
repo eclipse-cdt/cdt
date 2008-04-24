@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
@@ -20,11 +20,14 @@ package org.eclipse.rse.core.references;
 
 
 /**
- * The class should be used by subclasses of {@link SystemReferencingObject} by instantiating it and delegating to it.
- * @noextend This class is not intended to be subclassed by clients.
- * The standard extensions are included in the framework.
- * @noinstantiate This class is not intended to be instantiated by clients.
- * The standard instances are created by the framework.
+ * The class should be used by subclasses of {@link SystemReferencingObject} by
+ * instantiating it and delegating to it.
+ * 
+ * @noextend This class is not intended to be subclassed by clients. The
+ *           standard extensions are included in the framework.
+ * @noinstantiate This class is not intended to be instantiated by clients. The
+ *                standard instances are created by the framework.
+ * @since org.eclipse.rse.core 3.0
  */
 public class SystemReferencingObjectHelper {
 
@@ -33,7 +36,7 @@ public class SystemReferencingObjectHelper {
 
 	/**
 	 * Default constructor.
-	 * @param caller the reference that this object is helping. 
+	 * @param caller the reference that this object is helping.
 	 */
 	public SystemReferencingObjectHelper(IRSEBaseReferencingObject caller) {
 		super();

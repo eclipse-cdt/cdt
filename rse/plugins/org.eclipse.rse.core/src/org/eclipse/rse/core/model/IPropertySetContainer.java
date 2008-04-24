@@ -22,7 +22,6 @@ package org.eclipse.rse.core.model;
  * A property set container is capable of containing property sets. This interface allows for the
  * addition, retrieval, and deletion of property sets from the container. A property set may have only
  * one container.
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

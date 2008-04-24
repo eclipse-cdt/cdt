@@ -25,8 +25,6 @@ package org.eclipse.rse.core.references;
  * <p>
  * These references are not persistent. Persistent references are managed
  * by the subtype IRSEPersistableReferencedObject.
- * @noextend This interface is not intended to be extended by clients.
- * The standard extensions are included in the framework.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

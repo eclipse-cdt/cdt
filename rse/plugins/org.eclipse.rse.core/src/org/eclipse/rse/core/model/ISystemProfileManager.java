@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IStatus;
  * processing is not desired. If events are necessary then the system registry
  * should be used.
  * 
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

@@ -19,8 +19,6 @@ package org.eclipse.rse.core.references;
 
 /**
  * Interface that any master object that is referenced must implement.
- * @noextend This interface is not intended to be extended by clients.
- * The standard extensions are included in the framework.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

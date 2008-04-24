@@ -19,8 +19,6 @@ package org.eclipse.rse.core.references;
 /**
  * This is an object that can have shadow (reference) objects, which simply
  * point to this object, and a copy of this object's unique name or key (for storing on disk).
- * @noextend This interface is not intended to be extended by clients.
- * The standard extensions are included in the framework.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

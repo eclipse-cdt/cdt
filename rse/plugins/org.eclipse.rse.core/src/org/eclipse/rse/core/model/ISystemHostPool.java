@@ -30,7 +30,6 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
  * that integrity of the host list is maintained even if multiple threads call
  * multiple methods in this interface concurrently.
  * </p>
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

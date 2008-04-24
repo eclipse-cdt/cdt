@@ -38,7 +38,6 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
  * definitions to RSE. When made inactive, it those definition are no longer 
  * available for use.
  * <p>
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

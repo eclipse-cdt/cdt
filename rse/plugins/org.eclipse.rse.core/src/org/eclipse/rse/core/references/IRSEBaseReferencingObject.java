@@ -24,8 +24,6 @@ package org.eclipse.rse.core.references;
  * real object.
  * <p>
  * This interface captures the simple set of methods such a shadow must implement.
- * @noextend This interface is not intended to be extended by clients.
- * The standard extensions are included in the framework.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
  */

@@ -16,7 +16,6 @@ package org.eclipse.rse.core;
  * org.eclipse.rse.core
  *
  * @since org.eclipse.rse.core 3.0
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement this interface is not intended to be implemented by clients
  */
 public interface IRSECoreStatusCodes {

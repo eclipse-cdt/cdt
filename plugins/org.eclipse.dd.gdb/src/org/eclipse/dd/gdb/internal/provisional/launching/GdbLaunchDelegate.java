@@ -12,9 +12,7 @@ package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -30,12 +28,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
-import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
-import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
-import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -44,7 +38,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
@@ -175,29 +168,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
-        }
-        // Create a memory retrieval and register it with session 
-        try {
-            launch.getDsfExecutor().submit( new Callable<Object>() {
-                public Object call() throws CoreException {
-                    DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), launch.getSession().getId());
-                    GDBControl gdbControl = tracker.getService(GDBControl.class);
-                    if (gdbControl != null) {
-                        IMemoryBlockRetrieval memRetrieval = new DsfMemoryBlockRetrieval(
-                            GDB_DEBUG_MODEL_ID, config, launch.getSession());
-                        launch.getSession().registerModelAdapter(IMemoryBlockRetrieval.class, memRetrieval);
-                        ((DsfMemoryBlockRetrieval) memRetrieval).initialize((IMemoryDMContext)gdbControl.getControlDMContext());
-                    }
-                    tracker.dispose();
-                    return null;
-                }
-            }).get();
-        } catch (InterruptedException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
-        } catch (ExecutionException e) {
-            throw (CoreException)e.getCause();
-        } catch (RejectedExecutionException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }
 	}
 

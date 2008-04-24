@@ -75,35 +75,6 @@ public class ShutdownSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
             shutdownService(MIRegisters.class, requestMonitor);
         }
-// TODO: As Pawel about the necessity of this step
-// Not clear on the purpose of this step since the next one does it also
-// (stopTrackingBreakpoints() is called as part of the shutdown method)
-// Besides, the run control is already gone so removing breakpoints from
-// the back-end is bound to fail...
-//    }, new Step() {
-//        @Override
-//        public void execute(final RequestMonitor requestMonitor) {
-//            MIBreakpointsManager bpm = fTracker.getService(MIBreakpointsManager.class);
-//            GDBControl commandControl = fTracker.getService(GDBControl.class);
-//            if (bpm != null && commandControl != null) {
-//            	bpm.stopTrackingBreakpoints(
-//                    commandControl.getGDBDMContext(), 
-//                    new RequestMonitor(getExecutor(), requestMonitor) {
-//                        @Override
-//                        protected void handleCompleted() {
-//                            // If un-installing breakpoints fails, log the error but continue shutting down.
-//                            if (!isSuccess) {
-//                                DsfGdbPlugin.getDefault().getLog().log(getStatus());
-//                            }
-//                            requestMonitor.done();
-//                        }
-//                    });
-//            } else {
-//                requestMonitor.setStatus(new Status(IStatus.ERROR, DsfGdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
-//                    "Needed services not found.", null)); //$NON-NLS-1$
-//                requestMonitor.done();
-//            }
-//        }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {

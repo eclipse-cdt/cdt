@@ -29,6 +29,8 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -40,6 +42,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.ITerminate;
 
@@ -55,7 +58,8 @@ public class GdbLaunch extends Launch
     private DsfServicesTracker fTracker;
     private boolean fInitialized = false;
     private boolean fShutDown = false;
-    
+
+    private DsfMemoryBlockRetrieval fMemRetrieval;
     
     public GdbLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
         super(launchConfiguration, mode, locator);
@@ -74,7 +78,6 @@ public class GdbLaunch extends Launch
     public void initializeControl()
         throws CoreException
     {
-        
         Runnable initRunnable = new DsfRunnable() { 
             public void run() {
                 fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
@@ -92,6 +95,28 @@ public class GdbLaunch extends Launch
             new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
         } catch (ExecutionException e) {
             new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
+        }
+
+        // Create a memory retrieval and register it with the session 
+        try {
+            fExecutor.submit( new Callable<Object>() {
+                public Object call() throws CoreException {
+                    GDBControl gdbControl = fTracker.getService(GDBControl.class);
+                    if (gdbControl != null) {
+                        fMemRetrieval = new DsfMemoryBlockRetrieval(
+                                GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
+                        fSession.registerModelAdapter(IMemoryBlockRetrieval.class, fMemRetrieval);
+                        fMemRetrieval.initialize((IMemoryDMContext) gdbControl.getControlDMContext());
+                    }
+                    return null;
+                }
+            }).get();
+        } catch (InterruptedException e) {
+            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
+        } catch (ExecutionException e) {
+            throw (CoreException)e.getCause();
+        } catch (RejectedExecutionException e) {
+            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }
     }
 
@@ -208,6 +233,10 @@ public class GdbLaunch extends Launch
                     fTracker.dispose();
                     fTracker = null;
                     DsfSession.endSession(fSession);
+                    
+                    // DsfMemoryBlockRetrieval.saveMemoryBlocks();
+                    fMemRetrieval.saveMemoryBlocks();
+                    
                     // endSession takes a full dispatch to distribute the 
                     // session-ended event, finish step only after the dispatch.
                     fExecutor.shutdown();

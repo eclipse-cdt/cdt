@@ -40,7 +40,6 @@ import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServices;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.dd.dsf.service.DsfSession.SessionEndedListener;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -74,7 +73,7 @@ import org.w3c.dom.NodeList;
  * code will still be functional after some trivial adjustments.
  * 
  */
-public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBlockRetrievalExtension, SessionEndedListener
+public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBlockRetrievalExtension
 {
 	private final String           fModelId;
 	private final DsfSession       fSession;
@@ -164,9 +163,6 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
         fWordSize     = 1;    // Get this from the launch configuration
         fSupportsValueModification = true;          // Get this from the launch configuration
         fSupportBaseAddressModification = false;    // Get this from the launch configuration
-
-		// So we are notified on exit and can save the memory blocks
-        DsfSession.addSessionEndedListener(this);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -266,17 +262,11 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	    }
 	}
 
-    /**
-     * On session exit, save the memory blocks in the launch configuration
-     */
-    public void sessionEnded(DsfSession session) {
-        DsfSession.removeSessionEndedListener(this);
-        saveMemoryBlocks();        
-    }
-
     // FIXME: Each retrieval overwrites the previous one :-(
-    // FIXME: Racing condition :-( - synchronize on launch config enough?
-    // FIXME: Make it a Job?
+    // In theory, we should make this a Job since we are writing to the file system.
+	// However, this would cause the same racing condition as Bug228308. Finally, we
+	// don't care too much about the UI responsiveness since we are in the process of
+	// shutting down :-)
 	public void saveMemoryBlocks() {
 		try {
 			ILaunchConfigurationWorkingCopy wc = fLaunchConfig.getWorkingCopy();

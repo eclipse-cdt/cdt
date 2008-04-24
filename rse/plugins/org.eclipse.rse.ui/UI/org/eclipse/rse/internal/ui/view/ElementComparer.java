@@ -14,14 +14,13 @@
  * Kevin Doyle (IBM) - [195537] Move ElementComparer From SystemView to Separate File
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [225911] Exception received after deleting a profile containing a connection
+ * David Dykstal (IBM) - [228774] [regression] AssertionFailedException when connecting to New Connection
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IElementComparer;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
@@ -54,18 +53,22 @@ public class ElementComparer implements IElementComparer {
 		 * Therefore, if there is no absolute name, play it safe and return the adapter's hashCode which won't ever change.
 		 */
 		int result = 0;
-		ISystemViewElementAdapter ident = null;
-		if (element instanceof IAdaptable) {
-			ident = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);
-			Assert.isNotNull(ident, NLS.bind("no adapter found for element {0}", element)); //$NON-NLS-1$
-			String absName = ident.getAbsoluteName(element);
-			if (absName != null) {
-				result = absName.hashCode();
+		if (element != null) {
+			if (element instanceof IAdaptable) {
+				ISystemViewElementAdapter ident = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);
+				if (ident != null) {
+					String absName = ident.getAbsoluteName(element);
+					if (absName != null) {
+						result = absName.hashCode();
+					} else {
+						result = ident.hashCode();
+					}
+				} else {
+					result = element.hashCode();
+				}
 			} else {
-				result = ident.hashCode();
+				result = element.hashCode();
 			}
-		} else if (element != null) {
-			result = element.hashCode();
 		}
 		return result;
 	}

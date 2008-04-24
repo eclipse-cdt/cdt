@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.model;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -73,6 +72,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		// handle all kinds of resources
@@ -153,10 +153,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	protected ICElement getSourceElementAtOffset(int offset) throws CModelException {
 		if (this instanceof ISourceReference && this instanceof Parent) {
 			ICElement[] children = ((Parent)this).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				ICElement aChild = children[i];
+			for (ICElement aChild : children) {
 				if (aChild instanceof ISourceReference) {
-					ISourceReference child = (ISourceReference) children[i];
+					ISourceReference child = (ISourceReference) aChild;
 					ISourceRange range = child.getSourceRange();
 					int startPos = range.getStartPos();
 					int endPos = startPos + range.getLength();
@@ -184,12 +183,11 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 */
 	protected ICElement[] getSourceElementsAtOffset(int offset) throws CModelException {
 		if (this instanceof ISourceReference && this instanceof Parent) {
-			ArrayList list = new ArrayList();
+			ArrayList<Object> list = new ArrayList<Object>();
 			ICElement[] children = ((Parent)this).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				ICElement aChild = children[i];
+			for (ICElement aChild : children) {
 				if (aChild instanceof ISourceReference) {
-					ISourceReference child = (ISourceReference) children[i];
+					ISourceReference child = (ISourceReference) aChild;
 					ISourceRange range = child.getSourceRange();
 					int startPos = range.getStartPos();
 					int endPos = startPos + range.getLength();
@@ -412,7 +410,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * if successful, or false if an error is encountered while determining
 	 * the structure of this element.
 	 */
-	protected abstract void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException;
+	protected abstract void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) throws CModelException;
 
 	/**
 	 * Open a <code>IOpenable</code> that is known to be closed (no check for
@@ -422,16 +420,16 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		CModelManager manager = CModelManager.getDefault();
 		boolean hadTemporaryCache = manager.hasTemporaryCache();
 		try {
-			HashMap newElements = manager.getTemporaryCache();
+			Map<ICElement, CElementInfo> newElements = manager.getTemporaryCache();
 			generateInfos(info, newElements, pm);
 			if (info == null) {
-				info = (CElementInfo)newElements.get(this);
+				info = newElements.get(this);
 			}
 			if (info == null) { // a source ref element could not be opened
 				// close any buffer that was opened for the openable parent
-				Iterator iterator = newElements.keySet().iterator();
+				Iterator<ICElement> iterator = newElements.keySet().iterator();
 				while (iterator.hasNext()) {
-					ICElement element = (ICElement)iterator.next();
+					ICElement element = iterator.next();
 					if (element instanceof Openable) {
 						((Openable)element).closeBuffer();
 					}

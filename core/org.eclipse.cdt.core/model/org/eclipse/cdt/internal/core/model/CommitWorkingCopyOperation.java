@@ -147,14 +147,12 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 
             worked(1);
 
-            if (deltaBuilder != null) {
-                // build the deltas
-                deltaBuilder.buildDeltas();
+            // build the deltas
+            deltaBuilder.buildDeltas();
 
-                // add the deltas to the list of deltas created during this operation
-                if (deltaBuilder.delta != null) {
-                    addDelta(deltaBuilder.delta);
-                }
+            // add the deltas to the list of deltas created during this operation
+            if (deltaBuilder.delta != null) {
+            	addDelta(deltaBuilder.delta);
             }
             worked(1);
 		} finally {	

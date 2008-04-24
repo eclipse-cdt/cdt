@@ -73,8 +73,8 @@ public class BinaryRunner {
 				ICElement[] children = container.getChildren();
 				if (children.length > 0) {
 					cdelta.added((ICElement)container);
-					for (int i = 0; i < children.length; i++) {
-						cdelta.added(children[i]);
+					for (ICElement element : children) {
+						cdelta.added(element);
 					}
 				}
 			}
@@ -200,7 +200,7 @@ public class BinaryRunner {
 			String name = proxy.getName();
 			IContentType contentType = CCorePlugin.getContentType(project, name);
 			if (contentType != null && textContentType != null) {
-				if (contentType != null && contentType.isKindOf(textContentType)) {
+				if (contentType.isKindOf(textContentType)) {
 					return true;
 				} else if (textContentType.isAssociatedWith(name)) {
 					return true;
@@ -219,7 +219,7 @@ public class BinaryRunner {
 						CModelManager factory = CModelManager.getDefault();
 						IBinaryFile bin = factory.createBinaryFile(file);
 						if (bin != null) {
-							// Create the file will add it to the {Archive,Binary}Containery.
+							// Create the file will add it to the {Archive,Binary}Container.
 							factory.create(file, bin, cproject);
 						}
 						return true;

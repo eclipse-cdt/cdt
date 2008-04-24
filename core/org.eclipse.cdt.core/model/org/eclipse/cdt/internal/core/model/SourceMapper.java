@@ -34,7 +34,7 @@ public class SourceMapper {
 	
 	public ITranslationUnit findTranslationUnit(IParent container, String filename) {
 		try {
-			List list = container.getChildrenOfType(ICElement.C_UNIT);
+			List<?> list = container.getChildrenOfType(ICElement.C_UNIT);
 			for (int i = 0; i < list.size(); i++) {
 				Object o = list.get(i);
 				if (o instanceof ITranslationUnit) {

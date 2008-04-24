@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.model;
 
 /**
   * The Element Info of a Working Copy.
-  * @deprecated Use {@link TranslationUnitInfo} directly
+  * @deprecated Use the extended class directly
   */
 @Deprecated
 public class WorkingCopyInfo extends TranslationUnitInfo {

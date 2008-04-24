@@ -50,7 +50,7 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	public ICProject[] getCProjects() throws CModelException {
-		List list = getChildrenOfType(C_PROJECT);
+		List<?> list = getChildrenOfType(C_PROJECT);
 		ICProject[] array= new ICProject[list.size()];
 		list.toArray(array);
 		return array;
@@ -92,10 +92,9 @@ public class CModel extends Openable implements ICModel {
 	public ICProject findCProject(IProject project) {
 		try {
 			ICProject[] projects = getOldCProjectsList();
-			for (int i = 0, length = projects.length; i < length; i++) {
-				ICProject javaProject = projects[i];
-				if (project.equals(javaProject.getProject())) {
-					return javaProject;
+			for (ICProject cProject : projects) {
+				if (project.equals(cProject.getProject())) {
+					return cProject;
 				}
 			}
 		} catch (CModelException e) {
@@ -188,7 +187,7 @@ public class CModel extends Openable implements ICModel {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
@@ -214,8 +213,7 @@ public class CModel extends Openable implements ICModel {
 		// determine my children
 		IWorkspaceRoot root = (IWorkspaceRoot)getResource();
 		IProject[] projects = root.getProjects();
-		for (int i = 0, max = projects.length; i < max; i++) {
-			IProject project = projects[i];
+		for (IProject project : projects) {
 			if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
 				ICProject cproject = new CProject(this, project);
 				info.addChild(cproject);

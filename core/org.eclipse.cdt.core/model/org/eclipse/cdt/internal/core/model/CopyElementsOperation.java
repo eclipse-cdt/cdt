@@ -170,7 +170,7 @@ public class CopyElementsOperation extends MultiOperation {
 
 		if (isInTUOperation) {
 			CreateElementInTUOperation inTUop = (CreateElementInTUOperation)op;
-			ICElement sibling = (ICElement) fInsertBeforeElements.get(element);
+			ICElement sibling = fInsertBeforeElements.get(element);
 			if (sibling != null) {
 				(inTUop).setRelativePosition(sibling, CreateElementInTUOperation.INSERT_BEFORE);
 			} else if (isRename()) {
@@ -200,8 +200,7 @@ public class CopyElementsOperation extends MultiOperation {
 	private ICElement resolveRenameAnchor(ICElement element) throws CModelException {
 		IParent parent = (IParent) element.getParent();
 		ICElement[] children = parent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			ICElement child = children[i];
+		for (ICElement child : children) {
 			if (child.equals(element)) {
 				return child;
 			}
@@ -256,18 +255,19 @@ public class CopyElementsOperation extends MultiOperation {
 	protected void verify(ICElement element) throws CModelException {
 		if (element == null || !element.exists())
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
+		else {
+			if (element.getElementType() < ICElement.C_UNIT)
+				error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
 
-		if (element.getElementType() < ICElement.C_UNIT)
-			error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
+			if (element.isReadOnly())
+				error(ICModelStatusConstants.READ_ONLY, element);
 
-		if (element.isReadOnly())
-			error(ICModelStatusConstants.READ_ONLY, element);
-
-		ICElement dest = getDestinationParent(element);
-		verifyDestination(element, dest);
-		verifySibling(element, dest);
-		if (fRenamingsList != null) {
-			verifyRenaming(element);
+			ICElement dest = getDestinationParent(element);
+			verifyDestination(element, dest);
+			verifySibling(element, dest);
+			if (fRenamingsList != null) {
+				verifyRenaming(element);
+			}
 		}
 	}
 }

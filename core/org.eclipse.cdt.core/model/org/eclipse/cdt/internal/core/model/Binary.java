@@ -198,6 +198,7 @@ public class Binary extends Openable implements IBinary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IBinaryObject.class.equals(adapter)) {
@@ -257,7 +258,7 @@ public class Binary extends Openable implements IBinary {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
 		throws CModelException {
 		return computeChildren(info, underlyingResource);
 	}
@@ -265,7 +266,7 @@ public class Binary extends Openable implements IBinary {
 	boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
 		boolean ok = false;
 		if (isObject() || isExecutable() || isSharedLib()) {
-			Map hash = new HashMap();
+			Map<IPath, BinaryModule> hash = new HashMap<IPath, BinaryModule>();
 			IBinaryObject obj = getBinaryObject();
 			if (obj != null) {
 				// First check if we can get the list of source
@@ -276,14 +277,14 @@ public class Binary extends Openable implements IBinary {
 						!addSourceFiles(info, obj, hash))
 				{
 					ISymbol[] symbols = obj.getSymbols();
-					for (int i = 0; i < symbols.length; i++) {
-						switch (symbols[i].getType()) {
+					for (ISymbol symbol : symbols) {
+						switch (symbol.getType()) {
 							case ISymbol.FUNCTION :
-								addFunction(info, symbols[i], hash);
+								addFunction(info, symbol, hash);
 							break;
 
 							case ISymbol.VARIABLE :
-								addVariable(info, symbols[i], hash);
+								addVariable(info, symbol, hash);
 							break;
 						}
 					}
@@ -295,7 +296,7 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	private boolean addSourceFiles(OpenableInfo info, IBinaryObject obj,
-			Map hash) throws CModelException {
+			Map<IPath, BinaryModule> hash) throws CModelException {
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
 
@@ -305,18 +306,7 @@ public class Binary extends Openable implements IBinary {
 
 		String[] sourceFiles = symbolreader.getSourceFiles();
 		if (sourceFiles != null && sourceFiles.length > 0) {
-			for (int i = 0; i < sourceFiles.length; i++) {
-				String filename = sourceFiles[i];
-
-				// Sometimes the path in the symbolics will have a different
-				// case than the actual file system path. Even if the file
-				// system is not case sensitive this will confuse the Path
-				// class.
-				// So make sure the path is canonical, otherwise breakpoints
-				// won't be resolved, etc..
-				// Also check for relative path names and attempt to resolve
-				// them relative to the executable.
-
+			for (String filename : sourceFiles) {
 				if (filename.startsWith(".")) { //$NON-NLS-1$
 					filename = obj.getPath().removeLastSegments(1).append(filename).toOSString();
 				}
@@ -341,9 +331,9 @@ public class Binary extends Openable implements IBinary {
 				.getWorkspace().getRoot()
 						.findFilesForLocation(new Path(filename));
 
-				for (int j = 0; j < filesInWP.length; j++) {
-					if (filesInWP[j].isAccessible()) {
-						wkspFile = filesInWP[j];
+				for (IFile element : filesInWP) {
+					if (element.isAccessible()) {
+						wkspFile = element;
 						break;
 					}
 				}
@@ -362,14 +352,14 @@ public class Binary extends Openable implements IBinary {
 		return false;
 	}
 	
-	private void addFunction(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
+	private void addFunction(OpenableInfo info, ISymbol symbol, Map<IPath, BinaryModule> hash) throws CModelException {
 		IPath filename= symbol.getFilename();
 		BinaryFunction function = null;
 
 		if (filename != null && !filename.isEmpty()) {
 			BinaryModule module = null;
 			if (hash.containsKey(filename)) {
-				module = (BinaryModule)hash.get(filename);
+				module = hash.get(filename);
 			} else {
 				// A special container we do not want the file to be parse.
 				module = new BinaryModule(this, filename);
@@ -392,13 +382,13 @@ public class Binary extends Openable implements IBinary {
 		//		}
 	}
 
-	private void addVariable(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
+	private void addVariable(OpenableInfo info, ISymbol symbol, Map<IPath, BinaryModule> hash) throws CModelException {
 		IPath filename= symbol.getFilename();
 		BinaryVariable variable = null;
 		if (filename != null && !filename.isEmpty()) {
 			BinaryModule module = null;
 			if (hash.containsKey(filename)) {
-				module = (BinaryModule)hash.get(filename);
+				module = hash.get(filename);
 			} else {
 				module = new BinaryModule(this, filename);
 				hash.put(filename, module);

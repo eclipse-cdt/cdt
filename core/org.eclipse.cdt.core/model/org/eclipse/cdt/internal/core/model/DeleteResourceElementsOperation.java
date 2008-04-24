@@ -39,7 +39,7 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	}
 
 	/**
-	 * @see MultiOperation. This method delegate to <code>deleteResource</code> or
+	 * @see MultiOperation This method delegate to <code>deleteResource</code> or
 	 * <code>deletePackageFragment</code> depending on the type of <code>element</code>.
 	 */
 	@Override

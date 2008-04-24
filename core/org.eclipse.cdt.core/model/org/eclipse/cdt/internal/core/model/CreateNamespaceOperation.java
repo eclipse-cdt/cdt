@@ -39,7 +39,7 @@ public class CreateNamespaceOperation extends CreateElementInTUOperation {
 	}
 
 	/**
-	 * @see CreateElementInCUOperation#generateResultHandle
+	 * @see CreateElementInTUOperation#generateResultHandle
 	 */
 	@Override
 	protected ICElement generateResultHandle() {
@@ -47,7 +47,7 @@ public class CreateNamespaceOperation extends CreateElementInTUOperation {
 	}
 
 	/**
-	 * @see CreateElementInCUOperation#getMainTaskName
+	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
 	public String getMainTaskName(){

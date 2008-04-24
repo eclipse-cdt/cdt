@@ -54,7 +54,7 @@ public class CContainer extends Openable implements ICContainer {
 	 * @see ICContainer#getBinaries()
 	 */
 	public IBinary[] getBinaries() throws CModelException {
-		List list = getChildrenOfType(C_BINARY);
+		List<?> list = getChildrenOfType(C_BINARY);
 		IBinary[] array = new IBinary[list.size()];
 		list.toArray(array);
 		return array;
@@ -82,7 +82,7 @@ public class CContainer extends Openable implements ICContainer {
 	 * @see ICContainer#getArchives()
 	 */
 	public IArchive[] getArchives() throws CModelException {
-		List list = getChildrenOfType(C_ARCHIVE);
+		List<?> list = getChildrenOfType(C_ARCHIVE);
 		IArchive[] array = new IArchive[list.size()];
 		list.toArray(array);
 		return array;
@@ -108,7 +108,7 @@ public class CContainer extends Openable implements ICContainer {
 	 * @see ICContainer#getTranslationUnits()
 	 */
 	public ITranslationUnit[] getTranslationUnits() throws CModelException {
-		List list = getChildrenOfType(C_UNIT);
+		List<?> list = getChildrenOfType(C_UNIT);
 		ITranslationUnit[] array = new ITranslationUnit[list.size()];
 		list.toArray(array);
 		return array;
@@ -135,7 +135,7 @@ public class CContainer extends Openable implements ICContainer {
 	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainers()
 	 */
 	public ICContainer[] getCContainers() throws CModelException {
-		List list = getChildrenOfType(C_CCONTAINER);
+		List<?> list = getChildrenOfType(C_CCONTAINER);
 		ICContainer[] array = new ICContainer[list.size()];
 		list.toArray(array);
 		return array;
@@ -174,7 +174,7 @@ public class CContainer extends Openable implements ICContainer {
 	 * @see Openable
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
 			throws CModelException {
 		boolean validInfo = false;
 		try {
@@ -203,7 +203,7 @@ public class CContainer extends Openable implements ICContainer {
 	}
 
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
-		ArrayList vChildren = new ArrayList();
+		ArrayList<ICElement> vChildren = new ArrayList<ICElement>();
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
@@ -212,8 +212,8 @@ public class CContainer extends Openable implements ICContainer {
 			}
 			if (resources != null) {
 				ICProject cproject = getCProject();
-				for (int i = 0; i < resources.length; i++) {
-					ICElement celement = computeChild(resources[i], cproject);
+				for (IResource resource2 : resources) {
+					ICElement celement = computeChild(resource2, cproject);
 					if (celement != null) {
 						vChildren.add(celement);
 					}

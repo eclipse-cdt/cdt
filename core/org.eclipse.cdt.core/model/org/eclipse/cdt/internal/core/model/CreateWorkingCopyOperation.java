@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IFile;
  */
 public class CreateWorkingCopyOperation extends CModelOperation {
 	
-	Map perFactoryWorkingCopies;
+	Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies;
 	IBufferFactory factory;
 	IProblemRequestor problemRequestor;
 	
@@ -33,7 +33,7 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 	 * Creates a working copy from the given original tu and the given buffer factory.
 	 * perFactoryWorkingCopies map is not null if the working copy is a shared working copy.
 	 */
-	public CreateWorkingCopyOperation(ITranslationUnit originalElement, Map perFactoryWorkingCopies, IBufferFactory factory, IProblemRequestor problemRequestor) {
+	public CreateWorkingCopyOperation(ITranslationUnit originalElement, Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies, IBufferFactory factory, IProblemRequestor problemRequestor) {
 		super(new ICElement[] {originalElement});
 		this.perFactoryWorkingCopies = perFactoryWorkingCopies;
 		this.factory = factory;
@@ -78,7 +78,7 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 	}
 
 	/**
-	 * @see JavaModelOperation#isReadOnly
+	 * @see CModelOperation#isReadOnly
 	 */
 	@Override
 	public boolean isReadOnly() {

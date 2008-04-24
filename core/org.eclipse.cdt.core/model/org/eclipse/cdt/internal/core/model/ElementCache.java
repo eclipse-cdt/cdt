@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IOpenable;
-import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
  * 
  * This class is similar to the JDT ElementCache class.
  */
-public class ElementCache extends OverflowingLRUCache {
+public class ElementCache<T> extends OverflowingLRUCache<IOpenable, T> {
 
 	/**
 	 * Constructs a new element cache of the given size.
@@ -43,8 +42,8 @@ public class ElementCache extends OverflowingLRUCache {
 	 * by closing the element.
 	 */
 	@Override
-	protected boolean close(LRUCacheEntry entry) {
-		IOpenable element = (IOpenable) entry._fKey;
+	protected boolean close(LRUCacheEntry<IOpenable, T> entry) {
+		IOpenable element = entry._fKey;
 		try {
 			if (element.hasUnsavedChanges()) {
 				return false;
@@ -56,10 +55,10 @@ public class ElementCache extends OverflowingLRUCache {
 		}
 	}
 		/**
-		 * Returns a new instance of the reciever.
+		 * Returns a new instance of the receiver.
 		 */
 		@Override
-		protected LRUCache newInstance(int size, int overflow) {
-			return new ElementCache(size, overflow);
+		protected OverflowingLRUCache<IOpenable, T> newInstance(int size, int overflow) {
+			return new ElementCache<T>(size, overflow);
 		}
 }

@@ -175,58 +175,34 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 		return addr;
 	}
 
-	/**
-	 * TODO: This should be in the info
-	 * @param line
-	 */
 	public void setLines(int startline, int endLine) {
 		fStartLine = startline;
 		fEndLine = endLine;
 	}
 
-	/**
-	 * TODO: This should be in the info
-	 * @param line
-	 */
 	public int getStartLine() {
 		return fStartLine;
 	}
 
-	/**
-	 * TODO: This should be in the info
-	 * @param line
-	 */
 	public int getEndLine() {
 		return fEndLine;
 	}
 
-	/**
-	 * @return
-	 */
 	private int getLength() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/**
-	 * @return
-	 */
 	public int getStartPos() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/**
-	 * @return
-	 */
 	private int getIdLength() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/**
-	 * @return
-	 */
 	public int getIdStartPos() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -250,7 +226,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
+	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) throws CModelException {
 	}
 
 	@Override

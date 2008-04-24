@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ISourceManipulation;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -191,7 +192,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * @see CElement#generateInfos
 	 */
 	@Override
-	protected void generateInfos(Object info, Map newElements, IProgressMonitor pm) throws CModelException {
+	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor pm) throws CModelException {
 		Openable openableParent = (Openable)getOpenableParent();
 		if (openableParent == null) {
 			return;
@@ -288,41 +289,41 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 				case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
 				case ICElement.C_TEMPLATE_METHOD:
 				case ICElement.C_TEMPLATE_METHOD_DECLARATION:
-					for (int i = 0; i < children.length; i++) {
-						if (elementType == children[i].getElementType() 
-								&& elementName.equals(children[i].getElementName())) {
-							assert children[i] instanceof IFunctionDeclaration;
-							String[] functionParams= ((IFunctionDeclaration)children[i]).getParameterTypes();
-							if (Arrays.equals(functionParams, mementoParams)) {
-								element= (CElement) children[i];
-								break;
+					for (ICElement element2 : children) {
+							if (elementType == element2.getElementType() 
+									&& elementName.equals(element2.getElementName())) {
+								assert element2 instanceof IFunctionDeclaration;
+								String[] functionParams= ((IFunctionDeclaration)element2).getParameterTypes();
+								if (Arrays.equals(functionParams, mementoParams)) {
+									element= (CElement) element2;
+									break;
+								}
 							}
 						}
-					}
 					break;
 				case ICElement.C_TEMPLATE_CLASS:
 				case ICElement.C_TEMPLATE_STRUCT:
 				case ICElement.C_TEMPLATE_UNION:
-					for (int i = 0; i < children.length; i++) {
-						if (elementType == children[i].getElementType() 
-								&& elementName.equals(children[i].getElementName())) {
-							assert children[i] instanceof ITemplate;
-							String[] templateParams= ((ITemplate)children[i]).getTemplateParameterTypes();
-							if (Arrays.equals(templateParams, mementoParams)) {
-								element= (CElement) children[i];
+					for (ICElement element2 : children) {
+							if (elementType == element2.getElementType() 
+									&& elementName.equals(element2.getElementName())) {
+								assert element2 instanceof ITemplate;
+								String[] templateParams= ((ITemplate)element2).getTemplateParameterTypes();
+								if (Arrays.equals(templateParams, mementoParams)) {
+									element= (CElement) element2;
+									break;
+								}
+							}
+						}
+					break;
+				default:
+					for (ICElement element2 : children) {
+							if (elementType == element2.getElementType() 
+									&& elementName.equals(element2.getElementName())) {
+								element= (CElement) element2;
 								break;
 							}
 						}
-					}
-					break;
-				default:
-					for (int i = 0; i < children.length; i++) {
-						if (elementType == children[i].getElementType() 
-								&& elementName.equals(children[i].getElementName())) {
-							element= (CElement) children[i];
-							break;
-						}
-					}
 					break;
 				}
 				if (element != null) {

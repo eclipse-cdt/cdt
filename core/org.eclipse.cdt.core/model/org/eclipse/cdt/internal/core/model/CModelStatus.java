@@ -303,9 +303,6 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		return exception.toString();
 	}
 
-	/**
-	 * @see IOperationStatus
-	 */
 	public IPath getPath() {
 		if (fPath == null) {
 			return Path.EMPTY;
@@ -321,8 +318,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		if (fChildren == fgEmptyChildren)
 			return super.getSeverity();
 		int severity = -1;
-		for (int i = 0, max = fChildren.length; i < max; i++) {
-			int childrenSeverity = fChildren[i].getSeverity();
+		for (IStatus element : fChildren) {
+			int childrenSeverity = element.getSeverity();
 			if (childrenSeverity > severity) {
 				severity = childrenSeverity;
 			}
@@ -378,8 +375,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		if (!isMultiStatus()) {
 			return matches(this, mask);
 		}
-		for (int i = 0, max = fChildren.length; i < max; i++) {
-			if (matches((CModelStatus)fChildren[i], mask))
+		for (IStatus element : fChildren) {
+			if (matches((CModelStatus)element, mask))
 				return true;
 		}
 		return false;
@@ -399,7 +396,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Creates and returns a new <code>ICModelStatus</code> that is a a
 	 * multi-status status.
 	 * 
-	 * @see IStatus#.isMultiStatus()
+	 * @see IStatus#isMultiStatus()
 	 */
 	public static ICModelStatus newMultiStatus(ICModelStatus[] children) {
 		CModelStatus jms = new CModelStatus();
@@ -410,8 +407,6 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * Creates and returns a new <code>ICModelStatus</code> that is a a
 	 * multi-status status.
-	 * 
-	 * @see IStatus#.isMultiStatus()
 	 */
 	public static ICModelStatus newMultiStatus(int code, ICModelStatus[] children) {
 		CModelStatus jms = new CModelStatus(code);

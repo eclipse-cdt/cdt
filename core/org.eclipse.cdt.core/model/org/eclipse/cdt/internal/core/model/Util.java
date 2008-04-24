@@ -60,8 +60,7 @@ public class Util implements ICLogConstants {
 			return new StringBuffer(b.length).append(b);
 		} finally {
 			try {
-				if (stream != null)
-					stream.close();
+				stream.close();
 			} catch (IOException e) {
 			}
 		}
@@ -234,10 +233,6 @@ public class Util implements ICLogConstants {
 		}
 	}
 
-	/**
-	 * @param client
-	 * @return
-	 */
 	public static boolean isActive(DebugLogConstants client) {
 		if (client.equals(DebugLogConstants.PARSER)) {
 			return VERBOSE_PARSER;
@@ -436,8 +431,6 @@ public class Util implements ICLogConstants {
 
 	/**
 	 * Return true if the file is not a directory and has length > 0
-	 * @param path
-	 * @return
 	 */
 	public static boolean isNonZeroLengthFile(IPath path) {
 		return isNonZeroLengthFile(URIUtil.toURI(path));
@@ -445,8 +438,6 @@ public class Util implements ICLogConstants {
 	
 	/**
 	 * Return true if the file referred to by the URI is not a directory and has length > 0
-	 * @param uri
-	 * @return
 	 */
 	public static boolean isNonZeroLengthFile(URI uri) {
 		try {

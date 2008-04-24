@@ -39,12 +39,12 @@ public class CElementDelta implements ICElementDelta {
 	private int fChangeFlags = 0;
 
 	/**
-	 * @see #getMovedFromHandle()
+	 * @see #getMovedFromElement()
 	 */
 	protected ICElement fMovedFromHandle = null;
 
 	/**
-	 * @see #getMovedToHandle()
+	 * @see #getMovedToElement()
 	 */
 	protected ICElement fMovedToHandle = null;
 
@@ -171,8 +171,8 @@ public class CElementDelta implements ICElementDelta {
 						// child was changed then changed -> it is changed
 						case CHANGED:
 							ICElementDelta[] children = child.getAffectedChildren();
-							for (int i = 0; i < children.length; i++) {
-								CElementDelta childsChild = (CElementDelta) children[i];
+							for (ICElementDelta element : children) {
+								CElementDelta childsChild = (CElementDelta) element;
 								((CElementDelta) existingChild).addAffectedChild(childsChild);
 							}
 							// add the non-c resource deltas if needed
@@ -276,7 +276,7 @@ public class CElementDelta implements ICElementDelta {
 	 */
 	protected CElementDelta createDeltaTree(ICElement element, CElementDelta delta) {
 		CElementDelta childDelta = delta;
-		ArrayList ancestors= getAncestors(element);
+		ArrayList<ICElement> ancestors= getAncestors(element);
 		if (ancestors == null) {
 			if (equalsAndSameParent(delta.getElement(), getElement())) {
 				// handle case of two jars that can be equals but not in the
@@ -292,7 +292,7 @@ public class CElementDelta implements ICElementDelta {
 			}
 		} else {
 			for (int i = 0, size = ancestors.size(); i < size; i++) {
-				ICElement ancestor = (ICElement) ancestors.get(i);
+				ICElement ancestor = ancestors.get(i);
 				CElementDelta ancestorDelta = new CElementDelta(ancestor);
 				ancestorDelta.addAffectedChild(childDelta);
 				childDelta = ancestorDelta;
@@ -309,8 +309,8 @@ public class CElementDelta implements ICElementDelta {
 		if (equalsAndSameParent(fChangedElement, e)) { // handle case of two jars that can be equals but not in the same project
 			return this;
 		}
-		for (int i = 0; i < fAffectedChildren.length; i++) {
-			CElementDelta delta = ((CElementDelta)fAffectedChildren[i]).find(e);
+		for (ICElementDelta element : fAffectedChildren) {
+			CElementDelta delta = ((CElementDelta)element).find(e);
 			if (delta != null) {
 				return delta;
 			}
@@ -345,12 +345,12 @@ public class CElementDelta implements ICElementDelta {
 	 * element is not a descendant of the root of this tree, <code>null</code>
 	 * is returned.
 	 */
-	private ArrayList getAncestors(ICElement element) {
+	private ArrayList<ICElement> getAncestors(ICElement element) {
 		ICElement parent = element.getParent();
 		if (parent == null) {
 			return null;
 		}
-		ArrayList parents = new ArrayList();
+		ArrayList<ICElement> parents = new ArrayList<ICElement>();
 		while (!parent.equals(fChangedElement)) {
 			parents.add(parent);
 			parent = parent.getParent();
@@ -377,7 +377,7 @@ public class CElementDelta implements ICElementDelta {
 		if (length == 0) {
 			return new ICElementDelta[] {};
 		}
-		ArrayList children= new ArrayList(length);
+		ArrayList<ICElementDelta> children= new ArrayList<ICElementDelta>(length);
 		for (int i = 0; i < length; i++) {
 			if (fAffectedChildren[i].getKind() == type) {
 				children.add(fAffectedChildren[i]);
@@ -619,7 +619,7 @@ public class CElementDelta implements ICElementDelta {
 	 * Returns a string representation of this delta's
 	 * structure suitable for debug purposes.
 	 *
-	 * @see toString
+	 * @see #toString()
 	 */
 	public String toDebugString(int depth) {
 		StringBuffer buffer = new StringBuffer();

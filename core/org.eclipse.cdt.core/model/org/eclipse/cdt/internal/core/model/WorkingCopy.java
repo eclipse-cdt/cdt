@@ -190,14 +190,14 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 
 		// look for it.
 		ICElement element = workingCopyElement;
-		ArrayList children = new ArrayList();
+		ArrayList<ICElement> children = new ArrayList<ICElement>();
 		while (element != null && element.getElementType() != ICElement.C_UNIT) {
 			children.add(element);
 			element = element.getParent();
 		}
 		ICElement current = tu;
 		for (int i = children.size()-1; i >= 0; i--) {
-			ICElement child = (ICElement)children.get(i);
+			ICElement child = children.get(i);
 			if (current instanceof IParent) {
 				try {
 					ICElement[] celems = ((IParent)current).getChildren();
@@ -282,7 +282,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	/**
-	 * @see ICFile
+	 * @see ITranslationUnit
 	 * @see IWorkingCopy
 	 *
 	 * @exception CModelException attempting to open a read only element for
@@ -331,7 +331,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			if (originalBuffer != null) {
 				char[] originalContents = originalBuffer.getCharacters();
 				if (originalContents != null) {
-					buffer.setContents((char[])originalContents.clone());
+					buffer.setContents(originalContents.clone());
 				}
 			} else {
 				// initialize buffer
@@ -379,7 +379,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.ICFile#save(IProgressMonitor, boolean)
+	 * @see ITranslationUnit#save(IProgressMonitor, boolean)
 	 */
 	@Override
 	public void save(IProgressMonitor pm, boolean force) throws CModelException {

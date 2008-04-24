@@ -25,23 +25,22 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class Structure extends StructureDeclaration implements  IStructure {
 	
-	Map superClassesNames = new TreeMap();
+	Map<String, ASTAccessVisibility> superClassesNames = new TreeMap<String, ASTAccessVisibility>();
 
 	public Structure(ICElement parent, int kind, String name) {
 		super(parent, name, kind);
 	}
 
 	public IField[] getFields() throws CModelException {
-		List fields = new ArrayList();
+		List<ICElement> fields = new ArrayList<ICElement>();
 		fields.addAll(getChildrenOfType(ICElement.C_FIELD));
-		return (IField[]) fields.toArray(new IField[fields.size()]);
+		return fields.toArray(new IField[fields.size()]);
 	}
 
 	public IField getField(String name) {
 		try {
 			IField[] fields = getFields();
-			for (int i = 0; i<fields.length; i++){
-				IField field = fields[i];
+			for (IField field : fields) {
 				if(field.getElementName().equals(name)){
 					return field;
 				}
@@ -52,17 +51,16 @@ public class Structure extends StructureDeclaration implements  IStructure {
 	}
 
 	public IMethodDeclaration[] getMethods() throws CModelException {
-		List methods = new ArrayList();
+		List<ICElement> methods = new ArrayList<ICElement>();
 		methods.addAll(getChildrenOfType(ICElement.C_METHOD_DECLARATION));
 		methods.addAll(getChildrenOfType(ICElement.C_METHOD));
-		return (IMethodDeclaration[])methods.toArray(new IMethodDeclaration[methods.size()]);
+		return methods.toArray(new IMethodDeclaration[methods.size()]);
 	}
 
 	public IMethodDeclaration getMethod(String name) {
 		try {
 			IMethodDeclaration[] methods = getMethods();
-			for (int i = 0; i<methods.length; i++){
-				IMethodDeclaration method = methods[i];
+			for (IMethodDeclaration method : methods) {
 				if(method.getElementName().equals(name)){
 					return method;
 				}
@@ -74,8 +72,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 
 	public boolean isAbstract() throws CModelException {
 		IMethodDeclaration[] methods = getMethods();
-		for(int i=0; i<methods.length; i++){
-			IMethodDeclaration method = methods[i];
+		for (IMethodDeclaration method : methods) {
 			if(method.isPureVirtual())
 				return true;
 		}
@@ -83,11 +80,11 @@ public class Structure extends StructureDeclaration implements  IStructure {
 	}
 
 	public String[] getSuperClassesNames(){
-		return (String[])superClassesNames.keySet().toArray(new String[superClassesNames.keySet().size()]);
+		return superClassesNames.keySet().toArray(new String[superClassesNames.keySet().size()]);
 	}
 
 	public ASTAccessVisibility getSuperClassAccess(String name){
-		return (ASTAccessVisibility)superClassesNames.get(name);
+		return superClassesNames.get(name);
 	}
 	
 	public void addSuperClass(String name) {

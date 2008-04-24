@@ -26,7 +26,7 @@ public class FunctionTemplate extends Function implements IFunctionTemplate {
 	
 	/**
 	 * Returns the parameterTypes.
-	 * @see org.eclipse.cdt.core.model.ITemplate#getParameters()
+	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
 	 * @return String[]
 	 */
 	public String[] getTemplateParameterTypes() {
@@ -34,8 +34,7 @@ public class FunctionTemplate extends Function implements IFunctionTemplate {
 	}
 
 	/**
-	 * Sets the fParameterTypes.
-	 * @param fParameterTypes The fParameterTypes to set
+	 * Sets the template parameter types.
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
 		fTemplate.setTemplateParameterTypes(templateParameterTypes);

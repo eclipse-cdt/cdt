@@ -39,15 +39,11 @@ public class CContainerInfo extends OpenableInfo {
 		super(element);
 	}
 
-	/**
-	 * @param container
-	 * @return
-	 */
 	public Object[] getNonCResources(IResource res) {
 		if (nonCResources != null)
 			return nonCResources;
 
-		ArrayList notChildren = new ArrayList();
+		ArrayList<IResource> notChildren = new ArrayList<IResource>();
 		ICElement celement = getElement();
 		ICProject cproject = celement.getCProject();
 		// move back to the sourceroot.
@@ -76,8 +72,7 @@ public class CContainerInfo extends OpenableInfo {
 			}
 			
 			if (resources != null) {
-				for (int i = 0; i < resources.length; i++) {
-					IResource member = resources[i];
+				for (IResource member : resources) {
 					switch(member.getType()) {
 						case IResource.FOLDER: {
 							// Check if the folder is not itself a sourceEntry.
@@ -113,10 +108,6 @@ public class CContainerInfo extends OpenableInfo {
 		return nonCResources;
 	}
 
-	/**
-	 * @param container
-	 * @return
-	 */
 	public void setNonCResources(Object[] resources) {
 		nonCResources = resources;
 	}
@@ -125,9 +116,8 @@ public class CContainerInfo extends OpenableInfo {
 		if(entries == null)
 			return false;
 		
-		for (int k = 0; k < entries.length; k++) {
-			ICSourceEntry entry = entries[k];
-//			if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
+		for (ICSourceEntry entry : entries) {
+			//			if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				IPath sourcePath = entry.getFullPath();
 				if (resourcePath.equals(sourcePath)) {
 					return true;

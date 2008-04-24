@@ -20,11 +20,6 @@ import org.eclipse.cdt.core.model.IStructureDeclaration;
  */
 public class StructureDeclaration extends SourceManipulation implements IStructureDeclaration {
 
-	/**
-	 * @param parent
-	 * @param name
-	 * @param type
-	 */
 	public StructureDeclaration(ICElement parent, String name, int kind) {
 		super(parent, name, kind);
 	}

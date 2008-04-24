@@ -28,7 +28,7 @@ public class Region implements IRegion {
 	/**
 	 * A collection of the top level elements that have been added to the region
 	 */
-	protected ArrayList fRootElements;
+	protected ArrayList<ICElement> fRootElements;
 
 	/**
 	 * Creates an empty region.
@@ -36,7 +36,7 @@ public class Region implements IRegion {
 	 * @see IRegion
 	 */
 	public Region() {
-		fRootElements = new ArrayList(1);
+		fRootElements = new ArrayList<ICElement>(1);
 	}
 
 	/**
@@ -57,10 +57,10 @@ public class Region implements IRegion {
 	public boolean contains(ICElement element) {
 
 		int size = fRootElements.size();
-		ArrayList parents = getAncestors(element);
+		ArrayList<ICElement> parents = getAncestors(element);
 
 		for (int i = 0; i < size; i++) {
-			ICElement aTop = (ICElement) fRootElements.get(i);
+			ICElement aTop = fRootElements.get(i);
 			if (aTop.equals(element)) {
 				return true;
 			}
@@ -79,8 +79,8 @@ public class Region implements IRegion {
 	 * order.
 	 * 
 	 */
-	private ArrayList getAncestors(ICElement element) {
-		ArrayList parents = new ArrayList();
+	private ArrayList<ICElement> getAncestors(ICElement element) {
+		ArrayList<ICElement> parents = new ArrayList<ICElement>();
 		ICElement parent = element.getParent();
 		while (parent != null) {
 			parents.add(parent);
@@ -97,7 +97,7 @@ public class Region implements IRegion {
 		int size = fRootElements.size();
 		ICElement[] roots = new ICElement[size];
 		for (int i = 0; i < size; i++) {
-			roots[i] = (ICElement) fRootElements.get(i);
+			roots[i] = fRootElements.get(i);
 		}
 
 		return roots;
@@ -121,9 +121,9 @@ public class Region implements IRegion {
 	 */
 	private void removeAllChildren(ICElement element) {
 		if (element instanceof IParent) {
-			ArrayList newRootElements = new ArrayList();
+			ArrayList<ICElement> newRootElements = new ArrayList<ICElement>();
 			for (int i = 0, size = fRootElements.size(); i < size; i++) {
-				ICElement currentRoot = (ICElement) fRootElements.get(i);
+				ICElement currentRoot = fRootElements.get(i);
 				// walk the current root hierarchy
 				ICElement parent = currentRoot.getParent();
 				boolean isChild = false;

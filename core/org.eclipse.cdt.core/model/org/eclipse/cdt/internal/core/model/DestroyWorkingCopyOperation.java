@@ -12,8 +12,9 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Map;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Destroys a working copy (remove it from its cache if it is shared)
@@ -47,9 +48,9 @@ public class DestroyWorkingCopyOperation extends CModelOperation {
 		// In order to be shared, working copies have to denote the same compilation unit
 		// AND use the same buffer factory.
 		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
-		Map sharedWorkingCopies = manager.sharedWorkingCopies;
+		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = manager.sharedWorkingCopies;
 		
-		Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(workingCopy.bufferFactory);
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(workingCopy.bufferFactory);
 		if (perFactoryWorkingCopies != null) {
 			if (perFactoryWorkingCopies.remove(originalElement) != null) {
 				//System.out.println("Destroying shared working copy " + workingCopy.toStringWithAncestors());//$NON-NLS-1$

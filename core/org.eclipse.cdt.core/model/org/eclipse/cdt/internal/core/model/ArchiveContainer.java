@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 
  
 import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
@@ -46,7 +47,7 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
 		throws CModelException {
 		// this will bootstrap/start the runner for the project.
 		CModelManager.getDefault().getBinaryRunner(getCProject());

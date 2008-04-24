@@ -82,9 +82,6 @@ public class FieldInfo extends SourceManipulationInfo {
 		this.visibility = visibility;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.internal.core.model.SourceManipulationInfo#hasSameContentsAs(SourceManipulationInfo)
-	 */
 	@Override
 	public boolean hasSameContentsAs( SourceManipulationInfo info){
 		

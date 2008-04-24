@@ -70,7 +70,7 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
+	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) throws CModelException {
 	}
 
 	@Override

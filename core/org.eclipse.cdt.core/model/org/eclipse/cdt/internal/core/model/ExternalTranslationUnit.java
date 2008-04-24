@@ -22,10 +22,6 @@ import org.eclipse.cdt.core.model.ICElement;
  */
 public class ExternalTranslationUnit extends TranslationUnit {
 
-	/**
-	 * @param parent
-	 * @param path
-	 */
 	public ExternalTranslationUnit(ICElement parent, URI uri, String contentTypeID) {
 		super(parent, uri, contentTypeID);
 	}

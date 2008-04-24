@@ -51,7 +51,7 @@ public class MethodTemplateDeclaration extends MethodDeclaration implements IMet
 
 	/**
 	 * Sets the fParameterTypes.
-	 * @param fParameterTypes The fParameterTypes to set
+	 * @param templateParameterTypes The template parameter types to set
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
 		fTemplate.setTemplateParameterTypes(templateParameterTypes);

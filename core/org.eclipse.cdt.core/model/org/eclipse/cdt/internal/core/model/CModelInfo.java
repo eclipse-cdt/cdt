@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -65,9 +66,6 @@ public class CModelInfo extends OpenableInfo {
 		return nonCResources;
 	}
 
-	/**
-	 * @return
-	 */
 	public void setNonCResources(Object[] resources) {
 		nonCResources = resources;
 	}

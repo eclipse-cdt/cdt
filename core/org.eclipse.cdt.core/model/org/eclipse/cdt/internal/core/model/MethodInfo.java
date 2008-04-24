@@ -74,9 +74,6 @@ public class MethodInfo extends FunctionInfo {
 		this.visibility = visibility;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.internal.core.model.SourceManipulationInfo#hasSameContentsAs(org.eclipse.cdt.internal.core.model.SourceManipulationInfo)
-	 */
 	@Override
 	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
 		return (super.hasSameContentsAs(otherInfo)

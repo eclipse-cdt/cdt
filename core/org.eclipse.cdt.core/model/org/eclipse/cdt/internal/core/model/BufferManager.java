@@ -16,7 +16,6 @@ import java.util.Enumeration;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IOpenable;
-import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -32,7 +31,7 @@ public class BufferManager implements IBufferFactory {
 	/**
 	 * An LRU cache of <code>IBuffers</code>.
 	 */
-	public class BufferCache extends OverflowingLRUCache {
+	public class BufferCache<K> extends OverflowingLRUCache<K,IBuffer> {
 		/**
 		 * Constructs a new buffer cache of the given size.
 		 */
@@ -53,8 +52,8 @@ public class BufferManager implements IBufferFactory {
 		 * by closing the buffer.
 		 */
 		@Override
-		protected boolean close(LRUCacheEntry entry) {
-			IBuffer buffer= (IBuffer) entry._fValue;
+		protected boolean close(LRUCacheEntry<K,IBuffer> entry) {
+			IBuffer buffer= entry._fValue;
 			if (buffer.hasUnsavedChanges()) {
 				return false;
 			}
@@ -65,8 +64,8 @@ public class BufferManager implements IBufferFactory {
 		 * Returns a new instance of the reciever.
 		 */
 		@Override
-		protected LRUCache newInstance(int size, int overflow) {
-			return new BufferCache(size, overflow);
+		protected OverflowingLRUCache<K, IBuffer> newInstance(int size, int overflow) {
+			return new BufferCache<K>(size, overflow);
 		}
 	}
 
@@ -76,7 +75,7 @@ public class BufferManager implements IBufferFactory {
 	 * LRU cache of buffers. The key and value for an entry
 	 * in the table is the identical buffer.
 	 */
-	protected OverflowingLRUCache openBuffers = new BufferCache(60);
+	protected OverflowingLRUCache<IOpenable, IBuffer> openBuffers = new BufferCache<IOpenable>(60);
 
 	/**
 	 * Creates a new buffer manager.
@@ -135,7 +134,7 @@ public class BufferManager implements IBufferFactory {
 	 * @see OverflowingLRUCache
 	 * @return Enumeration of IBuffer
 	 */
-	public Enumeration getOpenBuffers() {
+	public Enumeration<IBuffer> getOpenBuffers() {
 		synchronized (openBuffers) {
 			openBuffers.shrink();
 			return openBuffers.elements();

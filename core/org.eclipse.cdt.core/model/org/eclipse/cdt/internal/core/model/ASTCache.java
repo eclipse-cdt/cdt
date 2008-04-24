@@ -45,7 +45,7 @@ public class ASTCache {
 	/**
 	 * Do something with an AST.
 	 * 
-	 * @see #runOnAST(IASTTranslationUnit)
+	 * @see #runOnAST(ILanguage, IASTTranslationUnit)
 	 */
 	public static interface ASTRunnable {
 		/**
@@ -180,7 +180,7 @@ public class ASTCache {
 	}
 
 	/**
-	 * Executes {@link ASTRunnable#runOnAST(IASTTranslationUnit)} with the AST
+	 * Executes {@link ASTRunnable#runOnAST(ILanguage, IASTTranslationUnit)} with the AST
 	 * provided by this cache for the given translation unit. Handles acquiring
 	 * and releasing the index read-lock for the client.
 	 * 

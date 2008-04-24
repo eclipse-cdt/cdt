@@ -63,27 +63,28 @@ public class RenameElementsOperation extends MoveElementsOperation {
 	 */
 	@Override
 	protected void verify(ICElement element) throws CModelException {
-		int elementType = element.getElementType();
 		
 		if (element == null || !element.exists())
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
-			
-		if (element.isReadOnly())
-			error(ICModelStatusConstants.READ_ONLY, element);
-			
-		if (!(element instanceof ISourceReference))
-			error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
-			
-		if (elementType < ICElement.C_UNIT /*|| elementType == ICElement.INITIALIZER*/)
-			error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
-			
-//		Member localContext;
-//		if (element instanceof Member && (localContext = ((Member)element).getOuterMostLocalContext()) != null && localContext != element) {
-//			// JDOM doesn't support source manipulation in local/anonymous types
-//			error(IJavaModelStatusConstants.INVALID_ELEMENT_TYPES, element);
-//		}
+		else {
+			int elementType = element.getElementType();
+			if (element.isReadOnly())
+				error(ICModelStatusConstants.READ_ONLY, element);
 
-		verifyRenaming(element);
+			if (!(element instanceof ISourceReference))
+				error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
+
+			if (elementType < ICElement.C_UNIT /*|| elementType == ICElement.INITIALIZER*/)
+				error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
+
+			//		Member localContext;
+			//		if (element instanceof Member && (localContext = ((Member)element).getOuterMostLocalContext()) != null && localContext != element) {
+			//			// JDOM doesn't support source manipulation in local/anonymous types
+			//			error(IJavaModelStatusConstants.INVALID_ELEMENT_TYPES, element);
+			//		}
+
+			verifyRenaming(element);
+		}
 	}
 
 }

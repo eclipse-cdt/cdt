@@ -13,9 +13,9 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IStructure;
-import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
@@ -50,7 +50,7 @@ public class CreateMethodOperation extends CreateMemberOperation {
 	}
 
 	/**
-	 * @see CreateElementInCUOperation#generateResultHandle
+	 * @see CreateElementInTUOperation#generateResultHandle
 	 */
 	@Override
 	protected ICElement generateResultHandle() {
@@ -59,7 +59,7 @@ public class CreateMethodOperation extends CreateMemberOperation {
 	}
 
 	/**
-	 * @see CreateElementInCUOperation#getMainTaskName
+	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
 	public String getMainTaskName(){
@@ -67,7 +67,7 @@ public class CreateMethodOperation extends CreateMemberOperation {
 	}
 
 	/**
-	 * @see CreateTypeMemberOperation#verifyNameCollision
+	 * @see CreateMemberOperation#verifyNameCollision
 	 */
 	@Override
 	protected ICModelStatus verifyNameCollision() {

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 
 
@@ -33,28 +34,28 @@ public class CModelCache {
 	/**
 	 * Cache of open projects and roots.
 	 */
-	protected Map projectAndRootCache;
+	protected Map<ICElement, Object> projectAndRootCache;
 	
 	/**
 	 * Cache of open containers
 	 */
-	protected Map folderCache;
+	protected Map<ICElement, Object> folderCache;
 
 	/**
 	 * Cache of open translation unit files
 	 */
-	protected OverflowingLRUCache fileCache;
+	protected OverflowingLRUCache<IOpenable, Object> fileCache;
 
 	/**
 	 * Cache of children of C elements
 	 */
-	protected Map childrenCache;
+	protected Map<ICElement, Object> childrenCache;
 	
 public CModelCache() {
-	this.projectAndRootCache = new HashMap(PROJ_CACHE_SIZE);
-	this.folderCache = new HashMap(FOLDER_CACHE_SIZE);	
-	this.fileCache = new ElementCache(FILE_CACHE_SIZE);
-	this.childrenCache = new HashMap(CHILDREN_CACHE_SIZE); // average 20 children per openable
+	this.projectAndRootCache = new HashMap<ICElement, Object>(PROJ_CACHE_SIZE);
+	this.folderCache = new HashMap<ICElement, Object>(FOLDER_CACHE_SIZE);	
+	this.fileCache = new ElementCache<Object>(FILE_CACHE_SIZE);
+	this.childrenCache = new HashMap<ICElement, Object>(CHILDREN_CACHE_SIZE); // average 20 children per openable
 }
 
 public double openableFillingRatio() {
@@ -94,7 +95,7 @@ protected Object peekAtInfo(ICElement element) {
 		case ICElement.C_ARCHIVE:
 		case ICElement.C_BINARY:		
 		case ICElement.C_UNIT:
-			return this.fileCache.peek(element);
+			return this.fileCache.peek((IOpenable) element);
 		default:
 			return this.childrenCache.get(element);
 	}
@@ -115,7 +116,7 @@ protected void putInfo(ICElement element, Object info) {
 		case ICElement.C_ARCHIVE:
 		case ICElement.C_BINARY:		
 		case ICElement.C_UNIT:
-			this.fileCache.put(element, info);
+			this.fileCache.put((IOpenable)element, info);
 			break;
 		default:
 			this.childrenCache.put(element, info);
@@ -136,7 +137,7 @@ protected void removeInfo(ICElement element) {
 		case ICElement.C_ARCHIVE:
 		case ICElement.C_BINARY:		
 		case ICElement.C_UNIT:
-			this.fileCache.remove(element);
+			this.fileCache.remove((IOpenable)element);
 			break;
 		default:
 			this.childrenCache.remove(element);

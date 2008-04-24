@@ -59,10 +59,6 @@ public abstract class APathEntry extends PathEntry {
 		return basePath;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public IPath getBaseReference() {
 		return baseRef;
 	}

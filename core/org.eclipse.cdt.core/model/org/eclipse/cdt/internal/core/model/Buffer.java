@@ -37,7 +37,7 @@ public class Buffer implements IBuffer {
 	protected IFile file;
 	protected int flags;
 	protected char[] contents;
-	protected ArrayList changeListeners;
+	protected ArrayList<IBufferChangedListener> changeListeners;
 	protected IOpenable owner;
 	protected int gapStart= -1;
 	protected int gapEnd= -1;
@@ -63,14 +63,14 @@ public class Buffer implements IBuffer {
 	 */
 	public void addBufferChangedListener(IBufferChangedListener listener) {
 		if (this.changeListeners == null) {
-			this.changeListeners = new ArrayList(5);
+			this.changeListeners = new ArrayList<IBufferChangedListener>(5);
 		}
 		if (!this.changeListeners.contains(listener)) {
 			this.changeListeners.add(listener);
 		}
 	}
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#append(char)
+	 * @see org.eclipse.cdt.core.model.IBuffer#append(char[])
 	 */
 	public void append(char[] text) {
 		if (!isReadOnly()) {
@@ -87,7 +87,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#append(java.lang.String)
+	 * @see org.eclipse.cdt.core.model.IBuffer#append(java.lang.String)
 	 */
 	public void append(String text) {
 		if (text == null) {
@@ -97,7 +97,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#close()
+	 * @see org.eclipse.cdt.core.model.IBuffer#close()
 	 */
 	public void close() {
 		BufferChangedEvent event = null;
@@ -113,7 +113,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getChar(int)
+	 * @see org.eclipse.cdt.core.model.IBuffer#getChar(int)
 	 */
 	public char getChar(int position) {
 		synchronized (this.lock) {
@@ -126,7 +126,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getCharacters()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getCharacters()
 	 */
 	public char[] getCharacters() {
 		if (this.contents == null) return null;
@@ -143,7 +143,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getContents()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getContents()
 	 */
 	public String getContents() {
 		if (this.contents == null) return null;
@@ -151,7 +151,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getLength()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getLength()
 	 */
 	public int getLength() {
 		synchronized (this.lock) {
@@ -161,14 +161,14 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getOwner()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getOwner()
 	 */
 	public IOpenable getOwner() {
 		return this.owner;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getText(int, int)
+	 * @see org.eclipse.cdt.core.model.IBuffer#getText(int, int)
 	 */
 	public String getText(int offset, int length) {
 		if (this.contents == null)
@@ -188,28 +188,28 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getUnderlyingResource()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getUnderlyingResource()
 	 */
 	public IResource getUnderlyingResource() {
 		return this.file;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#hasUnsavedChanges()
+	 * @see org.eclipse.cdt.core.model.IBuffer#hasUnsavedChanges()
 	 */
 	public boolean hasUnsavedChanges() {
 		return (this.flags & F_HAS_UNSAVED_CHANGES) != 0;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#isClosed()
+	 * @see org.eclipse.cdt.core.model.IBuffer#isClosed()
 	 */
 	public boolean isClosed() {
 		return (this.flags & F_IS_CLOSED) != 0;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#isReadOnly()
+	 * @see org.eclipse.cdt.core.model.IBuffer#isReadOnly()
 	 */
 	public boolean isReadOnly() {
 		if (this.file == null) {
@@ -225,7 +225,7 @@ public class Buffer implements IBuffer {
 	protected void notifyChanged(final BufferChangedEvent event) {
 		if (this.changeListeners != null) {
 			for (int i = 0, size = this.changeListeners.size(); i < size; ++i) {
-				final IBufferChangedListener listener = (IBufferChangedListener) this.changeListeners.get(i);
+				final IBufferChangedListener listener = this.changeListeners.get(i);
 				SafeRunner.run(new ISafeRunnable() {
 					public void handleException(Throwable exception) {
 						Util.log(exception, "Exception occurred in listener of buffer change notification", ICLogConstants.CDT); //$NON-NLS-1$
@@ -249,7 +249,7 @@ public class Buffer implements IBuffer {
 		}
 	}
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#replace(int, int, char)
+	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, char[])
 	 */
 	public void replace(int position, int length, char[] text) {
 		if (!isReadOnly()) {
@@ -282,14 +282,14 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#replace(int, int, java.lang.String)
+	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, java.lang.String)
 	 */
 	public void replace(int position, int length, String text) {
 		this.replace(position, length, text == null ? null : text.toCharArray());
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
+	 * @see org.eclipse.cdt.core.model.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	public void save(IProgressMonitor progress, boolean force)
 		throws CModelException {
@@ -338,7 +338,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#setContents(char)
+	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(char[])
 	 */
 	public void setContents(char[] newContents) {
 		// allow special case for first initialization 
@@ -366,7 +366,7 @@ public class Buffer implements IBuffer {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#setContents(java.lang.String)
+	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(java.lang.String)
 	 */
 	public void setContents(String newContents) {
 		this.setContents(newContents.toCharArray());

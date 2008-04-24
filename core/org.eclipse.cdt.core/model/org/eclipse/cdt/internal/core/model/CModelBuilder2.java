@@ -198,37 +198,33 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// includes
 		final IASTPreprocessorIncludeStatement[] includeDirectives= ast.getIncludeDirectives();
 		Set<Include> allIncludes= new HashSet<Include>();
-		for (int i= 0; i < includeDirectives.length; i++) {
-			IASTPreprocessorIncludeStatement includeDirective= includeDirectives[i];
+		for (IASTPreprocessorIncludeStatement includeDirective : includeDirectives) {
 			if (isLocalToFile(includeDirective)) {
 				createInclusion(fTranslationUnit, includeDirective, allIncludes);
 			}
 		}
 		// macros
 		final IASTPreprocessorMacroDefinition[] macroDefinitions= ast.getMacroDefinitions();
-		for (int i= 0; i < macroDefinitions.length; i++) {
-			IASTPreprocessorMacroDefinition macroDefinition= macroDefinitions[i];
+		for (IASTPreprocessorMacroDefinition macroDefinition : macroDefinitions) {
 			if (isLocalToFile(macroDefinition)) {
 				createMacro(fTranslationUnit, macroDefinition);
 			}
 		}
 		// declarations
 		final IASTDeclaration[] declarations= ast.getDeclarations();
-		for (int i= 0; i < declarations.length; i++) {
-			IASTDeclaration declaration= declarations[i];
+		for (IASTDeclaration declaration : declarations) {
 			if (isLocalToFile(declaration)) {
 				createDeclaration(fTranslationUnit, declaration);
 			}
 		}
 
 		// sort by offset
-		@SuppressWarnings("unchecked")
-		final List<SourceManipulation> children= fTranslationUnit.getElementInfo().internalGetChildren();
-		Collections.sort(children, new Comparator<SourceManipulation>() {
-			public int compare(SourceManipulation o1, SourceManipulation o2) {
+		final List<ICElement> children= fTranslationUnit.getElementInfo().internalGetChildren();
+		Collections.sort(children, new Comparator<ICElement>() {
+			public int compare(ICElement o1, ICElement o2) {
 				try {
-					final SourceManipulationInfo info1= o1.getSourceManipulationInfo();
-					final SourceManipulationInfo info2= o2.getSourceManipulationInfo();
+					final SourceManipulationInfo info1= ((SourceManipulation) o1).getSourceManipulationInfo();
+					final SourceManipulationInfo info2= ((SourceManipulation) o2).getSourceManipulationInfo();
 					int delta= info1.getStartPos() - info2.getStartPos();
 					if (delta == 0) {
 						delta= info1.getIdStartPos() - info2.getIdStartPos();
@@ -249,15 +245,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			problemRequestor.beginReporting();
 			final IASTProblem[] ppProblems= ast.getPreprocessorProblems();
 			IASTProblem[] problems= ppProblems;
-			for (int i= 0; i < problems.length; i++) {
-				IASTProblem problem= problems[i];
+			for (IASTProblem problem : problems) {
 				if (isLocalToFile(problem)) {
 					problemRequestor.acceptProblem(problem);
 				}
 			}
 			problems= CPPVisitor.getProblems(ast);
-			for (int i= 0; i < problems.length; i++) {
-				IASTProblem problem= problems[i];
+			for (IASTProblem problem : problems) {
 				if (isLocalToFile(problem)) {
 					problemRequestor.acceptProblem(problem);
 				}
@@ -358,8 +352,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		} else if (declaration instanceof IASTSimpleDeclaration) {
 			CElement[] elements= createSimpleDeclarations(parent, (IASTSimpleDeclaration)declaration, true);
 			String[] parameterTypes= ASTStringUtil.getTemplateParameterArray(templateDeclaration.getTemplateParameters());
-			for (int i= 0; i < elements.length; i++) {
-				CElement element= elements[i];
+			for (CElement element : elements) {
 				// set the template parameters
 				if (element instanceof StructureTemplate) {
 					StructureTemplate classTemplate= (StructureTemplate) element;
@@ -408,8 +401,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 */
 	private void createLinkageSpecification(Parent parent, ICPPASTLinkageSpecification linkageDeclaration) throws CModelException, DOMException {
 		IASTDeclaration[] declarations= linkageDeclaration.getDeclarations();
-		for (int i= 0; i < declarations.length; i++) {
-			IASTDeclaration declaration= declarations[i];
+		for (IASTDeclaration declaration : declarations) {
 			if (linkageDeclaration.getFileLocation() != null || isLocalToFile(declaration)) {
 				createDeclaration(parent, declaration);
 			}
@@ -524,8 +516,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final Set<Namespace> savedNamespaces= fAllNamespaces;
 		fAllNamespaces= new HashSet<Namespace>();
 		IASTDeclaration[] nsDeclarations= declaration.getDeclarations();
-		for (int i= 0; i < nsDeclarations.length; i++) {
-			IASTDeclaration nsDeclaration= nsDeclarations[i];
+		for (IASTDeclaration nsDeclaration : nsDeclarations) {
 			if (declaration.getFileLocation() != null || isLocalToFile(nsDeclaration)) {
 				createDeclaration(element, nsDeclaration);
 			}
@@ -597,8 +588,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// add to parent
 		parent.addChild(element);
 		final IASTEnumerator[] enumerators= enumSpecifier.getEnumerators();
-		for (int i= 0; i < enumerators.length; i++) {
-			final IASTEnumerator enumerator= enumerators[i];
+		for (final IASTEnumerator enumerator : enumerators) {
 			createEnumerator(element, enumerator);
 		}
 		// set enumeration position
@@ -672,8 +662,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// store super classes names
 			final ICPPASTCompositeTypeSpecifier cppCompositeTypeSpecifier= (ICPPASTCompositeTypeSpecifier)compositeTypeSpecifier;
 			ICPPASTBaseSpecifier[] baseSpecifiers= cppCompositeTypeSpecifier.getBaseSpecifiers();
-			for (int i= 0; i < baseSpecifiers.length; i++) {
-				final ICPPASTBaseSpecifier baseSpecifier= baseSpecifiers[i];
+			for (final ICPPASTBaseSpecifier baseSpecifier : baseSpecifiers) {
 				final IASTName baseName= baseSpecifier.getName();
 				final ASTAccessVisibility visibility;
 				switch(baseSpecifier.getVisibility()) {
@@ -713,8 +702,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		pushDefaultVisibility(defaultVisibility);
 		try {
 			final IASTDeclaration[] memberDeclarations= compositeTypeSpecifier.getMembers();
-			for (int i= 0; i < memberDeclarations.length; i++) {
-				IASTDeclaration member= memberDeclarations[i];
+			for (IASTDeclaration member : memberDeclarations) {
 				if (compositeTypeSpecifier.getFileLocation() != null || isLocalToFile(member)) {
 					createDeclaration(element, member);
 				}
@@ -862,8 +850,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			if (!isMethod && name instanceof ICPPASTQualifiedName) {
 				final IASTName[] names= ((ICPPASTQualifiedName)name).getNames();
 				if (isTemplate) {
-					for (int i= 0; i < names.length; i++) {
-						if (names[i] instanceof ICPPASTTemplateId) {
+					for (IASTName name2 : names) {
+						if (name2 instanceof ICPPASTTemplateId) {
 							isMethod= true;
 							break;
 						}

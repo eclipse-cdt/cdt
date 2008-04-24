@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.model;
  
 import java.util.ArrayList;
 import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
@@ -40,10 +41,10 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 	public IBinary[] getBinaries() throws CModelException {
 		sync();
 		ICElement[] e = getChildren();
-		ArrayList list = new ArrayList(e.length);
-		for (int i = 0; i < e.length; i++) {
-			if (e[i] instanceof IBinary) {
-				IBinary bin = (IBinary)e[i];
+		ArrayList<IBinary> list = new ArrayList<IBinary>(e.length);
+		for (ICElement element : e) {
+			if (element instanceof IBinary) {
+				IBinary bin = (IBinary)element;
 				if (bin.showInBinaryContainer()) {
 					list.add(bin);
 				}
@@ -63,7 +64,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
 		throws CModelException {
 		// this will bootstrap/start the runner for the project.
 		CModelManager.getDefault().getBinaryRunner(getCProject());

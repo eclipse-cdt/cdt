@@ -36,11 +36,11 @@ class CElementInfo {
 	 * object. This is an empty array if this element has
 	 * no children.
 	 */
-	private List fChildren;
+	private List<ICElement> fChildren;
 
 	/**
 	 * Is the structure of this element known
-	 * @see ICElement.isStructureKnown()
+	 * @see ICElement#isStructureKnown()
 	 */
 	protected boolean fIsStructureKnown = false;
 
@@ -49,7 +49,7 @@ class CElementInfo {
 	protected CElementInfo(CElement element) {
 		this.element = element;
 		// Array list starts with size = 0
-		fChildren = new Vector(0);
+		fChildren = new Vector<ICElement>(0);
 	}
 
 	protected CElement getElement() {
@@ -65,11 +65,11 @@ class CElementInfo {
 	protected ICElement[] getChildren() {
 		synchronized (fChildren) {
 			ICElement[] array= new ICElement[fChildren.size()];		
-			return (ICElement[]) fChildren.toArray( array );
+			return fChildren.toArray( array );
 		}
 	}
 
-	List internalGetChildren() {
+	List<ICElement> internalGetChildren() {
 		return fChildren;
 	}
 
@@ -84,7 +84,7 @@ class CElementInfo {
 	}
 
 	/**
-	 * @see ICElement.isStructureKnown()
+	 * @see ICElement#isStructureKnown()
 	 */
 	protected boolean isStructureKnown() {
 		return fIsStructureKnown;
@@ -98,7 +98,7 @@ class CElementInfo {
 		fChildren.clear();
 	}
 
-	protected void setChildren(List children) {
+	protected void setChildren(List<? extends ICElement> children) {
 		fChildren.addAll(children);
 	}
 
@@ -138,7 +138,7 @@ class CElementInfo {
 
 	/**
 	 * Sets whether the structure of this element known
-	 * @see ICElement.isStructureKnown()
+	 * @see ICElement#isStructureKnown()
 	 */
 	protected void setIsStructureKnown(boolean newIsStructureKnown) {
 		fIsStructureKnown = newIsStructureKnown;

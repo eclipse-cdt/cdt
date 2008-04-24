@@ -16,11 +16,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class SourceEntry extends APathEntry implements ISourceEntry {
 
-	/**
-	 * 
-	 * @param path
-	 * @param exclusionPatterns
-	 */
 	public SourceEntry(IPath sourcePath, IPath[] exclusionPatterns) {
 		super(IPathEntry.CDT_SOURCE, null, null, sourcePath, exclusionPatterns, false);
 	}

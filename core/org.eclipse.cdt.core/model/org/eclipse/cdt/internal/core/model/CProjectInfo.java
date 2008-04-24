@@ -65,14 +65,11 @@ class CProjectInfo extends OpenableInfo {
 		return vLib;
 	}
 
-	/**
-	 * @return
-	 */
 	public Object[] getNonCResources(IResource res) {
 		if (nonCResources != null)
 			return nonCResources;
 
-		List notChildren = new ArrayList();
+		List<IResource> notChildren = new ArrayList<IResource>();
 		try {
 			if (res instanceof IContainer) {
 				ICProject cproject = getElement().getCProject();
@@ -128,10 +125,6 @@ class CProjectInfo extends OpenableInfo {
 		return nonCResources;
 	}
 
-	/**
-	 * @param container
-	 * @return
-	 */
 	public void setNonCResources(Object[] resources) {
 		nonCResources = resources;
 	}
@@ -141,18 +134,18 @@ class CProjectInfo extends OpenableInfo {
 	 */
 	public void resetCaches() {
 		if (libReferences != null) {
-			for (int i = 0; i < libReferences.length; i++) {
+			for (ILibraryReference libReference : libReferences) {
 				try {
-					((CElement)libReferences[i]).close();
+					((CElement)libReference).close();
 				} catch (CModelException e) {
 					//
 				}
 			}
 		}
 		if (incReferences != null) {
-			for (int i = 0; i < incReferences.length; i++) {
+			for (IIncludeReference incReference : incReferences) {
 				try {
-					((CElement)incReferences[i]).close();
+					((CElement)incReference).close();
 				} catch (CModelException e) {
 					//
 				}

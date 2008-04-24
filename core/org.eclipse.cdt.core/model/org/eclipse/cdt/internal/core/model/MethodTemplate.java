@@ -26,7 +26,7 @@ public class MethodTemplate extends Method implements IMethodTemplate {
 	
 	/**
 	 * Returns the parameterTypes.
-	 * @see org.eclipse.cdt.core.model.ITemplate#getParameters()
+	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
 	 * @return String[]
 	 */
 	public String[] getTemplateParameterTypes() {
@@ -35,7 +35,7 @@ public class MethodTemplate extends Method implements IMethodTemplate {
 
 	/**
 	 * Sets the fParameterTypes.
-	 * @param fParameterTypes The fParameterTypes to set
+	 * @param templateParameterTypes The template parameter types to set
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
 		fTemplate.setTemplateParameterTypes(templateParameterTypes);

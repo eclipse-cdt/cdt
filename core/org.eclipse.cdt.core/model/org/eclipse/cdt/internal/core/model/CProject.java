@@ -165,9 +165,9 @@ public class CProject extends Openable implements ICProject {
 		if (incRefs == null) {
 			IPathEntry[] entries = getResolvedPathEntries();
 			ArrayList<IncludeReference> list = new ArrayList<IncludeReference>(entries.length);
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
-					IIncludeEntry entry = (IIncludeEntry) entries[i];
+			for (IPathEntry entrie : entries) {
+				if (entrie.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+					IIncludeEntry entry = (IIncludeEntry) entrie;
 					list.add(new IncludeReference(this, entry));
 				}
 			}
@@ -190,9 +190,9 @@ public class CProject extends Openable implements ICProject {
 			BinaryParserConfig[] binConfigs = CModelManager.getDefault().getBinaryParser(getProject());
 			IPathEntry[] entries = getResolvedPathEntries();
 			ArrayList<ILibraryReference> list = new ArrayList<ILibraryReference>(entries.length);
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
-					ILibraryEntry entry = (ILibraryEntry) entries[i];
+			for (IPathEntry entrie : entries) {
+				if (entrie.getEntryKind() == IPathEntry.CDT_LIBRARY) {
+					ILibraryEntry entry = (ILibraryEntry) entrie;
 					ILibraryReference lib = getLibraryReference(this, binConfigs, entry);
 					if (lib != null) {
 						list.add(lib);
@@ -213,10 +213,10 @@ public class CProject extends Openable implements ICProject {
 		}
 		ILibraryReference lib = null;
 		if (binConfigs != null) {
-			for (int i = 0; i < binConfigs.length; i++) {
+			for (BinaryParserConfig binConfig : binConfigs) {
 				IBinaryFile bin;
 				try {
-					IBinaryParser parser = binConfigs[i].getBinaryParser();
+					IBinaryParser parser = binConfig.getBinaryParser();
 					bin = parser.getBinary(entry.getFullLibraryPath());
 					if (bin != null) {
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
@@ -281,8 +281,7 @@ public class CProject extends Openable implements ICProject {
 		// create project options
 		try {
 			String[] propertyNames= preferences.keys();
-			for (int i= 0; i < propertyNames.length; i++){
-				String propertyName= propertyNames[i];
+			for (String propertyName : propertyNames) {
 				String value= preferences.get(propertyName, null);
 				if (value != null && optionNames.contains(propertyName)){
 					options.put(propertyName, value.trim());
@@ -450,9 +449,9 @@ public class CProject extends Openable implements ICProject {
 	public ISourceRoot findSourceRoot(IResource res) {
 	    try {
 			ISourceRoot[] roots = getAllSourceRoots();
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].isOnSourceEntry(res)) {
-					return roots[i];
+			for (ISourceRoot root : roots) {
+				if (root.isOnSourceEntry(res)) {
+					return root;
 				}
 			}
 	    } catch (CModelException e) {
@@ -466,9 +465,9 @@ public class CProject extends Openable implements ICProject {
 	public ISourceRoot findSourceRoot(IPath path) {
 	    try {
 			ISourceRoot[] roots = getAllSourceRoots();
-			for (int i = 0; i < roots.length; i++) {
-			    if (roots[i].getPath().equals(path)) {
-					return roots[i];
+			for (ISourceRoot root : roots) {
+			    if (root.getPath().equals(path)) {
+					return root;
 				}
 			}
 	    } catch (CModelException e) {
@@ -482,9 +481,9 @@ public class CProject extends Openable implements ICProject {
 	public ISourceRoot[] getSourceRoots() throws CModelException {
 		Object[] children = getChildren();
 		ArrayList<ISourceRoot> result = new ArrayList<ISourceRoot>(children.length);
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof ISourceRoot) {
-				result.add((ISourceRoot) children[i]);
+		for (Object element : children) {
+			if (element instanceof ISourceRoot) {
+				result.add((ISourceRoot) element);
 			}
         }
 		return result.toArray(new ISourceRoot[result.size()]);
@@ -535,9 +534,9 @@ public class CProject extends Openable implements ICProject {
 	 */
 	public IOutputEntry[] getOutputEntries(IPathEntry[] entries) throws CModelException {
 		ArrayList<IPathEntry> list = new ArrayList<IPathEntry>(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getEntryKind() == IPathEntry .CDT_OUTPUT) {
-				list.add(entries[i]);
+		for (IPathEntry entrie : entries) {
+			if (entrie.getEntryKind() == IPathEntry .CDT_OUTPUT) {
+				list.add(entrie);
 			}
 		}
 		IOutputEntry[] outputs = new IOutputEntry[list.size()];
@@ -558,8 +557,8 @@ public class CProject extends Openable implements ICProject {
 
 		try {
 			IOutputEntry[] entries = getOutputEntries();
-			for (int i = 0; i < entries.length; i++) {
-				boolean on = isOnOutputEntry(entries[i], path);
+			for (IOutputEntry entrie : entries) {
+				boolean on = isOnOutputEntry(entrie, path);
 				if (on) {
 					return on;
 				}
@@ -582,7 +581,7 @@ public class CProject extends Openable implements ICProject {
 	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm,
-			Map newElements, IResource underlyingResource)
+			Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
 			throws CModelException {
 		boolean validInfo = false;
 		try {
@@ -612,9 +611,8 @@ public class CProject extends Openable implements ICProject {
 		
 		if(entries != null){
 			ArrayList<ISourceRoot> list = new ArrayList<ISourceRoot>(entries.length);
-			for (int i = 0; i < entries.length; i++) {
-				ICSourceEntry sourceEntry = entries[i];
-					ISourceRoot root = getSourceRoot(sourceEntry);
+			for (ICSourceEntry sourceEntry : entries) {
+				ISourceRoot root = getSourceRoot(sourceEntry);
 					if (root != null) {
 						list.add(root);
 					}
@@ -630,8 +628,8 @@ public class CProject extends Openable implements ICProject {
 		children.addAll(sourceRoots);
 		
 		boolean projectIsSourceRoot = false;
-		for (Iterator<ISourceRoot> i = sourceRoots.iterator(); i.hasNext();)
-			if (i.next().getResource().equals(getProject())) {
+		for (ISourceRoot sourceRoot : sourceRoots)
+			if (sourceRoot.getResource().equals(getProject())) {
 				projectIsSourceRoot = true;
 				break;
 			}
@@ -639,12 +637,10 @@ public class CProject extends Openable implements ICProject {
 		// Now look for output folders
 		try {
 			IResource[] resources = getProject().members();
-			for (int i = 0; i < resources.length; i++) {
-				IResource child = resources[i];
+			for (IResource child : resources) {
 				if (child.getType() == IResource.FOLDER) {
 					boolean found = false;
-					for (Iterator<ISourceRoot> iter = sourceRoots.iterator(); iter.hasNext();) {
-						ISourceRoot sourceRoot = iter.next();
+					for (ISourceRoot sourceRoot : sourceRoots) {
 						if (sourceRoot.isOnSourceEntry(child)) {
 							found = true;
 							break;
@@ -677,8 +673,8 @@ public class CProject extends Openable implements ICProject {
 	public boolean isOnSourceRoot(ICElement element) {
 		try {
 			ISourceRoot[] roots = getSourceRoots();
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].isOnSourceEntry(element)) {
+			for (ISourceRoot root : roots) {
+				if (root.isOnSourceEntry(element)) {
 					return true;
 				}
 			}
@@ -694,8 +690,8 @@ public class CProject extends Openable implements ICProject {
 	public boolean isOnSourceRoot(IResource resource) {
 		try {
 			ISourceRoot[] roots = getSourceRoots();
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].isOnSourceEntry(resource)) {
+			for (ISourceRoot root : roots) {
+				if (root.isOnSourceEntry(resource)) {
 					return true;
 				}
 			}

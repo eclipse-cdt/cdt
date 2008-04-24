@@ -54,6 +54,7 @@ import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
@@ -211,11 +212,11 @@ public class CCorePlugin extends Plugin {
 		
 		// if factory is null, default factory must be used
 		if (factory == null) factory = BufferManager.getDefaultBufferManager().getDefaultBufferFactory();
-		Map<ITranslationUnit, IWorkingCopy> sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
+		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
 		
-		Map<ITranslationUnit, IWorkingCopy> perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
 		if (perFactoryWorkingCopies == null) return CModelManager.NoWorkingCopy;
-		Collection<IWorkingCopy> copies = perFactoryWorkingCopies.values();
+		Collection<WorkingCopy> copies = perFactoryWorkingCopies.values();
 		IWorkingCopy[] result = new IWorkingCopy[copies.size()];
 		copies.toArray(result);
 		return result;
@@ -494,7 +495,7 @@ public class CCorePlugin extends Plugin {
         for (String key : newOptions.keySet()){
             if (!CModelManager.OptionNames.contains(key)) continue; // unrecognized option
             if (key.equals(CORE_ENCODING)) continue; // skipped, contributed by resource prefs
-            String value = (String)newOptions.get(key);
+            String value = newOptions.get(key);
             preferences.setValue(key, value);
         }
     
@@ -508,12 +509,12 @@ public class CCorePlugin extends Plugin {
 	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CBuildConsole"); //$NON-NLS-1$
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
-						String consoleID = configElements[j].getAttribute("id"); //$NON-NLS-1$
+				for (IExtension extension2 : extensions) {
+					IConfigurationElement[] configElements = extension2.getConfigurationElements();
+					for (IConfigurationElement configElement : configElements) {
+						String consoleID = configElement.getAttribute("id"); //$NON-NLS-1$
 						if ((id == null && consoleID == null) || (id != null && id.equals(consoleID))) {
-							return (IConsole) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
+							return (IConsole) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 						}
 					}
 				}
@@ -570,9 +571,6 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @param project
-	 * @return
-	 * @throws CoreException
 	 * @deprecated - use getBinaryParserExtensions(IProject project)
 	 */
 	@Deprecated
@@ -621,9 +619,9 @@ public class CCorePlugin extends Plugin {
 		IExtension extension = extensionPoint.getExtension(id);
 		if (extension != null) {
 			IConfigurationElement element[] = extension.getConfigurationElements();
-			for (int i = 0; i < element.length; i++) {
-				if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
-					parser = (IBinaryParser) element[i].createExecutableExtension("run"); //$NON-NLS-1$
+			for (IConfigurationElement element2 : element) {
+				if (element2.getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+					parser = (IBinaryParser) element2.createExecutableExtension("run"); //$NON-NLS-1$
 					break;
 				}
 			}
@@ -655,9 +653,6 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @param project
-	 * @return
-	 * @throws CoreException
 	 * @deprecated use getCProjetDescription(IProject project, boolean create)
 	 */
 	@Deprecated
@@ -779,9 +774,9 @@ public class CCorePlugin extends Plugin {
 							ICProjectDescription projDes = createProjectDescription(projectHandle, true);
 							ICConfigurationDescription cfgs[] = projDes.getConfigurations();
 							ICConfigurationDescription cfg = null;
-							for(int i = 0; i < cfgs.length; i++){
-								if(bsId.equals(cfgs[i].getBuildSystemId())){
-									cfg = cfgs[i];
+							for (ICConfigurationDescription cfg2 : cfgs) {
+								if(bsId.equals(cfg2.getBuildSystemId())){
+									cfg = cfg2;
 									break;
 								}
 							}
@@ -830,14 +825,7 @@ public class CCorePlugin extends Plugin {
 	 * All checks should have been done externally
 	 * (as in the Conversion Wizards). 
 	 * This method blindly does the conversion.
-	 * 
-	 * @param project
-	 * @param String targetNature
-	 * @param monitor
-	 * @param projectID
-	 * @exception CoreException
 	 */
-
 	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID)
 		throws CoreException {
 		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
@@ -862,14 +850,7 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Method to convert a project to a C++ nature 
-	 * 
-	 * @param project
-	 * @param String targetNature
-	 * @param monitor
-	 * @param projectID
-	 * @exception CoreException
 	 */
-
 	public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID)
 		throws CoreException {
 		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
@@ -899,14 +880,14 @@ public class CCorePlugin extends Plugin {
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			IConfigurationElement defaultContributor = null;
-			for (int i = 0; i < extensions.length; i++) {
-				IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-				for (int j = 0; j < configElements.length; j++) {
-					if (configElements[j].getName().equals("processList")) { //$NON-NLS-1$
-						String platform = configElements[j].getAttribute("platform"); //$NON-NLS-1$
+			for (IExtension extension2 : extensions) {
+				IConfigurationElement[] configElements = extension2.getConfigurationElements();
+				for (IConfigurationElement configElement : configElements) {
+					if (configElement.getName().equals("processList")) { //$NON-NLS-1$
+						String platform = configElement.getAttribute("platform"); //$NON-NLS-1$
 						if (platform == null ) { // first contrbutor found with not platform will be default.
 							if (defaultContributor == null) {
-								defaultContributor = configElements[j];
+								defaultContributor = configElement;
 							}
 						} else if (platform.equals(Platform.getOS())) {
 							// found explicit contributor for this platform.
@@ -925,7 +906,6 @@ public class CCorePlugin extends Plugin {
 	
 	/**
 	 * Array of error parsers ids.
-	 * @return
 	 */
 	public String[] getAllErrorParsersIDs() {
         IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ERROR_PARSER_SIMPLE_ID);
@@ -1072,7 +1052,7 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * this method is a full equivalent to {@link #createProjectDescription(IProject, boolean, false)}
+	 * this method is a full equivalent to <code>createProjectDescription(IProject, boolean, false)</code>.
 	 * 
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
@@ -1126,7 +1106,7 @@ public class CCorePlugin extends Plugin {
 	 * @param des
 	 * @throws CoreException
 	 * 
-	 * @see {@link #getProjectDescription(IProject, boolean)}
+	 * @see #getProjectDescription(IProject, boolean)
 	 * @see #createProjectDescription(IProject, boolean)
 	 */
 	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
@@ -1183,8 +1163,6 @@ public class CCorePlugin extends Plugin {
 	
 	/**
 	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
-	 * @param project
-	 * @return
 	 */
 	public boolean isNewStyleProject(IProject project){
 		return fNewCProjectDescriptionManager.isNewStyleProject(project);
@@ -1192,8 +1170,6 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
-	 * @param des
-	 * @return
 	 */
 	public boolean isNewStyleProject(ICProjectDescription des){
 		return fNewCProjectDescriptionManager.isNewStyleProject(des);

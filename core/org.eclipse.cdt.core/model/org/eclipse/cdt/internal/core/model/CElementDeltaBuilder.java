@@ -47,17 +47,17 @@ public class CElementDeltaBuilder {
 	/**
 	 * The old handle to info relationships
 	 */
-	Map infos;
+	Map<ICElement, CElementInfo> infos;
 
 	/**
 	 * The old position info
 	 */
-	Map oldPositions;
+	Map<ICElement, ListItem> oldPositions;
 
 	/**
 	 * The new position info
 	 */
-	Map newPositions;
+	Map<ICElement, ListItem> newPositions;
 
 	/**
 	 * Change delta
@@ -67,12 +67,12 @@ public class CElementDeltaBuilder {
 	/**
 	 * List of added elements
 	 */
-	ArrayList added;
+	ArrayList<ICElement> added;
 
 	/**
 	 * List of removed elements
 	 */
-	ArrayList removed;
+	ArrayList<ICElement> removed;
 	
 	/**
 	 * Doubly linked list item
@@ -213,26 +213,26 @@ private void findContentChange(CElementInfo oldInfo, CElementInfo newInfo, ICEle
  * Adds removed deltas for any handles left in the table
  */
 private void findDeletions() {
-	Iterator iter = this.infos.keySet().iterator();
+	Iterator<ICElement> iter = this.infos.keySet().iterator();
 	while(iter.hasNext()) {
-		ICElement element = (ICElement)iter.next();
+		ICElement element = iter.next();
 		this.delta.removed(element);
 		this.removed(element);
 	}
 }
 private CElementInfo getElementInfo(ICElement element) {
-	return (CElementInfo)this.infos.get(element);
+	return this.infos.get(element);
 }
 private ListItem getNewPosition(ICElement element) {
-	return (ListItem)this.newPositions.get(element);
+	return this.newPositions.get(element);
 }
 private ListItem getOldPosition(ICElement element) {
-	return (ListItem)this.oldPositions.get(element);
+	return this.oldPositions.get(element);
 }
 private void initialize() {
-	this.infos = new HashMap(20);
-	this.oldPositions = new HashMap(20);
-	this.newPositions = new HashMap(20);
+	this.infos = new HashMap<ICElement, CElementInfo>(20);
+	this.oldPositions = new HashMap<ICElement, ListItem>(20);
+	this.newPositions = new HashMap<ICElement, ListItem>(20);
 	this.putOldPosition(this.cElement, new ListItem(null, null));
 	this.putNewPosition(this.cElement, new ListItem(null, null));
 	this.delta = new CElementDelta(cElement);
@@ -243,8 +243,8 @@ private void initialize() {
 		this.delta.fineGrained();
 	}
 	
-	this.added = new ArrayList(5);
-	this.removed = new ArrayList(5);
+	this.added = new ArrayList<ICElement>(5);
+	this.removed = new ArrayList<ICElement>(5);
 }
 /**
  * Inserts position information for the elements into the new or old positions table

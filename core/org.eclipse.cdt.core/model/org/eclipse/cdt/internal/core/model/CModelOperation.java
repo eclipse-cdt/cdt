@@ -106,7 +106,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/*
 	 * A per thread stack of java model operations (PerThreadObject of ArrayList).
 	 */
-	protected static ThreadLocal operationStacks = new ThreadLocal();
+	protected static ThreadLocal<ArrayList<CModelOperation>> operationStacks = new ThreadLocal<ArrayList<CModelOperation>>();
 
 	protected CModelOperation() {
 	}
@@ -178,12 +178,12 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Registers the given reconcile delta with the C Model Manager.
 	 */
 	protected void addReconcileDelta(IWorkingCopy workingCopy, ICElementDelta delta) {
-		HashMap reconcileDeltas = CModelManager.getDefault().reconcileDeltas;
+		HashMap<IWorkingCopy, ICElementDelta> reconcileDeltas = CModelManager.getDefault().reconcileDeltas;
 		CElementDelta previousDelta = (CElementDelta)reconcileDeltas.get(workingCopy);
 		if (previousDelta != null) {
 			ICElementDelta[] children = delta.getAffectedChildren();
-			for (int i = 0, length = children.length; i < length; i++) {
-				CElementDelta child = (CElementDelta)children[i];
+			for (ICElementDelta element : children) {
+				CElementDelta child = (CElementDelta)element;
 				previousDelta.insertDeltaTree(child.getElement(), child);
 			}
 		} else {
@@ -229,8 +229,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		if (fElementsToProcess == null || fElementsToProcess.length == 0) {
 			return new CModelStatus(ICModelStatusConstants.NO_ELEMENTS_TO_PROCESS);
 		}
-		for (int i = 0; i < fElementsToProcess.length; i++) {
-			if (fElementsToProcess[i] == null) {
+		for (ICElement elementsToProces : fElementsToProcess) {
+			if (elementsToProces == null) {
 				return new CModelStatus(ICModelStatusConstants.NO_ELEMENTS_TO_PROCESS);
 			}
 		}
@@ -359,8 +359,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			}
 			//accumulate the nested operation deltas
 			if (operation.fDeltas != null) {
-				for (int i = 0; i < operation.fDeltas.length; i++) {
-					addDelta(operation.fDeltas[i]);
+				for (ICElementDelta delta : operation.fDeltas) {
+					addDelta(delta);
 				}
 			}
 		} catch (CoreException ce) {
@@ -538,8 +538,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			// hook to ensure working copies remain consistent
 			//makeWorkingCopiesConsistent(fDeltas);
 			CModelManager manager= CModelManager.getDefault();
-			for (int i= 0; i < fDeltas.length; i++) {
-				manager.registerCModelDelta(fDeltas[i]);
+			for (ICElementDelta delta : fDeltas) {
+				manager.registerCModelDelta(delta);
 			}
 		}
 	}
@@ -548,10 +548,10 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Returns the stack of operations running in the current thread.
 	 * Returns an empty stack if no operations are currently running in this thread. 
 	 */
-	protected ArrayList getCurrentOperationStack() {
-		ArrayList stack = (ArrayList)operationStacks.get();
+	protected ArrayList<CModelOperation> getCurrentOperationStack() {
+		ArrayList<CModelOperation> stack = operationStacks.get();
 		if (stack == null) {
-			stack = new ArrayList();
+			stack = new ArrayList<CModelOperation>();
 			operationStacks.set(stack);
 		}
 		return stack;
@@ -562,13 +562,13 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Returns the poped operation or null if the stack was empty.
 	 */
 	protected CModelOperation popOperation() {
-		ArrayList stack = getCurrentOperationStack();
+		ArrayList<CModelOperation> stack = getCurrentOperationStack();
 		int size = stack.size();
 		if (size > 0) {
 			if (size == 1) { // top level operation 
 				operationStacks.set(null); // release reference (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=33927)
 			}
-			return (CModelOperation)stack.remove(size-1);
+			return stack.remove(size-1);
 		} else {
 			return null;
 		}
@@ -585,7 +585,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Returns whether this operation is the first operation to run in the current thread.
 	 */
 	protected boolean isTopLevelOperation() {
-		ArrayList stack;
+		ArrayList<CModelOperation> stack;
 		return 
 			(stack = this.getCurrentOperationStack()).size() > 0
 			&& stack.get(0) == this;
@@ -663,7 +663,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 
 	/**
 	 * Sets whether this operation is nested or not.
-	 * @see CreateElementInCUOperation#checkCanceled
+	 * @see CreateElementInTUOperation#checkCanceled
 	 */
 	protected void setNested(boolean nested) {
 		fNested = nested;

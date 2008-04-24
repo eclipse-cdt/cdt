@@ -41,11 +41,6 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	IIncludeEntry fIncludeEntry;
 	IPath fPath;
 
-	/**
-	 * @param parent
-	 * @param name
-	 * @param type
-	 */
 	public IncludeReference(ICProject cproject, IIncludeEntry entry) {
 		this(cproject, entry, entry.getFullIncludePath());
 	}
@@ -83,7 +78,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
 		return computeChildren(info, underlyingResource);
 	}
 
@@ -108,24 +103,24 @@ public class IncludeReference extends Openable implements IIncludeReference {
 			String[] names = null;
 			if (file != null && file.isDirectory()) {
 				names = file.list();
-			}
-	
-			if (names != null) {
-				IPath path = new Path(file.getAbsolutePath());
-				for (int i = 0; i < names.length; i++) {
-					File child = new File(file, names[i]);
-					ICElement celement = null;
-					if (child.isDirectory()) {
-						celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
-					} else if (child.isFile()){
-						String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), names[i]);
-						if (id != null) {
-							// TODO:  should use URI
-							celement = new ExternalTranslationUnit(this, URIUtil.toURI(path.append(names[i])), id);
+
+				if (names != null) {
+					IPath path = new Path(file.getAbsolutePath());
+					for (String name : names) {
+						File child = new File(file, name);
+						ICElement celement = null;
+						if (child.isDirectory()) {
+							celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
+						} else if (child.isFile()){
+							String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), name);
+							if (id != null) {
+								// TODO:  should use URI
+								celement = new ExternalTranslationUnit(this, URIUtil.toURI(path.append(name)), id);
+							}
 						}
-					}
-					if (celement != null) {
-						vChildren.add(celement);
+						if (celement != null) {
+							vChildren.add(celement);
+						}
 					}
 				}
 			}

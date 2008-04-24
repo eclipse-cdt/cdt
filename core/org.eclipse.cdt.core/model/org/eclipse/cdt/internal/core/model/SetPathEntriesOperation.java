@@ -67,23 +67,22 @@ public class SetPathEntriesOperation extends CModelOperation {
 
 			IProject[] projectReferences = description.getReferencedProjects();
 
-			HashSet oldReferences = new HashSet(projectReferences.length);
-			for (int i = 0; i < projectReferences.length; i++) {
-				String projectName = projectReferences[i].getName();
+			HashSet<String> oldReferences = new HashSet<String>(projectReferences.length);
+			for (IProject projectReference : projectReferences) {
+				String projectName = projectReference.getName();
 				oldReferences.add(projectName);
 			}
-			HashSet newReferences = (HashSet) oldReferences.clone();
+			@SuppressWarnings("unchecked")
+			HashSet<String> newReferences = (HashSet<String>) oldReferences.clone();
 
-			for (int i = 0; i < oldRequired.length; i++) {
-				String projectName = oldRequired[i];
+			for (String projectName : oldRequired) {
 				newReferences.remove(projectName);
 			}
-			for (int i = 0; i < newRequired.length; i++) {
-				String projectName = newRequired[i];
+			for (String projectName : newRequired) {
 				newReferences.add(projectName);
 			}
 
-			Iterator iter;
+			Iterator<String> iter;
 			int newSize = newReferences.size();
 
 			checkIdentity : {
@@ -101,7 +100,7 @@ public class SetPathEntriesOperation extends CModelOperation {
 			int index = 0;
 			iter = newReferences.iterator();
 			while (iter.hasNext()) {
-				requiredProjectNames[index++] = (String) iter.next();
+				requiredProjectNames[index++] = iter.next();
 			}
 			Arrays.sort(requiredProjectNames); // ensure that if changed, the order is consistent
 

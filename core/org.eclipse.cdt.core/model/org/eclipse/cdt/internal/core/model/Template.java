@@ -25,7 +25,7 @@ public class Template implements ITemplate {
 	}
 	/**
 	 * Returns the parameterTypes.
-	 * @see org.eclipse.cdt.core.model.ITemplate#getParameters()
+	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
 	 * @return String[]
 	 */
 	public String[] getTemplateParameterTypes() {
@@ -34,7 +34,7 @@ public class Template implements ITemplate {
 
 	/**
 	 * Sets the fParameterTypes.
-	 * @param fParameterTypes The fParameterTypes to set
+	 * @param templateParameterTypes The template parameter types to set
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
 		this.templateParameterTypes = templateParameterTypes;

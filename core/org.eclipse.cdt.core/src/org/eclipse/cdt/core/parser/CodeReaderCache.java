@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.util.ILRUCacheable;
-import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -77,9 +76,6 @@ public class CodeReaderCache implements ICodeReaderCache {
 			
 			/**
 			 * Create a RemoveCacheJob used to run as a separate thread to remove a CodeReader from the cache.
-			 * @param cache
-			 * @param event
-			 * @param mutex
 			 */
 			public RemoveCacheJob(ICodeReaderCache cache, IResourceChangeEvent event) {
 				super(REMOVE_CACHE);
@@ -97,11 +93,11 @@ public class CodeReaderCache implements ICodeReaderCache {
 			}
             
             private void removeKeys(IResourceDelta[] deltas) {
-                for(int j=0; j<deltas.length; j++) {
-                    if (deltas[j].getResource().getType() == IResource.PROJECT || deltas[j].getResource().getType() == IResource.FOLDER) {
-                        removeKeys(deltas[j].getAffectedChildren());
-                    } else if (deltas[j].getResource() instanceof IFile && ((IFile)deltas[j].getResource()).getLocation() != null) {
-                        removeKey(((IFile)deltas[j].getResource()).getLocation().toOSString());
+                for (IResourceDelta delta : deltas) {
+                    if (delta.getResource().getType() == IResource.PROJECT || delta.getResource().getType() == IResource.FOLDER) {
+                        removeKeys(delta.getAffectedChildren());
+                    } else if (delta.getResource() instanceof IFile && ((IFile)delta.getResource()).getLocation() != null) {
+                        removeKey(((IFile)delta.getResource()).getLocation().toOSString());
                     }
                 }
             }
@@ -142,7 +138,6 @@ public class CodeReaderCache implements ICodeReaderCache {
 	/**
 	 * Get a CodeReader from the cache.  The key is the char[] filename of the CodeReader to retrieve.
 	 * @param key the path of the CodeReader to retrieve
-	 * @return
 	 */
 	public synchronized CodeReader get(String key) {
 		CodeReader ret = null;
@@ -189,6 +184,37 @@ public class CodeReaderCache implements ICodeReaderCache {
 		cache.setSpaceLimit(size * MB_TO_KB_FACTOR);
 	}
 	
+	
+	/**
+	 * This is a wrapper for entries to put into the OverflowingLRUCache (required to determine the
+	 * size of entries relative to the CodeReader's file size).
+	 * 
+	 * Although the size of the CodeReaderCache is specified in terms of MB, the actual granularity of
+	 * the cache is KB.
+	 * 
+	 * @author dsteffle
+	 *
+	 */
+	private class CodeReaderCacheEntry implements ILRUCacheable {
+
+		private static final double CHAR_TO_KB_FACTOR = 1024;
+		CodeReader reader = null;
+		int size = 0; // used to specify the size of the CodeReader in terms of KB
+
+		public CodeReaderCacheEntry(CodeReader value) {
+			this.reader = value;
+			size = (int)Math.ceil(reader.buffer.length / CHAR_TO_KB_FACTOR); // get the size of the file in terms of KB 
+		}
+
+		public int getCacheFootprint() {
+			return size;
+		}
+		
+		public CodeReader getCodeReader() {
+			return reader;
+		}
+	}
+
 	/**
 	 * This class is a wrapper/implementor class for OverflowingLRUCache.
 	 * 
@@ -198,37 +224,8 @@ public class CodeReaderCache implements ICodeReaderCache {
 	 * @author dsteffle
 	 *
 	 */
-	private class CodeReaderLRUCache extends OverflowingLRUCache {
+	private class CodeReaderLRUCache extends OverflowingLRUCache<String, CodeReaderCacheEntry> {
 		
-		/**
-		 * This is a wrapper for entries to put into the OverflowingLRUCache (required to determine the
-		 * size of entries relative to the CodeReader's file size).
-		 * 
-		 * Although the size of the CodeReaderCache is specified in terms of MB, the actual granularity of
-		 * the cache is KB.
-		 * 
-		 * @author dsteffle
-		 *
-		 */
-		private class CodeReaderCacheEntry implements ILRUCacheable {
-
-			private static final double CHAR_TO_KB_FACTOR = 1024;
-			CodeReader reader = null;
-			int size = 0; // used to specify the size of the CodeReader in terms of KB
-
-			public CodeReaderCacheEntry(CodeReader value) {
-				this.reader = value;
-				size = (int)Math.ceil(reader.buffer.length / CHAR_TO_KB_FACTOR); // get the size of the file in terms of KB 
-			}
-
-			public int getCacheFootprint() {
-				return size;
-			}
-			
-			public CodeReader getCodeReader() {
-				return reader;
-			}
-		}
 		
 		/**
 		 * Creates a new CodeReaderLRUCache with a specified initial maximum size.
@@ -241,7 +238,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 		
 		// must be overloaded, required to remove entries from the cache
 		@Override
-		protected boolean close(LRUCacheEntry entry) {
+		protected boolean close(LRUCacheEntry<String,CodeReaderCacheEntry> entry) {
 			Object obj = remove(entry._fKey);
 			
 			if (obj != null) 
@@ -251,16 +248,15 @@ public class CodeReaderCache implements ICodeReaderCache {
 		}
 
 		@Override
-		protected LRUCache newInstance(int size, int overflow) {
+		protected OverflowingLRUCache<String,CodeReaderCacheEntry> newInstance(int size, int overflow) {
 			return null;
 		}
 		
 		/**
 		 * Removes an entry from the cache and returns the entry that was removed if found.
 		 * Otherwise null is returned. 
-		 * @param key
-		 * @return
 		 */
+		@Override
 		public CodeReader remove(String key) {
 			Object removed = removeKey(key);
 						
@@ -274,30 +270,23 @@ public class CodeReaderCache implements ICodeReaderCache {
 		 * Puts a CodeReader into the cache by wrapping it with a CodeReaderCacheEntry first. 
 		 * This way the proper size of the element in the cache can be determined
 		 * via the CodeReaderCacheEntry.
-		 * @param key
-		 * @param value
-		 * @return
 		 */
-		public CodeReader put(Object key, CodeReader value) {
-			Object entry = new CodeReaderCacheEntry(value);
-		
-			Object ret = put(key, entry);
-			
-			if (ret instanceof CodeReaderCacheEntry)
-				return ((CodeReaderCacheEntry)ret).getCodeReader();
+		public CodeReader put(String key, CodeReader value) {
+			CodeReaderCacheEntry entry = new CodeReaderCacheEntry(value);
+			CodeReaderCacheEntry ret = put(key, entry);
+			if (ret != null)
+				return ret.getCodeReader();
 			
 			return null;
 		}
 
 		/**
 		 * Retrieves a CodeReader from the cache corresponding to the path specified by the key.
-		 * @param key
-		 * @return
 		 */
 		public CodeReader get(String key) {
-			Object obj = peek(key);
-			if (obj instanceof CodeReaderCacheEntry)
-				return ((CodeReaderCacheEntry)obj).getCodeReader();
+			CodeReaderCacheEntry obj = peek(key);
+			if (obj != null)
+				return obj.getCodeReader();
 
 			return null;
 		}
@@ -320,7 +309,6 @@ public class CodeReaderCache implements ICodeReaderCache {
 	
 	/**
 	 * Returns the current size of the cache.  For the CodeReaderCache this is in MB.
-	 * @return
 	 */
 	public int getCurrentSpace() {
 		return cache.getCurrentSpace(); 

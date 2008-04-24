@@ -147,12 +147,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public ICElement getElementAtLine(int line) throws CModelException {
 		ICElement[] celements = getChildren();
-		for (int i = 0; i < celements.length; i++) {
-			ISourceRange range = ((ISourceReference)celements[i]).getSourceRange();
+		for (ICElement celement : celements) {
+			ISourceRange range = ((ISourceReference)celement).getSourceRange();
 			int startLine = range.getStartLine();
 			int endLine = range.getEndLine();
 			if (line >= startLine && line <= endLine) {
-				return celements[i];
+				return celement;
 			}
 		}
 		return null;
@@ -180,9 +180,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		try {
 			ICElement[] celements = getChildren();
-			for (int i = 0; i < celements.length; i++) {
-				if (name.equals(celements[i].getElementName())) {
-					return celements[i];
+			for (ICElement celement : celements) {
+				if (name.equals(celement.getElementName())) {
+					return celement;
 				}
 			}
 		} catch (CModelException e) {
@@ -196,9 +196,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				try {
 					ICElement[] celements = ((IParent) current).getChildren();
 					current = null;
-					for (int i = 0; i < celements.length; i++) {
-						if (names[j].equals(celements[i].getElementName())) {
-							current = celements[i];
+					for (ICElement celement : celements) {
+						if (names[j].equals(celement.getElementName())) {
+							current = celement;
 							break;
 						}
 					}
@@ -215,10 +215,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public IInclude getInclude(String name) {
 		try {
 			ICElement[] celements = getChildren();
-			for (int i = 0; i < celements.length; i++) {
-				if (celements[i].getElementType() == ICElement.C_INCLUDE) {
-					if (name.equals(celements[i].getElementName())) {
-						return (IInclude) celements[i];
+			for (ICElement celement : celements) {
+				if (celement.getElementType() == ICElement.C_INCLUDE) {
+					if (name.equals(celement.getElementName())) {
+						return (IInclude) celement;
 					}
 				}
 			}
@@ -230,9 +230,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public IInclude[] getIncludes() throws CModelException {
 		ICElement[] celements = getChildren();
 		ArrayList<ICElement> aList = new ArrayList<ICElement>();
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i].getElementType() == ICElement.C_INCLUDE) {
-				aList.add(celements[i]);
+		for (ICElement celement : celements) {
+			if (celement.getElementType() == ICElement.C_INCLUDE) {
+				aList.add(celement);
 			}
 		}
 		return aList.toArray(new IInclude[0]);
@@ -241,10 +241,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public IUsing getUsing(String name) {
 		try {
 			ICElement[] celements = getChildren();
-			for (int i = 0; i < celements.length; i++) {
-				if (celements[i].getElementType() == ICElement.C_USING) {
-					if (name.equals(celements[i].getElementName())) {
-						return (IUsing) celements[i];
+			for (ICElement celement : celements) {
+				if (celement.getElementType() == ICElement.C_USING) {
+					if (name.equals(celement.getElementName())) {
+						return (IUsing) celement;
 					}
 				}
 			}
@@ -256,9 +256,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public IUsing[] getUsings() throws CModelException {
 		ICElement[] celements = getChildren();
 		ArrayList<ICElement> aList = new ArrayList<ICElement>();
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i].getElementType() == ICElement.C_USING) {
-				aList.add(celements[i]);
+		for (ICElement celement : celements) {
+			if (celement.getElementType() == ICElement.C_USING) {
+				aList.add(celement);
 			}
 		}
 		return aList.toArray(new IUsing[0]);
@@ -272,10 +272,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				if (current instanceof IParent) {
 					ICElement[] celements = ((IParent) current).getChildren();
 					current = null;
-					for (int i = 0; i < celements.length; i++) {
-						if (celements[i].getElementType() == ICElement.C_NAMESPACE) {
-							if (name.equals(celements[i].getElementName())) {
-								current = celements[i];
+					for (ICElement celement : celements) {
+						if (celement.getElementType() == ICElement.C_NAMESPACE) {
+							if (name.equals(celement.getElementName())) {
+								current = celement;
 								break;
 							}
 						}
@@ -295,9 +295,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public INamespace[] getNamespaces() throws CModelException {
 		ICElement[] celements = getChildren();
 		ArrayList<ICElement> aList = new ArrayList<ICElement>();
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i].getElementType() == ICElement.C_NAMESPACE) {
-				aList.add(celements[i]);
+		for (ICElement celement : celements) {
+			if (celement.getElementType() == ICElement.C_NAMESPACE) {
+				aList.add(celement);
 			}
 		}
 		return aList.toArray(new INamespace[0]);
@@ -405,11 +405,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		// In order to be shared, working copies have to denote the same translation unit
 		// AND use the same buffer factory.
 		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
-		Map sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
+		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
 
-		Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
 		if (perFactoryWorkingCopies == null) return null;
-		return (WorkingCopy) perFactoryWorkingCopies.get(this);
+		return perFactoryWorkingCopies.get(this);
 	}
 
 	@Override
@@ -418,7 +418,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 
 		// We reuse the general info cache in the CModelBuilder, We should not do this
@@ -468,14 +468,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		// In order to be shared, working copies have to denote the same translation unit
 		// AND use the same buffer factory.
 		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
-		Map sharedWorkingCopies = manager.sharedWorkingCopies;
+		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = manager.sharedWorkingCopies;
 
-		Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
 		if (perFactoryWorkingCopies == null) {
-			perFactoryWorkingCopies = new HashMap();
+			perFactoryWorkingCopies = new HashMap<ITranslationUnit, WorkingCopy>();
 			sharedWorkingCopies.put(factory, perFactoryWorkingCopies);
 		}
-		WorkingCopy workingCopy = (WorkingCopy)perFactoryWorkingCopies.get(this);
+		WorkingCopy workingCopy = perFactoryWorkingCopies.get(this);
 		if (workingCopy != null) {
 			workingCopy.useCount++;
 			return workingCopy;
@@ -511,7 +511,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	protected void openParent(Object childInfo, Map newElements, IProgressMonitor pm) throws CModelException {
+	protected void openParent(CElementInfo childInfo, Map<ICElement, CElementInfo> newElements, IProgressMonitor pm) throws CModelException {
 		try {
 			super.openParent(childInfo, newElements, pm);
 		} catch (CModelException e) {
@@ -548,13 +548,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			info= createElementInfo();
 		}
 		try {
-			HashMap newElements = manager.getTemporaryCache();
+			Map<ICElement, CElementInfo> newElements = manager.getTemporaryCache();
 			openWhenClosed(info, monitor);
 			if (newElements.get(this) == null) {
 				// close any buffer that was opened for the new elements
-				Iterator iterator = newElements.keySet().iterator();
+				Iterator<ICElement> iterator = newElements.keySet().iterator();
 				while (iterator.hasNext()) {
-					ICElement element = (ICElement)iterator.next();
+					ICElement element = iterator.next();
 					if (element instanceof Openable) {
 						((Openable)element).closeBuffer();
 					}
@@ -625,14 +625,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return buffer;
 	}
 
-	public Map parse() {
+	public Map<?, ?> parse() {
 		throw new UnsupportedOperationException("Deprecated method"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Parse the buffer contents of this element.
 	 */
-	private void parse(Map newElements, IProgressMonitor monitor) {
+	private void parse(Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) {
 		boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
 		IContributedModelBuilder mb = LanguageManager.getInstance().getContributedModelBuilderFor(this);
 		if (mb == null) {
@@ -646,7 +646,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * Parse the buffer contents of this element.
 	 * @param monitor
 	 */
-	private void parseUsingCModelBuilder(Map newElements, boolean quickParseMode, IProgressMonitor monitor) {
+	private void parseUsingCModelBuilder(Map<ICElement, CElementInfo> newElements, boolean quickParseMode, IProgressMonitor monitor) {
 		try {
 			new CModelBuilder2(this, monitor).parse(quickParseMode);
 		} catch (OperationCanceledException oce) {
@@ -854,11 +854,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {
 				fLanguageOfContext= null;
-				for (int i = 0; i < CTX_LINKAGES.length; i++) {
+				for (int element : CTX_LINKAGES) {
 					IIndexFile context= null;
 					final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
 					if (ifl != null) {
-						IIndexFile indexFile= index.getFile(CTX_LINKAGES[i], ifl);
+						IIndexFile indexFile= index.getFile(element, ifl);
 						if (indexFile != null) {
 							// bug 199412, when a source-file includes itself the context may recurse.
 							HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
@@ -1032,43 +1032,43 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			case ICElement.C_TEMPLATE_METHOD:
 			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 				// search for matching function
-				for (int i = 0; i < children.length; i++) {
-					if (elementType == children[i].getElementType()
-							&& elementName.equals(children[i].getElementName())) {
-						assert children[i] instanceof IFunctionDeclaration;
-						String[] functionParams= ((IFunctionDeclaration)children[i]).getParameterTypes();
-						if (Arrays.equals(functionParams, mementoParams)) {
-							element= (CElement) children[i];
-							break;
+				for (ICElement element2 : children) {
+						if (elementType == element2.getElementType()
+								&& elementName.equals(element2.getElementName())) {
+							assert element2 instanceof IFunctionDeclaration;
+							String[] functionParams= ((IFunctionDeclaration)element2).getParameterTypes();
+							if (Arrays.equals(functionParams, mementoParams)) {
+								element= (CElement) element2;
+								break;
+							}
 						}
 					}
-				}
 				break;
 			case ICElement.C_TEMPLATE_CLASS:
 			case ICElement.C_TEMPLATE_STRUCT:
 			case ICElement.C_TEMPLATE_UNION:
 				// search for matching template type
-				for (int i = 0; i < children.length; i++) {
-					if (elementType == children[i].getElementType()
-							&& elementName.equals(children[i].getElementName())) {
-						assert children[i] instanceof ITemplate;
-						String[] templateParams= ((ITemplate)children[i]).getTemplateParameterTypes();
-						if (Arrays.equals(templateParams, mementoParams)) {
-							element= (CElement) children[i];
-							break;
+				for (ICElement element2 : children) {
+						if (elementType == element2.getElementType()
+								&& elementName.equals(element2.getElementName())) {
+							assert element2 instanceof ITemplate;
+							String[] templateParams= ((ITemplate)element2).getTemplateParameterTypes();
+							if (Arrays.equals(templateParams, mementoParams)) {
+								element= (CElement) element2;
+								break;
+							}
 						}
 					}
-				}
 				break;
 			default:
 				// search for matching element
-				for (int i = 0; i < children.length; i++) {
-					if (elementType == children[i].getElementType()
-							&& elementName.equals(children[i].getElementName())) {
-						element= (CElement) children[i];
-						break;
+				for (ICElement element2 : children) {
+						if (elementType == element2.getElementType()
+								&& elementName.equals(element2.getElementName())) {
+							element= (CElement) element2;
+							break;
+						}
 					}
-				}
 				break;
 			}
 			if (element != null) {

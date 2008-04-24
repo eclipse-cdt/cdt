@@ -72,7 +72,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	
 	public ScalabilityPreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
-		setDescription(PreferencesMessages.ScalabilityPreferencePage_description);
+		setDescription(PreferencesMessages.ScalabilityPreferencePage_description); 
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
             SelectionListener listener= (SelectionListener)iter.next();
             listener.widgetSelected(null);
         }
-        fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
+        fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));	
 	}
 
 	/*
@@ -114,7 +114,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.SCALABILITY_PREFERENCE_PAGE);
-	}
+	}	
 
 	/*
 	 * @see PreferencePage#createContents(Composite)
@@ -138,14 +138,14 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		
 		createDetectionSettings(composite);
 
-		new Separator().doFillIntoGrid(composite, nColumns);
+		new Separator().doFillIntoGrid(composite, nColumns);	
 		
 		createScalabilityModeSettings(composite);
 
-		new Separator().doFillIntoGrid(composite, nColumns);
+		new Separator().doFillIntoGrid(composite, nColumns);	
 		
 		String noteTitle= PreferencesMessages.ScalabilityPreferencePage_note;
-		String noteMessage= PreferencesMessages.ScalabilityPreferencePage_preferenceOnlyForNewViews;
+		String noteMessage= PreferencesMessages.ScalabilityPreferencePage_preferenceOnlyForNewViews; 
 		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), composite, noteTitle, noteMessage);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -196,7 +196,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		fLinesToTrigger.setValidRange( 1, Integer.MAX_VALUE );
 		String minValue = Integer.toString( 1 );
 		String maxValue = Integer.toString( Integer.MAX_VALUE );
-		fLinesToTrigger.setErrorMessage( MessageFormat.format(PreferencesMessages.ScalabilityPreferencePage_error, new Object[]{ minValue, maxValue } ) );
+		fLinesToTrigger.setErrorMessage( MessageFormat.format(PreferencesMessages.ScalabilityPreferencePage_error, minValue, maxValue) );
 		fLinesToTrigger.load();
 		fLinesToTrigger.setPropertyChangeListener( new IPropertyChangeListener() {
 
@@ -222,7 +222,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	private static void indent(Control control) {
 		GridData gridData= new GridData();
 		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);
+		control.setLayoutData(gridData);		
 	}
 	
 	private void createDependency(final Button master, String masterKey, final Control slave) {
@@ -269,7 +269,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		prefs.setValue(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, fLinesToTrigger.getIntValue());
 		CUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
-	}
+	}	
 	
 	/*
 	 * @see PreferencePage#performDefaults()
@@ -291,6 +291,6 @@ public class ScalabilityPreferencePage extends PreferencePage implements
             SelectionListener listener= (SelectionListener)iter.next();
             listener.widgetSelected(null);
         }
-        fLinesToTrigger.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
+        fLinesToTrigger.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));	
 	}
 }

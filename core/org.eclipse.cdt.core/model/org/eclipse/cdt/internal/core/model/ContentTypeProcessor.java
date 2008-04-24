@@ -328,11 +328,11 @@ public class ContentTypeProcessor extends CModelOperation {
 				}
 			}
 			// Assume a workspace resolver
-			List list = new ArrayList(cprojects.length);
+			List<ICProject> list = new ArrayList<ICProject>(cprojects.length);
 			for (int i = 0; i < cprojects.length; ++i) {
 				list.add(cprojects[i]);
 			}
-			return (ICProject[]) list.toArray(new ICProject[list.size()]);
+			return list.toArray(new ICProject[list.size()]);
 		} catch (CModelException e) {
 			//
 		}

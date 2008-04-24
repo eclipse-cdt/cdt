@@ -32,11 +32,11 @@ import org.eclipse.cdt.internal.core.CharOperation;
 public class DeleteElementsOperation extends MultiOperation {
 	/**
 	 * The elements this operation processes grouped by compilation unit
-	 * @see processElements(). Keys are compilation units,
+	 * @see #processElements()  Keys are compilation units,
 	 * values are <code>IRegion</code>s of elements to be processed in each
 	 * compilation unit.
 	 */ 
-	protected Map fChildrenToRemove;
+	protected Map<ITranslationUnit, IRegion> fChildrenToRemove;
 
 	/**
 	 * When executed, this operation will delete the given elements. The elements
@@ -62,15 +62,14 @@ public class DeleteElementsOperation extends MultiOperation {
 	 * duplicates specified in elements to be processed.
 	 */
 	protected void groupElements() throws CModelException {
-		fChildrenToRemove = new HashMap(1);
+		fChildrenToRemove = new HashMap<ITranslationUnit, IRegion>(1);
 		int uniqueTUs = 0;
-		for (int i = 0, length = fElementsToProcess.length; i < length; i++) {
-			ICElement e = fElementsToProcess[i];
+		for (ICElement e : fElementsToProcess) {
 			ITranslationUnit tu = getTranslationUnitFor(e);
 			if (tu == null) {
 				throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, e));
 			}
-			IRegion region = (IRegion) fChildrenToRemove.get(tu);
+			IRegion region = fChildrenToRemove.get(tu);
 			if (region == null) {
 				region = new Region();
 				fChildrenToRemove.put(tu, region);
@@ -79,10 +78,10 @@ public class DeleteElementsOperation extends MultiOperation {
 			region.add(e);
 		}
 		fElementsToProcess = new ICElement[uniqueTUs];
-		Iterator iter = fChildrenToRemove.keySet().iterator();
+		Iterator<ITranslationUnit> iter = fChildrenToRemove.keySet().iterator();
 		int i = 0;
 		while (iter.hasNext()) {
-			fElementsToProcess[i++] = (ICElement) iter.next();
+			fElementsToProcess[i++] = iter.next();
 		}
 	}
 	/**
@@ -96,9 +95,8 @@ public class DeleteElementsOperation extends MultiOperation {
 		IBuffer buffer = tu.getBuffer();
 		if (buffer == null) return;
 		CElementDelta delta = new CElementDelta(tu);
-		ICElement[] cuElements = ((IRegion) fChildrenToRemove.get(tu)).getElements();
-		for (int i = 0, length = cuElements.length; i < length; i++) {
-			ICElement e = cuElements[i];
+		ICElement[] cuElements = fChildrenToRemove.get(tu).getElements();
+		for (ICElement e : cuElements) {
 			if (e.exists()) {
 				char[] contents = buffer.getCharacters();
 				if (contents == null) continue;
@@ -165,9 +163,8 @@ public class DeleteElementsOperation extends MultiOperation {
 	 */
 	@Override
 	protected void verify(ICElement element) throws CModelException {
-		ICElement[] children = ((IRegion) fChildrenToRemove.get(element)).getElements();
-		for (int i = 0; i < children.length; i++) {
-			ICElement child = children[i];
+		ICElement[] children = fChildrenToRemove.get(element).getElements();
+		for (ICElement child : children) {
 			if (child.getResource() != null)
 				error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, child);
 			if (child.isReadOnly())

@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.util;
 
 
 import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  *	The <code>OverflowingLRUCache</code> is an LRUCache which attempts
@@ -48,7 +47,7 @@ import java.util.Iterator;
  *
  * This class is similar to the JDT OverflowingLRUCache class.
  */
-public abstract class OverflowingLRUCache extends LRUCache {
+public abstract class OverflowingLRUCache<K,T> extends LRUCache<K,T> {
 	/**
 	 * Indicates if the cache has been over filled and by how much.
 	 */
@@ -96,8 +95,8 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	@Override
 	public Object clone() {
 		
-		OverflowingLRUCache newCache = (OverflowingLRUCache)newInstance(fSpaceLimit, fOverflow);
-		LRUCacheEntry qEntry;
+		OverflowingLRUCache<K,T> newCache = newInstance(fSpaceLimit, fOverflow);
+		LRUCacheEntry<K,T> qEntry;
 		
 		/* Preserve order of entries by copying from oldest to newest */
 		qEntry = this.fEntryQueueTail;
@@ -115,25 +114,25 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * by closing the obejct.
 	 *
 	 */
-	protected abstract boolean close(LRUCacheEntry entry);
+	protected abstract boolean close(LRUCacheEntry<K,T> entry);
 	/**
 	 *	Returns an enumerator of the values in the cache with the most
 	 *	recently used first.
 	 */
-	public Enumeration elements() {
+	public Enumeration<T> elements() {
 		if (fEntryQueue == null)
-			return new LRUCacheEnumerator(null);
-		LRUCacheEnumerator.LRUEnumeratorElement head = 
-			new LRUCacheEnumerator.LRUEnumeratorElement(fEntryQueue._fValue);
-		LRUCacheEntry currentEntry = fEntryQueue._fNext;
-		LRUCacheEnumerator.LRUEnumeratorElement currentElement = head;
+			return new LRUCacheEnumerator<T>(null);
+		LRUCacheEnumerator.LRUEnumeratorElement<T> head = 
+			new LRUCacheEnumerator.LRUEnumeratorElement<T>(fEntryQueue._fValue);
+		LRUCacheEntry<K,T> currentEntry = fEntryQueue._fNext;
+		LRUCacheEnumerator.LRUEnumeratorElement<T> currentElement = head;
 		while(currentEntry != null) {
-			currentElement.fNext = new LRUCacheEnumerator.LRUEnumeratorElement(currentEntry._fValue);
+			currentElement.fNext = new LRUCacheEnumerator.LRUEnumeratorElement<T>(currentEntry._fValue);
 			currentElement = currentElement.fNext;
 			
 			currentEntry = currentEntry._fNext;
 		}
-		return new LRUCacheEnumerator(head);
+		return new LRUCacheEnumerator<T>(head);
 	}
 	public double fillingRatio() {
 		return (fCurrentSpace + fOverflow) * 100.0 / fSpaceLimit;
@@ -144,7 +143,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 *
 	 * @return Hashtable of entries
 	 */
-	public java.util.Hashtable getEntryTable() {
+	public java.util.Hashtable<K,LRUCacheEntry<K,T>> getEntryTable() {
 		return fEntryTable;
 	}
 	/**
@@ -183,7 +182,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 		/* Free up space by removing oldest entries */
 		int spaceNeeded = (int)((1 - fLoadFactor) * fSpaceLimit);
 		spaceNeeded = (spaceNeeded > space) ? spaceNeeded : space;
-		LRUCacheEntry entry = fEntryQueueTail;
+		LRUCacheEntry<K,T> entry = fEntryQueueTail;
 	
 		while (fCurrentSpace + spaceNeeded > limit && entry != null) {
 			this.privateRemoveEntry(entry, false, false);
@@ -203,16 +202,16 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	/**
 	 * Returns a new instance of the reciever.
 	 */
-	protected abstract LRUCache newInstance(int size, int overflow);
+	protected abstract OverflowingLRUCache<K,T> newInstance(int size, int overflow);
 	/**
 	 * Answers the value in the cache at the given key.
 	 * If the value is not in the cache, returns null
 	 *
 	 * This function does not modify timestamps.
 	 */
-	public Object peek(Object key) {
+	public T peek(K key) {
 		
-		LRUCacheEntry entry = (LRUCacheEntry) fEntryTable.get(key);
+		LRUCacheEntry<K,T> entry = fEntryTable.get(key);
 		if (entry == null) {
 			return null;
 		}
@@ -223,7 +222,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 */
 	public void printStats() {
 		int forwardListLength = 0;
-		LRUCacheEntry entry = fEntryQueue;
+		LRUCacheEntry<K,T> entry = fEntryQueue;
 		while(entry != null) {
 			forwardListLength++;
 			entry = entry._fNext;
@@ -238,11 +237,11 @@ public abstract class OverflowingLRUCache extends LRUCache {
 		}
 		System.out.println("Backward length: " + backwardListLength); //$NON-NLS-1$
 	
-		Enumeration keys = fEntryTable.keys();
+		Enumeration<K> keys = fEntryTable.keys();
 		class Temp {
-			public Class fClass;
+			public Class<?> fClass;
 			public int fCount;
-			public Temp(Class aClass) {
+			public Temp(Class<?> aClass) {
 				fClass = aClass;
 				fCount = 1;
 			}
@@ -251,11 +250,11 @@ public abstract class OverflowingLRUCache extends LRUCache {
 				return "Class: " + fClass + " has " + fCount + " entries."; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 			}
 		}
-		java.util.HashMap h = new java.util.HashMap();
+		java.util.HashMap<Class<?>, Temp> h = new java.util.HashMap<Class<?>, Temp>();
 		while(keys.hasMoreElements()) {
-			entry = (LRUCacheEntry)fEntryTable.get(keys.nextElement());
-			Class key = entry._fValue.getClass();
-			Temp t = (Temp)h.get(key);
+			entry = fEntryTable.get(keys.nextElement());
+			Class<?> key = entry._fValue.getClass();
+			Temp t = h.get(key);
 			if (t == null) {
 				h.put(key, new Temp(key));
 			} else {
@@ -263,8 +262,8 @@ public abstract class OverflowingLRUCache extends LRUCache {
 			}
 		}
 	
-		for (Iterator iter = h.keySet().iterator(); iter.hasNext();){
-			System.out.println(h.get(iter.next()));
+		for (Object element : h.keySet()) {
+			System.out.println(h.get(element));
 		}
 	}
 	/**
@@ -275,7 +274,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * (i.e., the entry table is left alone).
 	 */
 	@Override
-	protected void privateRemoveEntry (LRUCacheEntry entry, boolean shuffle) {
+	protected void privateRemoveEntry (LRUCacheEntry<K,T> entry, boolean shuffle) {
 		privateRemoveEntry(entry, shuffle, true);
 	}
 	/**
@@ -289,7 +288,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 *	@param shuffle indicates whether we are just shuffling the queue 
 	 *	(i.e., the entry table is left alone).
 	 */
-	protected void privateRemoveEntry(LRUCacheEntry entry, boolean shuffle, boolean external) {
+	protected void privateRemoveEntry(LRUCacheEntry<K, T> entry, boolean shuffle, boolean external) {
 	
 		if (!shuffle) {
 			if (external) {
@@ -309,8 +308,8 @@ public abstract class OverflowingLRUCache extends LRUCache {
 				privateNotifyDeletionFromCache(entry);
 			}
 		}
-		LRUCacheEntry previous = entry._fPrevious;
-		LRUCacheEntry next = entry._fNext;
+		LRUCacheEntry<K, T> previous = entry._fPrevious;
+		LRUCacheEntry<K, T> next = entry._fNext;
 			
 		/* if this was the first entry */
 		if (previous == null) {
@@ -333,14 +332,14 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * @return added value.
 	 */
 	@Override
-	public Object put(Object key, Object value) {
+	public T put(K key, T value) {
 		/* attempt to rid ourselves of the overflow, if there is any */
 		if (fOverflow > 0)
 			shrink();
 			
 		/* Check whether there's an entry in the cache */
 		int newSpace = spaceFor (key, value);
-		LRUCacheEntry entry = (LRUCacheEntry) fEntryTable.get (key);
+		LRUCacheEntry<K, T> entry = fEntryTable.get (key);
 		
 		if (entry != null) {
 			
@@ -378,7 +377,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * @param key Key of object to remove from cache.
 	 * @return Value removed from cache.
 	 */
-	public Object remove(Object key) {
+	public Object remove(K key) {
 		return removeKey(key);
 	}
 	/**
@@ -431,7 +430,7 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 * <p>This method will do nothing if timestamps have been disabled.
 	 */
 	@Override
-	protected void updateTimestamp(LRUCacheEntry entry) {
+	protected void updateTimestamp(LRUCacheEntry<K, T> entry) {
 		if (fTimestampsOn) {
 			entry._fTimestamp = fTimestampCounter++;
 			if (fEntryQueue != entry) {

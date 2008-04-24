@@ -13,12 +13,12 @@ package org.eclipse.cdt.internal.core.model;
 
 
 import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 
@@ -56,7 +56,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	}
 
 	/**
-	 * @see CreateElementInCUOperation#generateResultHandle
+	 * @see CreateElementInTUOperation#generateResultHandle
 	 */
 	@Override
 	protected ICElement generateResultHandle() {
@@ -64,7 +64,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	}
 
 	/**
-	 * @see CreateElementInCUOperation#getMainTaskName
+	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
 	public String getMainTaskName(){
@@ -97,7 +97,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	 *  <li>INVALID_NAME - not a valid include declaration name.
 	 * </ul>
 	 * @see ICModelStatus
-	 * @see CNamingConventions
+	 * @see CConventions
 	 */
 	@Override
 	public ICModelStatus verify() {

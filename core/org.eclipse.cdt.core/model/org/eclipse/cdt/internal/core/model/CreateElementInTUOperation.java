@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -21,7 +22,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
- * <p>This abstract class implements behavior common to <code>CreateElementInCUOperations</code>.
+ * <p>This abstract class implements behavior common to <code>CreateElementInTUOperations</code>.
  * To create a compilation unit, or an element contained in a compilation unit, the
  * source code for the entire compilation unit is updated and saved.
  *
@@ -174,8 +175,8 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 			fResultElements = generateResultHandles();
 			if (!isWorkingCopy) { // if unit is working copy, then save will have already fired the delta
 				if (unit.getParent().exists()) {
-					for (int i = 0; i < fResultElements.length; i++) {
-						delta.added(fResultElements[i]);
+					for (ICElement resultElement : fResultElements) {
+						delta.added(resultElement);
 					}
 					addDelta(delta);
 				} // else unit is created outside classpath
@@ -211,7 +212,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	/**
 	 * Returns the amount of work for the main task of this operation for
 	 * progress reporting.
-	 * @see executeOperation()
+	 * @see #executeOperation()
 	 */
 	protected int getMainAmountOfWork(){
 		return 2;
@@ -220,7 +221,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	/**
 	 * Returns the name of the main task of this operation for
 	 * progress reporting.
-	 * @see executeOperation()
+	 * @see #executeOperation()
 	 */
 	protected abstract String getMainTaskName();
 
@@ -246,8 +247,8 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 * Inserts the given child into the given JDOM, 
 	 * based on the position settings of this operation.
 	 *
-	 * @see createAfter(IJavaElement)
-	 * @see createBefore(IJavaElement);
+	 * @see #createAfter(ICElement)
+	 * @see #createBefore(ICElement)
 	 */
 	protected void insertElement() throws CModelException {
 		if (fInsertionPolicy != INSERT_LAST) {
@@ -307,7 +308,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	 *  <li>INVALID_SIBLING - the sibling provided for positioning is not valid.
 	 * </ul>
 	 * @see ICModelStatus
-	 * @see CNamingConventions
+	 * @see CConventions
 	 */
 	@Override
 	public ICModelStatus verify() {

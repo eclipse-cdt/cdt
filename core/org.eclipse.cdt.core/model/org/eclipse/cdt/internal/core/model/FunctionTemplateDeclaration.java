@@ -49,8 +49,7 @@ public class FunctionTemplateDeclaration extends FunctionDeclaration implements 
 	}
 
 	/**
-	 * Sets the fParameterTypes.
-	 * @param fParameterTypes The fParameterTypes to set
+	 * Sets the template parameter types.
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
 		fTemplate.setTemplateParameterTypes(templateParameterTypes);

@@ -67,7 +67,7 @@ public class Archive extends Openable implements IArchive {
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
 		throws CModelException {
 		return computeChildren(info, underlyingResource);
 	}
@@ -76,8 +76,7 @@ public class Archive extends Openable implements IArchive {
 		IBinaryArchive ar = getBinaryArchive();
 		if (ar != null) {
 			IBinaryObject[] objects = ar.getObjects();
-			for (int i = 0; i < objects.length; i++) {
-				final IBinaryObject obj = objects[i];
+			for (final IBinaryObject obj : objects) {
 				Binary binary = new Binary(this, ar.getPath().append(obj.getName()), obj);
 				info.addChild(binary);
 			}
@@ -90,6 +89,7 @@ public class Archive extends Openable implements IArchive {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IBinaryArchive.class.equals(adapter)) {

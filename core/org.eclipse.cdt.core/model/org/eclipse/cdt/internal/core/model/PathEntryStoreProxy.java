@@ -27,12 +27,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPathEntryStore, IPathEntryStoreListener {
-	private List fListeners;
+	private List<IPathEntryStoreListener> fListeners;
 	private IPathEntryStore fStore;
 	
 	public PathEntryStoreProxy(IProject project){
 		super(project, PathEntryManager.PATHENTRY_STORE_UNIQ_ID);
-		fListeners = Collections.synchronizedList(new ArrayList());
+		fListeners = Collections.synchronizedList(new ArrayList<IPathEntryStoreListener>());
 	}
 	
 	public IPathEntryStore getStore(){

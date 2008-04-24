@@ -27,7 +27,7 @@ public class Enumerator extends SourceManipulation implements IEnumerator{
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.core.model.IEnumerator#getConstantExptrssion()
+	 * @see org.eclipse.cdt.core.model.IEnumerator#getConstantExpression()
 	 */
 	public String getConstantExpression() {
 		return constantExpression;

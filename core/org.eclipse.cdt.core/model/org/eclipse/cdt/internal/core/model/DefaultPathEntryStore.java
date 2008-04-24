@@ -71,7 +71,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 
 	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
 
-	List listeners;
+	List<IPathEntryStoreListener> listeners;
 	IProject fProject;
 	
 	/**
@@ -79,7 +79,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	 */
 	public DefaultPathEntryStore(IProject project) {
 		fProject = project;
-		listeners = Collections.synchronizedList(new ArrayList());
+		listeners = Collections.synchronizedList(new ArrayList<IPathEntryStoreListener>());
 		// Register the Core Model on the Descriptor
 		// Manager, it needs to know about changes.
 		CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(this);
@@ -88,7 +88,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	public IPathEntry[] getRawPathEntries() throws CoreException {
 		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(fProject, false);
 		if (cdesc != null) {
-			ArrayList pathEntries = new ArrayList();
+			ArrayList<IPathEntry> pathEntries = new ArrayList<IPathEntry>();
 			Element element = cdesc.getProjectData(PATH_ENTRY_ID);
 			NodeList list = element.getChildNodes();
 			for (int i = 0; i < list.getLength(); i++) {
@@ -185,7 +185,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 				IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(
 						element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
 				
-				if (baseRef != null && !baseRef.isEmpty()) {
+				if (!baseRef.isEmpty()) {
 					return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
 				}
 				return CoreModel.newLibraryEntry(path, basePath, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath,
@@ -212,7 +212,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 				if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
 					isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
 				}
-				if (baseRef != null && !baseRef.isEmpty()) {
+				if (!baseRef.isEmpty()) {
 					return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
 				}
 				return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
@@ -225,7 +225,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 			case IPathEntry.CDT_MACRO : {
 				String macroName = element.getAttribute(ATTRIBUTE_NAME);
 				String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
-				if (baseRef != null && !baseRef.isEmpty()) {
+				if (!baseRef.isEmpty()) {
 					return CoreModel.newMacroRefEntry(path, baseRef, macroName);
 				}
 				return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
@@ -247,16 +247,16 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 
 	static void encodePathEntries(IPath projectPath, Document doc, Element configRootElement, IPathEntry[] entries) {
 		Element element;
-		for (int i = 0; i < entries.length; i++) {
+		for (IPathEntry entrie : entries) {
 			element = doc.createElement(PATH_ENTRY);
 
 			configRootElement.appendChild(element);
-			int kind = entries[i].getEntryKind();
+			int kind = entrie.getEntryKind();
 			// Set the kind
 			element.setAttribute(ATTRIBUTE_KIND, PathEntry.kindToString(kind));
 
 			// translate the project prefix.
-			IPath xmlPath = entries[i].getPath();
+			IPath xmlPath = entrie.getPath();
 			if (xmlPath == null) {
 				xmlPath = new Path(""); //$NON-NLS-1$
 			}
@@ -285,7 +285,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 				case IPathEntry.CDT_CONTAINER:
 					break;
 				case IPathEntry.CDT_LIBRARY: {
-					ILibraryEntry lib = (ILibraryEntry) entries[i];
+					ILibraryEntry lib = (ILibraryEntry) entrie;
 					IPath libraryPath = lib.getLibraryPath();
 					element.setAttribute(ATTRIBUTE_LIBRARY, libraryPath.toString());
 					IPath sourcePath = lib.getSourceAttachmentPath();
@@ -308,7 +308,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 					break;
 				}
 				case IPathEntry.CDT_INCLUDE: {
-					IIncludeEntry include = (IIncludeEntry) entries[i];
+					IIncludeEntry include = (IIncludeEntry) entrie;
 					IPath includePath = include.getIncludePath();
 					element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
 					if (include.isSystemInclude()) {
@@ -317,26 +317,26 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 					break;
 				}
 				case IPathEntry.CDT_INCLUDE_FILE: {
-					IIncludeFileEntry include = (IIncludeFileEntry) entries[i];
+					IIncludeFileEntry include = (IIncludeFileEntry) entrie;
 					IPath includeFilePath = include.getIncludeFilePath();
 					element.setAttribute(ATTRIBUTE_INCLUDE_FILE, includeFilePath.toString());
 					break;
 				}
 				case IPathEntry.CDT_MACRO: {
-					IMacroEntry macro = (IMacroEntry) entries[i];
+					IMacroEntry macro = (IMacroEntry) entrie;
 					element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
 					element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
 					break;
 				}
 				case IPathEntry.CDT_MACRO_FILE: {
-					IMacroFileEntry macro = (IMacroFileEntry) entries[i];
+					IMacroFileEntry macro = (IMacroFileEntry) entrie;
 					element.setAttribute(ATTRIBUTE_MACRO_FILE, macro.getMacroFilePath().toString());
 					break;
 				}
 			}
 
-			if (entries[i] instanceof APathEntry) {
-				APathEntry entry = (APathEntry) entries[i];
+			if (entrie instanceof APathEntry) {
+				APathEntry entry = (APathEntry) entrie;
 
 				// save the basePath or the baseRef
 				IPath basePath = entry.getBasePath();
@@ -362,7 +362,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 			}
 
 			// Save the export attribute
-			if (entries[i].isExported()) {
+			if (entrie.isExported()) {
 				element.setAttribute(ATTRIBUTE_EXPORTED, VALUE_TRUE);
 			}
 		}
@@ -402,8 +402,8 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.CONTENT_CHANGED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
 		listeners.toArray(observers);
-		for (int i = 0; i < observers.length; i++) {
-			observers[i].pathEntryStoreChanged(evt);
+		for (IPathEntryStoreListener observer : observers) {
+			observer.pathEntryStoreChanged(evt);
 		}
 	}
 
@@ -414,8 +414,8 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject, PathEntryStoreChangedEvent.STORE_CLOSED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
 		listeners.toArray(observers);
-		for (int i = 0; i < observers.length; i++) {
-			observers[i].pathEntryStoreChanged(evt);
+		for (IPathEntryStoreListener observer : observers) {
+			observer.pathEntryStoreChanged(evt);
 		}
 		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(this);
 	}

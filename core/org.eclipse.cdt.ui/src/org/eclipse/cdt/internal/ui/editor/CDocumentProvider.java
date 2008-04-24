@@ -791,7 +791,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			ICProject cproject= CoreModel.getDefault().create(file.getProject());
 			if (cproject != null) {
 				String contentTypeId= CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
-				return new TranslationUnit(cproject, file, contentTypeId);
+				if (contentTypeId != null) {
+					return new TranslationUnit(cproject, file, contentTypeId);
+				}
 			}
 		}
 		return null;

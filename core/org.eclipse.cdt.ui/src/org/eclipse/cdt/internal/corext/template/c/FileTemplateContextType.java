@@ -170,11 +170,22 @@ public class FileTemplateContextType extends TemplateContextType {
 	}
 	
 	protected void addResourceVariables() {
-		addResolver(new FileTemplateVariableResolver(FILENAME, TemplateMessages.FileTemplateContextType_variable_description_filename)); 
-		addResolver(new FileTemplateVariableResolver(FILEBASE, TemplateMessages.FileTemplateContextType_variable_description_filebase)); 
-		addResolver(new FileTemplateVariableResolver(FILELOCATION, TemplateMessages.FileTemplateContextType_variable_description_fileloc)); 
-		addResolver(new FileTemplateVariableResolver(FILEPATH, TemplateMessages.FileTemplateContextType_variable_description_filepath)); 
-		addResolver(new FileTemplateVariableResolver(PROJECTNAME, TemplateMessages.FileTemplateContextType_variable_description_projectname)); 
+		addResolver(new FileTemplateVariableResolver(FILENAME, TemplateMessages.FileTemplateContextType_variable_description_filename));
+		addResolver(new FileTemplateVariableResolver(FILEBASE, TemplateMessages.FileTemplateContextType_variable_description_filebase));
+		addResolver(new FileTemplateVariableResolver(FILELOCATION, TemplateMessages.FileTemplateContextType_variable_description_fileloc));
+		addResolver(new FileTemplateVariableResolver(FILEPATH, TemplateMessages.FileTemplateContextType_variable_description_filepath));
+		addResolver(new FileTemplateVariableResolver(PROJECTNAME, TemplateMessages.FileTemplateContextType_variable_description_projectname));
+	}
+
+	@Override
+	protected TemplateVariableResolver getResolver(String type) {
+		// compatibility with editor template variables
+		if ("file".equals(type)) { //$NON-NLS-1$
+			type= FILENAME;
+		} else if ("project".equals(type) || "enclosing_project".equals(type)) { //$NON-NLS-1$ //$NON-NLS-2$
+			type= PROJECTNAME;
+		}
+		return super.getResolver(type);
 	}
 
 	@Override
@@ -183,16 +194,16 @@ public class FileTemplateContextType extends TemplateContextType {
 		for (int i= 0; i < variables.length; i++) {
 			String type= variables[i].getType();
 			if (getResolver(type) == null) {
-				throw new TemplateException(Messages.format(TemplateMessages.FileTemplateContextType_validate_unknownvariable, type)); 
+				throw new TemplateException(Messages.format(TemplateMessages.FileTemplateContextType_validate_unknownvariable, type));
 			}
 			required.remove(type);
 		}
 		if (!required.isEmpty()) {
 			String missing= required.get(0);
-			throw new TemplateException(Messages.format(TemplateMessages.FileTemplateContextType_validate_missingvariable, missing)); 
+			throw new TemplateException(Messages.format(TemplateMessages.FileTemplateContextType_validate_missingvariable, missing));
 		}
 		super.validateVariables(variables);
-	}	
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.templates.TemplateContextType#resolve(org.eclipse.jface.text.templates.TemplateVariable, org.eclipse.jface.text.templates.TemplateContext)

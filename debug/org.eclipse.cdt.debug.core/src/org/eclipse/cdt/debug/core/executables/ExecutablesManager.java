@@ -100,24 +100,28 @@ public class ExecutablesManager extends PlatformObject {
 		if (tempDisableRefresh) {
 			return Status.OK_STATUS;
 		}
+		
+		synchronized (executables) {
+			ArrayList<Executable> oldList = new ArrayList<Executable>(executables);
+			executables.clear();
 
-		ArrayList<Executable> oldList = executables;
-		executables = new ArrayList<Executable>();
-		synchronized (executableProviders) {
-			monitor.beginTask("Refresh Executables", executableProviders.size());
-			for (IExecutableProvider provider : executableProviders) {
-				executables.addAll(provider.getExecutables(new SubProgressMonitor(monitor, 1)));
+			synchronized (executableProviders) {
+				monitor.beginTask("Refresh Executables", executableProviders.size());
+				for (IExecutableProvider provider : executableProviders) {
+					executables.addAll(provider.getExecutables(new SubProgressMonitor(monitor, 1)));
+				}
+				monitor.done();
 			}
-			monitor.done();
-		}
-		refreshNeeded = false;
+			refreshNeeded = false;
 
-		synchronized (changeListeners) {
-			for (IExecutablesChangeListener listener : changeListeners) {
-				listener.executablesChanged(new ExecutablesChangeEvent(oldList, executables) {
-				});
+			synchronized (changeListeners) {
+				for (IExecutablesChangeListener listener : changeListeners) {
+					listener.executablesChanged(new ExecutablesChangeEvent(oldList, executables) {
+					});
+				}
 			}
 		}
+
 		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 	}
 

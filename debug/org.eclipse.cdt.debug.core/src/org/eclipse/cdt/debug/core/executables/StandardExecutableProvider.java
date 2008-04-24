@@ -123,43 +123,44 @@ public class StandardExecutableProvider implements IResourceChangeListener, ICPr
 	}
 
 	public Collection<Executable> getExecutables(IProgressMonitor monitor) {
-		executables.clear();
+		synchronized (executables) {
+			executables.clear();
 
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject[] projects = root.getProjects();
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IProject[] projects = root.getProjects();
 
-		monitor.beginTask("Checking C/C++ Projects", projects.length);
+			monitor.beginTask("Checking C/C++ Projects", projects.length);
 
-		for (IProject project : projects) {
+			for (IProject project : projects) {
 
-			if (monitor.isCanceled())
-				break;
+				if (monitor.isCanceled())
+					break;
 
-			try {
-				if (CoreModel.hasCNature(project)) {
-					CModelManager manager = CModelManager.getDefault();
-					ICProject cproject = manager.create(project);
-					try {
-						IBinary[] binaries = cproject.getBinaryContainer().getBinaries();
-						for (IBinary binary : binaries) {
-							if (binary.isExecutable() || binary.isSharedLib()) {
-								IPath exePath = binary.getResource().getLocation();
-								if (exePath == null)
-									exePath = binary.getPath();
-								Executable exe = new Executable(exePath, project, binary.getResource());
-								executables.add(exe);
+				try {
+					if (CoreModel.hasCNature(project)) {
+						CModelManager manager = CModelManager.getDefault();
+						ICProject cproject = manager.create(project);
+						try {
+							IBinary[] binaries = cproject.getBinaryContainer().getBinaries();
+							for (IBinary binary : binaries) {
+								if (binary.isExecutable() || binary.isSharedLib()) {
+									IPath exePath = binary.getResource().getLocation();
+									if (exePath == null)
+										exePath = binary.getPath();
+									Executable exe = new Executable(exePath, project, binary.getResource());
+									executables.add(exe);
+								}
 							}
+						} catch (CModelException e) {
 						}
-					} catch (CModelException e) {
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				monitor.worked(1);
 			}
-			monitor.worked(1);
+			monitor.done();
 		}
-		monitor.done();
-
 		return executables;
 	}
 

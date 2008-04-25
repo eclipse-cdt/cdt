@@ -68,7 +68,10 @@ public class RSETerminalConnectorImpl extends TerminalConnectorImpl {
     }
 
     public void setTerminalSize(int newWidth, int newHeight) {
-        shell.setTerminalSize(newWidth, newHeight);
+    	if(shell != null)
+    	{	
+            shell.setTerminalSize(newWidth, newHeight);
+    	}    
     }
 
     public InputStream getInputStream() {

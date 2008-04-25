@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -49,7 +50,6 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 			map.put(ImageConsts.IMAGE_CLCL_SETTINGS, "properties_tsk.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_CLCL_COMMAND_INPUT_FIELD, "command_input_field.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_CLCL_SCROLL_LOCK, "lock_co.gif"); //$NON-NLS-1$
-			map.put(ImageConsts.IMAGE_CLCL_CLEAR_ALL, "clear_co.gif"); //$NON-NLS-1$
 
 			loadImageRegistry(imageRegistry, ImageConsts.IMAGE_DIR_LOCALTOOL, map);
 
@@ -62,7 +62,6 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 			map.put(ImageConsts.IMAGE_ELCL_SETTINGS, "properties_tsk.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_ELCL_COMMAND_INPUT_FIELD, "command_input_field.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_ELCL_SCROLL_LOCK, "lock_co.gif"); //$NON-NLS-1$
-			map.put(ImageConsts.IMAGE_ELCL_CLEAR_ALL, "clear_co.gif"); //$NON-NLS-1$
 
 			loadImageRegistry(imageRegistry, ImageConsts.IMAGE_DIR_ELCL, map);
 
@@ -75,7 +74,6 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 			map.put(ImageConsts.IMAGE_DLCL_SETTINGS, "properties_tsk.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_DLCL_COMMAND_INPUT_FIELD, "command_input_field.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_DLCL_SCROLL_LOCK, "lock_co.gif"); //$NON-NLS-1$
-			map.put(ImageConsts.IMAGE_DLCL_CLEAR_ALL, "clear_co.gif"); //$NON-NLS-1$
 
 			loadImageRegistry(imageRegistry, ImageConsts.IMAGE_DIR_DLCL, map);
 

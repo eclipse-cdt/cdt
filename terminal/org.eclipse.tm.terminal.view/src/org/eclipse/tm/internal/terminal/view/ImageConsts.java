@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - extracted from TerminalConsts
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -33,19 +34,16 @@ public interface ImageConsts
     public static final String  IMAGE_CLCL_CONNECT             = "ImageClclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_DISCONNECT          = "ImageClclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_SETTINGS            = "ImageClclSettings"; //$NON-NLS-1$
-    public static final String  IMAGE_CLCL_CLEAR_ALL            = "ImageClclClearAll"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_SCROLL_LOCK         = "ImageClclScrollLock"; //$NON-NLS-1$
 
     public static final String  IMAGE_DLCL_CONNECT             = "ImageDlclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_DISCONNECT          = "ImageDlclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_SETTINGS            = "ImageDlclSettings"; //$NON-NLS-1$
-    public static final String  IMAGE_DLCL_CLEAR_ALL            = "ImageDlclClearAll"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_SCROLL_LOCK         = "ImageDlclScrollLock"; //$NON-NLS-1$
 
     public static final String  IMAGE_ELCL_CONNECT             = "ImageElclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_DISCONNECT          = "ImageElclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_SETTINGS            = "ImageElclSettings"; //$NON-NLS-1$
-    public static final String  IMAGE_ELCL_CLEAR_ALL            = "ImageElclClearAll"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_SCROLL_LOCK         = "ImageElclScrollLock"; //$NON-NLS-1$
 	public static final String  IMAGE_CLCL_COMMAND_INPUT_FIELD        = "ImageClclCommandInputField";//$NON-NLS-1$
 	public static final String  IMAGE_ELCL_COMMAND_INPUT_FIELD        = "ImageDlclCommandInputField";//$NON-NLS-1$

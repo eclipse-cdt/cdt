@@ -15,8 +15,9 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206892] State handling: Only allow connect when CLOSED
  * Michael Scharf (Wind River) - [209656] ClassCastException in TerminalView under Eclipse-3.4M3
- * Michael Scharf (Wind River) - [189774] Ctrl+V does not work in the command input field. 
+ * Michael Scharf (Wind River) - [189774] Ctrl+V does not work in the command input field.
  * Michael Scharf (Wind River) - [217999] Duplicate context menu entries in Terminal
+ * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -33,7 +34,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Composite;
@@ -41,20 +41,20 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.actions.TerminalAction;
-import org.eclipse.tm.internal.terminal.actions.TerminalActionClearAll;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionConnect;
-import org.eclipse.tm.internal.terminal.actions.TerminalActionCopy;
-import org.eclipse.tm.internal.terminal.actions.TerminalActionCut;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionDisconnect;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionNewTerminal;
-import org.eclipse.tm.internal.terminal.actions.TerminalActionPaste;
-import org.eclipse.tm.internal.terminal.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSettings;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionToggleCommandInputField;
 import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
+import org.eclipse.tm.internal.terminal.control.actions.TerminalActionClearAll;
+import org.eclipse.tm.internal.terminal.control.actions.TerminalActionCopy;
+import org.eclipse.tm.internal.terminal.control.actions.TerminalActionCut;
+import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
+import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -92,15 +92,15 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	protected TerminalAction fActionTerminalSettings;
 
-	protected TerminalAction fActionEditCopy;
+	protected TerminalActionCopy fActionEditCopy;
 
-	protected TerminalAction fActionEditCut;
+	protected TerminalActionCut fActionEditCut;
 
-	protected TerminalAction fActionEditPaste;
+	protected TerminalActionPaste fActionEditPaste;
 
-	protected TerminalAction fActionEditClearAll;
+	protected TerminalActionClearAll fActionEditClearAll;
 
-	protected TerminalAction fActionEditSelectAll;
+	protected TerminalActionSelectAll fActionEditSelectAll;
 
 	protected TerminalAction fActionToggleCommandInputField;
 
@@ -233,9 +233,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		return fCtlTerminal.getState()==TerminalState.CONNECTING
 		    || fCtlTerminal.getState()==TerminalState.OPENED;
 	}
-	private boolean isConnected() {
-		return fCtlTerminal.getState()==TerminalState.CONNECTED;
-	}
+
 	public void onTerminalDisconnect() {
 		fCtlTerminal.disconnectTerminal();
 	}
@@ -356,65 +354,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		fCtlTerminal.setFont(JFaceResources.getFont(FONT_DEFINITION));
 	}
 
-	public void onEditCopy() {
-		String selection=fCtlTerminal.getSelection();
-
-		if (!selection.equals("")) {//$NON-NLS-1$
-			fCtlTerminal.copy();
-		} else {
-			fCtlTerminal.sendKey('\u0003');
-		}
-	}
-
-	public void updateEditCopy() {
-		boolean bEnabled=true;
-
-		if (fMenuAboutToShow) {
-			bEnabled = fCtlTerminal.getSelection().length()>0;
-		}
-
-		fActionEditCopy.setEnabled(bEnabled);
-	}
-
-	public void onEditCut() {
-		fCtlTerminal.sendKey('\u0018');
-	}
-
-	public void updateEditCut() {
-		boolean bEnabled;
-
-		bEnabled = !fMenuAboutToShow;
-		fActionEditCut.setEnabled(bEnabled);
-	}
-
-	public void onEditPaste() {
-		fCtlTerminal.paste();
-	}
-
-	public void updateEditPaste() {
-		String strText = (String) fCtlTerminal.getClipboard().getContents(TextTransfer.getInstance());
-
-		boolean bEnabled = ((strText != null) && (!strText.equals("")) && (isConnected()));//$NON-NLS-1$
-
-		fActionEditPaste.setEnabled(bEnabled);
-	}
-
-	public void onEditClearAll() {
-		fCtlTerminal.clearTerminal();
-	}
-
-	public void updateEditClearAll() {
-		fActionEditClearAll.setEnabled(!fCtlTerminal.isEmpty());
-	}
-
-	public void onEditSelectAll() {
-		fCtlTerminal.selectAll();
-	}
-
-	public void updateEditSelectAll() {
-		fActionEditSelectAll.setEnabled(!fCtlTerminal.isEmpty());
-	}
-
 	// ViewPart interface
 
 	public void createPartControl(Composite wndParent) {
@@ -511,11 +450,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		fActionTerminalConnect = new TerminalActionConnect(this);
 		fActionTerminalDisconnect = new TerminalActionDisconnect(this);
 		fActionTerminalSettings = new TerminalActionSettings(this);
-		fActionEditCopy = new TerminalActionCopy(this);
-		fActionEditCut = new TerminalActionCut(this);
-		fActionEditPaste = new TerminalActionPaste(this);
-		fActionEditClearAll = new TerminalActionClearAll(this);
-		fActionEditSelectAll = new TerminalActionSelectAll(this);
+		fActionEditCopy = new TerminalActionCopy(fCtlTerminal);
+		fActionEditCut = new TerminalActionCut(fCtlTerminal);
+		fActionEditPaste = new TerminalActionPaste(fCtlTerminal);
+		fActionEditClearAll = new TerminalActionClearAll(fCtlTerminal);
+		fActionEditSelectAll = new TerminalActionSelectAll(fCtlTerminal);
 		fActionToggleCommandInputField = new TerminalActionToggleCommandInputField(this);
 	}
 	protected void setupLocalToolBars() {
@@ -569,7 +508,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected class TerminalContextMenuHandler implements MenuListener, IMenuListener {
 		public void menuHidden(MenuEvent event) {
 			fMenuAboutToShow = false;
-			updateEditCopy();
+			fActionEditCopy.updateAction(fMenuAboutToShow);
 		}
 
 		public void menuShown(MenuEvent e) {
@@ -577,11 +516,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		}
 		public void menuAboutToShow(IMenuManager menuMgr) {
 			fMenuAboutToShow = true;
-			updateEditCopy();
-			updateEditCut();
-			updateEditSelectAll();
-			updateEditPaste();
-			updateEditClearAll();
+			fActionEditCopy.updateAction(fMenuAboutToShow);
+			fActionEditCut.updateAction(fMenuAboutToShow);
+			fActionEditSelectAll.updateAction(fMenuAboutToShow);
+			fActionEditPaste.updateAction(fMenuAboutToShow);
+			fActionEditClearAll.updateAction(fMenuAboutToShow);
 		}
 	}
 

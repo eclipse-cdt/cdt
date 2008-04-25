@@ -1,24 +1,25 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
- * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files 
+ * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
- * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared 
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Anna Dushistova (MontaVista)  - [149285] [ssh] multiple prompts and errors in case of incorrect username
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -77,7 +79,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Launches a shell and/or runs a shell command, displaying the output
- * in the Remote Shell view. 
+ * in the Remote Shell view.
  */
 public class SystemCommandAction extends SystemBaseAction
 {
@@ -90,14 +92,14 @@ public class SystemCommandAction extends SystemBaseAction
 			_cmdsPart = cmdsPart;
 			_cmd = cmd;
 		}
-		
+
 		public void run()
 		{
 			_cmdsPart.updateOutput(_cmd);
 		}
-		
+
 	}
-	
+
 	private class RunShellJob extends Job
 	{
 		private IRemoteCmdSubSystem _ss;
@@ -108,7 +110,7 @@ public class SystemCommandAction extends SystemBaseAction
 			_ss = ss;
 			_cmdsPart = cmdsPart;
 		}
-		
+
 		public IStatus run(IProgressMonitor monitor)
 		{
 			try
@@ -123,6 +125,9 @@ public class SystemCommandAction extends SystemBaseAction
 			catch (SystemMessageException e) {
 				SystemMessageDialog.displayMessage(e);
 			}
+			catch (OperationCanceledException e) {
+				//do nothing--it's user's action
+			}
 			catch (Exception e) {
 				SystemBasePlugin.logError(
 						e.getLocalizedMessage()!=null ? e.getLocalizedMessage() : e.getClass().getName(),
@@ -131,28 +136,40 @@ public class SystemCommandAction extends SystemBaseAction
 			return Status.OK_STATUS;
 		}
 	}
-	
+
 	public class PromptForPassword implements Runnable
 	{
 		public SubSystem _ss;
+		private boolean connectionCancelled=false;
 		public PromptForPassword(SubSystem ss)
 		{
 			_ss = ss;
 		}
-		
+
 		public void run()
 		{
 			try
 			{
 				_ss.promptForPassword();
 			}
+			catch (OperationCanceledException canceledEx) {
+				setConnectionCancelled(true);
+			}
 			catch (Exception e)
 			{
-				
+				/* ignore */
 			}
 		}
+
+		public void setConnectionCancelled(boolean connectionCancelled) {
+			this.connectionCancelled = connectionCancelled;
+		}
+
+		public boolean isConnectionCancelled() {
+			return connectionCancelled;
+		}
 	}
-	
+
 	public class UpdateRegistry implements Runnable
 	{
 		private SubSystem _ss;
@@ -160,25 +177,25 @@ public class SystemCommandAction extends SystemBaseAction
 		{
 			_ss = ss;
 		}
-		
+
 		public void run()
 		{
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.connectedStatusChange(_ss, true, false);
 		}
 	}
-	
+
 	private IRemoteFile _selected;
 	private ISystemFilterReference _selectedFilterRef;
-	
+
 
 	private boolean _isShell;
 	private IRemoteCmdSubSystem _cmdSubSystem;
 
-	
+
 
 	/**
-	 * The command dialog used when running a command. 
+	 * The command dialog used when running a command.
 	 */
 	public class CommandDialog extends SystemPromptDialog
 	{
@@ -289,7 +306,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 		/**
 		 * validate the invocation
-		 * @return a SystemMessage if the invocation is invalid.	
+		 * @return a SystemMessage if the invocation is invalid.
 		 */
 		protected SystemMessage validateInvocation()
 		{
@@ -299,7 +316,7 @@ public class SystemCommandAction extends SystemBaseAction
 			if (theNewName.length() == 0)
 			{
 				String msgTxt = ShellResources.MSG_UCMD_INVOCATION_EMPTY;
-				_errorMessage = new SimpleSystemMessage(ShellsUIPlugin.PLUGIN_ID, 
+				_errorMessage = new SimpleSystemMessage(ShellsUIPlugin.PLUGIN_ID,
 						"RSEG1260", //$NON-NLS-1$
 						IStatus.ERROR, msgTxt);
 			}
@@ -321,7 +338,9 @@ public class SystemCommandAction extends SystemBaseAction
 
 	/**
 	 * Constructor for SystemCommandAction
-	 * @param parent
+	 *
+	 * @param parent Shell of parent window. Can be null if you don't know it,
+	 *            but call setShell when you do.
 	 */
 	public SystemCommandAction(Shell parent)
 	{
@@ -330,8 +349,11 @@ public class SystemCommandAction extends SystemBaseAction
 
 	/**
 	 * Constructor for SystemCommandAction
-	 * @param parent
-	 * @param isShell indication of whether this action launches a shell or runs a command
+	 *
+	 * @param parent Shell of parent window. Can be null if you don't know it,
+	 *            but call setShell when you do.
+	 * @param isShell indication of whether this action launches a shell or runs
+	 *            a command
 	 */
 	public SystemCommandAction(Shell parent, boolean isShell)
 	{
@@ -340,8 +362,11 @@ public class SystemCommandAction extends SystemBaseAction
 
 	/**
 	 * Constructor for SystemCommandAction
-	 * @param parent
-	 * @param isShell indication of whether this action launches a shell or runs a command
+	 *
+	 * @param parent Shell of parent window. Can be null if you don't know it,
+	 *            but call setShell when you do.
+	 * @param isShell indication of whether this action launches a shell or runs
+	 *            a command
 	 * @param cmdSubSystem the command subsystem to use if launching a shell
 	 */
 	public SystemCommandAction(Shell parent, boolean isShell, IRemoteCmdSubSystem cmdSubSystem)
@@ -356,9 +381,12 @@ public class SystemCommandAction extends SystemBaseAction
 
 	/**
 	 * Constructor for SystemCommandAction
+	 *
 	 * @param title the title of the action
-	 * @param parent
-	 * @param isShell indication of whether this action launches a shell or runs a command
+	 * @param parent Shell of parent window. Can be null if you don't know it,
+	 *            but call setShell when you do.
+	 * @param isShell indication of whether this action launches a shell or runs
+	 *            a command
 	 * @param cmdSubSystem the command subsystem to use if launching a shell
 	 */
 	public SystemCommandAction(String title, Shell parent, boolean isShell, IRemoteCmdSubSystem cmdSubSystem)
@@ -369,12 +397,15 @@ public class SystemCommandAction extends SystemBaseAction
 
 	/**
 	 * Constructor for SystemCommandAction
+	 *
 	 * @param title the title of the action
 	 * @param tooltip the tooltip for the action
-	 * @param parent
-	 * @param isShell indication of whether this action launches a shell or runs a command
+	 * @param parent Shell of parent window. Can be null if you don't know it,
+	 *            but call setShell when you do.
+	 * @param isShell indication of whether this action launches a shell or runs
+	 *            a command
 	 * @param cmdSubSystem the command subsystem to use if launching a shell
-	 */	
+	 */
 	public SystemCommandAction(String title, String tooltip, Shell parent, boolean isShell, IRemoteCmdSubSystem cmdSubSystem)
 	{
 		this(
@@ -389,13 +420,16 @@ public class SystemCommandAction extends SystemBaseAction
 
 	/**
 	 * Constructor for SystemCommandAction
+	 *
 	 * @param title the title of the action
 	 * @param tooltip the tooltip for the action
 	 * @param descriptor the image descriptor for the action
-	 * @param parent
-	 * @param isShell indication of whether this action launches a shell or runs a command
+	 * @param parent Shell of parent window. Can be null if you don't know it,
+	 *            but call setShell when you do.
+	 * @param isShell indication of whether this action launches a shell or runs
+	 *            a command
 	 * @param cmdSubSystem the command subsystem to use if launching a shell
-	 */	
+	 */
 	public SystemCommandAction(String title, String tooltip, ImageDescriptor descriptor, Shell parent, boolean isShell, IRemoteCmdSubSystem cmdSubSystem)
 	{
 		super(title, tooltip, descriptor, parent);
@@ -411,7 +445,7 @@ public class SystemCommandAction extends SystemBaseAction
 	{
 		_cmdSubSystem = ss;
 	}
-	
+
 	/**
 	 * Runs the command action.  If the action is for launching a shell, the shell is launched
 	 * and the remote shell view shows it's output.  If the action is for running a command, a
@@ -452,11 +486,11 @@ public class SystemCommandAction extends SystemBaseAction
 				}
 			}
 		}
-		
+
 		IRemoteFile selectedFile = _selected;
 		if (_selected == null)
 		{
-			return _cmdSubSystem;	
+			return _cmdSubSystem;
 		}
 
 		IHost sysConn = selectedFile.getSystemConnection();
@@ -491,7 +525,7 @@ public class SystemCommandAction extends SystemBaseAction
 			try
 			{
 				//Shell shell = getShell();
-				
+
 				if (_selectedFilterRef != null)
 				{
 					ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)_selectedFilterRef).getAdapter(ISystemViewElementAdapter.class);
@@ -508,7 +542,7 @@ public class SystemCommandAction extends SystemBaseAction
 						}
 					}
 				}
-					
+
 				IProgressMonitor monitor = new NullProgressMonitor();
 				if (_selected != null)
 				{
@@ -595,7 +629,7 @@ public class SystemCommandAction extends SystemBaseAction
 			{
 				SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
 				SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-				
+
 				RunShellJob job = new RunShellJob(cmdSubSystem, cmdsPart);
 				job.schedule();
 			}
@@ -608,16 +642,20 @@ public class SystemCommandAction extends SystemBaseAction
 		}
 
 	}
-	
+
 	private boolean connect(SubSystem ss, IProgressMonitor monitor) throws Exception
 	{
 		if (!ss.isConnected())
 		{
-			
+
 			Display dis = Display.getDefault();
-			dis.syncExec(new PromptForPassword(ss));
-			ss.getConnectorService().connect(monitor);
-			dis.asyncExec(new UpdateRegistry(ss));			
+			PromptForPassword passPrompt = new PromptForPassword(ss);
+			dis.syncExec(passPrompt);
+			if(!passPrompt.isConnectionCancelled()){
+			     ss.getConnectorService().connect(monitor);
+			     dis.asyncExec(new UpdateRegistry(ss));
+			}else
+				throw new OperationCanceledException();
 		}
 		return true;
 	}
@@ -636,7 +674,7 @@ public class SystemCommandAction extends SystemBaseAction
 	 * Called when the selection changes in the systems view.  This determines
 	 * the input object for the command and whether to enable or disable
 	 * the action.
-	 * 
+	 *
 	 * @param selection the current seleciton
 	 * @return whether to enable or disable the action
 	 */
@@ -686,7 +724,7 @@ public class SystemCommandAction extends SystemBaseAction
 			if (_cmdSubSystem != cmdSubSystem)
 			{
 				_cmdSubSystem = cmdSubSystem;
-				enable = _cmdSubSystem.canRunCommand();	
+				enable = _cmdSubSystem.canRunCommand();
 			}
 		}
 		else if (_cmdSubSystem != null)

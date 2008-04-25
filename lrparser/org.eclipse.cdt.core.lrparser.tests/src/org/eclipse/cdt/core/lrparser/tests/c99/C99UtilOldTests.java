@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2UtilOldTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class C99UtilOldTests extends AST2UtilOldTests {
 
 	 
     @Override
+    @SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
     	return ParseHelper.parse(code, language, expectNoProblems);
@@ -40,7 +42,8 @@ public class C99UtilOldTests extends AST2UtilOldTests {
 	}
     
     
-    public void testCastExpression() throws Exception { // A not typedefed
+    @Override
+	public void testCastExpression() throws Exception { // A not typedefed
     	try {
     		super.testCastExpression();
     		fail();

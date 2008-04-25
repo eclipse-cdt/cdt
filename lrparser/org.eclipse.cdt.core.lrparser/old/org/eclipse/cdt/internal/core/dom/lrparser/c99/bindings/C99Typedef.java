@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.core.runtime.PlatformObject;
 
+@SuppressWarnings("restriction")
 public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef, ITypeContainer, ITypeable {
 
 	private IType type;
@@ -68,13 +69,13 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		try {
 			if(t instanceof ITypedef)
 				return type.isSameType(((ITypedef)t).getType());
-			else 
-				return type.isSameType(t);
+			return type.isSameType(t);
 		} catch(DOMException _) {
 			return false;
 		}
 	}
 
+	@Override
 	public C99Typedef clone() {
 		try {
 			C99Typedef clone = (C99Typedef) super.clone();

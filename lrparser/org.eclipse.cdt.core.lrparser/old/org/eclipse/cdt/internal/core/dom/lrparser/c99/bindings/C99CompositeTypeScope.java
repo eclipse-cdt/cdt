@@ -29,7 +29,7 @@ public class C99CompositeTypeScope extends C99Scope implements ICCompositeTypeSc
 		return struct;
 	}
 	
-	public IBinding getBinding(char[] name) throws DOMException {
+	public IBinding getBinding(@SuppressWarnings("unused") char[] name) throws DOMException {
 		throw new UnsupportedOperationException();
 	}
 

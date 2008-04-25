@@ -23,12 +23,14 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.prefix.BasicCompletionTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class C99CompletionBasicTest extends BasicCompletionTest {
 
 	public C99CompletionBasicTest() { }
 
 
 	@Override
+	@SuppressWarnings("unused") 
 	protected IASTCompletionNode getCompletionNode(String code,
 			ParserLanguage lang, boolean useGNUExtensions)
 			throws ParserException {

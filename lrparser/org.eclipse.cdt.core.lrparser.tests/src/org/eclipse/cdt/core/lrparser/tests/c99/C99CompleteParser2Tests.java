@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.tests.ast2.CompleteParser2Tests;
 public class C99CompleteParser2Tests extends CompleteParser2Tests {
 
 	@Override
+	@SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse(String code, boolean expectedToPass,
 			ParserLanguage lang, boolean gcc) throws Exception {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
@@ -40,6 +41,7 @@ public class C99CompleteParser2Tests extends CompleteParser2Tests {
 	
 	// Tests that are failing at this point
     
+	@Override
 	public void testBug39676_tough() { // is this C99?
 		try {
 			super.testBug39676_tough();

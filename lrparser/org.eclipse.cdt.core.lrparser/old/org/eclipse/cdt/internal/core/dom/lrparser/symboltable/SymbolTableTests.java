@@ -7,9 +7,10 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99Label;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99Structure;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99Variable;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings("nls")
 public class SymbolTableTests {//extends TestCase {
 	// TODO write tests for imperative symbol table
+	
 	
 	private final String[] KEYS = { "pantera", "soulfly", "inflames", "megadeth", "archenemy", "carcass" };
 	
@@ -41,28 +42,31 @@ public class SymbolTableTests {//extends TestCase {
 	}
 	
 	
+	// these are here just to get the tests to compile
+	// JUnit is not available in this plugin, this is old code that I just didn't want to delete
 	
-	private void assertEquals(Integer integer, Integer lookup) {
+	@SuppressWarnings("unused")
+	private void assertEquals( Integer integer, Integer lookup) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-
+	@SuppressWarnings("unused")
 	private void assertFalse(boolean empty) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-
+	@SuppressWarnings("unused")
 	private void assertNull(Integer lookup) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-
+	@SuppressWarnings("unused")
 	private void assertTrue(boolean empty) {
 		// TODO Auto-generated method stub
 		
@@ -87,6 +91,7 @@ public class SymbolTableTests {//extends TestCase {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	private static void assertMap(FunctionalMap map, Comparable[] keys, Object[] vals) {
 		assert keys.length == vals.length;
 		
@@ -98,14 +103,14 @@ public class SymbolTableTests {//extends TestCase {
 		}
 	}
 	
-	
+	@SuppressWarnings("unused")
 	private static void assertTrue(String string, boolean containsKey) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-
+	@SuppressWarnings("unused")
 	private static void assertEquals(String string, Object object, Object lookup) {
 		// TODO Auto-generated method stub
 		
@@ -164,14 +169,14 @@ public class SymbolTableTests {//extends TestCase {
 		}
 	}
 	
-	
+	@SuppressWarnings("unused") 
 	private void assertEquals(String key, String name) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-
+	@SuppressWarnings("unused") 
 	private void assertNotNull(IBinding b) {
 		// TODO Auto-generated method stub
 		

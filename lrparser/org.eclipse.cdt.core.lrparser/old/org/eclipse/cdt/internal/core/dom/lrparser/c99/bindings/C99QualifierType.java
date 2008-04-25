@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
+@SuppressWarnings("restriction")
 public class C99QualifierType implements ICQualifierType, ITypeContainer {
 
 	private boolean isRestrict;
@@ -88,6 +89,7 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 	}
 	
 	
+	@Override
 	public C99QualifierType clone() {
 		try {
 			C99QualifierType clone = (C99QualifierType) super.clone();

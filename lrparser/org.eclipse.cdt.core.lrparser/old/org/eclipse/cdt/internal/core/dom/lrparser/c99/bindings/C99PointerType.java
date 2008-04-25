@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 
+@SuppressWarnings("restriction")
 public class C99PointerType implements ITypeContainer, ICPointerType {
 
 	
@@ -84,6 +85,7 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 	
 	
 	
+	@Override
 	public C99PointerType clone() {
 		try {
 			C99PointerType clone = (C99PointerType) super.clone();

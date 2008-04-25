@@ -35,6 +35,7 @@ public class C99Field extends C99Variable implements IC99Binding, IField, ITypea
 		this.compositeTypeOwner = compositeTypeOwner;
 	}
 
+	@Override
 	public IScope getScope() {
 		try {
 			return compositeTypeOwner.getCompositeScope();

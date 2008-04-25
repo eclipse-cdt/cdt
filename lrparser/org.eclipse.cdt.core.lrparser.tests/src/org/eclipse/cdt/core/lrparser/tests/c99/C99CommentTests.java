@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.CommentTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class C99CommentTests extends CommentTests {
 
 	 
     @Override
+    @SuppressWarnings("unused")
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems )  throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
     	return ParseHelper.parse(code, language, expectNoProblems);
@@ -32,6 +34,7 @@ public class C99CommentTests extends CommentTests {
     
     
     @Override
+    @SuppressWarnings("unused")
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang,
 			boolean useGNUExtensions, boolean expectNoProblems,
 			boolean parseComments) throws ParserException {
@@ -49,12 +52,12 @@ public class C99CommentTests extends CommentTests {
 	}
 	
 	
+	@SuppressWarnings("nls")
 	public void testBug191266() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		sb.append("#define MACRO 1000000000000  \n");
-		sb.append("int x = MACRO;  \n");
-		sb.append("//comment\n");
-		String code = sb.toString();
+		String code =
+			"#define MACRO 1000000000000  \n" +
+			"int x = MACRO;  \n" +
+			"//comment\n";
 		
 		IASTTranslationUnit tu = parse(code, ParserLanguage.C, false, false, true);
 		

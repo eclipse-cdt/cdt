@@ -22,10 +22,12 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction")
 public class C99KnRTests extends AST2KnRTests {
 	
 	 
     @Override
+    @SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
     	return ParseHelper.parse(code, language, expectNoProblems);

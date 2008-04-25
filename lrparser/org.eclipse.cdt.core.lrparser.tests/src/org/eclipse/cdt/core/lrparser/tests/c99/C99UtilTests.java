@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2UtilTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class C99UtilTests extends AST2UtilTests {
 
 	@Override
@@ -32,6 +33,7 @@ public class C99UtilTests extends AST2UtilTests {
 	}
 	 
     @Override
+    @SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
     	return ParseHelper.parse(code, language, expectNoProblems);

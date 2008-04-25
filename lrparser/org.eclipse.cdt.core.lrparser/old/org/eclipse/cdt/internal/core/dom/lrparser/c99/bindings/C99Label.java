@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
+@SuppressWarnings("restriction")
 public class C99Label extends PlatformObject implements IC99Binding, ILabel {
 
 	private String name;

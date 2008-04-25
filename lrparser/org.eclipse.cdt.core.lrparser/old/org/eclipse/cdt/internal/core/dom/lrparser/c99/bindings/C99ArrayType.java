@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
+@SuppressWarnings("restriction")
 public class C99ArrayType implements ICArrayType, ITypeContainer {
 
 	private boolean isConst;
@@ -108,6 +109,7 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 	}
 
 	
+	@Override
 	public C99ArrayType clone() {
 		C99ArrayType clone = null;
 		try {

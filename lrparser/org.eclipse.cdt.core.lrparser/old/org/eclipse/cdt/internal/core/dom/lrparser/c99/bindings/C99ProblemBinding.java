@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
+@SuppressWarnings("restriction")
 public class C99ProblemBinding extends ProblemBinding implements IProblemBinding {
 
 

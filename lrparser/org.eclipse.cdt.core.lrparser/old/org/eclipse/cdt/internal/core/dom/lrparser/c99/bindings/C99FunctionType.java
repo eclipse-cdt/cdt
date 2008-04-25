@@ -37,11 +37,12 @@ public class C99FunctionType implements IFunctionType {
 		this.returnType = returnType;
 	}
 
-	public boolean isSameType(IType type) {
+	public boolean isSameType(@SuppressWarnings("unused") IType type) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public C99FunctionType clone() {
 		try {
 			C99FunctionType clone = (C99FunctionType) super.clone();

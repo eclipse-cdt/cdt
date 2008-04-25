@@ -25,7 +25,7 @@ public class C99FunctionScope extends C99Scope implements ICFunctionScope {
 	private IScope bodyScope;
 	
 	
-	public IBinding getBinding(char[] name) throws DOMException {
+	public IBinding getBinding(@SuppressWarnings("unused") char[] name) throws DOMException {
 		// TODO Auto-generated method stub
 		return null;
 	}

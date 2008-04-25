@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
 
+@SuppressWarnings("nls")
 public class C99DigraphTrigraphTests extends TestCase {
 
 	
@@ -138,6 +139,7 @@ public class C99DigraphTrigraphTests extends TestCase {
 		assertEquals("5", lit.toString());
 		
 	}
+	
 	
 	
 	public void testTrigraphAndDigraphSequecesInPreprocessorDirectives() {

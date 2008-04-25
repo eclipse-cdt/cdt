@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
+@SuppressWarnings("restriction")
 public class C99Enumerator extends PlatformObject implements IC99Binding, IEnumerator, ITypeable {
 
 	private String name;

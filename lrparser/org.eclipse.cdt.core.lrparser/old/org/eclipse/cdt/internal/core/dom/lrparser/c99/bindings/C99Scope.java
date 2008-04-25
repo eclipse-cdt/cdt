@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  * @author Mike Kucera
  *
  */
+@SuppressWarnings({"restriction","unused"})
 public class C99Scope implements IC99Scope, IASTInternalScope {
 
 	
@@ -60,7 +61,7 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	}
 	
 	
-	public IBinding[] find(String name) {
+	public IBinding[] find( String name) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMLocationMacroTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class C99DOMLocationMacroTests extends DOMLocationMacroTests {
 
 	 
@@ -32,6 +33,8 @@ public class C99DOMLocationMacroTests extends DOMLocationMacroTests {
 	}
 
 
+	@Override
+	@SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
    		return ParseHelper.parse(code, language, expectNoProblems);
@@ -50,7 +53,9 @@ public class C99DOMLocationMacroTests extends DOMLocationMacroTests {
     /**
      * Tests GCC specific stuff, not applicable at this point
      */
-    public void testStdioBug() throws ParserException {
+    
+	@Override
+	public void testStdioBug() throws ParserException {
     	try {
     		super.testStdioBug();
     		fail();

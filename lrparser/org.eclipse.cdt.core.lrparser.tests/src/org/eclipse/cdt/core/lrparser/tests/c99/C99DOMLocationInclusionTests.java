@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.lrparser.tests.c99;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.core.parser.tests.ast2.DOMLocationInclusionTests;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
 
+@SuppressWarnings("restriction")
 public class C99DOMLocationInclusionTests extends DOMLocationInclusionTests {
 	
 	public C99DOMLocationInclusionTests() {
@@ -39,10 +39,10 @@ public class C99DOMLocationInclusionTests extends DOMLocationInclusionTests {
 	@Override
 	protected IASTTranslationUnit parse(IFile code, IScannerInfo s)throws Exception {
 		// TODO: total freakin hack! the test suite needs to be refactored
-		ILanguage lang = code.getName().endsWith("cc") ? getCPPLanguage() : getC99Language();
+		ILanguage lang = code.getName().endsWith("cc") ? getCPPLanguage() : getC99Language(); //$NON-NLS-1$
 		
 		CodeReader codeReader = new CodeReader(code.getLocation().toOSString());
-		IASTTranslationUnit tu = lang.getASTTranslationUnit(codeReader, s, SavedCodeReaderFactory.getInstance(), null, BaseExtensibleLanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
+		IASTTranslationUnit tu = lang.getASTTranslationUnit(codeReader, s, SavedCodeReaderFactory.getInstance(), null, ILanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
 
 		return tu;
 	}

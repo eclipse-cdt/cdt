@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -33,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction")
 public class ParseHelper {
 	
 	static int testsRun = 0;
@@ -120,7 +120,7 @@ public class ParseHelper {
 		CodeReader codeReader = new CodeReader(code.toCharArray());
 		IASTTranslationUnit tu;
 		try {
-			tu = language.getASTTranslationUnit(codeReader, new ScannerInfo(), null, null, AbstractLanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
+			tu = language.getASTTranslationUnit(codeReader, new ScannerInfo(), null, null, ILanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
 		} catch (CoreException e) {
 			throw new AssertionFailedError(e.toString());
 		}

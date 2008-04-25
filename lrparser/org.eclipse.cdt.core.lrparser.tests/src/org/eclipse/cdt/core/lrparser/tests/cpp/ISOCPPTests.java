@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class ISOCPPTests extends AST2CPPTests {
 
 	
@@ -28,7 +29,6 @@ public class ISOCPPTests extends AST2CPPTests {
 	}
 	
 	 
-    @SuppressWarnings("restriction")
 	@Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems, @SuppressWarnings("unused") boolean parseComments) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();

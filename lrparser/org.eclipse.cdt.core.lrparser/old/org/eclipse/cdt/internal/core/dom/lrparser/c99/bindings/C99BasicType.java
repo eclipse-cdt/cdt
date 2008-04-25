@@ -120,6 +120,7 @@ public class C99BasicType implements ICBasicType {
 		       bt.isLongLong == this.isLongLong;
 	}
 	
+	@Override
 	public C99BasicType clone() {
 		try {
 			return (C99BasicType) super.clone();

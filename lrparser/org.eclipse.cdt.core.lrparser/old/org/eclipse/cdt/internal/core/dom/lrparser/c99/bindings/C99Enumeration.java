@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
+@SuppressWarnings("restriction")
 public class C99Enumeration extends PlatformObject implements IC99Binding, IEnumeration, ITypeable {
 
 	private List<IEnumerator> enumerators = new ArrayList<IEnumerator>();	
@@ -71,6 +72,7 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
         return false;
 	}
 
+	@Override
 	public C99Enumeration clone() {
 		try {
 			C99Enumeration clone = (C99Enumeration) super.clone();

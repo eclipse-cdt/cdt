@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
+@SuppressWarnings("restriction")
 public class C99Variable extends PlatformObject implements IC99Binding, IVariable, ITypeable {
 
 	

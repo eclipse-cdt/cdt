@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
+@SuppressWarnings("restriction")
 public class C99Structure extends PlatformObject implements IC99Binding, ICompositeType, ITypeable {
 
 	
@@ -119,6 +120,7 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 	
 	//private IScope scope;
 	
+	@Override
 	public C99Structure clone() {
 		try {
 			C99Structure clone = (C99Structure) super.clone();

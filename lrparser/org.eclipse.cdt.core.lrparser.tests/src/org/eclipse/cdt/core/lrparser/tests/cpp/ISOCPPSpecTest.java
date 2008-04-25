@@ -10,6 +10,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPSpecTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class ISOCPPSpecTest extends AST2CPPSpecTest {
 	
 	public ISOCPPSpecTest() { } 

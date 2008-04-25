@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CSpecTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+@SuppressWarnings("restriction")
 public class C99SpecTests extends AST2CSpecTest {
 
 	public C99SpecTests() { } 

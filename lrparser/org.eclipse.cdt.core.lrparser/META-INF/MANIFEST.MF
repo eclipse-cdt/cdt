@@ -16,3 +16,4 @@ Export-Package: org.eclipse.cdt.core.dom.lrparser,
  org.eclipse.cdt.internal.core.dom.lrparser.c99;x-internal:=true
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Vendor.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

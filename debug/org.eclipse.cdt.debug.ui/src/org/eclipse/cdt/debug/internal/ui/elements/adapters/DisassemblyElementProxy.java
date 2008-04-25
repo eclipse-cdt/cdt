@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.IDisassemblyLine;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.DisassemblyRetrieval;

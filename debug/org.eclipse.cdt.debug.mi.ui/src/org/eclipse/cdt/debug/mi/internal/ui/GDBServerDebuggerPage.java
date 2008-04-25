@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ComboDialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;

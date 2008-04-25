@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -332,7 +333,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		if (container == null)
 			return false;
 
-		if (container.equals(".")) //$NON-NLS-1$
+	if (container.equals(".") && !isOffline()) //$NON-NLS-1$
 		{
 		    try
 		    {

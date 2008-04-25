@@ -14,10 +14,15 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
- ********************************************************************************/
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+*******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -68,8 +73,8 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 	 */
 	public void run()	
 	{		  
-		IHost conn = (IHost)getFirstSelection();
-		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
+		final IHost conn = (IHost)getFirstSelection();
+		final ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
 	
 		if (conn.isOffline())
 		{
@@ -103,15 +108,23 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 				}
 			}
 			
-			// check that everything was disconnedted okay and this is not the local connection
-			if(sr.isAnySubSystemConnected(conn) && !conn.getSystemType().isLocal())
+			Job job = new Job("Ensure Disconnected")
 			{
-				// backout changes, likely because user cancelled the disconnect
-				setChecked(false);
-				sr.setHostOffline(conn, false);
-			}
+				public IStatus run(IProgressMonitor monitor){
+						// check that everything was disconnedted okay and this is not the local connection
+						if(sr.isAnySubSystemConnected(conn) && !conn.getSystemType().isLocal())
+						{
+							// backout changes, likely because user cancelled the disconnect
+							setChecked(false);
+							sr.setHostOffline(conn, false);
+						}
+						return Status.OK_STATUS;
+					}
+			};
+			job.schedule();
 		}
 	}
+
 
 
 	/* (non-Javadoc)

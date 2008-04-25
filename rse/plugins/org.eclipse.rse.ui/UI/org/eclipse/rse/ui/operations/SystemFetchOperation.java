@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
  * David Dykstal (IBM) - [189483] add notification when canceling password prompting
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -228,6 +229,9 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		else
 		{
 			ss = (SubSystem)_adapter.getSubSystem(_remoteObject);
+		}
+		if (ss.isOffline() ){
+			return;
 		}
 		synchronized (ss.getConnectorService())
 		{

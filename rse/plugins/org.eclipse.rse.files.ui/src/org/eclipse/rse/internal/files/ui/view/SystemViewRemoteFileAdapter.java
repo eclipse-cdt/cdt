@@ -50,6 +50,7 @@
  * Xuan Chen        (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * Rupen Mardirossian (IBM)      - [210682] Copy collisions will use SystemCopyDialog now instead of renameDialog when there is a copy collision within the same connection
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3285,13 +3286,14 @@ public class SystemViewRemoteFileAdapter
 			// get updated remoteFile so we get the current remote timestamp
 			//remoteFile.markStale(true);
 			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
-			try
-			{
-				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
-			}
-			catch (Exception e)
-			{
-
+			if (!subsystem.isOffline()){ // only do this check when online..if offline we assume the temp file is okay
+				try
+				{
+					remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+				}
+				catch (Exception e)
+				{					
+				}
 			}
 
 			// get the remote modified stamp

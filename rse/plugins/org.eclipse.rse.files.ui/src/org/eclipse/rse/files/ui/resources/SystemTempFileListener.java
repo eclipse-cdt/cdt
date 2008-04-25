@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [199573] Fix potential threading issues in SystemTempFileListener
  * David McKnight   (IBM)        - [205297] Editor upload should not be on main thread
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -611,7 +612,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			}
 
 			// attempt the remote file synchronization      
-			if (doesHandle(fs))
+			if (doesHandle(fs) && !fs.isOffline())
 			{
 				// see if we're connected
 				try
@@ -632,7 +633,6 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 					properties.setDirty(true);
 					return;
 				}
-
 				doResourceSynchronization(fs, file, uploadPath, monitor);
 			}
 		}

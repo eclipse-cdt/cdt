@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [199424] restoring memento state asynchronously
  * David McKnight   (IBM)        - [187711] Link with Editor handled by extension
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -131,7 +132,6 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.framelist.FrameList;
-
 /**
  * This is the desktop view wrapper of the System View viewer.
  */
@@ -1538,68 +1538,72 @@ public class SystemViewPart
 					{
 						ss.getCacheManager().setRestoreFromMemento(true);
 					}
-										
-					String path = robject.name;
-					ISystemFilterReference fref = robject.fRef;
-					
-					try
-					{
-						Object actualObject = ss.getObjectWithAbsoluteName(path, monitor);
+
+					if (!ss.isOffline()){
+						String path = robject.name;
+						ISystemFilterReference fref = robject.fRef;
 						
-						if (actualObject instanceof IAdaptable)
+						try
 						{
-							// get the adapter
-							ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)actualObject).getAdapter(ISystemViewElementAdapter.class);
+							Object actualObject = ss.getObjectWithAbsoluteName(path, monitor);
 							
-							// get the context
-							ContextObject contextObject = new ContextObject(actualObject, ss, fref);
+							if (actualObject instanceof IAdaptable)
+							{
+								// get the adapter
+								ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)actualObject).getAdapter(ISystemViewElementAdapter.class);
+								
+								// get the context
+								ContextObject contextObject = new ContextObject(actualObject, ss, fref);
+								
+								// get the children	
+								Object[] children = adapter.getChildren(contextObject, monitor);
 							
-							// get the children	
-							Object[] children = adapter.getChildren(contextObject, monitor);
-						
-							ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(actualObject, children);
-							Display.getDefault().asyncExec(showRunnable);
+								ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(actualObject, children);
+								Display.getDefault().asyncExec(showRunnable);
+							}
+							
+						}
+						catch (Exception e)
+						{
+							// unexpected
 						}
 						
+						// yantzi: artemis 6.0:  reset restore from memento flag
+						if (ss != null && ss.supportsCaching())
+						{
+							ss.getCacheManager().setRestoreFromMemento(false);
+						}	
 					}
-					catch (Exception e)
-					{
-						// unexpected
-					}
-					
-					// yantzi: artemis 6.0:  reset restore from memento flag
-					if (ss != null && ss.supportsCaching())
-					{
-						ss.getCacheManager().setRestoreFromMemento(false);
-					}	
 				}
 				else if (object instanceof ISystemFilterReference)
 				{
 					ISystemFilterReference fref = (ISystemFilterReference)object;
 					ISubSystem ss = fref.getSubSystem();
-					if (!ss.isConnected()){
-						try
+					if (!ss.isOffline()){
+						if (!ss.isConnected()){
+							try
+							{
+								ss.connect(monitor, false);
+							}
+							catch (Exception e){
+								return Status.CANCEL_STATUS;
+							}
+						}
+						if (ss.isConnected())
 						{
-							ss.connect(monitor, false);
-						}
-						catch (Exception e){
-							return Status.CANCEL_STATUS;
-						}
+							// get the adapter
+							ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)object).getAdapter(ISystemViewElementAdapter.class);
+							
+							// get the context
+							ContextObject contextObject = new ContextObject(fref, ss, fref);
+							
+							// get the children	
+							Object[] children = adapter.getChildren(contextObject, monitor);
+						
+							ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(fref, children);
+							Display.getDefault().asyncExec(showRunnable);
+						}	
 					}
-					if (ss.isConnected())
-					{
-						// get the adapter
-						ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)object).getAdapter(ISystemViewElementAdapter.class);
-						
-						// get the context
-						ContextObject contextObject = new ContextObject(fref, ss, fref);
-						
-						// get the children	
-						Object[] children = adapter.getChildren(contextObject, monitor);
-					
-						ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(fref, children);
-						Display.getDefault().asyncExec(showRunnable);
-					}	
 				}
 			}
 			boolean restoreFromCache = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);

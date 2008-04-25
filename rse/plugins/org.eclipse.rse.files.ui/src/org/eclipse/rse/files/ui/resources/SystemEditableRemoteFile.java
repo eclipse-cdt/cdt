@@ -30,6 +30,7 @@
  * David McKnight   (IBM)        - [222406] Need to be able to override local encoding
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * Kevin Doyle		(IBM)		 - [224162] SystemEditableRemoteFile.saveAs does not work because FileServiceSubSytem.upload does invalid check
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1574,14 +1575,16 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		
 		// get fresh remote file object
 		remoteFile.markStale(true); // make sure we get the latest remote file (with proper permissions and all)
-		try
-		{
-			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
-		}
-		catch (Exception e)
-		{
-			SystemMessageDialog.displayExceptionMessage(SystemMessageDialog.getDefaultShell(), e);
-			return;
+		if (!remoteFile.getParentRemoteFileSubSystem().isOffline()){
+			try
+			{
+				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+			}
+			catch (Exception e)
+			{
+				SystemMessageDialog.displayExceptionMessage(SystemMessageDialog.getDefaultShell(), e);
+				return;
+			}
 		}
 		boolean readOnly = !remoteFile.canWrite();
 		ResourceAttributes attr = file.getResourceAttributes();

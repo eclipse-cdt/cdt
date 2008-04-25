@@ -37,6 +37,7 @@
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -1696,14 +1697,16 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			msg = SubSystemConfiguration.getConnectingMessage(getHostName(), getConnectorService().getPort());
 			SystemBasePlugin.logInfo(msg);
 
-			if (!implicitConnect(true, mon, msg, totalWorkUnits)){
-				String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
-				throw new Exception(msgTxt);
-			}
-			internalConnect(mon);
+			if (!isOffline()){	
+				if (!implicitConnect(true, mon, msg, totalWorkUnits)){
+					String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
+					throw new Exception(msgTxt);
+				}
+				internalConnect(mon);
 
-			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			registry.connectedStatusChange(_ss, true, false);
+				ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+				registry.connectedStatusChange(_ss, true, false);
+			}
 		}
 	}
 

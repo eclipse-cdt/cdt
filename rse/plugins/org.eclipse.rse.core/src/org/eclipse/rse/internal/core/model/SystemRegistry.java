@@ -49,6 +49,7 @@
  * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
+ * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -2757,7 +2758,13 @@ public class SystemRegistry implements ISystemRegistry
 	        {
 	        	ISystemFilterReference ref = (ISystemFilterReference)remoteResource;
 	        	ISubSystem ss = ref.getSubSystem();
-	        	remoteResource = ss.getTargetForFilter(ref);
+	        	if (!ss.isOffline()){
+	        		remoteResource = ss.getTargetForFilter(ref);
+	        	}
+	        	else {
+	        		return null;
+	        	}
+
 	      		IRemoteObjectIdentifier rid = getRemoteObjectIdentifier(remoteResource);
 	    		if (rid == null)
 	    		  return null;

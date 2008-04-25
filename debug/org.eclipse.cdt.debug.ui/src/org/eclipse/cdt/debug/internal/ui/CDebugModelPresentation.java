@@ -63,6 +63,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -83,6 +84,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorDescriptor;
@@ -293,6 +295,12 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected Image getBreakpointImage( ICBreakpoint breakpoint ) {
+		// if adapter installed for breakpoint, call the adapter
+		ILabelProvider adapter = (ILabelProvider) Platform.getAdapterManager().getAdapter(breakpoint, ILabelProvider.class);
+		if (adapter!=null) { 
+			Image image = adapter.getImage(breakpoint);
+			if (image!=null) return image;
+		}
 		try {
 			if ( breakpoint instanceof ICLineBreakpoint ) {
 				return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
@@ -387,6 +395,12 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				return null;
 			}
 			if ( element instanceof IBreakpoint ) {
+				// if adapter installed for breakpoint, call adapter
+				ILabelProvider adapter = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+				if (adapter!=null) { 
+					String text = adapter.getText(element);
+					if (text!=null) return text;
+				}
 				return CDebugUtils.getBreakpointText( (IBreakpoint)element, showQualified );
 			}
 			if ( element instanceof IDebugTarget )

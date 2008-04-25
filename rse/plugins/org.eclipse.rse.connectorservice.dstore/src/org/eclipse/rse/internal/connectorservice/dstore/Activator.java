@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
+ * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -25,7 +26,6 @@ import org.eclipse.rse.connectorservice.dstore.IUniversalDStoreConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
-
 
 /**
  * The main plugin class to be used in the desktop.

@@ -30,6 +30,7 @@
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
+ * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;

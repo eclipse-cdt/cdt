@@ -18,7 +18,7 @@
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)         - [221747] Default Connection Timeout is too high
  * David McKnight  (IBM)         - [228334] [dstore] Default DataStore connection timeout is too short
- * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
+ * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;

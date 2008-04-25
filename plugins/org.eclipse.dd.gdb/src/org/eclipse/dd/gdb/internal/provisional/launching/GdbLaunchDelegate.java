@@ -1,31 +1,41 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2008  QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ * QNX Software Systems   - Initial API and implementation
+ * Windriver and Ericsson - Updated for DSF
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.launching; 
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
-import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.cdt.utils.pty.PTY;
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
@@ -40,22 +50,19 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
  
 /**
- * The launch configuration delegate for the CDI debugger session types.
+ * The shared launch configuration delegate for the DSF/GDB debugger.
+ * This delegate supports all configuration types (local, remote, attach, etc)
  */
 @ThreadSafe
-public class GdbLaunchDelegate extends AbstractCLaunchDelegate 
+public class GdbLaunchDelegate extends LaunchConfigurationDelegate 
     implements ILaunchConfigurationDelegate2
 {
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.gdb"; //$NON-NLS-1$
-    private SessionType fSessionType;
         
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
     public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
 		if ( monitor == null ) {
 			monitor = new NullProgressMonitor();
@@ -70,21 +77,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
 		if ( monitor.isCanceled() ) {
 			return;
 		}
-		try {
-	        String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-        	if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-        		fSessionType = SessionType.RUN;
-        	} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-        		fSessionType = SessionType.ATTACH;
-        	} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-        		fSessionType = SessionType.CORE;
-        	} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
-        		fSessionType = SessionType.REMOTE;
-        	} else {
-            	fSessionType = SessionType.RUN;
-        	}
 
-			launchDebugSession( config, launch, monitor );
+		try {
+    		launchDebugSession( config, launch, monitor );
 		}
 		finally {
 			monitor.done();
@@ -95,9 +90,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
 		if ( monitor.isCanceled() ) {
 			return;
 		}
+		
+		SessionType sessionType = getSessionType(config);
         final GdbLaunch launch = (GdbLaunch)l;
 
-        if (fSessionType == SessionType.REMOTE) {
+        if (sessionType == SessionType.REMOTE) {
             monitor.subTask( "Debugging remote C/C++ application" ); //$NON-NLS-1$    	
         } else {
             monitor.subTask( "Debugging local C/C++ application" ); //$NON-NLS-1$
@@ -114,7 +111,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         // If we are attaching, get the process id now, so as to avoid starting the launch
         // and canceling it if the user does not put the pid properly.
     	int pid = -1;
-        if (fSessionType == SessionType.ATTACH) {
+        if (sessionType == SessionType.ATTACH) {
         	try {
         		// have we already been given the pid (maybe from a JUnit test launch or something)
         		pid = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
@@ -130,8 +127,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         				LaunchMessages.getString("LocalAttachLaunchDelegate.No_Process_ID_selected"))); //$NON-NLS-1$
         	}
     	}
-
-		setDefaultSourceLocator(launch, config);
         
         // Create and invoke the launch sequence to create the debug control and services
         final ServicesLaunchSequence servicesLaunchSequence = 
@@ -156,10 +151,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
 
         // Create and invoke the final launch sequence to setup GDB
         final FinalLaunchSequence finalLaunchSequence;
-        if (fSessionType == SessionType.ATTACH) {
+        if (sessionType == SessionType.ATTACH) {
         	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, pid);
         } else {
-        	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, fSessionType);
+        	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType);
         }
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
@@ -171,6 +166,23 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         }
 	}
 
+    private SessionType getSessionType(ILaunchConfiguration config) {
+    	try {
+    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+    			return SessionType.RUN;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+    			return SessionType.ATTACH;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+    			return SessionType.CORE;
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+    			return SessionType.REMOTE;
+    		}
+    	} catch (CoreException e) {    		
+    	}
+    	return SessionType.RUN;
+    }
+    
 	// Copied from the CDT
 	protected int promptForProcessID(ILaunchConfiguration config) throws CoreException {
 		IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null); //$NON-NLS-1$//$NON-NLS-2$
@@ -186,91 +198,16 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
 		return -1;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#getPluginID()
-	 */
-	@Override
-    protected String getPluginID() {
-		return LaunchUIPlugin.getUniqueIdentifier();
-	}
-
-	/**
-	 * Performs a runtime exec on the given command line in the context of the
-	 * specified working directory, and returns the resulting process. If the
-	 * current runtime does not support the specification of a working
-	 * directory, the status handler for error code
-	 * <code>ERR_WORKING_DIRECTORY_NOT_SUPPORTED</code> is queried to see if
-	 * the exec should be re-executed without specifying a working directory.
-	 * 
-	 * @param cmdLine
-	 *            the command line
-	 * @param workingDirectory
-	 *            the working directory, or <code>null</code>
-	 * @return the resulting process or <code>null</code> if the exec is
-	 *         cancelled
-	 * @see Runtime
-	 */
-	protected Process exec( String[] cmdLine, String[] environ, File workingDirectory, boolean usePty ) throws CoreException {
-		Process p = null;
-		try {
-			if ( workingDirectory == null ) {
-				p = ProcessFactory.getFactory().exec( cmdLine, environ );
-			}
-			else {
-				if ( usePty && PTY.isSupported() ) {
-					p = ProcessFactory.getFactory().exec( cmdLine, environ, workingDirectory, new PTY() );
-				}
-				else {
-					p = ProcessFactory.getFactory().exec( cmdLine, environ, workingDirectory );
-				}
-			}
-		}
-		catch( IOException e ) {
-			if ( p != null ) {
-				p.destroy();
-			}
-			abort( "Error starting process.", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR ); //$NON-NLS-1$
-		}
-		catch( NoSuchMethodError e ) {
-			// attempting launches on 1.2.* - no ability to set working
-			// directory
-			IStatus status = new Status( IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, LaunchMessages.getString( "LocalDsfLaunchDelegate.9" ), e ); //$NON-NLS-1$
-			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler( status );
-			if ( handler != null ) {
-				Object result = handler.handleStatus( status, this );
-				if ( result instanceof Boolean && ((Boolean)result).booleanValue() ) {
-					p = exec( cmdLine, environ, null, usePty );
-				}
-			}
-		}
-		return p;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
     public boolean preLaunchCheck( ILaunchConfiguration config, String mode, IProgressMonitor monitor ) throws CoreException {
 		// no pre launch check for core file
-		if ( mode.equals( ILaunchManager.DEBUG_MODE ) ) {
-			if ( ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE.equals( config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN ) ) )
-					return true; 
-		}
+		if (mode.equals(ILaunchManager.DEBUG_MODE) && getSessionType(config) == SessionType.CORE) return true; 
+		
 		return super.preLaunchCheck( config, mode, monitor );
 	}
-
-    ///////////////////////////////////////////////////////////////////////////
-    // ILaunchConfigurationDelegate2
-    @Override
-    public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-        return false;
-    }
-
-    @Override
-    public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-        return true;
-    }
 
     @Override
     public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
@@ -303,4 +240,228 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         }
         return null;
     }
+    
+	/**
+	 * Throws a core exception with an error status object built from the given
+	 * message, lower level exception, and error code.
+	 * 
+	 * @param message
+	 *            the status message
+	 * @param exception
+	 *            lower level exception associated with the error, or
+	 *            <code>null</code> if none
+	 * @param code
+	 *            error code
+	 */
+	protected void abort(String message, Throwable exception, int code) throws CoreException {
+		MultiStatus status = new MultiStatus(GdbPlugin.PLUGIN_ID, code, message, exception);
+		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code, exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				exception));
+		throw new CoreException(status);
+	}
+	
+	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
+		String projectName = getProjectName(configuration);
+		if (projectName != null) {
+			projectName = projectName.trim();
+			if (projectName.length() > 0) {
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
+				if (cProject != null && cProject.exists()) {
+					return cProject;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+	}
+
+	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+	}
+
+	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
+		String path = getProgramName(configuration);
+		if (path == null) {
+			return null;
+		}
+		return new Path(path);
+	}
+
+	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
+		String name = getProjectName(config);
+		if (name == null) {
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+		}
+		ICProject cproject = getCProject(config);
+		if (cproject == null) {
+			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (!proj.exists()) {
+				abort(
+						LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
+						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+			} else if (!proj.isOpen()) {
+				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
+						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+			}
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Not_a_C_CPP_project"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+		}
+		return cproject;
+	}
+
+	protected IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
+		ICProject cproject = verifyCProject(config);
+		IPath programPath = getProgramPath(config);
+		if (programPath == null || programPath.isEmpty()) {
+			return null;
+		}
+		if (!programPath.isAbsolute()) {
+			IFile wsProgramPath = cproject.getProject().getFile(programPath);
+			programPath = wsProgramPath.getLocation();
+		}
+		if (!programPath.toFile().exists()) {
+			abort(
+					LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
+					new FileNotFoundException(
+							LaunchMessages.getFormattedString(
+																"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.toOSString())), //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+		return programPath;
+	}
+	
+	/**
+	 * @param project
+	 * @param exePath
+	 * @return
+	 * @throws CoreException
+	 */
+	protected IBinaryObject verifyBinary(ICProject proj, IPath exePath) throws CoreException {
+		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(proj.getProject());
+		for (int i = 0; i < parserRef.length; i++) {
+			try {
+				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
+				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+				if (exe != null) {
+					return exe;
+				}
+			} catch (ClassCastException e) {
+			} catch (IOException e) {
+			}
+		}
+		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
+		try {
+			return (IBinaryObject)parser.getBinary(exePath);
+		} catch (ClassCastException e) {
+		} catch (IOException e) {
+		}
+		Throwable exception = new FileNotFoundException(LaunchMessages.getFormattedString(
+				"AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable", exePath.toOSString())); //$NON-NLS-1$
+		int code = ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY;
+		MultiStatus status = new MultiStatus(GdbPlugin.PLUGIN_ID, code, 
+				                             LaunchMessages.getString("AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable"), exception); //$NON-NLS-1$
+		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code, exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				exception));
+		throw new CoreException(status);
+	}
+	
+	/**
+	 * Recursively creates a set of projects referenced by the current project
+	 * 
+	 * @param proj
+	 *            The current project
+	 * @param referencedProjSet
+	 *            A set of referenced projects
+	 * @throws CoreException
+	 *             if an error occurs while getting referenced projects from the
+	 *             current project
+	 */
+	private HashSet<IProject> getReferencedProjectSet(IProject proj, HashSet<IProject> referencedProjSet) throws CoreException {
+		// The top project is a reference too and it must be added at the top to avoid cycles
+		referencedProjSet.add(proj);
+		
+		IProject[] projects = proj.getReferencedProjects();
+		for (IProject refProject : projects) {
+			if (refProject.exists() && !referencedProjSet.contains(refProject)) {
+				getReferencedProjectSet(refProject, referencedProjSet);
+			}
+		}
+		return referencedProjSet;
+	}
+	
+	/**
+	 * Returns the order list of projects to build before launching.
+	 *  Used in buildForLaunch() 
+	 */
+	@Override
+	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
+		IProject[] orderedProjects = null;
+		ArrayList<IProject> orderedProjList = null;
+
+		ICProject cProject = getCProject(configuration);
+		if (cProject != null) {
+			HashSet<IProject> projectSet = getReferencedProjectSet(cProject.getProject(), new HashSet<IProject>());
+
+			String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
+			if (orderedNames != null) {
+				//Projects may not be in the build order but should still be built if selected
+				ArrayList<IProject> unorderedProjects = new ArrayList<IProject>(projectSet.size());
+				unorderedProjects.addAll(projectSet);
+				orderedProjList = new ArrayList<IProject>(projectSet.size());
+
+				for (String projectName : orderedNames) {
+					for (IProject proj : unorderedProjects) {
+						if (proj.getName().equals(projectName)) {
+							orderedProjList.add(proj);
+							unorderedProjects.remove(proj);
+							break;
+						}
+					}
+				}
+				
+				// Add any remaining projects to the end of the list
+				orderedProjList.addAll(unorderedProjects);
+
+				orderedProjects = orderedProjList.toArray(new IProject[orderedProjList.size()]);
+			} else {
+				// Try the project prerequisite order then
+				IProject[] projects = projectSet.toArray(new IProject[projectSet.size()]);
+				orderedProjects = ResourcesPlugin.getWorkspace().computeProjectOrder(projects).projects;
+			}
+		}
+		return orderedProjects;
+	}
+
+	/* Used in finalLaunchCheck() */
+	@Override
+	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
+		return getBuildOrder(configuration, mode);
+	}
+	
+	/**
+	 * Searches for compile errors in the specified project
+	 * Used in finalLaunchCheck() 
+	 * @param proj
+	 *            The project to search
+	 * @return true if compile errors exist, otherwise false
+	 */
+
+	@Override
+	protected boolean existsProblems(IProject proj) throws CoreException {
+		IMarker[] markers = proj.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		if (markers.length > 0) {
+			for (IMarker marker : markers) {
+				Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
+				if (severity != null) {
+					return severity.intValue() >= IMarker.SEVERITY_ERROR;
+				}
+			}
+		}
+		return false;
+	}
 }

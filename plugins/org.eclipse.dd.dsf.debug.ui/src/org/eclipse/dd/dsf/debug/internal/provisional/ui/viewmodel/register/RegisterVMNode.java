@@ -114,16 +114,19 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             return element instanceof RegisterVMC;
         }
 
+        /**
+         * Expected format: GRP( GroupName ).REG( RegisterName )
+         */
         public String createWatchExpression(Object element) throws CoreException {
             IRegisterGroupDMData groupData = fSyncRegisterDataAccess.getRegisterGroupDMData(element);
             IRegisterDMData registerData = fSyncRegisterDataAccess.getRegisterDMData(element);
+            
             if (groupData != null && registerData != null) { 
-                StringBuffer exprBuf = new StringBuffer();
-                exprBuf.append("$$\""); //$NON-NLS-1$
-                exprBuf.append(groupData.getName());
-                exprBuf.append('"');
-                exprBuf.append('$');
-                exprBuf.append(registerData.getName());
+            	StringBuffer exprBuf = new StringBuffer();
+            	
+            	exprBuf.append("GRP( ");  exprBuf.append(groupData.getName());    exprBuf.append(" )"); //$NON-NLS-1$ //$NON-NLS-2$
+            	exprBuf.append(".REG( "); exprBuf.append(registerData.getName()); exprBuf.append(" )"); //$NON-NLS-1$ //$NON-NLS-2$
+                
                 return exprBuf.toString();
             }
 
@@ -380,15 +383,15 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     }
     
     public int getDeltaFlags(Object e) {
-        // In theory we want each node to act independently in terms of events. It might be
-        // the case that we would only have elements of this type at the root level.  It is
-        // the case that the current layout model always starts with the GROUPS followed by
-        // REGISTERS followed by BITFIELDS. But if we do this when a run-control event  has
-        // occured we generate a DELTA for every element,  which can create  a massive list
-        // of entries all of which say update the entire view. So for now we will just have
-        // the GROUP LAYOUT node do this.  Later we need to revisit the logic and make sure
-        // there is a way for the nodes to operate independently and efficiently.
-        //
+        /* In theory we want each node to act independently in terms of events. It might be
+         * the case that we would only have elements of this type at the root level.  It is
+         * the case that the current layout model always starts with the GROUPS followed by
+         * REGISTERS followed by BITFIELDS. But if we do this when a run-control event  has
+         * occured we generate a DELTA for every element,  which can create  a massive list
+         * of entries all of which say update the entire view. So for now we will just have
+         * the GROUP LAYOUT node do this.  Later we need to revisit the logic and make sure
+         * there is a way for the nodes to operate independently and efficiently.
+         */
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
         }
@@ -436,36 +439,56 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         
         rm.done();
     }
-    
+
+    /**
+     * Expected format: GRP( GroupName ).REG( RegisterName )
+     *              or: $RegisterName
+     */
+ 
     public boolean canParseExpression(IExpression expression) {
         return parseExpressionForRegisterName(expression.getExpressionText()) != null;
     }
-
-    /**
-     * Expected format: $$"Group Name"$Register_Name.Bit_Field_Name
-     */
+    
     private String parseExpressionForRegisterName(String expression) {
-        if (expression.startsWith("$$\"")) { //$NON-NLS-1$
-            int secondQuoteIdx = expression.indexOf('"', "$$\"".length()); //$NON-NLS-1$
-            if (secondQuoteIdx > 0) {
-                String registerSubString = expression.substring(secondQuoteIdx + 1);
-                if (registerSubString.length() != 0 && 
-                    registerSubString.charAt(0) == '$' && 
-                    Character.isLetterOrDigit(registerSubString.charAt(1))) 
-                {
-                    int registerEnd = 1;
-                    while ( registerEnd < registerSubString.length() && 
-                            Character.isLetterOrDigit(registerSubString.charAt(registerEnd)) ) 
-                    {
-                        registerEnd++;
-                    }
-                    return registerSubString.substring(1, registerEnd);
-                }
+    	if (expression.startsWith("GRP(")) { //$NON-NLS-1$
+    		/*
+    		 * Get the group portion.
+    		 */
+    		int startIdx = "GRP(".length(); //$NON-NLS-1$
+            int endIdx = expression.indexOf(')', startIdx);
+            String remaining = expression.substring(endIdx+1);
+            if ( ! remaining.startsWith(".REG(") ) { //$NON-NLS-1$
+                return null;
             }
-        } 
+            
+            /*
+             * Get the register portion.
+             */
+            startIdx = ".REG(".length(); //$NON-NLS-1$
+            endIdx = remaining.indexOf(')', startIdx);
+            String regName = remaining.substring(startIdx,endIdx);
+            return regName.trim();
+        }
+    	else if ( expression.startsWith("$") ) { //$NON-NLS-1$
+    		/*
+    		 * At this point I am leaving this code here to represent the register case. To do this
+    		 * correctly would be to use the findRegister function and upgrade the register service
+    		 * to deal with registers that  do not have a specified group parent context.  I do not
+    		 * have the time for this right now.  So by saying we do not handle this the Expression
+    		 * VM node will take it and pass it to the debug engine  as a generic expression.  Most
+    		 * debug engines ( GDB included )  have an inherent knowledge  of the core registers as
+    		 * part of their expression evaluation  and will respond with a flat value for the reg.
+    		 * This is not totally complete in that you should be able to express  a register which
+    		 * has bit fields for example and the bit fields should be expandable in the expression
+    		 * view. With this method it will just appear to have a single value and no sub-fields.
+    		 * I will file a defect/enhancement  for this to mark it.  This comment will act as the
+    		 * place-holder for the future work.
+    		 */
+    		return null;
+    	}
+    	
         return null;
     }
-
     @Override
     protected void testElementForExpression(Object element, IExpression expression, final DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {

@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterGroupVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess;
@@ -178,10 +180,12 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
     }
     
     /**
-     * Configures the nodes of this provider.  This method may be overriden by
+     * Configures the nodes of this provider.  This method may be over-ridden by
      * sub classes to create an alternate configuration in this provider.
      */
     protected void configureLayout() {
+    	
+    	IFormattedValuePreferenceStore prefStore = FormattedValuePreferenceStore.getDefault();
         
         /*
          *  Allocate the synchronous data providers.
@@ -195,7 +199,7 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         IRootVMNode rootNode = new RootDMVMNode(this); 
         
         /*
-         * Now the Overarching management node.
+         * Now the Over-arching management node.
          */
         ExpressionManagerVMNode expressionManagerNode = new ExpressionManagerVMNode(this);
         addChildNodes(rootNode, new IVMNode[] {expressionManagerNode});
@@ -205,20 +209,25 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
          */
         IExpressionVMNode registerGroupNode = new RegisterGroupVMNode(this, getSession(), syncRegDataAccess);
         
-        IExpressionVMNode registerNode = new RegisterVMNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), syncRegDataAccess);
+        IExpressionVMNode registerNode = new RegisterVMNode(prefStore, this, getSession(), syncRegDataAccess);
         addChildNodes(registerGroupNode, new IExpressionVMNode[] {registerNode});
+        
+        /*
+         * Create the next level which is the bit-field level.
+         */
+        IVMNode bitFieldNode = new RegisterBitFieldVMNode(prefStore, this, getSession(), syncRegDataAccess);
+        addChildNodes(registerNode, new IVMNode[] { bitFieldNode });
         
         /*
          *  Create the support for the SubExpressions. Anything which is brought into the expressions
          *  view comes in as a fully qualified expression so we go directly to the SubExpression layout
          *  node.
          */
-        IExpressionVMNode variableNode = 
-            new VariableVMNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), syncvarDataAccess);
+        IExpressionVMNode variableNode =  new VariableVMNode(prefStore, this, getSession(), syncvarDataAccess);
         addChildNodes(variableNode, new IExpressionVMNode[] {variableNode});
         
         /*
-         *  Tell the expression node which subnodes  it will directly support.  It is very important
+         *  Tell the expression node which sub-nodes it will directly support.  It is very important
          *  that the variables node be the last in this chain.  The model assumes that there is some
          *  form of metalanguage expression syntax which each  of the nodes evaluates and decides if
          *  they are dealing with it or not. The variables node assumes that the expression is fully

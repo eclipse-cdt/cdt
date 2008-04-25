@@ -60,16 +60,13 @@ public class ExpressionColumnPresentation implements IColumnPresentation {
         return null;
     } 
 
-
-    
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
     public String[] getInitialColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__EXPRESSION, IDebugVMConstants.COLUMN_ID__VALUE };
+        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE };
     }
     
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
     public boolean isOptional() {
         return true;
     }
-
 }

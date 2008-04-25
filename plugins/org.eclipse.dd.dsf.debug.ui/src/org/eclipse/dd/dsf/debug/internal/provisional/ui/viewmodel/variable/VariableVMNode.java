@@ -442,10 +442,16 @@ public class VariableVMNode extends AbstractExpressionVMNode
     }
     
     public boolean canParseExpression(IExpression expression) {
-        // Indicate that we can parse any expression that does not start with 
-        // the reserved '$' and '#' characters.
-        String expressionText = expression.getExpressionText();
-        return !expressionText.startsWith("$") && !expressionText.startsWith("#");
+    	// At this point we are going to say we will allow anything as an expression.
+    	// Since the evaluation  of VM Node implementations searches  in the order of
+    	// registration  and we always make sure we register the VariableVMNode last,
+    	// we know that the other possible handlers have passed the expression by. So
+    	// we are going to say OK and let the expression evaluation of whatever debug
+    	// backend is connected to decide. This does not allow us to put up any  good
+    	// diagnostic error message ( instead the error will come from the backend ).
+    	// But it does allow for the most flexibility
+    	
+    	return true;
     }
     
     @Override

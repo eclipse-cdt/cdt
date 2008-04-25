@@ -102,13 +102,16 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
             return element instanceof RegisterGroupVMC;
         }
         
+        /**
+         * Expected format: Group(GroupName)
+         */
         public String createWatchExpression(Object element) throws CoreException {
             IRegisterGroupDMData groupData = fSyncRegisterDataAccess.getRegisterGroupDMData(element);
             if (groupData != null) {
                 StringBuffer exprBuf = new StringBuffer();
-                exprBuf.append("$$\""); //$NON-NLS-1$
+                exprBuf.append("GRP( "); //$NON-NLS-1$
                 exprBuf.append(groupData.getName());
-                exprBuf.append('"');
+                exprBuf.append(" )"); //$NON-NLS-1$
                 return exprBuf.toString();
             }
             
@@ -275,15 +278,19 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     }
 
     /**
-     * Expected format: $$"Group Name"$Register_Name.Bit_Field_Name
+     * Expected format: Group(GroupName)
      */
     private String parseExpressionForGroupName(String expression) {
-        if (expression.startsWith("$$\"")) { //$NON-NLS-1$
-            int secondQuoteIdx = expression.indexOf('"', "$$\"".length()); //$NON-NLS-1$
-            if (secondQuoteIdx > 0) {
-                return expression.substring(3, secondQuoteIdx);
-            }
-        } 
+    	if (expression.startsWith("GRP(")) { //$NON-NLS-1$
+    		/*
+    		 * Extract the group name.
+    		 */
+    		int startIdx = "GRP(".length(); //$NON-NLS-1$
+            int endIdx = expression.indexOf(')', startIdx);
+            String groupName = expression.substring(startIdx, endIdx);
+            return groupName.trim();
+        }
+    	
         return null;
     }
     

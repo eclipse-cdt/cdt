@@ -117,6 +117,9 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             return element instanceof BitFieldVMC;
         }
         
+        /**
+         * Expected format: GRP( GroupName ).REG( RegisterName ).BFLD( BitFieldname )
+         */
         public String createWatchExpression(Object element) throws CoreException {
             IRegisterGroupDMData groupData = fDataAccess.getRegisterGroupDMData(element);
             IRegisterDMData registerData = fDataAccess.getRegisterDMData(element);
@@ -124,15 +127,14 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 
             if (groupData != null && registerData != null && bitFieldData != null) { 
                 StringBuffer exprBuf = new StringBuffer();
-                exprBuf.append("$$\""); //$NON-NLS-1$
-                exprBuf.append(groupData.getName());
-                exprBuf.append('"');
-                exprBuf.append('$');
-                exprBuf.append(registerData.getName());
-                exprBuf.append('.');
-                exprBuf.append(bitFieldData.getName());
+                
+                exprBuf.append("GRP( ");   exprBuf.append(groupData.getName());    exprBuf.append(" )"); //$NON-NLS-1$ //$NON-NLS-2$
+                exprBuf.append(".REG( ");  exprBuf.append(registerData.getName()); exprBuf.append(" )"); //$NON-NLS-1$ //$NON-NLS-2$
+                exprBuf.append(".BFLD( "); exprBuf.append(bitFieldData.getName()); exprBuf.append(" )"); //$NON-NLS-1$ //$NON-NLS-2$
+                
                 return exprBuf.toString();
             }
+
             return null;
         }
     }
@@ -503,6 +505,61 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
 
+    /**
+     * Expected format: GRP( GroupName ).REG( RegisterName ).BFLD( BitFieldname )
+     */
+    
+    public boolean canParseExpression(IExpression expression) {
+        return parseExpressionForBitFieldName(expression.getExpressionText()) != null;
+    }
+    
+    private String parseExpressionForBitFieldName(String expression) {
+    	
+    	if (expression.startsWith("GRP(")) { //$NON-NLS-1$
+    		
+    		/*
+    		 *  Get the group portion.
+    		 */
+    		int startIdx = "GRP(".length(); //$NON-NLS-1$
+            int endIdx = expression.indexOf(')', startIdx);
+            String remaining = expression.substring(endIdx+1);
+            if ( ! remaining.startsWith(".REG(") ) { //$NON-NLS-1$
+                return null;
+            }
+            
+            /*
+             * Get the register portion.
+             */
+            startIdx = ".REG(".length(); //$NON-NLS-1$
+            endIdx = remaining.indexOf(')', startIdx);
+            remaining = remaining.substring(endIdx+1);
+            
+            /*
+             * Get the bit-field portion.
+             */
+            if ( ! remaining.startsWith(".BFLD(") ) { //$NON-NLS-1$
+                return null;
+            }
+            startIdx = ".BFLD(".length(); //$NON-NLS-1$
+            endIdx = remaining.indexOf(')', startIdx);
+            String bitFieldName = remaining.substring(startIdx, endIdx);
+            
+            /*
+             * Make sure there is nothing following. If there is then this
+             * is not a properly formed expression and we do not claim it.
+             */
+            remaining = remaining.substring( endIdx + 1);
+            
+            if ( remaining.length() != 0 ) {
+            	return null;
+            }
+            
+            return bitFieldName.trim();
+        }
+    	
+        return null;
+    }
+    
     @Override
     protected void testElementForExpression(Object element, IExpression expression, final DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {
@@ -545,38 +602,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
 
-    public boolean canParseExpression(IExpression expression) {
-        return parseExpressionForBitFieldName(expression.getExpressionText()) != null;
-    }
-
-    /**
-     * Expected format: $$"Group Name"$Register_Name.Bit_Field_Name
-     */
-    private String parseExpressionForBitFieldName(String expression) {
-        if (expression.startsWith("$$\"")) { //$NON-NLS-1$
-            int secondQuoteIdx = expression.indexOf('"', "$$\"".length()); //$NON-NLS-1$
-            if (secondQuoteIdx > 0) {
-                String registerSubString = expression.substring(secondQuoteIdx + 1);
-                if (registerSubString.length() != 0 && 
-                    registerSubString.charAt(0) == '$' && 
-                    Character.isLetterOrDigit(registerSubString.charAt(1))) 
-                {
-                    int registerEnd = 1;
-                    while ( registerEnd < registerSubString.length() && 
-                            Character.isLetterOrDigit(registerSubString.charAt(registerEnd)) ) 
-                    {
-                        registerEnd++;
-                    }
-                    if ((registerEnd + 1) < registerSubString.length() && '.' == registerSubString.charAt(registerEnd)) {
-                        return registerSubString.substring(registerEnd + 1);
-                    }
-                }
-            }
-        } 
-        return null;
-    }
-
-    
     @Override
     protected void associateExpression(Object element, IExpression expression) {
         if (element instanceof BitFieldVMC) {

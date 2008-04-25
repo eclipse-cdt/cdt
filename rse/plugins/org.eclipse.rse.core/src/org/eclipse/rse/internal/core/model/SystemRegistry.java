@@ -1,28 +1,28 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Michael Scharf (Wind River) - patch for an NPE in getSubSystemConfigurations()
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
  * Uwe Stieber (Wind River) - bugfixing
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Tobias Schwarz (Wind River) - [183134] getLocalHost() does not return Local
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
@@ -48,6 +48,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -60,6 +61,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -88,9 +90,9 @@ import org.eclipse.rse.core.filters.ISystemFilterStartHere;
 import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemHostPool;
-import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -126,7 +128,7 @@ public class SystemRegistry implements ISystemRegistry
 
 	private ISubSystemConfigurationProxy[] subsystemConfigurationProxies = null;
 	private boolean errorLoadingFactory = false;
-	
+
 	//For ISystemViewInputProvider
 	private Object viewer = null;
 
@@ -134,12 +136,12 @@ public class SystemRegistry implements ISystemRegistry
 	 * Constructor.
 	 * This is protected as the singleton instance should be retrieved by
 	 *  calling getSystemRegistry().
-	 * @param logfilePath Root folder. Where to place the log file. 
+	 * @param logfilePath Root folder. Where to place the log file.
 	 */
 	protected SystemRegistry(String logfilePath)
 	{
 		super();
-	
+
 		// get initial shell
 		//FIXME - this can cause problems - don't think we should do this here anyway
 		//getShell(); // will quietly fail in headless mode. Phil
@@ -162,7 +164,7 @@ public class SystemRegistry implements ISystemRegistry
 
 	/**
 	 * Return singleton instance. Must be used on first instantiate.
-	 * @param logfilePath Root folder. Where to place the log file. 
+	 * @param logfilePath Root folder. Where to place the log file.
 	 */
 	public static SystemRegistry getInstance(String logfilePath)
 	{
@@ -170,7 +172,7 @@ public class SystemRegistry implements ISystemRegistry
 			new SystemRegistry(logfilePath);
 		return registry;
 	}
-	
+
 	/**
 	 * Return singleton instance assuming it already exists.
 	 */
@@ -219,9 +221,9 @@ public class SystemRegistry implements ISystemRegistry
 		  	     subsystemConfigurationProxies[idx].isSubSystemConfigurationActive())
 		  	 {
 		  	   SubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
-		  	   if (factory != null)          	   
+		  	   if (factory != null)
 		  	   {
-		         SubSystem[] sss = factory.getSubSystems(selectedConnection, SubSystemConfiguration.LAZILY);               
+		         SubSystem[] sss = factory.getSubSystems(selectedConnection, SubSystemConfiguration.LAZILY);
 		         if ((sss != null) && (sss.length>0))
 		           hasSubsystems = true;
 		  	   }
@@ -231,13 +233,13 @@ public class SystemRegistry implements ISystemRegistry
 		  	 else
 		  	   hasSubsystems = true;
 		  }
-		}  
+		}
 		else
-		  hasSubsystems = true;  	
+		  hasSubsystems = true;
 		return hasSubsystems;
 		*/
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
@@ -255,9 +257,9 @@ public class SystemRegistry implements ISystemRegistry
 	 * Private method used by RSEUIPlugin to tell registry all registered subsystem
 	 * factories. This way, all code can use this registry to access them versus the
 	 * RSEUIPlugin.
-	 * 
+	 *
 	 * Proxies must be set sorted by priority, then ID in order to get deterministic
-	 * results for all getSubSystemConfiguration*() queries. 
+	 * results for all getSubSystemConfiguration*() queries.
 	 */
 	public void setSubSystemConfigurationProxies(ISubSystemConfigurationProxy[] proxies)
 	{
@@ -354,7 +356,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISubSystemConfiguration[] result = (ISubSystemConfiguration[]) configurations.toArray(new ISubSystemConfiguration[configurations.size()]);
 		return result;
 	}
-	
+
 	// ----------------------------
 	// PROFILE METHODS...
 	// ----------------------------
@@ -391,7 +393,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemProfile profile = mgr.createSystemProfile(profileName, makeActive);
 		if (makeActive)
 		{
-			//fireEvent(new SystemResourceChangeEvent(profile,ISystemResourceChangeEvent.EVENT_ADD,this));    	  
+			//fireEvent(new SystemResourceChangeEvent(profile,ISystemResourceChangeEvent.EVENT_ADD,this));
 		}
 		fireModelChangeEvent(
 				ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED,
@@ -474,7 +476,7 @@ public class SystemRegistry implements ISystemRegistry
 			}
 		}
 		////Listening to events now
-		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                
+		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list
 		//boolean namesQualifed = SystemPreferencesManager.getQualifyConnectionNames();
 		//if (namesQualifed)
 		//	setQualifiedHostNames(namesQualifed); // causes refresh events to be fired
@@ -497,7 +499,7 @@ public class SystemRegistry implements ISystemRegistry
 		String oldName = profile.getName();
 		IHost[] newConns = null;
 
-		//RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Start of system profile copy. From: "+oldName+" to: "+newName+", makeActive: "+makeActive);             
+		//RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Start of system profile copy. From: "+oldName+" to: "+newName+", makeActive: "+makeActive);
 		// STEP 0: BRING ALL IMPACTED SUBSYSTEM FACTORIES TO LIFE NOW, BEFORE CREATING THE NEW PROFILE.
 		// IF WE DO NOT DO THIS NOW, THEN THEY WILL CREATE A FILTER POOL MGR FOR THE NEW PROFILE AS THEY COME
 		// TO LIFE... SOMETHING WE DON'T WANT!
@@ -665,7 +667,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemProfileManager manager = getSystemProfileManager();
 		ISystemProfile defaultProfile = manager.getDefaultPrivateSystemProfile();
 		if (profile != defaultProfile) {
-			// Test if there are any filter pools in this profile that are referenced by another active profile...    	
+			// Test if there are any filter pools in this profile that are referenced by another active profile...
 			Vector activeReferenceVector = new Vector();
 			if (!makeActive && (subsystemConfigurationProxies != null)) {
 				for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++) {
@@ -747,14 +749,14 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return (IConnectorService[]) services.toArray(new IConnectorService[services.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(org.eclipse.rse.core.model.IHost, boolean)
 	 */
 	public ISubSystem[] getSubSystems(IHost host, boolean force) {
 		return getSubSystems(host);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(org.eclipse.rse.core.model.IHost)
 	 */
@@ -784,9 +786,9 @@ public class SystemRegistry implements ISystemRegistry
 	/**
 	 * Resolve a subsystem from it's absolute name.  The absolute name of a subsystem
 	 * is denoted by <I>profileName</I>.<I>connectionName</I>:<I>subsystemConfigurationId</I>
-	 * 
+	 *
 	 * @param absoluteSubSystemName the name of the subsystem
-	 * 
+	 *
 	 * @return the subsystem
 	 */
 	public ISubSystem getSubSystem(String absoluteSubSystemName)
@@ -800,7 +802,7 @@ public class SystemRegistry implements ISystemRegistry
 			String srcProfileName = absoluteSubSystemName.substring(0, profileDelim);
 			String srcConnectionName = absoluteSubSystemName.substring(profileDelim + 1, connectionDelim);
 			String srcSubSystemConfigurationId = absoluteSubSystemName.substring(connectionDelim + 1, absoluteSubSystemName.length());
-			
+
 			ISystemProfile profile = getSystemProfile(srcProfileName);
 			return getSubSystem(profile, srcConnectionName, srcSubSystemConfigurationId);
 		}
@@ -810,16 +812,16 @@ public class SystemRegistry implements ISystemRegistry
 
 	/**
 	 * Resolve a subsystem from it's profile, connection and subsystem name.
-	 * 
+	 *
 	 * @param profile the profile to search
 	 * @param srcConnectionName the name of the connection
 	 * @param subsystemConfigurationId the factory Id of the subsystem
-	 * 
+	 *
 	 * @return the subsystem
 	 */
 	public ISubSystem getSubSystem(ISystemProfile profile, String srcConnectionName, String subsystemConfigurationId)
 	{
-		// find the src connection    	    	
+		// find the src connection
 		IHost[] connections = getHostsByProfile(profile);
 		if (connections == null)
 		{
@@ -878,97 +880,95 @@ public class SystemRegistry implements ISystemRegistry
 		dataStream.append(factoryId);
 		return dataStream.toString();
 	}
-	
+
 	/**
-	 * Check if two objects refers to the same system object by comparing it absoluteName with its subsystem id.
-	 * 
-	 * @param firstObject the first object to compare
-	 * @param firstObjectFullName the full name of the firstObject.  If null, get the full name from the firstObject
-	 * @param secondObject the second object to compare
-	 * @param secondObjectFullName the full name of the secondObject. If null, get the full name from the secondObject
+	 * Adapt the given element to an adapter that allows reading the element's
+	 * absolute name and parent subsystem.
+	 *
+	 * @param element an element to adapt.
+	 * @return the requested adapter, or <code>null</code> if the element is
+	 *         not adaptable as needed.
+	 * @since org.eclipse.rse.core 3.0
 	 */
-	public boolean isSameObjectByAbsoluteName(Object firstObject, String firstObjectFullName, Object secondObject, String secondObjectFullName)
+	public static ISystemDragDropAdapter getSystemDragDropAdapter(Object element) {
+		Object adapter = null;
+		if (element instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) element;
+			adapter = adaptable.getAdapter(ISystemDragDropAdapter.class);
+			if (adapter == null) {
+				adapter = Platform.getAdapterManager().getAdapter(element, "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+				if (adapter == null) {
+					return null;
+				}
+				assert false : "Found ISystemViewElementAdapter but no ISystemDragDropAdapter"; //$NON-NLS-1$
+			}
+		} else {
+			IAdapterManager am = Platform.getAdapterManager();
+			adapter = am.getAdapter(element, ISystemDragDropAdapter.class.getName());
+			if (adapter == null) {
+				adapter = am.getAdapter(element, "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+				if (adapter == null) {
+					return null;
+				}
+				assert false : "Found ISystemViewElementAdapter but no ISystemDragDropAdapter"; //$NON-NLS-1$
+			}
+		}
+		// At this point, we know for sure that we can adapt!
+		return (ISystemDragDropAdapter) adapter;
+	}
+
+	/**
+	 * Check if two objects refers to the same system object by comparing their
+	 * absolute Names and subsystem id's.
+	 *
+	 * @param firstObject the first object to compare
+	 * @param firstObjectFullName the full name of the firstObject. If null, get
+	 *            the full name from the firstObject
+	 * @param secondObject the second object to compare
+	 * @param secondObjectFullName the full name of the secondObject. If null,
+	 *            get the full name from the secondObject
+	 * @return <code>true</code> if the objects to be compared are the same
+	 *         instance; or, if both objects are non-null and adaptable to an
+	 *         RSE ISystemDragDropAdapter each, and those adapters do return a
+	 *         valid absolute name that's the same for both elements, and both
+	 *         elements belong to the same subsystem instance. Otherwise,
+	 *         <code>false</code> in all other cases.
+	 */
+	public static boolean isSameObjectByAbsoluteName(Object firstObject, String firstObjectFullName, Object secondObject, String secondObjectFullName)
 	{
-		if (firstObject == secondObject)
-		{
+		if (firstObject == secondObject) {
 			return true;
 		}
-		String firstObjectAbsoluteNameWithSubSystemId = null;
-		
-		//Simply doing comparason of if two object is equal is not enough
-		//If two different objects, but if their absoluate path (with subsystem id)
-		//are the same, they refer to the same remote object.
-		
-		if(firstObject instanceof IAdaptable) 
-		{
-			ISystemDragDropAdapter adapter = null;
-	    	
-			adapter = (ISystemDragDropAdapter)((IAdaptable)firstObject).getAdapter(ISystemDragDropAdapter.class);
-			String subSystemId = null; 
-      	
-      	  	if (adapter != null ) {
-      		  // first need to check subsystems
-      		  ISubSystem subSystem = adapter.getSubSystem(firstObject);
-      		  if (null != subSystem)
-      		  {
-      			  subSystemId = getAbsoluteNameForSubSystem(subSystem);
-      		  }
-      		  else
-      		  {
-      			  subSystemId = "";  //$NON-NLS-1$
-      		  }
-      		
-      		  if (firstObjectFullName != null)
-      		  {
-      			firstObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + firstObjectFullName; //$NON-NLS-1$
-      		  }
-      		  else
-      		  {
-      			  String absolutePath = adapter.getAbsoluteName(firstObject);
-      			  firstObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + absolutePath;  //$NON-NLS-1$
-      		  }
-      			 
-	      }
-        }
-		
-		
-		String secondObjectAbsoluteNameWithSubSystemId = null;
-		if(secondObject instanceof IAdaptable) 
-		{
-			ISystemDragDropAdapter adapter = null;
-	    	
-			adapter = (ISystemDragDropAdapter)((IAdaptable)secondObject).getAdapter(ISystemDragDropAdapter.class);
-			String subSystemId = null; 
-      	
-      	  	if (adapter != null ) {
-      		  // first need to check subsystems
-      		  ISubSystem subSystem = adapter.getSubSystem(secondObject);
-      		  if (null != subSystem)
-    		  {
-    			  subSystemId = getAbsoluteNameForSubSystem(subSystem);
-    		  }
-    		  else
-    		  {
-    			  subSystemId = "";  //$NON-NLS-1$
-    		  }
-      		  if (secondObjectFullName != null)
-    		  {
-    			secondObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + secondObjectFullName; //$NON-NLS-1$
-    		  }
-    		  else
-    		  {
-    			  String absolutePath = adapter.getAbsoluteName(secondObject);
-    			  secondObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + absolutePath;  //$NON-NLS-1$
-    		  }
-      			 
-	      }
-        }
-		
-		if (firstObjectAbsoluteNameWithSubSystemId != null && firstObjectAbsoluteNameWithSubSystemId.equals(secondObjectAbsoluteNameWithSubSystemId))
-		{
-			return true;
+		ISystemDragDropAdapter adA = null;
+		ISystemDragDropAdapter adB = null;
+		if (firstObjectFullName == null) {
+			adA = getSystemDragDropAdapter(firstObject);
+			if (adA != null) {
+				firstObjectFullName = adA.getAbsoluteName(firstObject);
+			}
 		}
-		
+		if (secondObjectFullName == null) {
+			adB = getSystemDragDropAdapter(secondObject);
+			if (adB != null) {
+				secondObjectFullName = adB.getAbsoluteName(secondObject);
+			}
+		}
+		if (firstObjectFullName != null && firstObjectFullName.equals(secondObjectFullName)) {
+			// full names exist and are the same: compare the subsystems
+			if (adA == null) { // firstFullName was passed in
+				adA = getSystemDragDropAdapter(firstObject);
+				assert adA != null : "full name \"" + firstObjectFullName + "\" has no ISystemDragDropAdapter!"; //$NON-NLS-1$ //$NON-NLS-2$
+				assert firstObjectFullName.equals(adA.getAbsoluteName(firstObject)) : "full name \"" + firstObjectFullName + "\" differs from adapter response: " + adA.getAbsoluteName(firstObject); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (adB == null) { // secondFullName was passed in
+				adB = getSystemDragDropAdapter(secondObject);
+				assert adB != null : "full name \"" + secondObjectFullName + "\" has no ISystemDragDropAdapter!"; //$NON-NLS-1$ //$NON-NLS-2$
+				assert secondObjectFullName.equals(adB.getAbsoluteName(secondObject)) : "full name \"" + firstObjectFullName + "\" differs from adapter response: " + adB.getAbsoluteName(secondObject); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			ISubSystem ssA = adA.getSubSystem(firstObject);
+			ISubSystem ssB = adB.getSubSystem(secondObject);
+			return ssA == ssB;
+		}
 		return false;
 	}
 
@@ -981,10 +981,10 @@ public class SystemRegistry implements ISystemRegistry
 	 	StringBuffer dataStream = new StringBuffer();
 
 		String profileName = connection.getSystemProfileName();
-		String connectionName = connection.getAliasName();  
-		
+		String connectionName = connection.getAliasName();
+
 		dataStream.append(profileName);
-		dataStream.append("."); //$NON-NLS-1$
+		dataStream.append(".");
 		dataStream.append(connectionName);
 		return dataStream.toString();
 	}
@@ -1002,11 +1002,11 @@ public class SystemRegistry implements ISystemRegistry
 			if (subsystemInterface.isInstance(ss))
 			{
 				matches.add(ss);
-			}						
+			}
 		}
 		return (ISubSystem[])matches.toArray(new ISubSystem[matches.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getServiceSubSystems(org.eclipse.rse.core.model.IHost, java.lang.Class)
 	 */
@@ -1047,7 +1047,7 @@ public class SystemRegistry implements ISystemRegistry
 		else
 			return (new ISubSystem[0]);
 	}
-	
+
 	public ISubSystemConfiguration[] getSubSystemConfigurations() {
 		// fixed Bugzilla Bug 160115 - added non-null guard for config
 		Vector v = new Vector();
@@ -1065,7 +1065,7 @@ public class SystemRegistry implements ISystemRegistry
 		v.toArray(result);
 		return result;
 	}
-	
+
 	/**
 	 * Return Vector of subsystem factories that apply to a given system connection
 	 */
@@ -1144,7 +1144,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemHostPool result = SystemHostPool.getSystemHostPool(profile);
 		return result;
 	}
-	
+
 	/**
 	 * Return connection pools for active profiles. One per.
 	 */
@@ -1168,13 +1168,13 @@ public class SystemRegistry implements ISystemRegistry
 	// ----------------------------
 	// PUBLIC CONNECTION METHODS...
 	// ----------------------------
-	
+
 	/**
 	 * Return the first connection to localhost we can find. While we always create a default one in
 	 *  the user's profile, it is possible that this profile is not active or the connection was deleted.
 	 *  However, since any connection to localHost will usually do, we just search all active profiles
 	 *  until we find one, and return it. <br>
-	 * If no localhost connection is found, this will return null. If one is needed, it can be created 
+	 * If no localhost connection is found, this will return null. If one is needed, it can be created
 	 *  easily by calling {@link #createLocalHost(ISystemProfile, String, String)}.
 	 */
 	public IHost getLocalHost()
@@ -1200,15 +1200,15 @@ public class SystemRegistry implements ISystemRegistry
 			if (conns != null) {
 				for (int jdx = 0; jdx < conns.length; jdx++) {
 					//ISystemHostPool ensures that we never have "null" hosts.
-					assert conns[jdx]!=null : "Null host in pool "+pools[idx].getName()+" at "+jdx; //$NON-NLS-1$ //$NON-NLS-2$
+					assert conns[jdx]!=null : "Null host in pool "+pools[idx].getName()+" at "+jdx;
 					hosts.add(conns[jdx]);
 				}
 			}
 		}
-		IHost[] allConns = (IHost[])hosts.toArray(new IHost[hosts.size()]); 
+		IHost[] allConns = (IHost[])hosts.toArray(new IHost[hosts.size()]);
 		return allConns;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsByProfile(org.eclipse.rse.core.model.ISystemProfile)
@@ -1218,14 +1218,14 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemHostPool pool = getHostPool(profile);
 		return pool.getHosts();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 */
 	public IHost[] getHostsBySubSystemConfiguration(ISubSystemConfiguration factory)
 	{
-		/* The following algorithm failed because factory.getSubSystems() only returns 
+		/* The following algorithm failed because factory.getSubSystems() only returns
 		 *  subsystems that have been restored, which are only those that have been
 		 *  expanded.
 		 */
@@ -1244,7 +1244,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return conns;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(java.lang.String)
@@ -1286,7 +1286,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public IHost[] getHostsBySystemType(IRSESystemType systemType) {
 		List connections = new ArrayList();
-		
+
 		if (systemType != null) {
 			IHost[] candidates = getHosts();
 			for (int i = 0; i < candidates.length; i++) {
@@ -1297,10 +1297,10 @@ public class SystemRegistry implements ISystemRegistry
 				}
 			}
 		}
-		
+
 		return (IHost[])connections.toArray(new IHost[connections.size()]);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemTypes(org.eclipse.rse.core.IRSESystemType[])
@@ -1328,7 +1328,7 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		return getHostPool(profile).getHost(connectionName);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostPosition(org.eclipse.rse.core.model.IHost)
@@ -1338,7 +1338,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemHostPool pool = conn.getHostPool();
 		return pool.getHostPosition(conn);
 	}
-	
+
 	/**
 	 * Return the zero-based position of a SystemConnection object within all active profiles.
 	 */
@@ -1362,7 +1362,7 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		return getHostPool(profile).getHostCount();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCountWithinProfile(org.eclipse.rse.core.model.IHost)
@@ -1402,7 +1402,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return names;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostAliasNamesForAllActiveProfiles()
@@ -1445,7 +1445,7 @@ public class SystemRegistry implements ISystemRegistry
 			}
 		}
 		if ((systemType != null) && (systemType.isLocal() && (v.size() == 0)))
-			v.addElement("localhost"); //$NON-NLS-1$
+			v.addElement("localhost");
 		return (String[])v.toArray(new String[v.size()]);
 	}
 
@@ -1460,7 +1460,7 @@ public class SystemRegistry implements ISystemRegistry
 			profile = getSystemProfileManager().getDefaultPrivateSystemProfile();
 		if (profile == null)
 			profile = getSystemProfileManager().getActiveSystemProfiles()[0];
-		 
+
 		try
 		{
 			IRSESystemType localType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
@@ -1468,7 +1468,7 @@ public class SystemRegistry implements ISystemRegistry
 		  			profile.getName(), localType,
 		  			name, // connection name
 		  			"localhost", // hostname //$NON-NLS-1$
-		  			"", // description //$NON-NLS-1$
+		  			"", // description
 		  			// DY:  defect 42101, description cannot be null
 		  			// null, // description
 		  			userId, // default user Id
@@ -1477,11 +1477,11 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		catch (Exception exc)
 		{
-			RSECorePlugin.getDefault().getLogger().logError("Error creating local connection", exc); //$NON-NLS-1$
+			RSECorePlugin.getDefault().getLogger().logError("Error creating local connection", exc);
 		}
 		return localConn;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, org.eclipse.rse.core.model.ISubSystemConfigurator[])
 	 */
@@ -1498,7 +1498,7 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		return createHost(profileName, systemType, connectionName, hostName, description, defaultUserId, defaultUserIdLocation, true, configurators);
 	}
-	
+
 	/**
 	 * Create a host object, given its host pool and its attributes.
 	 * <p>
@@ -1522,9 +1522,9 @@ public class SystemRegistry implements ISystemRegistry
 	 * @return SystemConnection object, or null if it failed to create. This is typically
 	 * because the connectionName is not unique. Call getLastException() if necessary.
 	 */
-	public IHost createHost(final String profileName, final IRSESystemType systemType, final String hostName, 
-			final String hostAddress, final String description, final String defaultUserId, 
-			final int defaultUserIdLocation, final boolean createSubSystems, 
+	public IHost createHost(final String profileName, final IRSESystemType systemType, final String hostName,
+			final String hostAddress, final String description, final String defaultUserId,
+			final int defaultUserIdLocation, final boolean createSubSystems,
 			final ISubSystemConfigurator[] configurators) throws Exception {
 		final ISystemRegistry sr = this;
 		class CreateHostOperation implements ISystemProfileOperation {
@@ -1607,30 +1607,30 @@ public class SystemRegistry implements ISystemRegistry
 		FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, sr);
 		Display.getDefault().asyncExec(fire);
 		////Listening to FireNewHostEvents now
-		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                
+		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list
 		return host;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#createSubSystems(org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.subsystems.ISubSystemConfiguration[])
 	 */
 	public ISubSystem[] createSubSystems(IHost host, ISubSystemConfiguration[] configurations) {
-		
+
 		ISubSystem[] subsystems = new ISubSystem[configurations.length];
-		
+
 		for (int i = 0; i < configurations.length; i++) {
 			subsystems[i] = configurations[i].createSubSystem(host, true, null);
 		}
-		
+
 		for (int j = 0; j < subsystems.length; j++) {
 			fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystems[j], null);
 		}
-		
+
 		host.commit();
 		return subsystems;
 	}
-	
+
 	class NotifyModelChangedRunnable implements Runnable
 	{
 		private ISystemModelChangeEvent _event;
@@ -1638,13 +1638,13 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			_event = event;
 		}
-		
+
 		public void run()
 		{
 			modelListenerManager.notify(_event);
 		}
 	}
-	
+
 	class NotifyResourceChangedRunnable implements Runnable
 	{
 		private ISystemResourceChangeEvent _event;
@@ -1652,13 +1652,13 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			_event = event;
 		}
-		
+
 		public void run()
 		{
 			listenerManager.notify(_event);
 		}
 	}
-	
+
 	class NotifyPreferenceChangedRunnable implements Runnable
 	{
 		private ISystemPreferenceChangeEvent _event;
@@ -1666,30 +1666,30 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			_event = event;
 		}
-		
+
 		public void run()
 		{
 			preferenceListManager.notify(_event);
 		}
 	}
-	
+
 	class PreferenceChangedRunnable implements Runnable
 	{
 		private ISystemPreferenceChangeEvent _event;
 		private ISystemPreferenceChangeListener _listener;
-		
+
 		public PreferenceChangedRunnable(ISystemPreferenceChangeEvent event, ISystemPreferenceChangeListener listener)
 		{
 			_event = event;
 			_listener = listener;
 		}
-		
+
 		public void run()
 		{
 			_listener.systemPreferenceChanged(_event);
 		}
 	}
-	
+
 	class ModelResourceChangedRunnable implements Runnable
 	{
 		private ISystemModelChangeListener _listener;
@@ -1699,13 +1699,13 @@ public class SystemRegistry implements ISystemRegistry
 			_event = event;
 			_listener = listener;
 		}
-		
+
 		public void run()
 		{
 			_listener.systemModelResourceChanged(_event);
 		}
 	}
-	
+
 	class ResourceChangedRunnable implements Runnable
 	{
 		private ISystemResourceChangeListener _listener;
@@ -1715,13 +1715,13 @@ public class SystemRegistry implements ISystemRegistry
 			_event = event;
 			_listener = listener;
 		}
-		
+
 		public void run()
 		{
 			_listener.systemResourceChanged(_event);
 		}
 	}
-	
+
 	class RemoteResourceChangedRunnable implements Runnable
 	{
 		private ISystemRemoteChangeListener _listener;
@@ -1731,13 +1731,13 @@ public class SystemRegistry implements ISystemRegistry
 			_event = event;
 			_listener = listener;
 		}
-		
+
 		public void run()
 		{
 			_listener.systemRemoteResourceChanged(_event);
 		}
 	}
-	
+
 	class RemoteChangedRunnable implements Runnable
 	{
 		private ISystemRemoteChangeEvent _event;
@@ -1745,28 +1745,28 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			_event = event;
 		}
-		
+
 		public void run()
 		{
 			remoteListManager.notify(_event);
 		}
 	}
-	
-	
+
+
 	class FireNewHostEvents implements Runnable
 	{
 		private ISubSystem[] subSystems;
 		private IHost conn;
 		private ISystemRegistry reg;
-						
-		
+
+
 		public FireNewHostEvents(IHost host, ISubSystem[] subSystems, ISystemRegistry registry)
 		{
-			this.subSystems= subSystems; 
+			this.subSystems= subSystems;
 			this.conn = host;
 			this.reg = registry;
 		}
-		
+
 		public void run()
 		{
 			int eventType = ISystemResourceChangeEvents.EVENT_ADD_RELATIVE;
@@ -1787,15 +1787,15 @@ public class SystemRegistry implements ISystemRegistry
 					ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED,
 					ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_CONNECTION,
 					conn, null);
-		
+
 			for (int s = 0; s < subSystems.length; s++)
 			{
 				ISubSystem ss = subSystems[s];
-				fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, ss, null);						
+				fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, ss, null);
 			}
 		}
 	}
-	
+
 	private ISubSystemConfigurator[] getApplicableConfigurators(ISubSystemConfiguration ssf, ISubSystemConfigurator[] allPages)
 	{
 		if ((allPages == null) || (allPages.length == 0))
@@ -1813,7 +1813,7 @@ public class SystemRegistry implements ISystemRegistry
 				subPages[count++] = allPages[idx];
 		return subPages;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String)
@@ -1821,17 +1821,17 @@ public class SystemRegistry implements ISystemRegistry
 	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description)
 		throws Exception
 	{
-		return createHost(profileName, systemType, connectionName, hostName, description, true);  
+		return createHost(profileName, systemType, connectionName, hostName, description, true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description, boolean createSubSystems) throws Exception
 	{
-		return createHost(profileName, systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, createSubSystems, null);  
+		return createHost(profileName, systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, createSubSystems, null);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String)
@@ -1842,9 +1842,9 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemProfile profile = getSystemProfileManager().getDefaultPrivateSystemProfile();
 		if (profile == null)
 			profile = getSystemProfileManager().getActiveSystemProfiles()[0];
-		return createHost(profile.getName(), systemType, connectionName, hostName, description);  
+		return createHost(profile.getName(), systemType, connectionName, hostName, description);
 	}
-	
+
 	/**
 	 * Return the previous connection as would be shown in the view
 	 */
@@ -1867,7 +1867,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return prevConn;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#updateHost(org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int)
@@ -1886,7 +1886,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		else
 			defaultUserIdChanged = !conn.compareUserIds(defaultUserId, orgDefaultUserId); // d43219
-		//!defaultUserId.equalsIgnoreCase(orgDefaultUserId);    	
+		//!defaultUserId.equalsIgnoreCase(orgDefaultUserId);
 
 		try
 		{
@@ -1896,13 +1896,13 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		catch (SystemMessageException exc)
 		{
-			RSECorePlugin.getDefault().getLogger().logError("Exception in updateConnection for " + connectionName, exc); //$NON-NLS-1$
+			RSECorePlugin.getDefault().getLogger().logError("Exception in updateConnection for " + connectionName, exc);
 			lastException = exc;
 			return;
 		}
 		catch (Exception exc)
 		{
-			RSECorePlugin.getDefault().getLogger().logError("Exception in updateConnection for " + connectionName, exc); //$NON-NLS-1$
+			RSECorePlugin.getDefault().getLogger().logError("Exception in updateConnection for " + connectionName, exc);
 			lastException = exc;
 			return;
 		}
@@ -1933,7 +1933,7 @@ public class SystemRegistry implements ISystemRegistry
 					}
 					catch (Exception exc)
 					{
-					} // msg already shown    	  	   
+					} // msg already shown
 				}
 			}
 		}
@@ -1963,8 +1963,8 @@ public class SystemRegistry implements ISystemRegistry
 		for (int idx = 0; idx < affectedSubSystemFactories.size(); idx++)
 		{
 			 ((ISubSystemConfiguration) affectedSubSystemFactories.elementAt(idx)).deleteSubSystemsByConnection(conn);
-		} 
-		conn.getHostPool().deleteHost(conn); // delete from memory and from disk.       
+		}
+		conn.getHostPool().deleteHost(conn); // delete from memory and from disk.
 		fireModelChangeEvent(
 				ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED,
 				ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_CONNECTION,
@@ -1981,8 +1981,8 @@ public class SystemRegistry implements ISystemRegistry
 
 		// it looks good, so proceed...
 		String oldName = conn.getAliasName();
-		
-		
+
+
 		// DKM - changing how this is done since there are services with different configurations now
 		ISubSystem[] subsystems = conn.getSubSystems();
 		for (int i = 0; i < subsystems.length; i++)
@@ -1990,7 +1990,7 @@ public class SystemRegistry implements ISystemRegistry
 			ISubSystem ss = subsystems[i];
 			ss.getSubSystemConfiguration().renameSubSystemsByConnection(conn, newName);
 		}
-		
+
 		/*
 		Vector affectedSubSystemFactories = getSubSystemFactories(conn);
 		for (int idx = 0; idx < affectedSubSystemFactories.size(); idx++)
@@ -1998,7 +1998,7 @@ public class SystemRegistry implements ISystemRegistry
 		*/
 		conn.getHostPool().renameHost(conn, newName); // rename in memory and disk
 		////Listening to events now
-		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list        
+		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list
 		fireModelChangeEvent(
 				ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED,
 				ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_CONNECTION,
@@ -2042,7 +2042,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemHostPool targetPool = getHostPool(targetProfile);
 		IHost newConn = null;
 
-		RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Start of system connection copy. From: " + oldName + " to: " + newName); //$NON-NLS-1$ //$NON-NLS-2$
+		RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Start of system connection copy. From: " + oldName + " to: " + newName);
 
 		// STEP 0: BRING ALL IMPACTED SUBSYSTEM FACTORIES TO LIFE NOW, BEFORE DOING THE CLONE.
 		getSubSystemFactories(conn);
@@ -2061,7 +2061,7 @@ public class SystemRegistry implements ISystemRegistry
 
 			ISubSystem[] subsystems = null;
 			ISubSystemConfiguration factory = null;
-			msg = "Copying subsystems for connection " + conn.getAliasName(); //$NON-NLS-1$
+			msg = "Copying subsystems for connection " + conn.getAliasName();
 			//monitor.subTask(msg);
 			RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), msg);
 			subsystems = getSubSystems(conn); // get old subsystems for this connection
@@ -2069,7 +2069,7 @@ public class SystemRegistry implements ISystemRegistry
 			{
 				for (int jdx = 0; jdx < subsystems.length; jdx++)
 				{
-					msg += ": subsystem " + subsystems[jdx].getName(); //$NON-NLS-1$
+					msg += ": subsystem " + subsystems[jdx].getName();
 					//monitor.subTask(msg);
 					RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), msg);
 					factory = subsystems[jdx].getSubSystemConfiguration();
@@ -2077,7 +2077,7 @@ public class SystemRegistry implements ISystemRegistry
 					//try { java.lang.Thread.sleep(3000l); } catch (InterruptedException e) {}
 				}
 			}
-			//monitor.worked(1);                
+			//monitor.worked(1);
 		}
 		catch (Exception exc)
 		{
@@ -2094,11 +2094,11 @@ public class SystemRegistry implements ISystemRegistry
 			}
 			catch (Exception exc)
 			{
-				RSECorePlugin.getDefault().getLogger().logError("Exception (ignored) cleaning up from copy-connection exception.", exc); //$NON-NLS-1$
+				RSECorePlugin.getDefault().getLogger().logError("Exception (ignored) cleaning up from copy-connection exception.", exc);
 			}
 			throw (lastExc);
 		}
-		RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Copy of system connection " + oldName + " to " + newName + " successful"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Copy of system connection " + oldName + " to " + newName + " successful");
 		if (getSystemProfileManager().isSystemProfileActive(targetProfile.getName()))
 		{
 			int eventType = ISystemResourceChangeEvents.EVENT_ADD_RELATIVE;
@@ -2128,7 +2128,7 @@ public class SystemRegistry implements ISystemRegistry
 			if (newConn != null)
 			{
 				deleteHost(conn); // delete old connection now that new one created successfully
-				RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Move of system connection " + conn.getAliasName() + " to profile " + targetProfile.getName() + " successful"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				RSECorePlugin.getDefault().getLogger().logDebugMessage(this.getClass().getName(), "Move of system connection " + conn.getAliasName() + " to profile " + targetProfile.getName() + " successful");
 				fireEvent(new SystemResourceChangeEvent(conn, ISystemResourceChangeEvents.EVENT_DELETE, this));
 			}
 		}
@@ -2146,26 +2146,26 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public boolean isAnySubSystemSupportsConnect(IHost conn) {
 		Vector v = getSubSystemFactories(conn);
-		
+
 		if (v != null) {
 			Iterator iter = v.iterator();
-			
+
 			while (iter.hasNext()) {
 				Object obj = iter.next();
-				
+
 				if (obj instanceof ISubSystemConfiguration) {
 					ISubSystemConfiguration config = (ISubSystemConfiguration)obj;
-					
+
 					if (config.supportsSubSystemConnect()) {
 						return true;
 					}
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#isAnySubSystemConnected(org.eclipse.rse.core.model.IHost)
@@ -2187,7 +2187,7 @@ public class SystemRegistry implements ISystemRegistry
 
 	/**
 	 * Check if there are any subsystem configurations that have not yet been instantiated
-	 * and apply to the given system type. 
+	 * and apply to the given system type.
 	 * @param systemType the system type to check
 	 * @return <code>true</code> if there are any matching subsystem configurations not yet instantiated.
 	 */
@@ -2205,7 +2205,7 @@ public class SystemRegistry implements ISystemRegistry
 			}
 		}
 		return false;
-		
+
 	}
 
 	/*
@@ -2229,7 +2229,7 @@ public class SystemRegistry implements ISystemRegistry
 			//If there are no subsystems, they are all connected.
 			return true;
 		}
-		
+
 		for (int idx = 0; all && (idx < subsystems.length); idx++)
 		{
 			ISubSystem ss = subsystems[idx];
@@ -2241,7 +2241,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return all;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#disconnectAllSubSystems(org.eclipse.rse.core.model.IHost)
@@ -2254,7 +2254,7 @@ public class SystemRegistry implements ISystemRegistry
 			return;
 
 		// dy:  defect 47281, user repeatedly prompted to disconnect if there is an open file
-		// and they keep hitting cancel. 
+		// and they keep hitting cancel.
 		boolean cancelled = false;
 		for (int idx = 0; idx < subsystems.length && !cancelled; idx++)
 		{
@@ -2263,12 +2263,12 @@ public class SystemRegistry implements ISystemRegistry
 			{
 				try
 				{
-					//ss.getConnectorService().disconnect(); defect 40675         	 
+					//ss.getConnectorService().disconnect(); defect 40675
 					ss.disconnect();
 				}
 				catch (InterruptedException exc)
 				{
-					System.out.println("Cancelled"); //$NON-NLS-1$
+					System.out.println("Cancelled");
 					cancelled = true;
 				}
 				catch (Exception exc)
@@ -2301,10 +2301,10 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			int eventId = ISystemResourceChangeEvents.EVENT_ICON_CHANGE;
 			fireEvent(new SystemResourceChangeEvent(conn, eventId, this));
-			
+
 			SystemResourceChangeEvent event = new SystemResourceChangeEvent(subsystem, eventId, conn);
 			fireEvent(event);
-			
+
 			// DKM
 			// fire for each subsystem
 			ISubSystem[] sses = getSubSystems(conn);
@@ -2315,16 +2315,16 @@ public class SystemRegistry implements ISystemRegistry
 			    {
 			        SystemResourceChangeEvent sevent = new SystemResourceChangeEvent(ss, eventId, conn);
 					fireEvent(sevent);
-					
+
 					sevent.setType(ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE); // update vrm
 					fireEvent(sevent);
 			    }
 			}
-			
-			
+
+
 			// DY:  Conditioning of property change event type has been removed so
 			// that the connected property is updated on a disconnect.
-			//if (connected)        
+			//if (connected)
 			event.setType(ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE); // update vrm
 
 			fireEvent(event);
@@ -2333,7 +2333,7 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			invalidateFiltersFor(subsystem);
 			fireEvent(new SystemResourceChangeEvent(subsystem, ISystemResourceChangeEvents.EVENT_MUST_COLLAPSE, this));
-			
+
 			ISubSystem[] sses = getSubSystems(conn);
 			for (int i = 0; i < sses.length; i++)
 			{
@@ -2350,7 +2350,7 @@ public class SystemRegistry implements ISystemRegistry
 
 	// ----------------------------
 	// RESOURCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Register your interest in being told when a system resource such as a connection is changed.
@@ -2392,16 +2392,16 @@ public class SystemRegistry implements ISystemRegistry
 	            {
 	                ((ISystemContainer)ref).markStale(true);
 	            }
-	        }	        
+	        }
 	    }
-	    
+
 	    if (onMainThread()) {
 	    	listenerManager.notify(event);
 	    }
 	    else {
 	    	runOnMainThread(new NotifyResourceChangedRunnable(event));
 	    }
-	    	
+
 	}
 	/**
 	 * Notify a specific listener of a change to a system resource such as a connection.
@@ -2415,7 +2415,7 @@ public class SystemRegistry implements ISystemRegistry
 			runOnMainThread(new ResourceChangedRunnable(event, l));
 		}
 	}
-	
+
 	/**
 	 * Return the listener manager such that the SystemRegistryUI
 	 * can re-use it for posting events that can only be posted
@@ -2429,7 +2429,7 @@ public class SystemRegistry implements ISystemRegistry
 
 	// ----------------------------
 	// MODEL RESOURCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Register your interest in being told when an RSE model resource is changed.
@@ -2448,23 +2448,23 @@ public class SystemRegistry implements ISystemRegistry
 		modelListenerManager.removeSystemModelChangeListener(l);
 		modelListenerCount--;
 	}
-	
+
 	private boolean onMainThread()
 	{
 		return Display.getCurrent() != null;
 	}
-	
+
 	private void runOnMainThread(Runnable runnable)
 	{
 		Display.getDefault().asyncExec(runnable);
 	}
-	
+
 	/**
 	 * Notify all listeners of a change to a system model resource such as a connection.
 	 * You would not normally call this as the methods in this class call it when appropriate.
 	 */
 	public void fireEvent(ISystemModelChangeEvent event)
-	{		
+	{
 		if (onMainThread()) {
 			modelListenerManager.notify(event);
 		}
@@ -2485,8 +2485,8 @@ public class SystemRegistry implements ISystemRegistry
 		modelEvent.setResourceType(resourceType);
 		modelEvent.setResource(resource);
 		modelEvent.setOldName(oldName);
-		
-		if (onMainThread()) {	
+
+		if (onMainThread()) {
 			modelListenerManager.notify(modelEvent);
 		}
 		else {
@@ -2494,9 +2494,9 @@ public class SystemRegistry implements ISystemRegistry
 			runOnMainThread(new NotifyModelChangedRunnable(modelEvent));
 		}
 	}
-	
 
-	
+
+
 	/**
 	 * Notify a specific listener of a change to a system model resource such as a connection.
 	 */
@@ -2512,7 +2512,7 @@ public class SystemRegistry implements ISystemRegistry
 
 	// --------------------------------
 	// REMOTE RESOURCE EVENT METHODS...
-	// --------------------------------            
+	// --------------------------------
 
 	/**
 	 * Register your interest in being told when a remote resource is changed.
@@ -2531,7 +2531,7 @@ public class SystemRegistry implements ISystemRegistry
 		remoteListManager.removeSystemRemoteChangeListener(l);
 		remoteListCount--;
 	}
-	
+
 	/**
 	 * Query if the ISystemRemoteChangeListener is already listening for SystemRemoteChange events
 	 */
@@ -2539,7 +2539,7 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		return remoteListManager.isRegisteredSystemRemoteChangeListener(l);
 	}
-	
+
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * You would not normally call this as the methods in this class call it when appropriate.
@@ -2553,14 +2553,14 @@ public class SystemRegistry implements ISystemRegistry
 			runOnMainThread(new RemoteChangedRunnable(event));
 		}
 	}
-	
+
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
 	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
 	 */
@@ -2572,7 +2572,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
-		
+
 		if (remoteEvent == null)
 			remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
@@ -2580,7 +2580,7 @@ public class SystemRegistry implements ISystemRegistry
 		remoteEvent.setResourceParent(resourceParent);
 		remoteEvent.setOldNames(oldNames);
 		remoteEvent.setSubSystem(subsystem);
-		
+
 		if (onMainThread())
 		{
 			remoteListManager.notify(remoteEvent);
@@ -2597,10 +2597,10 @@ public class SystemRegistry implements ISystemRegistry
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
 	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
-	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
+	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent.
 	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
 	 */
 	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames, Object originatingViewer)
@@ -2611,7 +2611,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
-		
+
 		//if (remoteEvent == null)
 			remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
@@ -2620,7 +2620,7 @@ public class SystemRegistry implements ISystemRegistry
 		remoteEvent.setOldNames(oldNames);
 		remoteEvent.setSubSystem(subsystem);
 		remoteEvent.setOriginatingViewer(originatingViewer);
-		
+
 		if (onMainThread())
 		{
 			remoteListManager.notify(remoteEvent);
@@ -2638,7 +2638,7 @@ public class SystemRegistry implements ISystemRegistry
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
      * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
 	 */
@@ -2650,7 +2650,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
-		
+
 		if (remoteEvent == null)
 			remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setOperation(operation);
@@ -2659,7 +2659,7 @@ public class SystemRegistry implements ISystemRegistry
 		remoteEvent.setResourceParent(resourceParent);
 		remoteEvent.setOldNames(oldNames);
 		remoteEvent.setSubSystem(subsystem);
-		
+
 		if (onMainThread())
 		{
 			remoteListManager.notify(remoteEvent);
@@ -2677,10 +2677,10 @@ public class SystemRegistry implements ISystemRegistry
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
 	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
-	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
+	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent.
 	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
 	 */
 	public void fireRemoteResourceChangeEvent(String operation, int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames, Object originatingViewer)
@@ -2691,17 +2691,17 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
-		
+
 		if (remoteEvent == null)
 			remoteEvent = new SystemRemoteChangeEvent();
-		remoteEvent.setOperation(operation);	
+		remoteEvent.setOperation(operation);
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
 		remoteEvent.setResourceParent(resourceParent);
 		remoteEvent.setOldNames(oldNames);
 		remoteEvent.setSubSystem(subsystem);
 		remoteEvent.setOriginatingViewer(originatingViewer);
-		
+
 		if (onMainThread())
 		{
 			remoteListManager.notify(remoteEvent);
@@ -2711,14 +2711,14 @@ public class SystemRegistry implements ISystemRegistry
 			runOnMainThread(new RemoteChangedRunnable(remoteEvent));
 		}
 	}
-	
+
     /**
      * Returns the implementation of ISystemRemoteElement for the given
      * object.  Returns null if this object does not adaptable to this.
      */
-    protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
+    protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o)
     {
-		//Try 1: element already an instance of IRemoteObjectIdentifier? 
+		//Try 1: element already an instance of IRemoteObjectIdentifier?
     	if (o instanceof IRemoteObjectIdentifier) {
     		return (IRemoteObjectIdentifier)o;
     	}
@@ -2745,14 +2745,14 @@ public class SystemRegistry implements ISystemRegistry
     	}
 		return adapter;
     }
-    
+
 	 private String getRemoteResourceAbsoluteName(Object remoteResource)
 	    {
 	    	if (remoteResource == null)
 	    	  return null;
 	    	String remoteResourceName = null;
 	        if (remoteResource instanceof String)
-	    	  remoteResourceName = (String)remoteResource;    	  
+	    	  remoteResourceName = (String)remoteResource;
 	        else if (remoteResource instanceof SystemFilterReference)
 	        {
 	        	ISystemFilterReference ref = (ISystemFilterReference)remoteResource;
@@ -2763,16 +2763,16 @@ public class SystemRegistry implements ISystemRegistry
 	    		  return null;
 	    		remoteResourceName = rid.getAbsoluteName(remoteResource);
 	        }
-	        else 
+	        else
 	    	{
 	    		IRemoteObjectIdentifier rid = getRemoteObjectIdentifier(remoteResource);
 	    		if (rid == null)
 	    		  return null;
 	    		remoteResourceName = rid.getAbsoluteName(remoteResource);
 	    	}
-	    	return remoteResourceName;    	
+	    	return remoteResourceName;
 	    }
-	 
+
 	 private List findFilterReferencesFor(ISubSystem subsystem)
 		{
 		   List results = new ArrayList();
@@ -2785,24 +2785,24 @@ public class SystemRegistry implements ISystemRegistry
 				    for (int i = 0; i < refs.length; i++)
 				    {
 				        ISystemFilterReference filterRef = refs[i];
-				   
+
 				        if (!filterRef.isStale() && filterRef.hasContents(SystemChildrenContentsType.getInstance()))
 				        {
 				        	results.add(filterRef);
 				        }
 				    }
-				    
+
 		    	}
 		    }
 		    return results;
-		
+
 	    }
-	 
+
 	public List findFilterReferencesFor(Object resource, ISubSystem subsystem)
 	{
 		return findFilterReferencesFor(resource, subsystem, true);
 	}
-		
+
 	public List findFilterReferencesFor(Object resource, ISubSystem subsystem, boolean onlyCached)
 	{
 	    String elementName = getRemoteResourceAbsoluteName(resource);
@@ -2813,35 +2813,35 @@ public class SystemRegistry implements ISystemRegistry
 		    for (int i = 0; i < refs.length; i++)
 		    {
 		        ISystemFilterReference filterRef = refs[i];
-		   
+
 		        if (!onlyCached || (!filterRef.isStale() && filterRef.hasContents(SystemChildrenContentsType.getInstance())))
-		        	
+
 		        {
 		    	    	// #1
 		    	    	if (subsystem.doesFilterMatch(filterRef.getReferencedFilter(), elementName))
 		    	    	{
 		    	  	       results.add(filterRef); // found a match!
-	
+
 		    	    	}
 		    	    	// #2
 		    	    	else if (subsystem.doesFilterListContentsOf(filterRef.getReferencedFilter(),elementName))
 		    	    	{
 		    	    	    results.add(filterRef); // found a match!
-		   	    	    } 
+		   	    	    }
 		        }
 		    }
-		    
-		  
+
+
 	    }
 	    return results;
-	
+
     }
-	
+
 	public void invalidateFiltersFor(ISubSystem subsystem)
-	{	    
+	{
 	    if (subsystem != null)
 	    {
-		    
+
 	        List results = findFilterReferencesFor(subsystem);
 	        for (int i = 0; i < results.size(); i++)
 	        {
@@ -2849,12 +2849,12 @@ public class SystemRegistry implements ISystemRegistry
 	        }
 	    }
 	}
-	
+
 	public void invalidateFiltersFor(Object resourceParent, ISubSystem subsystem)
-	{	    
+	{
 	    if (subsystem != null)
 	    {
-		    
+
 	        List results = findFilterReferencesFor(resourceParent, subsystem);
 	        for (int i = 0; i < results.size(); i++)
 	        {
@@ -2862,7 +2862,7 @@ public class SystemRegistry implements ISystemRegistry
 	        }
 	    }
 	}
-	
+
 	/**
 	 * Notify a specific listener of a change to a remote resource such as a file.
 	 */
@@ -2874,12 +2874,12 @@ public class SystemRegistry implements ISystemRegistry
 		else {
 			runOnMainThread(new RemoteResourceChangedRunnable(event, l));
 		}
-			
+
 	}
 
 	// ----------------------------
 	// PREFERENCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Register your interest in being told when a system preference changes
@@ -2909,7 +2909,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 	}
 	/**
-	 * Notify a specific listener of a change to a system preference 
+	 * Notify a specific listener of a change to a system preference
 	 */
 	public void fireEvent(ISystemPreferenceChangeListener l, ISystemPreferenceChangeEvent event)
 	{
@@ -2957,10 +2957,10 @@ public class SystemRegistry implements ISystemRegistry
 
 	// ----------------------------
 	// SAVE / RESTORE METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
-	 * Save everything! 
+	 * Save everything!
 	 */
 	public boolean save()
 	{
@@ -3035,7 +3035,7 @@ public class SystemRegistry implements ISystemRegistry
 	// ----------------------------------
 	// SYSTEMVIEWINPUTPROVIDER METHODS...
 	// ----------------------------------
-	
+
 	/**
 	 * Return the child objects to constitute the root elements in the system view tree.
 	 * We return all connections that have an enabled system type.
@@ -3044,12 +3044,12 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		//DKM - only return enabled connections now
 		IHost[] connections = getHosts();
-		List result = new ArrayList(); 
+		List result = new ArrayList();
 		for (int i = 0; i < connections.length; i++) {
 			IHost con = connections[i];
 			IRSESystemType sysType = con.getSystemType();
 			// sysType can be null if workspace contains a host that is no longer defined by the workbench
-			if (sysType != null && sysType.isEnabled()) { 
+			if (sysType != null && sysType.isEnabled()) {
 				// Note: System types without registered subsystems get disabled by the default
 				// AbstractRSESystemType implementation itself! There is no need to re-check this here again.
 				result.add(con);
@@ -3057,7 +3057,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return result.toArray();
 	}
-	
+
 	/**
 	 * Return true if {@link #getSystemViewRoots()} will return a non-empty list
 	 * We return true if there are any connections for any active profile.
@@ -3084,7 +3084,7 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		this.viewer = viewer;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getViewer()

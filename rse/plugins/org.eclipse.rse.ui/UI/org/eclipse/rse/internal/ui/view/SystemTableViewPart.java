@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
@@ -31,7 +31,8 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * Xuan Chen        (IBM)        - [225685] NPE when running archive testcases
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API type
- ********************************************************************************/
+ * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
+*******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
@@ -144,11 +145,11 @@ public class SystemTableViewPart extends ViewPart
 
 	class BrowseAction extends Action
 	{
-		
+
 		public BrowseAction()
 		{
 		}
-		
+
 		public BrowseAction(String label, ImageDescriptor des)
 		{
 			super(label, des);
@@ -317,13 +318,13 @@ public class SystemTableViewPart extends ViewPart
 			_isLocked = !_isLocked;
 			showLock();
 		}
-		
+
 		/**
 		 * Returns the label depending on lock state.
 		 * @return the label.
 		 */
 		public String determineLabel() {
-			
+
 			if (!_isLocked) {
 				return SystemResources.ACTION_LOCK_LABEL;
 			}
@@ -331,18 +332,18 @@ public class SystemTableViewPart extends ViewPart
 				return SystemResources.ACTION_UNLOCK_LABEL;
 			}
 		}
-		
+
 		/**
 		 * Returns the tooltip depending on lock state.
 		 * @return the tooltip.
 		 */
 		public String determineTooltip() {
-			
+
 			if (!_isLocked) {
 				return SystemResources.ACTION_LOCK_TOOLTIP;
 			}
 			else {
-				return SystemResources.ACTION_UNLOCK_TOOLTIP;				
+				return SystemResources.ACTION_UNLOCK_TOOLTIP;
 			}
 		}
 	}
@@ -351,7 +352,7 @@ public class SystemTableViewPart extends ViewPart
 	{
 		public RefreshAction()
 		{
-			super(SystemResources.ACTION_REFRESH_TABLE_LABLE, 
+			super(SystemResources.ACTION_REFRESH_TABLE_LABLE,
 					//RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_REFRESH_ID));
 					RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_REFRESH_ID));
 			setToolTipText(SystemResources.ACTION_REFRESH_TABLE_TOOLTIP);
@@ -402,7 +403,7 @@ public class SystemTableViewPart extends ViewPart
 			_viewer.setSelection(_viewer.getSelection());
 		}
 	}
-	
+
 	class SelectInputAction extends BrowseAction
 	{
 		public SelectInputAction()
@@ -410,22 +411,22 @@ public class SystemTableViewPart extends ViewPart
 			super(SystemResources.ACTION_SELECT_INPUT_LABEL, null);
 			setToolTipText(SystemResources.ACTION_SELECT_INPUT_TOOLTIP);
 		}
-		
+
 		public void checkEnabledState()
 		{
-			setEnabled(true);	
+			setEnabled(true);
 		}
-		
+
 		public void run()
 		{
-			
+
 			SystemSelectAnythingDialog dlg = new SystemSelectAnythingDialog(_viewer.getShell(), SystemResources.ACTION_SELECT_INPUT_DLG);
-			
+
 			SystemActionViewerFilter filter = new SystemActionViewerFilter();
 			Class[] types = {Object.class};
-			filter.addFilterCriterion(types, "hasChildren", "true"); //$NON-NLS-1$ //$NON-NLS-2$	
+			filter.addFilterCriterion(types, "hasChildren", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			dlg.setViewerFilter(filter);
-			
+
 			Object inputObject = _viewer.getInput();
 			if (inputObject == null)
 			{
@@ -436,7 +437,7 @@ public class SystemTableViewPart extends ViewPart
 			{
 				Object selected = dlg.getSelectedObject();
 				if (selected != null && selected instanceof IAdaptable)
-				{					
+				{
 					IAdaptable adaptable = (IAdaptable)selected;
 					((ISystemViewElementAdapter)adaptable.getAdapter(ISystemViewElementAdapter.class)).setViewer(_viewer);
 					setInput(adaptable);
@@ -674,7 +675,7 @@ public class SystemTableViewPart extends ViewPart
 			final String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
 
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			
+
 			Object input = null;
 			if (subsystemId == null)
 			{
@@ -686,7 +687,7 @@ public class SystemTableViewPart extends ViewPart
 				}
 				else
 				{
-				    // 191288 we now use registry instead of registry ui as input 
+				    // 191288 we now use registry instead of registry ui as input
 					input = registry;
 				}
 			}
@@ -722,7 +723,7 @@ public class SystemTableViewPart extends ViewPart
 			} // end else
 			return runWithInput(monitor, input, memento);
 		}
-			
+
 		private class RunOnceConnectedOnMainThread implements Runnable
 		{
 			private IMemento _inmemento;
@@ -738,13 +739,13 @@ public class SystemTableViewPart extends ViewPart
 				_filterID = filterID;
 				_objectID = objectID;
 			}
-			
+
 			public void run()
 			{
 				runOnceConnected(new NullProgressMonitor(), _inmemento, _input, _subSystem, _filterID, _objectID);
 			}
 		}
-		
+
 		public IStatus runOnceConnected(IProgressMonitor monitor, IMemento memento, Object input, ISubSystem subsystem, String filterID, String objectID)
 		{
 			if (subsystem.isConnected()) {
@@ -798,14 +799,14 @@ public class SystemTableViewPart extends ViewPart
 			}
 			return Status.OK_STATUS;
 		}
-	
+
 	}
-	
+
 
 
 	private class SelectColumnsAction extends BrowseAction
 	{
-	    
+
 	    class SelectColumnsDialog extends SystemPromptDialog
 		{
 	        private ISystemViewElementAdapter _adapter;
@@ -813,15 +814,15 @@ public class SystemTableViewPart extends ViewPart
 			private IPropertyDescriptor[] _uniqueDescriptors;
 			private ArrayList _currentDisplayedDescriptors;
 			private ArrayList _availableDescriptors;
-			
+
 			private List _availableList;
 			private List _displayedList;
-			
+
 			private Button _addButton;
 			private Button _removeButton;
 			private Button _upButton;
 			private Button _downButton;
-			
+
 
 			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager)
 			{
@@ -852,14 +853,14 @@ public class SystemTableViewPart extends ViewPart
 			{
 			    Widget source = e.widget;
 			    if (source == _addButton)
-			    { 
+			    {
 			        int[] toAdd = _availableList.getSelectionIndices();
-			        addToDisplay(toAdd);	        	        
+			        addToDisplay(toAdd);
 			    }
 			    else if (source == _removeButton)
 			    {
 			        int[] toAdd = _displayedList.getSelectionIndices();
-			        removeFromDisplay(toAdd);	   
+			        removeFromDisplay(toAdd);
 			    }
 			    else if (source == _upButton)
 			    {
@@ -873,11 +874,11 @@ public class SystemTableViewPart extends ViewPart
 			        moveDown(index);
 			        _displayedList.select(index + 1);
 			    }
-			    
+
 			    // update button enable states
 			    updateEnableStates();
 			}
-			
+
 			public IPropertyDescriptor[] getDisplayedColumns()
 			{
 			    IPropertyDescriptor[] displayedColumns = new IPropertyDescriptor[_currentDisplayedDescriptors.size()];
@@ -887,14 +888,14 @@ public class SystemTableViewPart extends ViewPart
 			    }
 			    return displayedColumns;
 			}
-			
+
 			private void updateEnableStates()
 			{
 			    boolean enableAdd = false;
 			    boolean enableRemove = false;
 			    boolean enableUp = false;
 			    boolean enableDown = false;
-			    
+
 			    int[] availableSelected = _availableList.getSelectionIndices();
 			    for (int i = 0; i < availableSelected.length; i++)
 			    {
@@ -905,11 +906,11 @@ public class SystemTableViewPart extends ViewPart
 			            enableAdd = true;
 			        }
 			    }
-			    
+
 			    if (_displayedList.getSelectionCount()>0)
 			    {
 			        enableRemove = true;
-			        
+
 			        int index = _displayedList.getSelectionIndex();
 			        if (index > 0)
 			        {
@@ -920,63 +921,63 @@ public class SystemTableViewPart extends ViewPart
 			            enableDown = true;
 			        }
 			    }
-			    
+
 			    _addButton.setEnabled(enableAdd);
 			    _removeButton.setEnabled(enableRemove);
 			    _upButton.setEnabled(enableUp);
 			    _downButton.setEnabled(enableDown);
-			    
+
 			}
-			
+
 			private void moveUp(int index)
 			{
 			    Object obj = _currentDisplayedDescriptors.remove(index);
 		        _currentDisplayedDescriptors.add(index - 1, obj);
 		        refreshDisplayedList();
 			}
-			
+
 			private void moveDown(int index)
 			{
 			    Object obj = _currentDisplayedDescriptors.remove(index);
 		        _currentDisplayedDescriptors.add(index + 1, obj);
-		        
+
 		        refreshDisplayedList();
 			}
-			
+
 			private void addToDisplay(int[] toAdd)
 			{
 			    ArrayList added = new ArrayList();
 			    for (int i = 0; i < toAdd.length; i++)
 			    {
 			        int index = toAdd[i];
-			        
+
 			        IPropertyDescriptor descriptor = (IPropertyDescriptor)_availableDescriptors.get(index);
-			        
+
 			        if (!_currentDisplayedDescriptors.contains(descriptor))
 			        {
 			            _currentDisplayedDescriptors.add(descriptor);
 			            added.add(descriptor);
-			        }			            
+			        }
 			    }
-			    
+
 			    for (int i = 0; i < added.size(); i++)
-			    {			       
-			      _availableDescriptors.remove(added.get(i));			       			            
+			    {
+			      _availableDescriptors.remove(added.get(i));
 			    }
-			    
-			    
+
+
 			    refreshAvailableList();
 			    refreshDisplayedList();
-			  
+
 			}
-			
+
 			private void removeFromDisplay(int[] toRemove)
 			{
 			    for (int i = 0; i < toRemove.length; i++)
 			    {
 			        int index = toRemove[i];
 			        IPropertyDescriptor descriptor = (IPropertyDescriptor)_currentDisplayedDescriptors.get(index);
-			        _currentDisplayedDescriptors.remove(index);			    
+			        _currentDisplayedDescriptors.remove(index);
 			        _availableDescriptors.add(descriptor);
 			    }
 			    refreshDisplayedList();
@@ -998,38 +999,38 @@ public class SystemTableViewPart extends ViewPart
 			public Control createInner(Composite parent)
 			{
 				Composite main = SystemWidgetHelpers.createComposite(parent, 1);
-				
+
 
 				Composite c = SystemWidgetHelpers.createComposite(main, 4);
 				c.setLayoutData(new GridData(GridData.FILL_BOTH));
 				_availableList = SystemWidgetHelpers.createListBox(c, SystemResources.RESID_TABLE_SELECT_COLUMNS_AVAILABLE_LABEL, this, true);
-				
+
 				Composite addRemoveComposite = SystemWidgetHelpers.createComposite(c, 1);
 				addRemoveComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 				_addButton = SystemWidgetHelpers.createPushButton(addRemoveComposite,
-				        SystemResources.RESID_TABLE_SELECT_COLUMNS_ADD_LABEL, 
+				        SystemResources.RESID_TABLE_SELECT_COLUMNS_ADD_LABEL,
 				        this);
 				_addButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_ADD_TOOLTIP);
-				
-				_removeButton = SystemWidgetHelpers.createPushButton(addRemoveComposite, 
+
+				_removeButton = SystemWidgetHelpers.createPushButton(addRemoveComposite,
 				        SystemResources.RESID_TABLE_SELECT_COLUMNS_REMOVE_LABEL,
 				        this);
 				_removeButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_REMOVE_TOOLTIP);
-				
+
 				_displayedList = SystemWidgetHelpers.createListBox(c, SystemResources.RESID_TABLE_SELECT_COLUMNS_DISPLAYED_LABEL, this, false);
-				
+
 				Composite upDownComposite = SystemWidgetHelpers.createComposite(c, 1);
 				upDownComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-				_upButton = SystemWidgetHelpers.createPushButton(upDownComposite, 
+				_upButton = SystemWidgetHelpers.createPushButton(upDownComposite,
 				        SystemResources.RESID_TABLE_SELECT_COLUMNS_UP_LABEL,
 				        this);
 				_upButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_UP_TOOLTIP);
-				
-				_downButton = SystemWidgetHelpers.createPushButton(upDownComposite, 
-				        SystemResources.RESID_TABLE_SELECT_COLUMNS_DOWN_LABEL, 
+
+				_downButton = SystemWidgetHelpers.createPushButton(upDownComposite,
+				        SystemResources.RESID_TABLE_SELECT_COLUMNS_DOWN_LABEL,
 				        this);
 				_downButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_DOWN_TOOLTIP);
-				
+
 				initLists();
 
 				setHelp();
@@ -1042,7 +1043,7 @@ public class SystemTableViewPart extends ViewPart
 			   refreshDisplayedList();
 			   updateEnableStates();
 			}
-			
+
 			private void refreshAvailableList()
 			{
 			    _availableList.removeAll();
@@ -1053,28 +1054,28 @@ public class SystemTableViewPart extends ViewPart
 			        _availableList.add(descriptor.getDisplayName());
 			    }
 			}
-			
+
 			private void refreshDisplayedList()
 			{
 			    _displayedList.removeAll();
 			    // initialize display list
 			    for (int i = 0; i < _currentDisplayedDescriptors.size(); i++)
 			    {
-		
+
 			        Object obj = _currentDisplayedDescriptors.get(i);
 			        if (obj != null && obj instanceof IPropertyDescriptor)
 			        {
 			            _displayedList.add(((IPropertyDescriptor)obj).getDisplayName());
 			        }
-			    }  
+			    }
 			}
-			
+
 			private void setHelp()
 			{
 				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000"); //$NON-NLS-1$
 			}
 		}
-	    
+
 		public SelectColumnsAction()
 		{
 			super(SystemResources.ACTION_SELECTCOLUMNS_LABEL, null);
@@ -1095,7 +1096,7 @@ public class SystemTableViewPart extends ViewPart
 		}
 		public void run()
 		{
-		    ISystemTableViewColumnManager mgr = _viewer.getColumnManager();		    
+		    ISystemTableViewColumnManager mgr = _viewer.getColumnManager();
 		    ISystemViewElementAdapter adapter = _viewer.getAdapterForContents();
 		    SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr);
 		    if (dlg.open() == Window.OK)
@@ -1121,13 +1122,13 @@ public class SystemTableViewPart extends ViewPart
 	private LockAction _lockAction = null;
 	private RefreshAction _refreshAction = null;
 	private SystemRefreshAction _refreshSelectionAction = null;
- 
+
 	private SelectInputAction _selectInputAction = null;
 	private PositionToAction _positionToAction = null;
 	private SubSetAction _subsetAction = null;
 	private SystemTablePrintAction _printTableAction = null;
 	private SelectColumnsAction _selectColumnsAction = null;
-	
+
 	// common actions
 	private SystemCopyToClipboardAction _copyAction;
 	private SystemPasteFromClipboardAction _pasteAction;
@@ -1144,8 +1145,8 @@ public class SystemTableViewPart extends ViewPart
 	private String _message, _errorMessage;
 	private SystemMessage sysErrorMessage;
 	private IStatusLineManager _statusLine = null;
-	
-	// constants			
+
+	// constants
 	public static final String ID = "org.eclipse.rse.ui.view.systemTableView"; // matches id in plugin.xml, view tag	 //$NON-NLS-1$
 
 	// Restore memento tags
@@ -1182,7 +1183,7 @@ public class SystemTableViewPart extends ViewPart
 	{
 		return _viewer;
 	}
-	
+
 	public Viewer getRSEViewer()
 	{
 		return _viewer;
@@ -1195,7 +1196,7 @@ public class SystemTableViewPart extends ViewPart
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
-		
+
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		_viewer = new SystemTableView(table, this);
 
@@ -1220,7 +1221,7 @@ public class SystemTableViewPart extends ViewPart
 		_browseHistory = new ArrayList();
 		_browsePosition = 0;
 
-		// register global edit actions 		
+		// register global edit actions
 		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -1234,13 +1235,13 @@ public class SystemTableViewPart extends ViewPart
 		editorActionHandler.setPasteAction(_pasteAction);
 		editorActionHandler.setDeleteAction(_deleteAction);
 		editorActionHandler.setSelectAllAction(new SelectAllAction());
-		
+
 		// register rename action as a global handler
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.RENAME.getId(), _renameAction);
-		
+
 
 		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "sysd0000"); //$NON-NLS-1$
-		
+
 		getSite().registerContextMenu(_viewer.getContextMenuManager(), _viewer);
 	}
 
@@ -1290,7 +1291,7 @@ public class SystemTableViewPart extends ViewPart
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.removeSystemRemoteChangeListener(this);
 		registry.removeSystemResourceChangeListener(this);
-	
+
 		if (_viewer != null)
 		{
 			_viewer.dispose();
@@ -1311,7 +1312,7 @@ public class SystemTableViewPart extends ViewPart
 		if (adapter != null)
 		{
 			alreadyHandled = adapter.handleDoubleClick(element);
-			
+
 			if (!alreadyHandled && adapter.hasChildren((IAdaptable)element))
 			{
 				setInput((IAdaptable) element);
@@ -1390,9 +1391,9 @@ public class SystemTableViewPart extends ViewPart
 	_refreshSelectionAction = new SystemRefreshAction(getShell());
 		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), _refreshSelectionAction);
 		_refreshSelectionAction.setSelectionProvider(_viewer);
-		
+
 		_statusLine = actionBars.getStatusLineManager();
-		
+
 		addToolBarItems(toolBarManager);
 		addToolBarMenuItems(menuMgr);
 	}
@@ -1406,8 +1407,8 @@ public class SystemTableViewPart extends ViewPart
 		menuManager.add(new Separator("Filter")); //$NON-NLS-1$
 		menuManager.add(_positionToAction);
 		menuManager.add(_subsetAction);
-		
-	//DKM - this action is useless - remove it	
+
+	//DKM - this action is useless - remove it
 	//	menuManager.add(new Separator("Print"));
 	//	menuManager.add(_printTableAction);
 
@@ -1421,8 +1422,8 @@ public class SystemTableViewPart extends ViewPart
 
 		toolBarManager.add(_lockAction);
 		toolBarManager.add(_refreshAction);
-	
-		
+
+
 		toolBarManager.add(new Separator("Navigate")); //$NON-NLS-1$
 		// only support history when we're locked
 		if (_isLocked)
@@ -1467,7 +1468,7 @@ public class SystemTableViewPart extends ViewPart
 		if (_currentItem != null)
 		{
 			IAdaptable item = _currentItem.getObject();
-			
+
 			ISystemViewElementAdapter adapter1 = (ISystemViewElementAdapter)object.getAdapter(ISystemViewElementAdapter.class);
 			ISystemViewElementAdapter adapter2 = (ISystemViewElementAdapter)item.getAdapter(ISystemViewElementAdapter.class);
 			if (adapter1 == adapter2)
@@ -1501,7 +1502,7 @@ public class SystemTableViewPart extends ViewPart
 		{
 			setTitle(object);
 			_viewer.setInput(object);
-		
+
 			if (_refreshSelectionAction != null)
 			{
 				_refreshSelectionAction.updateSelection(new StructuredSelection(object));
@@ -1519,7 +1520,7 @@ public class SystemTableViewPart extends ViewPart
 				}
 
 				_currentItem = new HistoryItem(object, filters);
-				
+
 
 				_browseHistory.add(_currentItem);
 				_browsePosition = _browseHistory.lastIndexOf(_currentItem);
@@ -1544,7 +1545,7 @@ public class SystemTableViewPart extends ViewPart
 			String type = va.getType(object);
 			String name = va.getName(object);
 			//setPartName(type + " " + name);
-			
+
 			setContentDescription(type + " "+ name); //$NON-NLS-1$
 
 			//SystemTableViewProvider provider = (SystemTableViewProvider) _viewer.getContentProvider();
@@ -1577,12 +1578,12 @@ public class SystemTableViewPart extends ViewPart
   	  			// Update the history to remove all references to object
   	  			removeFromHistory(multi[i]);
   	  		}
-  	  		break;  
+  	  		break;
   	    default:
   	    	break;
 		}
 	}
-	
+
 	protected void removeFromHistory(Object c)
 	{
 	    // if the object is in history, remove it since it's been deleted
@@ -1605,12 +1606,12 @@ public class SystemTableViewPart extends ViewPart
 	            // 	Since we are removing an item the size decreased by one so i
 	            // needs to decrease by one or we will skip elements in _browseHistory
 	            i--;
-	        } 
+	        }
 	    }
-	    
+
 	    if (_currentItem != null) {
 	    	Object currentObject = _currentItem.getObject();
-	    
+
 		    // Update the input of the viewer to the closest item in the history
 		    // that still exists if the current viewer item has been deleted.
 		    if (c == currentObject || c.equals(currentObject) || isParentOf(c,currentObject))
@@ -1628,7 +1629,7 @@ public class SystemTableViewPart extends ViewPart
 	        }
 	    }
 	}
-	
+
 	protected boolean isParentOf(Object parent, Object child) {
 		if (parent instanceof IAdaptable && child instanceof IAdaptable) {
 			ISystemDragDropAdapter adapterParent = (ISystemDragDropAdapter) ((IAdaptable)parent).getAdapter(ISystemDragDropAdapter.class);
@@ -1636,8 +1637,8 @@ public class SystemTableViewPart extends ViewPart
 			// Check that both parent and child are from the same SubSystem
 			if (adapterParent != null && adapterChild != null &&
 					adapterParent.getSubSystem(parent) == adapterChild.getSubSystem(child)) {
-				String parentAbsoluteName = adapterParent.getAbsoluteName(parent);  
-				String childAbsoluteName = adapterChild.getAbsoluteName(child); 
+				String parentAbsoluteName = adapterParent.getAbsoluteName(parent);
+				String childAbsoluteName = adapterChild.getAbsoluteName(child);
 				// Check if the child's absolute name starts with the parents absolute name
 				// if it does then parent is the parent of child.
 				if(childAbsoluteName != null && childAbsoluteName.startsWith(parentAbsoluteName)) {
@@ -1647,8 +1648,8 @@ public class SystemTableViewPart extends ViewPart
 		}
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 *  changes. You will be called after the resource is changed.
@@ -1666,22 +1667,17 @@ public class SystemTableViewPart extends ViewPart
 		}
 
 		Object child = event.getResource();
-		
-		
+
+
 		Object input = _viewer.getInput();
-		
-		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		
-		boolean referToSameObject = false;
-		if (registry instanceof SystemRegistry)
-		{			
-			String[] oldNames = event.getOldNames();
-			String oldName = (oldNames == null)? null : oldNames[0];
-			referToSameObject = ((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child, oldName); // right now assuming only one resource
-		}
-		
+
+		String[] oldNames = event.getOldNames();
+		// right now assuming only one resource
+		String oldName = (oldNames == null) ? null : oldNames[0];
+		boolean referToSameObject = SystemRegistry.isSameObjectByAbsoluteName(input, null, child, oldName);
+
 		if (input == child || child instanceof java.util.List || referToSameObject)
-		{ 
+		{
 			switch (eventType)
 			{
 				// --------------------------
@@ -1689,31 +1685,31 @@ public class SystemTableViewPart extends ViewPart
 				// --------------------------
 				case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CHANGED :
 					break;
-	
+
 					// --------------------------
 					// REMOTE RESOURCE CREATED...
 					// --------------------------
 				case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED :
 					break;
-	
+
 					// --------------------------
 					// REMOTE RESOURCE DELETED...
 					// --------------------------
 				case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED :
-					{				    
+					{
 				    	if (child instanceof java.util.List)
 				    	{
 				    		java.util.List list = (java.util.List)child;
 				    	    for (int v = 0; v < list.size(); v++)
 				    	    {
 				    	        Object c = list.get(v);
-				    	        
-				    	        removeFromHistory(c);			
+
+				    	        removeFromHistory(c);
 				    	        /*
 				    	        if (c == input)
-				    	        {				    	         				    	            			    	            
+				    	        {
 				    	            setInput((IAdaptable)null, null, false);
-				    	          
+
 				    	            return;
 				    	        }
 				    	        */
@@ -1723,12 +1719,12 @@ public class SystemTableViewPart extends ViewPart
 				    	{
 				    	    removeFromHistory(child);
 				    	    //setInput((IAdaptable)null);
-				    	   
+
 				    	    return;
 				    	}
 					}
 					break;
-	
+
 					// --------------------------
 					// REMOTE RESOURCE RENAMED...
 					// --------------------------
@@ -1736,12 +1732,12 @@ public class SystemTableViewPart extends ViewPart
 					{
 				    	setInput((IAdaptable)child);
 					}
-	
+
 					break;
 			}
 		}
 	}
-	
+
 	public Shell getShell()
 	{
 		return _viewer.getShell();
@@ -1762,7 +1758,7 @@ public class SystemTableViewPart extends ViewPart
 	* within the part controls.
 	* <p>
 	* The parent's default implementation will ignore the memento and initialize
-	* the view in a fresh state.  Subclasses may override the implementation to 
+	* the view in a fresh state.  Subclasses may override the implementation to
 	* perform any state restoration as needed.
 	*/
 	public void init(IViewSite site, IMemento memento) throws PartInitException
@@ -1780,12 +1776,12 @@ public class SystemTableViewPart extends ViewPart
 	 * Method declared on IViewPart.
 	 */
 	public void saveState(IMemento memento)
-	{				  
+	{
 		super.saveState(memento);
 
 		if (!SystemPreferencesManager.getRememberState())
 			return;
-			
+
 		if (_viewer != null)
 		{
 			Object input = _viewer.getInput();
@@ -1794,7 +1790,7 @@ public class SystemTableViewPart extends ViewPart
 			{
 				if (input instanceof ISystemRegistry)
 				{
-					
+
 				}
 				else if (input instanceof IHost)
 				{
@@ -1863,8 +1859,8 @@ public class SystemTableViewPart extends ViewPart
 			}
 		}
 	}
-	
-	
+
+
 //	 -------------------------------
 	// ISystemMessageLine interface...
 	// -------------------------------
@@ -1951,7 +1947,7 @@ public class SystemTableViewPart extends ViewPart
 		if (_statusLine != null)
 			_statusLine.setMessage(message);
 	}
-	/** 
+	/**
 	 *If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage
 	 */

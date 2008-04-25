@@ -22,7 +22,7 @@
    </url>
 
    <includes
-         id="org.eclipse.cdt.source"
+         id="org.eclipse.cdt.platform.source"
          version="0.0.0"/>
 
    <includes

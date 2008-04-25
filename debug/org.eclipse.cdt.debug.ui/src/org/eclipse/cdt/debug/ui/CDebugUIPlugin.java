@@ -38,12 +38,17 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -301,4 +306,50 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
     public DisassemblyEditorManager getDisassemblyEditorManager() {
         return fDisassemblyEditorManager;
     }
+    
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in relative path
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	/**
+	 * 
+	 * @param key - key is usually plug-in relative path to image like icons/xxx.gif
+	 * @return Image loaded from key location or from registry cache, it will be stored in plug-in registry and disposed when plug-in unloads
+	 */
+	public Image getImage(String key) {
+		ImageRegistry registry = getImageRegistry();
+		Image image = registry.get(key);
+		if (image == null) {
+			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
+			if (descriptor==null) {
+				ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+				return sharedImages.getImage(key);
+			}
+			registry.put(key, descriptor);
+			image = registry.get(key);
+		}
+		return image;
+	}
+
+	/**
+	 * @param key - image key to associate with descriptor, if not set yet
+	 * @param desc - image descriptor
+	 * @return
+	 */
+	public Image getImage(String key, ImageDescriptor desc) {
+		ImageRegistry registry = getImageRegistry();
+		Image image = registry.get(key);
+		if (image == null) {
+			registry.put(key, desc);
+			image = registry.get(key);
+		}
+		return image;
+	}
 }

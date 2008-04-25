@@ -301,7 +301,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 				final String mb = "mb"; //$NON-NLS-1$
 				final String million = "M"; //$NON-NLS-1$
 				System.out.print(sep0);   
-				System.out.print(cal.get(Calendar.YEAR) + twoDigits.format(cal.get(Calendar.MONTH)+1) + twoDigits.format(cal.get(Calendar.DAY_OF_MONTH)+1));
+				System.out.print(cal.get(Calendar.YEAR) + twoDigits.format(cal.get(Calendar.MONTH)+1) + twoDigits.format(cal.get(Calendar.DAY_OF_MONTH)));
 				System.out.print(sep);   
 				System.out.print(nfGroup.format(info.fCompletedSources));
 				System.out.print(sep);   

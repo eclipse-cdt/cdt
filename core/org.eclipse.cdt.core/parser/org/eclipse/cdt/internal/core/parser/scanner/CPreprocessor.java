@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -135,10 +136,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private final ScannerContext fRootContext;
 	private ScannerContext fCurrentContext;
 
-    private boolean isCancelled = false;
+    private boolean isCancelled= false;
+	private boolean fIsFirstFetchToken= true;
 
 	private Token fPrefetchedTokens;
     private Token fLastToken;
+
 
     public CPreprocessor(CodeReader reader, IScannerInfo info, ParserLanguage language, IParserLogService log,
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
@@ -200,6 +203,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			}
 			public boolean getInclusionExists(String path) {
 				return readerFactory.createCodeReaderForInclusion(path) != null;
+			}
+			public IncludeFileContent getContentForContextToHeaderGap(String fileLocation) {
+				return null;
 			}
 		};
 	}
@@ -296,6 +302,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
     }
 
+	private void beforeFirstFetchToken() {
+		if (fPreIncludedFiles != null) {
+    		handlePreIncludedFiles();
+    	}
+		final String location = fLocationMap.getTranslationUnitPath();
+		IncludeFileContent content= fCodeReaderFactory.getContentForContextToHeaderGap(location);
+		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
+			processInclusionFromIndex(0, location, content);
+		}
+	}
+
     private void handlePreIncludedFiles() {
     	final String[] imacro= fPreIncludedFiles[0];
     	if (imacro != null && imacro.length > 0) {
@@ -377,8 +394,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
      * Returns the next token from the preprocessor without concatenating string literals.
      */
     private Token fetchToken() throws OffsetLimitReachedException {
-    	if (fPreIncludedFiles != null) {
-    		handlePreIncludedFiles();
+    	if (fIsFirstFetchToken) {
+    		beforeFirstFetchToken();
+    		fIsFirstFetchToken= false;
     	}
     	Token t= fPrefetchedTokens;
     	if (t != null) {

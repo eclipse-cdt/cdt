@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -49,6 +50,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -1319,6 +1321,31 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURENCES);
 			assertEquals(2, decls.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	// #define BUG ok
+	
+	// int BUG;
+
+	// #include "common.h"
+	// #include "header.h"
+	public void testCommonHeader_Bug228012() throws Exception {
+		String[] contents= getContentsForTest(3);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0]);
+		IFile hfile= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[2]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		ITranslationUnit tu= (ITranslationUnit) CoreModel.getDefault().create(hfile);
+		fIndex.acquireReadLock();
+		try {
+			IASTTranslationUnit ast= tu.getAST(fIndex, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTSimpleDeclaration decl= (IASTSimpleDeclaration) ast.getDeclarations()[0];
+			assertEquals("ok", decl.getDeclarators()[0].getName().toString());
 		} finally {
 			fIndex.releaseReadLock();
 		}

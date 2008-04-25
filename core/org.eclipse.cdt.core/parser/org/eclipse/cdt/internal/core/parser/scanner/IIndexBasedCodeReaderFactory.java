@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
 
 /** 
  * The index based code-reader factory fakes the inclusion of files that are already indexed.
@@ -36,4 +37,11 @@ public interface IIndexBasedCodeReaderFactory extends ICodeReaderFactory {
 	 * @since 5.0
 	 */
 	boolean getInclusionExists(String finalPath);
+
+	/**
+	 * Returns a file-content object of kind {@link InclusionKind#FOUND_IN_INDEX}, representing
+	 * the content from the context of the given file up to where the file actually gets included.
+	 * @since 5.0
+	 */
+	IncludeFileContent getContentForContextToHeaderGap(String fileLocation);
 }

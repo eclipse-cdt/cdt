@@ -843,6 +843,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		
 		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
 			IndexBasedCodeReaderFactory ibcf= new IndexBasedCodeReaderFactory(index, new ProjectIndexerInputAdapter(getCProject()), linkageID, codeReaderFactory);
+			if ((style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
+				ibcf.setSupportFillGapFromContextToHeader(true);
+			}
 			codeReaderFactory= ibcf;
 		}
 

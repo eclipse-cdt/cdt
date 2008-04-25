@@ -4,6 +4,7 @@
 
      <extension-point id="CDebuggerPage" name="%CDebuggerPage" schema="schema/CDebuggerPage.exsd"/>
      <extension-point id="BreakpointActionPage" name="%BreakpointActionPage" schema="schema/BreakpointActionPage.exsd"/>
+     <extension-point id="breakpointContribution" name="%breakpointContribution" schema="schema/BreakpointUIContribution.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -885,6 +886,15 @@
                menubarPath="cDebugActions"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
          </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddCatchpointActionDelegate"
+               icon="icons/obj16/catchpoint_obj.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddCatchpointActionDelegate"
+               label="%AddCatchpoint.label"
+               menubarPath="cDebugActions"
+               style="push"
+               tooltip="%AddCatchpoint.tooltip">
+         </action>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.VariableView"
@@ -1033,6 +1043,16 @@
             <adapt
                   type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
             </adapt>
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.cdt.debug.internal.ui.propertypages.CCatchpointPropertyPage"
+            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.catchpoint"
+            name="%CatchpointBreakpointPage.label">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.cdt.debug.core.model.ICCatchpoint">
+            </adapt> 
          </enabledWhen>
       </page>
       <page
@@ -1654,5 +1674,18 @@
        </command>
     </menuContribution>
  </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+       <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICCatchpoint"
+            class="org.eclipse.cdt.debug.ui.breakpoints.CCatchpointsLabelProviderFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.jface.viewers.ILabelProvider">
+         </adapter>
+      </factory>
+   </extension>
 
 </plugin>

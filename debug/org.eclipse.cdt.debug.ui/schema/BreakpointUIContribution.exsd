@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.cdt.debug.ui" id="breakpointContribution" name="Breakpoint UI Contribution"/>
+      </appinfo>
+      <documentation>
+         This extension point provides a mechanism for contributing UI to view and edit breakpoint attributes.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="breakpointLabels"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="breakpointLabels">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="attribute"/>
+         </sequence>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  marker type for which attribute labels are applied
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="debugModelId" type="string">
+            <annotation>
+               <documentation>
+                  debug model Id for this extension is valid
+(debugModelId is a property of cbreakpoint)
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="attribute">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="value"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  id of the breakpoint attribute, for example &quot;catchpoint.type&quot;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  user visible label for the breakpoint attribute value
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="fieldEditor" type="string">
+            <annotation>
+               <documentation>
+                  field editor that will be shown to for given attribute.
+If not specified this attribute will not be visible in Common page.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.FieldEditor:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string" use="default" value="string">
+            <annotation>
+               <documentation>
+                  Type of the attribute: boolean, string, integer
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="value">
+      <annotation>
+         <documentation>
+            Properties of value for parent attribute.
+If Value contains child attributes it means that these property only enabled when value of parent attribute equal to current element value
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Value of the attribute for which label is declared
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  User visible label for the breakpoint attribute value
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         CDT 5.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         &lt;pre&gt;
+&lt;extension id=&quot;com.xyz.coolMarkerLabels&quot; point=&quot;org.eclipse.cdt.debug.ui.breakpointContribution&quot;&gt;
+     &lt;breakpointLabels markerId=&quot;com.xyz.coolMarker&quot;&gt; 
+     &lt;attribute name=&quot;owner&quot; label=&quot;Resource Owner&quot;&gt;
+        &lt;value value=&quot;harris.bob&quot; label=&quot;Bob Harris&quot;/&gt;
+        &lt;value value=&quot;harris.mary&quot; label=&quot;Mary Harris&quot;/&gt;
+     &lt;/attribute&gt; 
+     &lt;/breakpointLabels&gt;
+ &lt;/extension&gt;
+ 
+ &lt;extension point=&quot;org.eclipse.cdt.debug.ui.breakpointContribution&quot;&gt;
+     &lt;breakpointLabels markerId=&quot;org.eclipse.cdt.debug.core.catchpoint&quot;&gt; 
+     &lt;attribute name=&quot;org.eclipse.cdt.debug.core.catchpoint.type&quot; label=&quot;Catchpoint Type&quot; type=&quot;enum&quot;&gt;
+        &lt;value value=&quot;gdb.catch&quot; label=&quot;Exception Caught&quot;&gt;
+            &lt;attribute name=&quot;org.eclipse.cdt.debug.core.catchpoint.argument&quot; label=&quot;C/C++ Type&quot; 
+                 type=&quot;string&quot; fieldEditor=&quot;org.eclipse.cdt.debug.ui.breakpoints.CTypeSelectorEditor&quot;&gt;
+            &lt;/attribute&gt;
+        &lt;/value&gt;
+        &lt;value value=&quot;gdb.throw&quot; label=&quot;Exception Thrown&quot;/&gt;
+        &lt;value value=&quot;gdb.signal&quot; label=&quot;Signal Caught&quot;&gt;
+            &lt;attribute name=&quot;org.eclipse.cdt.debug.core.catchpoint.argument&quot; label=&quot;Signal Number&quot; 
+                 type=&quot;integer&quot; fieldEditor=&quot;IntegerFieldEditor&quot;&gt;
+            &lt;/attribute&gt;
+        &lt;/value&gt;
+     &lt;/attribute&gt; 
+     &lt;/breakpointLabels&gt;
+ &lt;/extension&gt;
+ &lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+
+
+
+</schema>

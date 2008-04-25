@@ -26,11 +26,11 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.cdt.gdb.build.source"
+         id="org.eclipse.cdt.gnu.build.source"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.cdt.gdb.debug.source"
+         id="org.eclipse.cdt.gnu.debug.source"
          version="0.0.0"/>
 
    <requires>

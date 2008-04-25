@@ -8,16 +8,11 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.model;
+package org.eclipse.cdt.core.settings.model;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingContainer;
-import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 
 /**
  * This class is intended to hold "similar" Language Setting objects. 
@@ -28,7 +23,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	ICConfigurationDescription cfgd = null;
 	
 	public MultiLanguageSetting(List<ICLanguageSetting> data, ICConfigurationDescription cf) {
-		items = (ICLanguageSetting[])data.toArray(new ICLanguageSetting[data.size()]);
+		items = data.toArray(new ICLanguageSetting[data.size()]);
 		cfgd = cf;
 	}
 	
@@ -82,8 +77,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 */
 	public int getSupportedEntryKinds() {
 		int res = 0;
-		for (int i=0; i<items.length; i++)
-			res |= items[i].getSupportedEntryKinds();
+		for (ICLanguageSetting item : items)
+			res |= item.getSupportedEntryKinds();
 		return res;
 	}
 
@@ -96,40 +91,40 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setSettingEntries(int, org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry[])
 	 */
 	public void setSettingEntries(int kind, ICLanguageSettingEntry[] entries) {
-		for (int i=0; i<items.length; i++)
-			items[i].setSettingEntries(kind, entries);
+		for (ICLanguageSetting item : items)
+			item.setSettingEntries(kind, entries);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setSettingEntries(int, java.util.List)
 	 */
 	public void setSettingEntries(int kind, List<ICLanguageSettingEntry> entriesList) {
-		for (int i=0; i<items.length; i++)
-			items[i].setSettingEntries(kind, entriesList);
+		for (ICLanguageSetting item : items)
+			item.setSettingEntries(kind, entriesList);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setSourceContentTypeIds(java.lang.String[])
 	 */
 	public void setSourceContentTypeIds(String[] ids) {
-		for (int i=0; i<items.length; i++)
-			items[i].setSourceContentTypeIds(ids);
+		for (ICLanguageSetting item : items)
+			item.setSourceContentTypeIds(ids);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setSourceExtensions(java.lang.String[])
 	 */
 	public void setSourceExtensions(String[] exts) {
-		for (int i=0; i<items.length; i++)
-			items[i].setSourceExtensions(exts);
+		for (ICLanguageSetting item : items)
+			item.setSourceExtensions(exts);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#supportsEntryKind(int)
 	 */
 	public boolean supportsEntryKind(int kind) {
-		for (int i=0; i<items.length; i++)
-			if (items[i].supportsEntryKind(kind))
+		for (ICLanguageSetting item : items)
+			if (item.supportsEntryKind(kind))
 					return true;
 		return false;
 	}
@@ -138,7 +133,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getConfiguration()
 	 */
 	public ICConfigurationDescription getConfiguration() {
-		System.out.println("Bad multi access: MultiLanguageSetting.getConfiguration()");
+		System.out.println("Bad multi access: MultiLanguageSetting.getConfiguration()"); //$NON-NLS-1$
 		return null; // CFGs are different
 	}
 
@@ -146,7 +141,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getId()
 	 */
 	public String getId() { // IDs are different
-		System.out.println("Bad multi access: MultiLanguageSetting.getId()");
+		System.out.println("Bad multi access: MultiLanguageSetting.getId()"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -161,7 +156,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getParent()
 	 */
 	public ICSettingContainer getParent() {
-		System.out.println("Bad multi access: MultiLanguageSetting.getParent()");
+		System.out.println("Bad multi access: MultiLanguageSetting.getParent()"); //$NON-NLS-1$
 		return null; // Parents are different
 	}
 
@@ -170,8 +165,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 */
 	public int getType() {
 		int x = items[0].getType();
-		for (int i=0; i<items.length; i++)
-			if (x != items[i].getType())
+		for (ICLanguageSetting item : items)
+			if (x != item.getType())
 					return 0;
 		return x;
 	}

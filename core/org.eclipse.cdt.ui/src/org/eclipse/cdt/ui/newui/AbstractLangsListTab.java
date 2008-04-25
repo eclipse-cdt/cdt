@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.model.MultiLanguageSetting;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
@@ -68,6 +67,7 @@ import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 

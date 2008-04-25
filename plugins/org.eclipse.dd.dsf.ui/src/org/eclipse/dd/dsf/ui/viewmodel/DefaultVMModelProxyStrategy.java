@@ -336,8 +336,6 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                     new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (isDisposed()) return;
-    
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
                             // No need to propagate error, there's no means or need to display it.
@@ -449,13 +447,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                             }
                             
                             final MultiRequestMonitor<RequestMonitor> elementsDeltasMultiRequestMon = 
-                                new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), null) { 
-                                    @Override
-                                    protected void handleCompleted() {
-                                        if (isDisposed()) return;
-                                        requestMonitor.done();
-                                    }
-                                };
+                                new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), requestMonitor);
     
                             // For each element from this node, create a new delta, 
                             // and then call all the child nodes to build their delta. 
@@ -508,8 +500,6 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             new DataRequestMonitor<Map<IVMNode, Integer>>(getVMProvider().getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
-                    if (isDisposed()) return;
-                    
                     final CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), requestMonitor);
                     int multiRmCount = 0;
                     
@@ -562,11 +552,6 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             final Integer[] counts = new Integer[childNodes.length]; 
             final MultiRequestMonitor<RequestMonitor> childrenCountMultiRequestMon = 
                 new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), rm) { 
-                    @Override
-                    protected void handleCompleted() {
-                        if (isDisposed()) return;
-                        super.handleCompleted();
-                    }
                     @Override
                     protected void handleSuccess() {
                         Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();

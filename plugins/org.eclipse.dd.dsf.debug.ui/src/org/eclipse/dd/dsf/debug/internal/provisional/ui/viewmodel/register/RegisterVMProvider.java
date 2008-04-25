@@ -12,6 +12,7 @@ package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register;
 
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
@@ -99,4 +100,13 @@ public class RegisterVMProvider extends AbstractDMVMProvider
     public void propertyChange(PropertyChangeEvent event) {
         handleEvent(event);
     }
+    
+    @Override
+    protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
+        // To optimize the performance of the view when stepping rapidly, skip all 
+        // other events when a suspended event is received, including older suspended
+        // events.
+        return newEvent instanceof ISuspendedDMEvent;
+    }
+    
 }

@@ -15,12 +15,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.ui.concurrent.DisplayDsfExecutor;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
@@ -123,6 +125,13 @@ abstract public class AbstractVMProvider implements IVMProvider
      */
     private IRootVMNode fRootNode;
     
+    private class ModelProxyEventQueue {
+        private boolean fProcessingEvent = false;
+        private List<Object> fEventQueue = new LinkedList<Object>();
+    }
+    
+    private Map<IVMModelProxy, ModelProxyEventQueue> fEventQueues = new HashMap<IVMModelProxy, ModelProxyEventQueue>();
+    
     /**
      * Constructs the view model provider for given DSF session.  The 
      * constructor is thread-safe to allow VM provider to be constructed
@@ -198,24 +207,109 @@ abstract public class AbstractVMProvider implements IVMProvider
     public void handleEvent(final Object event) {
         for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
             if (proxyStrategy.isDeltaEvent(event)) {
-                proxyStrategy.createDelta(
-                    event, 
-                    new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
-                        @Override
-                        public void handleCompleted() {
-                            if (isSuccess()) {
-                                proxyStrategy.fireModelChanged(getData());
+                if (!fEventQueues.containsKey(proxyStrategy)) {
+                    fEventQueues.put(proxyStrategy, new ModelProxyEventQueue());
+                }
+                final ModelProxyEventQueue queue = fEventQueues.get(proxyStrategy);
+                if (queue.fProcessingEvent) {
+                    if (!queue.fEventQueue.isEmpty()) {
+                        for (ListIterator<Object> itr = queue.fEventQueue.listIterator(queue.fEventQueue.size() - 1); itr.hasPrevious();) {
+                            Object eventToSkip = itr.previous();
+                            if (canSkipHandlingEvent(event, eventToSkip)) {
+                                itr.remove();
+                            } else {
+                                break;
                             }
                         }
-                        @Override public String toString() {
-                            return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                        }   
-                    });
+                    }
+                    queue.fEventQueue.add(event);
+                } else {
+                    doHandleEvent(queue, proxyStrategy, event); 
+                }
+            }
+        }
+        
+        // Clean up model proxies that were removed.
+        List<IVMModelProxy> activeProxies = getActiveModelProxies();
+        for (Iterator<IVMModelProxy> itr = fEventQueues.keySet().iterator(); itr.hasNext();) {
+            if (!activeProxies.contains(itr.next())) {
+                itr.remove();
             }
         }
     }
+     
+    private void doHandleEvent(final ModelProxyEventQueue queue, final IVMModelProxy proxyStrategy, final Object event) {
+        queue.fProcessingEvent = true;
+        handleEvent(
+            proxyStrategy, event, 
+            new RequestMonitor(getExecutor(), null) {
+                @Override
+                protected void handleCompleted() {
+                    queue.fProcessingEvent = false;
+                    if (!queue.fEventQueue.isEmpty()) {
+                        doHandleEvent(queue, proxyStrategy, queue.fEventQueue.remove(0));
+                    }                                    
+                }
+            });
+    }
 
+    /**
+     * Handles the given event for the given proxy strategy.  
+     * <p>
+     * This method is called by the base {@link #handleEvent(Object)} 
+     * implementation to handle the given event using the given model proxy.
+     * The default implementation of this method checks whether the given
+     * proxy is active and if the proxy is active, it is called to generate the 
+     * delta which is then sent to the viewer. 
+     * </p>
+     * @param proxyStrategy Model proxy strategy to use to process this event.
+     * @param event Event to process.
+     * @param rm Request monitor to call when processing the event is 
+     * completed.
+     */
+    protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {   
+        if (!proxyStrategy.isDisposed()) {
+            proxyStrategy.createDelta(
+                event, 
+                new DataRequestMonitor<IModelDelta>(getExecutor(), rm) {
+                    @Override
+                    public void handleCompleted() {
+                        if (isSuccess()) {
+                            proxyStrategy.fireModelChanged(getData());
+                        }
+                        super.handleCompleted();
+                    }
+                    @Override public String toString() {
+                        return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    }   
+                });
+        } else {
+            rm.done();
+        }
+    }
 
+    /**
+     * Determines whether processing of a given event can be skipped.  This 
+     * method is called when there are multiple events waiting to be processed
+     * by the provider.  As new events are received from the model, they are
+     * compared with the events in the queue using this method, events at the 
+     * end of the queue are tested for removal.  If this method returns that a 
+     * given event can be skipped in favor of the new event, the skipped event
+     * is removed from the queue.  This process is repeated with the new event
+     * until an event which cannot be stopped is found or the queue goes empty.
+     * <p>
+     * This method may be overriden by specific view model provider 
+     * implementations extending this abstract class. 
+     * </p>
+     * @param newEvent New event that was received from the model.
+     * @param eventToSkip Event which is currently at the end of the queue.  
+     * @return True if the event at the end of the queue can be skipped in 
+     * favor of the new event.
+     */
+    protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
+        return false;
+    }
+    
     public IRootVMNode getRootVMNode() {
         return fRootNode;
     }

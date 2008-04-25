@@ -14,10 +14,14 @@ package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StandardProcessVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode.LaunchesEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
@@ -126,4 +130,23 @@ public class LaunchVMProvider extends AbstractDMVMProvider
             // shut down.  
         }
     }
+    
+    @Override
+    protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
+        // To optimize view performance when stepping rapidly, skip events that came 
+        // before the last suspended events.  However, the debug view can get suspended
+        // events for different threads, so make sure to skip only the events if they
+        // were in the same hierarchy as the last suspended event.
+        if (newEvent instanceof ISuspendedDMEvent && eventToSkip instanceof IDMEvent<?>) {
+            IDMContext newEventDmc = ((IDMEvent<?>)newEvent).getDMContext();
+            IDMContext eventToSkipDmc = ((IDMEvent<?>)eventToSkip).getDMContext();
+            
+            if (newEventDmc.equals(eventToSkipDmc) || DMContexts.isAncestorOf(eventToSkipDmc, newEventDmc)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
 }

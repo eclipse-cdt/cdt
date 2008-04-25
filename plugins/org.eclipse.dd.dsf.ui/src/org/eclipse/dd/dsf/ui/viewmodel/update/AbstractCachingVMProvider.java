@@ -21,6 +21,7 @@ import java.util.concurrent.Executor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
@@ -555,39 +556,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
 
     @Override
-    public void handleEvent(final Object event) {
+    protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {   
         IElementUpdateTester elementTester =  getActiveUpdatePolicy().getTesterTester(event);
         
         List<FlushMarkerKey> flushKeys = new LinkedList<FlushMarkerKey>();
-        List<IVMModelProxy> proxies = new LinkedList<IVMModelProxy>();
 
-        for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
-            if (proxyStrategy.isDeltaEvent(event)) {
-                flushKeys.add(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
-                proxies.add(proxyStrategy);
-            }
-        }
+        flushKeys.add(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
         
         flush(flushKeys);
         
-        for (final IVMModelProxy proxyStrategy : proxies) {
-            if (!proxyStrategy.isDisposed() && proxyStrategy.isDeltaEvent(event)) {
-                proxyStrategy.createDelta(
-                    event, 
-                    new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
-                        @Override
-                        public void handleCompleted() {
-                            
-                            if (isSuccess()) {
-                                proxyStrategy.fireModelChanged(getData());
-                            }
-                        }
-                        @Override public String toString() {
-                            return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                        }
-                    });
-            }
-        }
+        super.handleEvent(proxyStrategy, event, rm);
     }
     
     /**

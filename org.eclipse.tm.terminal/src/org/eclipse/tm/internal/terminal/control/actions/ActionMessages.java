@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,30 +13,22 @@
  * Contributors:
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.actions;
+package org.eclipse.tm.internal.terminal.control.actions;
 
-import org.eclipse.tm.internal.terminal.view.ITerminalView;
-import org.eclipse.tm.internal.terminal.view.ImageConsts;
+import org.eclipse.osgi.util.NLS;
 
-public class TerminalActionClearAll extends TerminalAction
-{
-    public TerminalActionClearAll(ITerminalView target)
-    {
-        super(target,
-              TerminalActionClearAll.class.getName());
-
-        setupAction(ActionMessages.CLEARALL,
-                    ActionMessages.CLEARALL,
-                    ImageConsts.IMAGE_CLCL_CLEAR_ALL,
-                    ImageConsts.IMAGE_ELCL_CLEAR_ALL,
-                    ImageConsts.IMAGE_DLCL_CLEAR_ALL,
-                    false);
-    }
-
-	public void run() {
-		fTarget.onEditClearAll();
+public class ActionMessages extends NLS {
+	static {
+		NLS.initializeMessages(ActionMessages.class.getName(),
+				ActionMessages.class);
 	}
+
+	public static String COPY;
+	public static String CUT;
+	public static String PASTE;
+	public static String SELECTALL;
+	public static String CLEARALL;
+
 }
-
-

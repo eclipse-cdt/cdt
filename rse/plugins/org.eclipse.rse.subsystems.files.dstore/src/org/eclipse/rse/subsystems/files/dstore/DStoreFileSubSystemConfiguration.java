@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Kushal Munir (IBM) - [189352] Set whether file service is Unix-style system or not
@@ -51,11 +51,11 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAda
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
-public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfiguration 
+public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfiguration
 {
 	protected boolean _isWindows;
 	protected IHostFileToRemoteFileAdapter _hostFileAdapter;
-	public DStoreFileSubSystemConfiguration() 
+	public DStoreFileSubSystemConfiguration()
 	{
 		super();
 		_isWindows = false;
@@ -65,7 +65,7 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#isFactoryFor(java.lang.Class)
 	 */
-	public boolean isFactoryFor(Class subSystemType) 
+	public boolean isFactoryFor(Class subSystemType)
 	{
 		boolean isFor = FileServiceSubSystem.class.equals(subSystemType);
 		return isFor;
@@ -74,17 +74,18 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration#supportsArchiveManagement()
 	 */
-	public boolean supportsArchiveManagement() 
+	public boolean supportsArchiveManagement()
 	{
 		return true;
 	}
-	
+
 	/**
-	 * Instantiate and return an instance of OUR subystem. 
-	 * Do not populate it yet though!
+	 * Instantiate and return an instance of OUR subsystem. Do not populate it
+	 * yet though!
+	 *
 	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(IHost)
 	 */
-	public ISubSystem createSubSystemInternal(IHost host) 
+	public ISubSystem createSubSystemInternal(IHost host)
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
 		ISubSystem subsys = new FileServiceSubSystem(host, connectorService, getFileService(host), getHostFileAdapter(), getSearchService(host));
@@ -94,7 +95,7 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsFileTypes()
 	 */
-	public boolean supportsFileTypes() 
+	public boolean supportsFileTypes()
 	{
 		return false;
 	}
@@ -102,7 +103,7 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsSearch()
 	 */
-	public boolean supportsSearch() 
+	public boolean supportsSearch()
 	{
 		return true;
 	}
@@ -110,7 +111,7 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsEnvironmentVariablesPropertyPage()
 	 */
-	public boolean supportsEnvironmentVariablesPropertyPage() 
+	public boolean supportsEnvironmentVariablesPropertyPage()
 	{
 		return false;
 	}
@@ -118,7 +119,7 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsFilters()
 	 */
-	public boolean supportsFilters() 
+	public boolean supportsFilters()
 	{
 		return true;
 	}
@@ -127,30 +128,30 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	{
 		DStoreConnectorServiceManager.getInstance().setConnectorService(host, getServiceImplType(), connectorService);
 	}
-	
+
 	public IConnectorService getConnectorService(IHost host)
 	{
 		return DStoreConnectorServiceManager.getInstance().getConnectorService(host, getServiceImplType());
 	}
-	
+
 	public IFileService createFileService(IHost host)
 	{
 		final IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
 		final DStoreFileService service = new DStoreFileService(connectorService, RemoteFileUtility.getSystemFileTransferModeRegistry());
 		service.setIsUnixStyle(isUnixStyle());
-		
+
 		int dvalue = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
 		if (dvalue == 0)
 			dvalue = IUniversalDataStoreConstants.BUFFER_SIZE;
 		service.setBufferDownloadSize(dvalue);
-		
-		
+
+
 		int uvalue = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
 		if (uvalue == 0)
 			uvalue = IUniversalDataStoreConstants.BUFFER_SIZE;
 		service.setBufferUploadSize(uvalue);
-		
+
 
  		// Listen to preference changes
 		IPropertyChangeListener preferenceListener = new IPropertyChangeListener() {
@@ -166,19 +167,19 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 				}
 			}
 		};
-		
+
 		Preferences pstore = RSEUIPlugin.getDefault().getPluginPreferences();
-		pstore.addPropertyChangeListener(preferenceListener);		
-		
+		pstore.addPropertyChangeListener(preferenceListener);
+
 		return service;
 	}
-	
+
 	public ISearchService createSearchService(IHost host)
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
 		return new DStoreSearchService(connectorService);
 	}
-	
+
 	public IHostFileToRemoteFileAdapter getHostFileAdapter()
 	{
 		if (_hostFileAdapter == null)

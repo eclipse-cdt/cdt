@@ -28,5 +28,7 @@
  	<includes
          id="org.eclipse.cdt.gnu.debug.source"
          version="0.0.0"/>
+    
+    <plugin id="org.eclipse.cdt.source" version="5.0.0.qualifier" /> 
 
 </feature>

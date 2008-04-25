@@ -19,13 +19,13 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
  * A breakpoint is capable of suspending the execution of a program 
  * whenever a certain point in the program is reached. Provides a 
  * basic functionality for the location breakpoints, watchpoints,
- * and catchpoints.
+ * and event breakpoints
  * 
  * @see ICDILineBreakpoint
  * @see ICDIFunctionBreakpoint
  * @see ICDIAddressBreakpoint
  * @see ICDIWatchpoint
- * @see ICDICatchpoint
+ * @see ICDIEventBreakpoint
  * 
  * @since Jul 9, 2002
  */

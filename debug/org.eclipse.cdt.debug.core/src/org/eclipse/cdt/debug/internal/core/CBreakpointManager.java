@@ -51,7 +51,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement3;
-import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
@@ -64,7 +64,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
-import org.eclipse.cdt.debug.core.model.ICCatchpoint;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -255,11 +255,11 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					catch( CDIException e ) {
 					}
 				}
-				if ( breakpoint instanceof ICCatchpoint && cdiBreakpoint instanceof ICDICatchpoint) {
-					ICCatchpoint mcatchpoint = (ICCatchpoint) breakpoint;
-					ICDICatchpoint cdicatchpoint = (ICDICatchpoint) cdiBreakpoint;
-					if (!mcatchpoint.getEventType().equals(cdicatchpoint.getEventType())) return false; 
-					return (mcatchpoint.getEventArgument().equals(cdicatchpoint.getExtraArgument()));
+				if ( breakpoint instanceof ICEventBreakpoint && cdiBreakpoint instanceof ICDIEventBreakpoint) {
+					ICEventBreakpoint mevtbkpt = (ICEventBreakpoint) breakpoint;
+					ICDIEventBreakpoint cdievtbkpt = (ICDIEventBreakpoint) cdiBreakpoint;
+					if (!mevtbkpt.getEventType().equals(cdievtbkpt.getEventType())) return false; 
+					return (mevtbkpt.getEventArgument().equals(cdievtbkpt.getExtraArgument()));
 				}
 			}
 			catch( CoreException e ) {
@@ -461,8 +461,8 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	private void handleBreakpointCreatedEvent( ICDIBreakpoint cdiBreakpoint ) {
 		if ( cdiBreakpoint instanceof ICDIWatchpoint )
 			doHandleWatchpointCreatedEvent( (ICDIWatchpoint)cdiBreakpoint );
-		if ( cdiBreakpoint instanceof ICDICatchpoint )
-			doHandleCatachpointCreatedEvent( (ICDICatchpoint)cdiBreakpoint );
+		if ( cdiBreakpoint instanceof ICDIEventBreakpoint )
+			doHandleCatachpointCreatedEvent( (ICDIEventBreakpoint)cdiBreakpoint );
 		else if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
 			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
 		if ( !cdiBreakpoint.isTemporary() && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
@@ -470,13 +470,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 	}
 
-	private void doHandleCatachpointCreatedEvent(ICDICatchpoint cdiCatchpoint) {
+	private void doHandleCatachpointCreatedEvent(ICDIEventBreakpoint cdiEventBkpt) {
 		ICBreakpoint breakpoint = null;
 		synchronized( getBreakpointMap() ) {
-			breakpoint = getBreakpointMap().getCBreakpoint( cdiCatchpoint );
+			breakpoint = getBreakpointMap().getCBreakpoint( cdiEventBkpt );
 			if ( breakpoint == null ) {
 				try {
-					breakpoint = createCatchpoint( cdiCatchpoint );
+					breakpoint = createEventBreakpoint( cdiEventBkpt );
 				}
 				catch( CDIException e ) {
 				}
@@ -484,7 +484,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				}
 			}
 			if ( breakpoint != null )
-				getBreakpointMap().put( breakpoint, cdiCatchpoint );
+				getBreakpointMap().put( breakpoint, cdiEventBkpt );
 		}
 
 		if ( breakpoint != null ) {
@@ -496,7 +496,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			catch( CoreException e ) {
 			}
 			getBreakpointNotifier().breakpointInstalled( getDebugTarget(), breakpoint );
-			changeBreakpointProperties( breakpoint, cdiCatchpoint );
+			changeBreakpointProperties( breakpoint, cdiEventBkpt );
 		}
 		
 	}
@@ -821,12 +821,12 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					} else {
 						b = cdiTarget.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
 					}
-				} else if (breakpoints[i] instanceof ICCatchpoint) {
-					ICCatchpoint catchpoint = (ICCatchpoint) breakpoints[i];
-					ICDICondition condition = createCondition(catchpoint);
+				} else if (breakpoints[i] instanceof ICEventBreakpoint) {
+					ICEventBreakpoint eventbkpt = (ICEventBreakpoint) breakpoints[i];
+					ICDICondition condition = createCondition(eventbkpt);
 					if (cdiTarget instanceof ICDIBreakpointManagement3) {
 						ICDIBreakpointManagement3 bpManager3 = (ICDIBreakpointManagement3) cdiTarget;
-						b = bpManager3.setCatchpoint(catchpoint.getEventType(), catchpoint
+						b = bpManager3.setEventBreakpoint(eventbkpt.getEventType(), eventbkpt
 								.getEventArgument(), ICDIBreakpoint.REGULAR, condition, true, breakpoints[i].isEnabled());
 					} else {
 						throw new UnsupportedOperationException("BreakpointManager does not support this type of breapoints");
@@ -1008,17 +1008,17 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		return watchpoint;
 	}
 	
-	private ICCatchpoint createCatchpoint(ICDICatchpoint cdiCatchpoint) throws CDIException,
+	private ICEventBreakpoint createEventBreakpoint(ICDIEventBreakpoint cdiEventBkpt) throws CDIException,
 			CoreException {
 
-		ICCatchpoint catchpoint;
-		catchpoint = CDIDebugModel.catchpointExists(cdiCatchpoint.getEventType(), cdiCatchpoint
+		ICEventBreakpoint eventBkpt;
+		eventBkpt = CDIDebugModel.eventBreakpointExists(cdiEventBkpt.getEventType(), cdiEventBkpt
 				.getExtraArgument());
-		if (catchpoint != null)
-			return catchpoint;
-		catchpoint = CDIDebugModel.createCatchpoint(cdiCatchpoint.getEventType(), cdiCatchpoint
+		if (eventBkpt != null)
+			return eventBkpt;
+		eventBkpt = CDIDebugModel.createEventBreakpoint(cdiEventBkpt.getEventType(), cdiEventBkpt
 				.getExtraArgument(), false);
-		return catchpoint;
+		return eventBkpt;
 	}
 
 	private void changeBreakpointProperties( ICBreakpoint breakpoint, IMarkerDelta delta ) {

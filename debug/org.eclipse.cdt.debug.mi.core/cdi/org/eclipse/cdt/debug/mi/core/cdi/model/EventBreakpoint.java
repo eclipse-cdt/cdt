@@ -14,10 +14,10 @@ import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
-public class Catchpoint extends Breakpoint implements ICDICatchpoint {
+public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 
 	public static final String CATCH = "org.eclipse.cdt.debug.gdb.catch";
 	public static final String THROW = "org.eclipse.cdt.debug.gdb.throw";
@@ -25,7 +25,7 @@ public class Catchpoint extends Breakpoint implements ICDICatchpoint {
 	private String eventType;
 	private String arg;
 
-	public Catchpoint(Target target, String event, String arg, ICDICondition cond, boolean enabled) {
+	public EventBreakpoint(Target target, String event, String arg, ICDICondition cond, boolean enabled) {
 		super(target, ICDIBreakpoint.REGULAR, cond, enabled);
 		this.eventType = event;
 		this.arg = arg==null?"":arg;
@@ -58,24 +58,24 @@ public class Catchpoint extends Breakpoint implements ICDICatchpoint {
 	@Override
 	public boolean equals(Object arg0) {
 		if (this == arg0) return true;
-		if (!(arg0 instanceof Catchpoint)) return false;
+		if (!(arg0 instanceof EventBreakpoint)) return false;
 		MIBreakpoint[] breakpoints = getMIBreakpoints();
 		if (breakpoints==null || breakpoints.length==0) {
 			return super.equals(arg0);
 		}
-		return Arrays.equals(breakpoints, ((Catchpoint)arg0).getMIBreakpoints());
+		return Arrays.equals(breakpoints, ((EventBreakpoint)arg0).getMIBreakpoints());
 	}
 	/**
 	 * Returns event type by using miBreakpoint parameters
 	 * @param miBreakpoint
-	 * @return null if unknown type, null cannot be used to create valid Catchpoint
+	 * @return null if unknown type, null cannot be used to create valid EventBreakpoint
 	 */
 	public static String getEventTypeFromMI(MIBreakpoint miBreakpoint) {
 		if (miBreakpoint.getWhat().equals("exception catch")) {
 			return 
-			 Catchpoint.CATCH;
+			 EventBreakpoint.CATCH;
 		} else if (miBreakpoint.getWhat().equals("exception throw")) {
-			return  Catchpoint.THROW;
+			return  EventBreakpoint.THROW;
 		}
 		return null; // not known/supported
 	}

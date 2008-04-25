@@ -13,7 +13,7 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.internal.ui.dialogs.AddCatchpointDialog;
+import org.eclipse.cdt.debug.internal.ui.dialogs.AddEventBreakpointDialog;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.UIMessages;
 import org.eclipse.core.resources.IResource;
@@ -29,7 +29,7 @@ import org.eclipse.ui.actions.ActionDelegate;
 /**
  * A delegate for the "Add Event Breakpoint" action.
  */
-public class AddCatchpointActionDelegate extends ActionDelegate implements IViewActionDelegate {
+public class AddEventBreakpointActionDelegate extends ActionDelegate implements IViewActionDelegate {
 
 	private IViewPart fView;
 
@@ -52,24 +52,24 @@ public class AddCatchpointActionDelegate extends ActionDelegate implements IView
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		AddCatchpointDialog dlg = new AddCatchpointDialog(CDebugUIPlugin.getActiveWorkbenchShell());
+		AddEventBreakpointDialog dlg = new AddEventBreakpointDialog(CDebugUIPlugin.getActiveWorkbenchShell());
 		if (dlg.isActive() == false) {
-			String message = ActionMessages.getString("AddCatchpointActionDelegate.2");
+			String message = ActionMessages.getString("AddEventBreakpointActionDelegate.2");
 			MessageDialog.openError( getView().getSite().getShell(), UIMessages.getString( "CDebugUIPlugin.0" ), message); 
 		} else {
 			if (dlg.open() == Window.OK) {
-				addCatchpoint(dlg.getEventTypeId(), dlg.getEventArgument());
+				addEventBreakpoint(dlg.getEventTypeId(), dlg.getEventArgument());
 			}
 		}
 	}
 
-	protected void addCatchpoint(String id, String arg) {
+	protected void addEventBreakpoint(String id, String arg) {
 		if (getResource() == null)
 			return;
 		try {
-			CDIDebugModel.createCatchpoint(id, arg, true); //$NON-NLS-1$
+			CDIDebugModel.createEventBreakpoint(id, arg, true); //$NON-NLS-1$
 		} catch (CoreException ce) {
-			CDebugUIPlugin.errorDialog(ActionMessages.getString("AddCatchpointActionDelegate.0"), ce); //$NON-NLS-1$
+			CDebugUIPlugin.errorDialog(ActionMessages.getString("AddEventBreakpointActionDelegate.0"), ce); //$NON-NLS-1$
 		}
 	}
 

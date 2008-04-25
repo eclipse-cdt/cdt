@@ -17,11 +17,11 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 
 public interface ICDIBreakpointManagement3 extends ICDIBreakpointManagement2{
 	/**
-	 * Set a catchpoint
-	 * @param type - catchpoint type, interpreted by backend
+	 * Set an event breakpoint
+	 * @param type - event breakpoint type, interpreted by backend
 	 * @param arg - extra argument, for example signal number
-	 * @param cdiBreakpointType - cdi breakpoint type, just in case some inferiors support "hardware" catchpoints
+	 * @param cdiBreakpointType - cdi breakpoint type, just in case some inferiors support "hardware" event breakpoints
 	 */
-	ICDICatchpoint setCatchpoint(String type, String arg, int cdiBreakpointType,
+	ICDIEventBreakpoint setEventBreakpoint(String type, String arg, int cdiBreakpointType,
 			ICDICondition condition, boolean deferred, boolean enabled) throws CDIException;
 }

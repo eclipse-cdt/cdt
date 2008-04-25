@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICCatchpoint;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
@@ -372,7 +372,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			return PropertyPageMessages.getString("CBreakpointPropertyPage.4");
 		if (breakpoint instanceof ICLineBreakpoint)
 			return PropertyPageMessages.getString("CBreakpointPropertyPage.8");
-		if (breakpoint instanceof ICCatchpoint)
+		if (breakpoint instanceof ICEventBreakpoint)
 			return PropertyPageMessages.getString("CBreakpointPropertyPage.21");
 		if (breakpoint instanceof ICWatchpoint) {
 			ICWatchpoint watchpoint = (ICWatchpoint) breakpoint;

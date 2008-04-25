@@ -224,7 +224,7 @@ public class CLIProcessor {
 	    	return MIBreakpointChangedEvent.HINT_NEW_FUNCTION_BREAKPOINT;
 	    }
 	    if (op.equals("catch")) {
-	    	return MIBreakpointChangedEvent.HINT_NEW_CATCHPOINT;
+	    	return MIBreakpointChangedEvent.HINT_NEW_EVENTBREAKPOINT;
 	    }
 	    if ( !st.hasMoreTokens() ) {
 	    	// "break" with no arguments

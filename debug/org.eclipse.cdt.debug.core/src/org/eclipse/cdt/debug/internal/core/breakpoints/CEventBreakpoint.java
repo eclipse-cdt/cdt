@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.model.ICCatchpoint;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -22,21 +22,21 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 
-public class CCatchpoint extends CBreakpoint implements ICCatchpoint {
+public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 
-	private static final String C_CATCHPOINT_MARKER_TYPE = "org.eclipse.cdt.debug.core.cCatchpointMarker"; //$NON-NLS-1$;
+	private static final String C_EVENTBREAKPOINT_MARKER_TYPE = "org.eclipse.cdt.debug.core.cEventBreakpointMarker"; //$NON-NLS-1$;
 
-	public CCatchpoint() {
+	public CEventBreakpoint() {
 
 	}
 
 	public static String getMarkerType() {
-		return C_CATCHPOINT_MARKER_TYPE;
+		return C_EVENTBREAKPOINT_MARKER_TYPE;
 	}
 
-	public CCatchpoint(IResource resource, Map attributes, boolean add) throws CoreException {
+	public CEventBreakpoint(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
 		this();
-		// catchpoint must set non null EVENT_TYPE_ID property to be valid
+		// event breakpoint must set non null EVENT_TYPE_ID property to be valid
 		if (attributes.get(EVENT_TYPE_ID) == null)
 			throw new IllegalArgumentException();
 		setBreakpointMarker(resource, getMarkerType(), attributes, add);
@@ -44,7 +44,7 @@ public class CCatchpoint extends CBreakpoint implements ICCatchpoint {
 	}
 
 	private void setBreakpointMarker(final IResource resource, final String markerType,
-			final Map attributes, final boolean add) throws DebugException {
+			final Map<String, Object> attributes, final boolean add) throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -68,17 +68,17 @@ public class CCatchpoint extends CBreakpoint implements ICCatchpoint {
 	}
 
 	/**
-	 * @see ICCatchpoint#getEventType()
+	 * @see ICEventBreakpoint#getEventType()
 	 */
 	public String getEventType() throws DebugException {
 		return ensureMarker().getAttribute(EVENT_TYPE_ID, ""); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ICCatchpoint#getEventArgument()
+	 * @see ICEventBreakpoint#getEventArgument()
 	 */
 	public String  getEventArgument() throws CoreException {
-		return (String) ensureMarker().getAttribute(EVENT_ARG, "");
+		return ensureMarker().getAttribute(EVENT_ARG, "");
 	}
 
 }

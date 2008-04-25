@@ -14,10 +14,10 @@ package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.core.runtime.CoreException;
 
-public interface ICDICatchpoint extends ICDIBreakpoint {
+public interface ICDIEventBreakpoint extends ICDIBreakpoint {
 	/**
-	 * Get catchpoint type. This is usually id in reverse web notation. 
-	 * @return catchpoint type id
+	 * Get event breakpoint type. This is usually id in reverse web notation. 
+	 * @return event breakpoint type id
 	 * @throws CoreException 
 	 */
 	String getEventType() throws CoreException;

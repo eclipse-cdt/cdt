@@ -887,13 +887,13 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
          </action>
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddCatchpointActionDelegate"
-               icon="icons/obj16/catchpoint_obj.gif"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddCatchpointActionDelegate"
-               label="%AddCatchpoint.label"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddEventBreakpointActionDelegate"
+               icon="icons/obj16/eventbreakoint_obj.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddEventBreakpointActionDelegate"
+               label="%AddEventBreakpoint.label"
                menubarPath="cDebugActions"
                style="push"
-               tooltip="%AddCatchpoint.tooltip">
+               tooltip="%AddEventBreakpoint.tooltip">
          </action>
       </viewContribution>
       <viewContribution
@@ -1667,8 +1667,8 @@
    <extension
          point="org.eclipse.core.runtime.adapters">
        <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.ICCatchpoint"
-            class="org.eclipse.cdt.debug.ui.breakpoints.CCatchpointsLabelProviderFactory">
+            adaptableType="org.eclipse.cdt.debug.core.model.ICEventBreakpoint"
+            class="org.eclipse.cdt.debug.ui.breakpoints.CEventBreakpointsLabelProviderFactory">
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
          </adapter>

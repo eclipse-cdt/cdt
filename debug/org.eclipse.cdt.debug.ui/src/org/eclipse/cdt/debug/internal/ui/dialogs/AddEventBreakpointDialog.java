@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.core.model.ICCatchpoint;
-import org.eclipse.cdt.debug.internal.core.breakpoints.CCatchpoint;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
 import org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPreferenceStore;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointUIContributionFactory;
@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The "Add Catchpoint" dialog of the "Add catchpoint" action.
  */
-public class AddCatchpointDialog extends Dialog implements ModifyListener, SelectionListener {
+public class AddEventBreakpointDialog extends Dialog implements ModifyListener, SelectionListener {
 
 	private Combo fEventTypeInput;
 	private String fEventType;
@@ -75,12 +75,12 @@ public class AddCatchpointDialog extends Dialog implements ModifyListener, Selec
 			Composite parent = getFieldEditorParent();
 			try {
 				Map map = new HashMap();
-				map.put(ICCatchpoint.EVENT_TYPE_ID, eventType);
+				map.put(ICEventBreakpoint.EVENT_TYPE_ID, eventType);
 				ICBreakpointsUIContribution cons[] = CBreakpointUIContributionFactory.getInstance()
-						.getBreakpointUIContributions(modelId, CCatchpoint.getMarkerType(), map);
+						.getBreakpointUIContributions(modelId, CEventBreakpoint.getMarkerType(), map);
 				for (ICBreakpointsUIContribution con : cons) {
 
-					if (con.getId().equals(ICCatchpoint.EVENT_TYPE_ID)) continue;
+					if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) continue;
 					FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel(),
 							parent);
 					getPreferenceStore().setValue(con.getId(),"");
@@ -100,7 +100,7 @@ public class AddCatchpointDialog extends Dialog implements ModifyListener, Selec
 	 * 
 	 * @param parentShell
 	 */
-	public AddCatchpointDialog(Shell parentShell) {
+	public AddEventBreakpointDialog(Shell parentShell) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		factory = CBreakpointUIContributionFactory.getInstance();
@@ -115,10 +115,10 @@ public class AddCatchpointDialog extends Dialog implements ModifyListener, Selec
 
 	private void loadEventTypes() {
 		ICBreakpointsUIContribution[] cons = factory.getBreakpointUIContributions(debugModelId,
-				CCatchpoint.getMarkerType(), null);
+				CEventBreakpoint.getMarkerType(), null);
 		for (int i = 0; i < cons.length; i++) {
 			ICBreakpointsUIContribution con = cons[i];
-			if (con.getId().equals(ICCatchpoint.EVENT_TYPE_ID)) {
+			if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
 				String[] possibleValues = con.getPossibleValues();
 				for (String value : possibleValues) {
 					fIdLabelMap.put(value, con.getLabelForValue(value));
@@ -228,7 +228,7 @@ public class AddCatchpointDialog extends Dialog implements ModifyListener, Selec
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(DialogMessages.getString("AddCatchpointDialog.2")); //$NON-NLS-1$
+		newShell.setText(DialogMessages.getString("AddEventBreakpointDialog.2")); //$NON-NLS-1$
 	}
 
 	/*
@@ -244,7 +244,7 @@ public class AddCatchpointDialog extends Dialog implements ModifyListener, Selec
 			page.performOk();
 			IPreferenceStore preferenceStore = page.getPreferenceStore();
 			if (preferenceStore != null) {
-				fEventArgument = preferenceStore.getString(ICCatchpoint.EVENT_ARG);
+				fEventArgument = preferenceStore.getString(ICEventBreakpoint.EVENT_ARG);
 			}
 			else
 				fEventArgument = null;

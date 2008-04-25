@@ -27,13 +27,13 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICCatchpoint;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
-import org.eclipse.cdt.debug.internal.core.breakpoints.CCatchpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
@@ -589,16 +589,16 @@ public class CDIDebugModel {
 		return handle1.equals( handle2 );
 	}
 	
-	public static ICCatchpoint catchpointExists(String type, String arg ) throws CoreException {
+	public static ICEventBreakpoint eventBreakpointExists(String type, String arg ) throws CoreException {
 		String modelId = getPluginIdentifier();
 		
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints = manager.getBreakpoints(modelId);
 		for (int i = 0; i < breakpoints.length; i++) {
-			if (!(breakpoints[i] instanceof ICCatchpoint)) {
+			if (!(breakpoints[i] instanceof ICEventBreakpoint)) {
 				continue;
 			}
-			ICCatchpoint breakpoint = (ICCatchpoint) breakpoints[i];
+			ICEventBreakpoint breakpoint = (ICEventBreakpoint) breakpoints[i];
 
 			if (breakpoint.getEventType().equals(type)) {
 				String arg1 = breakpoint.getEventArgument();
@@ -612,7 +612,7 @@ public class CDIDebugModel {
 		}
 		return null;
 	}
-	public static ICCatchpoint createCatchpoint(String type, String arg, boolean register)
+	public static ICEventBreakpoint createEventBreakpoint(String type, String arg, boolean register)
 			throws CoreException {
 		final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
 		final Map<String,Object> attributes = new HashMap<String,Object>();
@@ -620,9 +620,9 @@ public class CDIDebugModel {
 		attributes.put(IBreakpoint.ENABLED, true);
 		attributes.put(ICBreakpoint.IGNORE_COUNT, 0);
 		attributes.put(ICBreakpoint.CONDITION, "");
-		attributes.put(ICCatchpoint.EVENT_TYPE_ID, type);
-		attributes.put(ICCatchpoint.EVENT_ARG, arg);
-		return new CCatchpoint(resource, attributes, register);
+		attributes.put(ICEventBreakpoint.EVENT_TYPE_ID, type);
+		attributes.put(ICEventBreakpoint.EVENT_ARG, arg);
+		return new CEventBreakpoint(resource, attributes, register);
 
 	}
 }

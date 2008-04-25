@@ -31,7 +31,7 @@ import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Catchpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.EventBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.LocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -152,8 +152,8 @@ public class SharedLibraryManager extends Manager {
 							bpMgr.setLocationBreakpoint((LocationBreakpoint)bkpt);
 						} else if (bkpt instanceof Watchpoint) {
 							bpMgr.setWatchpoint((Watchpoint)bkpt);
-						} else if (bkpt instanceof Catchpoint) {
-							bpMgr.setCatchpoint((Catchpoint)bkpt);
+						} else if (bkpt instanceof EventBreakpoint) {
+							bpMgr.setEventBreakpoint((EventBreakpoint)bkpt);
 						} else {
 							throw new CDIException();
 						}

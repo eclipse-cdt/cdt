@@ -21,13 +21,13 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement3;
-import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Catchpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.EventBreakpoint;
 
-public class CatchpointTests extends AbstractDebugTest {
+public class EventBreakpointTests extends AbstractDebugTest {
 	public static Test suite() {
-		return new DebugTestWrapper(CatchpointTests.class){};
+		return new DebugTestWrapper(EventBreakpointTests.class){};
 	}
 
 	protected String getProjectName() {
@@ -39,7 +39,7 @@ public class CatchpointTests extends AbstractDebugTest {
 	}
 
 	protected String getProjectBinary() {
-		return "catchpoints";
+		return "catchpoints.exe";
 	}
 
 	@Override
@@ -59,16 +59,16 @@ public class CatchpointTests extends AbstractDebugTest {
 	}
 
 	public void testCatch() throws CModelException, IOException, MIException, CDIException {
-		catchpoints(Catchpoint.CATCH, "");
+		eventbreakpoints(EventBreakpoint.CATCH, "");
 	}
 
 	public void testThrow() throws CModelException, IOException, MIException, CDIException {
-		catchpoints(Catchpoint.THROW, "");
+		eventbreakpoints(EventBreakpoint.THROW, "");
 	}
 	
-	private void catchpoints(String type, String arg) throws CModelException, IOException, MIException, CDIException {
+	private void eventbreakpoints(String type, String arg) throws CModelException, IOException, MIException, CDIException {
 		ICDIBreakpoint[] breakpoints;
-		ICDICatchpoint curbreak;
+		ICDIEventBreakpoint curbreak;
 
 		setBreakOnMain();
 		currentTarget.restart();
@@ -80,13 +80,13 @@ public class CatchpointTests extends AbstractDebugTest {
 		currentTarget.deleteAllBreakpoints();
 		pause();
 		assertTrue(currentTarget instanceof ICDIBreakpointManagement3);
-		((ICDIBreakpointManagement3) currentTarget).setCatchpoint(type, arg, ICDIBreakpoint.REGULAR, null, false, true);
+		((ICDIBreakpointManagement3) currentTarget).setEventBreakpoint(type, arg, ICDIBreakpoint.REGULAR, null, false, true);
 		pause();
 		breakpoints = currentTarget.getBreakpoints();
 		assertNotNull(breakpoints);
 		assertTrue(breakpoints.length == 1);
-		if (breakpoints[0] instanceof ICDICatchpoint) {
-			curbreak = (ICDICatchpoint) breakpoints[0];
+		if (breakpoints[0] instanceof ICDIEventBreakpoint) {
+			curbreak = (ICDIEventBreakpoint) breakpoints[0];
 		} else
 			curbreak = null;
 		assertNotNull(curbreak);

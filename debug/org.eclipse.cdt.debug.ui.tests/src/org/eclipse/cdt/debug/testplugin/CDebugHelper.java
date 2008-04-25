@@ -20,8 +20,10 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.command.MIVersion;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.widgets.Display;
 
 
 /**
@@ -68,6 +70,9 @@ public class CDebugHelper {
 		ICDISession session;
 		mi=MIPlugin.getDefault();
 		
+		try {
+			project.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (Exception exc) {}
 		IBinary bins[] = project.getBinaryContainer().getBinaries();
 		if (bins.length!=1) {
 			//SHOULD NOT HAPPEN

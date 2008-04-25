@@ -15,32 +15,30 @@ package org.eclipse.cdt.debug.core.model;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Interface for debugger catchpoints (event breakpoints). Example of catchpoint
+ * Interface for debugger event breakpoints. Example of event breakpoint
  * is break on raising exception in C++, or break on receiving signal.
  * 
  * @sinse 5.0
  */
-public interface ICCatchpoint extends ICBreakpoint {
+public interface ICEventBreakpoint extends ICBreakpoint {
 	/**
-	 * Breakpoint attribute storing the catchpoint event id
-	 * is set in (value <code>"org.eclipse.cdt.debug.core.catchpoint.event_id"</code>). 
+	 * Breakpoint attribute storing the event breakpoint event id
 	 * This attribute is a <code>String</code>.
 	 * 
 	 */
-	public static final String EVENT_TYPE_ID = "org.eclipse.cdt.debug.core.catchpoint_event_id"; //$NON-NLS-1$	
+	public static final String EVENT_TYPE_ID = "org.eclipse.cdt.debug.core.eventbreakpoint_event_id"; //$NON-NLS-1$	
 	/**
-	 * Breakpoint attribute storing the catchpoint event argument
-	 * is set in (value <code>"org.eclipse.cdt.debug.core.catchpoint.event_arg"</code>). 
+	 * Breakpoint attribute storing the event breakpoint argument
 	 * This attribute is a <code>String</code>.
 	 * 
 	 */
-	public static final String EVENT_ARG = "org.eclipse.cdt.debug.core.catchpoint_event_arg"; //$NON-NLS-1$	
+	public static final String EVENT_ARG = "org.eclipse.cdt.debug.core.eventbreakpoint_event_arg"; //$NON-NLS-1$	
 	
 	/**
-	 * Get catchpoint type. This is usually id in reverse web notation. 
+	 * Get event breakpoint type. This is usually id in reverse web notation. 
 	 * This type is interpreted by underlying debugger implementation.
 	 * Use extension point <code>org.eclipse.cdt.debug.ui.breakpointContribution</code> to define user visible label for this event type.
-	 * @return catchpoint type id (not null)
+	 * @return event breakpoint type id (not null)
 	 * @throws CoreException 
 	 */
 	String getEventType() throws CoreException;

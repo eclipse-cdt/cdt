@@ -81,7 +81,9 @@ public interface ICPPParserExtensionConfiguration {
 	 * 
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
+	 * @deprecated configure extra keywords, via {@link IScannerExtensionConfiguration#getAdditionalKeywords()}      
 	 */
+	@Deprecated
 	public boolean supportRestrictKeyword();
 
 	/**

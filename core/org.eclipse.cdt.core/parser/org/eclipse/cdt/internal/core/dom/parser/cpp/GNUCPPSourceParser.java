@@ -1833,8 +1833,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     private final boolean supportComplex;
 
-    private final boolean supportRestrict;
-
     private final boolean supportLongLong;
 
 	private final IIndex index;
@@ -1873,7 +1871,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
-        supportRestrict = config.supportRestrictKeyword();
         supportComplex = config.supportComplexNumbers();
         supportLongLong = config.supportLongLongs();
         this.index= index;
@@ -2968,10 +2965,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 last = consume();
                 break;
             case IToken.t_restrict:
-                if (!supportRestrict) {
-                    IToken la = LA(1);
-                    throwBacktrack(la.getOffset(), la.getEndOffset() - la.getOffset());
-                }
                 isRestrict = true;
                 last = consume();
                 break;

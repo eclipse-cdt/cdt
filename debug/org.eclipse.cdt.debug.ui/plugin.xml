@@ -1046,16 +1046,6 @@
          </enabledWhen>
       </page>
       <page
-            class="org.eclipse.cdt.debug.internal.ui.propertypages.CCatchpointPropertyPage"
-            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.catchpoint"
-            name="%CatchpointBreakpointPage.label">
-         <enabledWhen>
-            <adapt
-                  type="org.eclipse.cdt.debug.core.model.ICCatchpoint">
-            </adapt> 
-         </enabledWhen>
-      </page>
-      <page
             class="org.eclipse.cdt.debug.ui.breakpointactions.ActionsPropertyPage"
             id="org.eclipse.cdt.debug.ui.breakpointactions.actions"
             name="%BreakpointActionsPage.label">

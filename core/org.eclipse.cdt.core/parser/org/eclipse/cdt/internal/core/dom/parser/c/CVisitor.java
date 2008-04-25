@@ -11,7 +11,6 @@
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import java.util.ArrayList;
@@ -490,6 +489,9 @@ public class CVisitor {
 			binding = resolveBinding( parent );
 		} else if( parent instanceof IASTFieldReference ){
 			binding = (IBinding) findBinding( (IASTFieldReference) parent, false );
+			if (binding == null) {
+				binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
+			}
 		} else if( parent instanceof IASTDeclarator ){
 			binding = createBinding( (IASTDeclarator) parent, name );
 		} else if( parent instanceof ICASTCompositeTypeSpecifier ){

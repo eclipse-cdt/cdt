@@ -4636,12 +4636,41 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}	
 	
-    
     // int f(x) {
     //    return 0;
     // }
     public void testBug228422_noKnrParam() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	parse(buffer.toString(), ParserLanguage.C, false );
+    }
+    
+    //    struct {
+    //    	char foo;
+    //    } myStruct, *myStructPointer;
+    //
+    //    union {
+    //    	char foo;
+    //    } myUnion, *myUnionPointer;
+    //
+    //    void test() {
+    //    	myStruct.foo=1;
+    //    	myStructPointer->foo=2;
+    //    	myUnion.foo=3;
+    //    	myUnionPointer->foo=4;
+    //
+    //    	myStruct.bar=1;
+    //    	myStructPointer->bar=2;
+    //    	myUnion.bar=3;
+    //    	myUnionPointer->bar=4;
+    //    }  
+    public void testBug228504_nonExistingMembers() throws Exception {
+    	boolean[] isCpps= {true, false};
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    		for (int i=1; i < 5; i++) {
+				ba.assertNonProblem("foo=" + i, 3);
+				ba.assertProblem("bar=" + i, 3);
+			}
+		}
     }
 }

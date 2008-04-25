@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [189873] Improve remote shell editor open action with background jobs
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * David McKnight   (IBM)        - [228933] file icons shown in shell view should check editor registry for proper icon
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -759,7 +760,11 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE))
 			{
-				imageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE); 
+				String name = output.getAbsolutePath();
+				imageDescriptor =  getEditorRegistry().getImageDescriptor(name);
+				if (imageDescriptor == null){
+					imageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+				}
 					//RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILE_ID);
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_GREP))

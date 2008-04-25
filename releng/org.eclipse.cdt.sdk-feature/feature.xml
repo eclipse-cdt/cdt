@@ -21,22 +21,22 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/ganymede"/>
    </url>
 
-   <includes
-         id="org.eclipse.cdt.platform.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.cdt.gnu.build.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.cdt.gnu.debug.source"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
       <import feature="org.eclipse.cdt" version="5.0.0" match="compatible"/>
    </requires>
+
+   <plugin
+         id="org.eclipse.cdt.platform.source"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.gnu.build.source"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.gnu.debug.source"
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.cdt.sdk"

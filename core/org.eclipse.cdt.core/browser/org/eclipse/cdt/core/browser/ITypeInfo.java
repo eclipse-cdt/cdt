@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 /**
  * Type information.
  */
-public interface ITypeInfo extends Comparable {
+public interface ITypeInfo {
 
 	public static final int KNOWN_TYPES[] = {
 		ICElement.C_NAMESPACE,

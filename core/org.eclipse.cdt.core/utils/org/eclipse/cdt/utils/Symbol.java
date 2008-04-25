@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.core.runtime.IPath;
 
-public class Symbol implements ISymbol, Comparable {
+public class Symbol implements ISymbol {
 
 	protected final BinaryObjectAdapter binary;
 	private final String name;

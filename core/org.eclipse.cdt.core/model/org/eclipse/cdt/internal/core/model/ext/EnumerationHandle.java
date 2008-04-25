@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 
-public class EnumerationHandle extends CElementHandle implements org.eclipse.cdt.core.model.IEnumeration, ICElementHandle {
+public class EnumerationHandle extends CElementHandle implements org.eclipse.cdt.core.model.IEnumeration {
 
 	public EnumerationHandle(ICElement parent, IEnumeration enumeration) {
 		super(parent, ICElement.C_ENUMERATION, enumeration.getName());

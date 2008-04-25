@@ -50,7 +50,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 
-import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
+import org.eclipse.cdt.internal.core.browser.IndexModelUtil;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 

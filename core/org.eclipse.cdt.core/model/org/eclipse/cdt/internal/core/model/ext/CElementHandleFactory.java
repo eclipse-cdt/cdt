@@ -59,7 +59,7 @@ public class CElementHandleFactory {
 	public static ICElementHandle create(ITranslationUnit tu, IIndexMacro macro, 
 			IRegion region, long timestamp) throws CoreException {
 		CElementHandle element= new MacroHandle(tu, macro);
-		if (element != null && region != null) {
+		if (region != null) {
 			element.setRangeOfID(region, timestamp);
 		}
 		return element;

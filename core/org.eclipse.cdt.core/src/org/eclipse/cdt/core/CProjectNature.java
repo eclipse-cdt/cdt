@@ -45,7 +45,7 @@ public class CProjectNature implements IProjectNature {
 	/**
 	 * Utility method for adding a nature to a project.
 	 * 
-	 * @param proj
+	 * @param project
 	 *            the project to add the nature
 	 * @param natureId
 	 *            the id of the nature to assign to the project
@@ -57,8 +57,8 @@ public class CProjectNature implements IProjectNature {
 	public static void addNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		String[] prevNatures = description.getNatureIds();
-		for (int i = 0; i < prevNatures.length; i++) {
-			if (natureId.equals(prevNatures[i]))
+		for (String prevNature : prevNatures) {
+			if (natureId.equals(prevNature))
 				return;
 		}
 		String[] newNatures = new String[prevNatures.length + 1];
@@ -71,7 +71,7 @@ public class CProjectNature implements IProjectNature {
 	/**
 	 * Utility method for removing a project nature from a project.
 	 * 
-	 * @param proj
+	 * @param project
 	 *            the project to remove the nature from
 	 * @param natureId
 	 *            the nature id to remove
@@ -82,9 +82,9 @@ public class CProjectNature implements IProjectNature {
 	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		String[] prevNatures = description.getNatureIds();
-		List newNatures = new ArrayList(Arrays.asList(prevNatures));
+		List<String> newNatures = new ArrayList<String>(Arrays.asList(prevNatures));
 		newNatures.remove(natureId);
-		description.setNatureIds((String[]) newNatures.toArray(new String[newNatures.size()]));
+		description.setNatureIds(newNatures.toArray(new String[newNatures.size()]));
 		project.setDescription(description, monitor);
 	}
 

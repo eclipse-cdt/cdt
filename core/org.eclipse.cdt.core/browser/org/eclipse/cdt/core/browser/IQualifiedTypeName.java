@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-public interface IQualifiedTypeName extends Comparable {
+public interface IQualifiedTypeName extends Comparable<IQualifiedTypeName> {
 
 	public final static String QUALIFIER = "::"; //$NON-NLS-1$
 

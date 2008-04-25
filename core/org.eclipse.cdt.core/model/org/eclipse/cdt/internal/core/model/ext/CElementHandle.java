@@ -80,6 +80,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
@@ -197,8 +198,8 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return NO_CHILDREN;
 	}
 
-	public List getChildrenOfType(int type) throws CModelException {
-		return Collections.EMPTY_LIST;
+	public List<ICElement> getChildrenOfType(int type) throws CModelException {
+		return Collections.emptyList();
 	}
 
 	public boolean hasChildren() {

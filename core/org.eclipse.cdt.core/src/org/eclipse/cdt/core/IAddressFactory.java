@@ -22,13 +22,11 @@ public interface IAddressFactory
 {
 	/**
 	 * Returns zero address, i.e. minimal possible address
-	 * @return
 	 */
 	IAddress getZero();
 
 	/**
 	 * Returns maximal address.
-	 * @return
 	 */
 	IAddress getMax();
 
@@ -50,7 +48,6 @@ public interface IAddressFactory
 	 * Please see Addr32Factory.createAddress() for reference implementation.
 	 *
 	 * @param addr
-	 * @return
 	 */
 	IAddress createAddress(String addr);
 
@@ -70,7 +67,6 @@ public interface IAddressFactory
 	 * 
 	 * @param addr
 	 * @param radix
-	 * @return
 	 */
 	IAddress createAddress(String addr, int radix);
 	
@@ -78,7 +74,6 @@ public interface IAddressFactory
 	 * Create address from a BigInteger
 	 * 
 	 * @param addr
-	 * @return
 	 */
 	IAddress createAddress(BigInteger addr);
 }

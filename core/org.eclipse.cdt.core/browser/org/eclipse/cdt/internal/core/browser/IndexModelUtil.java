@@ -12,7 +12,7 @@
  *      Anton Leherbauer (Wind River Systems)
  *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.browser.util;
+package org.eclipse.cdt.internal.core.browser;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;

@@ -40,8 +40,8 @@ public interface ITypeSearchScope {
 	public void clear();
 	public ICProject[] getEnclosingProjects();
 	
-	public Collection pathSet();
-	public Collection containerSet();
-	public Collection projectSet();
-	public Collection enclosingProjectSet();
+	public Collection<IPath> pathSet();
+	public Collection<IPath> containerSet();
+	public Collection<ICProject> projectSet();
+	public Collection<ICProject> enclosingProjectSet();
 }

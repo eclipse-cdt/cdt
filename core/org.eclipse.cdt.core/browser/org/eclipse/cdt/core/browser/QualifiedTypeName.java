@@ -299,16 +299,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		return getFullyQualifiedName();
 	}
 
-	public int compareTo(Object obj) {
-		if (obj == this) {
-			return 0;
-		}
-		if (!(obj instanceof IQualifiedTypeName)) {
-			throw new ClassCastException();
-		}
-		return compareTo((IQualifiedTypeName)obj);
-	}
-	
 	public int compareTo(IQualifiedTypeName typeName) {
 		if (typeName == this)
 			return 0;

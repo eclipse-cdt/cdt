@@ -80,8 +80,6 @@ public class CommandLauncher {
 
 	/**
 	 * return the constructed Command line.
-	 * 
-	 * @return
 	 */
 	public String getCommandLine() {
 		return getCommandLine(getCommandArgs());
@@ -193,8 +191,8 @@ public class CommandLauncher {
 	protected String getCommandLine(String[] commandArgs) {
 		StringBuffer buf = new StringBuffer();
 		if (fCommandArgs != null) {
-			for (int i = 0; i < commandArgs.length; i++) {
-				buf.append(commandArgs[i]);
+			for (String commandArg : commandArgs) {
+				buf.append(commandArg);
 				buf.append(' ');
 			}
 			buf.append(lineSeparator);

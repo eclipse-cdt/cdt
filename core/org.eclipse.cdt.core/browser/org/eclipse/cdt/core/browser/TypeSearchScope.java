@@ -28,10 +28,10 @@ import org.eclipse.core.runtime.Path;
 
 public class TypeSearchScope implements ITypeSearchScope {
 
-	private Set fPathSet = new HashSet();
-	private Set fContainerSet = new HashSet();
-	private Set fProjectSet = new HashSet();
-	private Set fEnclosingProjectSet = new HashSet();
+	private Set<IPath> fPathSet = new HashSet<IPath>();
+	private Set<IPath> fContainerSet = new HashSet<IPath>();
+	private Set<ICProject> fProjectSet = new HashSet<ICProject>();
+	private Set<ICProject> fEnclosingProjectSet = new HashSet<ICProject>();
 	private boolean fWorkspaceScope = false;
 
 	// cached arrays
@@ -54,16 +54,16 @@ public class TypeSearchScope implements ITypeSearchScope {
 		add(project);
 	}
 
-	public Collection pathSet() {
+	public Collection<IPath> pathSet() {
 		return fPathSet;
 	}
-	public Collection containerSet() {
+	public Collection<IPath> containerSet() {
 		return fContainerSet;
 	}
-	public Collection projectSet() {
+	public Collection<ICProject> projectSet() {
 		return fProjectSet;
 	}
-	public Collection enclosingProjectSet() {
+	public Collection<ICProject> enclosingProjectSet() {
 		return fEnclosingProjectSet;
 	}
 
@@ -73,8 +73,8 @@ public class TypeSearchScope implements ITypeSearchScope {
 		
 		if (!scope.pathSet().isEmpty()) {
 			// check if this scope encloses the other scope's paths
-			for (Iterator i = scope.pathSet().iterator(); i.hasNext(); ) {
-				IPath path = (IPath) i.next();
+			for (Iterator<IPath> i = scope.pathSet().iterator(); i.hasNext(); ) {
+				IPath path = i.next();
 				if (!encloses(path))
 					return false;
 			}
@@ -82,8 +82,8 @@ public class TypeSearchScope implements ITypeSearchScope {
 		
 		if (!scope.containerSet().isEmpty()) {
 			// check if this scope encloses the other scope's containers
-			for (Iterator i = scope.containerSet().iterator(); i.hasNext(); ) {
-				IPath path = (IPath) i.next();
+			for (Iterator<IPath> i = scope.containerSet().iterator(); i.hasNext(); ) {
+				IPath path = i.next();
 				if (!encloses(path))
 					return false;
 			}
@@ -91,8 +91,8 @@ public class TypeSearchScope implements ITypeSearchScope {
 
 		if (!scope.projectSet().isEmpty()) {
 			// check if this scope encloses the other scope's projects
-			for (Iterator i = scope.projectSet().iterator(); i.hasNext(); ) {
-				ICProject project = (ICProject) i.next();
+			for (Iterator<ICProject> i = scope.projectSet().iterator(); i.hasNext(); ) {
+				ICProject project = i.next();
 				if (!encloses(project))
 					return false;
 			}
@@ -125,7 +125,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		if (fContainerSet.contains(path))
 			return true;
 		if (fContainerPaths == null) {
-			fContainerPaths = (IPath[]) fContainerSet.toArray(new IPath[fContainerSet.size()]);
+			fContainerPaths = fContainerSet.toArray(new IPath[fContainerSet.size()]);
 //			java.util.Arrays.sort(fContainerPaths);
 		}
 		for (int i = 0; i < fContainerPaths.length; ++i) {
@@ -140,7 +140,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 
 		// check projects that were explicity added to scope
 		if (fProjects == null) {
-			fProjects = (ICProject[]) fProjectSet.toArray(new ICProject[fProjectSet.size()]);
+			fProjects = fProjectSet.toArray(new ICProject[fProjectSet.size()]);
 		}
 		// check if one of the projects contains path
 		for (int i = 0; i < fProjects.length; ++i) {
@@ -168,7 +168,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		if (isWorkspaceScope()) {
 			return getAllProjects();
 		}
-		return (ICProject[]) fEnclosingProjectSet.toArray(new ICProject[fEnclosingProjectSet.size()]);
+		return fEnclosingProjectSet.toArray(new ICProject[fEnclosingProjectSet.size()]);
 	}
 	
 	private static boolean projectContainsPath(ICProject project, IPath path, boolean checkIncludePaths) {

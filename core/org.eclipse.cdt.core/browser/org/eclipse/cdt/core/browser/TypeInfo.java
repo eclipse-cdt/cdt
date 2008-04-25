@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.browser;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 
 public class TypeInfo implements ITypeInfo
 {
@@ -260,7 +259,11 @@ public class TypeInfo implements ITypeInfo
 	}
 
 	public static boolean isValidType(int type) {
-		return ArrayUtil.contains(KNOWN_TYPES, type);
+		for (int i= 0; i < KNOWN_TYPES.length; ++i) {
+			if (KNOWN_TYPES[i] == type)
+				return true;
+		}
+		return false;
 	}
 	
 	public void addDerivedReference(ITypeReference location) {

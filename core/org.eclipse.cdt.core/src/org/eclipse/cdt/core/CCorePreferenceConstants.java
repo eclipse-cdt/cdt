@@ -84,7 +84,6 @@ public class CCorePreferenceConstants {
 
 	/**
 	 * Active code formatter ID.
-	 * @see #getDefaultOptions
 	 */
 	public static final String CODE_FORMATTER = CCorePlugin.PLUGIN_ID + ".code_formatter"; //$NON-NLS-1$
 	

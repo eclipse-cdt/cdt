@@ -239,33 +239,7 @@ public class LRUCache<K,T> implements Cloneable {
 	public boolean isEmpty() {
 		return fEntryTable.isEmpty();
 	}
-	/**
-	 * Returns an enumeration that iterates over all the keys and values 
-	 * currently in the cache.
-	 */
-	public ICacheEnumeration keysAndValues() {
-		return new ICacheEnumeration() {
-		
-			Enumeration<LRUCacheEntry<K,T>> fValues = fEntryTable.elements();
-			LRUCacheEntry<K,T> fEntry;
-			
-			public boolean hasMoreElements() {
-				return fValues.hasMoreElements();
-			}
-			
-			public K nextElement() {
-				fEntry = fValues.nextElement();
-				return fEntry._fKey;
-			}
-			
-			public T getValue() {
-				if (fEntry == null) {
-					throw new java.util.NoSuchElementException();
-				}
-				return fEntry._fValue;
-			}
-		};
-	}
+
 	/**
 	 * Ensures there is the specified amount of free space in the receiver,
 	 * by removing old entries if necessary.  Returns true if the requested space was

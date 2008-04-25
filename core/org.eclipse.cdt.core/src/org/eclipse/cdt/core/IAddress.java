@@ -14,14 +14,14 @@ package org.eclipse.cdt.core;
 import java.math.BigInteger;
 
 /**
- * Represents C/C++ address in CDT. All implementors of this inteface should be 
+ * Represents C/C++ address in CDT. All implementors of this interface should be 
  * immutable, i.e. all methods should not modify objects, they should return 
  * new object.
  * 
  * Please see Addr32 and Addr64 classes to see how this interface should 
  * be extended
  */
-public interface IAddress extends Comparable {
+public interface IAddress extends Comparable<Object> {
 	/**
 	 * Adds offset to address and returns new address object 
 	 * which is the result  
@@ -56,7 +56,6 @@ public interface IAddress extends Comparable {
 	
 	/**
 	 * Returns the value of the address.
-	 * @return
 	 */
 	BigInteger getValue();
 		
@@ -99,7 +98,6 @@ public interface IAddress extends Comparable {
 	 * with all leading zeros. The length of returned string should be 
 	 * the same for all addresses of given class. I.e. 10 for 32-bit 
 	 * addresses and 18 for 64-bit addresses
-	 * @return
 	 */
 	String toHexAddressString();
 
@@ -109,7 +107,6 @@ public interface IAddress extends Comparable {
 	 * with all leading zeros. The length of returned string should be 
 	 * the same for all addresses of given class. I.e. 34 for 32-bit 
 	 * addresses and 66 for 64-bit addresses
-	 * @return
 	 */
 	String toBinaryAddressString();
 

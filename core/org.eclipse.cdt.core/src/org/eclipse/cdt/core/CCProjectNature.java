@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,7 +32,7 @@ public class CCProjectNature extends CProjectNature {
 	/**
 	 * Checks to ensure that a cnature already exists,
 	 * if not throw a CoreException. Does NOT add a default builder
-     * @see IProjectNature#configure
+     * @see IProjectNature#configure()
      */
     @Override
 	public void configure() throws CoreException {

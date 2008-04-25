@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
@@ -265,10 +264,6 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 	}
 
 	public void setCElementType(int type) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public int compareTo(Object arg0) {
 		throw new PDOMNotImplementedError();
 	}
 

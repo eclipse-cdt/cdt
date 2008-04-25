@@ -134,16 +134,16 @@ public class TypeUtil {
     	ICElement[] types = getTypes(tu);
     	ArrayList<ICElement> allTypes = new ArrayList<ICElement>(types.length);
     	ArrayList<ICElement> typesToTraverse = new ArrayList<ICElement>(types.length);
-    	for (int i = 0; i < types.length; i++) {
-    		typesToTraverse.add(types[i]);
+    	for (ICElement type : types) {
+    		typesToTraverse.add(type);
     	}
     	while (!typesToTraverse.isEmpty()) {
     		ICElement type = typesToTraverse.get(0);
     		typesToTraverse.remove(type);
     		allTypes.add(type);
     		types = getTypes(type);
-    		for (int i = 0; i < types.length; i++) {
-    			typesToTraverse.add(types[i]);
+    		for (ICElement type2 : types) {
+    			typesToTraverse.add(type2);
     		}
     	} 
         return allTypes.toArray(new ICElement[allTypes.size()]);
@@ -195,9 +195,9 @@ public class TypeUtil {
     public static IMethodDeclaration[] getMethods(ICElement elem) {
 	    if (elem instanceof IStructure) {
 	        try {
-	            List list = ((IParent)elem).getChildrenOfType(ICElement.C_METHOD_DECLARATION);
+	            List<?> list = ((IParent)elem).getChildrenOfType(ICElement.C_METHOD_DECLARATION);
 	            if (list != null && !list.isEmpty()) {
-	                return (IMethodDeclaration[]) list.toArray(new IMethodDeclaration[list.size()]);
+	                return list.toArray(new IMethodDeclaration[list.size()]);
 	            }
 	        } catch (CModelException e) {
 	        }
@@ -208,9 +208,9 @@ public class TypeUtil {
     public static ICElement[] getFields(ICElement elem) {
 	    if (elem instanceof IStructure) {
 	        try {
-	            List list = ((IParent)elem).getChildrenOfType(ICElement.C_FIELD);
+	            List<?> list = ((IParent)elem).getChildrenOfType(ICElement.C_FIELD);
 	            if (list != null && !list.isEmpty()) {
-	                return (ICElement[]) list.toArray(new ICElement[list.size()]);
+	                return list.toArray(new ICElement[list.size()]);
 	            }
 	        } catch (CModelException e) {
 	        }

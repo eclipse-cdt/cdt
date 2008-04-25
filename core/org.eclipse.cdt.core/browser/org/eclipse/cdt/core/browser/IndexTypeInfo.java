@@ -36,8 +36,8 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.core.browser.IndexModelUtil;
 import org.eclipse.cdt.internal.core.browser.IndexTypeReference;
-import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
@@ -59,8 +59,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		if (array == null)
 			return 0;
 		int result = 1;
-		for (int index = 0; index < array.length; index++) {
-			result = prime * result + (array[index] == null ? 0 : array[index].hashCode());
+		for (String element : array) {
+			result = prime * result + (element == null ? 0 : element.hashCode());
 		}
 		return result;
 	}
@@ -248,8 +248,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 					if (names.length == 0) {
 						names= index.findNames(ibs[0], IIndex.FIND_DECLARATIONS);
 					}
-					for (int i = 0; i < names.length; i++) {
-						reference= createReference(ibs[0], names[i]);
+					for (IIndexName name : names) {
+						reference= createReference(ibs[0], name);
 						if (reference != null) {
 							break;
 						}
@@ -312,8 +312,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 
 			IIndexMacro[] macros = index.findMacros(fqn[0].toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
 			if(macros.length>0) {
-				for (int i = 0; i < macros.length; i++) {
-					reference= createReference(macros[i]);
+				for (IIndexMacro macro : macros) {
+					reference= createReference(macro);
 					if (reference != null) {
 						break;
 					}
@@ -368,15 +368,13 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			index.acquireReadLock();
 			IIndexBinding[] ibs= findBindings();
 			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
-			for (int i = 0; i < ibs.length; i++) {
-				IIndexBinding binding = ibs[i];
+			for (IIndexBinding binding : ibs) {
 				IIndexName[] names;
 				names= index.findNames(binding, IIndex.FIND_DEFINITIONS);
 				if (names.length == 0) {
 					names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
 				}
-				for (int j= 0; j < names.length; j++) {
-					IIndexName indexName = names[j];
+				for (IIndexName indexName : names) {
 					if (checkFile(iflMap, indexName.getFile())) {
 						IndexTypeReference ref= createReference(binding, indexName);
 						if (ref != null) {
@@ -406,8 +404,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			// in case a file is represented multiple times in the index then we take references from
 			// one of those, only.
 			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
-			for (int i = 0; i < ibs.length; i++) {
-				IIndexMacro macro= ibs[i];
+			for (IIndexMacro macro : ibs) {
 				if (checkParameters(macro.getParameterList())) {
 					if (checkFile(iflMap, macro.getFile())) {
 						IndexTypeReference ref= createReference(macro);
@@ -512,10 +509,6 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	}
 
 	public void setCElementType(int type) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public int compareTo(Object arg0) {
 		throw new PDOMNotImplementedError();
 	}
 

@@ -69,7 +69,6 @@ public interface IBinaryParser extends IAdaptable {
 
 		/**
 		 * Return the binary parser
-		 * @return
 		 */
 		IBinaryParser getBinaryParser();
 	}
@@ -150,12 +149,11 @@ public interface IBinaryParser extends IAdaptable {
 	interface IBinaryShared extends IBinaryExecutable {
 		/**
 		 * The Share Object name.
-		 * @return
 		 */
 		String getSoName();
 	}
 
-	interface ISymbol extends Comparable {
+	interface ISymbol extends Comparable<Object> {
 
 		/**
 		 * Symbol is type function.
@@ -169,56 +167,47 @@ public interface IBinaryParser extends IAdaptable {
 
 		/**
 		 * Name of the Symbol
-		 * @return
 		 */
 		String getName();
 
 		/**
 		 * Address of the symbol
-		 * @return
 		 */
 		IAddress getAddress();
 
 		/**
 		 * Size of the symbol.
-		 * @return
 		 */
 		long getSize();
 
 		/**
 		 * Start linenumber of the symbol in the source
-		 * @return
 		 */
 		int getStartLine();
 
 		/**
 		 * End line number of the symbol in the source
-		 * @return
 		 */
 		int getEndLine();
 
 		/**
 		 * Source filename of the symbol.
-		 * @return
 		 */
 		IPath getFilename();
 
 		/**
 		 * Type of the symbol
-		 * @return
 		 */
 		int getType();
 
 		/**
 		 * Line number corresponding to the address offset.
 		 * @param offset
-		 * @return
 		 */
 		int getLineNumber(long offset);
 		
 		/**
 		 * Return the binary object this symbol is from.
-		 * @return
 		 */
 		IBinaryObject getBinaryObject();
 	}
@@ -228,7 +217,6 @@ public interface IBinaryParser extends IAdaptable {
 	 * @param hints - array byte that can be use to recognise the file.
 	 *     Can be null or empty array when no hints are passed.
 	 * @param path
-	 * @return
 	 * @throws IOException
 	 */
 	IBinaryFile getBinary(byte[] hints, IPath path) throws IOException;
@@ -237,14 +225,12 @@ public interface IBinaryParser extends IAdaptable {
 	 * Creates an IBinaryFile.
 	 * 
 	 * @param path
-	 * @return
 	 * @throws IOException
 	 */
 	IBinaryFile getBinary(IPath path) throws IOException;
 
 	/**
 	 * Returns the name of the Format.
-	 * @return
 	 */
 	String getFormat();
 
@@ -252,13 +238,11 @@ public interface IBinaryParser extends IAdaptable {
 	 * True if the resource is a binary. 
 	 * @param hints
 	 * @param path
-	 * @return
 	 */
 	boolean isBinary(byte[] hints, IPath path);
 
 	/**
-	 * Get a hint of the needed buffer size to recognise the file.
-	 * @return
+	 * Get a hint of the needed buffer size to recognize the file.
 	 */
 	int getHintBufferSize();
 }

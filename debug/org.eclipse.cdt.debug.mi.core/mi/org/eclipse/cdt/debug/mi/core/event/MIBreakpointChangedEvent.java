@@ -23,6 +23,7 @@ public class MIBreakpointChangedEvent extends MIChangedEvent {
 	public static final int HINT_NEW_LINE_BREAKPOINT = 1;
 	public static final int HINT_NEW_FUNCTION_BREAKPOINT = 2;
 	public static final int HINT_NEW_ADDRESS_BREAKPOINT = 3;
+	public static final int HINT_NEW_CATCHPOINT = 4;
 
 	int no = 0;
 	int hint = HINT_NONE;

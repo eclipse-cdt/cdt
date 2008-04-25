@@ -105,6 +105,22 @@
             name="org.eclipse.cdt.debug.core.read">
       </attribute>
    </extension>
+      <extension
+         id="cCatchpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.cdt.debug.core.catchpoint_event_id">
+      </attribute>
+      <attribute
+            name="org.eclipse.cdt.debug.core.catchpoint_event_arg">
+      </attribute>
+   </extension>
    <extension
          id="breakpointproblem"
          name="%breakpointProblem.name"
@@ -145,6 +161,12 @@
             name="%cWatchpoints.name"
             markerType="org.eclipse.cdt.debug.core.cWatchpointMarker"
             id="cWatchpoint">
+      </breakpoint>
+       <breakpoint
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CCatchpoint"
+            name="%cCatchpoint.name"
+            markerType="org.eclipse.cdt.debug.core.cCatchpointMarker"
+            id="cCatchpoint">
       </breakpoint>
    </extension>
    <extension

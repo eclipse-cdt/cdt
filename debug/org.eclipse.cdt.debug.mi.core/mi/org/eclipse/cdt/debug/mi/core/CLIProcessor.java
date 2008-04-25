@@ -174,7 +174,8 @@ public class CLIProcessor {
 		    (operation.startsWith("tb")  && "tbreak".indexOf(operation)  != -1) || //$NON-NLS-1$ //$NON-NLS-2$
 		    (operation.startsWith("hb")  && "hbreak".indexOf(operation)  != -1) || //$NON-NLS-1$ //$NON-NLS-2$
 		    (operation.startsWith("thb") && "thbreak".indexOf(operation) != -1) || //$NON-NLS-1$ //$NON-NLS-2$
-		    (operation.startsWith("rb")  && "rbreak".indexOf(operation)  != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("rb")  && "rbreak".indexOf(operation)  != -1) ||  //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("catch"))) {  //$NON-NLS-1$
 			isbreak = true;
 		}
 		return isbreak;
@@ -221,6 +222,9 @@ public class CLIProcessor {
 	    if (op.startsWith("rb")  && "rbreak".indexOf(op) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 	    	// only function breakpoints can be set using rbreak
 	    	return MIBreakpointChangedEvent.HINT_NEW_FUNCTION_BREAKPOINT;
+	    }
+	    if (op.equals("catch")) {
+	    	return MIBreakpointChangedEvent.HINT_NEW_CATCHPOINT;
 	    }
 	    if ( !st.hasMoreTokens() ) {
 	    	// "break" with no arguments

@@ -79,7 +79,11 @@ public class CommandFactory {
 	public MIBreakWatch createMIBreakWatch(boolean access, boolean read, String expression) {
 		return new MIBreakWatch(getMIVersion(), access, read, expression);
 	}
-
+	
+	public CLICatch createCLICatch(String event, String arg) {
+		return new CLICatch(event, arg);
+	}
+	
 	public MIDataDisassemble createMIDataDisassemble(String start, String end, boolean mixed) {
 		return new MIDataDisassemble(getMIVersion(), start, end, mixed);
 	}

@@ -8,12 +8,15 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
+ * QNX Software Systems - catchpoints - bug 226689
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -24,11 +27,13 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICCatchpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CCatchpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
@@ -582,5 +587,42 @@ public class CDIDebugModel {
 		}
 		// If handles are not file names ????
 		return handle1.equals( handle2 );
+	}
+	
+	public static ICCatchpoint catchpointExists(String type, String arg ) throws CoreException {
+		String modelId = getPluginIdentifier();
+		
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints = manager.getBreakpoints(modelId);
+		for (int i = 0; i < breakpoints.length; i++) {
+			if (!(breakpoints[i] instanceof ICCatchpoint)) {
+				continue;
+			}
+			ICCatchpoint breakpoint = (ICCatchpoint) breakpoints[i];
+
+			if (breakpoint.getEventType().equals(type)) {
+				String arg1 = breakpoint.getEventArgument();
+				if (arg1 == null)
+					arg1 = "";
+				String arg2 = arg == null ? "" : arg;
+				if (arg1.equals(arg2))
+					return breakpoint;
+			}
+
+		}
+		return null;
+	}
+	public static ICCatchpoint createCatchpoint(String type, String arg, boolean register)
+			throws CoreException {
+		final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
+		final Map<String,Object> attributes = new HashMap<String,Object>();
+		attributes.put(IBreakpoint.ID, CDIDebugModel.getPluginIdentifier());
+		attributes.put(IBreakpoint.ENABLED, true);
+		attributes.put(ICBreakpoint.IGNORE_COUNT, 0);
+		attributes.put(ICBreakpoint.CONDITION, "");
+		attributes.put(ICCatchpoint.EVENT_TYPE_ID, type);
+		attributes.put(ICCatchpoint.EVENT_ARG, arg);
+		return new CCatchpoint(resource, attributes, register);
+
 	}
 }

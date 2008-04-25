@@ -28,7 +28,8 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressToSource;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement3;
+import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
@@ -99,7 +100,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
-public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2, ICDIAddressToSource, ICDIMemorySpaceManagement {
+public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement3, ICDIAddressToSource, ICDIMemorySpaceManagement {
 
 	MISession miSession;
 	ICDITargetConfiguration fConfiguration;
@@ -1281,5 +1282,11 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		else {
 			return new String[0];
 		}
+	}
+
+	public ICDICatchpoint setCatchpoint(String type, String arg, int cdiType, ICDICondition condition, boolean deferred,
+			boolean enabled) throws CDIException {
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setCatchpoint(this,type,arg,condition,enabled);
 	}
 }

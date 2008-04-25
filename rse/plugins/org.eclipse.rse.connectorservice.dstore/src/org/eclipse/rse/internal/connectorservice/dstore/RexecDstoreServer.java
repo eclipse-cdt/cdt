@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [221095] [dstore][launcher] Specified REXEC port number is not used
+ * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -31,7 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ConnectionStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.rse.connectorservice.dstore.IUniversalDStoreConstants;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
@@ -63,7 +63,7 @@ public class RexecDstoreServer implements IServerLauncher
 	private boolean isModeChecked = false;
 	private boolean checkPort =true;
 	private boolean logInfo = false;
-	private int _socketTimeoutValue = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_TIMEOUT;
+	private int _socketTimeoutValue = 5000;
 
 	private static char[] ebcdictounicode =
 		{

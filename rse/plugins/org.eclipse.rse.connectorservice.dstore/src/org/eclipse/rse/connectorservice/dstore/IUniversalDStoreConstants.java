@@ -18,6 +18,7 @@
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)         - [221747] Default Connection Timeout is too high
  * David McKnight  (IBM)         - [228334] [dstore] Default DataStore connection timeout is too short
+ * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -61,15 +62,12 @@ public interface IUniversalDStoreConstants
     
     // RemoteClassLoader caching preferences
     public static final String RESID_PREF_CACHE_REMOTE_CLASSES = RESID_PREF_PREFIX + "cacheremoteclasses"; //$NON-NLS-1$
-    public static final boolean DEFAULT_PREF_CACHE_REMOTE_CLASSES = true;
-    
-        // Socket timeout preference
+
+    // Socket timeout preference
     public static final String RESID_PREF_SOCKET_TIMEOUT = RESID_PREF_PREFIX + "sockettimeout"; //$NON-NLS-1$
-    public static final int DEFAULT_PREF_SOCKET_TIMEOUT = 5000;
 
     public static final String RESID_PREF_DO_KEEPALIVE = RESID_PREF_PREFIX + "dokeepalive"; //$NON-NLS-1$
-    public static final boolean DEFAULT_PREF_DO_KEEPALIVE = true;
-    
+
     /**
 	 * @since 3.0
 	 */
@@ -78,25 +76,13 @@ public interface IUniversalDStoreConstants
     /**
 	 * @since 3.0
 	 */
-    public static final int DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT = 60000;
-    
-    /**
-	 * @since 3.0
-	 */
     public static final String RESID_PREF_SOCKET_READ_TIMEOUT = RESID_PREF_PREFIX + "socketreadtimeout"; //$NON-NLS-1$
    
-    /**
-	 * @since 3.0
-	 */
-    public static final int DEFAULT_PREF_SOCKET_READ_TIMEOUT = 3600000; 
-    
+
 
 	/**
 	 * @since 3.0
 	 */
 	public static final String ALERT_MISMATCHED_SERVER = RESID_PREFIX + "alert.mismatched.server"; //$NON-NLS-1$
-	/**
-	 * @since 3.0
-	 */
-	public static final boolean DEFAULT_ALERT_MISMATCHED_SERVER = true;
+
 }

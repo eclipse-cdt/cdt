@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
+ * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -57,28 +58,22 @@ public class Activator extends SystemBasePlugin {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 
-		int timeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_TIMEOUT;
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, timeout);	
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, 5000);	
 		
 		// do keepalive
-		boolean doKeepalive = IUniversalDStoreConstants.DEFAULT_PREF_DO_KEEPALIVE;
-		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, doKeepalive);
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, true);
 		
 		// socket read timeout 
-		int socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT, socketTimeout);
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT,  3600000);
 		
 		// keepalive response timeout
-		int keepaliveTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT, keepaliveTimeout);		
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT,  60000);		
 		
 		// show mismatched server warning
-		boolean showMismatchedWarning = IUniversalDStoreConstants.DEFAULT_ALERT_MISMATCHED_SERVER;
-		store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, showMismatchedWarning);
+		store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, true);
 
 		// cache remote classes
-		boolean cacheRemoteClasses = IUniversalDStoreConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES;
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);				
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, true);				
 	}
 
 	/**

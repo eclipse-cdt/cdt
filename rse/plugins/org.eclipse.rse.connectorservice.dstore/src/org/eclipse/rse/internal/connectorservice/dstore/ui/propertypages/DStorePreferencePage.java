@@ -11,6 +11,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  ********************************************************************************/
 package org.eclipse.rse.internal.connectorservice.dstore.ui.propertypages;
 
@@ -170,7 +171,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 			timeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT);
 		}
 		else { 
-			timeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_TIMEOUT;
+			timeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT);
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, timeout);
 		}
 		_connectionTimeout.setText(""+timeout); //$NON-NLS-1$
@@ -182,7 +183,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 			cacheRemoteClasses = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
 		}
 		else {
-			cacheRemoteClasses = IUniversalDStoreConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES;
+			cacheRemoteClasses = store.getDefaultBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);
 		}
 		_cacheRemoteClassesButton.setSelection(cacheRemoteClasses);
@@ -194,9 +195,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 			doKeepalive = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);		
 		}
 		else {
-			doKeepalive = IUniversalDStoreConstants.DEFAULT_PREF_DO_KEEPALIVE;
-			store.setDefault(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, doKeepalive);
-			
+			doKeepalive = store.getDefaultBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);	
 		}
 		_doKeepaliveButton.setSelection(doKeepalive);
 		
@@ -205,8 +204,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 			socketTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
 		}
 		else {
-			socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
-			store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT, socketTimeout);
+			socketTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
 		}
 		_socketReadTimeout.setText(""+socketTimeout); //$NON-NLS-1$
 		_socketReadTimeout.setEnabled(doKeepalive);
@@ -216,8 +214,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 			keepaliveTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);	
 		}
 		else {
-			keepaliveTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
-			store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT, keepaliveTimeout);
+			keepaliveTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
 		}
 		_keepaliveResponseTimeout.setText(""+keepaliveTimeout); //$NON-NLS-1$
 		_keepaliveResponseTimeout.setEnabled(doKeepalive);
@@ -228,9 +225,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 			showMismatchedWarning = store.getBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER);
 		}
 		else {
-			showMismatchedWarning = IUniversalDStoreConstants.DEFAULT_ALERT_MISMATCHED_SERVER;
-			store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, showMismatchedWarning);
-
+			showMismatchedWarning = store.getDefaultBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER);
 		}
 		_showMismatchedServerWarningButton.setSelection(showMismatchedWarning);
 	}
@@ -243,30 +238,33 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 	protected void performDefaults() {
 		super.performDefaults();	
 		
-		int timeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_TIMEOUT;
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+
+		int timeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT);
 		_connectionTimeout.setText(""+timeout); //$NON-NLS-1$
 		
 		// do keepalive
-		boolean doKeepalive = IUniversalDStoreConstants.DEFAULT_PREF_DO_KEEPALIVE;
+		boolean doKeepalive = store.getDefaultBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);
 		_doKeepaliveButton.setSelection(doKeepalive);
 		
 		// socket read timeout 
-		int socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
+		int socketTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
+
 		_socketReadTimeout.setText(""+socketTimeout); //$NON-NLS-1$
 		_socketReadTimeout.setEnabled(doKeepalive);
 		
 		// keepalive response timeout
-		int keepaliveTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
+		int keepaliveTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
 		_keepaliveResponseTimeout.setText(""+keepaliveTimeout); //$NON-NLS-1$
 		_keepaliveResponseTimeout.setEnabled(doKeepalive);
 		
 		
 		// show mismatched server warning
-		boolean showMismatchedWarning = IUniversalDStoreConstants.DEFAULT_ALERT_MISMATCHED_SERVER;
+		boolean showMismatchedWarning = store.getDefaultBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER);
 		_showMismatchedServerWarningButton.setSelection(showMismatchedWarning);
 		
 		// cache remote classes
-		boolean cacheRemoteClasses = IUniversalDStoreConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES;
+		boolean cacheRemoteClasses = store.getDefaultBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
 		_cacheRemoteClassesButton.setSelection(cacheRemoteClasses);
 		
 	}

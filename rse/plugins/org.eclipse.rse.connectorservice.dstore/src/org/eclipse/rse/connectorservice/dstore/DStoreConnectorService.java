@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
+ * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -125,6 +126,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	private ConnectionStatusListener _connectionStatusListener = null;
 	private IServerLauncher starter = null;
 	private IServerLauncherProperties _remoteServerLauncherProperties = null;
+	private boolean _isConnecting = false;
 
 	// Shortcut to sysInfo to save time
 	private transient DataElement sysInfo = null;
@@ -520,9 +522,11 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	 */
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
 	{
-	    if (isConnected()) {
+	    if (isConnected() || _isConnecting) {
 	        return;
 	    }
+	    
+	    _isConnecting = true;
 
 		// set A_PLUGIN_PATH so that dstore picks up the property
 		setPluginPathProperty();
@@ -669,6 +673,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
 						if (provider != null)
 						{
+							_isConnecting = false;
 							if (provider.importCertificates(certs, getHostName()))
 							{
 								connect(monitor);
@@ -727,12 +732,14 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					}
 					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
 					{
+						_isConnecting = false;
 						internalConnect(monitor);
 						return;
 					}
 				}
 				else if (launchMsg != null && isPortOutOfRange(launchMsg))
 				{
+					_isConnecting = false;
 					launchFailed = true;
 
 
@@ -771,6 +778,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						 )
 						)
 				{
+					_isConnecting = false;
 					if (conE instanceof SSLHandshakeException)
 					{
 						List certs = connectStatus.getUntrustedCertificates();
@@ -779,6 +787,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 							ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
 							if (provider != null)
 							{
+								
 								if (provider.importCertificates(certs, getHostName()))
 								{
 									connect(monitor);
@@ -807,6 +816,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				}
 				if (!connectStatus.isConnected() && connectStatus.isSLLProblem())
 				{
+					_isConnecting = false;
 					importCertsAndReconnect(connectStatus, monitor);
 					return;
 				}
@@ -851,6 +861,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
 					if (!connectStatus.isConnected() && connectStatus.isSLLProblem())
 					{
+						_isConnecting = false;
 						importCertsAndReconnect(connectStatus, monitor);
 						return;
 					}
@@ -871,8 +882,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_SSL);
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
-				{
+				{			
 					internalDisconnect(monitor);
+					_isConnecting = false;
 					throw new InterruptedException();
 				}
 			}
@@ -886,6 +898,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
 				{
 					internalDisconnect(monitor);
+					_isConnecting = false;
 					throw new InterruptedException();
 				}
 			}
@@ -972,12 +985,12 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 
 					int keepaliveResponseTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
 					if (keepaliveResponseTimeout == 0){ // use the default
-						keepaliveResponseTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
+						keepaliveResponseTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
 					}
 
 					int socketTimeout =  store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
 					if (socketTimeout == 0){ // use the default
-						socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
+						socketTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
 					}
 
 					// these preferences are only for the client
@@ -1021,6 +1034,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						{
 							if (provider.importCertificates(certs, getHostName()))
 							{
+								_isConnecting = false;
 								internalConnect(monitor);
 								return;
 							}
@@ -1048,6 +1062,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				}
 				else if (launchMsg != null && launchMsg.indexOf(IDataStoreConstants.AUTHENTICATION_FAILED) != -1)
 				{
+					_isConnecting = false;
 					if (launchFailed)
 				    {
 				        clearPassword(true, true);
@@ -1085,6 +1100,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						throw connectException;
 					}
 
+					
 					// Try to connect again.  This is a recursive call, but will only
 					// call if the user presses OK on the password prompt dialog, otherwise
 					// it will continue and return
@@ -1096,6 +1112,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				// If password has expired and must be changed
 				else if (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
 				{
+					_isConnecting = false;
 					SystemSignonInformation oldCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
 					SystemSignonInformation newCredentials = null;
 					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
@@ -1117,7 +1134,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						launchMsg = launchStatus.getMessage();
 					}
 					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
-					{
+					{						
 						internalConnect(monitor);
 						return;
 					}
@@ -1223,6 +1240,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						}
 					}
 				});
+				
+				_isConnecting = false;
 
 				// Check if the user cancelled the prompt
 				if (connectException instanceof OperationCanceledException)
@@ -1230,6 +1249,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					throw connectException;
 				}
 
+				
 				// Try to connect again.  This is a recursive call, but will only
 				// call if the user presses OK on the password prompt dialog, otherwise
 				// it will continue and return
@@ -1239,8 +1259,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				return;
 			}
 
+			_isConnecting = false;
 			throw new SystemMessageException(msg);
 		}
+		_isConnecting = false;
 	}
 
 	protected boolean isPortOutOfRange(String message)

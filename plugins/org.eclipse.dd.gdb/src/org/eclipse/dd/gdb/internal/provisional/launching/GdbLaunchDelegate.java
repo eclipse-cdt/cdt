@@ -198,9 +198,6 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		return -1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
     public boolean preLaunchCheck( ILaunchConfiguration config, String mode, IProgressMonitor monitor ) throws CoreException {
 		// no pre launch check for core file

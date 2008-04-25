@@ -18,23 +18,31 @@ import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 /**
  * A RemoteObjectId uniquely identifies an object in the RSE Tree, and is valid
  * as long as its parent subsystem exists.
- * 
+ *
  * It holds a Subsystem instance, and an absolute name. This class is meant as a
  * short-lived object for using in local comparisons only. Since it is only
  * valid as long as its parent subsystem exists, RemoteObjectId's cannot be
  * usefully persisted.
- * 
- * This class is immutable and therefore thread-safe.
  *
+ * This class is immutable and therefore thread-safe.
+ * 
  * TODO It is unfortunate that we need to access an ISystemDragDropAdapter just
  * to get the ISubSystem. A lower-level object identifier should be available,
  * but making that happen would break almost all clients since their adapter
  * factories are not prepared for it.
+ *
+ * TODO This class would make sense to eventually promote to API. But currently,
+ * it isn't used anywhere and is therefore dead code. But it is kept here in
+ * order to be convey the original idea and have it available when needed.
  * 
- * TODO This class is currently nowhere used and is therefore dead code. But it
- * is kept here in order to be convey the original idea and have it available
- * when needed.
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will work or
+ * that it will remain the same. Please do not use this API without consulting
+ * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
+ * team.
+ * </p>
+ *
  * @since org.eclipse.rse.core 3.0
  */
 public final class RemoteObjectId {

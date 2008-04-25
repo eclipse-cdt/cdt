@@ -1,25 +1,26 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
- * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files 
+ * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
- * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared 
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Yu-Fen Kuo       (MontaVista) - Adapted from SystemCommandAction
+ * Martin Oberhuber (Wind River) - [149285] [ssh] multiple prompts and errors in case of incorrect username
  ********************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui.actions;
@@ -28,6 +29,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -44,6 +46,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.custom.CTabItem;
@@ -52,7 +55,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * action to launch a terminal from either the terminal subsystem or selected
  * directory
- * 
+ *
  */
 public class LaunchTerminalAction extends SystemBaseAction {
 
@@ -66,7 +69,7 @@ public class LaunchTerminalAction extends SystemBaseAction {
 
     /**
      * Constructor for LaunchTerminalAction
-     * 
+     *
      * @param parent
      * @param subSystem
      *                the terminal subsystem to use if launching a terminal
@@ -80,7 +83,7 @@ public class LaunchTerminalAction extends SystemBaseAction {
 
     /**
      * Constructor for LaunchTerminalAction
-     * 
+     *
      * @param title
      *                title of the action
      * @param tooltip
@@ -99,7 +102,7 @@ public class LaunchTerminalAction extends SystemBaseAction {
 
     /**
      * Constructor for LaunchTerminalAction
-     * 
+     *
      * @param title
      *                title of the action
      * @param tooltip
@@ -127,7 +130,7 @@ public class LaunchTerminalAction extends SystemBaseAction {
 
     /**
      * settor for the terminal subsystem
-     * 
+     *
      * @param subSystem
      *                terminal subsystem
      */
@@ -137,7 +140,7 @@ public class LaunchTerminalAction extends SystemBaseAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.rse.ui.actions.SystemBaseAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
      */
     public boolean updateSelection(IStructuredSelection selection) {
@@ -212,7 +215,7 @@ public class LaunchTerminalAction extends SystemBaseAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.rse.ui.actions.SystemBaseAction#run()
      */
     public void run() {
@@ -237,9 +240,11 @@ public class LaunchTerminalAction extends SystemBaseAction {
             if (!terminalSubSystem.isConnected()) {
                 try {
                     terminalSubSystem.connect(new NullProgressMonitor(), false);
-
+                } catch (OperationCanceledException e) {
+					// user canceled, return silently
+					return;
                 } catch (Exception e) {
-                    Activator.logError(e.getLocalizedMessage(), e);
+                    SystemBasePlugin.logError(e.getLocalizedMessage(), e);
                 }
             }
             if (terminalSubSystem.isConnected()) {

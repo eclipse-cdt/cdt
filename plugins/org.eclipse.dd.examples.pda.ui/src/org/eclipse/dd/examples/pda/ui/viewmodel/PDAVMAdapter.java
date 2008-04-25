@@ -12,6 +12,7 @@ package org.eclipse.dd.examples.pda.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMProvider;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMAdapter;
@@ -44,7 +45,9 @@ public class PDAVMAdapter extends AbstractDMVMAdapter
             return new VariableVMProvider(this, context, getSession());
         } else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {
             return new ExpressionVMProvider(this, context, getSession());
-        } 
+        } else if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
+        	return new RegisterVMProvider(this, context, getSession());
+        }
         return null;
     }    
 }

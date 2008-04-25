@@ -24,6 +24,7 @@ import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.service.PDABreakpoints;
 import org.eclipse.dd.examples.pda.service.PDACommandControl;
 import org.eclipse.dd.examples.pda.service.PDAExpressions;
+import org.eclipse.dd.examples.pda.service.PDARegisters;
 import org.eclipse.dd.examples.pda.service.PDARunControl;
 import org.eclipse.dd.examples.pda.service.PDAStack;
 
@@ -61,7 +62,13 @@ public class PDAServicesShutdownSequence extends Sequence {
             public void execute(RequestMonitor requestMonitor) {
                 shutdownService(PDAExpressions.class, requestMonitor);
             }
-        }, 
+        },
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(PDARegisters.class, requestMonitor);
+            }
+        },
         new Step() {
             @Override
             public void execute(RequestMonitor requestMonitor) {

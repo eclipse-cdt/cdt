@@ -19,6 +19,7 @@ import org.eclipse.dd.examples.pda.service.PDABreakpointAttributeTranslator;
 import org.eclipse.dd.examples.pda.service.PDABreakpoints;
 import org.eclipse.dd.examples.pda.service.PDACommandControl;
 import org.eclipse.dd.examples.pda.service.PDAExpressions;
+import org.eclipse.dd.examples.pda.service.PDARegisters;
 import org.eclipse.dd.examples.pda.service.PDARunControl;
 import org.eclipse.dd.examples.pda.service.PDAStack;
 
@@ -94,6 +95,13 @@ public class PDAServicesInitSequence extends Sequence {
             public void execute(RequestMonitor requestMonitor) {
                 // Start the service to track expressions.
                 new PDAExpressions(fSession).initialize(requestMonitor);
+            }
+        },
+        new Step() { 
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                // Start the service to track expressions.
+                new PDARegisters(fSession).initialize(requestMonitor);
             }
         },
         new Step() { 

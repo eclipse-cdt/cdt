@@ -699,6 +699,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  			}
  			else {
  				IScope scope = binding.getScope();
+ 	 			if (scope instanceof ICPPTemplateScope 
+ 	 					&& binding instanceof ICPPTemplateParameter == false
+ 	 					&& scope instanceof IBinding == false  // PDOMCPPClassTemplate, PDOMCPPFunctionTemplate
+ 	 					) {
+ 	 				scope = scope.getParent();
+ 	 			}
+
  				if (binding instanceof IIndexBinding) {
  					IIndexBinding ib= (IIndexBinding) binding;
  					// don't adapt file local bindings from other fragments to this one.
@@ -714,13 +721,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  					return null;
  				}
  				
- 				if (scope instanceof ICPPTemplateScope && !(binding instanceof ICPPTemplateParameter)) {
- 					scope = scope.getParent();
- 					if (scope == null) {
- 						return this;
- 					}
- 				}
-
  				if (scope instanceof IIndexScope) {
  					if (scope instanceof CompositeScope) { // we special case for performance
  						return adaptOrAddBinding(add, ((CompositeScope) scope).getRawScopeBinding());
@@ -745,16 +745,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  				if (scopeNode instanceof IASTTranslationUnit) {
  					return this;
  				} 
- 				if (scope instanceof ICPPClassScope) {
- 					scopeBinding = ((ICPPClassScope)scope).getClassType();
- 				} else if (scope instanceof ICPPInternalUnknownScope) {
- 					scopeBinding = ((ICPPInternalUnknownScope) scope).getScopeBinding();
- 				} else {
- 					IName scopeName = scope.getScopeName();
- 					if (scopeName instanceof IASTName) {
- 						scopeBinding = ((IASTName) scopeName).resolveBinding();
- 					}
- 				}
+ 				scopeBinding= getBindingForASTScope(scope);
  			}
  			assert scopeBinding != binding;
  			if (scopeBinding != null && scopeBinding != binding) {
@@ -765,6 +756,20 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  		}
  		return null;
  	}
+
+	private IBinding getBindingForASTScope(IScope scope) throws DOMException {
+		if (scope instanceof ICPPClassScope) {
+			return ((ICPPClassScope)scope).getClassType();
+		} 
+		if (scope instanceof ICPPInternalUnknownScope) {
+			return ((ICPPInternalUnknownScope) scope).getScopeBinding();
+		} 
+		IName scopeName = scope.getScopeName();
+		if (scopeName instanceof IASTName) {
+			return ((IASTName) scopeName).resolveBinding();
+		}
+		return null;
+	}
 
 	private PDOMBinding adaptOrAddBinding(boolean add, IBinding binding) throws CoreException {
 		if (add) {

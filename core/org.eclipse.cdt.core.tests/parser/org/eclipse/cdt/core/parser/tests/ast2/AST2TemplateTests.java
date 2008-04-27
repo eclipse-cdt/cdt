@@ -2000,6 +2000,65 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( col.getName(2).resolveBinding() instanceof ICPPSpecialization );
 	}
 	
+    // template<class T>
+    // struct Closure {
+    //   Closure(T* obj, void (T::*method)()) {}
+    // };
+    //
+    // template<class T>
+    // Closure<T>* makeClosure(T* obj, void (T::*method)()) {
+    //   return new Closure<T>(obj, method);
+    // }
+    //
+    // struct A {
+    //   void m1() {}
+    //   void m2() {
+    //     makeClosure(this, &A::m1);
+    //   }
+    // };
+    public void _testBug201204() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction fn= bh.assertNonProblem("makeClosure(this", 11, ICPPFunction.class);
+    }
+
+	//    class A {};
+	//
+	//    template <class T> class C {
+	//    public:
+	//    	inline C(T& aRef) {}
+	//    	inline operator T&() {}
+	//    };
+	//
+	//    void foo(A a) {}
+	//    void bar(C<const A> ca) {}
+	//
+	//    void main2() {
+	//    	const A a= *new A();
+	//    	const C<const A> ca= *new C<const A>(*new A());
+	//
+	//    	foo(a); 
+	//    	bar(ca);
+	//    }
+	public void testBug214646() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		
+		IBinding b0= bh.assertNonProblem("foo(a)", 3);
+		IBinding b1= bh.assertNonProblem("bar(ca)", 3);
+		
+		assertInstance(b0, ICPPFunction.class);
+		assertInstance(b1, ICPPFunction.class);
+		
+		ICPPFunction f0= (ICPPFunction) b0, f1= (ICPPFunction) b1;
+		assertEquals(1, f0.getParameters().length);
+		assertEquals(1, f1.getParameters().length);
+		
+		assertInstance(f0.getParameters()[0].getType(), ICPPClassType.class);
+		assertFalse(f0 instanceof ICPPTemplateInstance);
+		assertFalse(f0 instanceof ICPPTemplateDefinition);
+		assertInstance(f1.getParameters()[0].getType(), ICPPClassType.class);
+		assertInstance(f1.getParameters()[0].getType(), ICPPTemplateInstance.class);
+	}
+	
 	// // Brian W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate
@@ -2180,7 +2239,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		}
 	}
 	
-	// template<typename _Tp>
+    // template<typename _Tp>
 	// class A {
 	// public:
 	//   typedef _Tp a;
@@ -2207,44 +2266,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 				assertEquals("int", ASTTypeUtil.getType(type));
 			}
 		}
-	}
-	
-	//    class A {};
-	//
-	//    template <class T> class C {
-	//    public:
-	//    	inline C(T& aRef) {}
-	//    	inline operator T&() {}
-	//    };
-	//
-	//    void foo(A a) {}
-	//    void bar(C<const A> ca) {}
-	//
-	//    void main2() {
-	//    	const A a= *new A();
-	//    	const C<const A> ca= *new C<const A>(*new A());
-	//
-	//    	foo(a); 
-	//    	bar(ca);
-	//    }
-	public void testBug214646() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
-		
-		IBinding b0= bh.assertNonProblem("foo(a)", 3);
-		IBinding b1= bh.assertNonProblem("bar(ca)", 3);
-		
-		assertInstance(b0, ICPPFunction.class);
-		assertInstance(b1, ICPPFunction.class);
-		
-		ICPPFunction f0= (ICPPFunction) b0, f1= (ICPPFunction) b1;
-		assertEquals(1, f0.getParameters().length);
-		assertEquals(1, f1.getParameters().length);
-		
-		assertInstance(f0.getParameters()[0].getType(), ICPPClassType.class);
-		assertFalse(f0 instanceof ICPPTemplateInstance);
-		assertFalse(f0 instanceof ICPPTemplateDefinition);
-		assertInstance(f1.getParameters()[0].getType(), ICPPClassType.class);
-		assertInstance(f1.getParameters()[0].getType(), ICPPTemplateInstance.class);
 	}
 	
 	//    class A {};

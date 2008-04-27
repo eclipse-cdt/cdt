@@ -2058,7 +2058,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(f1.getParameters()[0].getType(), ICPPClassType.class);
 		assertInstance(f1.getParameters()[0].getType(), ICPPTemplateInstance.class);
 	}
-	
+
+	// namespace ns {
+	//
+	// template<class _M1, class _M2>
+	// struct pair {
+	//   pair(const _M1& _a, const _M2& _b) {}
+	// };
+    //
+	// template<class _T1, class _T2>
+	// pair<_T1, _T2> make_pair(_T1 _x, _T2 _y) { return pair<_T1, _T2>(_x, _y); }
+	//
+	// }
+	//
+	// using ns::pair;
+	// using ns::make_pair;
+	// pair<int, int> p = make_pair(1, 2);
+    public void _testFunctionTemplateWithUsing() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction fn= bh.assertNonProblem("make_pair(1", 9, ICPPFunction.class);
+    }
+
 	// // Brian W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate
@@ -2239,6 +2259,37 @@ public class AST2TemplateTests extends AST2BaseTest {
 		}
 	}
 	
+	// template<typename _Iterator>
+	// struct IterTraits {
+	//   typedef typename _Iterator::iter_reference traits_reference;
+	// };
+	//
+	// template<typename _Tp>
+	// struct IterTraits<_Tp*> {
+	//   typedef _Tp& traits_reference;
+	// };
+	//
+	// template<typename _Pointer>
+	// struct Iter {
+	//   typedef typename IterTraits<_Pointer>::traits_reference iter_reference;
+	// };
+    //
+    // void main(Iter<int*>::iter_reference r);
+    public void _testSpecializationSelection() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		for (IASTName name : col.nameList) {
+			if ("r".equals(String.valueOf(name))) {
+				IBinding b0 = name.resolveBinding();
+				IType type = ((ICPPVariable) b0).getType();
+				type = getUltimateType(type, false);
+				assertInstance(type, IBasicType.class);
+				assertEquals("int", ASTTypeUtil.getType(type));
+			}
+		}
+    }
+
     // template<typename _Tp>
 	// class A {
 	// public:

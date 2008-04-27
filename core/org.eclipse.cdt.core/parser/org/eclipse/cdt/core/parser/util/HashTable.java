@@ -16,8 +16,7 @@ import java.util.Comparator;
 /**
  * @author ddaoust
  */
-public class HashTable implements Cloneable{
-
+public class HashTable implements Cloneable {
 	protected static final int minHashSize = 2;
 	protected int currEntry = -1;
 	
@@ -40,8 +39,7 @@ public class HashTable implements Cloneable{
 		if (size > minHashSize) {
 			hashTable = new int[size * 2];
 			nextTable = new int[size];
-		}
-		else {
+		} else {
 			hashTable = null;
 			nextTable = null;
 		}
@@ -81,8 +79,8 @@ public class HashTable implements Cloneable{
 			return;
 		
 		for (int i = 0; i < capacity(); i++) {
-	        hashTable[2*i] = 0;
-	        hashTable[2*i+1] = 0;
+	        hashTable[2 * i] = 0;
+	        hashTable[2 * i + 1] = 0;
 	        nextTable[i] = 0;
         }
 	}
@@ -92,8 +90,8 @@ public class HashTable implements Cloneable{
 		
 		// clear the table (don't call clear() or else the subclasses stuff will be cleared too)
 		for (int i = 0; i < capacity(); i++) {
-            hashTable[2*i] = 0;
-            hashTable[2*i+1] = 0;
+            hashTable[2 * i] = 0;
+            hashTable[2 * i + 1] = 0;
             nextTable[i] = 0;
 	    }
 		// Need to rehash everything
@@ -103,7 +101,6 @@ public class HashTable implements Cloneable{
 	}
 	protected void resize(int size) {
 		if (size > minHashSize) {
-		
 			hashTable = new int[size * 2];
 			nextTable = new int[size];
 			

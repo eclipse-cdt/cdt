@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author aniefer
  */
-public abstract class ObjectTable<T> extends HashTable implements Cloneable{  
+public abstract class ObjectTable<T> extends HashTable {  
 	protected T[] keyTable;
 
 	@SuppressWarnings("unchecked")
@@ -47,14 +47,14 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 	public List<T> toList(){
 	    List<T> list = new ArrayList<T>(size());
 	    int size = size();
-	    for( int i = 0; i < size; i++ ){
-	        list.add( keyAt( i ) );
+	    for (int i = 0; i < size; i++){
+	        list.add(keyAt(i));
 	    }
 	    return list;
 	}
 
-	public T keyAt(int i){
-	    if(i<0 || i>currEntry)
+	public T keyAt(int i) {
+	    if (i < 0 || i > currEntry)
 	        return null;
 	    
 	    return keyTable[i];
@@ -63,12 +63,12 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 	@Override
 	public void clear(){
 		super.clear();
-	    for( int i = 0; i < keyTable.length; i++ )
+	    for (int i = 0; i < keyTable.length; i++)
 	        keyTable[i] = null;
 	}
 	
 	@Override
-	protected final int hash( int pos ){
+	protected final int hash(int pos){
 	    return hash(keyTable[pos]);
 	}
 	
@@ -90,7 +90,7 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 		if (pos != -1)
 			return pos;
 		
-		if ( (currEntry + 1) >= capacity()) {
+		if ((currEntry + 1) >= capacity()) {
 			resize();
 		}
 		currEntry++;
@@ -101,7 +101,6 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 	
 	protected void removeEntry(int i) {	
 		// Remove the entry from the keyTable, shifting everything over if necessary
-
 		int hash = hash(keyTable[i]);
 		if (i < currEntry)
 			System.arraycopy(keyTable, i + 1, keyTable, i, currEntry - i);			
@@ -110,11 +109,9 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 		
 		// Make sure you remove the value before calling super where currEntry will change
 		removeEntry(i, hash);
-
 	}
 	
-	protected final int lookup(Object buffer ){
-		
+	protected final int lookup(Object buffer){
 		if (hashTable != null) {
 			int hash = hash(buffer);
 			
@@ -122,18 +119,19 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 				return -1;
 			
 			int i = hashTable[hash] - 1;
-			if (buffer.equals( keyTable[i] ) )
+			if (buffer.equals(keyTable[i]))
 				return i;
 			
 			// Follow the next chain
-			for (i = nextTable[i] - 1; i >= 0 && nextTable[i] != i + 1; i = nextTable[i] - 1)
-				if ( buffer.equals( keyTable[i] ))
+			for (i = nextTable[i] - 1; i >= 0 && nextTable[i] != i + 1; i = nextTable[i] - 1) {
+				if (buffer.equals(keyTable[i]))
 					return i;
+			}
 				
 			return -1;
 		}
 		for (int i = 0; i <= currEntry; i++) {
-			if (buffer.equals( keyTable[i] ) )
+			if (buffer.equals(keyTable[i]))
 				return i;
 		}
 		return -1;		
@@ -143,16 +141,16 @@ public abstract class ObjectTable<T> extends HashTable implements Cloneable{
 	    return lookup(key) != -1; 
 	}
 	
-	public Object [] keyArray(){
-	    Object [] keys = new Object[ size() ];
-	    System.arraycopy( keyTable, 0, keys, 0, keys.length );
+	public Object[] keyArray(){
+	    Object[] keys = new Object[size()];
+	    System.arraycopy(keyTable, 0, keys, 0, keys.length);
 	    return keys;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <X> X[] keyArray(Class<X> c) {
-		X[] keys = (X[]) Array.newInstance( c, size() );
-        System.arraycopy( keyTable, 0, keys, 0, keys.length );
+		X[] keys = (X[]) Array.newInstance(c, size());
+        System.arraycopy(keyTable, 0, keys, 0, keys.length);
         return keys;
 	}
 }

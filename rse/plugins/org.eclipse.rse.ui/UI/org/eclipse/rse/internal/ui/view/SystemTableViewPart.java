@@ -1676,7 +1676,7 @@ public class SystemTableViewPart extends ViewPart
 		// right now assuming only one resource
 		String oldName = (oldNames == null) ? null : oldNames[0];
 		boolean referToSameObject = false;
-		if (oldName != null){
+		if (input != null && oldName != null){
 			referToSameObject = SystemRegistry.isSameObjectByAbsoluteName(input, null, child, oldName);
 		}
 

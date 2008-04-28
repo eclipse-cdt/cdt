@@ -893,6 +893,8 @@ public class SystemRegistry implements ISystemRegistry
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static ISystemDragDropAdapter getSystemDragDropAdapter(Object element) {
+		if (element == null)
+			return null;
 		Object adapter = null;
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;

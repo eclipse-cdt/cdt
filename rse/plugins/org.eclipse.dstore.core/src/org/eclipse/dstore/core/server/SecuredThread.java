@@ -11,6 +11,7 @@
  * 
  * Contributors:
  *   Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ *   Noriaki Takatsu (IBM)  - [228335] [dstore] [dstore][multithread] start() in SecuredThread class
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -145,11 +146,15 @@ public class SecuredThread extends Thread
 	 {
 	  try
 	  {
+		  /*
+		   * As per bug 228335, this is commented out.
+		   * 
 	   ISystemService systemService = SystemServiceManager.getInstance().getSystemService();
 	   if (systemService != null){
 	    systemService.executeThread(this);
 	   }
 	   else
+		   */
 	   {
 	    super.start();
 	   }

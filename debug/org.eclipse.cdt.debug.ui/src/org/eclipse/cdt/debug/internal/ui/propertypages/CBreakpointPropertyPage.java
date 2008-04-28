@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.ui.propertypages;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointUIContributionFactory;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution;
+import org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -42,11 +44,7 @@ import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 
@@ -162,65 +160,25 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		}
 	}
 
-	class LabelFieldEditor extends FieldEditor {
-
-		private Label fTitleLabel;
-
-		private Label fValueLabel;
-
-		private Composite fBasicComposite;
-
+	class LabelFieldEditor extends ReadOnlyFieldEditor {
 		private String fValue;
 
-		private String fTitle;
-
 		public LabelFieldEditor( Composite parent, String title, String value ) {
+			super(title, title, parent);
 			fValue = value;
-			fTitle = title;
-			this.createControl( parent );
 		}
 
-		protected void adjustForNumColumns( int numColumns ) {
-			((GridData)fBasicComposite.getLayoutData()).horizontalSpan = numColumns;
-		}
-
-		protected void doFillIntoGrid( Composite parent, int numColumns ) {
-			fBasicComposite = new Composite( parent, SWT.NULL );
-			GridLayout layout = new GridLayout();
-			layout.marginWidth = 0;
-			layout.marginHeight = 0;
-			layout.numColumns = 2;
-			fBasicComposite.setLayout( layout );
-			GridData data = new GridData();
-			data.verticalAlignment = GridData.FILL;
-			data.horizontalAlignment = GridData.FILL;
-			fBasicComposite.setLayoutData( data );
-			fTitleLabel = new Label( fBasicComposite, SWT.NONE );
-			fTitleLabel.setText( fTitle );
-			GridData gd = new GridData();
-			gd.verticalAlignment = SWT.TOP;
-			fTitleLabel.setLayoutData( gd );
-			fValueLabel = new Label( fBasicComposite, SWT.WRAP );
-			fValueLabel.setText( fValue );
-			gd = new GridData();
-			fValueLabel.setLayoutData( gd );
-		}
-
-		public int getNumberOfControls() {
-			return 1;
-		}
-
-		/**
-		 * The label field editor is only used to present a text label on a preference page.
-		 */
+		@Override
 		protected void doLoad() {
+			if (textField != null) {
+				textField.setText(fValue);
+			}
 		}
-
+		@Override
 		protected void doLoadDefault() {
+			// nothing
 		}
 
-		protected void doStore() {
-		}
 	}
 
 	private BooleanFieldEditor fEnabled;
@@ -521,15 +479,12 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 					.getBreakpointUIContributions(breakpoint);
 			for (ICBreakpointsUIContribution con : cons) {
 
-				FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel(), parent);
+				FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel()+":", parent);
 				if (fieldEditor != null)
 					addField(fieldEditor);
-				String value = breakpoint.getMarker().getAttribute(con.getId(), "");
-
+				Object o = breakpoint.getMarker().getAttribute(con.getId());
+				String value = o==null?"":o.toString();
 				getPreferenceStore().setValue(con.getId(), value);
-				// this is used for LabelFieldEditor - not editable value 
-				getPreferenceStore().setValue(con.getId() + ".valuelabel",
-						con.getLabelForValue(value));
 			}
 		} catch (CoreException ce) {
 			CDebugUIPlugin.log(ce);

@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
 import org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPreferenceStore;
@@ -81,10 +82,10 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 				for (ICBreakpointsUIContribution con : cons) {
 
 					if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) continue;
+					if (con.getId().equals(ICBreakpointTyped.TYPE)) continue;
 					FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel(),
 							parent);
 					getPreferenceStore().setValue(con.getId(),"");
-					getPreferenceStore().setValue(con.getId()+".valuelabel", "");
 					if (fieldEditor != null)
 						addField(fieldEditor);
 				}

@@ -171,7 +171,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private int templateCount = 0;
     private int functionBodyCount= 0;
     private int templateArgListCount= 0;
-	private int preventLogicalOperatorInTemplateID;
+	private int rejectLogicalOperatorInTemplateID;
 
     protected CPPASTTranslationUnit translationUnit;
     
@@ -290,7 +290,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		completedArg = false;
 
         		IToken mark = mark();
-
         		IASTTypeId typeId = typeId(false);
         		if (typeId == null) {
         			backup(mark);
@@ -339,12 +338,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @since 5.0
      */
     protected final ITokenDuple nameWithoutLogicalOperatorInTemplateID() throws BacktrackException, EndOfFileException {
-    	preventLogicalOperatorInTemplateID++;
+    	rejectLogicalOperatorInTemplateID++;
     	try {
     		return name();
     	}
     	finally {
-    		preventLogicalOperatorInTemplateID--;
+    		rejectLogicalOperatorInTemplateID--;
     	}
     }
     /**
@@ -431,7 +430,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     @Override
 	protected IASTExpression conditionalExpression() throws BacktrackException, EndOfFileException {
     	final IASTExpression expr= super.conditionalExpression();
-    	if (templateArgListCount > 0 && preventLogicalOperatorInTemplateID > 0) {
+    	if (templateArgListCount > 0 && rejectLogicalOperatorInTemplateID > 0) {
     		// bug 104706, don't allow usage of logical operators in template argument lists.
     		if (expr instanceof IASTConditionalExpression) {
 				final ASTNode node = (ASTNode) expr;
@@ -456,20 +455,29 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume();
             templateArgListCount++;
             try {
+        		// bug 229062: content assist after '<' needs to prefer to backtrack here
+        		if (rejectLogicalOperatorInTemplateID == 1) {
+        			final int lt1= LT(1);
+        			if (lt1 == IToken.tCOMPLETION || lt1 == IToken.tEOC) {
+        				throw backtrack;
+        			}
+        		}
+
                 List<IASTNode> list = templateArgumentList();
-                argumentList.addSegment(list);
-                switch (LT(1)) {
-                case IToken.tGT:
+                switch(LT(1)) {
+                case IToken.tGT: 
+                	final int lt2= LT(2);
+                	if (lt2 == IToken.tINTEGER || lt2 == IToken.tFLOATINGPT) {
+                		throw backtrack;
+                	}
+                	break;
                 case IToken.tEOC:
-                    if( LT(2) == IToken.tINTEGER || LT(2) == IToken.tFLOATINGPT) {
-                        backup( secondMark );
-                        return last;
-                    }
-                    last = consume();
-                    break;
+                	break;
                 default:
-                    throw backtrack;
+                	throw backtrack;
                 }
+                argumentList.addSegment(list);
+                last = consume();
             } catch (BacktrackException bt) {
                 argumentList.addSegment(null);
                 backup(secondMark);

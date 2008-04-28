@@ -867,6 +867,36 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
+	// void test() {
+	// int local;
+	// for(loc/*cursor*/
+	public void testForStatement1() throws Exception {
+		final String[] expected= {
+				"local"
+		};
+		assertCompletionResults(expected);
+	}
+
+	// void test() {
+	// int local;
+	// for(int i=0;i<loc/*cursor*/
+	public void testForStatement2() throws Exception {
+		final String[] expected= {
+				"local"
+		};
+		assertCompletionResults(expected);
+	}
+
+	// void test() {
+	// int local;
+	// for(int i=0;i<local;loc/*cursor*/
+	public void testForStatement3() throws Exception {
+		final String[] expected= {
+				"local"
+		};
+		assertCompletionResults(expected);
+	}
+
 	//	#define INIT_PTR(PtrName)   (PtrName) = 0;
 	//	struct CCApp {
 	//	   int pIShell;

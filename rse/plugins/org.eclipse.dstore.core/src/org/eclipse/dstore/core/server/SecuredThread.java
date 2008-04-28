@@ -144,17 +144,18 @@ public class SecuredThread extends Thread
 	  */
 	 public void start()
 	 {
-	  try
-	  {
 		  /*
 		   * As per bug 228335, this is commented out.
 		   * 
+	  try
+	  {
+
 	   ISystemService systemService = SystemServiceManager.getInstance().getSystemService();
 	   if (systemService != null){
 	    systemService.executeThread(this);
 	   }
 	   else
-		   */
+		   
 	   {
 	    super.start();
 	   }
@@ -163,6 +164,8 @@ public class SecuredThread extends Thread
 	  {
 	   e.printStackTrace(new PrintWriter(System.err));
 	  }
+	  */
+		super.start();
 	 }
 }
 

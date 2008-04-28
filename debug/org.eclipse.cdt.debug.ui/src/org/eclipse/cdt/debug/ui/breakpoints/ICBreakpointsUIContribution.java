@@ -42,6 +42,11 @@ public interface ICBreakpointsUIContribution {
 	public FieldEditor getFieldEditor(String name, String labelText, Composite parent);
 	
 	/**
+	 * Get raw field editor class name
+	 * @return class name
+	 */
+	public String getFieldEditorClassName();
+	/**
 	 * Return list of possible values that attributes can take, of null of no restrictions
 	 * @return
 	 */

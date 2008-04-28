@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.preferences.LabelFieldEditor;
+import org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.widgets.Composite;
 
@@ -51,13 +51,15 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	public FieldEditor getFieldEditor(String name, String labelText, Composite parent) {
 		String className = fieldEditorClassName;
 		if (fieldEditorClassName == null) {
-			className = LabelFieldEditor.class.getName();
-			name = name+".valuelabel";
+			className = ReadOnlyFieldEditor.class.getName();
 		}
 		try {
 			Class cclass = Class.forName(className);
 			Constructor constructor = cclass.getConstructor(fieldSignature);
 			FieldEditor editor = (FieldEditor) constructor.newInstance(name, labelText, parent);
+			if (editor instanceof ICBreakpointsUIContributionUser) {
+				((ICBreakpointsUIContributionUser)editor).setContribution(this);
+			}
 			return editor;
 		} catch (Exception e) {
 			// cannot happened, would have happened when loading extension
@@ -146,5 +148,9 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	@Override
 	public String toString() {
 		return attId + " " + attLabel;
+	}
+
+	public String getFieldEditorClassName() {
+		return fieldEditorClassName;
 	}
 }

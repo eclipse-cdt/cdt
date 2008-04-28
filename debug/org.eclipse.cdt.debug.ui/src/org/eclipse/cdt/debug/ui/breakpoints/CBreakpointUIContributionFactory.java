@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -41,39 +43,51 @@ public class CBreakpointUIContributionFactory {
 	 * 
 	 * @param breakpoint
 	 * @return non-null array of ICBreakpointsUIContribution 
+	 * @throws CoreException 
 	 * @throws CoreException if cannot get marker attributes from berakpoint
 	 */
-	public ICBreakpointsUIContribution[] getBreakpointUIContributions(IBreakpoint breakpoint)
-			throws CoreException {
+
+	public ICBreakpointsUIContribution[] getBreakpointUIContributions(IBreakpoint breakpoint) throws CoreException {
 		String debugModelId = breakpoint.getModelIdentifier();
-		String markerType = breakpoint.getMarker().getType();
-		Map attributes = breakpoint.getMarker().getAttributes();
+		IMarker bmarker = breakpoint.getMarker();
+		Map attributes = bmarker.getAttributes();
+		String markerType = bmarker.getType();
 		return getBreakpointUIContributions(debugModelId, markerType, attributes);
 	}
 
-	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String debugModelId,
-			String breakpintMarkerType, Map attributes) {
+	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String debugModelId, String markerType,
+			Map attributes) {
 		ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
 		for (ICBreakpointsUIContribution con : contributions) {
-			if (debugModelId == null || con.getDebugModelId() == null || debugModelId != null
-					&& debugModelId.equals(con.getDebugModelId())) {
-				if (breakpintMarkerType != null && breakpintMarkerType.equals(con.getMarkerType())) { // TODO: handle marker inheritance?
-
-					if (attributes == null || con.isApplicable(attributes)) {
-						list.add(con);
+			try {
+				if (debugModelId == null || con.getDebugModelId() == null || debugModelId.equals(con.getDebugModelId())) {
+					String contributedMarkerType = con.getMarkerType();
+					if (isMarkerSubtypeOf(markerType, contributedMarkerType)) {
+						if (attributes == null || con.isApplicable(attributes)) {
+							list.add(con);
+						}
 					}
-
 				}
+			} catch (Exception e) {
+				CDebugUIPlugin.log(e);
 			}
 
 		}
 		return list.toArray(new ICBreakpointsUIContribution[list.size()]);
 	}
 
+	public boolean isMarkerSubtypeOf(String currentType, String type) throws CoreException {
+		return getWorkspace().getMarkerManager().isSubtype(currentType, type);
+	}
+
+	private Workspace getWorkspace() {
+		return (Workspace) CDebugUIPlugin.getWorkspace();
+	}
+
 	private void loadSubtypeContributions() {
 
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
-				CDebugUIPlugin.getUniqueIdentifier(), EXTENSION_POINT_NAME);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.getUniqueIdentifier(),
+				EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		IConfigurationElement[] elements = ep.getConfigurationElements();
@@ -99,8 +113,7 @@ public class CBreakpointUIContributionFactory {
 		}
 	}
 
-	private boolean processAttribute(IConfigurationElement attrElement,
-			DefaultCBreakpointUIContribution adapter) {
+	private boolean processAttribute(IConfigurationElement attrElement, DefaultCBreakpointUIContribution adapter) {
 		String attrId = getRequired(attrElement, "name");
 		String attrLabel = getRequired(attrElement, "label");
 		String className = attrElement.getAttribute("fieldEditor");
@@ -134,8 +147,7 @@ public class CBreakpointUIContributionFactory {
 		return true;
 	}
 
-	private void processValue(IConfigurationElement valueElement,
-			DefaultCBreakpointUIContribution adapter) {
+	private void processValue(IConfigurationElement valueElement, DefaultCBreakpointUIContribution adapter) {
 		String valueId = getRequired(valueElement, "value");
 		String valueLabel = getRequired(valueElement, "label");
 		if (valueId == null)

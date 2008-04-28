@@ -30,6 +30,7 @@
  * David McKnight   (IBM)        - [187711] Link with Editor handled by extension
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -82,8 +83,10 @@ import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.RSEInitJob;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCascadingPreferencesAction;
 import org.eclipse.rse.internal.ui.actions.SystemCollapseAllAction;
+import org.eclipse.rse.internal.ui.actions.SystemImportConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceQualifyConnectionNamesAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceRestoreStateAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceShowFilterPoolsAction;
@@ -649,8 +652,12 @@ public class SystemViewPart
 			boolean fromPopup = false;
 			boolean wantIcon = false;
 			SystemNewConnectionAction newConnectionAction = new SystemNewConnectionAction(shell, fromPopup, wantIcon, sp);
+			SystemImportConnectionAction importConnectionAction = new SystemImportConnectionAction();
+			importConnectionAction.setShell(shell);
+			importConnectionAction.setText(SystemResources.RESID_IMPORT_CONNECTION_LABEL_LONG);
 			SystemWorkWithProfilesAction wwProfilesAction = new SystemWorkWithProfilesAction(shell);
 			menuMgr.add(newConnectionAction);
+			menuMgr.add(importConnectionAction);
 			menuMgr.add(new Separator());
 			menuMgr.add(wwProfilesAction);
 			menuMgr.add(new Separator());

@@ -52,6 +52,7 @@
  * David McKnight   (IBM)        - [224380] system view should only fire property sheet update event when in focus
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David Dykstal (IBM) - [225911] Exception received after deleting a profile containing a connection
+ * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -135,6 +136,7 @@ import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonSelectAllAction;
 import org.eclipse.rse.internal.ui.actions.SystemExpandAction;
+import org.eclipse.rse.internal.ui.actions.SystemImportConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInMonitorAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInTableAction;
@@ -228,6 +230,7 @@ public class SystemView extends SafeTreeViewer
 	// protected actions initialized on demand:
 	// should be accessed by getters only
 	private SystemNewConnectionAction _newConnectionAction;
+	private SystemImportConnectionAction _importConnectionAction;
 	private SystemRefreshAction _refreshAction;
 	private PropertyDialogAction _propertyDialogAction;
 	private SystemCollapseAction _collapseAction; // defect 41203
@@ -667,6 +670,19 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
+	 * Rather than pre-defining this common action we wait until it is first needed,
+	 * for performance reasons.
+	 */
+	private IAction getImportConnectionAction() {
+		if (_importConnectionAction == null) {
+			_importConnectionAction = new SystemImportConnectionAction(); // true=>from popup menu
+			_importConnectionAction.setShell(getShell());
+			_importConnectionAction.setText(SystemResources.RESID_IMPORT_CONNECTION_LABEL_LONG);
+		}
+		return _importConnectionAction;
+	}
+
+	/**
 	 * Return the refresh action
 	 */
 	public IAction getRefreshAction() {
@@ -826,6 +842,7 @@ public class SystemView extends SafeTreeViewer
 		if (selectionCount == 0) // nothing selected
 		{
 			menu.add(getNewConnectionAction());
+			menu.add(getImportConnectionAction());
 			menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
 		} else {
 			if (selectionCount > 1) {

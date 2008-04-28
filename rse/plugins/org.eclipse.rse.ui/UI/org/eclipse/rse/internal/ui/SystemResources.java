@@ -20,6 +20,7 @@
  * Rupen Mardirossian (IBM)      - [210682] Added BUTTON_OVERWRITE_ALL & and tooltip, also added some verbiage for new SystemCopyDialog.	
  * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
+ * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -1000,14 +1001,38 @@ public class SystemResources extends NLS
 	public static String RESID_HOST_ENCODING_OTHER_TOOLTIP;
 	public static String RESID_HOST_ENCODING_ENTER_TOOLTIP;
 
-	public static String RESID_IMPORT_CONNECTION_ACTION_INVALID_FORMAT;
-
 	public static String RESID_IMPORT_CONNECTION_ACTION_LABEL;
 
-	public static String RESID_IMPORT_CONNECTION_ACTION_READER_MISSING;
-
 	public static String RESID_IMPORT_CONNECTION_ACTION_TOOLTIP;
+
+	public static String RESID_IMPORT_CONNECTION_LABEL_LONG;
 	
+	public static String SystemExportConnectionAction_CoreExceptionFound;
+
+	public static String SystemExportConnectionAction_Error;
+
+	public static String SystemExportConnectionAction_ExportJobName;
+
+	public static String SystemExportConnectionAction_OverwriteFileCondition;
+
+	public static String SystemExportConnectionAction_UnexpectedException;
+
+	public static String SystemExportConnectionAction_Warning;
+
+	public static String SystemExportConnectionAction_WriteProtectedFileCondition;
+
+	public static String SystemImportConnectionAction_CoreExceptionFound;
+
+	public static String SystemImportConnectionAction_Error;
+
+	public static String SystemImportConnectionAction_FileNotFoundCondition;
+
+	public static String SystemImportConnectionAction_FileNotReadableCondition;
+
+	public static String SystemImportConnectionAction_ImportJobName;
+
+	public static String SystemImportConnectionAction_UnexpectedException;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SystemResources.class);

@@ -32,6 +32,7 @@
  * Martin Oberhuber (Wind River) - [216266] Consider stateless subsystems (supportsSubSystemConnect==false)
  * David Dykstal (IBM) - [197036] minor refactoring caused by SystemRegistry fix for this bug
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -57,6 +58,8 @@ import org.eclipse.rse.internal.ui.actions.SystemClearAllPasswordsAction;
 import org.eclipse.rse.internal.ui.actions.SystemConnectAllSubSystemsAction;
 import org.eclipse.rse.internal.ui.actions.SystemCopyConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemDisconnectAllSubSystemsAction;
+import org.eclipse.rse.internal.ui.actions.SystemExportConnectionAction;
+import org.eclipse.rse.internal.ui.actions.SystemImportConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemMoveConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemMoveDownConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemMoveUpConnectionAction;
@@ -92,6 +95,8 @@ public class SystemViewConnectionAdapter
 	private SystemClearAllPasswordsAction clearPasswordAction = null;
 	private SystemCopyConnectionAction copyAction = null;
 	private SystemMoveConnectionAction moveAction = null;
+	private SystemExportConnectionAction exportAction = null; 
+	private SystemImportConnectionAction importAction = null; 
 	
 	// yantzi: artemis 6.0, add work offline support
 	private SystemWorkOfflineAction offlineAction = null;
@@ -149,6 +154,8 @@ public class SystemViewConnectionAdapter
 		menu.add(menuGroup, moveAction);
 		menu.add(menuGroup, upAction);
 		menu.add(menuGroup, downAction);
+		menu.add(menuGroup, exportAction);
+		menu.add(menuGroup, importAction);
 
 		// MJB: RE defect 40854
 		addConnectOrDisconnectAction(menu, menuGroup, selection);
@@ -203,7 +210,8 @@ public class SystemViewConnectionAdapter
 	    offlineAction = new SystemWorkOfflineAction(null);
 	    connectAction = new SystemConnectAllSubSystemsAction(null);
 	    clearPasswordAction = new SystemClearAllPasswordsAction(null);
-	    	
+	    exportAction = new SystemExportConnectionAction();
+	    importAction = new SystemImportConnectionAction();
 		actionsCreated = true;
 	}
 

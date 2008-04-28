@@ -7,6 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
+ * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  *********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -28,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -36,6 +38,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.rse.core.IRSECoreStatusCodes;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -61,6 +64,10 @@ import org.eclipse.rse.persistence.dom.RSEDOMNode;
  */
 public class RSEEnvelope {
 	
+	// IStatus is immutable so we can do this safely
+	private static IStatus INVALID_FORMAT = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, IRSECoreStatusCodes.INVALID_FORMAT, RSECoreMessages.RSEEnvelope_IncorrectFormat, null);
+	private static IStatus MODEL_NOT_EXPORTED = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, RSECoreMessages.RSEEnvelope_ModelNotExported);
+	
 	private RSEDOM dom = null;
 	
 	/**
@@ -71,28 +78,42 @@ public class RSEEnvelope {
 	
 	/**
 	 * Replaces the contents of this envelope with the contents found on the input stream.
-	 * The format of the stream is determined by the persistence provider used to write the contents fo that stream.
+	 * The format of the stream is determined by the persistence provider used to write the contents of that stream.
 	 * The stream is closed at the end of the operation.
 	 * This operation is performed in the thread of the caller.
 	 * If asynchronous operation is desired place this invocation inside a job.
 	 * @param in the input stream which is read into the envelope.
 	 * @param monitor a monitor used for tracking progress and cancelation.
 	 * If the monitor is cancelled this envelope will be empty.
-	 * @throws IOException should one occur manipulating the stream.
+	 * @throws CoreException if a problem occur reading the stream.
 	 */
-	public void get(InputStream in, IProgressMonitor monitor) throws IOException {
+	public void get(InputStream in, IProgressMonitor monitor) throws CoreException {
 		File envelopeFolder = getTemporaryFolder();
-		unzip(in, envelopeFolder);
-		String providerId = loadProviderId(envelopeFolder);
-		IRSEPersistenceManager manager = RSECorePlugin.getThePersistenceManager();
-		IRSEPersistenceProvider provider = manager.getPersistenceProvider(providerId);
-		if (provider != null) {
-			if (provider instanceof IRSEImportExportProvider) {
-				IRSEImportExportProvider ieProvider = (IRSEImportExportProvider) provider;
-				dom = ieProvider.importRSEDOM(envelopeFolder, monitor);
+		IStatus status = unzip(in, envelopeFolder);
+		if (status.isOK()) {
+			String providerId = loadProviderId(envelopeFolder);
+			IRSEPersistenceManager manager = RSECorePlugin.getThePersistenceManager();
+			IRSEPersistenceProvider provider = manager.getPersistenceProvider(providerId);
+			if (provider != null) {
+				if (provider instanceof IRSEImportExportProvider) {
+					IRSEImportExportProvider ieProvider = (IRSEImportExportProvider) provider;
+					dom = ieProvider.importRSEDOM(envelopeFolder, monitor);
+					if (dom == null) {
+						status = INVALID_FORMAT;
+					}
+				} else {
+					// invalid format due to bad persistence provider specfied
+					status = INVALID_FORMAT;
+				}
+			} else {
+				// invalid format due to provider not installed in this workbench
+				status = INVALID_FORMAT;
 			}
 		}
 		deleteFileSystemObject(envelopeFolder);
+		if (!status.isOK()) {
+			throw new CoreException(status);
+		}
 	}
 	
 	/**
@@ -122,10 +143,10 @@ public class RSEEnvelope {
 				}
 			deleteFileSystemObject(envelopeFolder);
 			} else {
-				status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, RSECoreMessages.RSEEnvelope_ModelNotExported); 
+				status = MODEL_NOT_EXPORTED;
 			}
 		} else {
-			status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, RSECoreMessages.RSEEnvelope_ExportNotSupported); 
+			status = MODEL_NOT_EXPORTED;
 		}
 		try {
 			out.close();
@@ -254,12 +275,13 @@ public class RSEEnvelope {
 	private IHost mergeHost(ISystemProfile profile, RSEDOMNode hostNode) {
 		IHost host = null;
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		String hostName = hostNode.getName();
+		String baseHostName = hostNode.getName();
+		String hostName = baseHostName;
 		if (registry.getHost(profile, hostName) != null) {
 			int n = 0;
 			while (registry.getHost(profile, hostName) != null) {
 				n++;
-				hostName = hostName + "-" + n; //$NON-NLS-1$
+				hostName = baseHostName + "-" + n; //$NON-NLS-1$
 			}
 			hostNode.setName(hostName);
 		}
@@ -316,7 +338,7 @@ public class RSEEnvelope {
 		return status;
 	}
 	
-	private String loadProviderId(File parent) {
+	private String loadProviderId(File parent) throws CoreException {
 		String providerId = null;
 		File idFile = new File(parent, "provider.id"); //$NON-NLS-1$
 		try {
@@ -324,6 +346,8 @@ public class RSEEnvelope {
 			providerId = in.readLine();
 			in.close();
 		} catch (IOException e) {
+			IStatus status = INVALID_FORMAT;
+			throw new CoreException(status);
 		}
 		return providerId;
 	}
@@ -432,11 +456,19 @@ public class RSEEnvelope {
 				}
 				entry = inZip.getNextEntry();
 			}
-			inZip.close();
 		} catch (FileNotFoundException e) {
 			status = makeStatus(e);
+		} catch (ZipException e) {
+			RSECorePlugin.getDefault().getLogger().logError(RSECoreMessages.RSEEnvelope_IncorrectFormat, e);
+			status = INVALID_FORMAT;
 		} catch (IOException e) {
 			status = makeStatus(e);
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				status = makeStatus(e);
+			}
 		}
 		return status;
 	}
@@ -460,7 +492,7 @@ public class RSEEnvelope {
 	}
 	
 	private IStatus makeStatus(Exception e) {
-		IStatus status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, "Unexpected Exception", e); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, "Unexpected exception", e); //$NON-NLS-1$
 		return status;
 	}
 

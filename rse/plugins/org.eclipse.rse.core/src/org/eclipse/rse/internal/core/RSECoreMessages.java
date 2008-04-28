@@ -13,6 +13,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
+ * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -50,6 +51,7 @@ public class RSECoreMessages extends NLS {
 	public static String PropertyFileProvider_SavingTaskName;
 	public static String PropertyFileProvider_UnexpectedException;
 	public static String RSEEnvelope_ExportNotSupported;
+	public static String RSEEnvelope_IncorrectFormat;
 	public static String RSEEnvelope_ModelNotExported;
 	public static String RSEPersistenceManager_DeleteProfileJobName;
 	public static String SaveRSEDOMJob_SavingProfileJobName;

@@ -263,7 +263,7 @@ public class IndexUI {
 
 	public static ICElementHandle[] findAllDefinitions(IIndex index, IBinding binding) throws CoreException {
 		if (binding != null) {
-			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 
 			ArrayList<ICElementHandle> result= new ArrayList<ICElementHandle>();
 			for (int i = 0; i < defs.length; i++) {

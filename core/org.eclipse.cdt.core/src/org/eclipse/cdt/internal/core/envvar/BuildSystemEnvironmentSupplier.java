@@ -28,7 +28,7 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
  * 
  * @since 3.0
  */
-public class BuildSustemEnvironmentSupplier implements
+public class BuildSystemEnvironmentSupplier implements
 		ICoreEnvironmentVariableSupplier {
 
 	/**

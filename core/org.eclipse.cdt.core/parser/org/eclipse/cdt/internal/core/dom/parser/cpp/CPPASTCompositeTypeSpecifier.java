@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -88,7 +88,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
         declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, decl );
         if(decl != null) {
         	decl.setParent(this);
-        	decl.setPropertyInParent(decl instanceof ICPPASTVisiblityLabel ? VISIBILITY_LABEL : MEMBER_DECLARATION);
+        	decl.setPropertyInParent(decl instanceof ICPPASTVisibilityLabel ? VISIBILITY_LABEL : MEMBER_DECLARATION);
         }
     }
 

@@ -193,7 +193,7 @@ public class CHQueries {
 
 	private static void findCalledBy(IIndex index, IBinding callee, boolean includeOrdinaryCalls, ICProject project, CalledByResult result) 
 			throws CoreException {
-		IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+		IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		for (IIndexName rname : names) {
 			if (includeOrdinaryCalls || rname.couldBePolymorphicMethodCall()) {
 				IIndexName caller= rname.getEnclosingDefinition();

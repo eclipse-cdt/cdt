@@ -120,11 +120,11 @@ public class TcModificationUtil {
 		return storage;
 	}
 
-	public static PerTypeMapStorage cloneRealToolToPathSet(PerTypeMapStorage starage){
-		starage = (PerTypeMapStorage)starage.clone();
+	public static PerTypeMapStorage cloneRealToolToPathSet(PerTypeMapStorage storage){
+		storage = (PerTypeMapStorage)storage.clone();
 		int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
 		for(int i = 0; i < types.length; i++){
-			Map map = starage.getMap(types[i], false);
+			Map map = storage.getMap(types[i], false);
 			if(map != null){
 				for(Iterator iter = map.entrySet().iterator(); iter.hasNext(); ){
 					Map.Entry entry = (Map.Entry)iter.next();
@@ -133,7 +133,7 @@ public class TcModificationUtil {
 			}
 		}
 
-		return starage;
+		return storage;
 	}
 	
 	public static PerTypeMapStorage createRealToolToPathSet(IConfiguration cfg, PerTypeMapStorage skipMapStorage, boolean addSkipPaths){
@@ -416,16 +416,16 @@ public class TcModificationUtil {
 		return list;
 	}
 
-	public static Object removeBuilderInfo(PerTypeMapStorage starage, IBuilder builder){
-		return starage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).remove(builder);
+	public static Object removeBuilderInfo(PerTypeMapStorage storage, IBuilder builder){
+		return storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).remove(builder);
 	}
 
-	public static void restoreBuilderInfo(PerTypeMapStorage starage, IBuilder builder, Object obj){
-		starage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).put(builder, obj);
+	public static void restoreBuilderInfo(PerTypeMapStorage storage, IBuilder builder, Object obj){
+		storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).put(builder, obj);
 	}
 
-//	public static boolean removeToolInfo(PerTypeMapStorage starage, IPath path, ITool tool){
-//		Map map = starage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+//	public static boolean removeToolInfo(PerTypeMapStorage storage, IPath path, ITool tool){
+//		Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 //		if(map == null)
 //			return false;
 //		Set set = (Set)map.get(tool);
@@ -437,14 +437,14 @@ public class TcModificationUtil {
 //		return result;
 //	}
 //	
-//	public static void restoreToolInfo(PerTypeMapStorage starage, IPath path, ITool tool){
-//		Map map = starage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
+//	public static void restoreToolInfo(PerTypeMapStorage storage, IPath path, ITool tool){
+//		Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
 //		Set set = TcModificationUtil.getPathTreeSet(map, tool);
 //		set.add(path);
 //	}
 //	
-//	public static Set removeToolInfoWithChildren(PerTypeMapStorage starage, IPath path, ITool tool){
-//		Map map = starage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+//	public static Set removeToolInfoWithChildren(PerTypeMapStorage storage, IPath path, ITool tool){
+//		Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 //		if(map == null)
 //			return null;
 //		SortedSet set = (SortedSet)map.get(tool);
@@ -459,8 +459,8 @@ public class TcModificationUtil {
 //		return rmSet;
 //	}
 //	
-//	public static void restoreToolInfoWithChildren(PerTypeMapStorage starage, Set restoreSet, ITool tool){
-//		Map map = starage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
+//	public static void restoreToolInfoWithChildren(PerTypeMapStorage storage, Set restoreSet, ITool tool){
+//		Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
 //		Set set = TcModificationUtil.getPathTreeSet(map, tool);
 //		set.addAll(restoreSet);
 //	}

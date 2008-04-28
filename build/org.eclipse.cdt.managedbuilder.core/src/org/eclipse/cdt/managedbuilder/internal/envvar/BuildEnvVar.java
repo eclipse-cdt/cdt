@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.envvar;
 
-import org.eclipse.cdt.core.envvar.EnvirinmentVariable;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 
@@ -19,7 +19,7 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
  * 
  * @since 3.0
  */
-public class BuildEnvVar extends EnvirinmentVariable implements IBuildEnvironmentVariable {
+public class BuildEnvVar extends EnvironmentVariable implements IBuildEnvironmentVariable {
 	public BuildEnvVar(String name, String value, int op, String delimiter){
 		super(name, value, op, delimiter);
 	}

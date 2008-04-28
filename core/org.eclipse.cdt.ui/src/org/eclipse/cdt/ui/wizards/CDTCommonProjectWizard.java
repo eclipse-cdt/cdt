@@ -282,7 +282,7 @@ implements IExecutableExtension, IWizardWithMemory
     @Override
 	public boolean canFinish() {
     	if (fMainPage.h_selected != null) {
-    		if(!fMainPage.h_selected.canFinich())
+    		if(!fMainPage.h_selected.canFinish())
     			return false;
     		String s = fMainPage.h_selected.getErrorMessage();
     		if (s != null) return false;

@@ -43,7 +43,7 @@ public class CDefaultConfigurationDataProvider extends
 			CConfigurationData base,
 			boolean clone,
 			IProgressMonitor monitor) throws CoreException {
-		CDataFacroty factory = getDataFactory();
+		CDataFactory factory = getDataFactory();
 		return factory.createConfigurationdata(des.getId(), des.getName(), base, clone);
 	}
 
@@ -54,7 +54,7 @@ public class CDefaultConfigurationDataProvider extends
 		ICStorageElement el = getStorageElement(des, false);
 		if(el != null){
 			CDataSerializer serializer = getDataSerializer();
-			CDataFacroty factory = getDataFactory();
+			CDataFactory factory = getDataFactory();
 			try {
 				return serializer.loadConfigurationData(factory, el);
 			} catch (CoreException e){
@@ -75,8 +75,8 @@ public class CDefaultConfigurationDataProvider extends
 		//do nothing
 	}
 	
-	protected CDataFacroty getDataFactory(){
-		return CDataFacroty.getDefault();
+	protected CDataFactory getDataFactory(){
+		return CDataFactory.getDefault();
 	}
 	
 	protected CDataSerializer getDataSerializer(){
@@ -91,7 +91,7 @@ public class CDefaultConfigurationDataProvider extends
 		return des.getStorage(getStorageId(), create);
 	}
 	
-	protected CConfigurationData createPreferenceConfig(CDataFacroty factory){
+	protected CConfigurationData createPreferenceConfig(CDataFactory factory){
 		return CDataUtil.createEmptyData(null, "preference", factory, true); //$NON-NLS-1$
 	}
 }

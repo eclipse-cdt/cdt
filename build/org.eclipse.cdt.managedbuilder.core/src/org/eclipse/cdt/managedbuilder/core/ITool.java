@@ -755,9 +755,9 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 
 	IInputType setHeaderExtensionsAttribute(IInputType type, String[] extensions);
 */
-	IInputType getEdtableInputType(IInputType base);
+	IInputType getEditableInputType(IInputType base);
 	
-	IOutputType getEdtableOutputType(IOutputType base);
+	IOutputType getEditableOutputType(IOutputType base);
 	
 	boolean isEnabled();
 	

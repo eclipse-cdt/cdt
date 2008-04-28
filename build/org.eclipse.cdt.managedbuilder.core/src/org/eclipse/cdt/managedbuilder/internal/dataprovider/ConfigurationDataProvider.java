@@ -459,12 +459,12 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		if(landTypes.size() != 0){
 			List srcList = new ArrayList();
 			srcList.addAll(landTypes);
-			type = (InputType)tool.getEdtableInputType(type);
+			type = (InputType)tool.getEditableInputType(type);
 			type.setSourceContentTypeIds((String[])srcList.toArray(new String[srcList.size()]));
 		}
 		
 		if(!des.getId().equals(type.getLanguageId(tool))){
-			type = (InputType)tool.getEdtableInputType(type);
+			type = (InputType)tool.getEditableInputType(type);
 			type.setLanguageIdAttribute(des.getId());
 			type.setLanguageNameAttribute(des.getName());
 		}
@@ -494,7 +494,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 				String name = des.getName();
 				Tool tool = (Tool)tc.createTool(extTool, id, name, false);
 				InputType type = (InputType)tool.getInputTypes()[0];
-				type = (InputType)tool.getEdtableInputType(type);
+				type = (InputType)tool.getEditableInputType(type);
 				type.setSourceContentTypes(des.getContentTypes());
 				type.setLanguageNameAttribute(des.getName());
 				type.setName(des.getName());

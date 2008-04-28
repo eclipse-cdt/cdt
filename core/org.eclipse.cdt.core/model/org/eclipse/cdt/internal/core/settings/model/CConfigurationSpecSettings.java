@@ -271,7 +271,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		if(fStorage == null){
 			fStorage = new CStorage((InternalXmlStorageElement)getRootStorageElement());
 //			if(fDescriptor != null)
-//				reconsileDescriptor(fStorage, fDescriptor);
+//				reconcileDescriptor(fStorage, fDescriptor);
 		}
 		return fStorage;
 	}
@@ -605,7 +605,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		return ids;
 	}
 
-	void reconsileExtensionSettings(boolean toExts){
+	void reconcileExtensionSettings(boolean toExts){
 		checkReconsile(CCorePlugin.BINARY_PARSER_UNIQ_ID, toExts);
 		checkReconsile(CCorePlugin.ERROR_PARSER_UNIQ_ID, toExts);
 	}
@@ -613,9 +613,9 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 //	private boolean checkReconsile(String extPointId, ICConfigExtensionReference refs[], boolean get){
 //		if(!get || !(((IInternalCCfgInfo)fCfg).getConfigurationData(false) instanceof CConfigurationDescriptionCache)){
 //			if(CCorePlugin.BINARY_PARSER_UNIQ_ID.equals(extPointId))
-//				return CProjectDescriptionManager.getInstance().reconsileBinaryParserExtRefs(fCfg, refs, get);
+//				return CProjectDescriptionManager.getInstance().reconcileBinaryParserExtRefs(fCfg, refs, get);
 //			else if(CCorePlugin.ERROR_PARSER_UNIQ_ID.equals(extPointId))
-//				return CProjectDescriptionManager.getInstance().reconsileErrorParserExtRefs(fCfg, refs, get);
+//				return CProjectDescriptionManager.getInstance().reconcileErrorParserExtRefs(fCfg, refs, get);
 //		}
 //		return false;
 //	}
@@ -832,7 +832,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 	
 	private void copyExtensionInfo(CConfigurationSpecSettings other){
-		other.reconsileExtensionSettings(true);
+		other.reconcileExtensionSettings(true);
 		if(other.fExtMap != null && other.fExtMap.size() != 0){
 			fExtMap = (HashMap)other.fExtMap.clone();
 			for(Iterator iter = fExtMap.entrySet().iterator(); iter.hasNext();){

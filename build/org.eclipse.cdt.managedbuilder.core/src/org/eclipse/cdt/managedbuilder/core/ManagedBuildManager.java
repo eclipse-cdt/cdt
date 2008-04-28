@@ -1768,7 +1768,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionProjectTypeMap().put(projectType.getId(), projectType);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"ProjectType",	//$NON-NLS-1$
 					projectType.getId());			
 		}
@@ -1785,7 +1785,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionConfigurationMap().put(configuration.getId(), configuration);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"Configuration",	//$NON-NLS-1$
 					configuration.getId());			
 		}
@@ -1802,7 +1802,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionResourceConfigurationMap().put(resourceConfiguration.getId(), resourceConfiguration);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"ResourceConfiguration",	//$NON-NLS-1$
 					resourceConfiguration.getId());			
 		}
@@ -1819,7 +1819,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionToolChainMap().put(toolChain.getId(), toolChain);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"ToolChain",	//$NON-NLS-1$
 					toolChain.getId());			
 		}
@@ -1838,7 +1838,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionToolMap().put(tool.getId(), tool);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"Tool",	//$NON-NLS-1$
 					tool.getId());			
 		}
@@ -1855,7 +1855,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionTargetPlatformMap().put(targetPlatform.getId(), targetPlatform);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"TargetPlatform",	//$NON-NLS-1$
 					targetPlatform.getId());			
 		}
@@ -1872,7 +1872,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionBuilderMap().put(builder.getId(), builder);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"Builder",	//$NON-NLS-1$
 					builder.getId());			
 		}
@@ -1889,7 +1889,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionOptionMap().put(option.getId(), option);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"Option",	//$NON-NLS-1$
 					option.getId());			
 		}
@@ -1906,7 +1906,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionOptionCategoryMap().put(optionCategory.getId(), optionCategory);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"OptionCategory",	//$NON-NLS-1$
 					optionCategory.getId());			
 		}
@@ -1923,7 +1923,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionInputTypeMap().put(inputType.getId(), inputType);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"InputType",	//$NON-NLS-1$
 					inputType.getId());			
 		}
@@ -1940,7 +1940,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Object previous = getExtensionOutputTypeMap().put(outputType.getId(), outputType);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.OutputDuplicateIdError(
+			ManagedBuildManager.outputDuplicateIdError(
 					"OutputType",	//$NON-NLS-1$
 					outputType.getId());			
 		}
@@ -2840,7 +2840,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		// Check if there is any build info associated with this project for this session
 		try {
-			buildInfo = getLoaddedBuildInfo(proj);
+			buildInfo = getLoadedBuildInfo(proj);
 		} catch (CoreException e) {
 			if(BuildDbgUtil.DEBUG)
 				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info: " + e.getLocalizedMessage()); //$NON-NLS-1$
@@ -2857,7 +2857,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				if(BuildDbgUtil.DEBUG)
 					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description is obtained, qwerying the loaded build info"); //$NON-NLS-1$
 				try {
-					buildInfo = getLoaddedBuildInfo(proj);
+					buildInfo = getLoadedBuildInfo(proj);
 				} catch (CoreException e) {
 					if(BuildDbgUtil.DEBUG)
 						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info (2): " + e.getLocalizedMessage()); //$NON-NLS-1$
@@ -2926,7 +2926,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return buildInfo;
 	}
 	
-	synchronized static ManagedBuildInfo getLoaddedBuildInfo(IProject project) throws CoreException{
+	synchronized static ManagedBuildInfo getLoadedBuildInfo(IProject project) throws CoreException{
 		// Check if there is any build info associated with this project for this session
 		ManagedBuildInfo buildInfo = (ManagedBuildInfo)fInfoMap.get(project);//project.getSessionProperty(buildInfoProperty);
 			// Make sure that if a project has build info, that the info is not corrupted
@@ -2961,7 +2961,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		// Check if there is any build info associated with this project for this session
 		try {
-			buildInfo = (ManagedBuildInfo)getLoaddedBuildInfo(resource.getProject());
+			buildInfo = (ManagedBuildInfo)getLoadedBuildInfo(resource.getProject());
 		} catch (CoreException e) {
 			// Continue, to see if any of the upcoming checks are successful
 		}
@@ -3081,7 +3081,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static IManagedBuildInfo getOldStyleBuildInfo(IProject project) throws CoreException {
 		IManagedBuildInfo info = null;
 		try {
-			info = getLoaddedBuildInfo(project);
+			info = getLoadedBuildInfo(project);
 		} catch (CoreException e) {
 		}
 		
@@ -3187,7 +3187,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 						else
 						{
 							// Print a warning
-							OutputIconError(path.toString());
+							outputIconError(path.toString());
 						}
 					}
 				}
@@ -3236,55 +3236,55 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return (IManagedConfigElement)getConfigElementMap().get(buildObj);
 	}
 	
-	public static void OptionValidError(int errorId, String id) {
+	public static void optionValidError(int errorId, String id) {
 		String[] msgs = new String[1];
 		msgs[0] = id;
 		switch (errorId) {
 		case ERROR_CATEGORY:
-			ManagedBuildManager.OutputManifestError(
+			ManagedBuildManager.outputManifestError(
 					ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_CATEGORY, msgs));
 			break;
 		case ERROR_FILTER:
-			ManagedBuildManager.OutputManifestError(
+			ManagedBuildManager.outputManifestError(
 					ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_FILTER, msgs));
 			break;
 		}
 	}
 	
-	public static void OptionValueHandlerError(String attribute, String id) {
+	public static void optionValueHandlerError(String attribute, String id) {
 		String[] msgs = new String[2];
 		msgs[0] = attribute;
 		msgs[1] = id;
-		ManagedBuildManager.OutputManifestError(
+		ManagedBuildManager.outputManifestError(
 			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_VALUEHANDLER, msgs));
 	}
 	
-	public static void OutputResolveError(String attribute, String lookupId, String type, String id) {
+	public static void outputResolveError(String attribute, String lookupId, String type, String id) {
 		String[] msgs = new String[4];
 		msgs[0] = attribute;
 		msgs[1] = lookupId;
 		msgs[2] = type;
 		msgs[3] = id;
-		ManagedBuildManager.OutputManifestError(
+		ManagedBuildManager.outputManifestError(
 			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_RESOLVING, msgs));
 	}
 	
-	public static void OutputDuplicateIdError(String type, String id) {
+	public static void outputDuplicateIdError(String type, String id) {
 		String[] msgs = new String[2];
 		msgs[0] = type;
 		msgs[1] = id;
-		ManagedBuildManager.OutputManifestError(
+		ManagedBuildManager.outputManifestError(
 			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_DUPLICATE, msgs));
 	}
 	
-	public static void OutputManifestError(String message) {
+	public static void outputManifestError(String message) {
 		System.err.println(ManagedMakeMessages.getResourceString(MANIFEST_ERROR_HEADER) + message + NEWLINE);
 	}
 	
-	public static void OutputIconError(String iconLocation) {
+	public static void outputIconError(String iconLocation) {
 		String[] msgs = new String[1];
 		msgs[0]= iconLocation;
-		ManagedBuildManager.OutputManifestError(
+		ManagedBuildManager.outputManifestError(
 			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_ICON, msgs));
 	}
 	
@@ -3861,10 +3861,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return null;
 	}
 */	
-	private static final boolean TEST_CONSISTANCE = false;
+	private static final boolean TEST_CONSISTENCE = false;
 
 	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes){
-		return getConfigurationForDescription(cfgDes, TEST_CONSISTANCE);
+		return getConfigurationForDescription(cfgDes, TEST_CONSISTENCE);
 	}
 
 	private static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes, boolean checkConsistance){
@@ -3966,7 +3966,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return 0;
 	}
 	public static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg){
-		return getDescriptionForConfiguration(cfg, TEST_CONSISTANCE);
+		return getDescriptionForConfiguration(cfg, TEST_CONSISTENCE);
 	}
 
 	private static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg, boolean checkConsistance){

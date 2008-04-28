@@ -53,7 +53,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		fProject = project;
 		fListeners = Collections.synchronizedList(new ArrayList());
 		
-		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED);
 	}
 
 	/* (non-Javadoc)

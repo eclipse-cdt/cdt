@@ -398,7 +398,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		}
 
 		// 2. Try definition in index
-		return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+		return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 	}
 
 	private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast,
@@ -411,7 +411,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		}
 		declNames= (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
 		if (declNames.length == 0) {
-			declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+			declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		}
 		return declNames;
 	}

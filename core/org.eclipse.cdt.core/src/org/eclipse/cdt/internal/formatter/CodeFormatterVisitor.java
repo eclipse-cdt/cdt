@@ -124,7 +124,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -328,8 +328,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     			return visit((IASTSimpleDeclaration)node);
     		} else if (node instanceof IASTASMDeclaration) {
     			return visit((IASTASMDeclaration)node);
-    		} else if (node instanceof ICPPASTVisiblityLabel) {
-    			return visit((ICPPASTVisiblityLabel)node);
+    		} else if (node instanceof ICPPASTVisibilityLabel) {
+    			return visit((ICPPASTVisibilityLabel)node);
     		} else if (node instanceof ICPPASTNamespaceDefinition) {
     			return visit((ICPPASTNamespaceDefinition)node);
     		} else if (node instanceof ICPPASTNamespaceAlias) {
@@ -754,8 +754,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.startNewLine();
 			for (int i = 0; i < memberDecls.length; i++) {
 				IASTDeclaration declaration = memberDecls[i];
-				if (declaration instanceof ICPPASTVisiblityLabel) {
-					visit((ICPPASTVisiblityLabel)declaration);
+				if (declaration instanceof ICPPASTVisibilityLabel) {
+					visit((ICPPASTVisibilityLabel)declaration);
 				} else {
 					declaration.accept(this);
 				}
@@ -791,8 +791,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.startNewLine();
 		for (int i = 0; i < memberDecls.length; i++) {
 			IASTDeclaration declaration = memberDecls[i];
-			if (declaration instanceof ICPPASTVisiblityLabel) {
-				visit((ICPPASTVisiblityLabel)declaration);
+			if (declaration instanceof ICPPASTVisibilityLabel) {
+				visit((ICPPASTVisibilityLabel)declaration);
 			} else {
 				declaration.accept(this);
 			}
@@ -1429,7 +1429,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.startNewLine();
 		for (int i = 0; i < memberDecls.length; i++) {
 			IASTDeclaration declaration = memberDecls[i];
-			if (declaration instanceof ICPPASTVisiblityLabel) {
+			if (declaration instanceof ICPPASTVisibilityLabel) {
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.indent();
 				}
@@ -1437,7 +1437,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.unIndent();
 				}
-				visit((ICPPASTVisiblityLabel)declaration);
+				visit((ICPPASTVisibilityLabel)declaration);
 			} else {
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.indent();
@@ -1467,18 +1467,18 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		return PROCESS_SKIP;
 	}
 
-	private int visit(ICPPASTVisiblityLabel node) {
+	private int visit(ICPPASTVisibilityLabel node) {
 		if (node.getNodeLocations()[0] instanceof IASTMacroExpansionLocation) {
 			skipNode(node);
 		} else {
 			switch (node.getVisibility()) {
-			case ICPPASTVisiblityLabel.v_private:
+			case ICPPASTVisibilityLabel.v_private:
 				scribe.printNextToken(Token.t_private, false);
 				break;
-			case ICPPASTVisiblityLabel.v_protected:
+			case ICPPASTVisibilityLabel.v_protected:
 				scribe.printNextToken(Token.t_protected, false);
 				break;
-			case ICPPASTVisiblityLabel.v_public:
+			case ICPPASTVisibilityLabel.v_public:
 				scribe.printNextToken(Token.t_public, false);
 				break;
 			}

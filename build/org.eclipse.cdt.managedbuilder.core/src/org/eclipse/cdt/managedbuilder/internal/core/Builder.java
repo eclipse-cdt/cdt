@@ -1314,7 +1314,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 				superClass = ManagedBuildManager.getExtensionBuilder(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.OutputResolveError(
+					ManagedBuildManager.outputResolveError(
 							"superClass",	//$NON-NLS-1$
 							superClassId,
 							"builder",	//$NON-NLS-1$

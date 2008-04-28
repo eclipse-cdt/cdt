@@ -123,7 +123,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 			assertTrue(binding.length < 2);
 			if (binding.length == 1) {
 				assertTrue(binding[0] instanceof IVariable);
-				count= index.findNames(binding[0], IIndex.FIND_ALL_OCCURENCES).length;
+				count= index.findNames(binding[0], IIndex.FIND_ALL_OCCURRENCES).length;
 			}
 			assertEquals(var, expectedCount, count);
 		}

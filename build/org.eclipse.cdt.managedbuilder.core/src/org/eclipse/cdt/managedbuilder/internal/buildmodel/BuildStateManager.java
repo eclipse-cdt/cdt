@@ -71,7 +71,7 @@ public class BuildStateManager {
 		public void handleEvent(CProjectDescriptionEvent event) {
 			switch(event.getEventType()){
 			case CProjectDescriptionEvent.APPLIED:
-			case CProjectDescriptionEvent.LOADDED:
+			case CProjectDescriptionEvent.LOADED:
 				ICDescriptionDelta delta = event.getProjectDelta();
 				processAppliedDelta(event, delta);
 				break;
@@ -143,7 +143,7 @@ public class BuildStateManager {
 	public void startup(){
 		if(fListener == null){
 			fListener = new EventListener();
-			CoreModel.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
+			CoreModel.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener, 
 					IResourceChangeEvent.POST_CHANGE 
 					| IResourceChangeEvent.PRE_DELETE

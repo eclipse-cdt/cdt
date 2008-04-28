@@ -55,12 +55,12 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 			CDataUtil.setInteger(el, ATTR_CONFIG_RELATIONS, fConfigRelations.intValue());
 	}
 	
-	public int getConfigurationReltations() {
+	public int getConfigurationRelations() {
 		if(fConfigRelations != null)
 			return fConfigRelations.intValue();
 		CProjectDescriptionPreferences superPrefs = getSuperPreferences();
 		if(superPrefs != null)
-			return superPrefs.getConfigurationReltations();
+			return superPrefs.getConfigurationRelations();
 		return DEFAULT_RELATIONS;
 	}
 
@@ -111,7 +111,7 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 		if(isDefaultConfigurationRelations() != other.isDefaultConfigurationRelations())
 			return false;
 
-		if(getConfigurationReltations() != other.getConfigurationReltations())
+		if(getConfigurationRelations() != other.getConfigurationRelations())
 			return false;
 		
 		return true;

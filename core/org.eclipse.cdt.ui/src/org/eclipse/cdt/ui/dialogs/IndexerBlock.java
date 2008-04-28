@@ -224,7 +224,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 			if (scope == IndexerPreferences.SCOPE_INSTANCE) {
 		    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
 		    	ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(false);
-		    	boolean useActive= prefs.getConfigurationReltations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
+		    	boolean useActive= prefs.getConfigurationRelations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
 		    	setUseActiveBuildConfig(useActive);
 			}
 		}
@@ -302,7 +302,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		if (fBuildConfigComboBox != null) {
 	    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
 	    	ICProjectDescription prefs= prjDescMgr.getProjectDescription(getProject(), false);
-	    	setUseActiveBuildConfig(prefs.getConfigurationReltations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
+	    	setUseActiveBuildConfig(prefs.getConfigurationRelations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
 	    	ICConfigurationDescription[] configs= prefs.getConfigurations();
 	    	String[] names= new String[configs.length];
 	    	for (int i = 0; i < configs.length; i++) {

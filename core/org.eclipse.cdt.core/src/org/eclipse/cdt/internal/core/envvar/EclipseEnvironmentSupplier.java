@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.envvar;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.eclipse.cdt.core.envvar.EnvirinmentVariable;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 
@@ -33,7 +33,7 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 			String value = EnvironmentReader.getEnvVar(name);
 			if(value == null)
 				return null;
-			return new EnvirinmentVariable(name,value,IEnvironmentVariable.ENVVAR_REPLACE,null);
+			return new EnvironmentVariable(name,value,IEnvironmentVariable.ENVVAR_REPLACE,null);
 		}
 		return null;
 	}
@@ -52,7 +52,7 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 			for( int i = 0; i < variables.length ; i++){
 				String name = (String)en.nextElement();
 				String value = values.getProperty(name);
-				variables[i] = new EnvirinmentVariable(name,value,IEnvironmentVariable.ENVVAR_REPLACE,null);
+				variables[i] = new EnvironmentVariable(name,value,IEnvironmentVariable.ENVVAR_REPLACE,null);
 			}
 			return variables;
 		}

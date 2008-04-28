@@ -839,7 +839,7 @@ public class OutputType extends BuildObject implements IOutputType {
 				superClass = ManagedBuildManager.getExtensionOutputType(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.OutputResolveError(
+					ManagedBuildManager.outputResolveError(
 							"superClass",	//$NON-NLS-1$
 							superClassId,
 							"outputType",	//$NON-NLS-1$

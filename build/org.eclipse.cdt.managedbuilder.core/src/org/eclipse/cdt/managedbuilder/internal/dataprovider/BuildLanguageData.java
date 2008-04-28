@@ -71,7 +71,7 @@ public class BuildLanguageData extends CLanguageData {
 	private void obtainEditableInputType(){
 		if(fInputType != null){
 //			IInputType old = fInputType;
-			fInputType = fTool.getEdtableInputType(fInputType);
+			fInputType = fTool.getEditableInputType(fInputType);
 //			if(old != fInputType){
 //				fDiscoveredInfo.checkUpdateInputType(fInputType);
 //			}
@@ -88,12 +88,12 @@ public class BuildLanguageData extends CLanguageData {
 		if(getOptionsForKind(kind).length == 0 && isToolChainDiscoveryProfile())
 			return null;
 			
-		BuildEntryStorage starage = (BuildEntryStorage)fKindToEntryStore.get(kind);
-		if(starage == null){
-			starage = new BuildEntryStorage(kind, this);
-			fKindToEntryStore.put(kind, starage);
+		BuildEntryStorage storage = (BuildEntryStorage)fKindToEntryStore.get(kind);
+		if(storage == null){
+			storage = new BuildEntryStorage(kind, this);
+			fKindToEntryStore.put(kind, storage);
 		}
-		return starage;
+		return storage;
 	}
 	
 	private void notifyOptionsChangeForKind(int kind){

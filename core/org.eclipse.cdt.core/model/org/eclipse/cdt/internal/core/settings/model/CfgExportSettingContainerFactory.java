@@ -52,7 +52,7 @@ public class CfgExportSettingContainerFactory extends
 	public void startup(){
 		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, 
 				CProjectDescriptionEvent.APPLIED
-				| CProjectDescriptionEvent.LOADDED);
+				| CProjectDescriptionEvent.LOADED);
 	}
 	
 	@Override
@@ -194,7 +194,7 @@ public class CfgExportSettingContainerFactory extends
 	
 	public void handleEvent(CProjectDescriptionEvent event) {
 		switch(event.getEventType()){
-			case CProjectDescriptionEvent.LOADDED:
+			case CProjectDescriptionEvent.LOADED:
 			case CProjectDescriptionEvent.APPLIED:
 				String[] ids = getContainerIds(event.getProjectDelta());
 				if(ids.length != 0){

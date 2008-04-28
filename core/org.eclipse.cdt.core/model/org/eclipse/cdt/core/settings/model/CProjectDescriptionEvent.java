@@ -15,12 +15,12 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 
 public final class CProjectDescriptionEvent {
-	public static final int LOADDED = 1;
+	public static final int LOADED = 1;
 	public static final int ABOUT_TO_APPLY = 1 << 1;
 	public static final int APPLIED = 1 << 2;
 	public static final int COPY_CREATED = 1 << 3;
 	public static final int DATA_APPLIED = 1 << 4;
-	public static final int ALL = LOADDED | ABOUT_TO_APPLY | APPLIED | COPY_CREATED | DATA_APPLIED;
+	public static final int ALL = LOADED | ABOUT_TO_APPLY | APPLIED | COPY_CREATED | DATA_APPLIED;
 	
 	private int fType;
 	private ICProjectDescription fNewDescription;
@@ -77,7 +77,7 @@ public final class CProjectDescriptionEvent {
 	private ICDescriptionDelta getDelta(boolean active){
 		ICDescriptionDelta delta = null;
 		switch(getEventType()){
-		case LOADDED:
+		case LOADED:
 		case ABOUT_TO_APPLY:
 		case APPLIED:
 		case DATA_APPLIED:

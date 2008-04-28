@@ -16,7 +16,7 @@ public interface ICProjectDescriptionPreferences {
 	 * independent of each other, i.e. changing the active configuration will NOT change the settings
 	 * configuration used by the core and vie a versa
 	 *  
-	 * @see #getConfigurationReltations()
+	 * @see #getConfigurationRelations()
 	 * @see #setConfigurationRelations(Integer)
 	 */
 	public static final int CONFIGS_INDEPENDENT = 1;
@@ -26,7 +26,7 @@ public interface ICProjectDescriptionPreferences {
 	 * settings are linked with each other, i.e. changing the active configuration will change the settings
 	 * configuration used by the core and vie a versa
 	 *  
-	 * @see #getConfigurationReltations()
+	 * @see #getConfigurationRelations()
 	 * @see #setConfigurationRelations(Integer)
 	 */
 	public static final int CONFIGS_LINK_SETTINGS_AND_ACTIVE = 2;
@@ -39,7 +39,7 @@ public interface ICProjectDescriptionPreferences {
 	 * 
 	 * @return int
 	 */
-	int getConfigurationReltations();
+	int getConfigurationRelations();
 	
 	/**
 	 * sets the configuration relation status. can be an integer value containing the

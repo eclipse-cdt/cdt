@@ -11,12 +11,12 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 
 /**
  * @author jcamelon
  */
-public class CPPASTVisibilityLabel extends CPPASTNode implements ICPPASTVisiblityLabel {
+public class CPPASTVisibilityLabel extends CPPASTNode implements ICPPASTVisibilityLabel {
 
     private int visibility;
 

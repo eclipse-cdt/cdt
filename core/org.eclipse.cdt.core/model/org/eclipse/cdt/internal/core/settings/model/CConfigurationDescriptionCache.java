@@ -100,7 +100,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		
 		fSettingsFactory = null;
 		
-		fSpecSettings.reconsileExtensionSettings(true);
+		fSpecSettings.reconcileExtensionSettings(true);
 		((CBuildSettingCache)fBuildData).initEnvironmentCache();
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 		fMacros = new StorableCdtVariables(vars, true);

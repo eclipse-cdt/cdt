@@ -230,14 +230,14 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 				assertTrue(ib[1] instanceof IFunction);
 				assertTrue(ib[1] instanceof ICPPBinding);
 				
-				IName[] nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES | IIndexFragment.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+				IName[] nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES | IIndexFragment.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 				assertEquals(1, nms.length);
 				assertTrue(nms[0].getFileLocation().getFileName().endsWith(".cpp"));
 
 				nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES);
 				assertEquals(0, nms.length);
 				
-				nms= pdom.findNames(ib[1], IIndexFragment.FIND_DEFINITIONS | IIndexFragment.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+				nms= pdom.findNames(ib[1], IIndexFragment.FIND_DEFINITIONS | IIndexFragment.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 				assertEquals(1, nms.length);
 				assertTrue(nms[0].getFileLocation().getFileName().endsWith(".c"));
 

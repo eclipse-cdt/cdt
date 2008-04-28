@@ -30,7 +30,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 	public AbstractCExtensionProxy(IProject project, String extPointId) {
 		fProject = project;
 		fExtPointId = extPointId;
-		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.APPLIED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.APPLIED);
 	}
 
 	protected final void providerRequested(){
@@ -156,7 +156,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 	protected boolean doHandleEvent(CProjectDescriptionEvent event){
 		boolean force = false;
 		switch(event.getEventType()){
-		case CProjectDescriptionEvent.LOADDED:
+		case CProjectDescriptionEvent.LOADED:
 			force = true;
 		case CProjectDescriptionEvent.APPLIED:
 			ICProjectDescription des = event.getNewCProjectDescription();

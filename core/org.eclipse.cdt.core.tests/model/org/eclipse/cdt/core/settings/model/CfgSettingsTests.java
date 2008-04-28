@@ -36,19 +36,19 @@ public class CfgSettingsTests extends BaseTestCase {
 		
 		ICProjectDescriptionWorkspacePreferences prefs = mngr.getProjectDescriptionWorkspacePreferences(true);
 		
-		int wspRel = prefs.getConfigurationReltations();
+		int wspRel = prefs.getConfigurationRelations();
 		CoreModel model = CoreModel.getDefault();
 		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
 		IProject project = p1.getProject();
 		ICProjectDescription des = model.getProjectDescription(project, false);
-		assertEquals(wspRel, des.getConfigurationReltations());
+		assertEquals(wspRel, des.getConfigurationRelations());
 		assertTrue(des.isDefaultConfigurationRelations());
 		prefs.setConfigurationRelations(ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
-		assertEquals(wspRel, des.getConfigurationReltations());
-		assertEquals(wspRel, mngr.getProjectDescriptionWorkspacePreferences(true).getConfigurationReltations());
+		assertEquals(wspRel, des.getConfigurationRelations());
+		assertEquals(wspRel, mngr.getProjectDescriptionWorkspacePreferences(true).getConfigurationRelations());
 		prefs.setConfigurationRelations(ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
-		assertEquals(wspRel, des.getConfigurationReltations());
-		assertEquals(wspRel, mngr.getProjectDescriptionWorkspacePreferences(true).getConfigurationReltations());
+		assertEquals(wspRel, des.getConfigurationRelations());
+		assertEquals(wspRel, mngr.getProjectDescriptionWorkspacePreferences(true).getConfigurationRelations());
 		assertTrue(des.isDefaultConfigurationRelations());
 		wspRel = getChangedConfigRelStatus(wspRel);
 
@@ -57,41 +57,41 @@ public class CfgSettingsTests extends BaseTestCase {
 		mngr.setProjectDescriptionWorkspacePreferences(prefs, true, null);
 		des = model.getProjectDescription(project, false);
 		prefs = mngr.getProjectDescriptionWorkspacePreferences(true);
-		assertEquals(wspRel, des.getConfigurationReltations());
-		assertEquals(wspRel, prefs.getConfigurationReltations());
+		assertEquals(wspRel, des.getConfigurationRelations());
+		assertEquals(wspRel, prefs.getConfigurationRelations());
 		assertTrue(des.isDefaultConfigurationRelations());
 		
 		des = mngr.getProjectDescription(project);
 		assertTrue(des.isDefaultConfigurationRelations());
-		wspRel = prefs.getConfigurationReltations();
-		assertEquals(wspRel, des.getConfigurationReltations());
+		wspRel = prefs.getConfigurationRelations();
+		assertEquals(wspRel, des.getConfigurationRelations());
 		wspRel = getChangedConfigRelStatus(wspRel);
 		prefs.setConfigurationRelations(wspRel);
-		assertTrue(wspRel != des.getConfigurationReltations());
+		assertTrue(wspRel != des.getConfigurationRelations());
 		mngr.setProjectDescriptionWorkspacePreferences(prefs, false, null);
-		assertEquals(wspRel, des.getConfigurationReltations());
+		assertEquals(wspRel, des.getConfigurationRelations());
 		mngr.setProjectDescription(des.getProject(), des);
 		des = mngr.getProjectDescription(project, false);
-		assertEquals(wspRel, des.getConfigurationReltations());
+		assertEquals(wspRel, des.getConfigurationRelations());
 		
 		des = mngr.getProjectDescription(project);
 		prefs = mngr.getProjectDescriptionWorkspacePreferences(false);
-		assertEquals(des.getConfigurationReltations(), prefs.getConfigurationReltations());
+		assertEquals(des.getConfigurationRelations(), prefs.getConfigurationRelations());
 		assertTrue(des.isDefaultConfigurationRelations());
-		wspRel = prefs.getConfigurationReltations();
+		wspRel = prefs.getConfigurationRelations();
 		int projRel = getChangedConfigRelStatus(wspRel);
 		des.setConfigurationRelations(projRel);
 		assertFalse(des.isDefaultConfigurationRelations());
-		assertEquals(projRel, des.getConfigurationReltations());
+		assertEquals(projRel, des.getConfigurationRelations());
 		mngr.setProjectDescription(project, des);
 		
 		des = mngr.getProjectDescription(project, false);
 		assertFalse(des.isDefaultConfigurationRelations());
-		assertEquals(projRel, des.getConfigurationReltations());
+		assertEquals(projRel, des.getConfigurationRelations());
 		
 		des = mngr.getProjectDescription(project, true);
 		assertFalse(des.isDefaultConfigurationRelations());
-		assertEquals(projRel, des.getConfigurationReltations());
+		assertEquals(projRel, des.getConfigurationRelations());
 
 		ICConfigurationDescription aCfg = des.getActiveConfiguration(); 
 		ICConfigurationDescription sCfg = des.getDefaultSettingConfiguration();

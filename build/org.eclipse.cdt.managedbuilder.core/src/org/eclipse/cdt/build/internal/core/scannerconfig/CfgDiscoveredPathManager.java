@@ -76,7 +76,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		CfgInfoContext fLoadContext;
 		ICfgScannerConfigBuilderInfo2Set fCfgInfo;
 		IScannerConfigBuilderInfo2 fInfo;
-		boolean fIsFerFileCache;
+		boolean fIsPerFileCache;
 	}
 	
 	public static class PathInfoCache{
@@ -187,7 +187,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 //	}
 	
 	private PathInfo resolveCacheBaseDiscoveredInfo(ContextInfo cInfo, IDiscoveredPathManager.IDiscoveredPathInfo baseInfo){
-		if(cInfo.fIsFerFileCache){
+		if(cInfo.fIsPerFileCache){
 			if(baseInfo instanceof IDiscoveredPathManager.IPerFileDiscoveredPathInfo2){
 				resolveCachePerFileInfo(cInfo, (IDiscoveredPathManager.IPerFileDiscoveredPathInfo2)baseInfo);
 			}
@@ -313,7 +313,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
 	private void removeCachedPathInfo(ContextInfo cInfo){
 //      ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
-		if(cInfo.fIsFerFileCache){
+		if(cInfo.fIsPerFileCache){
 			Configuration cfg = (Configuration)cInfo.fInitialContext.getConfiguration();
 			cfg.clearDiscoveredPathInfo();
 			
@@ -413,13 +413,13 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		if(isPerRcType){
 			contextInfo.fLoadContext = CfgScannerConfigUtil.adjustPerRcTypeContext(contextInfo.fInitialContext);
 			contextInfo.fCacheContext = contextInfo.fLoadContext;
-			contextInfo.fIsFerFileCache = false;
+			contextInfo.fIsPerFileCache = false;
 			contextInfo.fInfo = cfgInfo.getInfo(contextInfo.fLoadContext);
 		} else {
 			contextInfo.fLoadContext = new CfgInfoContext(context.getConfiguration());
 			contextInfo.fInfo = cfgInfo.getInfo(contextInfo.fLoadContext);
-			contextInfo.fIsFerFileCache = CfgScannerConfigProfileManager.isPerFileProfile(contextInfo.fInfo.getSelectedProfileId());
-			contextInfo.fCacheContext = contextInfo.fIsFerFileCache ? contextInfo.fInitialContext : contextInfo.fLoadContext;
+			contextInfo.fIsPerFileCache = CfgScannerConfigProfileManager.isPerFileProfile(contextInfo.fInfo.getSelectedProfileId());
+			contextInfo.fCacheContext = contextInfo.fIsPerFileCache ? contextInfo.fInitialContext : contextInfo.fLoadContext;
 		}
         
         return contextInfo;

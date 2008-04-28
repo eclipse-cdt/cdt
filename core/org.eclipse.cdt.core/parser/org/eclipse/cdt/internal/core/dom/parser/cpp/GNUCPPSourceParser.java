@@ -118,7 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
@@ -3935,7 +3935,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.t_private: {
                     IToken key = consume();
                     int l = consume(IToken.tCOLON).getEndOffset();
-                    ICPPASTVisiblityLabel label = createVisibilityLabel();
+                    ICPPASTVisibilityLabel label = createVisibilityLabel();
                     ((ASTNode) label).setOffsetAndLength(key.getOffset(), l - key.getOffset());
                     label.setVisibility(token2Visibility(key.getType()));
                     astClassSpecifier.addMemberDeclaration(label);
@@ -3980,7 +3980,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 
-    protected ICPPASTVisiblityLabel createVisibilityLabel() {
+    protected ICPPASTVisibilityLabel createVisibilityLabel() {
         return new CPPASTVisibilityLabel();
     }
 
@@ -3988,11 +3988,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected int token2Visibility(int type) {
         switch (type) {
         case IToken.t_public:
-            return ICPPASTVisiblityLabel.v_public;
+            return ICPPASTVisibilityLabel.v_public;
         case IToken.t_protected:
-            return ICPPASTVisiblityLabel.v_protected;
+            return ICPPASTVisibilityLabel.v_protected;
         case IToken.t_private:
-            return ICPPASTVisiblityLabel.v_private;
+            return ICPPASTVisibilityLabel.v_private;
         }
         return 0;
     }

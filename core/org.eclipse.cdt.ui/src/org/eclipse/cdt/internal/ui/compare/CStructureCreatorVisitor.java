@@ -45,7 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.model.ICElement;
 
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
@@ -257,7 +257,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 			}
 		} else if (node instanceof IASTASMDeclaration) {
 			// ignored
-		} else if (node instanceof ICPPASTVisiblityLabel) {
+		} else if (node instanceof ICPPASTVisibilityLabel) {
 			// ignored
 		} else if (node instanceof ICPPASTNamespaceDefinition) {
 			// handled below
@@ -387,7 +387,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 			}
 		} else if (node instanceof IASTASMDeclaration) {
 			// ignored
-		} else if (node instanceof ICPPASTVisiblityLabel) {
+		} else if (node instanceof ICPPASTVisibilityLabel) {
 			// ignored
 		} else if (node instanceof ICPPASTNamespaceDefinition) {
 			// handled below

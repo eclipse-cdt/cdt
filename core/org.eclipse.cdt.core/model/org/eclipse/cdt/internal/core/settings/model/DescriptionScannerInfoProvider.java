@@ -53,7 +53,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	DescriptionScannerInfoProvider(IProject project){
 		fProject = project;
 		
-		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED);
 	}
 	
 	private void updateProjCfgInfo(ICProjectDescription des){
@@ -151,7 +151,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		return macroEntries;
 	}
 
-	private IScannerInfo createProjectStannerInfo(){
+	private IScannerInfo createProjectScannerInfo(){
 		ICFolderDescription foDes = fCfgDes.getRootFolderDescription();
 		ICLanguageSetting[] lSettings = foDes.getLanguageSettings();
 		ICLanguageSettingPathEntry pathEntries[] = getPathEntries(lSettings, ICLanguageSettingEntry.INCLUDE_PATH);
@@ -194,7 +194,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 
 	private IScannerInfo createScannerInfo(ICLanguageSetting ls){
 		if(ls == null)
-			return createProjectStannerInfo();
+			return createProjectScannerInfo();
 		
 		ICLanguageSettingPathEntry pathEntries[] = getPathEntries(ls, ICLanguageSettingEntry.INCLUDE_PATH);
 		String incs[] = getValues(pathEntries);

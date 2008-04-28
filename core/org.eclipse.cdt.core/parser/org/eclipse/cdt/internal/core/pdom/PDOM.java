@@ -747,7 +747,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (myBinding instanceof PDOMBinding) {
 			PDOMBinding pdomBinding = (PDOMBinding) myBinding;
 			findNamesForMyBinding(pdomBinding, options, names);
-			if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
+			if ((options & SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
 				PDOMBinding[] xlangBindings= getCrossLanguageBindings(binding);
 				for (PDOMBinding xlangBinding : xlangBindings) {
 					findNamesForMyBinding(xlangBinding, options, names);
@@ -757,7 +757,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		else if (myBinding instanceof PDOMMacroContainer) {
 			final PDOMMacroContainer macroContainer = (PDOMMacroContainer) myBinding;
 			findNamesForMyBinding(macroContainer, options, names);
-			if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
+			if ((options & SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
 				PDOMMacroContainer[] xlangBindings= getCrossLanguageBindings(macroContainer);
 				for (PDOMMacroContainer xlangBinding : xlangBindings) {
 					findNamesForMyBinding(xlangBinding, options, names);

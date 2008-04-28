@@ -66,7 +66,7 @@ public interface IIndex {
 	 * You can use it to find the occurrences of a c++-function declared with 'extern "C"' within
 	 * the c-linkage.
 	 */
-	final int SEARCH_ACCROSS_LANGUAGE_BOUNDARIES= 0x8;
+	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES= 0x8;
 	/** 
 	 * Constant to search for all declarations including definitions.
 	 */
@@ -74,7 +74,7 @@ public interface IIndex {
 	/** 
 	 * Constant to search for all occurrences of a binding. This includes declarations, definitions and references.
 	 */
-	final int FIND_ALL_OCCURENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
+	final int FIND_ALL_OCCURRENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 
 	/**
 	 * Before making calls to an index you have to obtain a lock. The objects 
@@ -331,7 +331,7 @@ public interface IIndex {
 	 * or definitions, or a combination of those.
 	 * @param binding a binding for which names are searched for
 	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS},
-	 * {@link #FIND_REFERENCES} and {@link #SEARCH_ACCROSS_LANGUAGE_BOUNDARIES}.
+	 * {@link #FIND_REFERENCES} and {@link #SEARCH_ACROSS_LANGUAGE_BOUNDARIES}.
 	 * @return an array of names
 	 * @throws CoreException
 	 */

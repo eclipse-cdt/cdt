@@ -56,7 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
@@ -258,9 +258,9 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			ICPPASTUsingDeclaration using = (ICPPASTUsingDeclaration) node;
 			
 			return trailUsing.isTypename() == using.isTypename();
-		} else if (trailNode instanceof ICPPASTVisiblityLabel) {
-			ICPPASTVisiblityLabel trailVisibility = (ICPPASTVisiblityLabel) trailNode;
-			ICPPASTVisiblityLabel visibility = (ICPPASTVisiblityLabel) node;
+		} else if (trailNode instanceof ICPPASTVisibilityLabel) {
+			ICPPASTVisibilityLabel trailVisibility = (ICPPASTVisibilityLabel) trailNode;
+			ICPPASTVisibilityLabel visibility = (ICPPASTVisibilityLabel) node;
 			
 			return trailVisibility.getVisibility() == visibility.getVisibility();
 		} else {

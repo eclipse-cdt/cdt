@@ -918,7 +918,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				iconPathURL = new URL(iconPath);
 			} catch (MalformedURLException e) {
 				// Print a warning
-				ManagedBuildManager.OutputIconError(iconPath);
+				ManagedBuildManager.outputIconError(iconPath);
 				iconPathURL = null;
 			}
 		}
@@ -2402,7 +2402,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if(type.getParent() != this)
 				return;
 		}
-		type = getEdtableOutputType(type);
+		type = getEditableOutputType(type);
 		type.setOutputPrefix(prefix);
 		setRebuildState(true);
 		isDirty = true;
@@ -2858,7 +2858,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				setSuperClassInternal( ManagedBuildManager.getExtensionTool(superClassId) );
 				if (getSuperClass() == null) {
 					// Report error
-					ManagedBuildManager.OutputResolveError(
+					ManagedBuildManager.outputResolveError(
 							"superClass",	//$NON-NLS-1$
 							superClassId,
 							"tool",	//$NON-NLS-1$
@@ -3346,7 +3346,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				
 				for(ListIterator<IInputType> iter = types.listIterator(); iter.hasNext();){
 					IInputType type = iter.next();
-					iter.set(getEdtableInputType(type));
+					iter.set(getEditableInputType(type));
 				}
 
 				Map<IInputType, CLanguageData> map = (Map<IInputType, CLanguageData>)typeToDataMap.clone();
@@ -3443,7 +3443,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 
 	
-	public IInputType getEdtableInputType(IInputType base) {
+	public IInputType getEditableInputType(IInputType base) {
 		if(base.getParent() == this)
 			return base;
 		
@@ -3464,7 +3464,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return newType;
 	}
 	
-	public IOutputType getEdtableOutputType(IOutputType base) {
+	public IOutputType getEditableOutputType(IOutputType base) {
 		if(base.getParent() == this)
 			return base;
 		

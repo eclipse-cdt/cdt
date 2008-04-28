@@ -43,17 +43,17 @@ public interface IIndexFragment {
 	 */
 	final int FIND_REFERENCES   = IIndex.FIND_REFERENCES;
 	/**
-	 * @see IIndex#SEARCH_ACCROSS_LANGUAGE_BOUNDARIES
+	 * @see IIndex#SEARCH_ACROSS_LANGUAGE_BOUNDARIES
 	 */
-	final int SEARCH_ACCROSS_LANGUAGE_BOUNDARIES= IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES;
+	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES= IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES;
 	/**
 	 * @see IIndex#FIND_DECLARATIONS_DEFINITIONS
 	 */
 	final int FIND_DECLARATIONS_DEFINITIONS = IIndex.FIND_DECLARATIONS_DEFINITIONS;
 	/**
-	 * @see IIndex#FIND_ALL_OCCURENCES
+	 * @see IIndex#FIND_ALL_OCCURRENCES
 	 */
-	final int FIND_ALL_OCCURENCES = 		  IIndex.FIND_ALL_OCCURENCES;
+	final int FIND_ALL_OCCURRENCES = 		  IIndex.FIND_ALL_OCCURRENCES;
 	
 	/**
 	 * Property key for the fragment ID. The fragment ID should uniquely identify the fragments usage within

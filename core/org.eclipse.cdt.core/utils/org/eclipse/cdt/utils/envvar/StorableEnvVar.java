@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.envvar;
 
-import org.eclipse.cdt.core.envvar.EnvirinmentVariable;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 
 /**
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
  * @since 3.0
  *
  */
-public class StorableEnvVar extends EnvirinmentVariable {
+public class StorableEnvVar extends EnvironmentVariable {
 	public static final String VARIABLE_ELEMENT_NAME = "variable"; //$NON-NLS-1$
 	public static final String NAME = "name"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$

@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
@@ -100,8 +100,8 @@ public class DeclarationWriter extends NodeWriter{
 			writeUsingDeclaration((ICPPASTUsingDeclaration) declaration);
 		} else if (declaration instanceof ICPPASTUsingDirective) {
 			writeUsingDirective((ICPPASTUsingDirective) declaration);
-		} else if (declaration instanceof ICPPASTVisiblityLabel) {
-			writeVisibilityLabel((ICPPASTVisiblityLabel) declaration);
+		} else if (declaration instanceof ICPPASTVisibilityLabel) {
+			writeVisibilityLabel((ICPPASTVisibilityLabel) declaration);
 		}
 		
 		if(hasTrailingComments(declaration)) {
@@ -118,18 +118,18 @@ public class DeclarationWriter extends NodeWriter{
 		}
 	}
 
-	private void writeVisibilityLabel(ICPPASTVisiblityLabel visiblityLabel) {
+	private void writeVisibilityLabel(ICPPASTVisibilityLabel visiblityLabel) {
 		scribe.decrementIndentationLevel();
 		switch (visiblityLabel.getVisibility()) {
-		case ICPPASTVisiblityLabel.v_private:
+		case ICPPASTVisibilityLabel.v_private:
 			scribe.print(PRIVATE);
 			scribe.print(':');
 			break;
-		case ICPPASTVisiblityLabel.v_protected:
+		case ICPPASTVisibilityLabel.v_protected:
 			scribe.print(PROTECTED);
 			scribe.print(':');
 			break;
-		case ICPPASTVisiblityLabel.v_public:
+		case ICPPASTVisibilityLabel.v_public:
 			scribe.print(PUBLIC);	
 			scribe.print(':');
 			break;

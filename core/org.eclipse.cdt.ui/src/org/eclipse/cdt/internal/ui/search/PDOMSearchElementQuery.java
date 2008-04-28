@@ -34,7 +34,7 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 	private ISourceReference element;
 	
 	public PDOMSearchElementQuery(ICElement[] scope, ISourceReference element, int flags) {
-		super(scope, flags | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.element = element;
 	}
 

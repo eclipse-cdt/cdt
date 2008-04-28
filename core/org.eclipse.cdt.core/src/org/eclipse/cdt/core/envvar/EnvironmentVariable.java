@@ -19,36 +19,36 @@ import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
  * 
  * @since 3.0
  */
-public class EnvirinmentVariable implements IEnvironmentVariable, Cloneable {
+public class EnvironmentVariable implements IEnvironmentVariable, Cloneable {
 	protected String fName;
 	protected String fValue;
 	protected String fDelimiter;
 	protected int fOperation;
 	
-	public EnvirinmentVariable(String name, String value, int op, String delimiter){
+	public EnvironmentVariable(String name, String value, int op, String delimiter){
 		fName = name;
 		fOperation = op;
 		fValue = value;
 		fDelimiter = delimiter;
 	}
 	
-	protected EnvirinmentVariable(){
+	protected EnvironmentVariable(){
 		
 	}
 	
-	public EnvirinmentVariable(String name){
+	public EnvironmentVariable(String name){
 		this(name,null,ENVVAR_REPLACE,null);
 	}
 	
-	public EnvirinmentVariable(String name, String value){
+	public EnvironmentVariable(String name, String value){
 		this(name,value,ENVVAR_REPLACE,null);	
 	}
 
-	public EnvirinmentVariable(String name, String value, String delimiter){
+	public EnvironmentVariable(String name, String value, String delimiter){
 		this(name,value,ENVVAR_REPLACE,delimiter);	
 	}
 	
-	public EnvirinmentVariable(IEnvironmentVariable var){
+	public EnvironmentVariable(IEnvironmentVariable var){
 		this(var.getName(),var.getValue(),var.getOperation(),var.getDelimiter());	
 	}
 

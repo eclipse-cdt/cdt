@@ -744,7 +744,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			binding = findBinding("globalVar");
 			assertTrue(binding instanceof IVariable);
-			assertEquals(2, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURENCES).length);
+			assertEquals(2, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURRENCES).length);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -756,7 +756,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			binding = findBinding("globalVar");
 			assertTrue(binding instanceof IVariable);
-			assertEquals(1, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURENCES).length);
+			assertEquals(1, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURRENCES).length);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -769,7 +769,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			binding = findBinding("newVar");
 			assertTrue(binding instanceof IVariable);
-			assertEquals(2, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURENCES).length);
+			assertEquals(2, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURRENCES).length);
 		} finally {
 			fIndex.releaseReadLock();
 		}

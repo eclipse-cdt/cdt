@@ -76,7 +76,7 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
@@ -609,7 +609,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	private CProjectDescriptionEvent createLoaddedEvent(ICProjectDescription des){
-		return new CProjectDescriptionEvent(CProjectDescriptionEvent.LOADDED,
+		return new CProjectDescriptionEvent(CProjectDescriptionEvent.LOADED,
 				null,
 				des,
 				null,
@@ -3198,13 +3198,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return fDescriptorManager;
 	}
 
-	public CConfigurationData createDefaultConfigData(IProject project, CDataFacroty factory) throws CoreException{
+	public CConfigurationData createDefaultConfigData(IProject project, CDataFactory factory) throws CoreException{
 		return createDefaultConfigData(project, CDataUtil.genId(DEFAULT_CFG_ID_PREFIX), DEFAULT_CFG_NAME, factory);
 	}
 
-	public CConfigurationData createDefaultConfigData(IProject project, String id, String name, CDataFacroty factory) throws CoreException{
+	public CConfigurationData createDefaultConfigData(IProject project, String id, String name, CDataFactory factory) throws CoreException{
 		if(factory == null)
-			factory = new CDataFacroty();
+			factory = new CDataFactory();
 		
 		CConfigurationData data = CDataUtil.createEmptyData(id, name, factory, true);
 //		CDataUtil.
@@ -3489,7 +3489,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		try {
 			do {
 				if(oldPrefs != prefs){
-					if(prefs.getConfigurationReltations() != oldPrefs.getConfigurationReltations()){
+					if(prefs.getConfigurationRelations() != oldPrefs.getConfigurationRelations()){
 						changed = true;
 						break;
 					}

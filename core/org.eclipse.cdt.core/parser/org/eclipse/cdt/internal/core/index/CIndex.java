@@ -173,7 +173,7 @@ public class CIndex implements IIndex {
 			}
 		}
 		// bug 192352, files can reside in multiple fragments, remove duplicates
-		if (fragCount > 1 || (flags & IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
+		if (fragCount > 1 || (flags & IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
 			HashMap<String, IIndexFile> fileMap= new HashMap<String, IIndexFile>();
 			for (Iterator<IIndexFragmentName> iterator = result.iterator(); iterator.hasNext();) {
 				final IIndexFragmentName name = iterator.next();

@@ -1839,7 +1839,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					return valueHandler;
 				}
 			} catch (CoreException e) {
-				ManagedBuildManager.OptionValueHandlerError(element.getAttribute(VALUE_HANDLER), getId());
+				ManagedBuildManager.optionValueHandlerError(element.getAttribute(VALUE_HANDLER), getId());
 				// Assign the default handler to avoid further error messages
 				valueHandler = ManagedOptionValueHandler.getManagedOptionValueHandler();
 				return valueHandler;
@@ -1940,7 +1940,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				superClass = ManagedBuildManager.getExtensionOption(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.OutputResolveError(
+					ManagedBuildManager.outputResolveError(
 							"superClass",	//$NON-NLS-1$
 							superClassId,
 							"option",	//$NON-NLS-1$
@@ -1955,7 +1955,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				category = holder.getOptionCategory(categoryId);
 				if (category == null) {
 					// Report error
-					ManagedBuildManager.OutputResolveError(
+					ManagedBuildManager.outputResolveError(
 							"category",	//$NON-NLS-1$
 							categoryId,
 							"option",	//$NON-NLS-1$
@@ -2096,7 +2096,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if ( getOptionHolder() instanceof IToolChain  &&  isAbstract() == false ) {
 			// Check for error (a)
 			if (getCategory() == null) {
-				ManagedBuildManager.OptionValidError(ManagedBuildManager.ERROR_CATEGORY, getId());
+				ManagedBuildManager.optionValidError(ManagedBuildManager.ERROR_CATEGORY, getId());
 				// Object becomes invalid 
 				isValid = false;
 			}
@@ -2110,7 +2110,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					// TODO: Cannot differentiate between "all" and attribute not
 					// specified. Thus do not produce an error. We can argue that "all"
 					// means all valid resource configurations.
-					ManagedBuildManager.OptionValidError(ManagedBuildManager.ERROR_FILTER, getId());
+					ManagedBuildManager.optionValidError(ManagedBuildManager.ERROR_FILTER, getId());
 					// Object becomes invalid 
 					isValid = false;
 				}

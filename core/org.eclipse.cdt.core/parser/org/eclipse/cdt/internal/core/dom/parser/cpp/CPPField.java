@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -100,15 +100,15 @@ public class CPPField extends CPPVariable implements ICPPField {
 	}
 
 	public int getVisibility() throws DOMException {
-		ICPPASTVisiblityLabel vis = null;
+		ICPPASTVisibilityLabel vis = null;
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl != null ) {
 			IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 			IASTDeclaration [] members = cls.getMembers();
 			
 			for( int i = 0; i < members.length; i++ ){
-				if( members[i] instanceof ICPPASTVisiblityLabel )
-					vis = (ICPPASTVisiblityLabel) members[i];
+				if( members[i] instanceof ICPPASTVisibilityLabel )
+					vis = (ICPPASTVisibilityLabel) members[i];
 				else if( members[i] == decl )
 					break;
 			}
@@ -116,10 +116,10 @@ public class CPPField extends CPPVariable implements ICPPField {
 			if( vis != null ){
 				return vis.getVisibility();
 			} else if( cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class ){
-				return ICPPASTVisiblityLabel.v_private;
+				return ICPPASTVisibilityLabel.v_private;
 			}
 		}
-		return ICPPASTVisiblityLabel.v_public;
+		return ICPPASTVisibilityLabel.v_public;
 	}
 	
 	public ICPPClassType getClassOwner() throws DOMException {

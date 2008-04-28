@@ -12,7 +12,7 @@ package org.eclipse.cdt.make.internal.core.dataprovider;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationDataProvider;
 import org.eclipse.cdt.core.settings.model.util.CDataSerializer;
 import org.eclipse.cdt.core.settings.model.util.UserAndDiscoveredEntryDataSerializer;
@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class MakeConfigurationDataProvider extends CDefaultConfigurationDataProvider {
 	private static final String STORAGE_ID = "makeConfigDataProvider"; //$NON-NLS-1$
 
-	protected CDataFacroty getDataFactory() {
-		return MakeCDataFacroty.getDefault();
+	protected CDataFactory getDataFactory() {
+		return MakeCDataFactory.getDefault();
 	}
 
 	protected CDataSerializer getDataSerializer() {

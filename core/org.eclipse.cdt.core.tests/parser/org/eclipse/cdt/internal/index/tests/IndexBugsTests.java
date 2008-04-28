@@ -834,7 +834,7 @@ public class IndexBugsTests extends BaseTestCase {
 			IIndexBinding binding = bindings[0];
 			assertTrue(binding instanceof IVariable);
 			IIndexName[] names = index.findNames(binding,
-					IIndex.FIND_ALL_OCCURENCES);
+					IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(1, names.length);
 			assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
 			
@@ -1288,7 +1288,7 @@ public class IndexBugsTests extends BaseTestCase {
 			IIndexBinding[] bindings = fIndex.findBindings(new char[][] { "unrelated".toCharArray(),
 					"b".toCharArray() }, IndexFilter.ALL, NPM);
 			assertEquals(1, bindings.length);
-			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURENCES);
+			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(2, decls.length);
 		} finally {
 			fIndex.releaseReadLock();
@@ -1319,7 +1319,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(0, bindings.length);
 			bindings = fIndex.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, bindings.length);
-			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURENCES);
+			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(2, decls.length);
 		} finally {
 			fIndex.releaseReadLock();

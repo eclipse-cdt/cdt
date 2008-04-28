@@ -1568,7 +1568,7 @@ public class InputType extends BuildObject implements IInputType {
 				superClass = ManagedBuildManager.getExtensionInputType(superClassId);
 				if (superClass == null) {
 					// Report error
-					ManagedBuildManager.OutputResolveError(
+					ManagedBuildManager.outputResolveError(
 							"superClass",	//$NON-NLS-1$
 							superClassId,
 							"inputType",	//$NON-NLS-1$

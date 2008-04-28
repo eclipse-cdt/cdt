@@ -44,7 +44,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 	private String searchText;
 	
 	public PDOMSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
-		super(scope, flags | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.tu = tu;
 		this.selection = selection;
 		this.searchText= selection.getText();

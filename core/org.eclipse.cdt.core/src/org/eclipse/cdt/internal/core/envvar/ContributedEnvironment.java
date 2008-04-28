@@ -147,7 +147,7 @@ public class ContributedEnvironment implements IContributedEnvironment{
 	public String getOrigin(IEnvironmentVariable var) {
 		if(var instanceof EnvVarDescriptor) {
 			ICoreEnvironmentVariableSupplier sup = ((EnvVarDescriptor)var).getSupplier();
-			if (sup instanceof BuildSustemEnvironmentSupplier)
+			if (sup instanceof BuildSystemEnvironmentSupplier)
 				return Messages.getString("ContributedEnvironment.0"); //$NON-NLS-1$
 			if (sup instanceof EclipseEnvironmentSupplier)
 				return Messages.getString("ContributedEnvironment.1"); //$NON-NLS-1$

@@ -383,7 +383,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		
 		fActiveCfgInfo.setConfiguration(cfg);
 		
-		if(getConfigurationReltations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
+		if(getConfigurationRelations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
 			fSettingCfgInfo.setConfiguration(cfg);
 
 	}
@@ -529,7 +529,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	}
 	
 	public ICConfigurationDescription getDefaultSettingConfiguration(){
-		if(getConfigurationReltations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
+		if(getConfigurationRelations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
 			return getActiveConfiguration();
 		
 		return fSettingCfgInfo.getConfiguration();
@@ -543,7 +543,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 
 		fSettingCfgInfo.setConfiguration(cfg);
 		
-		if(getConfigurationReltations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
+		if(getConfigurationRelations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
 			fActiveCfgInfo.setConfiguration(cfg);
 	}
 
@@ -609,8 +609,8 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return fPrefs;
 	}
 
-	public int getConfigurationReltations() {
-		return fPrefs.getConfigurationReltations();
+	public int getConfigurationRelations() {
+		return fPrefs.getConfigurationRelations();
 	}
 
 	public boolean isDefaultConfigurationRelations() {

@@ -1294,7 +1294,7 @@ public class ToolReference implements IToolReference {
 		return null;
 	}
 
-	public IInputType getEdtableInputType(IInputType base) {
+	public IInputType getEditableInputType(IInputType base) {
 		return null;
 	}
 
@@ -1326,7 +1326,7 @@ public class ToolReference implements IToolReference {
 		return getName();
 	}
 
-	public IOutputType getEdtableOutputType(IOutputType base) {
+	public IOutputType getEditableOutputType(IOutputType base) {
 		return null;
 	}
 

@@ -23,30 +23,30 @@ public class CDefaultFileData extends CFileData {
 	protected String fId;
 	protected CLanguageData fLanguageData;
 	protected CConfigurationData fCfg;
-	private CDataFacroty fFactory;
+	private CDataFactory fFactory;
 	protected boolean fIsModified;
 
-	public CDefaultFileData(CConfigurationData cfg, CDataFacroty factory) {
+	public CDefaultFileData(CConfigurationData cfg, CDataFactory factory) {
 		fCfg = cfg;
 		if(factory == null)
-			factory = new CDataFacroty();
+			factory = new CDataFactory();
 		fFactory = factory;
 	}
 
-	public CDefaultFileData(String id, IPath path, CConfigurationData cfg, CDataFacroty factory) {
+	public CDefaultFileData(String id, IPath path, CConfigurationData cfg, CDataFactory factory) {
 		this(cfg, factory);
 		fId = id;
 		fName = path.toString();
 		fPath = path;
 	}
 
-	public CDefaultFileData(String id, IPath path, CFileData base, CConfigurationData cfg, CDataFacroty factory, boolean clone) {
+	public CDefaultFileData(String id, IPath path, CFileData base, CConfigurationData cfg, CDataFactory factory, boolean clone) {
 		this(id, path, cfg, factory);
 		
 		copyDataFrom(base, clone);
 	}
 
-	public CDefaultFileData(String id, IPath path, CFolderData base, CLanguageData baseLangData, CConfigurationData cfg, CDataFacroty factory) {
+	public CDefaultFileData(String id, IPath path, CFolderData base, CLanguageData baseLangData, CConfigurationData cfg, CDataFactory factory) {
 		this(id, path, cfg, factory);
 		
 		copyDataFrom(base, baseLangData);

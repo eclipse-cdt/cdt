@@ -26,24 +26,24 @@ public class CDefaultFolderData extends CFolderData {
 	protected String fName;
 	protected String fId;
 	protected CConfigurationData fCfg;
-	private CDataFacroty fFactory;
+	private CDataFactory fFactory;
 	protected boolean fIsModified;
 
-	public CDefaultFolderData(CConfigurationData cfg, CDataFacroty factory) {
+	public CDefaultFolderData(CConfigurationData cfg, CDataFactory factory) {
 		fCfg = cfg;
 		if(factory == null)
-			factory = new CDataFacroty();
+			factory = new CDataFactory();
 		fFactory = factory;
 	}
 
-	public CDefaultFolderData(String id, IPath path, CConfigurationData cfg, CDataFacroty factory) {
+	public CDefaultFolderData(String id, IPath path, CConfigurationData cfg, CDataFactory factory) {
 		this(cfg, factory);
 		fId = id;
 		fName = path.toString();
 		fPath = path;
 	}
 
-	public CDefaultFolderData(String id, IPath path, CFolderData base, CConfigurationData cfg, CDataFacroty factory, boolean clone) {
+	public CDefaultFolderData(String id, IPath path, CFolderData base, CConfigurationData cfg, CDataFactory factory, boolean clone) {
 		this(id, path, cfg, factory);
 		
 		copyDataFrom(base, clone);

@@ -98,7 +98,7 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 
     	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
     	ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(false);
-    	boolean useActive= prefs.getConfigurationReltations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
+    	boolean useActive= prefs.getConfigurationRelations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
     	fUseActiveBuildButton.setSelection(useActive);
     	fUseFixedBuildConfig.setSelection(!useActive);
     	

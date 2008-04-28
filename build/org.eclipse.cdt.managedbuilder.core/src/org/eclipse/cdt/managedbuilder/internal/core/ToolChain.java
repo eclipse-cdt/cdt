@@ -1628,7 +1628,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				setSuperClassInternal(ManagedBuildManager.getExtensionToolChain(superClassId));
 				if (getSuperClass() == null) {
 					// Report error
-					ManagedBuildManager.OutputResolveError(
+					ManagedBuildManager.outputResolveError(
 							"superClass",	//$NON-NLS-1$
 							superClassId,
 							"toolChain",	//$NON-NLS-1$

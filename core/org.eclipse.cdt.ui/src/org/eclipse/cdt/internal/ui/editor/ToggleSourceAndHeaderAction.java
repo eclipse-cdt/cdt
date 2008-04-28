@@ -134,9 +134,9 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 						final IIndexName[] partnerNames;
 						try {
 							if (isDefinition) {
-								partnerNames= fIndex.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+								partnerNames= fIndex.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 							} else {
-								partnerNames= fIndex.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+								partnerNames= fIndex.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 							}
 							if (partnerNames.length == 0) {
 								++fSuspect;

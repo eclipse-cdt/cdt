@@ -197,7 +197,7 @@ public class CWizardHandler implements Cloneable {
 	 */
 	public void initialize(EntryDescriptor data) throws CoreException {}
 
-	public boolean canFinich() {return true;}
+	public boolean canFinish() {return true;}
 
 	@Override
 	public Object clone() {

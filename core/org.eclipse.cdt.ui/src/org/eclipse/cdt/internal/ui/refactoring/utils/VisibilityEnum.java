@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
 /**
@@ -31,13 +31,13 @@ public enum VisibilityEnum {
 		this.stringRepresentation = stringRepresentation;
 	}
 	
-	public static VisibilityEnum from(ICPPASTVisiblityLabel visibility) {
+	public static VisibilityEnum from(ICPPASTVisibilityLabel visibility) {
 		switch(visibility.getVisibility()){
-		case ICPPASTVisiblityLabel.v_private:
+		case ICPPASTVisibilityLabel.v_private:
 			return VisibilityEnum.v_private;
-		case ICPPASTVisiblityLabel.v_protected:
+		case ICPPASTVisibilityLabel.v_protected:
 			return VisibilityEnum.v_protected;
-		case ICPPASTVisiblityLabel.v_public:
+		case ICPPASTVisibilityLabel.v_public:
 			return VisibilityEnum.v_public;
 		}
 		return null;
@@ -58,11 +58,11 @@ public enum VisibilityEnum {
 	public int getICPPASTVisiblityLabelVisibility() {
 		switch (this) {
 		case v_private:
-			return ICPPASTVisiblityLabel.v_private;
+			return ICPPASTVisibilityLabel.v_private;
 		case v_protected:
-			return ICPPASTVisiblityLabel.v_protected;
+			return ICPPASTVisibilityLabel.v_protected;
 		case v_public:
-			return ICPPASTVisiblityLabel.v_public;
+			return ICPPASTVisibilityLabel.v_public;
 		}
 		return 0;
 	}

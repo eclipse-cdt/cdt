@@ -1890,7 +1890,7 @@ public class SemanticHighlightings {
 					else if (!(binding instanceof ICExternalBinding)) {
 						return false;
 					}
-					IIndexName[] decls= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+					IIndexName[] decls= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 					for (IIndexName decl : decls) {
 						IIndexFile indexFile= decl.getFile();
 						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {

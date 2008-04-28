@@ -62,7 +62,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -301,8 +301,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			createFunctionDefinition(parent, (IASTFunctionDefinition)declaration, false);
 		} else if (declaration instanceof IASTSimpleDeclaration) {
 			createSimpleDeclarations(parent, (IASTSimpleDeclaration)declaration, false);
-		} else if (declaration instanceof ICPPASTVisiblityLabel) {
-			handleVisibilityLabel((ICPPASTVisiblityLabel)declaration);
+		} else if (declaration instanceof ICPPASTVisibilityLabel) {
+			handleVisibilityLabel((ICPPASTVisibilityLabel)declaration);
 		} else if(declaration instanceof ICPPASTNamespaceDefinition) {
 			createNamespace(parent, (ICPPASTNamespaceDefinition) declaration);
 		} else if (declaration instanceof ICPPASTNamespaceAlias) {
@@ -1160,7 +1160,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * Handle the special "declaration" visibility label
 	 * @param visibilityLabel
 	 */
-	private void handleVisibilityLabel(ICPPASTVisiblityLabel visibilityLabel) {
+	private void handleVisibilityLabel(ICPPASTVisibilityLabel visibilityLabel) {
 		setCurrentVisibility(adaptVisibilityConstant(visibilityLabel.getVisibility()));
 	}
 
@@ -1173,11 +1173,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 */
 	private ASTAccessVisibility adaptVisibilityConstant(int visibility) {
 		switch(visibility) {
-		case ICPPASTVisiblityLabel.v_public:
+		case ICPPASTVisibilityLabel.v_public:
 			return ASTAccessVisibility.PUBLIC;
-		case ICPPASTVisiblityLabel.v_protected:
+		case ICPPASTVisibilityLabel.v_protected:
 			return ASTAccessVisibility.PROTECTED;
-		case ICPPASTVisiblityLabel.v_private:
+		case ICPPASTVisibilityLabel.v_private:
 			return ASTAccessVisibility.PRIVATE;
 		}
 		assert false : "Unknown visibility"; //$NON-NLS-1$

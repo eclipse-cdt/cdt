@@ -54,7 +54,7 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.resources.IProject;
@@ -467,7 +467,7 @@ public class CDataUtil {
 		return h;
 	}
 	
-	public static CConfigurationData createEmptyData(String id, String name, CDataFacroty factory, boolean performLangAdjustment){
+	public static CConfigurationData createEmptyData(String id, String name, CDataFactory factory, boolean performLangAdjustment){
 		if(id == null)
 			id = genId(null);
 		
@@ -493,7 +493,7 @@ public class CDataUtil {
 		return data;
 	}
 
-	public static CConfigurationData adjustConfig(CConfigurationData cfg, CDataFacroty factory){
+	public static CConfigurationData adjustConfig(CConfigurationData cfg, CDataFactory factory){
 		LanguageManager mngr = LanguageManager.getInstance();
 		ILanguageDescriptor dess[] = mngr.getLanguageDescriptors();
 		Map map = mngr.getContentTypeIdToLanguageDescriptionsMap();
@@ -509,7 +509,7 @@ public class CDataUtil {
 	}
 
 	
-	private static void adjustFolderData(CConfigurationData cfgData, CFolderData data, CDataFacroty factory, ILanguageDescriptor dess[], HashMap map){
+	private static void adjustFolderData(CConfigurationData cfgData, CFolderData data, CDataFactory factory, ILanguageDescriptor dess[], HashMap map){
 		Map langMap = new HashMap();
 		for(int i = 0; i < dess.length; i++){
 			langMap.put(dess[i].getId(), dess[i]);
@@ -563,7 +563,7 @@ public class CDataUtil {
 		return lData;
 	}
 	
-	private static void addLangs(CConfigurationData cfgData, CFolderData data, CDataFacroty factory, Map langMap, Map cTypeToLangMap){
+	private static void addLangs(CConfigurationData cfgData, CFolderData data, CDataFactory factory, Map langMap, Map cTypeToLangMap){
 		List list = new ArrayList(langMap.values());
 		ILanguageDescriptor des;
 		while(list.size() != 0){

@@ -13,15 +13,15 @@ package org.eclipse.cdt.make.internal.core.dataprovider;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
-public class MakeCDataFacroty extends CDataFacroty {
-	private static MakeCDataFacroty fInstance;
+public class MakeCDataFactory extends CDataFactory {
+	private static MakeCDataFactory fInstance;
 	
-	public static CDataFacroty getDefault(){
+	public static CDataFactory getDefault(){
 		if(fInstance == null){
-			fInstance = new MakeCDataFacroty();
+			fInstance = new MakeCDataFactory();
 		}
 		return fInstance;
 	}

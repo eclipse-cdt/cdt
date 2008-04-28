@@ -68,7 +68,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 
 	public void startup(){
 		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.DATA_APPLIED
-				| CProjectDescriptionEvent.LOADDED);
+				| CProjectDescriptionEvent.LOADED);
 	}
 
 	public void shutdown(){
@@ -684,7 +684,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		case CProjectDescriptionEvent.DATA_APPLIED:
 			checkStore(event.getNewCProjectDescription());
 			break;
-		case CProjectDescriptionEvent.LOADDED:
+		case CProjectDescriptionEvent.LOADED:
 			final SettingsUpdateStatus status = update(event.getNewCProjectDescription());
 			if(status.isChanged()){
 				IWorkspaceRunnable r = new IWorkspaceRunnable(){

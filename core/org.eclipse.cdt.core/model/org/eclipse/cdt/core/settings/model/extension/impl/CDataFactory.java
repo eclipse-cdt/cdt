@@ -22,12 +22,12 @@ import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.runtime.IPath;
 
-public class CDataFacroty {
-	private static CDataFacroty fInstance;
+public class CDataFactory {
+	private static CDataFactory fInstance;
 	
-	public static CDataFacroty getDefault(){
+	public static CDataFactory getDefault(){
 		if(fInstance == null)
-			fInstance = new CDataFacroty();
+			fInstance = new CDataFactory();
 		return fInstance;
 	}
 

@@ -554,7 +554,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			IName[] declNames= ast.getDefinitionsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search definitions in index
-				declNames = ast.getIndex().findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+				declNames = ast.getIndex().findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 			}
 			return declNames;
 		}
@@ -572,7 +572,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			IName[] declNames= ast.getDeclarationsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search declarations in index
-				declNames= ast.getIndex().findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+				declNames= ast.getIndex().findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 			}
 			return declNames;
 		}

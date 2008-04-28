@@ -25,11 +25,11 @@ public interface ICPPMember extends ICPPBinding{
 	 */
 	public int getVisibility() throws DOMException;
 
-	public static final int v_private = ICPPASTVisiblityLabel.v_private;
+	public static final int v_private = ICPPASTVisibilityLabel.v_private;
 
-	public static final int v_protected = ICPPASTVisiblityLabel.v_protected;
+	public static final int v_protected = ICPPASTVisibilityLabel.v_protected;
 
-	public static final int v_public = ICPPASTVisiblityLabel.v_public;
+	public static final int v_public = ICPPASTVisibilityLabel.v_public;
 
 	public ICPPClassType getClassOwner() throws DOMException;
 	

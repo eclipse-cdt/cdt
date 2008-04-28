@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -101,25 +101,25 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		if( decl == null ){
 			ICPPClassType cls = getClassOwner();
 			if (cls != null) {
-				return ( cls.getKey() == ICPPClassType.k_class ) ? ICPPASTVisiblityLabel.v_private : ICPPASTVisiblityLabel.v_public;
+				return ( cls.getKey() == ICPPClassType.k_class ) ? ICPPASTVisibilityLabel.v_private : ICPPASTVisibilityLabel.v_public;
 			}
-			return ICPPASTVisiblityLabel.v_private;
+			return ICPPASTVisibilityLabel.v_private;
 		}
 		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 		IASTDeclaration [] members = cls.getMembers();
-		ICPPASTVisiblityLabel vis = null;
+		ICPPASTVisibilityLabel vis = null;
 		for (IASTDeclaration member : members) {
-			if( member instanceof ICPPASTVisiblityLabel )
-				vis = (ICPPASTVisiblityLabel) member;
+			if( member instanceof ICPPASTVisibilityLabel )
+				vis = (ICPPASTVisibilityLabel) member;
 			else if( member == decl )
 				break;
 		}
 		if( vis != null ){
 			return vis.getVisibility();
 		} else if( cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class ){
-			return ICPPASTVisiblityLabel.v_private;
+			return ICPPASTVisibilityLabel.v_private;
 		} 
-		return ICPPASTVisiblityLabel.v_public;
+		return ICPPASTVisibilityLabel.v_public;
 	}
 	
 	public ICPPClassType getClassOwner() throws DOMException {

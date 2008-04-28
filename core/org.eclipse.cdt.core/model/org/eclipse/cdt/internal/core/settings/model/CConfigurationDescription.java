@@ -125,7 +125,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
 		CConfigurationData data = mngr.createDefaultConfigData(projectDes.getProject(), id, name, PathEntryConfigurationDataProvider.getDataFactory());
 		setData(data);
-		fCfgSpecSettings.reconsileExtensionSettings(false);
+		fCfgSpecSettings.reconcileExtensionSettings(false);
 	}
 
 	/*

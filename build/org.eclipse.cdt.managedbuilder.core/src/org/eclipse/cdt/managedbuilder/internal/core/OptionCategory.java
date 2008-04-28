@@ -158,7 +158,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 				iconPathURL = new URL(iconPath);
 			} catch (MalformedURLException e) {
 				// Print a warning
-				ManagedBuildManager.OutputIconError(iconPath);
+				ManagedBuildManager.outputIconError(iconPath);
 				iconPathURL = null;
 			}
 		}
@@ -423,7 +423,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 					if (holder instanceof IOptionCategory) {
 						// Report error, only if the parent is a tool and thus also
 						// an option category. 
-						ManagedBuildManager.OutputResolveError(
+						ManagedBuildManager.outputResolveError(
 								"owner",	//$NON-NLS-1$
 								ownerId,
 								"optionCategory",	//$NON-NLS-1$
@@ -431,7 +431,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 						error = true;
 					} else if ( false == holder.getId().equals(ownerId) ) {
 						// Report error, if the holder ID does not match the owner's ID.
-						ManagedBuildManager.OutputResolveError(								
+						ManagedBuildManager.outputResolveError(								
 								"owner",	//$NON-NLS-1$
 								ownerId,
 								"optionCategory",	//$NON-NLS-1$

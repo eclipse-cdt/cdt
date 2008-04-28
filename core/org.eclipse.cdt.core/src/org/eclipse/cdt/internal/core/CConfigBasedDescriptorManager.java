@@ -418,7 +418,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				}
 				
 			};
-			CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(fDescriptionListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.DATA_APPLIED | CProjectDescriptionEvent.ABOUT_TO_APPLY);
+			CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(fDescriptionListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.DATA_APPLIED | CProjectDescriptionEvent.ABOUT_TO_APPLY);
 		}
 	}
 	
@@ -431,7 +431,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	private void doHandleEvent(CProjectDescriptionEvent event){
 		try {
 			switch(event.getEventType()){
-			case CProjectDescriptionEvent.LOADDED:{
+			case CProjectDescriptionEvent.LOADED:{
 					CProjectDescription des = (CProjectDescription)event.getNewCProjectDescription();
 					CConfigBasedDescriptor dr = getLoaddedDescriptor(des);
 					if(dr != null){

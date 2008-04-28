@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
@@ -66,8 +66,8 @@ public class AddDeclarationNodeToClassChange {
 		for(int i = 0; i < members.length; i++) {
 			IASTDeclaration declaration = members[i];
 			
-			if(declaration instanceof ICPPASTVisiblityLabel){
-				currentVisibility = VisibilityEnum.from((ICPPASTVisiblityLabel) declaration);
+			if(declaration instanceof ICPPASTVisibilityLabel){
+				currentVisibility = VisibilityEnum.from((ICPPASTVisibilityLabel) declaration);
 			}
 			
 			if (declaration instanceof IASTSimpleDeclaration) {
@@ -127,7 +127,7 @@ public class AddDeclarationNodeToClassChange {
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(nodeClass.getTranslationUnit());
 		
 		if(! currentVisibility.equals(visibility)) {
-			ICPPASTVisiblityLabel label = new CPPASTVisibilityLabel(visibility.getICPPASTVisiblityLabelVisibility());
+			ICPPASTVisibilityLabel label = new CPPASTVisibilityLabel(visibility.getICPPASTVisiblityLabelVisibility());
 			rewrite.insertBefore(nodeClass, null, label, createEditDescription());
 		}
 		

@@ -112,9 +112,9 @@ public class IndexLocationTest extends BaseTestCase {
 				assertEquals(1, bs1.length);
 				assertEquals(1, bs2.length);
 				assertEquals(1, bs3.length);
-				IIndexName[] nms1 = index.findNames(bs1[0], IIndex.FIND_ALL_OCCURENCES);
-				IIndexName[] nms2 = index.findNames(bs2[0], IIndex.FIND_ALL_OCCURENCES);
-				IIndexName[] nms3 = index.findNames(bs3[0], IIndex.FIND_ALL_OCCURENCES);
+				IIndexName[] nms1 = index.findNames(bs1[0], IIndex.FIND_ALL_OCCURRENCES);
+				IIndexName[] nms2 = index.findNames(bs2[0], IIndex.FIND_ALL_OCCURRENCES);
+				IIndexName[] nms3 = index.findNames(bs3[0], IIndex.FIND_ALL_OCCURRENCES);
 				assertEquals(1, nms1.length);
 				assertEquals(1, nms2.length);
 				assertEquals(1, nms3.length);
@@ -168,7 +168,7 @@ public class IndexLocationTest extends BaseTestCase {
 		try {
 			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, bs.length);
-			IIndexName[] nms= index.findNames(bs[0], IIndex.FIND_ALL_OCCURENCES);
+			IIndexName[] nms= index.findNames(bs[0], IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(1, nms.length);
 			IIndexFileLocation ilocation= nms[0].getFile().getLocation();
 			assertEquals("/"+cproject.getProject().getName()+"/content/external2.h", ilocation.getFullPath());
@@ -196,7 +196,7 @@ public class IndexLocationTest extends BaseTestCase {
 		try {
 			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, bs.length);
-			IIndexName[] nms= index.findNames(bs[0], IIndex.FIND_ALL_OCCURENCES);
+			IIndexName[] nms= index.findNames(bs[0], IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(1, nms.length);
 			IIndexFileLocation ilocation= nms[0].getFile().getLocation();
 			assertEquals("/"+cproject.getProject().getName()+"/content/external2.h", ilocation.getFullPath());

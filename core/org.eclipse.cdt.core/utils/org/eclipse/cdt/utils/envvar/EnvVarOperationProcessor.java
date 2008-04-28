@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.envvar.EnvirinmentVariable;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 
@@ -47,24 +47,24 @@ public class EnvVarOperationProcessor {
 		
 		switch(added.getOperation()){
 		case IEnvironmentVariable.ENVVAR_REMOVE:
-			return new EnvirinmentVariable(name,null,IEnvironmentVariable.ENVVAR_REMOVE,null);
+			return new EnvironmentVariable(name,null,IEnvironmentVariable.ENVVAR_REMOVE,null);
 		case IEnvironmentVariable.ENVVAR_APPEND:{
 				String delimiter = added.getDelimiter();
-				return new EnvirinmentVariable(name,
+				return new EnvironmentVariable(name,
 						performAppend(initial.getValue(),added.getValue(),delimiter),
 //						IEnvironmentVariable.ENVVAR_APPEND,
 						delimiter);
 			}
 		case IEnvironmentVariable.ENVVAR_PREPEND:{
 				String delimiter = added.getDelimiter();
-				return new EnvirinmentVariable(name,
+				return new EnvironmentVariable(name,
 						performPrepend(initial.getValue(),added.getValue(),delimiter),
 //						IEnvironmentVariable.ENVVAR_PREPEND,
 						delimiter);
 			}
 		case IEnvironmentVariable.ENVVAR_REPLACE:
 		default:
-			return new EnvirinmentVariable(added.getName(),added.getValue(),added.getDelimiter());
+			return new EnvironmentVariable(added.getName(),added.getValue(),added.getDelimiter());
 		}
 	}
 

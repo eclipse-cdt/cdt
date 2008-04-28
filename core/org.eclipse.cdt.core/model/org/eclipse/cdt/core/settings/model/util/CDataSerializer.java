@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -65,7 +65,7 @@ public class CDataSerializer {
 		return fInstance;
 	}
 
-	public CConfigurationData loadConfigurationData(CDataFacroty factory, ICStorageElement el) throws CoreException {
+	public CConfigurationData loadConfigurationData(CDataFactory factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.20"))); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class CDataSerializer {
 		return data;
 	}
 	
-	public CFolderData loadFolderData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
+	public CFolderData loadFolderData(CConfigurationData data, CDataFactory factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.22"))); //$NON-NLS-1$
@@ -159,7 +159,7 @@ public class CDataSerializer {
 		return foData;
 	}
 	
-	public CFileData loadFileData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
+	public CFileData loadFileData(CConfigurationData data, CDataFactory factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.25"))); //$NON-NLS-1$
@@ -198,7 +198,7 @@ public class CDataSerializer {
 		return fiData;
 	}
 
-	public CBuildData loadBuildData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
+	public CBuildData loadBuildData(CConfigurationData data, CDataFactory factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.28"))); //$NON-NLS-1$
@@ -240,7 +240,7 @@ public class CDataSerializer {
 		return bData;
 	}
 
-	public CTargetPlatformData loadTargetPlatformData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
+	public CTargetPlatformData loadTargetPlatformData(CConfigurationData data, CDataFactory factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.30"))); //$NON-NLS-1$
@@ -260,7 +260,7 @@ public class CDataSerializer {
 		return tpData;
 	}
 	
-	public CLanguageData loadLanguageData(CConfigurationData data, CResourceData rcData, CDataFacroty factory, ICStorageElement el) throws CoreException {
+	public CLanguageData loadLanguageData(CConfigurationData data, CResourceData rcData, CDataFactory factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.32"))); //$NON-NLS-1$

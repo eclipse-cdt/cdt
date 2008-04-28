@@ -51,7 +51,7 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 		}
 	}
 	
-	protected class DataFactory extends CDataFacroty {
+	protected class DataFactory extends CDataFactory {
 		@Override
 		public CLanguageData createLanguageData(CConfigurationData cfg,
 				CResourceData rcBase, CLanguageData base, String id, boolean clone) {
@@ -77,7 +77,7 @@ public abstract class UserAndDiscoveredEntryConfigurationDataProvider extends
 	}
 
 	@Override
-	protected CDataFacroty getDataFactory() {
+	protected CDataFactory getDataFactory() {
 		if(fDataFactory == null){
 			fDataFactory = new DataFactory();
 		}

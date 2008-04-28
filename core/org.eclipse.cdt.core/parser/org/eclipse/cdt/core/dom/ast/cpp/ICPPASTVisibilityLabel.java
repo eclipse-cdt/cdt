@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * 
  * @author jcamelon
  */
-public interface ICPPASTVisiblityLabel extends IASTDeclaration {
+public interface ICPPASTVisibilityLabel extends IASTDeclaration {
 
 	/**
 	 * <code>v_public</code> == public:

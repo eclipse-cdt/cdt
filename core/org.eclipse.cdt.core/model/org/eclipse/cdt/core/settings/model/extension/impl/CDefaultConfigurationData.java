@@ -38,13 +38,13 @@ public class CDefaultConfigurationData extends CConfigurationData {
 	protected CTargetPlatformData fTargetPlatformData;
 	protected CBuildData fBuildData;
 	protected ICSourceEntry[] fSourceEntries;
-	private CDataFacroty fFactory;
+	private CDataFactory fFactory;
 	protected boolean fIsModified;
 	private CConfigurationStatus fStatus = CConfigurationStatus.CFG_STATUS_OK;
 	
-	protected CDefaultConfigurationData(CDataFacroty factory){
+	protected CDefaultConfigurationData(CDataFactory factory){
 		if(factory == null)
-			factory = new CDataFacroty();
+			factory = new CDataFactory();
 		fFactory = factory;
 	}
 
@@ -52,15 +52,15 @@ public class CDefaultConfigurationData extends CConfigurationData {
 //		this(id, name, (CDataFacroty)null);
 //	}
 
-	public CDataFacroty getFactory(){
+	public CDataFactory getFactory(){
 		return fFactory;
 	}
 
-	public CDefaultConfigurationData(String id, String name, CDataFacroty factory) {
+	public CDefaultConfigurationData(String id, String name, CDataFactory factory) {
 		fId = id;
 		fName = name;
 		if(factory == null)
-			factory = new CDataFacroty();
+			factory = new CDataFactory();
 		fFactory = factory;
 	}
 
@@ -68,7 +68,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 //		this(id, name, base, null);
 //	}
 
-	public CDefaultConfigurationData(String id, String name, CConfigurationData base, CDataFacroty facroty, boolean clone) {
+	public CDefaultConfigurationData(String id, String name, CConfigurationData base, CDataFactory facroty, boolean clone) {
 		this(id, name, facroty);
 
 		copySettingsFrom(base, clone);

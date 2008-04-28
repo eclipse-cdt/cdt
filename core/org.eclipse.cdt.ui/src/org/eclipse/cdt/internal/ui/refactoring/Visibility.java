@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 
 /**
@@ -64,11 +64,11 @@ public class Visibility {
 			ICPPMember member = ((ICPPMember)name.resolveBinding());			
 			
 			switch (member.getVisibility()){
-				case ICPPASTVisiblityLabel.v_public:
+				case ICPPASTVisibilityLabel.v_public:
 					return PUBLIC;
-				case ICPPASTVisiblityLabel.v_protected:
+				case ICPPASTVisibilityLabel.v_protected:
 					return PROTECTED;
-				case ICPPASTVisiblityLabel.v_private:
+				case ICPPASTVisibilityLabel.v_private:
 					return PRIVATE;
 				default:
 					return UNKNOWN;

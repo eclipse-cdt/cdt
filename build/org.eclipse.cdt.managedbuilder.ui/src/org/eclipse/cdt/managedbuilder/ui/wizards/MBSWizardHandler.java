@@ -734,7 +734,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return clone;
 	}
 
-	public boolean canFinich() {
+	public boolean canFinish() {
 		if(entryInfo == null)
 			return false;
 		
@@ -749,7 +749,7 @@ public class MBSWizardHandler extends CWizardHandler {
 				if (!customPages[i].isPageComplete())
 					return false;
 		
-		return super.canFinich();
+		return super.canFinish();
 	}
 	
 	

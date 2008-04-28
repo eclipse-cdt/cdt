@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultFileData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultFolderData;
@@ -50,7 +50,7 @@ public class PathEntryConfigurationDataProvider extends
 	private static PathEntryDataFactory fFactory;
 	
 	
-	public static CDataFacroty getDataFactory(){
+	public static CDataFactory getDataFactory(){
 		if(fFactory == null){
 			fFactory = new PathEntryDataFactory();
 		}
@@ -74,7 +74,7 @@ public class PathEntryConfigurationDataProvider extends
 //		}
 
 		public PathEntryFolderData(String id, IPath path, PathEntryFolderData base,
-				CConfigurationData cfg, CDataFacroty factory, boolean clone) {
+				CConfigurationData cfg, CDataFactory factory, boolean clone) {
 			super(id, path, cfg, factory);
 			
 			if(base != null)
@@ -99,7 +99,7 @@ public class PathEntryConfigurationDataProvider extends
 //		}
 
 		public PathEntryFileData(String id, IPath path, PathEntryFileData base,
-				CConfigurationData cfg, CDataFacroty factory, boolean clone) {
+				CConfigurationData cfg, CDataFactory factory, boolean clone) {
 			super(id, path, cfg, factory);
 
 			fStore = new EntryStore(base.fStore, true);
@@ -109,7 +109,7 @@ public class PathEntryConfigurationDataProvider extends
 
 		public PathEntryFileData(String id, IPath path, PathEntryFolderData base,
 				CLanguageData baseLangData, CConfigurationData cfg,
-				CDataFacroty factory) {
+				CDataFactory factory) {
 			super(id, path, cfg, factory);
 
 			fStore = new EntryStore(base.fStore, true);
@@ -147,7 +147,7 @@ public class PathEntryConfigurationDataProvider extends
 		
 	}
 	
-	private static class PathEntryDataFactory extends CDataFacroty {
+	private static class PathEntryDataFactory extends CDataFactory {
 
 		@Override
 		public CConfigurationData createConfigurationdata(String id,

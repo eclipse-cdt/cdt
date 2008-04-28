@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
-import org.eclipse.cdt.core.envvar.EnvirinmentVariable;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IContributedEnvironment;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
@@ -50,7 +50,7 @@ public class EnvironmentVariableManager implements
 //	private EnvVarVariableSubstitutor fVariableSubstitutor;
 	
 	public static final UserDefinedEnvironmentSupplier fUserSupplier = new UserDefinedEnvironmentSupplier();
-	public static final BuildSustemEnvironmentSupplier fExternalSupplier = new BuildSustemEnvironmentSupplier();
+	public static final BuildSystemEnvironmentSupplier fExternalSupplier = new BuildSystemEnvironmentSupplier();
 	public static final EclipseEnvironmentSupplier fEclipseSupplier = new EclipseEnvironmentSupplier();
 	
 	private ContributedEnvironment fContributedEnvironment;
@@ -81,7 +81,7 @@ public class EnvironmentVariableManager implements
 			int varSupplierNum = getVarMacroSupplierNum(var,varMacroInfo);
 			value = resolveToString(new MacroDescriptor(macro,varMacroInfo,varSupplierNum));
 			removeResolvedMacro(var.getName());
-			return new EnvirinmentVariable(var.getName(),value,var.getOperation(),var.getDelimiter());
+			return new EnvironmentVariable(var.getName(),value,var.getOperation(),var.getDelimiter());
 		}
 		
 		protected IVariableContextInfo getVarMacroContextInfo(EnvVarDescriptor var){
@@ -384,7 +384,7 @@ public class EnvironmentVariableManager implements
 				var = ((EnvVarVariableSubstitutor)sub).resolveVariable(des);
 			else if(des.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE){
 				String name = des.getName();
-				var = new EnvirinmentVariable(name,sub.resolveToString(name),des.getOperation(),des.getDelimiter());
+				var = new EnvironmentVariable(name,sub.resolveToString(name),des.getOperation(),des.getDelimiter());
 			}
 		} catch (CdtVariableException e){
 		}

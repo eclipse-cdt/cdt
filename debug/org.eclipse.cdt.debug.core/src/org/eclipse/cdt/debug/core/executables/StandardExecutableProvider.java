@@ -41,7 +41,7 @@ public class StandardExecutableProvider implements IResourceChangeListener, ICPr
 	public StandardExecutableProvider() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		CoreModel.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(this,
-				CProjectDescriptionEvent.DATA_APPLIED | CProjectDescriptionEvent.LOADDED);
+				CProjectDescriptionEvent.DATA_APPLIED | CProjectDescriptionEvent.LOADED);
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {

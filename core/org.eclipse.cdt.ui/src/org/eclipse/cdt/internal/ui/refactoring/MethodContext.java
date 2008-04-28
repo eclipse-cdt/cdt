@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -65,8 +65,8 @@ public class MethodContext {
 		return null;
 	}
 	
-	public ICPPASTVisiblityLabel getMethodDeclarationASTVisibility(){
-		ICPPASTVisiblityLabel label = new CPPASTVisibilityLabel();
+	public ICPPASTVisibilityLabel getMethodDeclarationASTVisibility(){
+		ICPPASTVisibilityLabel label = new CPPASTVisibilityLabel();
 		ICPPMember member = ((ICPPMember)qname.resolveBinding());			
 
 		try {

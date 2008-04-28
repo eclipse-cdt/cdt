@@ -466,6 +466,7 @@ public class CVisitor {
 	protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	protected static final ASTNodeProperty STRING_LOOKUP_TAGS_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_TAGS_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	private static final String SIZE_T = "size_t"; //$NON-NLS-1$
+	private static final String PTRDIFF_T = "ptrdiff_t"; //$NON-NLS-1$
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	public static final char [] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	//lookup bits
@@ -708,7 +709,6 @@ public class CVisitor {
 	    	} else if( expression instanceof IASTBinaryExpression ){
 		        IASTBinaryExpression binary = (IASTBinaryExpression) expression;
 		        int op = binary.getOperator();
-				IType result = null;
 				switch( op ){
 					case IASTBinaryExpression.op_lessEqual:
 					case IASTBinaryExpression.op_lessThan:
@@ -718,25 +718,39 @@ public class CVisitor {
 					case IASTBinaryExpression.op_logicalOr:
 					case IASTBinaryExpression.op_equals:
 					case IASTBinaryExpression.op_notequals:
-						result = new CBasicType( IBasicType.t_int, 0 );
-						break;
+						CBasicType basicType = new CBasicType( IBasicType.t_int, 0 );
+			        	basicType.setValue(expression);
+			        	return basicType;
 					case IASTBinaryExpression.op_plus:
-					case IASTBinaryExpression.op_minus:
-						IType t = getExpressionType( ((IASTBinaryExpression) expression).getOperand1() );
-						if( t instanceof IPointerType )
-							result = t;
-						else{
-							result = getExpressionType( ((IASTBinaryExpression) expression).getOperand2() );
+						IType t2 = getExpressionType(binary.getOperand2());
+						if (unwrapTypedefs(t2) instanceof IPointerType) {
+							return t2;
 						}
 						break;
-					default:
-						result = getExpressionType( ((IASTBinaryExpression) expression).getOperand1() );
+
+					case IASTBinaryExpression.op_minus:
+						t2= getExpressionType(binary.getOperand2());
+						if (unwrapTypedefs(t2) instanceof IPointerType) {
+							IType t1 = getExpressionType(binary.getOperand1());
+							if (unwrapTypedefs(t1) instanceof IPointerType) {
+			        			IScope scope = getContainingScope(expression);
+			        			try {
+			        				IBinding[] bs = scope.find(PTRDIFF_T);
+			        				if (bs.length > 0 && bs[0] instanceof IType) {
+			        					return (IType) bs[0];
+			        				}
+			        			} catch (DOMException e) {
+			        			}
+
+								basicType = new CBasicType(IBasicType.t_int, CBasicType.IS_UNSIGNED | CBasicType.IS_LONG);
+					        	basicType.setValue(expression);
+					        	return basicType;
+							}
+							return t1;
+						}
+						break;
 				}
-	
-		        if( result instanceof CBasicType ){
-		        	((CBasicType)result).setValue( expression );
-		        }
-		        return result;
+				return getExpressionType(binary.getOperand1() );
 		    } else if( expression instanceof IASTUnaryExpression ) {
 				int op = ((IASTUnaryExpression)expression).getOperator(); 
 				if( op == IASTUnaryExpression.op_sizeof ){
@@ -816,6 +830,14 @@ public class CVisitor {
 	    }
 	    return null;
 	}
+
+	private static IType unwrapTypedefs(IType type) throws DOMException {
+		while (type instanceof ITypedef) {
+			type= ((ITypedef) type).getType();
+		}
+		return type;
+	}
+
 	/**
 	 * @param parent
 	 * @return

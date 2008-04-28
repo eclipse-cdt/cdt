@@ -185,6 +185,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  */
 public class CPPVisitor {
 	public static final String SIZE_T = "size_t"; //$NON-NLS-1$
+	public static final String PTRDIFF_T = "ptrdiff_t"; //$NON-NLS-1$
 	
 	/**
 	 * @param name
@@ -638,8 +639,8 @@ public class CPPVisitor {
 				ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
 				if (templateDecl != null) {
 					ICPPASTTemplateParameter[] params = templateDecl.getTemplateParameters();
-					for (int i = 0; i < params.length; i++) {
-						IASTName paramName = CPPTemplates.getTemplateParameterName(params[i]);
+					for (ICPPASTTemplateParameter param : params) {
+						IASTName paramName = CPPTemplates.getTemplateParameterName(param);
 						paramName.setBinding(null);
 						//unsetting the index bindings so that they
 						//can be re-resolved with normal bindings
@@ -675,7 +676,7 @@ public class CPPVisitor {
 		    	} else {
 		    		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, declarator.getName().toCharArray());
 		    	}
-		    } else if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+		    } else if (simpleDecl != null && simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
 				binding = new CPPField(name); 
 		    } else {
 		        binding = new CPPVariable(name);
@@ -1193,6 +1194,7 @@ public class CPPVisitor {
 			}
 		}
 		
+		@SuppressWarnings("fallthrough")
 		@Override
 		public int visit(IASTName name) {
 			if (name instanceof ICPPASTQualifiedName) return PROCESS_CONTINUE;
@@ -1248,7 +1250,8 @@ public class CPPVisitor {
         
 					if (kind == KIND_TYPE)
 					    return PROCESS_CONTINUE;
-
+					// fall through
+					
 				case KIND_OBJ_FN:
 					if (prop == IASTDeclarator.DECLARATOR_NAME ||
 						    prop == IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME ||
@@ -1281,13 +1284,13 @@ public class CPPVisitor {
 		private boolean isDeclarationsBinding(IBinding nameBinding) {
 			nameBinding= unwindBinding(nameBinding);
 			if (nameBinding != null) {
-				for (int i = 0; i < bindings.length; i++) {
-					if (nameBinding.equals(unwindBinding(bindings[i]))) {
+				for (IBinding binding : bindings) {
+					if (nameBinding.equals(unwindBinding(binding))) {
 						return true;
 					}
 					// a using declaration is a declaration for the references of its delegates
 					if (nameBinding instanceof ICPPUsingDeclaration) {
-						if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), bindings[i])) {
+						if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), binding)) {
 							return true;
 						}
 					}
@@ -1357,6 +1360,7 @@ public class CPPVisitor {
 			}
 		}
 		
+		@SuppressWarnings("fallthrough")
 		@Override
 		public int visit(IASTName name) {
 			if (name instanceof ICPPASTQualifiedName || name instanceof ICPPASTTemplateId)
@@ -1394,6 +1398,8 @@ public class CPPVisitor {
 					}
 					if (kind == KIND_TYPE)
 					    return PROCESS_CONTINUE;
+					// fall through
+
 				case KIND_OBJ_FN:
 					if (prop == IASTIdExpression.ID_NAME || 
 							prop == IASTFieldReference.FIELD_NAME || 
@@ -1433,15 +1439,14 @@ public class CPPVisitor {
 		private boolean isReferenceBinding(IBinding nameBinding) {
 			nameBinding= unwindBinding(nameBinding);
 			if (nameBinding != null) {
-				for (int i = 0; i < bindings.length; i++) {
-					if (nameBinding.equals(bindings[i])) {
+				for (IBinding binding : bindings) {
+					if (nameBinding.equals(binding)) {
 						return true;
 					}
 				}
 				if (nameBinding instanceof ICPPUsingDeclaration) {
 					IBinding[] delegates= ((ICPPUsingDeclaration) nameBinding).getDelegates();
-					for (int i = 0; i < delegates.length; i++) {
-						IBinding delegate = delegates[i];
+					for (IBinding delegate : delegates) {
 						if (isReferenceBinding(delegate)) {
 							return true;
 						}
@@ -1469,7 +1474,6 @@ public class CPPVisitor {
 	 * NOTE: This does not currectly handle parameters with typedef types.
 	 * @param returnType
 	 * @param parameters
-	 * @return
 	 */
 	
 	public static IFunctionType createImplicitFunctionType(IType returnType, IParameter[] parameters) {
@@ -1579,24 +1583,24 @@ public class CPPVisitor {
 
 	private static IType getPointerTypes(IType type, IASTDeclarator declarator) {
 	    IASTPointerOperator[] ptrOps = declarator.getPointerOperators();
-		for (int i = 0; i < ptrOps.length; i++) {
-		    if (ptrOps[i] instanceof IGPPASTPointerToMember)
-		        type = new GPPPointerToMemberType(type, (IGPPASTPointerToMember) ptrOps[i]);
-			else if (ptrOps[i] instanceof ICPPASTPointerToMember)
-				type = new CPPPointerToMemberType(type, (ICPPASTPointerToMember) ptrOps[i]);
-			else if (ptrOps[i] instanceof IGPPASTPointer)
-			    type = new GPPPointerType(type, (IGPPASTPointer) ptrOps[i]);
-		    else if (ptrOps[i] instanceof IASTPointer)
-		        type = new CPPPointerType(type, (IASTPointer) ptrOps[i]);
-		    else if (ptrOps[i] instanceof ICPPASTReferenceOperator)
+		for (IASTPointerOperator ptrOp : ptrOps) {
+		    if (ptrOp instanceof IGPPASTPointerToMember)
+		        type = new GPPPointerToMemberType(type, (IGPPASTPointerToMember) ptrOp);
+			else if (ptrOp instanceof ICPPASTPointerToMember)
+				type = new CPPPointerToMemberType(type, (ICPPASTPointerToMember) ptrOp);
+			else if (ptrOp instanceof IGPPASTPointer)
+			    type = new GPPPointerType(type, (IGPPASTPointer) ptrOp);
+		    else if (ptrOp instanceof IASTPointer)
+		        type = new CPPPointerType(type, (IASTPointer) ptrOp);
+		    else if (ptrOp instanceof ICPPASTReferenceOperator)
 		        type = new CPPReferenceType(type);
 		}
 		return type;
 	}
 	private static IType getArrayTypes(IType type, IASTArrayDeclarator declarator) {
 	    IASTArrayModifier[] mods = declarator.getArrayModifiers();
-	    for (int i = 0; i < mods.length; i++) {
-	        type = new CPPArrayType(type, mods[i].getConstantExpression());
+	    for (IASTArrayModifier mod : mods) {
+	        type = new CPPArrayType(type, mod.getConstantExpression());
 	    }
 	    return type;
 	}
@@ -1612,10 +1616,7 @@ public class CPPVisitor {
 			return createType(((IASTParameterDeclaration)node).getDeclarator());
 		return null;
 	}
-	/**
-	 * @param declarator
-	 * @return
-	 */
+
 	public static IType createType(IASTDeclarator declarator) {
 		IASTDeclSpecifier declSpec = null;
 		
@@ -1638,10 +1639,7 @@ public class CPPVisitor {
 		type = createType(type, declarator);
 		return type;
 	}
-	/**
-	 * @param declSpec
-	 * @return
-	 */
+
 	public static IType createType(IASTDeclSpecifier declSpec) {
 	    IType type = getBaseType(declSpec);
 		
@@ -1751,10 +1749,6 @@ public class CPPVisitor {
 		return null;
 	}
 	
-	/**
-	 * @param expression
-	 * @return
-	 */
 	public static IType getExpressionType(IASTExpression expression) {
 		if (expression == null)
 			return null;
@@ -1856,50 +1850,59 @@ public class CPPVisitor {
 	        	return (IType) binding;
 	        }
 	    } else if (expression instanceof IASTBinaryExpression) {
-	        IASTBinaryExpression binary = (IASTBinaryExpression) expression;
-	        int op = binary.getOperator();
-			IType result = null;
-			switch(op) {
-				case IASTBinaryExpression.op_lessEqual:
-				case IASTBinaryExpression.op_lessThan:
-				case IASTBinaryExpression.op_greaterEqual:
-				case IASTBinaryExpression.op_greaterThan:
-				case IASTBinaryExpression.op_logicalAnd:
-				case IASTBinaryExpression.op_logicalOr:
-				case IASTBinaryExpression.op_equals:
-				case IASTBinaryExpression.op_notequals:
-					result = new CPPBasicType(ICPPBasicType.t_bool, 0);
-					break;
-				case IASTBinaryExpression.op_plus:
-				case IASTBinaryExpression.op_minus:
-					IType t = getExpressionType(((IASTBinaryExpression) expression).getOperand1());
-					if (t instanceof IPointerType)
-						result = t;
-					else{
-						result = getExpressionType(((IASTBinaryExpression) expression).getOperand2());
-					}
-					break;
-				case ICPPASTBinaryExpression.op_pmarrow:
-				case ICPPASTBinaryExpression.op_pmdot:
-					IType type = getExpressionType(((IASTBinaryExpression) expression).getOperand2());
-					if (type instanceof ICPPPointerToMemberType) {
-		                try {
-	                        result = ((ICPPPointerToMemberType)type).getType();
-	                    } catch (DOMException e) {
-	                        result = e.getProblem();
-	                    }
-		            } else {
-						result = new ProblemBinding(binary, IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0]); 
-		            }
-					break;
-				default:
-					result = getExpressionType(((IASTBinaryExpression) expression).getOperand1());
-			}
-
-	        if (result instanceof CPPBasicType) {
-	        	((CPPBasicType)result).setValue(expression);
+	    	final IASTBinaryExpression binary = (IASTBinaryExpression) expression;
+	        final int op = binary.getOperator();
+	        switch(op) {
+	        case IASTBinaryExpression.op_lessEqual:
+	        case IASTBinaryExpression.op_lessThan:
+	        case IASTBinaryExpression.op_greaterEqual:
+	        case IASTBinaryExpression.op_greaterThan:
+	        case IASTBinaryExpression.op_logicalAnd:
+	        case IASTBinaryExpression.op_logicalOr:
+	        case IASTBinaryExpression.op_equals:
+	        case IASTBinaryExpression.op_notequals:
+	        	CPPBasicType basicType= new CPPBasicType(ICPPBasicType.t_bool, 0);
+	        	basicType.setValue(expression);
+	        	return basicType;
+	        case IASTBinaryExpression.op_plus:
+	        	IType t2 = getExpressionType(binary.getOperand2());
+	        	if (SemanticUtil.getUltimateTypeViaTypedefs(t2) instanceof IPointerType) {
+	        		return t2;
+	        	}
+	        	break;
+	        case IASTBinaryExpression.op_minus:
+	        	t2= getExpressionType(binary.getOperand2());
+	        	if (SemanticUtil.getUltimateTypeViaTypedefs(t2) instanceof IPointerType) {
+	        		IType t1 = getExpressionType(binary.getOperand1());
+	        		if (SemanticUtil.getUltimateTypeViaTypedefs(t1) instanceof IPointerType) {
+	        			IScope scope = getContainingScope(expression);
+	        			try {
+	        				IBinding[] bs = scope.find(PTRDIFF_T);
+	        				if (bs.length > 0 && bs[0] instanceof IType) {
+	        					return (IType) bs[0];
+	        				}
+	        			} catch (DOMException e) {
+	        			}
+	        			basicType= new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
+	        			basicType.setValue(expression);
+	        			return basicType;
+	        		}
+	        		return t1;
+	        	}
+	        	break;
+	        case ICPPASTBinaryExpression.op_pmarrow:
+	        case ICPPASTBinaryExpression.op_pmdot:
+	        	IType type = getExpressionType(((IASTBinaryExpression) expression).getOperand2());
+	        	if (type instanceof ICPPPointerToMemberType) {
+	        		try {
+	        			return ((ICPPPointerToMemberType)type).getType();
+	        		} catch (DOMException e) {
+	        			return e.getProblem();
+	        		}
+	        	} 
+	        	return new ProblemBinding(binary, IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0]); 
 	        }
-	        return result;
+			return getExpressionType(((IASTBinaryExpression) expression).getOperand1());
 	    } else if (expression instanceof IASTUnaryExpression) {
 			int op = ((IASTUnaryExpression)expression).getOperator();
 			if (op == IASTUnaryExpression.op_sizeof) {
@@ -2047,11 +2050,6 @@ public class CPPVisitor {
 		return action.getProblems();
 	}
 
-	/**
-	 * @param unit
-	 * @param binding
-	 * @return
-	 */
 	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
 		CollectReferencesAction action = new CollectReferencesAction(binding);
 		tu.accept(action);

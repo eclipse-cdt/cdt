@@ -4673,4 +4673,29 @@ public class AST2Tests extends AST2BaseTest {
 			}
 		}
     }
+    
+    //    struct S {
+    //    	int value; 
+    //    };
+    //    typedef struct S *PtrS; 
+    //    struct T {
+    //    	PtrS ptrS;  
+    //    };
+    //
+    //    void testint(int x);
+    //    void testptr(struct T* x);
+    //
+    //    void test() {
+    //    	struct T* t;
+    //    	t->ptrS->value;
+    //    	(t->ptrS+1)->value;
+    //    	testptr(t-0);
+    //    	testint(t-t);
+    //    	testint(0-t);
+    //    }  
+    public void testTypeOfPointerOperations() throws Exception {
+    	String code= getAboveComment();
+    	parseAndCheckBindings(code, ParserLanguage.C);
+    	parseAndCheckBindings(code, ParserLanguage.CPP);
+    }
 }

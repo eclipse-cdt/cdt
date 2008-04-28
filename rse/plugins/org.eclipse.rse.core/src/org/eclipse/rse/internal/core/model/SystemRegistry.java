@@ -50,6 +50,7 @@
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -939,6 +940,10 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		if (firstObject == secondObject) {
 			return true;
+		}
+		// should never be comparing null objects
+		if (firstObject == null || secondObject == null){
+			return false;
 		}
 		ISystemDragDropAdapter adA = null;
 		ISystemDragDropAdapter adB = null;

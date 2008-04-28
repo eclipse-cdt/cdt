@@ -29,8 +29,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICValue;
@@ -338,6 +340,7 @@ public class CDebugUtils {
 		StringBuffer label = new StringBuffer();
 		appendSourceName( breakpoint, label, qualified );
 		appendLineNumber( breakpoint, label );
+		appendBreakpointType( breakpoint, label );
 		appendIgnoreCount( breakpoint, label );
 		appendCondition( breakpoint, label );
 		return label.toString();
@@ -361,6 +364,7 @@ public class CDebugUtils {
 		StringBuffer label = new StringBuffer();
 		appendSourceName( breakpoint, label, qualified );
 		appendAddress( breakpoint, label );
+		appendBreakpointType( breakpoint, label );
 		appendIgnoreCount( breakpoint, label );
 		appendCondition( breakpoint, label );
 		return label.toString();
@@ -370,6 +374,7 @@ public class CDebugUtils {
 		StringBuffer label = new StringBuffer();
 		appendSourceName( breakpoint, label, qualified );
 		appendFunction( breakpoint, label );
+		appendBreakpointType( breakpoint, label );
 		appendIgnoreCount( breakpoint, label );
 		appendCondition( breakpoint, label );
 		return label.toString();
@@ -453,6 +458,28 @@ public class CDebugUtils {
 			label.append( ' ' );
 			label.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.7" ), new String[]{ range } ) ); //$NON-NLS-1$
 		}
+	}
+	
+	protected static StringBuffer appendBreakpointType( ICBreakpoint breakpoint, StringBuffer label ) throws CoreException {
+		if (breakpoint instanceof ICBreakpointTyped) {
+			String typeString = null;
+			int type = ((ICBreakpointTyped) breakpoint).getType();
+			switch (type) {
+			case ICDIBreakpoint.HARDWARE:
+				typeString = DebugCoreMessages.getString("CDebugUtils.10");
+				break;
+			case ICDIBreakpoint.TEMPORARY:
+				typeString = DebugCoreMessages.getString("CDebugUtils.11");
+				break;
+			}
+			if (typeString != null) {
+				label.append(' ');
+				label.append(MessageFormat.format(
+						DebugCoreMessages.getString("CDebugUtils.8"), new String[] { typeString })); //$NON-NLS-1$
+			}
+		}
+		return label;
+	
 	}
 
 	private static boolean isEmpty( String string ) {

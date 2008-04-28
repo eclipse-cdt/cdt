@@ -18,8 +18,10 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
+import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -40,7 +42,7 @@ import org.eclipse.debug.core.model.Breakpoint;
 /**
  * The base class for all C/C++ specific breakpoints.
  */
-public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IDebugEventSetListener {
+public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ICBreakpointTyped, IDebugEventSetListener {
 
     /**
      * Map of breakpoint extensions.  The keys to the map are debug model IDs 
@@ -154,6 +156,24 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 		setAttribute( IGNORE_COUNT, ignoreCount );
 		setAttribute( IMarker.MESSAGE, getMarkerMessage() );
 	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#getType()
+	 */
+	public int getType() throws CoreException {
+		return ensureMarker().getAttribute( TYPE, 0 );
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#setType(int)
+	 */
+	public void setType(int type) throws CoreException {
+		setAttribute( TYPE, type );
+		setAttribute( IMarker.MESSAGE, getMarkerMessage() );		
+	}
+
 
 	/*
 	 * (non-Javadoc)

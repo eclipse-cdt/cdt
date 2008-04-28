@@ -64,8 +64,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
-import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICThread;
@@ -770,8 +771,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			try {
 				ICDIBreakpoint b = null;
-				if ( breakpoints[i] instanceof ICFunctionBreakpoint ) {
-					ICFunctionBreakpoint breakpoint = (ICFunctionBreakpoint)breakpoints[i]; 
+				int breakpointType = ICDIBreakpoint.REGULAR;
+				ICBreakpoint icbreakpoint = breakpoints[i];
+				if (icbreakpoint instanceof ICBreakpointTyped) {
+					breakpointType = ((ICBreakpointTyped) icbreakpoint).getType();
+				}
+				if ( icbreakpoint instanceof ICFunctionBreakpoint ) {
+					ICFunctionBreakpoint breakpoint = (ICFunctionBreakpoint)icbreakpoint; 
 					String function = breakpoint.getFunction();
 					String fileName = breakpoint.getFileName();
 					ICDIFunctionLocation location = cdiTarget.createFunctionLocation( fileName, function );
@@ -780,68 +786,68 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					if (marker != null)
 						fBreakpointProblems.add(marker);
 					if (bpManager2 != null)
-						b = bpManager2.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
+						b = bpManager2.setFunctionBreakpoint( breakpointType, location, condition, true, icbreakpoint.isEnabled() );
 					else
-						b = cdiTarget.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );								
-				} else if ( breakpoints[i] instanceof ICAddressBreakpoint ) {
-					ICAddressBreakpoint breakpoint = (ICAddressBreakpoint)breakpoints[i]; 
+						b = cdiTarget.setFunctionBreakpoint( breakpointType, location, condition, true );								
+				} else if ( icbreakpoint instanceof ICAddressBreakpoint ) {
+					ICAddressBreakpoint breakpoint = (ICAddressBreakpoint)icbreakpoint; 
 					String address = breakpoint.getAddress();
 					ICDIAddressLocation location = cdiTarget.createAddressLocation( new BigInteger ( ( address.startsWith( "0x" ) ) ? address.substring( 2 ) : address, 16 ) ); //$NON-NLS-1$
 					ICDICondition condition = createCondition( breakpoint );
 					if (bpManager2 != null)
-						b = bpManager2.setAddressBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
+						b = bpManager2.setAddressBreakpoint( breakpointType, location, condition, true, icbreakpoint.isEnabled() );
 					else
-						b = cdiTarget.setAddressBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );					
-				} else if ( breakpoints[i] instanceof ICLineBreakpoint ) {
-					ICLineBreakpoint breakpoint = (ICLineBreakpoint)breakpoints[i]; 
+						b = cdiTarget.setAddressBreakpoint( breakpointType, location, condition, true );					
+				} else if ( icbreakpoint instanceof ICLineBreakpoint ) {
+					ICLineBreakpoint breakpoint = (ICLineBreakpoint)icbreakpoint; 
 					String handle = breakpoint.getSourceHandle();
 					IPath path = convertPath( handle );
 					ICDILineLocation location = cdiTarget.createLineLocation( path.toPortableString(), breakpoint.getLineNumber() );
 					ICDICondition condition = createCondition( breakpoint );
 					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
 					if (bpManager2 != null)
-						b = bpManager2.setLineBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
+						b = bpManager2.setLineBreakpoint( breakpointType, location, condition, true, icbreakpoint.isEnabled() );
 					else
-						b = cdiTarget.setLineBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
-				} else if ( breakpoints[i] instanceof ICWatchpoint ) {
-					ICWatchpoint watchpoint = (ICWatchpoint)breakpoints[i];
+						b = cdiTarget.setLineBreakpoint( breakpointType, location, condition, true );
+				} else if ( icbreakpoint instanceof ICWatchpoint ) {
+					ICWatchpoint watchpoint = (ICWatchpoint)icbreakpoint;
 					int accessType = 0;
 					accessType |= (watchpoint.isWriteType()) ? ICDIWatchpoint.WRITE : 0;
 					accessType |= (watchpoint.isReadType()) ? ICDIWatchpoint.READ : 0;
 					String expression = watchpoint.getExpression();
 					ICDICondition condition = createCondition( watchpoint );
 					if ( bpManager2 != null ) {
-						if ( breakpoints[i] instanceof ICWatchpoint2 ) {
+						if ( icbreakpoint instanceof ICWatchpoint2 ) {
 							ICWatchpoint2 wp2 = (ICWatchpoint2)watchpoint;
-							b = bpManager2.setWatchpoint(ICDIBreakpoint.REGULAR, accessType, expression, wp2.getMemorySpace(), 
-									wp2.getRange(), condition, breakpoints[i].isEnabled() );
+							b = bpManager2.setWatchpoint( breakpointType, accessType, expression, wp2.getMemorySpace(), 
+									wp2.getRange(), condition, icbreakpoint.isEnabled() );
 						} else {
-							b = bpManager2.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition, breakpoints[i].isEnabled() );
+							b = bpManager2.setWatchpoint( breakpointType, accessType, expression, condition, icbreakpoint.isEnabled() );
 						}
 					} else {
-						b = cdiTarget.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
+						b = cdiTarget.setWatchpoint(breakpointType, accessType, expression, condition );
 					}
-				} else if (breakpoints[i] instanceof ICEventBreakpoint) {
-					ICEventBreakpoint eventbkpt = (ICEventBreakpoint) breakpoints[i];
+				} else if (icbreakpoint instanceof ICEventBreakpoint) {
+					ICEventBreakpoint eventbkpt = (ICEventBreakpoint) icbreakpoint;
 					ICDICondition condition = createCondition(eventbkpt);
 					if (cdiTarget instanceof ICDIBreakpointManagement3) {
 						ICDIBreakpointManagement3 bpManager3 = (ICDIBreakpointManagement3) cdiTarget;
 						b = bpManager3.setEventBreakpoint(eventbkpt.getEventType(), eventbkpt
-								.getEventArgument(), ICDIBreakpoint.REGULAR, condition, true, breakpoints[i].isEnabled());
+								.getEventArgument(), breakpointType, condition, true, icbreakpoint.isEnabled());
 					} else {
 						throw new UnsupportedOperationException("BreakpointManager does not support this type of breapoints");
 					}
 
 				}
 				if ( b != null ) {
-					Object obj = getBreakpointMap().get( breakpoints[i] );
+					Object obj = getBreakpointMap().get( icbreakpoint );
 					if ( obj instanceof BreakpointInProgess ) {
 						((BreakpointInProgess)obj).setCDIBreakpoint( b );
 					}
 				}
 				// Hack: see bug 105196: [CDI]: Add "enabled" flag to the "set...Breakpoint" methods
-				if (bpManager2 == null && b != null && b.isEnabled() != breakpoints[i].isEnabled() ) {
-					b.setEnabled( breakpoints[i].isEnabled() );
+				if (bpManager2 == null && b != null && b.isEnabled() != icbreakpoint.isEnabled() ) {
+					b.setEnabled( icbreakpoint.isEnabled() );
 				}
 			}
 			catch( CoreException e ) {

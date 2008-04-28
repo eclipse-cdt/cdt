@@ -30,6 +30,10 @@
       <attribute
             name="org.eclipse.cdt.debug.core.sourceHandle">
       </attribute>
+      <attribute
+            name="org.eclipse.cdt.debug.core.breakpointType">
+      </attribute>
+      
    </extension>
    <extension
          id="commonCLineBreakpointMarker"

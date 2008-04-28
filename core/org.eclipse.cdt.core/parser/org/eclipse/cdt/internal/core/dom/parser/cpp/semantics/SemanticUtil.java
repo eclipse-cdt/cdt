@@ -42,11 +42,6 @@ public class SemanticUtil {
 	 */
 	private static final CharArraySet cas= new CharArraySet(OverloadableOperator.values().length);
 	
-	/**
-	 * Switch for enabling fix for bug 224364 
-	 */
-	public static final boolean ENABLE_224364= System.getProperty("cdt.enable.224364") != null; //$NON-NLS-1$
-	
 	static {
 		final int OPERATOR_SPC= OPERATOR_CHARS.length + 1;
 		for(OverloadableOperator op : OverloadableOperator.values()) {

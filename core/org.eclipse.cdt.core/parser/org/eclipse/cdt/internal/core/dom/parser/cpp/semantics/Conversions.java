@@ -41,10 +41,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -388,17 +384,10 @@ public class Conversions {
 				}
 			}
 		}
-
-		boolean checkConversionOperators=
-			(SemanticUtil.ENABLE_224364 && s instanceof ICPPClassType)
-			|| (s instanceof CPPClassType
-			|| s instanceof CPPClassTemplate
-			|| s instanceof CPPClassSpecialization
-			|| s instanceof CPPClassInstance);
 		
 		//conversion operators
 		boolean ambiguousConversionOperator= false;
-		if (checkConversionOperators) {
+		if (s instanceof ICPPClassType) {
 			ICPPMethod [] ops = SemanticUtil.getConversionOperators((ICPPClassType)s); 
 			if (ops.length > 0 && ops[0] instanceof IProblemBinding == false) {
 				for (final ICPPMethod op : ops) {

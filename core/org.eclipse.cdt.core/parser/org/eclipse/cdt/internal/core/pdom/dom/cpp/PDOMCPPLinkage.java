@@ -260,9 +260,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 							|| pdomBinding instanceof PDOMCPPDeferredClassInstance)) {
 						// Add instantiated constructors to the index (bug 201174).
 						addConstructors(pdomBinding, (ICPPClassType) binding);
-						if(SemanticUtil.ENABLE_224364) {
-							addConversionOperators(pdomBinding, (ICPPClassType) binding);
-						}
+						addConversionOperators(pdomBinding, (ICPPClassType) binding);
 					}
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));

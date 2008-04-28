@@ -11,7 +11,7 @@
  * 
  * Contributors:
  *   Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
- *   Noriaki Takatsu (IBM)  - [228335] [dstore] [dstore][multithread] start() in SecuredThread class
+ *   Noriaki Takatsu (IBM)  - [228335] [dstore][multithread] start() in SecuredThread class
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;

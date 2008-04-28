@@ -28,7 +28,6 @@ public interface ICPPASTConversionName extends IASTName {
 	 * 
 	 * i.e. getTypeId() on operator int(); would return the IASTTypeId for "int" 
 	 * 
-	 * @return
 	 */
 	public IASTTypeId getTypeId();
 	

@@ -25,7 +25,6 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 
     /**
      * does this function have the mutable storage class specifier
-     * @return
      * @throws DOMException
      */
     public boolean isMutable() throws DOMException;

@@ -30,14 +30,12 @@ public interface IFunction extends IBinding {
 	/**
 	 * Get the function scope
 	 * 
-	 * @return
 	 * @throws DOMException if this is a problem binding
 	 */
 	public IScope getFunctionScope() throws DOMException;
 	
 	/**
 	 * Get the IFunctionType for this function
-	 * @return
 	 * @throws DOMException if this is a problem binding
 	 */
 	public IFunctionType getType() throws DOMException;
@@ -45,7 +43,6 @@ public interface IFunction extends IBinding {
 	/**
 	 * Does this function have the static storage-class specifier
 	 * similarily for extern, auto, register
-	 * @return
 	 * @throws DOMException
 	 */
 	public boolean isStatic() throws DOMException;
@@ -55,14 +52,12 @@ public interface IFunction extends IBinding {
 
 	/**
 	 * is this function inline
-	 * @return
 	 * @throws DOMException
 	 */
 	public boolean isInline() throws DOMException;
 	
 	/**
 	 * Whether or not this function takes variable arguments
-	 * @return
 	 * @throws DOMException
 	 */
 	public boolean takesVarArgs()throws DOMException;

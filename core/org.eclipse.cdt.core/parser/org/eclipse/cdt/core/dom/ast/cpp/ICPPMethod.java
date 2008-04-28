@@ -20,7 +20,6 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	
 	/**
 	 * is this a virtual method
-	 * @return
 	 * @throws DOMException
 	 */
 	public boolean isVirtual() throws DOMException;

@@ -24,13 +24,11 @@ public interface ICPPFunctionType extends IFunctionType {
 
 	/**
 	 * returns true for a constant method
-	 * @return
 	 */
 	public boolean isConst();
 	
 	/**
 	 * returns true for a volatile method
-	 * @return
 	 */
 	public boolean isVolatile();
 }

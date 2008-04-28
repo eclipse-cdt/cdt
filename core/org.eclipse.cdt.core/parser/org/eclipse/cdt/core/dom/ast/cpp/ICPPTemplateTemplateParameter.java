@@ -26,7 +26,6 @@ public interface ICPPTemplateTemplateParameter extends ICPPTemplateParameter, IC
 	/**
 	 * The default type for this parameter. May be null
 	 * 
-	 * @return
 	 */
 	public IType getDefault() throws DOMException;
 }

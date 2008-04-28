@@ -22,7 +22,6 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * refined by qualifiers for signed/unsigned and short/long. The type could
 	 * also be unspecified which usually means int.
 	 * 
-	 * @return
 	 */
 	public int getType();
 

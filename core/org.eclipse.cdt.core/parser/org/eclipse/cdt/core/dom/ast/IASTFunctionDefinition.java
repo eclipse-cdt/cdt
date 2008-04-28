@@ -43,7 +43,6 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	/**
 	 * Get the decl specifier for the function.
 	 * 
-	 * @return
 	 */
 	public IASTDeclSpecifier getDeclSpecifier();
 
@@ -57,7 +56,6 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	/**
 	 * Get the declarator for the function.
 	 * 
-	 * @return
 	 */
 	public IASTFunctionDeclarator getDeclarator();
 
@@ -72,7 +70,6 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	 * Get the body of the function. This is usually a compound statement but
 	 * C++ also has a function try block.
 	 * 
-	 * @return
 	 */
 	public IASTStatement getBody();
 

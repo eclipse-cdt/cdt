@@ -22,8 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 public interface IGPPPointerType extends IPointerType {
 	/**
 	 * is this a restrict pointer
-	 * 
-	 * @return
 	 */
 	boolean isRestrict();
 }

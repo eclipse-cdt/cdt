@@ -23,7 +23,6 @@ public interface ICPPASTFieldReference extends IASTFieldReference {
 	/**
 	 * Was template keyword used?
 	 * 
-	 * @return
 	 */
 	public boolean isTemplate();
 

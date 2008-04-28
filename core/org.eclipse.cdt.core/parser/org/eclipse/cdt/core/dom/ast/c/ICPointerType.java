@@ -24,7 +24,6 @@ public interface ICPointerType extends IPointerType {
 	/**
 	 * is this a restrict pointer
 	 * 
-	 * @return
 	 */
 	boolean isRestrict();
 }

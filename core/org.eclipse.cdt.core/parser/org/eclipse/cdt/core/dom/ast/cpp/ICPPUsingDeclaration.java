@@ -21,11 +21,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * @author aniefer
  */
 public interface ICPPUsingDeclaration extends ICPPBinding {
+	
     /**
      * Return an array of bindings that were declared by this using declaration.
      * Each of these bindings delegates to some previously declared binding to which it
      * is a reference. 
-     * @return
      */
     IBinding[] getDelegates();
 }

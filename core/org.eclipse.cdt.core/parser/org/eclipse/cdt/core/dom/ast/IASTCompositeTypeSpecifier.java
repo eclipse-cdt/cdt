@@ -94,7 +94,6 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier , IASTName
 	/**
 	 * Get the scope that this interface eludes to in the logical tree.
 	 * 
-	 * @return
 	 */
 	public IScope getScope();
 }

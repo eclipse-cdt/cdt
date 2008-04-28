@@ -36,19 +36,16 @@ public interface IProblemBinding extends IBinding, IScope, IType {
     
     /**
      * get the AST node that this problem was created for
-     * @return
      */
     public IASTNode getASTNode();
 	
 	/**
 	 * returns the file name this problem occured in if known.
-	 * @return
 	 */
 	public String getFileName();
 	
 	/**
 	 * returns the line number for this problem if known
-	 * @return
 	 */
 	public int getLineNumber();
 	
@@ -60,35 +57,30 @@ public interface IProblemBinding extends IBinding, IScope, IType {
     /**
      * Attempt to use a symbol that was not found. 
      * Require attributes: A_SYMBOL_NAME
-     * @see #A_SYMBOL_NAME  
      */ 
     public final static int SEMANTIC_NAME_NOT_FOUND = 0x001;
 
     /**
      * Invalid overload of a particular name.
      * Required attributes: A_SYMBOL_NAME
-     * @see #A_SYMBOL_NAME  
      */
     public static final int SEMANTIC_INVALID_OVERLOAD = 0x002;
 
     /**
      * Invalid using directive.  
      * Required attributes: A_NAMESPACE_NAME
-     * @see #A_NAMESPACE_NAME
      */
     public static final int SEMANTIC_INVALID_USING = 0x003;
     
     /**
      * Ambiguous lookup for given name. 
      * Required attributes: A_SYMBOL_NAME
-     * @see #A_SYMBOL_NAME
      */
     public static final int SEMANTIC_AMBIGUOUS_LOOKUP = 0x004;
 
     /**
      * Invalid type provided
      * Required attribugtes: A_TYPE_NAME
-     * @see #A_TYPE_NAME
      */
     public static final int SEMANTIC_INVALID_TYPE = 0x005;
 

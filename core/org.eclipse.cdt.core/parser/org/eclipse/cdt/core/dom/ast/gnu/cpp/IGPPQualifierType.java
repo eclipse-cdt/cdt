@@ -23,7 +23,6 @@ public interface IGPPQualifierType extends IQualifierType {
 	/**
 	 * is this a restrict type
 	 * 
-	 * @return
 	 */
 	public boolean isRestrict();
 }

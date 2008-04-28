@@ -21,7 +21,6 @@ public interface ILabel extends IBinding {
 	/**
 	 * Returns the label statement for this label.
 	 * 
-	 * @return
 	 */
 	public IASTLabelStatement getLabelStatement() throws DOMException;
 	

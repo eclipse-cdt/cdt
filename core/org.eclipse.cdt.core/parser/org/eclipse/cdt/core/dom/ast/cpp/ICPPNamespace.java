@@ -25,14 +25,12 @@ public interface ICPPNamespace extends ICPPBinding {
 	/**
 	 * get the scope object associated with this namespace
 	 * 
-	 * @return
 	 * @throws DOMException
 	 */
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
 	
 	/**
 	 * get an array of the all the bindings declared in this namespace.
-	 * @return
 	 * @throws DOMException
 	 */
 	public IBinding [] getMemberBindings() throws DOMException;

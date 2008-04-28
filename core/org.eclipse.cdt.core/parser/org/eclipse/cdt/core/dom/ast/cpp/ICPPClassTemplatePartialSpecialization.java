@@ -35,14 +35,12 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	
 	/**
 	 * get the arguments to this specialization
-	 * @return
 	 */
 	public IType [] getArguments() throws DOMException;
 	
 	
 	/**
 	 * get the ICPPTemplateDefinition which this is a specialization of
-	 * @return
 	 */
 	public ICPPClassTemplate getPrimaryClassTemplate() throws DOMException;
 }

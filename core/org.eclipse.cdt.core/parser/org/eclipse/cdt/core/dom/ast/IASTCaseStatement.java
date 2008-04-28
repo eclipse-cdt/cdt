@@ -30,7 +30,6 @@ public interface IASTCaseStatement extends IASTStatement {
 	/**
 	 * The expression that determines whether this case should be taken.
 	 * 
-	 * @return
 	 */
 	public IASTExpression getExpression();
 

@@ -28,7 +28,6 @@ public interface ICCompositeTypeScope extends ICScope {
 	 * and that matches the given name.
 	 * 
 	 * @param name
-	 * @return
 	 * @throws DOMException
 	 */
 	public IBinding getBinding(char[] name) throws DOMException;

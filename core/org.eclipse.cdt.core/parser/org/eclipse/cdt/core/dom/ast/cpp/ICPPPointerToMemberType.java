@@ -24,7 +24,6 @@ public interface ICPPPointerToMemberType extends IPointerType {
 	/**
 	 * Get the class to whose members this points to
 	 * 
-	 * @return
 	 */
 	public ICPPClassType getMemberOfClass();
 }

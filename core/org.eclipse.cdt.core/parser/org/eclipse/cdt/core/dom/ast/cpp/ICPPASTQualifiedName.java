@@ -45,7 +45,6 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	/**
 	 * The last name is often semantically significant.
 	 * 
-	 * @return
 	 */
 	public IASTName getLastName();
 	
@@ -68,7 +67,6 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	 * This is used to check if the ICPPASTQualifiedName's last segment is
 	 * an ICPPASTConversionName or an ICPPASTOperatorName.
 	 * 
-	 * @return
 	 */
 	public boolean isConversionOrOperator();
 }

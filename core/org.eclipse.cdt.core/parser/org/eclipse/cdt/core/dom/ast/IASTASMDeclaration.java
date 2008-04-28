@@ -20,7 +20,6 @@ public interface IASTASMDeclaration extends IASTDeclaration {
 	/**
 	 * Get the assembly value.
 	 * 
-	 * @return
 	 */
 	public String getAssembly();
 

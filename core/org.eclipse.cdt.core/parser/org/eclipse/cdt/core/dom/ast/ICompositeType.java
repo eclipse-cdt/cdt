@@ -20,7 +20,6 @@ public interface ICompositeType extends IBinding, IType {
 	public static final int k_union = IASTCompositeTypeSpecifier.k_union;
 	/**
 	 *  what kind of composite type is this?
-	 * @return
 	 */
 	public int getKey() throws DOMException;
 	
@@ -36,13 +35,11 @@ public interface ICompositeType extends IBinding, IType {
 	 * or null if there is no such field.
 	 * 
 	 * @param name
-	 * @return
 	 */
 	public IField findField( String name ) throws DOMException;
 	
 	/**
 	 * get the IScope object that is associated with this composite type
-	 * @return
 	 * @throws DOMException
 	 */
 	public IScope getCompositeScope() throws DOMException;

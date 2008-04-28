@@ -28,7 +28,6 @@ public interface ICPPBase {
 	 * In the case of typedefs, the binding being typedefed will be returned instead of
 	 * the typedef itself.
 	 * 
-	 * @return
 	 */
 	public IBinding getBaseClass() throws DOMException;
 	
@@ -41,7 +40,6 @@ public interface ICPPBase {
 	/**
 	 * The visibility qualifier applied to the base class.
 	 * 
-	 * @return
 	 */
 	public int getVisibility() throws DOMException;
 
@@ -54,7 +52,6 @@ public interface ICPPBase {
 	/**
 	 * Whether this is a virtual base class.
 	 * 
-	 * @return
 	 */
 	public boolean isVirtual() throws DOMException;
 

@@ -45,7 +45,6 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * to be ambiguous a IProblemBinding is returned.
 	 * 
 	 * @param name
-	 * @return
 	 */
 	public IField findField(String name) throws DOMException;
 
@@ -89,7 +88,6 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * for this class. This list includes both declared and implicit
 	 * constructors.
 	 * 
-	 * @return
 	 */
 	public ICPPConstructor[] getConstructors() throws DOMException;
 
@@ -97,14 +95,12 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * return an array of bindings for those classes/functions declared as
 	 * friends of this class.
 	 * 
-	 * @return
 	 * @throws DOMException
 	 */
 	public IBinding[] getFriends() throws DOMException;
 	
 	/**
 	 * return an array of nested classes/structures
-	 * @return
 	 * @throws DOMException
 	 */
 	public ICPPClassType [] getNestedClasses() throws DOMException;

@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 public interface ICPPBinding extends IBinding {
 	/**
 	 * return an array of strings representing the qualified name of this binding
-	 * @return
 	 */
 	public String [] getQualifiedName() throws DOMException;
 	public char [][] getQualifiedNameCharArray() throws DOMException;
@@ -32,7 +31,6 @@ public interface ICPPBinding extends IBinding {
 	 * returns true if this binding is qualified wrt the translation unit
 	 * for example, local variables, function parameters and local classes will
 	 * all return false.
-	 * @return
 	 * @throws DOMException
 	 */
 	public boolean isGloballyQualified() throws DOMException;

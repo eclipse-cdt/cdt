@@ -22,9 +22,9 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
  * @author aniefer
  */
 public interface ICPPVariable extends IVariable, ICPPBinding {
+	
     /**
      * does this variable have the mutable storage class specifier
-     * @return
      * @throws DOMException
      */
     public boolean isMutable() throws DOMException;

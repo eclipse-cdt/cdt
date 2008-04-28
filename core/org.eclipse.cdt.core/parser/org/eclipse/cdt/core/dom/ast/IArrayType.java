@@ -20,14 +20,12 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IArrayType extends IType {
     /**
      * get the type that this is an array of
-     * @return
      * @throws DOMException
      */
     IType getType() throws DOMException;
     
     /**
      * get the expression that represents the size of this array
-     * @return
      * @throws DOMException
      */
     IASTExpression getArraySizeExpression() throws DOMException;

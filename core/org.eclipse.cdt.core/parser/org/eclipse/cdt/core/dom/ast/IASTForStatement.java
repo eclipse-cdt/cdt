@@ -49,10 +49,9 @@ public interface IASTForStatement extends IASTStatement {
     public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
             "IASTForStatement.INITIALIZER - initializer for IASTForStatement"); //$NON-NLS-1$
 
-    /**
-     * @return
-     */
+
     public IASTStatement getInitializerStatement();
+    
     /**
      * @param statement
      */

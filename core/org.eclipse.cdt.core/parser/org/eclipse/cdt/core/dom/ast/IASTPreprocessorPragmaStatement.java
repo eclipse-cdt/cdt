@@ -21,7 +21,6 @@ public interface IASTPreprocessorPragmaStatement extends
 	
 	/**
 	 * Returns the pragma message.
-	 * @return
 	 */
 	public char[] getMessage();
 

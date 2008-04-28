@@ -39,7 +39,7 @@ public interface IASTNameOwner {
 	/**
 	 * Get the role for the name. 
 	 * 
-	 * @param name <code>IASTName</code>
+	 * @param n <code>IASTName</code>
 	 * @return r_declaration, r_reference or r_unclear.
 	 */
 	public int getRoleForName( IASTName n );

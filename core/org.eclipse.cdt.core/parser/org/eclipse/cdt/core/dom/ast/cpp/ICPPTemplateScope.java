@@ -23,7 +23,6 @@ public interface ICPPTemplateScope extends ICPPScope {
 
 	/**
 	 * get the template that this scope represents
-	 * @return
 	 */
 	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException;
 

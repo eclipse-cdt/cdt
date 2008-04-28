@@ -71,9 +71,7 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator, IAST
 	/**
 	 * Map declarator to IASTName.
 	 * 
-	 * @param name
-	 *            <code>IASTName</code>
-	 * @return
+	 * @param name <code>IASTName</code>
 	 */
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name);
 }

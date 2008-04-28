@@ -20,7 +20,6 @@ public interface IType extends Cloneable {
     /**
      * is the given type the same as this type?
      * @param type
-     * @return
      */
     public boolean isSameType( IType type );
 }

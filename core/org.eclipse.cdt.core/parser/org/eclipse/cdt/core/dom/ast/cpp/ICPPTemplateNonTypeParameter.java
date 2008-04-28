@@ -22,7 +22,6 @@ public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter,
 	/**
 	 * The default value for this parameter.
 	 * 
-	 * @return
 	 */
 	public IASTExpression getDefault();
 

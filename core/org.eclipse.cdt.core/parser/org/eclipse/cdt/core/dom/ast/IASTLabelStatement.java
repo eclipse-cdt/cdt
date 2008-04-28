@@ -34,10 +34,9 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 	 */
 	public void setName(IASTName name);
 
-    /**
-     * @return
-     */
+
     public IASTStatement getNestedStatement();
+    
     /**
      * @param s
      */

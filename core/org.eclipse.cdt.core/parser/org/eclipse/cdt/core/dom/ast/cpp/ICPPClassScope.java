@@ -20,7 +20,6 @@ public interface ICPPClassScope extends ICPPScope {
 	/**
 	 * Get the binding for the class this scope is associated with
 	 * 
-	 * @return
 	 */
 	ICPPClassType getClassType();
 
@@ -30,7 +29,6 @@ public interface ICPPClassScope extends ICPPScope {
 	 * code. The methods that will be implicitly declared are: the default
 	 * constructor, copy constructor, copy assignment operator, and destructor
 	 * 
-	 * @return
 	 */
 	public ICPPMethod[] getImplicitMethods();
 }

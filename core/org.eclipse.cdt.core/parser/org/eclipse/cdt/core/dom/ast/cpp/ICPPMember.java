@@ -22,7 +22,6 @@ public interface ICPPMember extends ICPPBinding{
 	/**
 	 * The visibility.
 	 * 
-	 * @return
 	 */
 	public int getVisibility() throws DOMException;
 

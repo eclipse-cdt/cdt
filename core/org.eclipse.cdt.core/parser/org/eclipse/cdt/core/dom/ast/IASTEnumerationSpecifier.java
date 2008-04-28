@@ -111,8 +111,6 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 
 	/**
 	 * Get the enum's name.
-	 * 
-	 * @return
 	 */
 	public IASTName getName();
 

@@ -24,7 +24,6 @@ public interface IVariable extends IBinding {
 	/**
 	 * Does this function have the static storage-class specifier
 	 * similarily for extern, auto, register
-	 * @return
 	 * @throws DOMException
 	 */
 	public boolean isStatic() throws DOMException;

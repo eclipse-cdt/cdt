@@ -27,13 +27,11 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	
 	/**
 	 * get the template that this was instantiated from
-	 * @return
 	 */
 	public ICPPTemplateDefinition getTemplateDefinition();
 	
 	/**
 	 * get the types of the arguments the template was instantiated with.
-	 * @return
 	 */
 	public IType[] getArguments();
 }

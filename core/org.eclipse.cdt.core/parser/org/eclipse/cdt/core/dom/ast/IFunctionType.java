@@ -18,9 +18,9 @@ package org.eclipse.cdt.core.dom.ast;
  * @author aniefer
  */
 public interface IFunctionType extends IType {
+	
     /**
      * get the return type of this function type
-     * @return
      * @throws DOMException
      */
     public IType getReturnType() throws DOMException;
@@ -28,7 +28,6 @@ public interface IFunctionType extends IType {
     /**
      * get the adjusted parameter types
      * ISO C99 6.7.5.3, ISO C++98 8.3.4-3 
-     * @return
      * @throws DOMException
      */
     public IType [] getParameterTypes() throws DOMException;

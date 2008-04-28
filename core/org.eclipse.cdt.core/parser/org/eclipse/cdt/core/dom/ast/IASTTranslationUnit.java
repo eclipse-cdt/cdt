@@ -229,14 +229,10 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 
 	/**
 	 * @param offset
-	 * @return
 	 */
 	public String getContainingFilename(int offset);
     
-    
-    /**
-     * @return
-     */
+
     public ParserLanguage getParserLanguage();
     
     /**

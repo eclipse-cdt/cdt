@@ -149,7 +149,7 @@ public class ASTStringUtil {
 			final boolean takesVarArgs= standardFunctionDecl.takesVarArgs();
 			final String[] parameterStrings= new String[parameters.length + (takesVarArgs ? 1 : 0)];
 			int i;
-			for (i=0; i < parameters.length; ++i) {
+			for (i = 0; i < parameters.length; ++i) {
 				parameterStrings[i]= getParameterSignatureString(parameters[i]);
 			}
 			if (takesVarArgs) {
@@ -160,10 +160,10 @@ public class ASTStringUtil {
 			final ICASTKnRFunctionDeclarator knrDeclarator= (ICASTKnRFunctionDeclarator)functionDeclarator;
 			final IASTName[] names= knrDeclarator.getParameterNames();
 			final String[] result= new String[names.length];
-			for(int i=0; i<names.length; i++) {
+			for (int i = 0; i < names.length; i++) {
 				if (names[i] != null) {
 					final IASTDeclarator declaratorForParameterName= knrDeclarator.getDeclaratorForParameterName(names[i]);
-                    if( declaratorForParameterName != null ) {
+                    if (declaratorForParameterName != null) {
                         result[i]= getSignatureString(declaratorForParameterName);
                     } else {
                     	result[i]= "?"; //$NON-NLS-1$
@@ -181,15 +181,36 @@ public class ASTStringUtil {
 	 * @param templateParams
 	 * @return a string array of template parameters
 	 */
-	public static String[] getTemplateParameterArray(ICPPASTTemplateParameter[] templateParams){
+	public static String[] getTemplateParameterArray(ICPPASTTemplateParameter[] templateParams) {
 		final String[] parameterTypes= new String[templateParams.length];
-		for (int i= 0; i < templateParams.length; i++) {
+		for (int i = 0; i < templateParams.length; i++) {
 			final StringBuilder paramType= new StringBuilder();
 			final ICPPASTTemplateParameter parameter= templateParams[i];
 			appendTemplateParameterString(paramType, parameter);
 			parameterTypes[i]= trimRight(paramType).toString();
 		}
 		return parameterTypes;		
+	}
+
+	/**
+	 * Joins strings together using a given delimiter. 
+	 * @param strings the strings to join.
+	 * @param delimiter the delimiter that is put between the strings when joining them.
+	 * @return the joined string.
+	 */
+	public static String join(String[] strings, CharSequence delimiter) {
+    	if (strings.length == 0) {
+    		return ""; //$NON-NLS-1$
+    	} else if (strings.length == 1) {
+    		return strings[0];
+    	} else {
+    		StringBuilder buf = new StringBuilder(strings[0]);
+    		for (int i = 1; i < strings.length; i++) {
+    			buf.append(delimiter);
+    			buf.append(strings[i]);
+    		}
+    		return buf.toString();
+    	}
 	}
 
 	private static String getParameterSignatureString(IASTParameterDeclaration parameterDeclaration) {
@@ -199,20 +220,20 @@ public class ASTStringUtil {
 	private static StringBuilder appendSignatureString(StringBuilder buffer, IASTDeclarator declarator) {
 		// get the declaration node
 		IASTNode node= declarator.getParent();
-		while(node instanceof IASTDeclarator ){
+		while (node instanceof IASTDeclarator) {
 			declarator= (IASTDeclarator)node;
 			node= node.getParent();
 		}
 		
 		// get the declSpec
 		final IASTDeclSpecifier declSpec;
-		if(node instanceof IASTParameterDeclaration)
+		if (node instanceof IASTParameterDeclaration)
 			declSpec= ((IASTParameterDeclaration) node).getDeclSpecifier();
-		else if(node instanceof IASTSimpleDeclaration)
+		else if (node instanceof IASTSimpleDeclaration)
 			declSpec= ((IASTSimpleDeclaration)node).getDeclSpecifier();
-		else if(node instanceof IASTFunctionDefinition)
+		else if (node instanceof IASTFunctionDefinition)
 			declSpec= ((IASTFunctionDefinition)node).getDeclSpecifier();
-		else if(node instanceof IASTTypeId)
+		else if (node instanceof IASTTypeId)
 		    declSpec= ((IASTTypeId)node).getDeclSpecifier();
 		else
 			declSpec= null;
@@ -229,7 +250,8 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuilder appendDeclaratorString(StringBuilder buffer, IASTDeclarator declarator, boolean addParams) {
+	private static StringBuilder appendDeclaratorString(StringBuilder buffer, IASTDeclarator declarator,
+			boolean addParams) {
 		if (declarator == null) {
 			return buffer;
 		}
@@ -248,8 +270,7 @@ public class ASTStringUtil {
 					buffer.append(Keywords.cpLPAREN);
 					buffer.append(tmp);
 					buffer.append(Keywords.cpRPAREN);
-				}
-				else {
+				} else {
 					buffer.append(tmp);
 				}
 			}
@@ -350,7 +371,7 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendArrayQualifiersString(StringBuilder buffer, IASTArrayDeclarator declarator) {
 		final IASTArrayModifier[] modifiers= declarator.getArrayModifiers();
-		for (int i= 0; i < modifiers.length; i++) {
+		for (int i = 0; i < modifiers.length; i++) {
 			buffer.append(Keywords.cpLBRACKET).append(Keywords.cpRBRACKET);
 		}
 		return buffer;
@@ -396,7 +417,7 @@ public class ASTStringUtil {
 			final IASTParameterDeclaration[] parameters= standardFunctionDecl.getParameters();
 			final boolean takesVarArgs= standardFunctionDecl.takesVarArgs();
 			buffer.append(Keywords.cpLPAREN);
-			for (int i= 0; i < parameters.length; i++) {
+			for (int i = 0; i < parameters.length; i++) {
 				if (i > 0) {
 					buffer.append(COMMA_SPACE);
 				}
@@ -413,13 +434,13 @@ public class ASTStringUtil {
 		} else if (functionDeclarator instanceof ICASTKnRFunctionDeclarator) {
 			final ICASTKnRFunctionDeclarator knrDeclarator= (ICASTKnRFunctionDeclarator)functionDeclarator;
 			final IASTName[] names= knrDeclarator.getParameterNames();
-			for(int i=0; i<names.length; i++) {
+			for (int i = 0; i < names.length; i++) {
 				if (i > 0) {
 					buffer.append(COMMA_SPACE);
 				}
 				if (names[i] != null) {
 					final IASTDeclarator declaratorForParameterName= knrDeclarator.getDeclaratorForParameterName(names[i]);
-                    if(declaratorForParameterName != null) {
+                    if (declaratorForParameterName != null) {
                         appendSignatureString(buffer, declaratorForParameterName);
                     }
 				}
@@ -611,7 +632,7 @@ public class ASTStringUtil {
 			final ICPPASTQualifiedName qualifiedName= (ICPPASTQualifiedName)name;
 			if (qualified) {
 				final IASTName[] names= qualifiedName.getNames();
-				for (int i= 0; i < names.length; i++) {
+				for (int i = 0; i < names.length; i++) {
 					if (i > 0) {
 						buffer.append(Keywords.cpCOLONCOLON);
 					}
@@ -625,7 +646,7 @@ public class ASTStringUtil {
 			appendQualifiedNameString(buffer, templateId.getTemplateName());
 			final IASTNode[] templateArguments= templateId.getTemplateArguments();
 			buffer.append(Keywords.cpLT);
-			for (int i= 0; i < templateArguments.length; i++) {
+			for (int i = 0; i < templateArguments.length; i++) {
 				if (i > 0) {
 					buffer.append(Keywords.cpCOMMA);
 				}
@@ -652,7 +673,7 @@ public class ASTStringUtil {
 		} else if (expression instanceof IASTExpressionList) {
 			final IASTExpressionList expressionList= (IASTExpressionList)expression;
 			final IASTExpression[] expressions= expressionList.getExpressions();
-			for (int i= 0; i < expressions.length; i++) {
+			for (int i = 0; i < expressions.length; i++) {
 				if (i > 0) {
 					buffer.append(COMMA_SPACE);
 				}
@@ -675,7 +696,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuilder appendTemplateParameterString(StringBuilder buffer, ICPPASTTemplateParameter parameter){
+	private static StringBuilder appendTemplateParameterString(StringBuilder buffer, ICPPASTTemplateParameter parameter) {
 		if (parameter instanceof ICPPASTParameterDeclaration) {
 			appendParameterDeclarationString(buffer, (ICPPASTParameterDeclaration)parameter);
 		} else if (parameter instanceof ICPPASTSimpleTypeTemplateParameter) {
@@ -698,7 +719,7 @@ public class ASTStringUtil {
 			final ICPPASTTemplatedTypeTemplateParameter templatedTypeParameter= (ICPPASTTemplatedTypeTemplateParameter)parameter;
 			final ICPPASTTemplateParameter[] subParameters= templatedTypeParameter.getTemplateParameters();
 			buffer.append(Keywords.TEMPLATE).append(Keywords.cpLT);
-			for (int i= 0; i < subParameters.length; i++) {
+			for (int i = 0; i < subParameters.length; i++) {
 				final ICPPASTTemplateParameter templateParameter= subParameters[i];
 				if (i > 0) {
 					buffer.append(COMMA_SPACE);
@@ -710,5 +731,4 @@ public class ASTStringUtil {
 		}
 		return buffer;
 	}	
-	
 }

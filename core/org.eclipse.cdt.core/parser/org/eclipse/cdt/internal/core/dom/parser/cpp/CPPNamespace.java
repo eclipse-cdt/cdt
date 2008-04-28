@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -346,21 +347,13 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
     @Override
 	public String toString() {
     	String[] names = getQualifiedName();
     	if (names.length == 0) {
     		return "<unnamed namespace>"; //$NON-NLS-1$
-    	} else if (names.length == 1) {
-    		return names[0];
-    	} else {
-    		StringBuilder buf = new StringBuilder(names[0]);
-    		for (int i = 1; i < names.length; i++) {
-    			buf.append(Keywords.cpCOLONCOLON);
-    			buf.append(names[i]);
-    		}
-    		return buf.toString();
     	}
+    	return ASTStringUtil.join(names, String.valueOf(Keywords.cpCOLONCOLON));
 	}
 }

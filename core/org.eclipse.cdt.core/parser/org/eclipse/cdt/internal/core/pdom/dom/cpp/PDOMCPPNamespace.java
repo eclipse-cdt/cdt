@@ -27,10 +27,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -41,7 +43,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 class PDOMCPPNamespace extends PDOMCPPBinding
 		implements ICPPNamespace, ICPPNamespaceScope, IIndexScope {
@@ -74,12 +75,10 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	@Override
-	@SuppressWarnings("hiding")
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
-		}
-		else {
+		} else {
 			getIndex().accept(new IBTreeVisitor() {
 				public int compare(int record) throws CoreException {
 					return 0;
@@ -112,7 +111,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	public IBinding[] find(String name) {
 		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(),  name.toCharArray(), IndexFilter.ALL_DECLARED_OR_IMPLICIT,false, true);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(),  name.toCharArray(),
+					IndexFilter.ALL_DECLARED_OR_IMPLICIT,false, true);
 			getIndex().accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {
@@ -136,13 +136,15 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 	
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
+			throws DOMException {
 		IBinding[] result = null;
 		try {
 			if (!prefixLookup) {
 				return getBindingsViaCache(name.toCharArray());
 			}
-			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(), IndexFilter.ALL_DECLARED_OR_IMPLICIT, prefixLookup, !prefixLookup);
+			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(),
+					IndexFilter.ALL_DECLARED_OR_IMPLICIT, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			IBinding[] bindings = visitor.getBindings();
 			if (fileSet != null) {
@@ -161,7 +163,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		if (result != null) {
 			return result;
 		}
-		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, IndexFilter.ALL_DECLARED_OR_IMPLICIT, false, true);
+		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name,
+				IndexFilter.ALL_DECLARED_OR_IMPLICIT, false, true);
 		getIndex().accept(visitor);
 		result = visitor.getBindings();
 		pdom.putCachedResult(key, result);
@@ -177,7 +180,6 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return true;
 	}
 
-	@SuppressWarnings("hiding")
 	public IBinding[] getMemberBindings() throws DOMException {
 		IBinding[] result = null;
 		final List<PDOMNode> preresult = new ArrayList<PDOMNode>();
@@ -192,15 +194,24 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				}
 			});
 			result = preresult.toArray(new IBinding[preresult.size()]);
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 		}
 		return result;
 	}
 	
-	public void addUsingDirective(ICPPUsingDirective directive) throws DOMException {fail();}
+	public void addUsingDirective(ICPPUsingDirective directive) throws DOMException { fail(); }
 	
 	public IIndexBinding getScopeBinding() {
 		return this;
+	}
+
+    @Override
+	public String toString() {
+    	String[] names = getQualifiedName();
+    	if (names.length == 0) {
+    		return "<unnamed namespace>"; //$NON-NLS-1$
+    	}
+    	return ASTStringUtil.join(names, String.valueOf(Keywords.cpCOLONCOLON));
 	}
 }

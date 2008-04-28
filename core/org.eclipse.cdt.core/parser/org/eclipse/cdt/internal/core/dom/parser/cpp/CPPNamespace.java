@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -66,12 +67,11 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		}
     }
 
-	private static final char[] EMPTY_CHAR_ARRAY = { };
+	private static final char[] EMPTY_CHAR_ARRAY = {};
 
-	IASTName[] namespaceDefinitions = null;
-	ICPPNamespaceScope scope = null;
-
-	ICPPASTTranslationUnit tu = null;
+	IASTName[] namespaceDefinitions;
+	ICPPNamespaceScope scope;
+	ICPPASTTranslationUnit tu;
 
 	public CPPNamespace(ICPPASTNamespaceDefinition nsDef) {
 	    findAllDefinitions(nsDef);
@@ -357,7 +357,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
     	} else {
     		StringBuilder buf = new StringBuilder(names[0]);
     		for (int i = 1; i < names.length; i++) {
-    			buf.append("::"); //$NON-NLS-1$
+    			buf.append(Keywords.cpCOLONCOLON);
     			buf.append(names[i]);
     		}
     		return buf.toString();

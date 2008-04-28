@@ -43,6 +43,7 @@
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Rupen Mardirossian (IBM)      - [210682] Collisions when doing a copy operation across systems will us the SystemCopyDialog
+ * Xuan Chen        (IBM)        - [229093] set charset of the temp file of the text remote file to its remote encoding
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -92,6 +93,7 @@ import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -260,26 +262,28 @@ public class UniversalFileTransferUtility
 					setReadOnly(tempFile, srcFileOrFolder.canWrite());
 				}
 
-				if (srcFileOrFolder.isText())
+				if (remoteEncoding != null) 
 				{
-					try
+					if (srcFileOrFolder.isBinary())
 					{
 						if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
 						{
 							tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
 						}
-						String cset = tempFile.getCharset();
-						if (!cset.equals(remoteEncoding))
+						if (!tempFile.getCharset().equals(remoteEncoding))
 						{
-
-							//System.out.println("charset ="+cset);
-							//System.out.println("tempfile ="+tempFile.getFullPath());
-							tempFile.setCharset(remoteEncoding, monitor);
+							tempFile.setCharset(remoteEncoding, null);
 						}
 					}
-					catch (Exception e)
+					else 
 					{
-						e.printStackTrace();
+						// using text mode so the char set needs to be local
+						String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+						SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+						if (properties.getLocalEncoding() != null){
+							localEncoding = properties.getLocalEncoding();
+						}					
+						tempFile.setCharset(localEncoding, null);
 					}
 				}
 			}
@@ -540,26 +544,42 @@ public class UniversalFileTransferUtility
 						{
 							setReadOnly(tempFile, srcFileOrFolder.canWrite());
 						}
-
-						if (srcFileOrFolder.isText())
+						
+						try
 						{
-							try
+							if (remoteEncoding != null) 
 							{
-								if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+								if (srcFileOrFolder.isBinary())
 								{
-									tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+									if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+									{
+										tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+									}
+									if (!tempFile.getCharset().equals(remoteEncoding))
+									{
+										tempFile.setCharset(remoteEncoding, null);
+									}
 								}
-								String cset = tempFile.getCharset();
-								if (!cset.equals(remoteEncoding))
+								else 
 								{
-									tempFile.setCharset(remoteEncoding, null);//monitor);
+									// using text mode so the char set needs to be local
+									String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+									if (properties.getLocalEncoding() != null){
+										localEncoding = properties.getLocalEncoding();
+									}					
+									tempFile.setCharset(localEncoding, null);
 								}
-							}
-							catch (Exception e)
-							{
-								e.printStackTrace();
 							}
 						}
+						catch (Exception e)
+						{
+							SimpleSystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+											ICommonMessageIds.MSG_OPERATION_FAILED, 
+											IStatus.ERROR, "", e);  //$NON-NLS-1$
+							resultSet.setMessage(errorMessage);		
+							return null;
+						}
+
 
 						try
 						{

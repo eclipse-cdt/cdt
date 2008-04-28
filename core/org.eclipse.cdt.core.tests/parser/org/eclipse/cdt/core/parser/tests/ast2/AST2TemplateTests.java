@@ -2074,7 +2074,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// using ns::pair;
 	// using ns::make_pair;
 	// pair<int, int> p = make_pair(1, 2);
-    public void _testFunctionTemplateWithUsing() throws Exception {
+    public void testFunctionTemplateWithUsing() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction fn= bh.assertNonProblem("make_pair(1", 9, ICPPFunction.class);
     }

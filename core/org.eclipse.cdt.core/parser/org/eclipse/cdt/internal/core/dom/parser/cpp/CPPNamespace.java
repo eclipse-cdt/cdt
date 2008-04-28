@@ -45,9 +45,9 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPInternalBinding {
-    public static class CPPNamespaceProblem extends ProblemBinding implements ICPPNamespace{
-        public CPPNamespaceProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+	public static class CPPNamespaceProblem extends ProblemBinding implements ICPPNamespace{
+        public CPPNamespaceProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
 		public ICPPNamespaceScope getNamespaceScope() throws DOMException {
 			throw new DOMException(this);
@@ -65,15 +65,17 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 			throw new DOMException(this);
 		}
     }
+
 	private static final char[] EMPTY_CHAR_ARRAY = { };
-	
-	IASTName [] namespaceDefinitions = null;
+
+	IASTName[] namespaceDefinitions = null;
 	ICPPNamespaceScope scope = null;
-	
+
 	ICPPASTTranslationUnit tu = null;
-	public CPPNamespace( ICPPASTNamespaceDefinition nsDef ){
-	    findAllDefinitions( nsDef );
-	    if( namespaceDefinitions.length == 0 ){
+
+	public CPPNamespace(ICPPASTNamespaceDefinition nsDef) {
+	    findAllDefinitions(nsDef);
+	    if (namespaceDefinitions.length == 0) {
 	    	namespaceDefinitions = new IASTName[] { nsDef.getName() };
 	    }
 	}
@@ -89,56 +91,56 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
      */
     public IASTNode getDefinition() {
-        return ( tu != null ) ? tu : (IASTNode) namespaceDefinitions[0];
+        return (tu != null) ? tu : (IASTNode) namespaceDefinitions[0];
     }
 
 	static private class NamespaceCollector extends CPPASTVisitor {
 	    private ICPPASTNamespaceDefinition namespaceDef = null;
-	    private IASTName [] namespaces = null;
+	    private IASTName[] namespaces = null;
 	    
-	    public NamespaceCollector( ICPPASTNamespaceDefinition ns  ){
+	    public NamespaceCollector(ICPPASTNamespaceDefinition ns ) {
 	        shouldVisitNamespaces = true;
 	        shouldVisitDeclarations = true;
 	        this.namespaceDef = ns;
 	    }
 
 	    @Override
-		public int visit( ICPPASTNamespaceDefinition namespace) {
+		public int visit(ICPPASTNamespaceDefinition namespace) {
 	    	ICPPASTNamespaceDefinition orig = namespaceDef, candidate = namespace;
-	    	while( candidate != null ){
-	    		if( !CharArrayUtils.equals( orig.getName().toCharArray(), candidate.getName().toCharArray() ) )
+	    	while(candidate != null) {
+	    		if (!CharArrayUtils.equals(orig.getName().toCharArray(), candidate.getName().toCharArray()))
 	    			return PROCESS_CONTINUE;
-	    		if( orig.getParent() instanceof ICPPASTNamespaceDefinition ){
-	    			if( !(candidate.getParent() instanceof ICPPASTNamespaceDefinition ) )
+	    		if (orig.getParent() instanceof ICPPASTNamespaceDefinition) {
+	    			if (!(candidate.getParent() instanceof ICPPASTNamespaceDefinition))
 	    				return PROCESS_CONTINUE;
 	    			orig = (ICPPASTNamespaceDefinition) orig.getParent();
 	    			candidate = (ICPPASTNamespaceDefinition) candidate.getParent();
-	    		} else if( candidate.getParent() instanceof ICPPASTNamespaceDefinition ){
+	    		} else if (candidate.getParent() instanceof ICPPASTNamespaceDefinition) {
 	    			return PROCESS_CONTINUE;
 	    		} else {
 	    			break;
 	    		}
 	    	}
 
-	    	namespaces = (IASTName[]) ArrayUtil.append( IASTName.class, namespaces, namespace.getName() );
+	    	namespaces = (IASTName[]) ArrayUtil.append(IASTName.class, namespaces, namespace.getName());
 	        return PROCESS_SKIP;
 	    }
 	    
 	    @Override
-		public int visit( IASTDeclaration declaration ){
-	        if( declaration instanceof ICPPASTLinkageSpecification )
+		public int visit(IASTDeclaration declaration) {
+	        if (declaration instanceof ICPPASTLinkageSpecification)
 	            return PROCESS_CONTINUE;
 	        return PROCESS_SKIP;
 	    }
 	    
-	    public IASTName [] getNamespaces() {
-	    	return (IASTName[]) ArrayUtil.trim( IASTName.class, namespaces );
+	    public IASTName[] getNamespaces() {
+	    	return (IASTName[]) ArrayUtil.trim(IASTName.class, namespaces);
 	    }
 	}
 	
 	static private class NamespaceMemberCollector extends CPPASTVisitor {
 		public ObjectSet<IBinding> members = new ObjectSet<IBinding>(8);
-		public NamespaceMemberCollector(){
+		public NamespaceMemberCollector() {
 			shouldVisitNamespaces = true;
 			shouldVisitDeclarators = true;
 			shouldVisitDeclSpecifiers = true;
@@ -147,31 +149,31 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		
 		@Override
 		public int visit(IASTDeclarator declarator) {
-			while( declarator.getNestedDeclarator() != null )
+			while(declarator.getNestedDeclarator() != null)
 				declarator = declarator.getNestedDeclarator();
 			
 			IBinding binding = declarator.getName().resolveBinding();
-			if( binding != null && !(binding instanceof IProblemBinding))
-				members.put( binding );
+			if (binding != null && !(binding instanceof IProblemBinding))
+				members.put(binding);
 			
 			return PROCESS_SKIP;
 		}
 		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
-			if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
+			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 				IBinding binding = ((ICPPASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
-				if( binding != null && !(binding instanceof IProblemBinding) )
-					members.put( binding );
+				if (binding != null && !(binding instanceof IProblemBinding))
+					members.put(binding);
 				return PROCESS_SKIP;
-			} else if( declSpec instanceof ICPPASTElaboratedTypeSpecifier ) {
+			} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 				IASTNode parent = declSpec.getParent();
-				if( parent instanceof IASTSimpleDeclaration ){
-					if( ((IASTSimpleDeclaration)parent).getDeclarators().length > 0 )
+				if (parent instanceof IASTSimpleDeclaration) {
+					if (((IASTSimpleDeclaration)parent).getDeclarators().length > 0)
 						return PROCESS_SKIP;
 					
 					IBinding binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
-					if( binding != null && !(binding instanceof IProblemBinding) )
-						members.put( binding );
+					if (binding != null && !(binding instanceof IProblemBinding))
+						members.put(binding);
 					return PROCESS_SKIP;
 				}
 			}
@@ -180,34 +182,34 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		@Override
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 			IBinding binding = namespace.getName().resolveBinding();
-			if( binding != null && !(binding instanceof IProblemBinding) )
-				members.put( binding );
+			if (binding != null && !(binding instanceof IProblemBinding))
+				members.put(binding);
 			return PROCESS_SKIP;
 		}
 		@Override
 		public int visit(IASTDeclaration declaration) {
-			if( declaration instanceof ICPPASTUsingDeclaration ){
+			if (declaration instanceof ICPPASTUsingDeclaration) {
 				IBinding binding =((ICPPASTUsingDeclaration)declaration).getName().resolveBinding();
-				if( binding != null && !(binding instanceof IProblemBinding) )
-					members.put( binding );
+				if (binding != null && !(binding instanceof IProblemBinding))
+					members.put(binding);
 				return PROCESS_SKIP;
-			} else if( declaration instanceof IASTFunctionDefinition ){
-				return visit( ((IASTFunctionDefinition)declaration).getDeclarator() );
+			} else if (declaration instanceof IASTFunctionDefinition) {
+				return visit(((IASTFunctionDefinition)declaration).getDeclarator());
 			}
 			return PROCESS_CONTINUE;
 		}
 	}
-	private void findAllDefinitions( ICPPASTNamespaceDefinition namespaceDef ){
-	    NamespaceCollector collector = new NamespaceCollector( namespaceDef );
-	    namespaceDef.getTranslationUnit().accept( collector );
+	private void findAllDefinitions(ICPPASTNamespaceDefinition namespaceDef) {
+	    NamespaceCollector collector = new NamespaceCollector(namespaceDef);
+	    namespaceDef.getTranslationUnit().accept(collector);
 
 	    namespaceDefinitions = collector.getNamespaces();
-	    for( int i = 0; i < namespaceDefinitions.length; i++ ){
-	        namespaceDefinitions[i].setBinding( this );
+	    for (int i = 0; i < namespaceDefinitions.length; i++) {
+	        namespaceDefinitions[i].setBinding(this);
 	    }
 	}
 	
-	public IASTName [] getNamespaceDefinitions() {
+	public IASTName[] getNamespaceDefinitions() {
 	    return namespaceDefinitions;
 	}
 	
@@ -222,11 +224,11 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace#getNamespaceScope()
 	 */
 	public ICPPNamespaceScope getNamespaceScope() {
-		if( scope == null ){
-		    if( tu != null )
+		if (scope == null) {
+		    if (tu != null)
 		        scope = (ICPPNamespaceScope) tu.getScope();
 		    else
-		        scope = new CPPNamespaceScope( namespaceDefinitions[0].getParent() );
+		        scope = new CPPNamespaceScope(namespaceDefinitions[0].getParent());
 		}
 		return scope;
 	}
@@ -249,42 +251,42 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return tu != null ? null : CPPVisitor.getContainingScope( namespaceDefinitions[0] );
+		return tu != null ? null : CPPVisitor.getContainingScope(namespaceDefinitions[0]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
 	public IASTNode getPhysicalNode() {
-		return ( tu != null ? (IASTNode) tu : namespaceDefinitions[0] );
+		return tu != null ? (IASTNode) tu : namespaceDefinitions[0];
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
     public String[] getFullyQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
      */
     public char[][] getFullyQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray( this );
+        return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
      */
     public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
      */
     public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray( this );
+        return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     /* (non-Javadoc)
@@ -298,19 +300,19 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		if( !(node instanceof IASTName) )
+		if (!(node instanceof IASTName))
 		    return;
 		IASTName name = (IASTName) node;
 		
-		if( namespaceDefinitions == null ){
+		if (namespaceDefinitions == null) {
 		    namespaceDefinitions = new IASTName[] { name };
 		    return;
 		}
 		
-		if( namespaceDefinitions.length > 0 && ((ASTNode)name).getOffset() < ((ASTNode)namespaceDefinitions[0]).getOffset() ){
-			namespaceDefinitions = (IASTName[]) ArrayUtil.prepend( IASTName.class, namespaceDefinitions, name );
+		if (namespaceDefinitions.length > 0 && ((ASTNode)name).getOffset() < ((ASTNode)namespaceDefinitions[0]).getOffset()) {
+			namespaceDefinitions = (IASTName[]) ArrayUtil.prepend(IASTName.class, namespaceDefinitions, name);
 		} else {
-			namespaceDefinitions = (IASTName[]) ArrayUtil.append( IASTName.class, namespaceDefinitions, name );
+			namespaceDefinitions = (IASTName[]) ArrayUtil.append(IASTName.class, namespaceDefinitions, name);
 		}
 	}
 
@@ -318,21 +320,21 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
-		addDefinition( node );
+		addDefinition(node);
 	}
 	public void removeDeclaration(IASTNode node) {
 		ArrayUtil.remove(namespaceDefinitions, node);
 	}
 
 	public IBinding[] getMemberBindings() {
-		if( namespaceDefinitions != null ){
+		if (namespaceDefinitions != null) {
 			NamespaceMemberCollector collector = new NamespaceMemberCollector();
 			for (int i = 0; i < namespaceDefinitions.length; i++) {
 				IASTNode parent = namespaceDefinitions[i].getParent();
-				if( parent instanceof ICPPASTNamespaceDefinition ){
-					IASTDeclaration [] decls = ((ICPPASTNamespaceDefinition)parent).getDeclarations();
+				if (parent instanceof ICPPASTNamespaceDefinition) {
+					IASTDeclaration[] decls = ((ICPPASTNamespaceDefinition)parent).getDeclarations();
 					for (int j = 0; j < decls.length; j++) {
-						decls[j].accept( collector );
+						decls[j].accept(collector);
 					}
 				}
 			}
@@ -343,5 +345,22 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+	
+    @Override
+	public String toString() {
+    	String[] names = getQualifiedName();
+    	if (names.length == 0) {
+    		return "<unnamed namespace>"; //$NON-NLS-1$
+    	} else if (names.length == 1) {
+    		return names[0];
+    	} else {
+    		StringBuilder buf = new StringBuilder(names[0]);
+    		for (int i = 1; i < names.length; i++) {
+    			buf.append("::"); //$NON-NLS-1$
+    			buf.append(names[i]);
+    		}
+    		return buf.toString();
+    	}
 	}
 }

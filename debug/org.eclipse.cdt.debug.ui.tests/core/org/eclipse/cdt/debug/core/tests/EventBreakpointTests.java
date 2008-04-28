@@ -89,7 +89,7 @@ public class EventBreakpointTests extends AbstractDebugTest {
 			curbreak = (ICDIEventBreakpoint) breakpoints[0];
 		} else
 			curbreak = null;
-		assertNotNull("Found breakpoint is not catchpoint",curbreak);
+		assertNotNull("Found breakpoint is not an event breakpoint",curbreak);
 		currentTarget.resume(false);
 		waitSuspend(currentTarget);
 		// it is stopped we are fine, it did hit breakpoint

@@ -32,6 +32,7 @@
  * Xuan Chen        (IBM)        - [225685] NPE when running archive testcases
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API type
  * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
+ * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1674,7 +1675,10 @@ public class SystemTableViewPart extends ViewPart
 		String[] oldNames = event.getOldNames();
 		// right now assuming only one resource
 		String oldName = (oldNames == null) ? null : oldNames[0];
-		boolean referToSameObject = SystemRegistry.isSameObjectByAbsoluteName(input, null, child, oldName);
+		boolean referToSameObject = false;
+		if (oldName != null){
+			referToSameObject = SystemRegistry.isSameObjectByAbsoluteName(input, null, child, oldName);
+		}
 
 		if (input == child || child instanceof java.util.List || referToSameObject)
 		{

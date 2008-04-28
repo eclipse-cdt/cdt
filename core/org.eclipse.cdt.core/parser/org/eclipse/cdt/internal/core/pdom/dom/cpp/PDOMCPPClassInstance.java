@@ -12,7 +12,11 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -188,22 +192,19 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 	
 	private class SpecializationFinder implements IPDOMVisitor {
-		private ObjectMap specMap;
+		private HashMap<IBinding,ICPPSpecialization> origToSpecialization;
 		public SpecializationFinder(IBinding[] specialized) {
-			specMap = new ObjectMap(specialized.length);
-			for (int i = 0; i < specialized.length; i++) {
-				specMap.put(specialized[i], null);
+			origToSpecialization = new HashMap<IBinding,ICPPSpecialization>(specialized.length);
+			for (IBinding element : specialized) {
+				origToSpecialization.put(element, null);
 			}
 		}
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPSpecialization) {
-				IBinding specialized = ((ICPPSpecialization)node).getSpecializedBinding();
-				if (specMap.containsKey(specialized)) {
-					ICPPSpecialization specialization = (ICPPSpecialization) specMap.get(node);
-					if (specialization == null) {
-						specMap.remove(specialized);
-						specMap.put(specialized, node);
-					}
+				final ICPPSpecialization specialization = (ICPPSpecialization) node;
+				IBinding orig = specialization.getSpecializedBinding();
+				if (origToSpecialization.containsKey(orig)) {
+					origToSpecialization.put(orig, specialization);
 				}
 			}
 			return false;
@@ -211,17 +212,21 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPSpecialization[] getSpecializations() {
-			ICPPSpecialization[] result = new ICPPSpecialization[specMap.size()];
-			for (int i = 0; i < specMap.size(); i++) {
-				ICPPSpecialization specialization = (ICPPSpecialization) specMap.getAt(i);
-				if (specialization != null) {
-					result[i] = specialization;
-				} else {
-					result[i] = CPPTemplates.createSpecialization(
-							PDOMCPPClassInstance.this, (IBinding) specMap.keyAt(i), getArgumentMap());
+			Iterator<Map.Entry<IBinding,ICPPSpecialization>> it= origToSpecialization.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<IBinding, ICPPSpecialization> entry= it.next();
+				if (entry.getValue() == null) {
+					ICPPSpecialization specialization= CPPTemplates.createSpecialization(
+							PDOMCPPClassInstance.this, entry.getKey(), getArgumentMap());
+					if (specialization == null) {
+						it.remove();
+					}
+					else {
+						entry.setValue(specialization);
+					}
 				}
 			}
-			return result;
+			return origToSpecialization.values().toArray(new ICPPSpecialization[origToSpecialization.size()]);
 		}
 	}
 	

@@ -76,6 +76,7 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 	}
 	
 	public void selectionChanged(IAction action, ISelection selection) {
+		checkWS();
 		if (action.isEnabled() != enabled)
 			action.setEnabled(enabled);
 	}

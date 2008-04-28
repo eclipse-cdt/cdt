@@ -33,6 +33,7 @@ public class CDTPrefUtil {
 	public static final String KEY_EXPORT   = "properties.export.page.enable"; //$NON-NLS-1$
 	// string keys
 	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$
+	public static final String KEY_CONFSET = "workingsets.selected.configs";  //$NON-NLS-1$
 	// integer keys
 	public static final String KEY_POSSAVE  = "properties.save.position"; //$NON-NLS-1$
 		public static final int POSITION_SAVE_SIZE = 0;
@@ -57,6 +58,7 @@ public class CDTPrefUtil {
 	public static final String NULL = "NULL"; //$NON-NLS-1$
 	private static final IPreferenceStore pref = CUIPlugin.getDefault().getPreferenceStore();
 	private static final String DELIMITER = " "; //$NON-NLS-1$
+	public static final String CONFSETDEL = "\f"; //$NON-NLS-1$
 	private static LinkedList<String> preferredTCs = null;
 	
 	public static final Object[] EMPTY_ARRAY = new Object[0];
@@ -92,7 +94,7 @@ public class CDTPrefUtil {
 	public static void savePreferredTCs() {
 		if (preferredTCs == null) return; 
 		Iterator<String> it = preferredTCs.iterator();
-		StringBuffer b = new StringBuffer(); 
+		StringBuilder b = new StringBuilder(); 
 		while (it.hasNext()) {
 			String s = it.next();
 			if (s == null) continue; 
@@ -176,22 +178,6 @@ public class CDTPrefUtil {
 		if (s1 == null || 
 			s1.length == 0)
 			return EMPTY_ARRAY;
-/*
-		if (mode == DMODE_EMPTY) {
-			Arrays.sort(s1, cmp);
-			for (int i=1; i<input.length; i++) {
-				Object[] s2 = input[i];
-				if (s2 == null || 
-					s2.length == 0 || 
-					s1.length != s2.length)
-					return EMPTY_ARRAY;
-				Arrays.sort(s2, cmp);
-				if (! Arrays.equals(s1, s2))
-					return EMPTY_ARRAY;
-			}
-			return s1; // returns sorted strings !
-		}
-*/		 
 		if (getInt(KEY_DMODE) == DMODE_CONJUNCTION) 
 		{ 
 			ArrayList<Object> lst = new ArrayList<Object>();
@@ -227,5 +213,18 @@ public class CDTPrefUtil {
 		s1 = lst.toArray();
 		Arrays.sort(s1, cmp);
 		return s1;
+	}
+	
+	public static List<String> readConfigSets() {
+		return new LinkedList<String>(Arrays.asList(getStr(KEY_CONFSET).split(CONFSETDEL)));
+	}
+	public static void saveConfigSets(List<String> out) {
+		StringBuilder b = new StringBuilder(); 
+		for (String s : out) {
+			if (s == null) continue; 
+			b.append(s);
+			b.append(CONFSETDEL);
+		}
+		setStr(KEY_CONFSET, b.toString());
 	}
 }

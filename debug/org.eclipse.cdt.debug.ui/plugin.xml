@@ -1678,7 +1678,8 @@
       </factory>
    </extension>
      <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
-     <breakpointLabels markerType="org.eclipse.cdt.debug.core.cBreakpointMarker"> 
+     <breakpointLabels markerType="org.eclipse.cdt.debug.core.cBreakpointMarker"
+     debugModelId="org.eclipse.cdt.debug.core"> 
      <attribute name="org.eclipse.cdt.debug.core.breakpointType" label="%breapointType.label" type="integer"
      fieldEditor="org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor"
      >

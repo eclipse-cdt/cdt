@@ -14,6 +14,7 @@
  * Contributors:
  *  Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ *  Noriaki Takatsu    (IBM)   [229146] [multithread] changes to stop Miner threads when clients disconnect
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -130,6 +131,8 @@ implements ISchemaExtender
 		root.setUpdated(false);
 
 		_dataStore.update(root);
+		
+		super.finish();
 	}
 
 	/**

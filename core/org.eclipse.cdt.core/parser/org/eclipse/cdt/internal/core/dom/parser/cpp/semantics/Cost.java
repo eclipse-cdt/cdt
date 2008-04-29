@@ -92,68 +92,69 @@ class Cost {
 		if( result == 0 ){
 			if( cost.qualification != qualification ){
 				return cost.qualification - qualification;
-			} else if( (cost.qualification == qualification) && qualification == 0 ){
+			} 
+			if( qualification == 0 ){
 				return 0;
-			} else {
-				// something is wrong below:
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=226877
+			} 
+			
+			// something is wrong below:
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=226877
 
-				IPointerType op1, op2;
-				IType t1 = cost.target, t2 = target;
-				int subOrSuper = 0;
-				while( true ){
-					op1 = null;
-					op2 = null;
-					while( true ){
-						if( t1 instanceof ITypedef )
-                            try {
-                                t1 = ((ITypedef)t1).getType();
-                            } catch ( DOMException e ) {
-                                t1 = e.getProblem();
-                            }
-                        else {
-							if( t1 instanceof IPointerType )		
-								op1 = (IPointerType) t1;	
-							break;
+			IPointerType op1, op2;
+			IType t1 = cost.target, t2 = target;
+			int subOrSuper = 0;
+			while (true) {
+				op1 = null;
+				op2 = null;
+				while (true) {
+					if (t1 instanceof ITypedef) {
+						try {
+							t1 = ((ITypedef) t1).getType();
+						} catch (DOMException e) {
+							t1 = e.getProblem();
 						}
-					}
-					while( true ){
-						if( t2 instanceof ITypedef )
-                            try {
-                                t2 = ((ITypedef)t2).getType();
-                            } catch ( DOMException e ) {
-                                t2 = e.getProblem();
-                            }
-                        else {
-							if( t2 instanceof IPointerType )		
-								op1 = (IPointerType) t2;	
-							break;
-						}
-					}
-					if( op1 == null || op2 == null )
-						break;
-					
-					int cmp = ( op1.isConst() ? 1 : 0 ) + ( op1.isVolatile() ? 1 : 0 ) -
-					          ( op2.isConst() ? 1 : 0 ) + ( op2.isVolatile() ? 1 : 0 );
-
-					if( subOrSuper == 0 )
-						subOrSuper = cmp;
-					else if( subOrSuper > 0 ^ cmp > 0) {
-						result = -1;
-						break;
-					}
-
-				}
-				if( result == -1 ){
-					result = 0;
-				} else {
-					if( op1 == op2 ){
-						result = subOrSuper;
 					} else {
-						result = op1 != null ? 1 : -1; 
+						if (t1 instanceof IPointerType)
+							op1 = (IPointerType) t1;
+						break;
 					}
 				}
+				while (true) {
+					if (t2 instanceof ITypedef) {
+						try {
+							t2 = ((ITypedef) t2).getType();
+						} catch (DOMException e) {
+							t2 = e.getProblem();
+						}
+					} else {
+						if (t2 instanceof IPointerType)
+							op2 = (IPointerType) t2;
+						break;
+					}
+				}
+				if (op1 == null || op2 == null)
+					break;
+
+				int cmp = (op1.isConst() ? 1 : 0) + (op1.isVolatile() ? 1 : 0)
+						- (op2.isConst() ? 1 : 0) + (op2.isVolatile() ? 1 : 0);
+
+				if (cmp != 0) {
+					if (subOrSuper == 0) {
+						subOrSuper = cmp;
+					}
+					else if ((subOrSuper > 0) != (cmp > 0)) {
+						return 0;
+					}
+				}
+				t1= op1.getType();
+				t2= op2.getType();
 			}
+			if (op1 != null) { 
+				return 1;
+			} else if (op2 != null) {
+				return -1;
+			}
+			return 0;
 		}
 		 
 		return result;

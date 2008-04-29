@@ -43,10 +43,8 @@ public class ProcessHelper {
 	/**
 	 * This method is to append the given contents into a file.
 	 * 
-	 * @param fileContents,
-	 *            contents which are appended to the file.
-	 * @param toFile,
-	 *            a file to append contents.
+	 * @param fileContents contents which are appended to the file.
+	 * @param toFile a file to append contents.
 	 * @throws IOException,
 	 *             exception while writing contents into a file
      * 
@@ -62,7 +60,9 @@ public class ProcessHelper {
 				raf.skipBytes((int) raf.length());
 				raf.writeBytes(fileContents);
 			} finally {
-				raf.close();
+				if(raf != null) {
+					raf.close();
+				}
 			}
 		}
 	}
@@ -71,8 +71,7 @@ public class ProcessHelper {
 	 * This method returns a vector of all replace marker strings. (e.g.,
 	 * $(item), vector contains 'item' as one item. , ) is the end pattern.
 	 * 
-	 * @param str,
-	 *            A given string possibly containing markers.
+	 * @param str A given string possibly containing markers.
 	 * @return the set of names occurring within markers
      * @since 4.0
 	 */
@@ -172,11 +171,10 @@ public class ProcessHelper {
 
 
 	/**
-	 * Returns the Macro Value after expanding the Macros.
 	 * @param string
 	 * @param macros
 	 * @param valueStore
-	 * @return
+	 * @return the Macro Value after expanding the Macros.
      * 
      * @since 4.0
 	 */
@@ -192,10 +190,8 @@ public class ProcessHelper {
 	}
 
 	/**
-	 * Construct and return the replacement markers 
-	 * after adding the patterns to the macro.
 	 * @param macro
-	 * @return
+	 * @return the replacement marker string
      * 
      * @since 4.0
 	 */

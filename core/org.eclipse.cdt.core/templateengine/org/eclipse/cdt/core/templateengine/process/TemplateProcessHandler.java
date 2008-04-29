@@ -71,8 +71,7 @@ public class TemplateProcessHandler {
 	}
 
 	/**
-	 * Returns all macros
-	 * @return
+	 * @return the union of all macros used in this template's process groups
 	 */
 	public Set<String> getAllMacros() {
 		Set<String> set = new HashSet<String>();

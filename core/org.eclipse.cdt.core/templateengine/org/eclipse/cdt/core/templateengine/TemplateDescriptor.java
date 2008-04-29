@@ -110,10 +110,8 @@ public class TemplateDescriptor {
 
 	/**
 	 * This method is to get the list of property-group elements from template
-	 * descriptor root element
+	 * descriptor root element.
 	 * 
-	 * @param aRootElement
-	 *            root element of type JDOM Element
 	 * @return list of property-group elements
 	 */
 	public List<Element> getPropertyGroupList() {
@@ -156,7 +154,7 @@ public class TemplateDescriptor {
 				Element nextPGElement = propertyGroupList.get(i);
 				if (isNestedElement(nextPGElement))
 					nextPGElementName = nextPGElement.getNodeName();
-				if (nextPGElementName.equalsIgnoreCase(PROPERTY_GROUP) && isNestedElement(nextPGElement)) {
+				if (PROPERTY_GROUP.equalsIgnoreCase(nextPGElementName) && isNestedElement(nextPGElement)) {
 					return nextPGElement;
 				}
 			}

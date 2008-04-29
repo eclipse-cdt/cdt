@@ -253,8 +253,7 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * Returns All Macros as a Set.
-	 * @return Set, contains macros
+	 * @return the union of all macros used in the child processes
 	 */
 	public Set<String> getAllMacros() {
 		Set<String> set = null;

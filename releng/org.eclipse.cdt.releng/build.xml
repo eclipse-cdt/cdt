@@ -202,6 +202,9 @@
 		<copy todir="${copyToDir}/${buildType}.${buildId}">
 			<fileset dir="${buildDirectory}/${buildType}.${buildId}"/>
 		</copy>
+		<!-- Create symlink to latest build -->
+		<symlink action="delete" link="${copyToDir}/latest"/>
+		<symlink link="${copyToDir}/latest" resource="${copyToDir}/${buildType}.${buildId}"/> 
 	</target>
 
 	<target name="mail" depends="init">

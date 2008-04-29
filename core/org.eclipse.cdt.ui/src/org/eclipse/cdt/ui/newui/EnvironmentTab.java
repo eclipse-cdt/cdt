@@ -61,9 +61,6 @@ import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 
 
 public class EnvironmentTab extends AbstractCPropertyTab {
-	private static final String PREFIX = "EnvironmentBlock";	//$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String VALUE_UNDEF = LABEL + ".value.undef";	//$NON-NLS-1$
 	private static final String SEMI = ";"; //$NON-NLS-1$
 	private static final String LBR = " ["; //$NON-NLS-1$
 	private static final String RBR = "]"; //$NON-NLS-1$
@@ -116,7 +113,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				return td.var.getName();
 			case 1:
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-					return UIMessages.getString(VALUE_UNDEF);
+					return UIMessages.getString(UIMessages.getString("EnvironmentTab.20")); //$NON-NLS-1$
 				return td.var.getValue();
 			case 2:
 				return ce.getOrigin(td.var);
@@ -134,10 +131,6 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			case 0:
 				if (isUsers(td.var))
 					return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
-				break;
-			case 1:
-				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-					return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
 				break;
 			default:
 				break;

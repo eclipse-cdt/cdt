@@ -40,10 +40,11 @@ public class EnvDialog extends Dialog {
 	public String t1 = AbstractCPropertyTab.EMPTY_STR;
 	public String t2 = AbstractCPropertyTab.EMPTY_STR;
 	public boolean toAll = false;
+	private String title;
 
 	public EnvDialog(Shell parent, 
 			IEnvironmentVariable _var, 
-			String title, 
+			String _title, 
 			boolean _newAction,
 			boolean _multiCfg,
 			ICConfigurationDescription _cfgd) {
@@ -52,6 +53,7 @@ public class EnvDialog extends Dialog {
 		newAction = _newAction;
 		multiCfg = _multiCfg;
 		cfgd = _cfgd;
+		title = _title;
 	}
 
 	/**
@@ -63,6 +65,12 @@ public class EnvDialog extends Dialog {
 		setButtons();
 		return out;
 	}	
+	
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(title);
+	}
 	
 	@Override
 	protected Control createDialogArea(Composite c) {

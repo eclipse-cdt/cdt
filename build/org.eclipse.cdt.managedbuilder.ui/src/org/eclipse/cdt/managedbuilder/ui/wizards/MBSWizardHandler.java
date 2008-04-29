@@ -14,6 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,11 @@ public class MBSWizardHandler extends CWizardHandler {
 	protected CfgHolder[] cfgs = null;
 	protected IWizardPage[] customPages;
 	
+	/**
+	 * Current list of preferred toolchains
+	 */
+	private List<String> preferredTCs = new ArrayList<String>();
+		
 	protected static final class EntryInfo {
 		private SortedMap<String, IToolChain> tcs;
 		private EntryDescriptor entryDescriptor;
@@ -339,7 +345,8 @@ public class MBSWizardHandler extends CWizardHandler {
 			table.getAccessible().addAccessibleListener(
 					 new AccessibleAdapter() {                       
 		                 public void getName(AccessibleEvent e) {
-		                         e.result = head;
+		                	 if (e.result == null)
+		                		 e.result = head;
 		                 }
 		             }
 				 );
@@ -576,14 +583,25 @@ public class MBSWizardHandler extends CWizardHandler {
 	 */
 	
 	public void updatePreferred(List<String> prefs) {
+		preferredTCs.clear();
 		int x = table.getItemCount();
 		for (int i=0; i<x; i++) {
 			TableItem ti = table.getItem(i);
 			IToolChain tc = (IToolChain)ti.getData();
 			String id = (tc == null) ? CDTPrefUtil.NULL : tc.getId();
-			ti.setImage( prefs.contains(id) ? IMG1 : IMG0);
+			if (prefs.contains(id)) {
+				ti.setImage(IMG1);
+				preferredTCs.add(tc.getName());
+			}
+			else
+				ti.setImage(IMG0);
 		}
 	}
+	
+	public List<String> getPreferredTCNames() {
+		return preferredTCs;
+	}
+	
 	public String getHeader() { return head; }
 	public boolean isDummy() { return false; }
 	public boolean supportsPreferred() { return true; }

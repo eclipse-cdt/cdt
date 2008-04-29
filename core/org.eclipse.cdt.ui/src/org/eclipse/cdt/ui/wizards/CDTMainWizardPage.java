@@ -125,7 +125,11 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 					 new AccessibleAdapter() {                       
 		                 @Override
 						public void getName(AccessibleEvent e) {
-		                         e.result = UIMessages.getString("CMainWizardPage.0"); //$NON-NLS-1$
+		                	 for (int i = 0; i < tree.getItemCount(); i++) {
+		                		 if (tree.getItem(i).getText().compareTo(e.result) == 0)
+		                			 return;
+		                	 }
+	                         e.result = UIMessages.getString("CMainWizardPage.0"); //$NON-NLS-1$
 		                 }
 		             }
 				 );

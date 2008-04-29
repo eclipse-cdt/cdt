@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,12 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation 
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.preferences;
+
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -44,6 +48,8 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 
     private Button pref1;
     private Button pref0;
+    
+    private Label preferredTCsLabel;
 
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -69,6 +75,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 				TreeItem[] tis = tree.getSelection();
 				if (tis == null || tis.length == 0) return;
 				switchTo((CWizardHandler)tis[0].getData(), (EntryDescriptor)tis[0].getData(CDTMainWizardPage.DESC));
+				updatePreferredTCsLabel();
 			}});
         
         right = new Composite(c, SWT.NONE);
@@ -95,6 +102,15 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         pref0.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { setPref(false); }} );
         
+        //bug 189220 - provide more information for accessibility
+        preferredTCsLabel = new Label(c, SWT.LEFT);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        preferredTCsLabel.setLayoutData(gd);
+		
+		//space
+        new Label(c, 0).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+               
         show_sup = new Button(c, SWT.CHECK);
         show_sup.setSelection(true);
         show_sup.setText(Messages.getString("CMainWizardPage.1")); //$NON-NLS-1$
@@ -111,6 +127,8 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         CDTPrefUtil.readPreferredTCs();
         switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, null, null),
         		CDTMainWizardPage.getDescriptor(tree));
+        
+        updatePreferredTCsLabel();
     }
 
 	private void setPref(boolean set) {
@@ -125,6 +143,27 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 			}
 		}
 		h_selected.updatePreferred(CDTPrefUtil.getPreferredTCs());
+		
+		updatePreferredTCsLabel();		
+	}
+	
+	//bug 189220 - provide more information for accessibility
+	private void updatePreferredTCsLabel() {
+		if (h_selected instanceof MBSWizardHandler) {
+			List<String> tcs = ((MBSWizardHandler)h_selected).getPreferredTCNames();
+			if (tcs.size() == 0) {
+				preferredTCsLabel.setText(""); //$NON-NLS-1$
+				return;
+			}
+			
+			Iterator<String> iterator = tcs.iterator();
+			String temp = iterator.next();
+			while (iterator.hasNext()) {
+				temp = temp + ", " + iterator.next(); //$NON-NLS-1$
+			}
+		
+			preferredTCsLabel.setText(Messages.getString("PreferredToolchainsTab.3") + temp); //$NON-NLS-1$
+		}
 	}
 	
 //	private void switchTo(CWizardHandler h) {

@@ -150,7 +150,11 @@ public class VMViewerUpdate implements IViewerUpdate {
     public TreePath getElementPath() { return fElementPath; }
     public IPresentationContext getPresentationContext() { return fPresentationContext; }
     public IStatus getStatus() { return fRequestMonitor.getStatus(); }
-    public void setStatus(IStatus status) { fRequestMonitor.setStatus(status); }
+    public void setStatus(IStatus status) {
+        if ( isCanceled() ) {
+            fRequestMonitor.cancel();
+        }
+    	fRequestMonitor.setStatus(status); }
     
     public boolean isCanceled() { 
         if (fClientUpdate != null) {

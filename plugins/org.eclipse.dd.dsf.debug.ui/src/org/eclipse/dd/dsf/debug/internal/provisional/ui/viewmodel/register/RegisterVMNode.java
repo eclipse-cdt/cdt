@@ -53,6 +53,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -226,7 +227,13 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	                        @Override
 	                        public void handleCompleted() {
 	                            if (!isSuccess()) {
-	                                handleFailedUpdate(update);
+	                            	if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
+	                                    update.setLabel("...", labelIndex); //$NON-NLS-1$
+	                                } else {
+	                                    update.setLabel("Error: " + getStatus().getMessage(), labelIndex); //$NON-NLS-1$
+	                                }
+	                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
+	                                update.done();
 	                                return;
 	                            }
 	                            /*
@@ -240,10 +247,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	                                RegisterVMNode.this, update, valueDmc);
 	                            if(oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
 	                                update.setBackground(
-	                                    DebugUIPlugin.getPreferenceColor(
-	                                        IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),
-	                                    labelIndex);
+	                                    DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(), labelIndex);
 	                            }
+	                            update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
 	                            update.done();
 	                        }
 	                    }, 
@@ -291,7 +297,50 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         assert getStatus().isOK() || 
                                getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
                                getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
-                        handleFailedUpdate(update);
+                        /*
+                         *  Instead of just failing this outright we are going to attempt to do more here.
+                         *  Failing it outright causes the view to display ... for all columns in the line
+                         *  and this is uninformative about what is happening. We may be trying to show  a
+                         *  register whos retrieval has been cancelled by the lower level. Perhaps because
+                         *  we are stepping extremely fast and state changes cause the register service to
+                         *  return these requests without ever sending them to the debug engine.
+                         *  
+                         */
+                        String[] localColumns = update.getPresentationContext().getColumns();
+                        if (localColumns == null)
+                            localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
+                        
+                        for (int idx = 0; idx < localColumns.length; idx++) {
+                            if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
+                            	/*
+                            	 *  This used to be easy in that the DMC contained the name.  Which allowed us
+                            	 *  to display the register name and an error message across from it. Now that
+                            	 *  name must come from the data and we could not retrieve the data we do  not
+                            	 *  have anything intelligent to show here. I think this is going to look very
+                            	 *  ugly and will need to be worked on. We know the service has the name  with
+                            	 *  it, it is just the dynamic part which cannot be obtained ( as explained in
+                            	 *  comments above ). 
+                            	 */
+                                update.setLabel("Unknown name", idx); //$NON-NLS-1$
+                                update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER), idx);
+                            } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+                                update.setLabel("", idx); //$NON-NLS-1$
+                            } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+                                if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
+                                    update.setLabel("...", idx); //$NON-NLS-1$
+                                } else {
+                                    update.setLabel("Error: " + getStatus().getMessage(), idx); //$NON-NLS-1$
+                                }
+                            } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
+                                update.setLabel("...", idx); //$NON-NLS-1$
+                            } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
+                                update.setLabel("", idx); //$NON-NLS-1$
+                            }
+                            
+                            update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
+                        }
+                        
+                        update.done();
                         return;
                     }
                     
@@ -310,6 +359,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     boolean weAreExtractingFormattedData = false;
                     
                     for (int idx = 0; idx < localColumns.length; idx++) {
+                    	update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
                         if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
                             update.setLabel(getData().getName(), idx);
                             update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER), idx);

@@ -58,6 +58,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -254,7 +255,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
                                     update.setLabel(dmc.getExpression(), idx);
                                 }
+                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
                             }
+                            
                             
                             update.done();
                             return;
@@ -290,6 +293,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                     update.setLabel(getData().getName(), idx);
                                 }
                             }
+                            update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
                         }
                         
                         if ( ! weAreExtractingFormattedData ) {
@@ -299,6 +303,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
                                 	updateFormattedExpressionValue(update, idx, dmc, getData());
                                 }
+                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
                             }
                         }
                     }
@@ -331,7 +336,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
-                        handleFailedUpdate(update);
+                    	update.setLabel("Format information not available", labelIndex);
+                        update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
+                        update.done();
                         return;
                     }
                     
@@ -381,7 +388,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {
-                                    handleFailedUpdate(update);
+                                	update.setLabel("Error : " + getStatus().getMessage(), labelIndex);
+                                    update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
+                                    update.done();
                                     return;
                                 }
 
@@ -396,6 +405,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 }
                                 update.setLabel(stringValueBuf.toString(), labelIndex);*/
                                 update.setLabel(getData().getFormattedValue(), labelIndex);
+                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
                                 
                                 // Color based on change history
                                 FormattedValueDMData oldData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(

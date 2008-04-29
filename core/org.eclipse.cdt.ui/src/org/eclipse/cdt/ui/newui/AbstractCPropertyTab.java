@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -98,6 +100,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
 	public static final String WORKSPACE_DIR_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
 	public static final String BACKGROUND_TEXT_DEFAULT = UIMessages.getString("AbstractCPropertyTab.2"); //$NON-NLS-1$
+	public static final Color BACKGROUND_FOR_USER_VAR = new Color(Display.getDefault(), 255, 255, 200); // light yellow
 	
 	public static final int TRI_UNKNOWN = 2;
 	public static final int TRI_YES = 1;

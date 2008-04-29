@@ -151,8 +151,11 @@ public class ContributedEnvironment implements IContributedEnvironment{
 				return Messages.getString("ContributedEnvironment.0"); //$NON-NLS-1$
 			if (sup instanceof EclipseEnvironmentSupplier)
 				return Messages.getString("ContributedEnvironment.1"); //$NON-NLS-1$
-			if (sup instanceof UserDefinedEnvironmentSupplier)
+			if (sup instanceof UserDefinedEnvironmentSupplier) {
+				if (((EnvVarDescriptor)var).getContextInfo().getContext() != null)
+					return Messages.getString("ContributedEnvironment.4"); //$NON-NLS-1$
 				return Messages.getString("ContributedEnvironment.2"); //$NON-NLS-1$
+			}
 		}
 		return Messages.getString("ContributedEnvironment.3"); //$NON-NLS-1$
 	}

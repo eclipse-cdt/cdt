@@ -156,7 +156,13 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		public String getText(Object element) { return getColumnText(element, 0); }
 		public Font getFont(Object element) { return getFont(element, 0); }
 		public Image getColumnImage(Object element, int columnIndex) { return null; }
-		public Color getBackground(Object element){	return null; }
+
+		public Color getBackground(Object element){
+			ICdtVariable var = (ICdtVariable)element;
+			if(isUserVar(var))
+				return BACKGROUND_FOR_USER_VAR;
+			return null; 
+		}
 		
 		public String getColumnText(Object element, int columnIndex) {
 			ICdtVariable var = (ICdtVariable)element;
@@ -190,26 +196,14 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			return EMPTY_STR;
 		}
 		
-		private Font getValueFont(ICdtVariable var){
-			Font font = null;
-			if(isUserVar(var))
-				font = JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
-			return font;
-		}
 		public Font getFont(Object element, int columnIndex) {
 			ICdtVariable var = (ICdtVariable)element;
-			switch(columnIndex){
-			case 0:
-			case 1:
-				break;
-			case 2:
-				return getValueFont(var);
-			}
-			if(isUserVar(var))
+			if(columnIndex == 0 && isUserVar(var))
 				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 			return null;
 		}
-	    public Color getForeground(Object element){
+
+		public Color getForeground(Object element){
 			if(fIncorrectlyDefinedMacrosNames.contains(((ICdtVariable)element).getName()))
 				return JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR);
 			return null;
@@ -255,6 +249,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			handleDelButton();
 			break;
 		}
+		tv.getTable().setFocus();
 	}
 	
 	private void replaceMacros() {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.newui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -54,6 +55,7 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 
+import org.eclipse.cdt.internal.core.envvar.EnvVarDescriptor;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 
@@ -78,12 +80,18 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private ICConfigurationDescription cfgd = null;
 	private StorableEnvironment vars = null;
 
-	private class TabData {
+	private class TabData implements Comparable<TabData> {
 		IEnvironmentVariable var;
 		boolean changed;
 		TabData(IEnvironmentVariable _var, boolean _changed) {
 			var = _var;
 			changed = _changed;
+		}
+		public int compareTo(TabData a) {
+			String s = var.getName();
+			if (a != null && s != null && a.var != null)
+					return (s.compareTo(a.var.getName())); 
+			return 0;
 		}
 	}
 	
@@ -122,31 +130,30 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 		public Font getFont(Object element, int columnIndex) {
 			TabData td = (TabData)element;
-			Font f = null;
-			if (cfgd == null || ce.isUserVariable(cfgd, td.var))
-				f = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
-
 			switch(columnIndex){
 			case 0:
+				if (isUsers(td.var))
+					return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 				break;
 			case 1:
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-					f = JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
+					return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
 				break;
-			case 2:
-				return null;
+			default:
+				break;
 			}
-			return f;
+			return null;
 		}
 		
-	    /* (non-Javadoc)
-	     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	     */
 	    public Color getForeground(Object element){
 			return null;
 	    }
-		public Color getBackground(Object element){
-			return null;
+
+	    public Color getBackground(Object element){
+			TabData td = (TabData)element;
+			if (isUsers(td.var))
+				return BACKGROUND_FOR_USER_VAR;
+			return null; 
 	    }
 	}
 	
@@ -270,20 +277,33 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			handleEnvUndefButtonSelected(table.getSelectionIndex());
 			break;
 		}
+		table.setFocus();
 	}
 	
 	@Override
-	public void updateButtons() {
+	protected void updateButtons() {
 		if (table == null || table.isDisposed()) return;
 		
-		int pos = table.getSelectionIndex();
-		buttonSetEnabled(2, pos != -1);
-		buttonSetEnabled(3, pos != -1);
-		buttonSetEnabled(4, pos != -1);
+		boolean canEdit = table.getSelectionCount() == 1;
+		boolean canDel  = false;
+		boolean canUndef = table.getSelectionCount() >= 1;
+		if (canUndef) {
+			for (int i : table.getSelectionIndices()) {
+				IEnvironmentVariable var = ((TabData)tv.getElementAt(i)).var;
+				if (isUsers(var)) {
+				//	if (cfgd == null || !wse.getVariable(var.))
+					canDel = true;
+					break;
+				}
+			}
+		}
+		buttonSetEnabled(2, canEdit); // edit
+		buttonSetEnabled(3, canDel); // delete
+		buttonSetEnabled(4, canUndef); // undefine
 	}
 
 	@Override
-	public void updateData(ICResourceDescription _cfgd) {
+	protected void updateData(ICResourceDescription _cfgd) {
 		// null means preference configuration 
 		cfgd = (_cfgd != null) ? _cfgd.getConfiguration() : null;
 		if (cfgd == null && vars == null)
@@ -311,6 +331,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				data.add(new TabData(_var, false));
 			}
 		}
+		Collections.sort(data);
 		tv.setInput(data);
 		
 		updateLbs(lb1, lb2);
@@ -418,6 +439,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				ce.removeVariable(var.getName(), cfgd);
 		}
 		updateData();
+		int x = table.getItemCount() - 1;
+		if (x >= 0) {
+			table.setSelection(Math.min(x, n));
+			updateButtons();
+		}
 	}
 	
 	private void handleEnvAddButtonSelected() {
@@ -429,22 +455,36 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				page.isMultiCfg(),
 				cfgd);
 		if (dlg.open() == Window.OK) {
-			if (dlg.t1.trim().length() > 0) {
+			String name = dlg.t1.trim();
+			if (name.length() > 0) {
 				ICConfigurationDescription[] cfgs;
 				if (dlg.toAll)
 					cfgs = page.getCfgsEditable();
 				else 
 					cfgs = new ICConfigurationDescription[] {cfgd};
 				if (cfgd == null)
-					vars.createVariable(dlg.t1.trim(), dlg.t2.trim(), 
+					vars.createVariable(name, dlg.t2.trim(), 
 							IEnvironmentVariable.ENVVAR_APPEND,	SEMI);
 				else
 					for (ICConfigurationDescription cfg : cfgs) { 
-						ce.addVariable(dlg.t1.trim(), dlg.t2.trim(), 
+						ce.addVariable(name, dlg.t2.trim(), 
 								IEnvironmentVariable.ENVVAR_APPEND, 
 								SEMI, cfg);
 					}
 				updateData();
+				setPos(name);
+			}
+		}
+	}
+
+	private void setPos(String name) {
+		if (name == null || name.length() == 0)
+			return;
+		for (int i=0; i<table.getItemCount(); i++) {
+			if (name.equals(table.getItem(i).getText())) {
+				table.setSelection(i);
+				updateButtons();
+				break;
 			}
 		}
 	}
@@ -463,8 +503,9 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			else 
 				cfgs = new ICConfigurationDescription[] {cfgd};
 			
+			String name = null;
 			for (Object element : selected) {
-				String name = (String)element;
+				name = (String)element;
 				String value = EMPTY_STR;
 				int x = name.indexOf(LBR);
 				if (x >= 0) {
@@ -483,6 +524,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				}
 			}
 			updateData();
+			setPos(name);
 		}
 	}
 	
@@ -536,5 +578,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		ce.restoreDefaults(cfgd); // both for proj & prefs
 		vars = null;
 		updateData();
+	}
+	
+	private boolean isUsers(IEnvironmentVariable var) {
+		return cfgd == null || 
+		      (ce.isUserVariable(cfgd, var) &&
+			  ((EnvVarDescriptor)var).getContextInfo().getContext() != null);
+
 	}
 }

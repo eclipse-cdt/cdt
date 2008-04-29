@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -363,6 +364,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 			PDOMLinkage linkage= adaptLinkage(name.getLinkage());
 			if (linkage != null) {
 				return findBindingInLinkage(linkage, binding);
+			}
+		} else if (name.getPropertyInParent() == IASTPreprocessorStatement.MACRO_NAME) {
+			PDOMLinkage linkage= adaptLinkage(name.getLinkage());
+			if (linkage != null) {
+				return linkage.findMacroContainer(name.toCharArray());
 			}
 		}
 		return null;

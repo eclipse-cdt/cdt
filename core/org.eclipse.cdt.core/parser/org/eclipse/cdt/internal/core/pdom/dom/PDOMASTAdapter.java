@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -158,6 +157,11 @@ public class PDOMASTAdapter {
 
 		public boolean isPartOfTranslationUnitFile() {
 			return fLocation.getFileName().equals(fDelegate.getTranslationUnit().getFilePath());
+		}
+		
+		@Override
+		public String toString() {
+			return fDelegate.toString();
 		}
 	}
 
@@ -319,7 +323,7 @@ public class PDOMASTAdapter {
 		}
 	}
 
-	private static class AnonymousCPPEnumeration extends AnonymousCPPBinding implements IEnumeration, ICPPBinding {
+	private static class AnonymousCPPEnumeration extends AnonymousCPPBinding implements IEnumeration {
 		public AnonymousCPPEnumeration(char[] name, IEnumeration delegate) {
 			super(name, (ICPPBinding) delegate);
 		}

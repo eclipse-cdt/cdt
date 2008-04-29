@@ -307,7 +307,8 @@ public class PDOMFile implements IIndexFragmentFile {
 			return null;
 		}
 		try {
-			if (binding instanceof IMacroBinding) {
+			if (binding instanceof IMacroBinding
+					|| (binding == null && name.getPropertyInParent() == IASTPreprocessorStatement.MACRO_NAME)) {
 				return createPDOMMacroReferenceName(linkage, name);
 			}
 			PDOMBinding pdomBinding = linkage.addBinding(name);

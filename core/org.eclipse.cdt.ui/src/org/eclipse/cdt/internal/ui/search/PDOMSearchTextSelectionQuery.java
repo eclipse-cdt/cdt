@@ -60,19 +60,21 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 						searchText= searchName.toString();
 						IBinding binding= searchName.resolveBinding();
 						if (binding instanceof IProblemBinding == false) {
-							IScope scope= null;
-							try {
-								scope = binding.getScope();
-							} catch (DOMException e) {
-							}
-							if (scope instanceof ICPPBlockScope || scope instanceof ICFunctionScope) {
-								createLocalMatches(ast, binding);
-							}
-							else {
-								binding = index.findBinding(searchName);
-								if (binding != null) {
-									createMatches(index, binding);
+							if (binding != null) {
+								IScope scope= null;
+								try {
+									scope = binding.getScope();
+								} catch (DOMException e) {
 								}
+								if (scope instanceof ICPPBlockScope || scope instanceof ICFunctionScope) {
+									createLocalMatches(ast, binding);
+									return Status.OK_STATUS;
+								}
+							}
+							binding = index.findBinding(searchName);
+							if (binding != null) {
+								createMatches(index, binding);
+								return Status.OK_STATUS;
 							}
 						}
 					}

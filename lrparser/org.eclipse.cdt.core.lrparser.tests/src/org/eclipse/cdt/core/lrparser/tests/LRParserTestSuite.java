@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import org.eclipse.cdt.core.lrparser.tests.c99.*;
-import org.eclipse.cdt.core.lrparser.tests.cpp.ISOCPPParserTestSuite;
+
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -28,12 +27,35 @@ public class LRParserTestSuite extends TestSuite {
 	// and perhaps others
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		return new TestSuite() {{
 		
-		suite.addTest(C99ParserTestSuite.suite());
-		suite.addTest(ISOCPPParserTestSuite.suite());
+			addTestSuite(LRTests.class); // has some tests that do fail
+			
+			addTestSuite(LRCSpecTests.class); // a couple of failures
+			addTestSuite(LRKnRTests.class); // mostly fail due to ambiguities
+			
+			// The majority of the content assist test are in the ui tests plugin
+			addTestSuite(LRCompletionBasicTest.class);	
+			addTestSuite(LRCompletionParseTest.class);
+			// this one still has a lot of failing tests though
+			addTestSuite(LRSelectionParseTest.class);
+			
+			addTestSuite(LRDOMLocationInclusionTests.class);
+			addTestSuite(LRDOMLocationTests.class);
+			addTestSuite(LRDOMLocationMacroTests.class);
+			addTestSuite(LRDOMPreprocessorInformationTest.class);
+			addTestSuite(LRCommentTests.class);
+			addTestSuite(LRDigraphTrigraphTests.class);
+			addTestSuite(LRGCCTests.class);
+			addTestSuite(LRUtilOldTests.class);
+			addTestSuite(LRUtilTests.class);
+			addTestSuite(LRCompleteParser2Tests.class);
+			addTestSuite(LRTaskParserTest.class);
+			
+			addTestSuite(LRCPPSpecTest.class);
+			addTestSuite(LRCPPTests.class); 
 		
-		return suite;
+		}};
 	}	
 }
 

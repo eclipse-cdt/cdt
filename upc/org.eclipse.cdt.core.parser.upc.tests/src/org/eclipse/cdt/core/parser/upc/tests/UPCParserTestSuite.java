@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,27 +16,25 @@ import junit.framework.TestSuite;
 public class UPCParserTestSuite extends TestSuite {
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		
-		suite.addTestSuite(UPCC99CommentTests.class);
-		suite.addTestSuite(UPCC99CompletionBasicTest.class);
-		suite.addTestSuite(UPCC99CompletionParseTest.class);
-		suite.addTestSuite(UPCC99DOMLocationInclusionTests.class);
-		suite.addTestSuite(UPCC99DOMLocationMacroTests.class);
-		suite.addTestSuite(UPCC99DOMLocationTests.class);
-		suite.addTestSuite(UPCC99DOMPreprocessorInformationTest.class);
-		suite.addTestSuite(UPCC99KnRTests.class);
-		suite.addTestSuite(UPCC99SelectionParseTest.class);
-		suite.addTestSuite(UPCC99SpecTests.class);
-		suite.addTestSuite(UPCC99Tests.class);
-		suite.addTestSuite(UPCLanguageExtensionTests.class);
-		suite.addTestSuite(UPCC99DigraphTrigraphTests.class);
-		suite.addTestSuite(UPCC99GCCTests.class);
-		suite.addTestSuite(UPCC99UtilOldTests.class);
-		suite.addTestSuite(UPCC99UtilTests.class);
-		suite.addTestSuite(UPCC99CompleteParser2Tests.class);
-		suite.addTestSuite(UPCC99TaskParserTest.class);
-		
-		return suite;
+		return new TestSuite() {{
+			addTestSuite(UPCCommentTests.class);
+			addTestSuite(UPCCompletionBasicTest.class);
+			addTestSuite(UPCCompletionParseTest.class);
+			addTestSuite(UPCDOMLocationInclusionTests.class);
+			addTestSuite(UPCDOMLocationMacroTests.class);
+			addTestSuite(UPCDOMLocationTests.class);
+			addTestSuite(UPCDOMPreprocessorInformationTest.class);
+			addTestSuite(UPCKnRTests.class);
+			addTestSuite(UPCSelectionParseTest.class);
+			addTestSuite(UPCCSpecTests.class);
+			addTestSuite(UPCTests.class);
+			addTestSuite(UPCLanguageExtensionTests.class);
+			addTestSuite(UPCDigraphTrigraphTests.class);
+			addTestSuite(UPCGCCTests.class);
+			addTestSuite(UPCUtilOldTests.class);
+			addTestSuite(UPCUtilTests.class);
+			addTestSuite(UPCCompleteParser2Tests.class);
+			addTestSuite(UPCTaskParserTest.class);
+		}};
 	}
 }

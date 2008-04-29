@@ -226,9 +226,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					}
 				}
 			} else if (binding instanceof ICPPTemplateDefinition) {
-				if (binding instanceof ICPPInternalUnknownClassInstance) {
-					result = new CompositeCPPUnknownClassInstance(this, (ICPPInternalUnknownClassInstance) binding);
-				} else if (binding instanceof ICPPClassTemplate) {
+				if (binding instanceof ICPPClassTemplate) {
 					ICPPClassType def= (ICPPClassType) findOneBinding(binding);
 					return new CompositeCPPClassTemplate(this, def);
 				} else if (binding instanceof ICPPConstructor) {
@@ -246,6 +244,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = new CompositeCPPField(this, (ICPPField) binding);
 			} else if (binding instanceof ICPPVariable) {
 				result = new CompositeCPPVariable(this, (ICPPVariable) binding);
+			} else if (binding instanceof ICPPInternalUnknownClassInstance) {
+				result = new CompositeCPPUnknownClassInstance(this, (ICPPInternalUnknownClassInstance) binding);
 			} else if (binding instanceof ICPPInternalUnknownClassType) {
 				result = new CompositeCPPUnknownClassType(this, (ICPPInternalUnknownClassType) binding);
 			} else if (binding instanceof ICPPClassType) {

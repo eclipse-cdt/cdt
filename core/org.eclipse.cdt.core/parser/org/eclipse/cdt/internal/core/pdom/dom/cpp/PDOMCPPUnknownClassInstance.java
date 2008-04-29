@@ -22,13 +22,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassInstance;
@@ -59,8 +56,8 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType
 		
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
 		IType[] args = classInstance.getArguments();
-		for (int i = 0; i < args.length; i++) {
-			PDOMNode typeNode = getLinkageImpl().addType(this, args[i]);
+		for (IType arg : args) {
+			PDOMNode typeNode = getLinkageImpl().addType(this, arg);
 			if (typeNode != null)
 				list.addMember(typeNode);
 		}
@@ -107,38 +104,6 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType
 			}
 		}
 		return arguments;
-	}
-
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations()
-			throws DOMException {
-		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
-	}
-
-	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		return ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
-	}
-
-	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-	}
-
-	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {
-	}
-
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		ICPPSpecialization instance = getInstance(arguments);
-		if (instance == null) {
-			instance = new CPPDeferredClassInstance(this, argMap, arguments);
-			addSpecialization(arguments, instance);
-		}
-		return instance;
-	}
-
-	public ICPPSpecialization getInstance(IType[] arguments) {
-		return null;
-	}
-
-	public IBinding instantiate(IType[] arguments) {
-		return deferredInstance(null, arguments);
 	}
 
     /* (non-Javadoc)

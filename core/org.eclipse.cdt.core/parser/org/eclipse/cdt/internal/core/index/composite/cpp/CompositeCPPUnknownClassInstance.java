@@ -14,10 +14,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -44,32 +42,6 @@ class CompositeCPPUnknownClassInstance extends CompositeCPPUnknownClassType
 			CCorePlugin.log(e);
 		}
 		return arguments;
-	}
-
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations()	throws DOMException {
-		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
-	}
-
-	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		return ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
-	}
-
-	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-	}
-
-	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {
-	}
-
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.deferredInstance(argMap, arguments, cf, rbinding);
-	}
-
-	public ICPPSpecialization getInstance(IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.getInstance(arguments, cf, this);
-	}
-
-	public IBinding instantiate(IType[] args) {
-		return InternalTemplateInstantiatorUtil.instantiate(args, cf, rbinding);
 	}
 	
 	@Override

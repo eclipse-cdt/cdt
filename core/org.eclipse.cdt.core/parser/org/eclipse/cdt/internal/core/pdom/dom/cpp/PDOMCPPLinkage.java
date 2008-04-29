@@ -358,13 +358,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPFunction) {
 			pdomBinding = new PDOMCPPFunction(pdom, parent, (ICPPFunction) binding, true);
 		} else if (binding instanceof ICPPClassTemplate) {
+			pdomBinding= new PDOMCPPClassTemplate(pdom, parent, (ICPPClassTemplate) binding);
+		} else if (binding instanceof ICPPClassType) {
 			if (binding instanceof ICPPInternalUnknownClassInstance) {
 				pdomBinding= new PDOMCPPUnknownClassInstance(pdom, parent, (ICPPInternalUnknownClassInstance) binding);
-			} else {
-				pdomBinding= new PDOMCPPClassTemplate(pdom, parent, (ICPPClassTemplate) binding);
-			}
-		} else if (binding instanceof ICPPClassType) {
-			if (binding instanceof ICPPInternalUnknown) {
+			} else if (binding instanceof ICPPInternalUnknown) {
 				pdomBinding= new PDOMCPPUnknownClassType(pdom, parent, (ICPPInternalUnknownClassType) binding);
 			} else {
 				pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);

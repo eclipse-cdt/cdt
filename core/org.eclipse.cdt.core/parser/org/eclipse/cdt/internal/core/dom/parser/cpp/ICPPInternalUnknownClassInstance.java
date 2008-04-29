@@ -11,14 +11,12 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 
 /*
  * Represents a partially instantiated C++ class template, declaration of which is not yet available.
  *
  * @author Sergey Prigogin
  */
-public interface ICPPInternalUnknownClassInstance extends ICPPClassTemplate, ICPPInternalClassTemplate,
-		ICPPInternalUnknownClassType {
+public interface ICPPInternalUnknownClassInstance extends ICPPInternalUnknownClassType {
 	public IType[] getArguments();
 }

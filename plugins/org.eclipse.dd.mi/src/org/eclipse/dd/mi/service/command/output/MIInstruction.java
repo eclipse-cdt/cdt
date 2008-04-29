@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class MIInstruction implements IInstruction {
      *   - Function name
      *   - Offset
      *   - Instruction
-     *  
+     * 
      *   {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
      *   {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
      *   ...,
@@ -81,7 +81,7 @@ public class MIInstruction implements IInstruction {
 
             if (var.equals("address")) { //$NON-NLS-1$
                 try {
-                    address = new BigInteger(str.trim(), 16);
+                    address = decodeAddress(str.trim());
                 } catch (NumberFormatException e) {
                 }
                 continue;
@@ -126,5 +126,20 @@ public class MIInstruction implements IInstruction {
         }
 
     }
+
+	/**
+	 * Decode given string representation of a non-negative integer. A
+	 * hexadecimal encoded integer is expected to start with <code>0x</code>.
+	 * 
+	 * @param string
+	 *            decimal or hexadecimal representation of an non-negative integer
+	 * @return address value as <code>BigInteger</code>
+	 */
+	private static BigInteger decodeAddress(String string) {
+		if (string.startsWith("0x")) { //$NON-NLS-1$
+			return new BigInteger(string.substring(2), 16);
+		}
+		return new BigInteger(string);
+	}
 
 }

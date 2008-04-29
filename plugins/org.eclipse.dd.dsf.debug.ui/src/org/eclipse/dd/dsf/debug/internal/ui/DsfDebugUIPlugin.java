@@ -1,5 +1,6 @@
 package org.eclipse.dd.dsf.debug.internal.ui;
 
+import org.eclipse.dd.dsf.debug.internal.ui.disassembly.model.SourceDocumentProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -17,8 +18,11 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 	private static DsfDebugUIPlugin plugin;
     
     // BundleContext of this plugin
-    private static BundleContext fgBundleContext; 
-	
+    private static BundleContext fgBundleContext;
+
+	// The document provider for source documents in the disassembly.
+	private SourceDocumentProvider fSourceDocumentProvider;
+
 	/**
 	 * The constructor
 	 */
@@ -35,6 +39,7 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 		plugin = this;
         fgBundleContext = context;
 
+		fSourceDocumentProvider = new SourceDocumentProvider();
 	}
 
 	/*
@@ -43,6 +48,8 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
+		fSourceDocumentProvider.dispose();
+		fSourceDocumentProvider = null;
 		plugin = null;
 		super.stop(context);
 	}
@@ -74,5 +81,9 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	public static SourceDocumentProvider getSourceDocumentProvider() {
+		return getDefault().fSourceDocumentProvider;
 	}
 }

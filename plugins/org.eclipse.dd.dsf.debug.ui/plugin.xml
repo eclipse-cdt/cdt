@@ -278,5 +278,86 @@
               id="org.eclipse.dd.dsf.debug.ui.viewmodel.moduleDetailPaneFactory">
         </detailFactories>
     </extension>
-    
+
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%command.gotoPC.description"
+            id="org.eclipse.dd.dsf.debug.ui.disassembly.commands.gotoPC"
+            name="%command.gotoPC.name"/>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%command.gotoAddress.description"
+            id="org.eclipse.dd.dsf.debug.ui.disassembly.commands.gotoAddress"
+            name="%command.gotoAddress.name"/>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%command.gotoSymbol.description"
+            id="org.eclipse.dd.dsf.debug.ui.disassembly.commands.gotoSymbol"
+            name="%command.gotoSymbol.name"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.bindings">
+       <key sequence="HOME"
+            contextId="org.eclipse.dd.dsf.debug.ui.disassembly.context"
+            commandId="org.eclipse.dd.dsf.debug.ui.disassembly.commands.gotoPC"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key sequence="M1+G"
+            contextId="org.eclipse.dd.dsf.debug.ui.disassembly.context"
+            commandId="org.eclipse.dd.dsf.debug.ui.disassembly.commands.gotoAddress"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key sequence="M1+M2+G"
+            contextId="org.eclipse.dd.dsf.debug.ui.disassembly.context"
+            commandId="org.eclipse.dd.dsf.debug.ui.disassembly.commands.gotoSymbol"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="%commandContext.description"
+            id="org.eclipse.dd.dsf.debug.ui.disassembly.context"
+            name="%commandContext.name"
+            parentId="org.eclipse.debug.ui.debugging">
+      </context>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.dd.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants$Initializer"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.dd.dsf.debug.internal.ui.disassembly.DisassemblyView"
+            icon="icons/disassembly.gif"
+            id="org.eclipse.dd.dsf.debug.ui.disassembly.view"
+            name="%disassemblyView.name">
+      </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.dd.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferencePage"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            name="%disassemblyPreferencePage.name"
+            id="org.eclipse.dd.dsf.debug.ui.disassembly.preferencePage"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.dd.dsf.debug.ui.disassemblyRulerActions"
+            targetID="#DisassemblyPartRulerContext">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.ui.disassembly.actions.BreakpointPropertiesRulerActionDelegate"
+               id="org.eclipse.dd.dsf.debug.ui.disassembly.breakpointProperties"
+               label="%action.breakpointProperties.label"
+               menubarPath="debug">
+         </action>
+      </viewerContribution>
+   </extension>
+
 </plugin>

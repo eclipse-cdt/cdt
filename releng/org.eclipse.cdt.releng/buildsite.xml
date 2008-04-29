@@ -33,10 +33,10 @@
 	<feature id="org.eclipse.cdt.testing" url="features/org.eclipse.cdt.testing_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.gnu.build" url="features/org.eclipse.cdt.gdb.build_@buildVersion@.jar" version="@buildVersion@">
+	<feature id="org.eclipse.cdt.gnu.build" url="features/org.eclipse.cdt.gnu.build_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.gnu.debug" url="features/org.eclipse.cdt.gdb.debug_@buildVersion@.jar" version="@buildVersion@">
+	<feature id="org.eclipse.cdt.gnu.debug" url="features/org.eclipse.cdt.gnu.debug_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>
 </site>

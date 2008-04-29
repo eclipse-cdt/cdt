@@ -12,19 +12,33 @@
 <a href="cdt-master-@branchVersion@-@buildId@.zip">cdt-master-@branchVersion@-@buildId@.zip</a>
 </p>
 <p>
-To use this zip file, in the menu Help->SoftwareUpdates, select the Available Features tab and click Manage sites...  Click Add..., 
-then Archive... and point at the zip file. The list of available features will populate and you can select the features
-you want to install. You will at nead require the C/C++ Development Tooling feature which is the CDT runtime.
-
+To install CDT:
+<ol>
+<li>Download the master zip file and put it somewhere on your machine.</li>
+<li>Fire up Eclipse (The Platform Run-time 3.4M6a is minimum recommended)</li>
+<li>Help->Software Updates</li>
+<li>On the Available Features tab, select Manage sites...</li>
+<li>Add... in the master zip as an Archive...</li>
+<li>Under CDT Main Features select the one you want. C/C++ Development
+Tools is the main one. The SDK adds in the schemas and source for
+building extensions to the CDT. The C/C++ Development Platform is the
+Tools without the GNU toolchain support.</li>
+<li>You can install other neat things, including the Mylyn bridge, from
+the CDT Optional Features category.</li>
+</ol>
 </p>
 <p>This feature has everything, including:</p>
 <ul>
-<li>CDT Runtime Feature - includes editor, search, builders, launch, debug, gnu toolchain integrations for build/debug, user documentation</li>
+<li>CDT Platform Feature - includes editor, search, builders, launch, debug, user documentation</li>
+<li>CDT Runtime Feature - superset of platform feature that adds gnu toolchain integrations for build/debug</li>
 <li>CDT SDK Feature - superset of runtime that adds source and extension point schemas</li>
-<li>GDB Hardware Debugging - Provides a launch configuration for launching gdb to do hardware debugging.</li>
-<li>XL C/C++ Compiler Support - Provides an error parser and managed build support for IBM's XL C/C++ compilers.</li>
-<li>LR Parser - Provides a parser for the ISO/IEC 9899:1999 variant of the C programming language (aka C99), generated from a grammar using the LPG parser generator.  The grammar can be reused and extended to create your own parser for variants on the C programming language.</li>
-<li>CDT Utilities - Provides utilities for C/C++ Development Tools</li>
+<li>GDB Hardware Debugging - provides a launch configuration for launching gdb to do hardware debugging.</li>
+<li>XL C/C++ Compiler Support - provides an error parser and managed build support for IBM's XL C/C++ compilers.</li>
+<li>LR Parser - provides a parser for the ISO/IEC 9899:1999 variant of the C programming language (aka C99), generated from a 
+grammar using the LPG parser generator.  The grammar can be reused and extended to 
+create your own parser for variants on the C programming language.</li>
+<li>Mylyn Bridge - allows CDT to work with Mylyn.</li>
+<li>CDT Utilities - provides utilities for C/C++ Development Tools</li>
 <li>CDT Testing Feature - includes all test plugins required for running automated JUnit tests</li>
 </ul>
 </body>

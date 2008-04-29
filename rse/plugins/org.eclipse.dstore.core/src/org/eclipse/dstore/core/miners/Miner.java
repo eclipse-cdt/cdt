@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  *  Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
@@ -32,14 +32,14 @@ import org.eclipse.dstore.core.model.Handler;
 import org.eclipse.dstore.core.model.IExternalLoader;
 import org.eclipse.dstore.core.model.ISchemaExtender;
 import org.eclipse.dstore.core.server.SystemServiceManager;
- 
+
 /**
- * Miner is the abstract base class of all DataStore extensions).  
+ * Miner is the abstract base class of all DataStore extensions).
  * The DataStore framework knows how to load and route commands to miners
  * because it interfaces miners through the restricted set of interfaces declared here.
  * To add a new miner, developers must extend this class and implement the abstract methods declared here.
  */
-public abstract class Miner extends Handler 
+public abstract class Miner extends Handler
 implements ISchemaExtender
 {
 
@@ -47,8 +47,8 @@ implements ISchemaExtender
 	public DataElement _minerData;
 	public DataElement _minerTransient;
 
-	
-	
+
+
 	private boolean _initialized;
 	private boolean _connected;
 	private IExternalLoader _loader;
@@ -57,7 +57,7 @@ implements ISchemaExtender
 	protected String _value = null;
 	protected ArrayList _dependencies;
 	protected List _commandQueue;
-	
+
 	protected ResourceBundle _resourceBundle = null;
 
 	/**
@@ -73,7 +73,7 @@ implements ISchemaExtender
 	/**
 	 * Returns the qualified names of all miners that
 	 * this miner depends on.  A miner depends on another
-	 * miner if it's schema extends or uses another's schema. 
+	 * miner if it's schema extends or uses another's schema.
 	 * By default it returns an empty list.
 	 * @return a list of miner dependencies, each represented as a qualified name
 	 */
@@ -112,8 +112,11 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Shuts down the miner and cleans up it's meta-information.
-	 * Override this function to do your own cleanup.
+	 * Shuts down the miner and cleans up it's meta-information. Override this
+	 * function to do your own cleanup.
+	 * <p>
+	 * Subclasses may override this method but must call
+	 * <code>super.finish()</code> at the end of their overriding method.
 	 */
 	public void finish()
 	{
@@ -131,12 +134,12 @@ implements ISchemaExtender
 		root.setUpdated(false);
 
 		_dataStore.update(root);
-		
+
 		super.finish();
 	}
 
 	/**
-	 * Interface to retrieve an NL enabled resource bundle.  
+	 * Interface to retrieve an NL enabled resource bundle.
 	 * Override this function to get access to a real resource bundle.
 	 */
 	public ResourceBundle getResourceBundle()
@@ -165,7 +168,7 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * This gets called after a miner is initialized.  
+	 * This gets called after a miner is initialized.
 	 * If you need to update element information at that time, override this method.
 	 */
 	protected void updateMinerInfo()
@@ -199,16 +202,16 @@ implements ISchemaExtender
 		}
 		return _value;
 	}
-	
+
 	public final void handle()
 	{
 		while (!_commandQueue.isEmpty())
 		{
 			try
-			{	
+			{
 				DataElement cmd = (DataElement)_commandQueue.remove(0);
 				if (cmd != null){
-					command(cmd);			
+					command(cmd);
 				}
 			}
 			catch (Exception e){
@@ -217,13 +220,13 @@ implements ISchemaExtender
 		}
 		waitForInput();
 	}
-	
+
 	public final void requestCommand(DataElement command)
 	{
 		_commandQueue.add(command);
 		notifyInput();
 	}
-	
+
 	public final void initMiner(DataElement status)
 	{
 		try
@@ -252,11 +255,11 @@ implements ISchemaExtender
 		{
 			e.printStackTrace();
 		}
-		
-		
+
+
 
 	}
-	
+
 	/**
 	 * Issues a specified command on this miner from the DataStore framework.
 	 * The base class handles "C_INIT_MINERS" but other commands are delegated to
@@ -266,7 +269,7 @@ implements ISchemaExtender
 	 * @return the status of the command
 	 */
 	protected final DataElement command(DataElement command)
-	{		
+	{
 		String name = getCommandName(command);
 		DataElement status = getCommandStatus(command);
 
@@ -314,7 +317,7 @@ implements ISchemaExtender
 			    er.printStackTrace();
 				_dataStore.trace(er);
 				_dataStore.finish();
-				
+
 				if (SystemServiceManager.getInstance().getSystemService() == null)
 					System.exit(-1);
 			}
@@ -335,9 +338,9 @@ implements ISchemaExtender
 		}
 		return buf.toString();
 	}
-	
+
 	/**
-	 * Sets the DataStore and performs some fundamental initialization for this miner.  
+	 * Sets the DataStore and performs some fundamental initialization for this miner.
 	 * The framework calls this method on a miner before any commands are issued.
 	 * The extendSchema() is called on the miner.
 	 *
@@ -357,12 +360,12 @@ implements ISchemaExtender
 		// yantzi: Reuse existing miner root if found
 		_minerElement = _dataStore.find(root, DE.A_NAME, name, 1);
 		if (_minerElement == null || _minerElement.isDeleted())
-		{	
+		{
 			// Create new child for this miner
 			_minerElement   = _dataStore.createObject(root, DataStoreResources.model_miner, name, name);
 			_minerElement.setAttribute(DE.A_VALUE, value);
 			_minerElement.setAttribute(DE.A_SOURCE, getVersion());
-	
+
 			_minerData      = _dataStore.createObject(_minerElement, DataStoreResources.model_data, DataStoreResources.model_Data, name);
 			_minerTransient = _dataStore.createObject(_minerElement, DataStoreResources.model_transient, DataStoreResources.model_Transient_Objects, name);
 		}
@@ -374,7 +377,7 @@ implements ISchemaExtender
 			{
 				_minerData = _dataStore.createObject(_minerElement, DataStoreResources.model_data, DataStoreResources.model_Data, name);
 			}
-		
+
 			_minerTransient = _dataStore.find(_minerElement, DE.A_NAME, DataStoreResources.model_Transient_Objects, 1);
 			if (_minerTransient == null || _minerData.isDeleted())
 			{
@@ -510,7 +513,7 @@ implements ISchemaExtender
 	 * properties of the first. This is a helper method that miner may call
 	 * when it creates or updates the schema for it's tool domain.
 	 *
-	 * @param from the abstacting descriptor 
+	 * @param from the abstacting descriptor
 	 * @param to the descriptor that is abstracted
 	 * @return the new relationship descriptor
 	 */
@@ -520,9 +523,9 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Creates a contents relationship between any two elements. 
+	 * Creates a contents relationship between any two elements.
 	 *
-	 * @param from the containing element 
+	 * @param from the containing element
 	 * @param to the element that is contained
 	 * @return the new relationship
 	 */
@@ -531,10 +534,10 @@ implements ISchemaExtender
 		return _dataStore.createReference(from, to);
 	}
 
-	
+
 
 	/**
-	 * Returns the element that represents this miner. 
+	 * Returns the element that represents this miner.
 	 *
 	 * @return the miner element
 	 */
@@ -544,7 +547,7 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Returns the element that contains this miners meta-information. 
+	 * Returns the element that contains this miners meta-information.
 	 *
 	 * @return the miner data element
 	 */
@@ -554,7 +557,7 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Returns the transient object container for this element. 
+	 * Returns the transient object container for this element.
 	 *
 	 * @return the transient element
 	 */
@@ -564,7 +567,7 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Identifies a give object descriptor type to be transient in this miner. 
+	 * Identifies a give object descriptor type to be transient in this miner.
 	 *
 	 * @param objectDescriptor the object descriptor type that is transient
 	 */
@@ -574,7 +577,7 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Returns the name of a command. 
+	 * Returns the name of a command.
 	 * This is a helper method to be used inside handleCommand().
 	 *
 	 * @param command a tree of elements representing a command
@@ -586,7 +589,7 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Returns the status of a command. 
+	 * Returns the status of a command.
 	 * This is a helper method to be used inside handleCommand().
 	 *
 	 * @param command a tree of elements representing a command
@@ -602,7 +605,7 @@ implements ISchemaExtender
 
 
 	/**
-	 * Returns the number of arguments for this command. 
+	 * Returns the number of arguments for this command.
 	 * This is a helper method to be used inside handleCommand().
 	 *
 	 * @param command a tree of elements representing a command
@@ -614,7 +617,7 @@ implements ISchemaExtender
 	}
 
 	/**
-	 * Returns the argument of a command specified at a given index. 
+	 * Returns the argument of a command specified at a given index.
 	 * This is a helper method to be used inside handleCommand().
 	 *
 	 * @param command a tree of elements representing a command
@@ -638,7 +641,7 @@ implements ISchemaExtender
 
 
 	/**
-	 * Returns the descriptor root for the DataStore schema 
+	 * Returns the descriptor root for the DataStore schema
 	 *
 	 * @return the descriptor root
 	 */
@@ -656,7 +659,7 @@ implements ISchemaExtender
 	{
 		return _loader;
 	}
-	
+
 	public synchronized void waitForInput()
 	{
 		if (_commandQueue.size() == 0)
@@ -665,8 +668,8 @@ implements ISchemaExtender
 		}
 	}
 
-	
-	
+
+
 	/**
 	 * Handle commands that are routed to this miner.
 	 * This interface must be implemented by each miner in order to
@@ -675,7 +678,7 @@ implements ISchemaExtender
 	 * @param theCommand an instance of a command containing a tree of arguments
 	 */
 	public abstract DataElement handleCommand(DataElement theCommand);
-	
+
 
 	/**
 	 * Returns the version of this miner

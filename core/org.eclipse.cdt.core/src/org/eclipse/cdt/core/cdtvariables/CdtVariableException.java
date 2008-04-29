@@ -47,8 +47,6 @@ public class CdtVariableException extends CoreException {
 	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-	 * @param contextType the context type used in the operation
-	 * @param contextData the context data used in the operation
 	 */
 	public CdtVariableException(int code, 
 			String message, 
@@ -66,13 +64,9 @@ public class CdtVariableException extends CoreException {
 	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity and with the default message
 	 * 
 	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
-	 * @param exception a low-level exception, or <code>null</code> if not
-	 *    applicable 
 	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-	 * @param contextType the context type used in the operation
-	 * @param contextData the context data used in the operation
 	 */
 	public CdtVariableException(int code, 
 			String macroName, 
@@ -97,9 +91,9 @@ public class CdtVariableException extends CoreException {
 			IStatus children[] = status.getChildren();
 			ICdtVariableStatus result[] = new ICdtVariableStatus[children.length];
 			int num = 0;
-			for(int i = 0; i < children.length; i++){
-				if(children[i] instanceof ICdtVariableStatus)
-					result[num++]=(ICdtVariableStatus)children[i];
+			for (IStatus element : children) {
+				if(element instanceof ICdtVariableStatus)
+					result[num++]=(ICdtVariableStatus)element;
 			}
 			if(num != children.length){
 				ICdtVariableStatus tmp[] = new ICdtVariableStatus[num];

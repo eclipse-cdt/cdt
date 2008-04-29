@@ -115,8 +115,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		// first collect all valid file-locations
 		final Map<IPath, TaskList> pathToTaskList= new HashMap<IPath, TaskList>();
 		final Set<IProject> projects= new HashSet<IProject>();
-		for (int i = 0; i < filesToUpdate.length; i++) {
-			final IIndexFileLocation indexFileLocation = filesToUpdate[i];
+		for (final IIndexFileLocation indexFileLocation : filesToUpdate) {
 			final String filepath = indexFileLocation.getFullPath();
 			if (filepath != null) {
 				IFile file = workspaceRoot.getFile(new Path(filepath));
@@ -129,8 +128,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 
 		if (comments.length > 0) {
 			final Task[] tasks = taskParser.parse(comments);
-			for (int i = 0; i < tasks.length; i++) {
-				final Task task = tasks[i];
+			for (final Task task : tasks) {
 				TaskList list= pathToTaskList.get(new Path(task.getFileLocation()));
 				if (list != null) {
 					list.add(task);
@@ -209,7 +207,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					if (resource == null || !resource.exists()) {
+					if (!resource.exists()) {
 						return Status.CANCEL_STATUS;
 					}
 					resource.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);

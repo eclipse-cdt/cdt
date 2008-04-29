@@ -197,7 +197,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 	            else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
-	            if( declSpec.getStorageClass() == storage ) {
+	            if( declSpec != null && declSpec.getStorageClass() == storage ) {
 	            	return true;
 	            }
             }
@@ -290,7 +290,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	            else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
 	            
-	            if( declSpec.isInline() )
+	            if( declSpec != null && declSpec.isInline() )
                     return true;
             }
             if( ns != null && ++i < ns.length )
@@ -307,8 +307,8 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	    }
         IASTNode[] ds= getDeclarations();
         if (ds != null) {
-        	for (int i = 0; i < ds.length; i++) {
-        		if (CPPVisitor.isExternC(ds[i])) {
+        	for (IASTNode element : ds) {
+        		if (CPPVisitor.isExternC(element)) {
         			return true;
         		}
 			}

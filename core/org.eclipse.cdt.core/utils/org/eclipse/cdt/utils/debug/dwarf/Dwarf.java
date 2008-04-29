@@ -26,6 +26,7 @@ import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
 import org.eclipse.cdt.utils.debug.tools.DebugSymsRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
+import org.eclipse.cdt.utils.elf.Elf.Section;
 
 public class Dwarf {
 
@@ -83,12 +84,12 @@ public class Dwarf {
 		/* unsigned */
 		long tag;
 		byte hasChildren;
-		List attributes;
+		List<Attribute> attributes;
 		AbbreviationEntry(long c, long t, byte h) {
 			code = c;
 			tag = t;
 			hasChildren = h;
-			attributes = new ArrayList();
+			attributes = new ArrayList<Attribute>();
 		}
 	}
 
@@ -122,7 +123,7 @@ public class Dwarf {
 			StringBuffer sb = new StringBuffer();
 			sb.append(attribute.toString()).append(' ');
 			if (value != null) {
-				Class clazz = value.getClass();
+				Class<? extends Object> clazz = value.getClass();
 				if (clazz.isArray()) {
 					int len = Array.getLength(value);
 					sb.append(len).append(' ');
@@ -159,8 +160,8 @@ public class Dwarf {
 		int identifierCase;
 	}
 
-	Map dwarfSections = new HashMap();
-	Map abbreviationMaps = new HashMap();
+	Map<String, byte[]> dwarfSections = new HashMap<String, byte[]>();
+	Map<Integer, Map<Long, AbbreviationEntry>> abbreviationMaps = new HashMap<Integer, Map<Long, AbbreviationEntry>>();
 
 	boolean isLE;
 
@@ -183,11 +184,11 @@ public class Dwarf {
 		isLE = header.e_ident[Elf.ELFhdr.EI_DATA] == Elf.ELFhdr.ELFDATA2LSB;
 
 		Elf.Section[] sections = exe.getSections();
-		for (int i = 0; i < sections.length; i++) {
-			String name = sections[i].toString();
-			for (int j = 0; j < DWARF_SCNNAMES.length; j++) {
-				if (name.equals(DWARF_SCNNAMES[j])) {
-					dwarfSections.put(DWARF_SCNNAMES[j], sections[i].loadSectionData());
+		for (Section section : sections) {
+			String name = section.toString();
+			for (String element : DWARF_SCNNAMES) {
+				if (name.equals(element)) {
+					dwarfSections.put(element, section.loadSectionData());
 				}
 			}
 		}
@@ -334,7 +335,7 @@ public class Dwarf {
 	}
 
 	void parseDebugInfo(IDebugEntryRequestor requestor) {
-		byte[] data = (byte[]) dwarfSections.get(DWARF_DEBUG_INFO);
+		byte[] data = dwarfSections.get(DWARF_DEBUG_INFO);
 		if (data != null) {
 			try {
 				int length = 0;
@@ -353,7 +354,7 @@ public class Dwarf {
 					// read the abbrev section.
 					// Note "length+4" is the total size in bytes of the CU data.
 					InputStream in = new ByteArrayInputStream(data, offset + 11, length+4-11);
-					Map abbrevs = parseDebugAbbreviation(header);
+					Map<Long, AbbreviationEntry> abbrevs = parseDebugAbbreviation(header);
 					parseDebugInfoEntry(requestor, in, abbrevs, header);
 
 					if (printEnabled)
@@ -365,14 +366,14 @@ public class Dwarf {
 		}
 	}
 
-	Map parseDebugAbbreviation(CompilationUnitHeader header) throws IOException {
+	Map<Long, AbbreviationEntry> parseDebugAbbreviation(CompilationUnitHeader header) throws IOException {
 		int offset = header.abbreviationOffset;
 		Integer key = new Integer(offset);
-		Map abbrevs = (Map) abbreviationMaps.get(key);
+		Map<Long, AbbreviationEntry> abbrevs = abbreviationMaps.get(key);
 		if (abbrevs == null) {
-			abbrevs = new HashMap();
+			abbrevs = new HashMap<Long, AbbreviationEntry>();
 			abbreviationMaps.put(key, abbrevs);
-			byte[] data = (byte[]) dwarfSections.get(DWARF_DEBUG_ABBREV);
+			byte[] data = dwarfSections.get(DWARF_DEBUG_ABBREV);
 			if (data != null) {
 				InputStream in = new ByteArrayInputStream(data);
 				in.skip(offset);
@@ -405,17 +406,17 @@ public class Dwarf {
 		return abbrevs;
 	}
 
-	void parseDebugInfoEntry(IDebugEntryRequestor requestor, InputStream in, Map abbrevs, CompilationUnitHeader header)
+	void parseDebugInfoEntry(IDebugEntryRequestor requestor, InputStream in, Map<Long, AbbreviationEntry> abbrevs, CompilationUnitHeader header)
 		throws IOException {
 		while (in.available() > 0) {
 			long code = read_unsigned_leb128(in);
-			AbbreviationEntry entry = (AbbreviationEntry) abbrevs.get(new Long(code));
+			AbbreviationEntry entry = abbrevs.get(new Long(code));
 			if (entry != null) {
 				int len = entry.attributes.size();
-				List list = new ArrayList(len);
+				List<AttributeValue> list = new ArrayList<AttributeValue>(len);
 				try {
 					for (int i = 0; i < len; i++) {
-						Attribute attr = (Attribute) entry.attributes.get(i);
+						Attribute attr = entry.attributes.get(i);
 						Object obj = readAttribute((int) attr.form, in, header);
 						list.add(new AttributeValue(attr, obj));
 					}
@@ -516,7 +517,7 @@ public class Dwarf {
 			case DwarfConstants.DW_FORM_strp :
 				{
 					int offset = read_4_bytes(in);
-					byte[] data = (byte[]) dwarfSections.get(DWARF_DEBUG_STR);
+					byte[] data = dwarfSections.get(DWARF_DEBUG_STR);
 					if (data == null) {
 						obj = new String();
 					} else if (offset < 0 || offset > data.length) {
@@ -568,14 +569,14 @@ public class Dwarf {
 		return obj;
 	}
 
-	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List list) {
+	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<AttributeValue> list) {
 		int len = list.size();
 		int tag = (int) entry.tag;
 		if (printEnabled)
 			System.out.println("Abbrev Number " + entry.code); //$NON-NLS-1$
 		
 		for (int i = 0; i < len; i++) {
-			AttributeValue av = (AttributeValue) list.get(i);
+			AttributeValue av = list.get(i);
 			if (printEnabled)
 				System.out.println(av);
 			// We are only interrested in certain tags.
@@ -665,14 +666,14 @@ public class Dwarf {
 		return new Long(value);
 	}
 
-	void processSubProgram(IDebugEntryRequestor requestor, List list) {
+	void processSubProgram(IDebugEntryRequestor requestor, List<AttributeValue> list) {
 		long lowPC = 0;
 		long highPC = 0;
 		String funcName = ""; //$NON-NLS-1$
 		boolean isExtern = false;
 
 		for (int i = 0; i < list.size(); i++) {
-			AttributeValue av = (AttributeValue)list.get(i);
+			AttributeValue av = list.get(i);
 			try {
 				int name = (int)av.attribute.name;
 				switch(name) {
@@ -699,13 +700,13 @@ public class Dwarf {
 		requestor.exitFunction(highPC);
 	}
 
-	void processCompileUnit(IDebugEntryRequestor requestor, List list) {
+	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) {
 		if (currentCU != null) {
 			requestor.exitCompilationUnit(currentCU.highPC);
 		}
 		currentCU = new CompileUnit();
 		for (int i = 0; i < list.size(); i++) {
-			AttributeValue av = (AttributeValue)list.get(i);
+			AttributeValue av = list.get(i);
 			try {
 				int name = (int)av.attribute.name;
 				switch(name) {
@@ -755,8 +756,7 @@ public class Dwarf {
 			Dwarf dwarf = new Dwarf(args[0]);
 			dwarf.parse(symreq);
 			DebugSym[] entries = symreq.getEntries();
-			for (int i = 0; i < entries.length; i++) {
-				DebugSym entry = entries[i];
+			for (DebugSym entry : entries) {
 				System.out.println(entry);
 			}
 		} catch (IOException e) {

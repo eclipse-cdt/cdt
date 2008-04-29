@@ -60,12 +60,12 @@ public class AR {
 	public class ARHeader {
 
 		private String object_name;
-		private String modification_time;
-		private String uid;
-		private String gid;
-		private String mode;
+//		private String modification_time;
+//		private String uid;
+//		private String gid;
+//		private String mode;
 		private long size;
-		private long file_offset;
+//		private long file_offset;
 		private long macho_offset;
 
 		/**
@@ -88,23 +88,23 @@ public class AR {
 		 * @throws IOException 
 		 *    <code>offset</code> not in string table bounds.
 		 */
-		private String nameFromStringTable(long offset) throws IOException {
-			StringBuffer name = new StringBuffer(0);
-			long pos = efile.getFilePointer();
-
-			try {
-				if (strtbl_pos != -1) {
-					byte temp;
-					efile.seek(strtbl_pos + offset);
-					while ((temp = efile.readByte()) != '\n')
-						name.append((char) temp);
-				}
-			} finally {
-				efile.seek(pos);
-			}
-
-			return name.toString();
-		}
+//		private String nameFromStringTable(long offset) throws IOException {
+//			StringBuffer name = new StringBuffer(0);
+//			long pos = efile.getFilePointer();
+//
+//			try {
+//				if (strtbl_pos != -1) {
+//					byte temp;
+//					efile.seek(strtbl_pos + offset);
+//					while ((temp = efile.readByte()) != '\n')
+//						name.append((char) temp);
+//				}
+//			} finally {
+//				efile.seek(pos);
+//			}
+//
+//			return name.toString();
+//		}
 
 		/**
 		 * Creates a new archive header object.  
@@ -143,10 +143,10 @@ public class AR {
 			// Convert the raw bytes into strings and numbers.
 			//
 			this.object_name = removeBlanks(new String(object_name));
-			this.modification_time = new String(modification_time);
-			this.uid = new String(uid);
-			this.gid = new String(gid);
-			this.mode = new String(mode);
+//			this.modification_time = new String(modification_time);
+//			this.uid = new String(uid);
+//			this.gid = new String(gid);
+//			this.mode = new String(mode);
 			this.size = Long.parseLong(removeBlanks(new String(size)));
 
 			//
@@ -256,14 +256,14 @@ public class AR {
 		if (headers != null)
 			return;
 
-		Vector v = new Vector();
+		Vector<ARHeader> v = new Vector<ARHeader>();
 		try {
 			//
 			// Check for EOF condition
 			//
 			while (efile.getFilePointer() < efile.length()) {
 				ARHeader header = new ARHeader();
-				String name = header.getObjectName();
+				header.getObjectName();
 
 				long pos = efile.getFilePointer();
 
@@ -281,7 +281,7 @@ public class AR {
 		} catch (IOException e) {
 		}
 		// strtbl_pos = ???;
-		headers = (ARHeader[]) v.toArray(new ARHeader[0]);
+		headers = v.toArray(new ARHeader[0]);
 	}
 
 	/**
@@ -298,29 +298,29 @@ public class AR {
 	}
 
 	private boolean stringInStrings(String str, String[] set) {
-		for (int i = 0; i < set.length; i++)
-			if (str.compareTo(set[i]) == 0)
+		for (String element : set)
+			if (str.compareTo(element) == 0)
 				return true;
 		return false;
 	}
 
 	public String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector names_used = new Vector();
+		Vector<String> names_used = new Vector<String>();
 		String object_name;
 		int count;
 
 		loadHeaders();
 
 		count = 0;
-		for (int i = 0; i < headers.length; i++) {
-			object_name = headers[i].getObjectName();
+		for (ARHeader header : headers) {
+			object_name = header.getObjectName();
 			if (names != null && !stringInStrings(object_name, names))
 				continue;
 
 			object_name = "" + count + "_" + object_name; //$NON-NLS-1$ //$NON-NLS-2$
 			count++;
 
-			byte[] data = headers[i].getObjectData();
+			byte[] data = header.getObjectData();
 			File output = new File(outdir, object_name);
 			names_used.add(object_name);
 
@@ -329,7 +329,7 @@ public class AR {
 			rfile.close();
 		}
 
-		return (String[]) names_used.toArray(new String[0]);
+		return names_used.toArray(new String[0]);
 	}
 
 	public String[] extractFiles(String outdir) throws IOException {

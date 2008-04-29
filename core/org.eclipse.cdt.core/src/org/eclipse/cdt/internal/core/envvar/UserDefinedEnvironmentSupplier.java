@@ -185,7 +185,7 @@ public class UserDefinedEnvironmentSupplier extends
 		else if(context == null || context instanceof IWorkspace){
 			final Preferences prefs = getWorkspaceNode();
 			final String name = PREFNAME_WORKSPACE;
-			if(prefs != null && name != null)
+			if (prefs != null)
 				serializeInfo = new ISerializeInfo(){
 				public Preferences getNode(){
 					return prefs;
@@ -237,9 +237,9 @@ public class UserDefinedEnvironmentSupplier extends
 		try{
 			String ids[] = prefNode.keys();
 			boolean found = false;
-			for( int i = 0; i < ids.length; i++){
-				if(projDes.getConfigurationById(ids[i]) == null){
-					prefNode.remove(ids[i]);
+			for (String id : ids) {
+				if(projDes.getConfigurationById(id) == null){
+					prefNode.remove(id);
 					found = true;
 				}
 			}
@@ -285,22 +285,23 @@ public class UserDefinedEnvironmentSupplier extends
 		
 		if(oldVars == null || oldVars.length == 0){
 			if(newVars != null && newVars.length != 0)
-				addedVars = (IEnvironmentVariable[])newVars.clone() ;
+				addedVars = newVars.clone(); 
 		} else if(newVars == null || newVars.length == 0){
-			removedVars = (IEnvironmentVariable[])oldVars.clone();
+			removedVars = oldVars.clone();
 		} else {
-			HashSet newSet = new HashSet(newVars.length);
-			HashSet oldSet = new HashSet(oldVars.length);
+			HashSet<VarKey> newSet = new HashSet<VarKey>(newVars.length);
+			HashSet<VarKey> oldSet = new HashSet<VarKey>(oldVars.length);
 			
-			for(int i = 0; i < newVars.length; i++){
-				newSet.add(new VarKey(newVars[i], true));
+			for (IEnvironmentVariable newVar : newVars) {
+				newSet.add(new VarKey(newVar, true));
 			}
 	
-			for(int i = 0; i < oldVars.length; i++){
-				oldSet.add(new VarKey(oldVars[i], true));
+			for (IEnvironmentVariable oldVar : oldVars) {
+				oldSet.add(new VarKey(oldVar, true));
 			}
 	
-			HashSet newSetCopy = (HashSet)newSet.clone();
+			@SuppressWarnings("unchecked")
+			HashSet<VarKey> newSetCopy = (HashSet<VarKey>)newSet.clone();
 	
 			newSet.removeAll(oldSet);
 			oldSet.removeAll(newSetCopy);
@@ -315,14 +316,13 @@ public class UserDefinedEnvironmentSupplier extends
 			
 			newSetCopy.removeAll(newSet);
 			
-			HashSet modifiedSet = new HashSet(newSetCopy.size());
-			for(Iterator iter = newSetCopy.iterator(); iter.hasNext();){
-				VarKey key = (VarKey)iter.next();
+			HashSet<VarKey> modifiedSet = new HashSet<VarKey>(newSetCopy.size());
+			for (VarKey key : newSetCopy) {
 				modifiedSet.add(new VarKey(key.getVariable(), false));
 			}
 			
-			for(int i = 0; i < oldVars.length; i++){
-				modifiedSet.remove(new VarKey(oldVars[i], false));
+			for (IEnvironmentVariable oldVar : oldVars) {
+				modifiedSet.remove(new VarKey(oldVar, false));
 			}
 			
 			if(modifiedSet.size() != 0)
@@ -334,11 +334,11 @@ public class UserDefinedEnvironmentSupplier extends
 		return null;
 	}
 	
-	static IEnvironmentVariable[] varsFromKeySet(Set set){
+	static IEnvironmentVariable[] varsFromKeySet(Set<VarKey> set){
 		IEnvironmentVariable vars[] = new IEnvironmentVariable[set.size()];
 		int i = 0;
-		for(Iterator iter = set.iterator(); iter.hasNext(); i++){
-			VarKey key = (VarKey)iter.next();
+		for(Iterator<VarKey> iter = set.iterator(); iter.hasNext(); i++){
+			VarKey key = iter.next();
 			vars[i] = key.getVariable();
 		}
 		
@@ -348,8 +348,8 @@ public class UserDefinedEnvironmentSupplier extends
 	
 	public void storeProjectEnvironment(ICProjectDescription des, boolean force){
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			storeEnvironment(cfgs[i], force, false);
+		for (ICConfigurationDescription cfg : cfgs) {
+			storeEnvironment(cfg, force, false);
 		}
 		
 		Preferences node = getProjectNode(des);

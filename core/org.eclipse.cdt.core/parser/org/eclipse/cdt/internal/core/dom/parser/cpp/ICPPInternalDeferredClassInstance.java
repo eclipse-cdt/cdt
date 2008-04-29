@@ -21,7 +21,6 @@ public interface ICPPInternalDeferredClassInstance {
 	
 	/**
 	 * instantiate the original template
-	 * @return
 	 */
 	public IType instantiate(ObjectMap argMap);
 }

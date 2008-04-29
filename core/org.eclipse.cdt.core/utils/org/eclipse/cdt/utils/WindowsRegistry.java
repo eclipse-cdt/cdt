@@ -31,7 +31,7 @@ public class WindowsRegistry {
 		if (registry == null && !failed) {
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
 				try {
-					System.loadLibrary("winreg");
+					System.loadLibrary("winreg"); //$NON-NLS-1$
 					registry = new WindowsRegistry();
 				} catch (UnsatisfiedLinkError e) {
 					failed = true;

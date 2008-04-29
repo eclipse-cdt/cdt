@@ -17,10 +17,10 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 public class VCErrorParser extends AbstractErrorParser {
 	
 	private static final ErrorPattern[] patterns = {
-		new ErrorPattern("(.+?)(\\(([0-9]+)\\))? : (fatal error|error|warning) (.*)", 1, 3, 5, 0, 0) {
+		new ErrorPattern("(.+?)(\\(([0-9]+)\\))? : (fatal error|error|warning) (.*)", 1, 3, 5, 0, 0) { //$NON-NLS-1$
 			@Override
 			public int getSeverity(Matcher matcher) {
-				return "warning".equals(matcher.group(4))
+				return "warning".equals(matcher.group(4)) //$NON-NLS-1$
 					? IMarkerGenerator.SEVERITY_WARNING
 					: IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			}

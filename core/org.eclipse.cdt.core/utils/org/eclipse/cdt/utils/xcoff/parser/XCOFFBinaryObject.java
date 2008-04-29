@@ -31,6 +31,7 @@ import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.xcoff.AR;
 import org.eclipse.cdt.utils.xcoff.XCoff32;
+import org.eclipse.cdt.utils.xcoff.XCoff32.Symbol;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -113,7 +114,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	
 	/**
 	 * @throws IOException
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
 	@Override
 	public InputStream getContents() throws IOException {
@@ -173,28 +174,28 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(XCoff32 xcoff) throws IOException {
-		ArrayList list = new ArrayList();
+		ArrayList<XCoffSymbol> list = new ArrayList<XCoffSymbol>();
 
 		XCoff32.Symbol[] peSyms = xcoff.getSymbols();
 		byte[] table = xcoff.getStringTable();
 		addSymbols(peSyms, table, list);
 
-		symbols = (ISymbol[]) list.toArray(NO_SYMBOLS);
+		symbols = list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);
 		list.clear();
 	}
 
-	protected void addSymbols(XCoff32.Symbol[] peSyms, byte[] table, List list) {
+	protected void addSymbols(XCoff32.Symbol[] peSyms, byte[] table, List<XCoffSymbol> list) {
 		CPPFilt cppfilt = getCPPFilt();
 		Addr2line addr2line = getAddr2line(false);
-		for (int i = 0; i < peSyms.length; i++) {
-			if (peSyms[i].isFunction() || peSyms[i].isVariable() ) {
-				String name = peSyms[i].getName(table);
+		for (Symbol peSym : peSyms) {
+			if (peSym.isFunction() || peSym.isVariable() ) {
+				String name = peSym.getName(table);
 				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {
 					continue;
 				}
-				int type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
-				IAddress addr = new Addr32(peSyms[i].n_value);
+				int type = peSym.isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
+				IAddress addr = new Addr32(peSym.n_value);
 				int size = 4;
 				if (cppfilt != null) {
 					try {
@@ -240,7 +241,6 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 			return getAddr2line();
 		}
 		if (addr2line == null) {
-			XCOFF32Parser parser = (XCOFF32Parser) getBinaryParser();
 			addr2line = getAddr2line();
 			if (addr2line != null) {
 				starttime = System.currentTimeMillis();
@@ -306,6 +306,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {

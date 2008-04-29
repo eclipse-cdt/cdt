@@ -15,12 +15,11 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-class PDOMGPPBasicType extends PDOMCPPBasicType implements IGPPBasicType, IIndexType {
+class PDOMGPPBasicType extends PDOMCPPBasicType implements IGPPBasicType {
 
 	public PDOMGPPBasicType(PDOM pdom, int record) {
 		super(pdom, record);

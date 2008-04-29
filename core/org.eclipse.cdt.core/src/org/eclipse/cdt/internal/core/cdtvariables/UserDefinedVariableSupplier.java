@@ -18,7 +18,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -350,8 +349,8 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 				try {
 					String[] value = fVar.getStringListValue();
 					if(value != null){
-						for(int i = 0; i < value.length; i++){
-							code += value[i].hashCode();
+						for (String element : value) {
+							code += element.hashCode();
 						}
 					}
 				} catch (CdtVariableException e) {
@@ -395,19 +394,19 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		
 		if(oldVars == null || oldVars.length == 0){
 			if(newVars != null && newVars.length != 0)
-				addedVars = (ICdtVariable[])newVars.clone() ;
+				addedVars = newVars.clone() ;
 		} else if(newVars == null || newVars.length == 0){
-			removedVars = (ICdtVariable[])oldVars.clone();
+			removedVars = oldVars.clone();
 		} else {
 			HashSet<VarKey> newSet = new HashSet<VarKey>(newVars.length);
 			HashSet<VarKey> oldSet = new HashSet<VarKey>(oldVars.length);
 			
-			for(int i = 0; i < newVars.length; i++){
-				newSet.add(new VarKey(newVars[i], true));
+			for (ICdtVariable newVar : newVars) {
+				newSet.add(new VarKey(newVar, true));
 			}
 	
-			for(int i = 0; i < oldVars.length; i++){
-				oldSet.add(new VarKey(oldVars[i], true));
+			for (ICdtVariable oldVar : oldVars) {
+				oldSet.add(new VarKey(oldVar, true));
 			}
 	
 			HashSet<VarKey> newSetCopy = (HashSet<VarKey>)newSet.clone();
@@ -426,13 +425,13 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			newSetCopy.removeAll(newSet);
 			
 			HashSet modifiedSet = new HashSet(newSetCopy.size());
-			for(Iterator iter = newSetCopy.iterator(); iter.hasNext();){
-				VarKey key = (VarKey)iter.next();
+			for (Object element : newSetCopy) {
+				VarKey key = (VarKey)element;
 				modifiedSet.add(new VarKey(key.getVariable(), false));
 			}
 			
-			for(int i = 0; i < oldVars.length; i++){
-				modifiedSet.remove(new VarKey(oldVars[i], false));
+			for (ICdtVariable oldVar : oldVars) {
+				modifiedSet.remove(new VarKey(oldVar, false));
 			}
 			
 			if(modifiedSet.size() != 0)
@@ -513,8 +512,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	protected void loadPathEntryVariables(StorableCdtVariables vars){
 		org.eclipse.core.runtime.Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 		String[] names = prefs.propertyNames();
-		for(int i = 0; i < names.length; i++){
-			String name = names[i];
+		for (String name : names) {
 			if (name.startsWith(OLD_VARIABLE_PREFIX)) {
 				String value = prefs.getString(name);
 				prefs.setToDefault(name);
@@ -662,9 +660,9 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	}
 	
 	private void notifyListeners(VariableChangeEvent event){
-		ICdtVariableChangeListener[] listeners = (ICdtVariableChangeListener[])fListeners.toArray(new ICdtVariableChangeListener[fListeners.size()]);
-		for(int i = 0; i < listeners.length; i++){
-			listeners[i].variablesChanged(event);
+		ICdtVariableChangeListener[] listeners = fListeners.toArray(new ICdtVariableChangeListener[fListeners.size()]);
+		for (ICdtVariableChangeListener listener : listeners) {
+			listener.variablesChanged(event);
 		}
 	}
 	

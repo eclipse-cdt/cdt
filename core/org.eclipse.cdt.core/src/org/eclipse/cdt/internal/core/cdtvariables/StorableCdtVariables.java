@@ -54,8 +54,8 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 
 	public StorableCdtVariables(ICdtVariable vars[], boolean readOnly) {
 		fMacros = new HashMap<String, ICdtVariable>(vars.length);
-		for(int i = 0; i < vars.length; i++){
-			addMacro(vars[i]);
+		for (ICdtVariable var : vars) {
+			addMacro(var);
 		}
 		fIsReadOnly = readOnly;
 	}
@@ -199,8 +199,8 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	public void createMacros(ICdtVariable macros[]){
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		for(int i = 0; i < macros.length; i++){
-			createMacro(macros[i]);
+		for (ICdtVariable macro : macros) {
+			createMacro(macro);
 		}
 	}
 	
@@ -319,12 +319,12 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 		
-		ICdtVariable var = (ICdtVariable)getMap().get(name);
+		ICdtVariable var = getMap().get(name);
 		if(var == null){
 			int indx = name.indexOf(':');
 			if(indx != -1){
 				String baseName = name.substring(0, indx);
-				ICdtVariable tmp = (ICdtVariable)getMap().get(baseName);
+				ICdtVariable tmp = getMap().get(baseName);
 				if(tmp != null 
 						&& CdtVariableManager.getDefault().toEclipseVariable(tmp, null) != null){
 					var = EclipseVariablesVariableSupplier.getInstance().getVariable(name);
@@ -346,7 +346,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 
-		ICdtVariable macro = (ICdtVariable)getMap().remove(name);
+		ICdtVariable macro = getMap().remove(name);
 		if(macro != null){
 			fIsDirty = true;
 			fIsChanged = true;

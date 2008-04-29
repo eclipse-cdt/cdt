@@ -15,13 +15,8 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
 
-public class XCOFFBinaryExecutable extends XCOFFBinaryObject implements IBinaryFile {
+public class XCOFFBinaryExecutable extends XCOFFBinaryObject {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param type
-	 */
 	public XCOFFBinaryExecutable(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.EXECUTABLE);
 	}

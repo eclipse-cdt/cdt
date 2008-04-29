@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.cdt.utils.debug.DebugArrayType;
 import org.eclipse.cdt.utils.debug.DebugBaseType;
 import org.eclipse.cdt.utils.debug.DebugCrossRefType;
@@ -36,9 +39,7 @@ import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
 import org.eclipse.cdt.utils.debug.tools.DebugSymsRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
-import org.eclipse.cdt.utils.coff.PE;
-import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
-import org.eclipse.cdt.utils.coff.PE.Attribute;
+import org.eclipse.cdt.utils.elf.Elf.Section;
 
 public class Stabs {
 
@@ -57,7 +58,7 @@ public class Stabs {
 	int bracket;
 	String currentFile;
 
-	Map mapTypes = new HashMap();
+	Map<TypeNumber, DebugType> mapTypes = new HashMap<TypeNumber, DebugType>();
 	DebugType voidType = new DebugBaseType("void", 0, false); //$NON-NLS-1$
 
 	public Stabs(String file) throws IOException {
@@ -87,12 +88,12 @@ public class Stabs {
 		byte[] data = null;
 		byte[] stabstr = null;
 		Elf.Section[] sections = exe.getSections();
-		for (int i = 0; i < sections.length; i++) {
-			String name = sections[i].toString();
+		for (Section section : sections) {
+			String name = section.toString();
 			if (name.equals(".stab")) { //$NON-NLS-1$
-				data = sections[i].loadSectionData();
+				data = section.loadSectionData();
 			} else if (name.equals(".stabstr")) { //$NON-NLS-1$
-				stabstr = sections[i].loadSectionData();
+				stabstr = section.loadSectionData();
 			}
 		}
 		Elf.ELFhdr header = exe.getELFhdr();
@@ -107,12 +108,12 @@ public class Stabs {
 		byte[] stabstr = null;
 
 		SectionHeader[] sections = exe.getSectionHeaders();
-		for (int i = 0; i < sections.length; i++) {
-			String name = new String(sections[i].s_name).trim();
+		for (SectionHeader section : sections) {
+			String name = new String(section.s_name).trim();
 			if (name.equals(".stab")) { //$NON-NLS-1$
-				data = sections[i].getRawData();
+				data = section.getRawData();
 			} else if (name.equals(".stabstr")) { //$NON-NLS-1$
-				stabstr = sections[i].getRawData();
+				stabstr = section.getRawData();
 			}
 		}
 		
@@ -488,7 +489,7 @@ public class Stabs {
 					// According to the doc 't' can follow the 'T'.  If so just
 					// strip the T and go again.
 					if (infoField.length() > 0 && infoField.charAt(0) == 't') {
-						String s = field.replaceFirst(":T", ":");
+						String s = field.replaceFirst(":T", ":"); //$NON-NLS-1$ //$NON-NLS-2$
 						parseStabString(requestor, s, value);
 					} else {
 						// Just register the type.
@@ -994,7 +995,7 @@ public class Stabs {
 	 * @return
 	 */
 	DebugType parseStabEnumType(String name, Reader reader) throws IOException {
-		List list = new ArrayList();
+		List<DebugEnumField> list = new ArrayList<DebugEnumField>();
 		String fieldName = null;
 		StringBuffer sb = new StringBuffer();
 		int c;
@@ -1190,10 +1191,6 @@ public class Stabs {
 			overflowUpperBound = true;
 		}
 
-		if (typeNumber == null) {
-			typeNumber = new TypeNumber(0, 0);
-		}
-
 		boolean self = typeNumber.equals(number);
 
 		// Probably trying 64 bits range like "long long"
@@ -1365,7 +1362,7 @@ public class Stabs {
 	}
 
 	DebugType getDebugType(TypeNumber tn) {
-		return (DebugType) mapTypes.get(tn);
+		return mapTypes.get(tn);
 	}
 
 	public static void main(String[] args) {
@@ -1374,8 +1371,7 @@ public class Stabs {
 			Stabs stabs = new Stabs(args[0]);
 			stabs.parse(symreq);
 			DebugSym[] entries = symreq.getEntries();
-			for (int i = 0; i < entries.length; i++) {
-				DebugSym entry = entries[i];
+			for (DebugSym entry : entries) {
 				System.out.println(entry);
 			}
 		} catch (IOException e) {

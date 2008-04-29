@@ -25,10 +25,5 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 public interface ICPPInternalUnknown extends ICPPInternalBinding {
     public ICPPScope getUnknownScope();
 
-    /**
-     * @param argMap
-     * @return
-     * @throws DOMException
-     */
     public IBinding resolveUnknown(ObjectMap argMap) throws DOMException;
 }

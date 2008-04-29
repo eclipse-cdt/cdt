@@ -33,9 +33,9 @@ import org.eclipse.core.variables.VariablesPlugin;
  * @since 3.0
  */
 public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
-	private static final String VAR_PREFIX = "${";  //$NON-NLS-1$
-	private static final char VAR_SUFFIX = '}';  //$NON-NLS-1$
-	private static final char COLON = ':';  //$NON-NLS-1$
+//	private static final String VAR_PREFIX = "${";  //$NON-NLS-1$
+//	private static final char VAR_SUFFIX = '}';  
+	private static final char COLON = ':';  
 	
 	private static EclipseVariablesVariableSupplier fInstance;
 	
@@ -155,30 +155,30 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 
 		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 		IDynamicVariable vars[] = mngr.getDynamicVariables();
-		Map map = new HashMap();
-		for(int i = 0; i < vars.length; i++)
-			map.put(vars[i].getName(),vars[i]);
+		Map<String, IStringVariable> map = new HashMap<String, IStringVariable>();
+		for (IDynamicVariable var : vars)
+			map.put(var.getName(),var);
 
 		IValueVariable valVars[] = mngr.getValueVariables();
-		for(int i = 0; i < valVars.length; i++)
-			map.put(valVars[i].getName(),valVars[i]);
+		for (IValueVariable valVar : valVars)
+			map.put(valVar.getName(),valVar);
 
-		Collection collection = map.values();
+		Collection<IStringVariable> collection = map.values();
 		EclipseVarMacro macros[] = new EclipseVarMacro[collection.size()];
-		Iterator iter = collection.iterator();
+		Iterator<IStringVariable> iter = collection.iterator();
 		for(int i = 0; i < macros.length ; i++)
-			macros[i] = new EclipseVarMacro((IStringVariable)iter.next());
+			macros[i] = new EclipseVarMacro(iter.next());
 		
 		return macros;
 	}
 	
-	private String getMacroValue(String name){
-		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-		try{
-			return mngr.performStringSubstitution(VAR_PREFIX + name + VAR_SUFFIX);
-		}catch (CoreException e){
-		}
-
-		return null;
-	}
+//	private String getMacroValue(String name){
+//		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+//		try{
+//			return mngr.performStringSubstitution(VAR_PREFIX + name + VAR_SUFFIX);
+//		}catch (CoreException e){
+//		}
+//
+//		return null;
+//	}
 }

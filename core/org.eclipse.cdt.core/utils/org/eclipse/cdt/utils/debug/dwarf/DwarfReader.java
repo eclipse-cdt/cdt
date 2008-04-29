@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
+import org.eclipse.cdt.utils.elf.Elf.Section;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -39,13 +40,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			DWARF_DEBUG_STR		// this is optional. Some compilers don't generate it.
 		};
 
-	private Collection	m_fileCollection = new ArrayList();
+	private Collection<String>	m_fileCollection = new ArrayList<String>();
 	private String[] 	m_fileNames = null;
 	private String		m_exeFileWin32Drive; // Win32 drive of the exe file.
 	private boolean		m_onWindows;
 	private boolean		m_parsed = false;
 	private int 		m_leb128Size = 0;
-	private ArrayList	m_parsedLineTableOffsets = new ArrayList();
+	private ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
 	private int			m_parsedLineTableSize = 0;
 		
 	public DwarfReader(String file) throws IOException {
@@ -67,11 +68,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		
 		// Read in sections (and only the sections) we care about.
 		//
-		for (int i = 0; i < sections.length; i++) {
-			String name = sections[i].toString();
-			for (int j = 0; j < DWARF_SectionsToParse.length; j++) {
-				if (name.equals(DWARF_SectionsToParse[j])) {
-					dwarfSections.put(DWARF_SectionsToParse[j], sections[i].loadSectionData());
+		for (Section section : sections) {
+			String name = section.toString();
+			for (String element : DWARF_SectionsToParse) {
+				if (name.equals(element)) {
+					dwarfSections.put(element, section.loadSectionData());
 				}
 			}
 		}
@@ -95,7 +96,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			String cuCompDir,	// compilation directory of the CU 
 			int cuStmtList) 	// offset of the CU line table in .debug_line section 
 	{
-		byte[] data = (byte[]) dwarfSections.get(DWARF_DEBUG_LINE);
+		byte[] data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data != null) {
 			try {
 				int offset = cuStmtList;
@@ -134,7 +135,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 				// Read in directories.
 				//
-				ArrayList	dirList = new ArrayList();
+				ArrayList<String>	dirList = new ArrayList<String>();
 
 				// Put the compilation directory of the CU as the first dir
 				dirList.add(cuCompDir);
@@ -163,7 +164,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					leb128 = read_unsigned_leb128(data, offset);
 					offset += m_leb128Size;
 					
-					addSourceFile((String)dirList.get((int)leb128), fileName);
+					addSourceFile(dirList.get((int)leb128), fileName);
 					
 					// Skip the followings
 					//
@@ -191,7 +192,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	 */
 	private void getSourceFilesFromDebugLineSection()
 	{
-		byte[] data = (byte[]) dwarfSections.get(DWARF_DEBUG_LINE);
+		byte[] data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data == null) 
 			return;
 		
@@ -272,12 +273,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 				// Read in directories.
 				//
-				ArrayList dirList = new ArrayList();
+				ArrayList<String> dirList = new ArrayList<String>();
 
 				String str, fileName;
 
 				// first dir should be TAG_comp_dir from CU, which we don't have here.
-				dirList.add("");
+				dirList.add(""); //$NON-NLS-1$
 				
 				while (true) {
 					str = readString(data, offset);
@@ -301,7 +302,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					leb128 = read_unsigned_leb128(data, offset);
 					offset += m_leb128Size;
 
-					addSourceFile((String) dirList.get((int) leb128), fileName);
+					addSourceFile(dirList.get((int) leb128), fileName);
 
 					// Skip the followings
 					//
@@ -422,7 +423,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 		m_leb128Size = 0;
 		while (true) {
-			b = (short) data[offset++];
+			b = data[offset++];
 			if (data.length == offset)
 				break; //throw new IOException("no more data");
 			m_leb128Size++;
@@ -438,7 +439,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 	// Override parent: only handle TAG_Compile_Unit.
 	@Override
-	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List list) {
+	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<Dwarf.AttributeValue> list) {
 		int tag = (int) entry.tag;
 		switch (tag) {
 			case DwarfConstants.DW_TAG_compile_unit :
@@ -453,15 +454,15 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	// Just get the file name of the CU.
 	// Argument "requestor" is ignored.
 	@Override
-	void processCompileUnit(IDebugEntryRequestor requestor, List list) {
+	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) {
 		
 		String cuName, cuCompDir;
 		int		stmtList = -1;
 		
-		cuName = cuCompDir = "";
+		cuName = cuCompDir = ""; //$NON-NLS-1$
 		
 		for (int i = 0; i < list.size(); i++) {
-			AttributeValue av = (AttributeValue)list.get(i);
+			AttributeValue av = list.get(i);
 			try {
 				int name = (int)av.attribute.name;
 				switch(name) {

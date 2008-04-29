@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -19,8 +18,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 /**
  * @author jcamelon
  */
-public class WorkingCopyCodeReaderFactory extends
-        PartialWorkingCopyCodeReaderFactory implements ICodeReaderFactory {
+public class WorkingCopyCodeReaderFactory extends PartialWorkingCopyCodeReaderFactory {
 
     /**
      * @param provider

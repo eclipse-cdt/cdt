@@ -398,8 +398,7 @@ public class CPPSemantics {
         IType[] ps = getSourceParameterTypes(data.functionParameters);
         ObjectSet<IScope> namespaces = new ObjectSet<IScope>(2);
         ObjectSet<ICPPClassType> classes = new ObjectSet<ICPPClassType>(2);
-        for (int i = 0; i < ps.length; i++) {
-            IType p = ps[i];
+        for (IType p : ps) {
             p = getUltimateType(p, true);
             try {
                 getAssociatedScopes(p, namespaces, classes, data.tu);
@@ -421,10 +420,10 @@ public class CPPSemantics {
 
 			    ICPPClassType cls = (ICPPClassType) t;
 			    ICPPBase[] bases = cls.getBases();
-			    for (int i = 0; i < bases.length; i++) {
-			        if (bases[i] instanceof IProblemBinding)
+			    for (ICPPBase base : bases) {
+			        if (base instanceof IProblemBinding)
 			            continue;
-			        IBinding b = bases[i].getBaseClass();
+			        IBinding b = base.getBaseClass();
 			        if (b instanceof IType)
 			        	getAssociatedScopes((IType) b, namespaces, classes, tu);
 			    }
@@ -438,8 +437,8 @@ public class CPPSemantics {
 		    
 		    getAssociatedScopes(getUltimateType(ft.getReturnType(), true), namespaces, classes, tu);
 		    IType[] ps = ft.getParameterTypes();
-		    for (int i = 0; i < ps.length; i++) {
-		        getAssociatedScopes(getUltimateType(ps[i], true), namespaces, classes, tu);
+		    for (IType element : ps) {
+		        getAssociatedScopes(getUltimateType(element, true), namespaces, classes, tu);
 		    }
 		} else if (t instanceof ICPPPointerToMemberType) {
 		    IBinding binding = ((ICPPPointerToMemberType)t).getMemberOfClass();
@@ -511,29 +510,36 @@ public class CPPSemantics {
         
         CharArrayObjectMap map = null;
         Object[] objs = null;
+        int size;
         if (source instanceof CharArrayObjectMap) {
         	map = (CharArrayObjectMap) source;
+        	size= map.size();
 	    } else {
 			if (source instanceof Object[])
 				objs = ArrayUtil.trim(Object.class, (Object[]) source);
 			else 
 				objs = new Object[]{ source };
+			size= objs.length;
 		} 
 
-        int size = map != null ? map.size() : objs.length;
 		int resultInitialSize = resultMap.size();
         for (int i = 0; i < size; i ++) {
-        	char[] key = (map != null) ?
-        						map.keyAt(i) :
-        				 (objs[i] instanceof IBinding) ?
-        						((IBinding) objs[i]).getNameCharArray() :
-        						((IASTName) objs[i]).toCharArray();
+        	char[] key;
+        	Object so;
+        	if (map != null) {
+        		key= map.keyAt(i);
+        		so= map.get(key);
+        	} else if (objs != null) {
+        		so= objs[i];
+        		key= (so instanceof IBinding) ? ((IBinding) so).getNameCharArray() : ((IASTName) so).toCharArray();
+        	} else {
+        		return resultMap;
+        	}
         	int idx = resultMap.lookup(key);
         	if (idx == -1) {
-				resultMap.put(key, (map != null) ? map.get(key) : objs[i]);
+				resultMap.put(key, so);
 			} else if (!scoped || idx >= resultInitialSize) {
 			    Object obj = resultMap.get(key);
-			    Object so = (map != null) ? map.get(key) : objs[i];
 			    if (obj instanceof Object[]) {
 			        if (so instanceof IBinding || so instanceof IASTName)
 			            obj = ArrayUtil.append(Object.class, (Object[]) obj, so);
@@ -621,9 +627,11 @@ public class CPPSemantics {
 					if (inScope != null) {
 						if (data.contentAssist) {
 							Object[] objs = ArrayUtil.addAll(Object.class, null, inScope);
-							for (int i = 0; i < b.length; i++) {
-								if (isFromIndex(b[i]))
-									objs = ArrayUtil.append(Object.class, objs, b[i]);
+							if (b != null) {
+								for (IBinding element : b) {
+									if (isFromIndex(element))
+										objs = ArrayUtil.append(Object.class, objs, element);
+								}
 							}
 							mergeResults(data, objs, true);
 						} else {
@@ -650,8 +658,7 @@ public class CPPSemantics {
 					ICPPUsingDirective[] uds= blockScope.getUsingDirectives();
 					if (uds != null && uds.length > 0) {
 						HashSet<ICPPNamespaceScope> handled= new HashSet<ICPPNamespaceScope>();
-						for (int i = 0; i < uds.length; i++) {
-							final ICPPUsingDirective ud = uds[i];
+						for (final ICPPUsingDirective ud : uds) {
 							if (CPPSemantics.declaredBefore(ud, data.astName, false)) {
 								storeUsingDirective(data, blockScope, ud, handled);
 							}
@@ -851,11 +858,11 @@ public class CPPSemantics {
 		
 	    ICPPBase[] bases = cls.getBases();
 
-        for (int i = 0; i < bases.length; i++) {
-            IBinding b = bases[i].getBaseClass();
+        for (ICPPBase base : bases) {
+            IBinding b = base.getBaseClass();
             if (b instanceof ICPPClassType) {
             	IScope bScope = ((ICPPClassType)b).getCompositeScope();
-            	if (bases[i].isVirtual()) {
+            	if (base.isVirtual()) {
             		if (bScope != null)
             			data.visited.put(bScope);
             	} else if (bScope != null) {
@@ -878,10 +885,17 @@ public class CPPSemantics {
 		        return false;
 		}
 
-	    IBinding binding =  (n instanceof IBinding) ? (IBinding)n : ((IASTName)n).resolveBinding();
-	    Object[] objs = (names instanceof Object[]) ? (Object[])names : null;
-	    int idx = (objs != null && objs.length > 0) ? 0 : -1;
-	    Object o = (idx != -1) ? objs[idx++] : names;
+	    IBinding binding= (n instanceof IBinding) ? (IBinding) n : ((IASTName) n).resolveBinding();
+
+	    int idx= 0;
+	    Object[] objs= null;
+	    Object o= names;
+	    if (names instanceof Object[]) {
+	    	objs= (Object[]) names;
+	    	o= objs[0];
+	    	idx= 1;
+	    }
+	    
 	    while (o != null) {       
 	        IBinding b = (o instanceof IBinding) ? (IBinding) o : ((IASTName)o).resolveBinding();
 	        
@@ -910,7 +924,7 @@ public class CPPSemantics {
 		        if (!ok)
 					return true;
 	        }
-	        if (idx > -1 && idx < objs.length)
+	        if (objs != null && idx < objs.length)
 	        	o = objs[idx++];
 	        else
 	        	o = null;
@@ -955,8 +969,8 @@ public class CPPSemantics {
 				data.tu.handleAdditionalDirectives(nominated);
 			}
 			ICPPUsingDirective[] transitive= nominated.getUsingDirectives();
-			for (int i = 0; i < transitive.length; i++) {
-				storeUsingDirective(data, container, transitive[i], handled);
+			for (ICPPUsingDirective element : transitive) {
+				storeUsingDirective(data, container, element, handled);
 			}
 		}
 	}
@@ -1033,8 +1047,7 @@ public class CPPSemantics {
 		    //need binding because namespaces can be split
 		    CPPNamespace namespace = (CPPNamespace) ((ICPPASTNamespaceDefinition)parent).getName().resolveBinding();
 		    namespaceDefs = namespace.getNamespaceDefinitions();
-		    namespaceIdx= 0;
-		    nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
+		    nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[++namespaceIdx].getParent()).getDeclarations();
 			while (nodes.length == 0 && ++namespaceIdx < namespaceDefs.length) {
 				nodes= ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
 			}
@@ -1108,14 +1121,14 @@ public class CPPSemantics {
 				}
 			}
 		    
-			if (idx > -1 && ++idx < nodes.length) {
+			if (nodes != null && ++idx < nodes.length) {
 				item = nodes[idx];
 			} else {
 			    item = null;
-			    while (item == null) {
-				    if (namespaceIdx > -1) {
+			    while (true) {
+				    if (namespaceDefs != null) {
 				        //check all definitions of this namespace
-					    while (namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx) {
+					    while (++namespaceIdx < namespaceDefs.length) {
 					        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
 						    if (nodes.length > 0) {
 						        idx = 0;
@@ -1136,14 +1149,14 @@ public class CPPSemantics {
 				    	parent = ((ICPPASTCatchHandler)parent).getCatchBody();
 				    	if (parent instanceof IASTCompoundStatement) {
 				    		nodes = ((IASTCompoundStatement)parent).getStatements();
+				    		if (nodes.length > 0) {
+				    			idx = 0;
+				    			item = nodes[0];
+				    			break;
+				    		}  
 				    	}
-				    	if (nodes.length > 0) {
-					        idx = 0;
-					        item = nodes[0];
-					        break;
-					    }  
 				    }
-				    if (item == null && nodeStackPos >= 0) {
+				    if (item == null && nodeStack != null && nodeIdxStack != null && nodeStackPos >= 0) {
 				        nodes = nodeStack[nodeStackPos];
 				        nodeStack[nodeStackPos] = null;
 				        idx = nodeIdxStack[nodeStackPos--];
@@ -1200,8 +1213,7 @@ public class CPPSemantics {
 						data.tu.handleAdditionalDirectives(nominated);
 					}
 					ICPPUsingDirective[] usings= nominated.getUsingDirectives();
-					for (int i = 0; i < usings.length; i++) {
-						ICPPUsingDirective using = usings[i];
+					for (ICPPUsingDirective using : usings) {
 						storeUsingDirective(data, scope, using, null);
 					}
 				}
@@ -1273,8 +1285,7 @@ public class CPPSemantics {
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 			if (!declSpec.isFriend()) {
-				for (int i = 0; i < declarators.length; i++) {
-					IASTDeclarator declarator = declarators[i];
+				for (IASTDeclarator declarator : declarators) {
 					while (declarator.getNestedDeclarator() != null)
 						declarator = declarator.getNestedDeclarator();
 					IASTName declaratorName = declarator.getName();
@@ -1307,8 +1318,8 @@ public class CPPSemantics {
 				{
 				    Object o = null;
 				    IASTDeclaration[] decls = compSpec.getMembers();
-				    for (int i = 0; i < decls.length; i++) {
-                        o = collectResult(data, scope, decls[i], checkAux);
+				    for (IASTDeclaration decl : decls) {
+                        o = collectResult(data, scope, decl, checkAux);
                         if (o instanceof IASTName) {
                             if (resultName == null)
     						    resultName = (IASTName) o;
@@ -1338,8 +1349,7 @@ public class CPPSemantics {
 			    //check enumerators too
 			    IASTEnumerator[] list = enumeration.getEnumerators();
 			    IASTName tempName;
-			    for (int i = 0; i < list.length; i++) {
-			        IASTEnumerator enumerator = list[i];
+			    for (IASTEnumerator enumerator : list) {
 			        if (enumerator == null) break;
 			        tempName = enumerator.getName();
 			        ASTInternal.addName(scope,  tempName);
@@ -1460,11 +1470,11 @@ public class CPPSemantics {
 	    }
 	    
         IBinding[] result = null;
-        for (int i = 0; i < bindings.length; i++) {
-            if (bindings[i] instanceof IASTName)
-                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName)bindings[i]).resolveBinding());
-            else if (bindings[i] instanceof IBinding)
-                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, bindings[i]);
+        for (Object binding : bindings) {
+            if (binding instanceof IASTName)
+                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName)binding).resolveBinding());
+            else if (binding instanceof IBinding)
+                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
         }
         return new CPPCompositeBinding(result);
 	}
@@ -1863,8 +1873,8 @@ public class CPPSemantics {
 				result[0] = implicitType;
 		    }
 	    }
-	    for (int i = 0; i < params.length; i++)
-	        result = (IType[]) ArrayUtil.append(IType.class, result, params[i].getType());
+	    for (IParameter param : params)
+			result = (IType[]) ArrayUtil.append(IType.class, result, param.getType());
 		
 	    return result;
 	}
@@ -1886,9 +1896,9 @@ public class CPPSemantics {
 		reduceToViable(data, fns);
 		
 		if (data.forDefinition() || data.forExplicitInstantiation()) {
-			for (int i = 0; i < fns.length; i++) {
-				if (fns[i] != null) {
-					return fns[i];
+			for (IFunction fn : fns) {
+				if (fn != null) {
+					return fn;
 				}
 			}
 			return null;
@@ -2010,26 +2020,22 @@ public class CPPSemantics {
 			
 			if (!hasWorse) {
 				// if they are both template functions, we can order them that way
-				boolean bestIsTemplate = (bestFn instanceof ICPPSpecialization && 
-										 ((ICPPSpecialization) bestFn).getSpecializedBinding() instanceof ICPPFunctionTemplate);
-				boolean currIsTemplate = (currFn instanceof ICPPSpecialization && 
-						 				((ICPPSpecialization) currFn).getSpecializedBinding() instanceof ICPPFunctionTemplate);
-				if (bestIsTemplate && currIsTemplate) {
-					ICPPFunctionTemplate t1 = (ICPPFunctionTemplate) ((ICPPSpecialization) bestFn).getSpecializedBinding();
-					ICPPFunctionTemplate t2 = (ICPPFunctionTemplate) ((ICPPSpecialization) currFn).getSpecializedBinding();
-					int order = CPPTemplates.orderTemplateFunctions(t1, t2);
+				ICPPFunctionTemplate bestAsTemplate= asTemplate(bestFn);
+				ICPPFunctionTemplate currAsTemplate= asTemplate(currFn);
+				if (bestAsTemplate != null && currAsTemplate != null) {
+					int order = CPPTemplates.orderTemplateFunctions(bestAsTemplate, currAsTemplate);
 					if (order < 0) {
 						hasBetter = true;	 				
 					} else if (order > 0) {
 						ambiguous = false;
 					}
-				} else if (bestIsTemplate && !currIsTemplate) {
+				} else if (bestAsTemplate != null) {
 					// we prefer normal functions over template functions, unless we specified template arguments
 					if (data.preferTemplateFunctions())
 						ambiguous = false;
 					else
 						hasBetter = true;
-				} else if (!bestIsTemplate && currIsTemplate) {
+				} else if (currAsTemplate != null) {
 					if (data.preferTemplateFunctions())
 						hasBetter = true;
 					else
@@ -2051,6 +2057,16 @@ public class CPPSemantics {
 		}
 						
 		return bestFn;
+	}
+
+	private static ICPPFunctionTemplate asTemplate(IFunction function) {
+		if (function instanceof ICPPSpecialization) {
+			IBinding original= ((ICPPSpecialization) function).getSpecializedBinding();
+			if (original instanceof ICPPFunctionTemplate) {
+				return (ICPPFunctionTemplate) original;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -2084,8 +2100,8 @@ public class CPPSemantics {
             if (type == null || !(type instanceof IFunctionType))
                 return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name());
 
-            for (int i = 0; i < fns.length; i++) {
-                IFunction fn = (IFunction) fns[i];
+            for (IBinding fn2 : fns) {
+                IFunction fn = (IFunction) fn2;
                 IType ft = null;
                 try {
                      ft = fn.getType();
@@ -2100,7 +2116,7 @@ public class CPPSemantics {
                 }
             }
 
-            if (idx > 0 && ++idx < types.length) {
+            if (types != null && ++idx < types.length) {
                 type = types[idx];
             } else {
                 type = null;
@@ -2248,8 +2264,7 @@ public class CPPSemantics {
 	        if (data.hasResults()) {
 	            Object[] items = (Object[]) data.foundItems;
 	            IBinding temp = null;
-	            for (int i = 0; i < items.length; i++) {
-	                Object o = items[i];
+	            for (Object o : items) {
 	                if (o == null) break;
 	                if (o instanceof IASTName) {
 	    	            temp = ((IASTName) o).resolveBinding();
@@ -2402,11 +2417,11 @@ public class CPPSemantics {
 		
 		ObjectSet<IBinding> set = new ObjectSet<IBinding>(items.length);
 		IBinding binding = null;
-		for (int i = 0; i < items.length; i++) {
-		    if (items[i] instanceof IASTName) {
-		        binding = ((IASTName) items[i]).resolveBinding();
-		    } else if (items[i] instanceof IBinding) {
-		        binding = (IBinding) items[i];
+		for (Object item : items) {
+		    if (item instanceof IASTName) {
+		        binding = ((IASTName) item).resolveBinding();
+		    } else if (item instanceof IBinding) {
+		        binding = (IBinding) item;
 		    } else {
 		        binding = null;
 		    }

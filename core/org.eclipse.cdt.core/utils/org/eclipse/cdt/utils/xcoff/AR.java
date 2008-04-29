@@ -51,7 +51,7 @@ public class AR {
 		
 		private long fstmoff = 0;
 		private long lstmoff = 0;
-		private long memoff = 0;
+//		private long memoff = 0;
 		
 		public ARHeader() throws IOException {
 			try {
@@ -67,7 +67,7 @@ public class AR {
 					file.read(fl_freeoff);
 					fstmoff = Long.parseLong(removeBlanks(new String(fl_fstmoff)));
 					lstmoff = Long.parseLong(removeBlanks(new String(fl_lstmoff)));
-					memoff = Long.parseLong(removeBlanks(new String(fl_memoff)));
+//					memoff = Long.parseLong(removeBlanks(new String(fl_memoff)));
 				}
 				
 			} catch (IOException e) {
@@ -272,7 +272,7 @@ public class AR {
 		if (memberHeaders != null)
 			return;
 
-		Vector v = new Vector();
+		Vector<MemberHeader> v = new Vector<MemberHeader>();
 		try {
 			//
 			// Check for EOF condition
@@ -281,7 +281,6 @@ public class AR {
 			for (long pos = header.fstmoff; pos < file.length(); pos = aHeader.nxtmem) {
 				file.seek(pos);
 				aHeader = new MemberHeader();
-				String name = aHeader.getObjectName();
 				v.add(aHeader);
 				if (pos == 0 || pos == header.lstmoff) {	// end of double linked list
 					break;
@@ -289,7 +288,7 @@ public class AR {
 			}
 		} catch (IOException e) {
 		}
-		memberHeaders = (MemberHeader[]) v.toArray(new MemberHeader[0]);
+		memberHeaders = v.toArray(new MemberHeader[0]);
 	}
 
 	/**
@@ -306,22 +305,22 @@ public class AR {
 	}
 
 	public String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector names_used = new Vector();
+		Vector<String> names_used = new Vector<String>();
 		String object_name;
 		int count;
 
 		loadHeaders();
 
 		count = 0;
-		for (int i = 0; i < memberHeaders.length; i++) {
-			object_name = memberHeaders[i].getObjectName();
+		for (MemberHeader memberHeader : memberHeaders) {
+			object_name = memberHeader.getObjectName();
 			if (names != null && !stringInStrings(object_name, names))
 				continue;
 
 			object_name = "" + count + "_" + object_name; //$NON-NLS-1$ //$NON-NLS-2$
 			count++;
 
-			byte[] data = memberHeaders[i].getObjectData();
+			byte[] data = memberHeader.getObjectData();
 			File output = new File(outdir, object_name);
 			names_used.add(object_name);
 
@@ -330,12 +329,12 @@ public class AR {
 			rfile.close();
 		}
 
-		return (String[]) names_used.toArray(new String[0]);
+		return names_used.toArray(new String[0]);
 	}
 
 	private boolean stringInStrings(String str, String[] set) {
-		for (int i = 0; i < set.length; i++)
-			if (str.compareTo(set[i]) == 0)
+		for (String element : set)
+			if (str.compareTo(element) == 0)
 				return true;
 		return false;
 	}

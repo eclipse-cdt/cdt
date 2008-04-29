@@ -64,16 +64,17 @@ public class CPPField extends CPPVariable implements ICPPField {
 
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
+		IASTDeclaration decl= findDeclaration(getDefinition());
+		if (decl != null) {
+			return decl;
+		}
+		
 	    IASTName [] declarations = (IASTName[]) getDeclarations();
-		if( declarations != null || getDefinition() != null ){
-			int len = ( declarations != null ) ? declarations.length : 0;
-			for( int i = -1; i < len; i++ ){
-				IASTNode node = ( i == -1 ) ? getDefinition() : declarations[i];
-				if( node != null ){
-					while( !(node instanceof IASTDeclaration ) )
-						node = node.getParent();
-					if( node.getParent() instanceof ICPPASTCompositeTypeSpecifier )
-						return (IASTDeclaration) node;
+		if (declarations != null) {
+			for (IASTName name : declarations) {
+				decl= findDeclaration(name);
+				if (decl != null) {
+					return decl;
 				}
 			}
 		}
@@ -83,19 +84,29 @@ public class CPPField extends CPPVariable implements ICPPField {
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(scope);
 		IASTDeclaration [] members = compSpec.getMembers();
-		for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
-				for( int j = 0; j < dtors.length; j++ ){
-					IASTName name = dtors[j].getName();
+		for (IASTDeclaration member : members) {
+			if( member instanceof IASTSimpleDeclaration ){
+				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)member).getDeclarators();
+				for (IASTDeclarator dtor : dtors) {
+					IASTName name = dtor.getName();
 					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
 						name.resolveBinding() == this )
 					{
-						return members[i];
+						return member;
 					}
 				}
 			}
 		}
+		return null;
+	}
+
+	private IASTDeclaration findDeclaration(IASTNode node) {
+		while(node != null && node instanceof IASTDeclaration == false) {
+			node = node.getParent();
+		}
+		if (node != null && node.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+			return (IASTDeclaration) node;
+    	}
 		return null;
 	}
 
@@ -106,10 +117,10 @@ public class CPPField extends CPPVariable implements ICPPField {
 			IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 			IASTDeclaration [] members = cls.getMembers();
 			
-			for( int i = 0; i < members.length; i++ ){
-				if( members[i] instanceof ICPPASTVisibilityLabel )
-					vis = (ICPPASTVisibilityLabel) members[i];
-				else if( members[i] == decl )
+			for (IASTDeclaration member : members) {
+				if( member instanceof ICPPASTVisibilityLabel )
+					vis = (ICPPASTVisibilityLabel) member;
+				else if( member == decl )
 					break;
 			}
 		

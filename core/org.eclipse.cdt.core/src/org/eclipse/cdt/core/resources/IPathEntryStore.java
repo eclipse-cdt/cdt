@@ -22,8 +22,6 @@ public interface IPathEntryStore extends ICExtension {
 
 	/**
 	 * Returns the path entries save on the project. 
-	 * @param project
-	 * @return
 	 * @throws CoreException
 	 */
 	IPathEntry[] getRawPathEntries() throws CoreException;

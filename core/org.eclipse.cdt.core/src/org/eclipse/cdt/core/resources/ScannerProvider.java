@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.IPath;
 public class ScannerProvider extends AbstractCExtension implements IScannerInfoProvider, IElementChangedListener {
 
 	// Listeners interested in build model changes
-	private static Map listeners;
+	private static Map<IProject, List<IScannerInfoChangeListener>> listeners;
 
 	private static ScannerProvider fProvider;
 	
@@ -53,9 +53,9 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	/*
 	 * @return
 	 */
-	private static Map getListeners() {
+	private static Map<IProject, List<IScannerInfoChangeListener>> getListeners() {
 		if (listeners == null) {
-			listeners = new HashMap();
+			listeners = new HashMap<IProject, List<IScannerInfoChangeListener>>();
 		}
 		return listeners;
 	}
@@ -66,14 +66,14 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	 */
 	protected static void notifyInfoListeners(IProject project, IScannerInfo info) {
 		// Call in the cavalry
-		List listeners = (List)getListeners().get(project);
+		List<?> listeners = getListeners().get(project);
 		if (listeners == null) {
 			return;
 		}
 		IScannerInfoChangeListener[] observers = new IScannerInfoChangeListener[listeners.size()];
 		listeners.toArray(observers);
-		for (int i = 0; i < observers.length; i++) {
-			observers[i].changeNotification(project, info);
+		for (IScannerInfoChangeListener observer : observers) {
+			observer.changeNotification(project, info);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 
 			// get the macros
 			IMacroEntry[] macros = CoreModel.getMacroEntries(resPath);
-			Map symbolMap = new HashMap();
+			Map<String, String> symbolMap = new HashMap<String, String>();
 			for (int i = 0; i < macros.length; ++i) {
 				symbolMap.put(macros[i].getMacroName(), macros[i].getMacroValue());
 			}
@@ -145,11 +145,11 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		}
 		IProject project = resource.getProject();
 		// Get listeners for this resource
-		Map map = getListeners();
-		List list = (List)map.get(project);
+		Map<IProject, List<IScannerInfoChangeListener>> map = getListeners();
+		List<IScannerInfoChangeListener> list = map.get(project);
 		if (list == null) {
 			// Create a new list
-			list = new ArrayList();
+			list = new ArrayList<IScannerInfoChangeListener>();
 			map.put(project, list);
 		}
 		if (!list.contains(listener)) {
@@ -170,8 +170,8 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		}
 		IProject project = resource.getProject();
 		// Remove the listener
-		Map map = getListeners();
-		List list = (List)map.get(project);
+		Map<IProject, List<IScannerInfoChangeListener>> map = getListeners();
+		List<IScannerInfoChangeListener> list = map.get(project);
 		if (list != null && !list.isEmpty()) {
 			// The list is not empty so try to remove listener
 			list.remove(listener);
@@ -213,8 +213,8 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		}
 			
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
-		for (int i= 0; i < affectedChildren.length; i++) {
-			processDelta(affectedChildren[i]);
+		for (ICElementDelta element2 : affectedChildren) {
+			processDelta(element2);
 		}
 	}
 

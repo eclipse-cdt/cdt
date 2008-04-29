@@ -125,7 +125,6 @@ public class DBProperties {
 	 * it can be re-populated.
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("hiding")
 	public void clear() throws CoreException {
 		index.accept(new IBTreeVisitor(){
 			public int compare(int record) throws CoreException {

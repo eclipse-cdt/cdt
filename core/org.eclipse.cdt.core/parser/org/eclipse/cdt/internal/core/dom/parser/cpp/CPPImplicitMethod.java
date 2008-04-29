@@ -56,10 +56,10 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
         IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
         IASTDeclaration [] members = cls.getMembers();
         ICPPASTVisibilityLabel vis = null;
-        for( int i = 0; i < members.length; i++ ){
-            if( members[i] instanceof ICPPASTVisibilityLabel )
-                vis = (ICPPASTVisibilityLabel) members[i];
-            else if( members[i] == decl )
+        for (IASTDeclaration member : members) {
+            if( member instanceof ICPPASTVisibilityLabel )
+                vis = (ICPPASTVisibilityLabel) member;
+            else if( member == decl )
                 break;
         }
         if( vis != null ){
@@ -78,11 +78,11 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
 		if( declarations != null ){
-			for( int i = 0; i < declarations.length; i++ ){
-				if (declarations[i] == null) {
+			for (ICPPASTFunctionDeclarator declaration : declarations) {
+				if (declaration == null) {
 					break;
 				}
-				IASTDeclaration decl = (IASTDeclaration) declarations[i].getParent();
+				IASTDeclaration decl = (IASTDeclaration) declaration.getParent();
 				if( decl.getParent() instanceof ICPPASTCompositeTypeSpecifier )
 					return decl;
 			}
@@ -96,12 +96,11 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 			return null; 
 		}
 		IASTDeclaration [] members = compSpec.getMembers();
-		for( int i = 0; i < members.length; i++ ){
+		for (IASTDeclaration member : members) {
 			IASTDeclarator dtor = null;
 			IASTDeclarator [] ds = null;
 			int di = -1;
 			
-			IASTDeclaration member = members[i];
 			if( member instanceof ICPPASTTemplateDeclaration )
 			    member = ((ICPPASTTemplateDeclaration) member).getDeclaration();
 			if( member instanceof IASTSimpleDeclaration ){
@@ -112,46 +111,45 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 			if( ds != null && ds.length > 0 ){
 				di = 0;
 				dtor = ds[0];
-			}
-			
-			while( dtor != null ){
-				IASTName name = dtor.getName();
-				if( dtor instanceof ICPPASTFunctionDeclarator &&
-					CharArrayUtils.equals( name.toCharArray(), getNameCharArray() ) )
-				{
-					IType t0= CPPVisitor.createType( dtor );
-					boolean ok= false;
-					if (t0 instanceof IFunctionType) {
-						IFunctionType t = (IFunctionType) t0;
-						IType [] ps = t.getParameterTypes();
-						if( ps.length == params.length ){
-							int idx = 0;
-							for( ; idx < ps.length && ps[idx] != null; idx++ ){
-								if( !ps[idx].isSameType(params[idx]) )
-									break;
+				while( dtor != null ){
+					IASTName name = dtor.getName();
+					if( dtor instanceof ICPPASTFunctionDeclarator &&
+							CharArrayUtils.equals( name.toCharArray(), getNameCharArray() ) )
+					{
+						IType t0= CPPVisitor.createType( dtor );
+						boolean ok= false;
+						if (t0 instanceof IFunctionType) {
+							IFunctionType t = (IFunctionType) t0;
+							IType [] ps = t.getParameterTypes();
+							if( ps.length == params.length ){
+								int idx = 0;
+								for( ; idx < ps.length && ps[idx] != null; idx++ ){
+									if( !ps[idx].isSameType(params[idx]) )
+										break;
+								}
+								ok= idx == ps.length;
 							}
-							ok= idx == ps.length;
-						}
-						else if (ps.length == 0) {
-							if (params.length == 1) {
-								IType t1= params[0];
-								ok = (t1 instanceof IBasicType) && ((IBasicType) t1).getType() == IBasicType.t_void;
+							else if (ps.length == 0) {
+								if (params.length == 1) {
+									IType t1= params[0];
+									ok = (t1 instanceof IBasicType) && ((IBasicType) t1).getType() == IBasicType.t_void;
+								}
 							}
 						}
+						else {
+							ok= false;
+						}
+						if (ok) {
+							name.setBinding( this );
+							if( member instanceof IASTSimpleDeclaration )
+								addDeclaration( dtor );
+							else if( member instanceof IASTFunctionDefinition )
+								addDefinition( dtor );
+							return member;
+						}
 					}
-					else {
-						ok= false;
-					}
-					if (ok) {
-						name.setBinding( this );
-						if( member instanceof IASTSimpleDeclaration )
-						    addDeclaration( dtor );
-						else if( member instanceof IASTFunctionDefinition )
-						    addDefinition( dtor );
-						return members[i];
-					}
+					dtor = ( di > -1 && ++ di < ds.length ) ? ds[di] : null;
 				}
-				dtor = ( di > -1 && ++ di < ds.length ) ? ds[di] : null;
 			}
 		}
 		return null;

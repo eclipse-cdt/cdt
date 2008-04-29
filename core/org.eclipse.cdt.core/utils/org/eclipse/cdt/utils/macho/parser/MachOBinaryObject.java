@@ -248,7 +248,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	protected ISymbol[] loadSymbols(MachOHelper helper) throws IOException {
 		CPPFilt cppfilt =  null;
 		try {
-			ArrayList list = new ArrayList();
+			ArrayList<Symbol> list = new ArrayList<Symbol>();
 			// Hack should be remove when Elf is clean
 			helper.getMachO().setCppFilter(false);
 			cppfilt = getCPPFilt();
@@ -257,7 +257,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 			addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, cppfilt, list);
 			addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, cppfilt, list);
 			addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, cppfilt, list);
-			return (ISymbol[]) list.toArray(new ISymbol[list.size()]);
+			return list.toArray(new ISymbol[list.size()]);
 		} finally {
 			if (cppfilt != null) {
 				cppfilt.dispose();
@@ -270,9 +270,9 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return parser.getCPPFilt();
 	}
 
-	private void addSymbols(MachO.Symbol[] array, int type, CPPFilt cppfilt, List list) {
-		for (int i = 0; i < array.length; i++) {
-			String name = array[i].toString();
+	private void addSymbols(MachO.Symbol[] array, int type, CPPFilt cppfilt, List<Symbol> list) {
+		for (org.eclipse.cdt.utils.macho.MachO.Symbol element : array) {
+			String name = element.toString();
 			if (cppfilt != null) {
 				try {
 					name = cppfilt.getFunction(name);
@@ -280,11 +280,11 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 					cppfilt = null;
 				}
 			}
-			long addr = array[i].n_value;
+			long addr = element.n_value;
 			int size = 0;
-			String filename = array[i].getFilename();
-			IPath filePath = (filename != null) ? new Path(filename) : null; //$NON-NLS-1$
-			list.add(new Symbol(this, name, type, new Addr32(array[i].n_value), size, filePath, array[i].getLineNumber(addr), array[i].getLineNumber(addr + size - 1)));
+			String filename = element.getFilename();
+			IPath filePath = (filename != null) ? new Path(filename) : null;
+			list.add(new Symbol(this, name, type, new Addr32(element.n_value), size, filePath, element.getLineNumber(addr), element.getLineNumber(addr + size - 1)));
 		}
 	}
 	
@@ -395,6 +395,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(MachO.class)) {

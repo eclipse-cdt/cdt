@@ -28,8 +28,8 @@ public class CdtVariableResolver {
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	
 	public static final String VARIABLE_PREFIX = "${";	//$NON-NLS-1$
-	public static final char VARIABLE_SUFFIX = '}';	//$NON-NLS-1$
-	public static final char VARIABLE_ESCAPE_CHAR = '\\';	//$NON-NLS-1$
+	public static final char VARIABLE_SUFFIX = '}';	
+	public static final char VARIABLE_ESCAPE_CHAR = '\\';	
 	private static final int VARIABLE_PREFIX_LENGTH = VARIABLE_PREFIX.length();
 
 	static public String convertStringListToString(String value[], String listDelimiter) {
@@ -168,10 +168,6 @@ public class CdtVariableResolver {
 
 	/**
 	 * resolves macros in the array of string-list values
-	 * @param values
-	 * @param substitutor
-	 * @param ignoreErrors 
-	 * @return
 	 * @throws CdtVariableException
 	 */
 	static public String[] resolveStringListValues(String values[], IVariableSubstitutor substitutor, boolean ignoreErrors) 
@@ -187,11 +183,11 @@ public class CdtVariableResolver {
 					throw e;
 			}
 		else {	
-			List list = new ArrayList();
-			for(int i = 0; i < values.length; i++){
+			List<String> list = new ArrayList<String>();
+			for (String value : values) {
 				String resolved[];
 				try {
-					resolved = CdtVariableResolver.resolveToStringList(values[i], substitutor);
+					resolved = CdtVariableResolver.resolveToStringList(value, substitutor);
 					if(resolved != null && resolved.length > 0)
 						list.addAll(Arrays.asList(resolved));
 				} catch (CdtVariableException e) {
@@ -200,17 +196,13 @@ public class CdtVariableResolver {
 				}
 			}
 
-			result =  (String[])list.toArray(new String[list.size()]);
+			result =  list.toArray(new String[list.size()]);
 		}
 		return result;
 	}
 
 	/**
 	 * Resolves macros in the given String to the String-list
-	 * 
-	 * @param string
-	 * @param substitutor
-	 * @return
 	 * @throws CdtVariableException
 	 */
 	static public String[] resolveToStringList(String string, IVariableSubstitutor substitutor)
@@ -220,9 +212,6 @@ public class CdtVariableResolver {
 
 	/**
 	 * returns true if the given macro is a String-list macro.
-	 * 
-	 * @param macroType
-	 * @return
 	 */
 	public static boolean isStringListVariable(int macroType){
 		switch(macroType){
@@ -238,10 +227,6 @@ public class CdtVariableResolver {
 	
 	/**
 	 * checks the macros integrity for the given context
-	 * 
-	 * @param provider
-	 * @param contextType
-	 * @param contextData
 	 * @throws CdtVariableException
 	 */
 	public static void checkIntegrity(
@@ -251,8 +236,7 @@ public class CdtVariableResolver {
 		if(info != null){
 			ICdtVariable macros[] = SupplierBasedCdtVariableManager.getVariables(info,true);
 			if(macros != null){
-				for(int i = 0; i < macros.length; i++){
-					ICdtVariable macro = macros[i];
+				for (ICdtVariable macro : macros) {
 					if(isStringListVariable(macro.getValueType()))
 						substitutor.resolveToStringList(macro.getName());
 					else

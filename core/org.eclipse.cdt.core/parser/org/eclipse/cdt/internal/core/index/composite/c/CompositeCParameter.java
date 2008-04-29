@@ -13,12 +13,11 @@ package org.eclipse.cdt.internal.core.index.composite.c;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCParameter extends CompositeCBinding implements IIndexBinding, IParameter {
+class CompositeCParameter extends CompositeCBinding implements IParameter {
 
 	public CompositeCParameter(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);

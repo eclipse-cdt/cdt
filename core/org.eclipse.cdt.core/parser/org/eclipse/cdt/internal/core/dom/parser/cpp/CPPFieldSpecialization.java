@@ -26,11 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPFieldSpecialization extends CPPSpecialization implements ICPPField {
 	private IType type = null;
-	/**
-	 * @param orig
-	 * @param args
-	 * @param args
-	 */
+
 	public CPPFieldSpecialization( IBinding orig, ICPPScope scope, ObjectMap argMap ) {
 		super(orig, scope, argMap);
 	}

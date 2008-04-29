@@ -87,8 +87,8 @@ public class EnvVarOperationProcessor {
 			return prepend ? addValue + initialValue : initialValue + addValue;
 		}
 		
-		List value = convertToList(initialValue, delimiter);
-		List added = convertToList(addValue, delimiter);
+		List<String> value = convertToList(initialValue, delimiter);
+		List<String> added = convertToList(addValue, delimiter);
 
 		value = removeDuplicates(value, added);
 		
@@ -151,10 +151,9 @@ public class EnvVarOperationProcessor {
 	 * Converts a given value to string using a delimiter passed to this method
 	 * @param value
 	 * @param delimiter
-	 * @return
 	 */
-	static public List convertToList(String value, String delimiter){
-		List list = new ArrayList();
+	static public List<String> convertToList(String value, String delimiter){
+		List<String> list = new ArrayList<String>();
 		int delLength = delimiter.length();
 		int valLength = value.length();
 
@@ -180,15 +179,15 @@ public class EnvVarOperationProcessor {
 	/*
 	 * removes duplicates
 	 */
-	static public List removeDuplicates(List value, List duplicates){
-		List list = new ArrayList();
-		Iterator valueIter = value.iterator();
+	static public List<String> removeDuplicates(List<String> value, List<String> duplicates){
+		List<String> list = new ArrayList<String>();
+		Iterator<String> valueIter = value.iterator();
 		while(valueIter.hasNext()){
-			String curVal = (String)valueIter.next();
+			String curVal = valueIter.next();
 			boolean duplFound = false;
-			Iterator duplicatesIter = duplicates.iterator();
+			Iterator<String> duplicatesIter = duplicates.iterator();
 			while(duplicatesIter.hasNext()){
-				String curDupl = (String)duplicatesIter.next();
+				String curDupl = duplicatesIter.next();
 				if(curVal.equals(curDupl)){
 					duplFound = true;
 					break;
@@ -207,12 +206,12 @@ public class EnvVarOperationProcessor {
 	 * @param delimiter
 	 * @return String
 	 */
-	static public String convertToString(List list, String delimiter){
-		Iterator iter = list.iterator();
+	static public String convertToString(List<String> list, String delimiter){
+		Iterator<String> iter = list.iterator();
 		StringBuffer buffer = new StringBuffer();
 		
 		while(iter.hasNext()){
-			buffer.append((String)iter.next());
+			buffer.append(iter.next());
 			
 			if(iter.hasNext())
 				buffer.append(delimiter);
@@ -220,20 +219,7 @@ public class EnvVarOperationProcessor {
 		
 		return buffer.toString();
 	}
-	
-	/*
-	 * concatenetes two Strings
-	 * Returns a resulting string
-	 */
-	static private String concatenateStrings(String str1, String str2, String delimiter){
-		if(str1 == null || "".equals(str1))   //$NON-NLS-1$
-			return str2;
-		if(str2 == null || "".equals(str2))   //$NON-NLS-1$
-			return str1;
 		
-		return str1 + delimiter + str2;
-	}
-	
 	/*
 	 * normalizes the variable name. That is: removes prepended and appended spaces
 	 * and converts the name to upper-case for Win32 systems
@@ -256,14 +242,13 @@ public class EnvVarOperationProcessor {
 		
 		IEnvironmentVariable filtered[] = new IEnvironmentVariable[variables.length];
 		int filteredNum = 0;
-		for(int i = 0; i < variables.length; i++){
-			IEnvironmentVariable var = variables[i];
+		for (IEnvironmentVariable var : variables) {
 			String name = null;
 			if(var != null && (name = normalizeName(var.getName())) != null){
 				boolean skip = false;
 				if(remove != null && remove.length > 0){
-					for(int j = 0; j < remove.length; j++){
-						if(remove[j] != null && remove[j].equals(name)){
+					for (String element : remove) {
+						if(element != null && element.equals(name)){
 							skip = true;
 							break;
 						}

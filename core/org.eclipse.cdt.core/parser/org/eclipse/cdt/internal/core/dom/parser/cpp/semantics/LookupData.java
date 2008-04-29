@@ -284,7 +284,6 @@ class LookupData {
     }
     /**
      * an IType[] of function arguments, inluding the implied object argument
-     * @return
      */
     public IType getImpliedObjectArgument() {
         IType implied = null;

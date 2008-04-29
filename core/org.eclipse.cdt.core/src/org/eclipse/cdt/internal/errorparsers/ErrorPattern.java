@@ -158,7 +158,7 @@ public class ErrorPattern {
 		if (!file.exists())  {
 			CygPath cygpath = null ;
 			try {
-				cygpath = new CygPath("cygpath");
+				cygpath = new CygPath("cygpath"); //$NON-NLS-1$
 				String cygfilename = cygpath.getFileName(filename);
 				path = new Path(cygfilename);
 			} catch (IOException e) {

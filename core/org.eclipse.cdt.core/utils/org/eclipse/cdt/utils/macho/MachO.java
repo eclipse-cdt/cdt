@@ -40,7 +40,7 @@ public class MachO {
     private Symbol[] local_symbols;		/* local symbols from DySymtabCommand */
     private boolean dynsym = false;		/* set if DynSymtabCommand is present */
     Line[] lines;				/* line table */
-    private ArrayList sections = new ArrayList();			/* sections from SegmentCommand */
+    private ArrayList<Section> sections = new ArrayList<Section>();			/* sections from SegmentCommand */
     SymtabCommand symtab;		/* SymtabCommand that contains the symbol table */
     
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -171,17 +171,17 @@ public class MachO {
 			else
 			if ( magic == MH_UNIVERSAL)
 			{ 
-				String arch = System.getProperty("os.arch");
+				String arch = System.getProperty("os.arch"); //$NON-NLS-1$
 				int numArchives = efile.readIntE();
 				while (numArchives-- > 0)
 				{
-					int cpuType = efile.readIntE();
-					int cpuSubType = efile.readIntE();
-					int archiveOffset = efile.readIntE();
-					int archiveSize = efile.readIntE();
-					int archiveAlignment = efile.readIntE();
-					if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) || 
-							(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")))
+					int cpuType =       efile.readIntE(); // cpuType
+					                    efile.readIntE(); // cpuSubType
+					int archiveOffset = efile.readIntE(); // archiveOffset
+									 	efile.readIntE(); // archiveSize
+									 	efile.readIntE(); // archiveAlignment
+					if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
+							(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc"))) //$NON-NLS-1$
 					{
 						efile.seek(archiveOffset);
 						magic = efile.readIntE();
@@ -212,17 +212,17 @@ public class MachO {
 			else
 				if ( magic == MH_UNIVERSAL)
 				{ 
-					String arch = System.getProperty("os.arch");
+					String arch = System.getProperty("os.arch"); //$NON-NLS-1$
 					int numArchives = makeInt(bytes, offset, isle); offset += 4;
 					while (numArchives-- > 0)
 					{
 						int cpuType = makeInt(bytes, offset, isle); offset += 4;
-						int cpuSubType = makeInt(bytes, offset, isle); offset += 4;
-						int archiveOffset = makeInt(bytes, offset, isle); offset += 4;
-						int archiveSize = makeInt(bytes, offset, isle); offset += 4;
-						int archiveAlignment = makeInt(bytes, offset, isle); offset += 4;
-						if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) || 
-								(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")))
+						offset += 4; // cpuSubType
+						int archiveOffset = makeInt(bytes, offset, isle); offset += 4; 
+						offset += 4; // archiveSize
+						offset += 4; // archiveAlignment
+						if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
+								(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc"))) //$NON-NLS-1$
 						{
 							offset = archiveOffset;
 							magic = makeInt(bytes, offset, isle); offset += 4;
@@ -243,15 +243,6 @@ public class MachO {
 			sizeofcmds = makeInt(bytes, offset, isle); offset += 4;
 			flags = makeInt(bytes, offset, isle); offset += 4;
 		}
-	}
-
-	private static final short makeShort(byte [] val, int offset, boolean isle) throws IOException {
-		if (val.length < offset + 2)
-			throw new IOException();
-		if ( isle ) {
-			return (short)(((val[offset + 1] & 0xff) << 8) + (val[offset + 0] & 0xff));
-		}
-		return (short)(((val[offset + 0] & 0xff) << 8) + (val[offset + 1] & 0xff));
 	}
 
 	private static final int makeInt(byte [] val, int offset, boolean isle) throws IOException
@@ -644,7 +635,7 @@ public class MachO {
 		return getCStr();
 	}
 	
-	public class Symbol implements Comparable {
+	public class Symbol implements Comparable<Object> {
 		/* n_type bit masks */
 		public final static int N_STAB = 0xe0;
 		public final static int N_PEXT = 0x10;
@@ -889,7 +880,7 @@ public class MachO {
 	 * and the Long doesn't know how to compare against a Symbol so if
 	 * we compare Symbol vs Long it is ok, but not if we do Long vs Symbol.
 	 */
-	public static class SymbolComparator implements Comparator {
+	public static class SymbolComparator implements Comparator<Object> {
 		long val1, val2;
 		public int compare(Object o1, Object o2) {
 
@@ -916,7 +907,7 @@ public class MachO {
 	/**
 	 * Simple class to implement a line table
 	 */
-	public static class Line implements Comparable {
+	public static class Line implements Comparable<Object> {
 		public long address;
 		public int lineno;
 		public String file;
@@ -1141,12 +1132,12 @@ public class MachO {
 			return;
 		}
 		DySymtabCommand dysymtab = null;
-		for (int c = 0; c < loadcommands.length; c++) {
-			switch (loadcommands[c].cmd) {
+		for (LoadCommand loadcommand : loadcommands) {
+			switch (loadcommand.cmd) {
 				case LoadCommand.LC_SYMTAB:
-					symtab = (SymtabCommand)loadcommands[c];
+					symtab = (SymtabCommand)loadcommand;
 					efile.seek(symtab.symoff);
-					ArrayList symList = new ArrayList(symtab.nsyms);
+					ArrayList<Symbol> symList = new ArrayList<Symbol>(symtab.nsyms);
 					for (int s = 0; s < symtab.nsyms; s++) {
 						Symbol symbol = new Symbol();
 						symbol.n_strx = efile.readIntE();
@@ -1159,20 +1150,20 @@ public class MachO {
 							debugsym = true;
 						}
 					}
-					symbols = (Symbol[])symList.toArray(new Symbol[0]);
+					symbols = symList.toArray(new Symbol[0]);
 					break;
 					
 				case LoadCommand.LC_DYSYMTAB:
-					dysymtab = (DySymtabCommand)loadcommands[c];
+					dysymtab = (DySymtabCommand)loadcommand;
 					break;
 			}
 		}
 		if (dysymtab != null) {
-			ArrayList symList = new ArrayList(dysymtab.nlocalsym);
+			ArrayList<Symbol> symList = new ArrayList<Symbol>(dysymtab.nlocalsym);
 			for (int s = dysymtab.ilocalsym; s < dysymtab.nlocalsym; s++) {
 				symList.add(symbols[s]);
 			}
-			local_symbols = (Symbol[])symList.toArray(new Symbol[0]);
+			local_symbols = symList.toArray(new Symbol[0]);
 		}
 	}
 	
@@ -1182,8 +1173,8 @@ public class MachO {
 		}
 		/* count number of source line entries */
 		int nlines = 0;
-		for (int s = 0; s < symbols.length; s++) {
-			if (symbols[s].n_type == Symbol.N_SLINE || symbols[s].n_type == Symbol.N_FUN) {
+		for (Symbol symbol : symbols) {
+			if (symbol.n_type == Symbol.N_SLINE || symbol.n_type == Symbol.N_FUN) {
 				nlines++;
 			}
 		}
@@ -1192,15 +1183,14 @@ public class MachO {
 		}
 		
 		/* now create line table, sorted on address */
-		Map lineList = new HashMap(nlines);
-		for (int s = 0; s < symbols.length; s++) {
-			Symbol sym = symbols[s];
+		Map<Line, Line> lineList = new HashMap<Line, Line>(nlines);
+		for (Symbol sym : symbols) {
 			if (sym.n_type == Symbol.N_SLINE || sym.n_type == Symbol.N_FUN) {
 				Line lentry = new Line();
 				lentry.address = sym.n_value;
 				lentry.lineno = sym.n_desc;
 				
-				Line lookup = (Line)lineList.get(lentry);
+				Line lookup = lineList.get(lentry);
 				if (lookup != null) {
 					lentry = lookup;
 				} else {
@@ -1221,13 +1211,12 @@ public class MachO {
 				}
 			}
 		}
-		Set k = lineList.keySet();
-		lines = (Line[]) k.toArray(new Line[k.size()]);
+		Set<Line> k = lineList.keySet();
+		lines = k.toArray(new Line[k.size()]);
 		Arrays.sort(lines);
 		
 		/* now check for file names */
-		for (int s = 0; s < symbols.length; s++) {
-			Symbol sym = symbols[s];
+		for (Symbol sym : symbols) {
 			if (sym.n_type == Symbol.N_SO) {
 				Line line = getLine(sym.n_value);
 				if (line != null) {
@@ -1238,11 +1227,11 @@ public class MachO {
 		
 	}
 	
-	private ArrayList getSections(SegmentCommand seg) throws IOException {
+	private ArrayList<Section> getSections(SegmentCommand seg) throws IOException {
 		if ( seg.nsects == 0 ) {
-			return new ArrayList();			
+			return new ArrayList<Section>();			
 		}
-		ArrayList sections = new ArrayList();
+		ArrayList<Section> sections = new ArrayList<Section>();
 		for ( int i = 0; i < seg.nsects; i++ ) {
 			Section section = new Section();
 			byte[] sectname = new byte[16];
@@ -1266,19 +1255,19 @@ public class MachO {
 		return sections;
 	}
 
-	private TwoLevelHint[] getTwoLevelHints(int nhints) throws IOException {
-		if ( nhints == 0 ) {
-			return new TwoLevelHint[0];			
-		}
-		TwoLevelHint[] tlhints = new TwoLevelHint[nhints];
-		for ( int i = 0; i < nhints; i++ ) {
-			int field = efile.readIntE();
-			tlhints[i] = new TwoLevelHint();
-			tlhints[i].isub_image = (field & 0xff000000) >> 24;
-			tlhints[i].itoc = field & 0x00ffffff;
-		}
-		return tlhints;
-	}
+//	private TwoLevelHint[] getTwoLevelHints(int nhints) throws IOException {
+//		if ( nhints == 0 ) {
+//			return new TwoLevelHint[0];			
+//		}
+//		TwoLevelHint[] tlhints = new TwoLevelHint[nhints];
+//		for ( int i = 0; i < nhints; i++ ) {
+//			int field = efile.readIntE();
+//			tlhints[i] = new TwoLevelHint();
+//			tlhints[i].isub_image = (field & 0xff000000) >> 24;
+//			tlhints[i].itoc = field & 0x00ffffff;
+//		}
+//		return tlhints;
+//	}
 	
 	private String getCStr() throws IOException {
 		StringBuffer str = new StringBuffer();
@@ -1597,18 +1586,18 @@ public class MachO {
     	}
     
     public Section[] getSections() {
-        return (Section[]) sections.toArray(new Section[sections.size()]);
+        return sections.toArray(new Section[sections.size()]);
     }
 
     public DyLib[] getDyLibs(int type) {
-		ArrayList v = new ArrayList();
-		for (int i = 0; i < loadcommands.length; i++) {
-			if (loadcommands[i].cmd == type) {
-				DyLibCommand dl = (DyLibCommand)loadcommands[i];
+		ArrayList<DyLib> v = new ArrayList<DyLib>();
+		for (LoadCommand loadcommand : loadcommands) {
+			if (loadcommand.cmd == type) {
+				DyLibCommand dl = (DyLibCommand)loadcommand;
 				v.add(dl.dylib);				
 			}
 		}
-		return (DyLib[]) v.toArray(new DyLib[v.size()]);
+		return v.toArray(new DyLib[v.size()]);
     }
 	
 	/* return the address of the function that address is in */
@@ -1663,10 +1652,10 @@ public class MachO {
 			} catch (IOException e) { }
 
 
-			for (int i = 0; i < loadcommands.length; i++) {
-				if (loadcommands[i].cmd == LoadCommand.LC_SYMTAB)
+			for (LoadCommand loadcommand : loadcommands) {
+				if (loadcommand.cmd == LoadCommand.LC_SYMTAB)
 				{
-					symtab = (SymtabCommand)loadcommands[i];
+					symtab = (SymtabCommand)loadcommand;
 					try {
 						int symSize = symtab.nsyms * 12;
 						byte[] data = new byte[symSize];

@@ -55,6 +55,7 @@ public class GeneratePDOM implements ISafeRunnable {
 		if(cproject==null) {
 			fail(MessageFormat.format(Messages.GeneratePDOM_ProjectProviderReturnedNullCProject,
 					new Object [] {pm.getClass().getName()}));
+			return; // cannot be reached, inform the compiler
 		}
 		
 		IIndexLocationConverter converter= pm.getLocationConverter(cproject);

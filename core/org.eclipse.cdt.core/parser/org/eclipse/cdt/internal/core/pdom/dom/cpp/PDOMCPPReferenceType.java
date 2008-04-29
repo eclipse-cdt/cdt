@@ -49,9 +49,9 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 		
 		try {
 			// type
-			IType targetType = type.getType();
 			int typeRec = 0;
 			if (type != null) {
+				IType targetType = type.getType();
 				PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
 				if (targetTypeNode != null)
 					typeRec = targetTypeNode.getRecord();

@@ -33,7 +33,6 @@ public class CLIUtil {
 	 * @param arguments the arguments map
 	 * @param opt the option name to check
 	 * @param number the number of parameters
-	 * @return
 	 * @throws CoreException if the number of parameters is not the specified expected number
 	 */
 	public static List<String> getArg(Map<String, List<String>> arguments, String opt, int number) throws CoreException {
@@ -47,23 +46,20 @@ public class CLIUtil {
 
 	/**
 	 * Returns a map of String option to List of String parameters.
-	 * <br>
-	 * @param args
-	 * @return
 	 */
 	public static Map<String,List<String>> parseToMap(String[] args) {
 		Map<String,List<String>> result = new HashMap<String,List<String>>();
 		String current = null;
-		for(int i=0; i<args.length; i++) {
-			if(args[i].startsWith("-")) { //$NON-NLS-1$
-				current = args[i];
+		for (String arg : args) {
+			if(arg.startsWith("-")) { //$NON-NLS-1$
+				current = arg;
 				result.put(current, new ArrayList<String>());
 			} else {
 				if(current==null) {
 					current= UNQUALIFIED_PARAMETERS;
 					result.put(current, new ArrayList<String>());
 				}
-				(result.get(current)).add(args[i]);
+				(result.get(current)).add(arg);
 			}
 		}
 		return result;

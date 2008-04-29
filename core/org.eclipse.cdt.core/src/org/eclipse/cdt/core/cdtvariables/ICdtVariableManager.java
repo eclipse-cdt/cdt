@@ -31,29 +31,7 @@ public interface ICdtVariableManager{
 	 * 
 	 * Returns reference to the IBuildMacro interface representing Macro of the
 	 * specified name or null if there is there is no such macro
-	 * @param macroName macro name
-	 * @param contextType represents the context type. Should be set to one of the the
-	 * IBuildMacroProvider. CONTEXT_xxx constants 
-	 * @param contextData represents the additional data needed by the Build Macro Provider
-	 * and Macro Suppliers in order to obtain the macro value. The type of the context data
-	 * differs depending on the context type and can be one of the following: 
-	 * 1. IFileContextData interface � used to represent currently selected file context
-	 *      the IFileContextData interface is defined as follows:
-	 * 	    pulic interface IFileContextData{
-	 *     		IFile getFile();
-	 *	    	IOption getOption();
-	 *  	    }
-	 *     NOTE: the IFileContextData is passed that represents the current file and the option 
-	 *     for that file because Macro Value Provider needs to know what option should be used 
-	 *     as a context in case macro is not found for �current file� context
-	 * 2.  IOptionContextData interface used to represent the currently selected option context
-	 * 3.  IConfiguration � used to represent the currently selected configuration context
-	 * 4.  IProject � used to represent current project context
-	 * 5.  IWorkspace � used to represent current workspace context
-	 * 6.  null � to represent the CDT and Eclipse installation context
-	 * 7.  null � to represent process environment context
-	 * @param includeParentContext specifies whether lower-precedence context macros should 
-	 *     be included
+	 * @param name macro name
 	 */
 	public ICdtVariable getVariable(String name, ICConfigurationDescription cfg);
 
@@ -91,8 +69,6 @@ public interface ICdtVariableManager{
 	 * �<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>�
 	 * otherwise the BuildMacroException is thrown in case the string to be resolved references 
 	 * string-list macros 
-	 * @param contextType context from which the macro search should be started
-	 * @param contextData context data
 	 */
 	public String resolveValue(String value, 
 					String nonexistentMacrosValue,
@@ -103,7 +79,6 @@ public interface ICdtVariableManager{
 	 * 
 	 * if the string contains a value that can be treated as a StringList resolves it to arrays of strings
 	 * otherwise throws the BuildMacroException exception
-	 * @see isStringListValue
 	 */
 	public String[] resolveStringListValue(String value, 
 					String nonexistentMacrosValue,
@@ -114,7 +89,7 @@ public interface ICdtVariableManager{
 	 * 
 	 * resolves macros in the array of string-list values
 	 * 
-	 * @see isStringListValue
+	 * @see #isStringListValue
 	 */
 	public String[] resolveStringListValues(String value[], 
 					String nonexistentMacrosValue,

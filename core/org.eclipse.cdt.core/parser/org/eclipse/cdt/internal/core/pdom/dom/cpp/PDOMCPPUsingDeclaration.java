@@ -41,7 +41,6 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 	
 	private IBinding[] delegates;
 	
-	@SuppressWarnings("hiding")
 	public PDOMCPPUsingDeclaration(PDOM pdom, PDOMNode parent, ICPPUsingDeclaration using)
 			throws CoreException {
 		super(pdom, parent, using.getNameCharArray());

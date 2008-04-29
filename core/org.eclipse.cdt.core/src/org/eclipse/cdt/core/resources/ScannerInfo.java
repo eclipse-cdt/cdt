@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 
 public class ScannerInfo implements IExtendedScannerInfo {
 
-	private final Map fMacroMap;
+	private final Map<String, String> fMacroMap;
 	private final String[] fSystemIncludePaths;
 	private final String[] fMacroFiles;
 	private final String[] fIncludeFiles;
@@ -25,14 +25,20 @@ public class ScannerInfo implements IExtendedScannerInfo {
 	final static String[] EMPTY_ARRAY_STRING = new String[0];
 
 	protected ScannerInfo(String[] systemIncludePaths, String[] localIncludePaths, String[] includeFiles,
-			Map macroMap, String[] macroFiles) {
+			Map<String, String> macroMap, String[] macroFiles) {
 		fSystemIncludePaths = (systemIncludePaths == null) ? EMPTY_ARRAY_STRING : systemIncludePaths;
 		fLocalIncludePaths = (localIncludePaths == null) ? EMPTY_ARRAY_STRING : localIncludePaths;
 		fIncludeFiles = (includeFiles == null) ? EMPTY_ARRAY_STRING : includeFiles;
 		fMacroFiles = (macroFiles == null) ? EMPTY_ARRAY_STRING : macroFiles;
-		fMacroMap = (macroMap == null) ? Collections.EMPTY_MAP : macroMap;
+		fMacroMap= nonNullMap(macroMap);
 	}
 
+	private Map<String, String> nonNullMap(Map<String, String> macroMap) {
+		if (macroMap == null) {
+			return Collections.emptyMap();
+		}
+		return macroMap;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,7 +53,7 @@ public class ScannerInfo implements IExtendedScannerInfo {
 	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
-	public synchronized Map getDefinedSymbols() {
+	public synchronized Map<String, String> getDefinedSymbols() {
 		return fMacroMap;
 	}
 

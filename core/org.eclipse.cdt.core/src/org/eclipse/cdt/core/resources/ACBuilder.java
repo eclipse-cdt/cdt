@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Preferences;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
 
-	private static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled";
+	private static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled"; //$NON-NLS-1$
 	private static final Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 
 	/**
@@ -52,10 +52,10 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			 * Try to find matching markers and don't put in duplicates
 			 */
 			if ((cur != null) && (cur.length > 0)) {
-				for (int i = 0; i < cur.length; i++) {
-					int line = ((Integer) cur[i].getAttribute(IMarker.LINE_NUMBER)).intValue();
-					int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
-					String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
+				for (IMarker element : cur) {
+					int line = ((Integer) element.getAttribute(IMarker.LINE_NUMBER)).intValue();
+					int sev = ((Integer) element.getAttribute(IMarker.SEVERITY)).intValue();
+					String mesg = (String) element.getAttribute(IMarker.MESSAGE);
 					if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
 						return;
 					}

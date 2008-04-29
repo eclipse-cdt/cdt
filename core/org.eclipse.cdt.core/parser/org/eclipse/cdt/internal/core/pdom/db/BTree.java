@@ -50,7 +50,7 @@ public class BTree {
 	 * Constructor.
 	 * 
 	 * @param db the database containing the btree
-	 * @param root offset into database of the pointer to the root node
+	 * @param rootPointer offset into database of the pointer to the root node
 	 */
 	public BTree(Database db, int rootPointer, int degree, IBTreeComparator cmp) {
 		if(degree<2)
@@ -93,8 +93,7 @@ public class BTree {
 	 * key was already there, in which case we return the record
 	 * that matched. In other cases, we just return the record back.
 	 * 
-	 * @param offset of the record
-	 * @return 
+	 * @param record  offset of the record
 	 */
 	public int insert(int record) throws CoreException {
 		int root = getRoot();
@@ -229,7 +228,6 @@ public class BTree {
 	 * The reference to the record in the btree is deleted.
 	 *  
 	 * @param record the record to delete
-	 * @param cmp the comparator for locating the record
 	 * @throws CoreException
 	 */
 	public void delete(int record) throws CoreException {
@@ -345,8 +343,11 @@ public class BTree {
 
 				/* Case 2c: Merge successor and predecessor */
 				// assert(pred!=null && succ!=null);
-				mergeNodes(succ, node, keyIndexInNode, pred);
-				return deleteImp(key, pred.node, mode);
+				if (pred != null) {
+					mergeNodes(succ, node, keyIndexInNode, pred);
+					return deleteImp(key, pred.node, mode);
+				}
+				return key;
 			} else {
 				/* Case 3: non-leaf node which does not itself contain the key */
 
@@ -422,7 +423,7 @@ public class BTree {
 	 * 'keyProvider' as the source of the median key. Bounds checking is not
 	 * performed.
 	 * @param src the key to merge into dst
-	 * @param mid the node that provides the median key for the new node
+	 * @param keyProvider the node that provides the median key for the new node
 	 * @param kIndex the index of the key in the node <i>mid</i> which is to become the new node's median key
 	 * @param dst the node which is the basis and result of the merge
 	 */

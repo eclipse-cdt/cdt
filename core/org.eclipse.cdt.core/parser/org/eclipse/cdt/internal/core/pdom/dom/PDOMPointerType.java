@@ -54,21 +54,19 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 		
 		try {
 			// type
-			IType targetType= type.getType();
 			int typeRec = 0;
+			byte flags = 0;
 			if (type != null) {
+				IType targetType= type.getType();
 				PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
 				if (targetTypeNode != null)
 					typeRec = targetTypeNode.getRecord();
+				if (type.isConst())
+					flags |= CONST;
+				if (type.isVolatile())
+					flags |= VOLATILE;
 			}
 			db.putInt(record + TYPE, typeRec);
-			
-			// flags
-			byte flags = 0;
-			if (type.isConst())
-				flags |= CONST;
-			if (type.isVolatile())
-				flags |= VOLATILE;
 			db.putByte(record + FLAGS, flags);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));

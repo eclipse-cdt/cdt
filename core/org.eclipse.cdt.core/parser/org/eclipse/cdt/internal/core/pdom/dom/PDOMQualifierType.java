@@ -57,23 +57,22 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		
 		// type
 		try {
-			IType targetType = type.getType();
 			if (type != null) {
+				IType targetType = type.getType();
 				PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
 				if (targetTypeNode != null) {
 					db.putInt(record + TYPE, targetTypeNode.getRecord());
 				}
-			}
-			
-			// flags
-			byte flags = 0;
-			if (type.isConst())
-				flags |= CONST;
-			if (type.isVolatile())
-				flags |= VOLATILE;
-			if (type instanceof ICQualifierType && ((ICQualifierType)type).isRestrict())
-				flags |= RESTRICT;
-			db.putByte(record + FLAGS, flags);
+				// flags
+				byte flags = 0;
+				if (type.isConst())
+					flags |= CONST;
+				if (type.isVolatile())
+					flags |= VOLATILE;
+				if (type instanceof ICQualifierType && ((ICQualifierType)type).isRestrict())
+					flags |= RESTRICT;
+				db.putByte(record + FLAGS, flags);
+			}			
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}

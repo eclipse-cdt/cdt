@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import java.io.IOException;
-
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -29,7 +27,7 @@ public interface IBTreeVisitor {
 	 * 
 	 * @param record
 	 * @return -1 if record < key, 0 if record == key, 1 if record > key
-	 * @throws IOException
+	 * @throws CoreException
 	 */
 	public abstract int compare(int record) throws CoreException;
 
@@ -37,7 +35,7 @@ public interface IBTreeVisitor {
 	 * Visit a given record and return whether to continue or not.
 
 	 * @return <code>true</code> to continue the visit, <code>false</code> to abort it.
-	 * @throws IOException
+	 * @throws CoreException
 	 */
 	public abstract boolean visit(int record) throws CoreException;
 	

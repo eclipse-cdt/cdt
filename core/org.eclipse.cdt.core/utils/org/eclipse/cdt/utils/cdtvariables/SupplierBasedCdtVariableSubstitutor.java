@@ -24,13 +24,13 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
 
 public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor {
-	private static final Object UNDEFINED_MACRO_VALUE = new Object();
+//	private static final Object UNDEFINED_MACRO_VALUE = new Object();
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private IVariableContextInfo fContextInfo;
 	private String fInexistentMacroValue;
 	private String fListDelimiter;
 	private String fIncorrectlyReferencedMacroValue;
-	private Map fDelimiterMap;
+	private Map<?, ?> fDelimiterMap;
 	
 	protected class ResolvedMacro extends CdtVariable{
 		private boolean fIsDefined;
@@ -99,31 +99,29 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		protected String stringListToString(String values[]) throws CdtVariableException {
 			String result = null;
 			String delimiter;
-			if(values == null)
-				result = null;
-			else if(values.length == 0)
-				result = EMPTY_STRING;
-			else if(values.length == 1)
-				result = values[0];
-			else if((delimiter = getDelimiter()) != null){
-				StringBuffer buffer = new StringBuffer(); 
-				for(int i = 0; i < values.length; i++){
-					buffer.append(values[i]);
-					if(i < values.length-1)
-						buffer.append(delimiter);
+			if (values != null) {
+				if(values.length == 0)
+					result = EMPTY_STRING;
+				else if(values.length == 1)
+					result = values[0];
+				else if((delimiter = getDelimiter()) != null){
+					StringBuffer buffer = new StringBuffer(); 
+					for(int i = 0; i < values.length; i++){
+						buffer.append(values[i]);
+						if(i < values.length-1)
+							buffer.append(delimiter);
+					}
+					result = buffer.toString();
+				} else {
+					ICdtVariableStatus eStatus = new SupplierBasedCdtVariableStatus(ICdtVariableStatus.TYPE_MACRO_NOT_STRING, 
+							null, 
+							null, 
+							fName,
+							fContextInfo);
+					throw new CdtVariableException(eStatus);
 				}
-				result = buffer.toString();
-			} else {
-				ICdtVariableStatus eStatus = new SupplierBasedCdtVariableStatus(ICdtVariableStatus.TYPE_MACRO_NOT_STRING, 
-						null, 
-						null, 
-						fName,
-						fContextInfo);
-				throw new CdtVariableException(eStatus);
-			}
-			
+			}			
 			return result;
-
 		}
 		
 		public boolean isList(){
@@ -144,7 +142,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		private ICdtVariable fMacro;
 		private boolean fInitialized;
 		private int fSupplierNum;
-		private int fEnvSupplierNum;
+//		private int fEnvSupplierNum;
 		
 		public MacroDescriptor(String name, IVariableContextInfo info){
 			fName = name;
@@ -203,15 +201,15 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 
 	}
 
-	private Map fResolvedMacros = new HashMap();
-	private HashSet fMacrosUnderResolution = new HashSet();
-	private Stack fMacroDescriptors = new Stack();
+	private Map<String, ResolvedMacro> fResolvedMacros = new HashMap<String, ResolvedMacro>();
+	private HashSet<String> fMacrosUnderResolution = new HashSet<String>();
+	private Stack<MacroDescriptor> fMacroDescriptors = new Stack<MacroDescriptor>();
 
 	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
 		this(contextInfo, inexistentMacroValue, listDelimiter, null ,inexistentMacroValue);
 	}
 
-	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter, Map delimiterMap, String incorrectlyReferencedMacroValue){
+	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter, Map<?, ?> delimiterMap, String incorrectlyReferencedMacroValue){
 		fContextInfo = contextInfo;
 		fInexistentMacroValue = inexistentMacroValue;
 		fListDelimiter = listDelimiter;
@@ -344,11 +342,11 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 				if(resolvedValues.length == 1)
 					result = resolvedValues[0];
 				else{
-					List list = new ArrayList();
-					for(int i = 0; i < resolvedValues.length; i++)
-						list.addAll(Arrays.asList(resolvedValues[i]));
+					List<String> list = new ArrayList<String>();
+					for (String[] resolvedValue : resolvedValues)
+						list.addAll(Arrays.asList(resolvedValue));
 					
-					result = (String[])list.toArray(new String[list.size()]);
+					result = list.toArray(new String[list.size()]);
 				}
 				resolvedMacro = new ResolvedMacro(macroName,result);
 			}
@@ -377,7 +375,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	private ResolvedMacro checkResolvingMacro(MacroDescriptor des)
 				throws CdtVariableException{
 		String name = des.fName;
-		ResolvedMacro value = (ResolvedMacro)fResolvedMacros.get(name);
+		ResolvedMacro value = fResolvedMacros.get(name);
 		if(value == null){
 			if(fMacrosUnderResolution.add(name)) {
 				fMacroDescriptors.push(des);
@@ -393,7 +391,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 				// ${macro1} = "...${macro1}..."
 				// In the above example the ${macro1} reference will be expanded to the value of the ${macro1} macro of the
 				// parent context or to an empty string if there is no such macro defined in the parent contexts
-				MacroDescriptor last = (MacroDescriptor)fMacroDescriptors.lastElement();
+				MacroDescriptor last = fMacroDescriptors.lastElement();
 				if(last != null && last.fName.equals(name)) {
 					value = resolveParentMacro(last);
 					if(value == null)
@@ -422,7 +420,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	}
 	
 	protected ResolvedMacro removeResolvedMacro(String name){
-		return (ResolvedMacro)fResolvedMacros.remove(name);
+		return fResolvedMacros.remove(name);
 	}
 	
 	/* (non-Javadoc)
@@ -439,11 +437,11 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		fResolvedMacros.clear();
 	}
 
-	public Map getDelimiterMap() {
+	public Map<?, ?> getDelimiterMap() {
 		return fDelimiterMap;
 	}
 
-	public void setDelimiterMap(Map delimiterMap) throws CdtVariableException {
+	public void setDelimiterMap(Map<?, ?> delimiterMap) throws CdtVariableException {
 		if(checkEqual(fDelimiterMap,delimiterMap))
 			return;
 		reset();

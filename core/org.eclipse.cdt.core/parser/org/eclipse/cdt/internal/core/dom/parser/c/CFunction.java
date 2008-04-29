@@ -360,7 +360,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	            } else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
 	            
-	            if( declSpec.getStorageClass() == storage ) {
+	            if( declSpec != null && declSpec.getStorageClass() == storage ) {
 	            	return true;
 	            }
             }
@@ -421,7 +421,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	            } else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
 	
-	            if( declSpec.isInline() )
+	            if( declSpec != null && declSpec.isInline() )
 	                return true;
             }
             if( ds != null && ++i < ds.length )

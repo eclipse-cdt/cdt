@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.SafeRunner;
  */
 public class PathEntryVariableManager implements IPathEntryVariableManager {
 
-	private Set listeners;
+	private Set<IPathEntryVariableChangeListener> listeners;
 	private Preferences preferences;
 
 	static final String VARIABLE_PREFIX = "pathEntryVariable."; //$NON-NLS-1$
@@ -55,7 +55,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * 
 	 */ 
 	private PathEntryVariableManager() {
-		this.listeners = Collections.synchronizedSet(new HashSet());
+		this.listeners = Collections.synchronizedSet(new HashSet<IPathEntryVariableChangeListener>());
 		this.preferences = CCorePlugin.getDefault().getPluginPreferences();
 	}
 
@@ -65,7 +65,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * that. But then if they try and call #setValue using the same key it will throw
 	 * an exception. We may want to revisit this behaviour in the future.
 	 * 
-	 * @see org.eclipse.core.resources.IPathEntryVariableManager#getValue(String)
+	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#getValue(String)
 	 */
 	public IPath getValue(String varName) {
 		String key = getKeyForName(varName);
@@ -74,7 +74,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathEntryVariableManager#setValue(String, IPath)
+	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#setValue(String, IPath)
 	 */
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		//if the location doesn't have a device, see if the OS will assign one
@@ -86,10 +86,11 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 		synchronized (this) {
 			IPath currentValue = getValue(varName);
 			boolean variableExists = currentValue != null;
-			if (!variableExists && newValue == null) {
-				return;
-			}
-			if (variableExists && currentValue.equals(newValue)) {
+			if (currentValue == null) {
+				if (newValue == null) {
+					return;
+				}
+			} else if (currentValue.equals(newValue)) {
 				return;
 			}
 			if (newValue == null) {
@@ -112,7 +113,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.IPathEntryVariableManager#resolvePath(IPath)
+	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#resolvePath(IPath)
 	 */
 	public IPath resolvePath(IPath path) {
 		if (path == null || path.segmentCount() == 0) {
@@ -167,19 +168,19 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
 	public String[] getVariableNames() {
-		List result = new LinkedList();
+		List<String> result = new LinkedList<String>();
 		String[] names = preferences.propertyNames();
-		for (int i = 0; i < names.length; i++) {
-			if (names[i].startsWith(VARIABLE_PREFIX)) {
-				String key = names[i].substring(VARIABLE_PREFIX.length());
+		for (String name : names) {
+			if (name.startsWith(VARIABLE_PREFIX)) {
+				String key = name.substring(VARIABLE_PREFIX.length());
 				result.add(key);
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.
+	 * @see org.eclipse.cdt.core.resources.
 	 * IPathEntryVariableManager#addChangeListener(IPathEntryVariableChangeListener)
 	 */
 	public void addChangeListener(IPathEntryVariableChangeListener listener) {
@@ -187,7 +188,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.
+	 * @see org.eclipse.cdt.core.resources.
 	 * IPathEntryVariableManager#removeChangeListener(IPathEntryVariableChangeListener)
 	 */
 	public void removeChangeListener(IPathEntryVariableChangeListener listener) {

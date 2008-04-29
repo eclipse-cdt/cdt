@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import java.io.IOException;
-
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -22,11 +20,6 @@ public interface IBTreeComparator {
 
 	/**
 	 * Compare two records. Used for insert.
-	 * 
-	 * @param record1
-	 * @param record2
-	 * @return
-	 * @throws IOException
 	 */
 	public abstract int compare(int record1, int record2) throws CoreException;
 	

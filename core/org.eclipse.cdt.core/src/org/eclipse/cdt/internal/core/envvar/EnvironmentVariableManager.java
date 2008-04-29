@@ -124,7 +124,7 @@ public class EnvironmentVariableManager implements
 
 		if(contextInfo == null)
 			return null;
-		if((variableName = EnvVarOperationProcessor.normalizeName(variableName)) == null) //$NON-NLS-1$
+		if((variableName = EnvVarOperationProcessor.normalizeName(variableName)) == null) 
 			return null;
 
 
@@ -133,8 +133,8 @@ public class EnvironmentVariableManager implements
 		if(!includeParentLevels){
 			ICoreEnvironmentVariableSupplier suppliers[] = infos[0].getSuppliers();
 			boolean bVarFound = false;
-			for(int i = 0; i < suppliers.length; i++){
-				if(suppliers[i].getVariable(variableName,infos[0].getContext()) != null){
+			for (ICoreEnvironmentVariableSupplier supplier : suppliers) {
+				if(supplier.getVariable(variableName,infos[0].getContext()) != null){
 					bVarFound = true;
 					break;
 				}
@@ -224,16 +224,16 @@ public class EnvironmentVariableManager implements
 			return null;
 		
 		IEnvironmentContextInfo infos[] = getAllContextInfos(contextInfo);
-		HashSet set = null;
+		HashSet<String> set = null;
 		
 		if(!includeParentLevels){
 			ICoreEnvironmentVariableSupplier suppliers[] = infos[0].getSuppliers();
-			set = new HashSet();
+			set = new HashSet<String>();
 			for(int i = 0; i < suppliers.length; i++){
 				IEnvironmentVariable vars[] = suppliers[i].getVariables(infos[0].getContext());
 				if(vars != null){
-					for(int j = 0; j < vars.length; j++){
-						String name = EnvVarOperationProcessor.normalizeName(vars[j].
+					for (IEnvironmentVariable var : vars) {
+						String name = EnvVarOperationProcessor.normalizeName(var.
 								getName());
 						if(name != null)
 							set.add(name);
@@ -260,15 +260,15 @@ public class EnvironmentVariableManager implements
 
 				IEnvironmentVariable vars[] = null;
 				if(set != null){
-					List varList = new ArrayList();
-					Iterator iter = set.iterator();
+					List<IEnvironmentVariable> varList = new ArrayList<IEnvironmentVariable>();
+					Iterator<String> iter = set.iterator();
 					
 					while(iter.hasNext()){
-						IEnvironmentVariable var = supplier.getVariable((String)iter.next(),info.getContext());
+						IEnvironmentVariable var = supplier.getVariable(iter.next(),info.getContext());
 						if(var != null)
 							varList.add(var);
 					}
-					vars = (IEnvironmentVariable[])varList.toArray(new IEnvironmentVariable[varList.size()]);
+					vars = varList.toArray(new IEnvironmentVariable[varList.size()]);
 				}
 				else{
 					 vars = supplier.getVariables(info.getContext());
@@ -311,14 +311,14 @@ public class EnvironmentVariableManager implements
 		if(contextInfo == null)
 			return null;
 			
-		List list = new ArrayList();
+		List<IEnvironmentContextInfo> list = new ArrayList<IEnvironmentContextInfo>();
 	
 		list.add(contextInfo);
 			
 		while((contextInfo = contextInfo.getNext()) != null)
 			list.add(contextInfo);
 		
-		return (IEnvironmentContextInfo[])list.toArray(new IEnvironmentContextInfo[list.size()]);
+		return list.toArray(new IEnvironmentContextInfo[list.size()]);
 	}
 	
 	private boolean isWin32(){
@@ -371,7 +371,7 @@ public class EnvironmentVariableManager implements
 		if(des == null || info == null)
 			return null;
 
-		return calculateResolvedVariable(des,getVariableSubstitutor(getMacroContextInfoForContext(info.getContext()),""," ")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return calculateResolvedVariable(des,getVariableSubstitutor(getMacroContextInfoForContext(info.getContext()),""," ")); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
 
 	public IEnvironmentVariable calculateResolvedVariable(EnvVarDescriptor des, IVariableSubstitutor sub){

@@ -182,11 +182,11 @@ public class CPPTemplates {
 				int idx = templates.length;
 				int i = 0;
 				IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-				for (int j = 0; j < ns.length; j++) {
-					if (ns[j] instanceof ICPPASTTemplateId) {
+				for (IASTName element : ns) {
+					if (element instanceof ICPPASTTemplateId) {
 						++i;
 						if (i == idx) {
-							binding = ((ICPPASTTemplateId) ns[j]).getTemplateName().resolveBinding();
+							binding = ((ICPPASTTemplateId) element).getTemplateName().resolveBinding();
 							break;
 						}
 					}
@@ -253,10 +253,6 @@ public class CPPTemplates {
 		return null;
 	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
 	public static IBinding createBinding(ICPPASTTemplateId id) {
 		IASTNode parent = id.getParent();
 		int segment = -1;
@@ -407,9 +403,9 @@ public class CPPTemplates {
 		} catch (DOMException e) {
 		}
 		if (specializations != null) {
-			for (int i = 0; i < specializations.length; i++) {
-				if (isSameTemplate(specializations[i], id)) {
-					spec = specializations[i];
+			for (ICPPClassTemplatePartialSpecialization specialization : specializations) {
+				if (isSameTemplate(specialization, id)) {
+					spec = specialization;
 					break;
 				}
 			}
@@ -503,10 +499,8 @@ public class CPPTemplates {
 			return null;
 		ICPPFunctionTemplate[] templates = null;
 		IBinding temp = null;
-		for (int i = 0; i < items.length; i++) {
-			Object o = items[i];
-
-	        if (o instanceof IASTName) {
+		for (Object o : items) {
+			if (o instanceof IASTName) {
 	            temp = ((IASTName) o).resolveBinding();
 	            if (temp == null)
 	                continue;
@@ -565,7 +559,7 @@ public class CPPTemplates {
 			IType arg = null;
 			for (int j = 0; j < numParams; j++) {
 				ICPPTemplateParameter param = params[j];
-				if (j < numArgs) {
+				if (j < numArgs && templateArguments != null) {
 					arg = templateArguments[j];
 				} else {
 					arg = null;
@@ -593,10 +587,6 @@ public class CPPTemplates {
 
 	/**
 	 * return Object[] of { ObjectMap, IType[] }
-	 * @param primaryTemplate
-	 * @param ps
-	 * @param specArgs
-	 * @return
 	 * @throws DOMException
 	 */
 	static protected Object[] deduceTemplateFunctionArguments(ICPPFunctionTemplate primaryTemplate,
@@ -642,11 +632,6 @@ public class CPPTemplates {
 		return null;
 	}
 
-	/**
-	 * @param decl
-	 * @param arguments
-	 * @return
-	 */
 	public static IBinding createInstance(ICPPScope scope, IBinding decl, ObjectMap argMap, IType[] args) {
 		ICPPTemplateInstance instance = null;
 		if (decl instanceof ICPPClassType) {
@@ -919,9 +904,9 @@ public class CPPTemplates {
 				boolean clear = bindings.containsKey(name.getBinding());
 				if (!clear && binding instanceof ICPPTemplateInstance) {
 					IType[] args = ((ICPPTemplateInstance) binding).getArguments();
-					for (int i = 0; i < args.length; i++) {
-						if (args[i] instanceof IBinding) {
-							if(bindings.containsKey((IBinding)args[i])) {
+					for (IType arg : args) {
+						if (arg instanceof IBinding) {
+							if(bindings.containsKey((IBinding)arg)) {
 								clear = true;
 								break;
 							}
@@ -941,11 +926,7 @@ public class CPPTemplates {
 			return PROCESS_SKIP;
 		}
 	}
-	/**
-	 * @param definition
-	 * @param declarator
-	 * @return
-	 */
+
 	public static boolean isSameTemplate(ICPPTemplateDefinition definition, IASTName name) {
 		ICPPTemplateParameter[] defParams = null;
 		try {
@@ -1094,7 +1075,7 @@ public class CPPTemplates {
 
 			IType[] instanceArgs = null;
 			for (int i = 0; i < numTemplateParams; i++) {
-				IType arg = (i < numTemplateArgs) ? CPPVisitor.createType(templateArguments[i]) : null;
+				IType arg = (i < numTemplateArgs && templateArguments != null) ? CPPVisitor.createType(templateArguments[i]) : null;
 				IType mapped = (IType) map.get(templateParams[i]);
 
 				if (arg != null && mapped != null) {
@@ -1118,7 +1099,7 @@ public class CPPTemplates {
 				    if (def != null) {
 				        if (def instanceof ICPPTemplateParameter) {
 				            for (int j = 0; j < i; j++) {
-                                if (templateParams[j] == def) {
+                                if (templateParams[j] == def && instanceArgs != null) {
                                     def = instanceArgs[j];
                                 }
                             }
@@ -1410,7 +1391,10 @@ public class CPPTemplates {
 		}
 
 		ICPPClassTemplatePartialSpecialization[] specializations = template.getPartialSpecializations();
-		int size = (specializations != null) ? specializations.length : 0;
+		if (specializations == null) {
+			return template;
+		}
+		final int size= specializations.length;
 		if (size == 0) {
 			return template;
 		}
@@ -1490,9 +1474,7 @@ public class CPPTemplates {
 	public static final class CPPImplicitFunctionTemplate extends CPPFunctionTemplate {
 		IParameter[] functionParameters = null;
 		ICPPTemplateParameter[] templateParameters = null;
-		/**
-		 * @param name
-		 */
+
 		public CPPImplicitFunctionTemplate(ICPPTemplateParameter[] templateParameters, IParameter[] functionParameters) {
 			super(null);
 			this.functionParameters = functionParameters;
@@ -1656,7 +1638,10 @@ public class CPPTemplates {
 			return e1.getProblem();
 		}
 
-		int numParams = (parameters != null) ? parameters.length : 0;
+		if (parameters == null) {
+			return null;
+		}
+		final int numParams= parameters.length;
 		int numArgs = arguments.length;
 
 		if (numParams == 0) {
@@ -1719,10 +1704,10 @@ public class CPPTemplates {
 			}
 		}
 
-		if (map.isEmpty()) {
-			map = null;
-		}
 		if (argsContainTemplateParameters) {
+			if (map.isEmpty()) {
+				map = null;
+			}
 			return ((ICPPInternalTemplateInstantiator) template).deferredInstance(map, arguments);
 		}
 
@@ -1754,8 +1739,6 @@ public class CPPTemplates {
 	 * Returns an array of specialized bases. The bases will be specialized versions of
 	 * the template instances associated specialized bindings bases.
 	 * binding.
-	 * @param classInstance
-	 * @return
 	 * @throws DOMException
 	 */
 	public static ICPPBase[] getBases(ICPPTemplateInstance classInstance) throws DOMException {
@@ -1765,8 +1748,7 @@ public class CPPTemplates {
 		if (pdomBases != null) {
 			ICPPBase[] result = null;
 
-			for (int i = 0; i < pdomBases.length; i++) {
-				ICPPBase origBase = pdomBases[i];
+			for (ICPPBase origBase : pdomBases) {
 				ICPPBase specBase = (ICPPBase) ((ICPPInternalBase) origBase).clone();
 				IBinding origClass = origBase.getBaseClass();
 				if (origClass instanceof IType) {

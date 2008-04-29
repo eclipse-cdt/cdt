@@ -131,16 +131,16 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 	private String[] getMacroNames(int contextType, boolean clone){
 		String names[] = null;
 		switch(contextType){
-		case DefaultVariableContextInfo.CONTEXT_CONFIGURATION:
+		case ICoreVariableContextInfo.CONTEXT_CONFIGURATION:
 			names = fConfigurationMacros; 
 			break;
-		case DefaultVariableContextInfo.CONTEXT_WORKSPACE:
+		case ICoreVariableContextInfo.CONTEXT_WORKSPACE:
 			names = fWorkspaceMacros; 
 			break;
-		case DefaultVariableContextInfo.CONTEXT_INSTALLATIONS:
+		case ICoreVariableContextInfo.CONTEXT_INSTALLATIONS:
 			names = fCDTEclipseMacros; 
 			break;
-		case DefaultVariableContextInfo.CONTEXT_ECLIPSEENV:
+		case ICoreVariableContextInfo.CONTEXT_ECLIPSEENV:
 			break;
 		}
 		if(names != null)
@@ -166,22 +166,22 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 			Object contextData) {
 		ICdtVariable macro = null; 
 		switch(contextType){
-		case DefaultVariableContextInfo.CONTEXT_CONFIGURATION:
+		case ICoreVariableContextInfo.CONTEXT_CONFIGURATION:
 			if(contextData instanceof ICConfigurationDescription){
 				macro = getMacro(macroName, (ICConfigurationDescription)contextData);
 			}
 			break;
-		case DefaultVariableContextInfo.CONTEXT_WORKSPACE:
+		case ICoreVariableContextInfo.CONTEXT_WORKSPACE:
 			if(contextData == null || contextData instanceof IWorkspace){
 				macro = getMacro(macroName, (IWorkspace)contextData);
 			}
 			break;
-		case DefaultVariableContextInfo.CONTEXT_INSTALLATIONS:
+		case ICoreVariableContextInfo.CONTEXT_INSTALLATIONS:
 			if(contextData == null){
 				macro = getMacro(macroName);
 			}
 			break;
-		case DefaultVariableContextInfo.CONTEXT_ECLIPSEENV:
+		case ICoreVariableContextInfo.CONTEXT_ECLIPSEENV:
 			break;
 		}
 		
@@ -368,23 +368,23 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 		return macro;
 	}
 	
-	private String getBaseName(String name){
-		String value = null;
-		int index = name.lastIndexOf('.');
-		if(index == -1)
-			value = name;
-		else
-			value = name.substring(0,index);
-		return value;
-	}
-	
-	private String getExtension(String name){
-		String value = null;
-		int index = name.lastIndexOf('.');
-		if(index != -1)
-			value = name.substring(index+1);
-		return value;
-	}
+//	private String getBaseName(String name){
+//		String value = null;
+//		int index = name.lastIndexOf('.');
+//		if(index == -1)
+//			value = name;
+//		else
+//			value = name.substring(0,index);
+//		return value;
+//	}
+//	
+//	private String getExtension(String name){
+//		String value = null;
+//		int index = name.lastIndexOf('.');
+//		if(index != -1)
+//			value = name.substring(index+1);
+//		return value;
+//	}
 	
 /*	public IBuildMacro getMacro(String macroName, IManagedProject mngProj){
 		IBuildMacro macro = null;
@@ -474,8 +474,8 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 		if(names != null){
 			ICdtVariable macros[] = new ICdtVariable[names.length];
 			int num = 0;
-			for(int i = 0; i < names.length; i++){
-				ICdtVariable macro = getMacro(names[i],contextType,contextData);
+			for (String name : names) {
+				ICdtVariable macro = getMacro(name,contextType,contextData);
 				if(macro != null)
 					macros[num++] = macro;
 			}

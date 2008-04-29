@@ -33,8 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCPPEnumeration extends PDOMCPPBinding
-		implements IEnumeration, IIndexType, ICPPBinding {
+class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexType {
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	

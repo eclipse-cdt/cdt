@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
 public interface IString {
 	/**
 	 * Get the offset of this IString record in the PDOM
-	 * @return
 	 */
 	public int getRecord();
 	
@@ -91,7 +90,7 @@ public interface IString {
 	
 	/**
 	 * Compare this IString record and the specified character array
-	 * @param chars
+	 * @param name the name to compare to
 	 * @param caseSensitive whether to compare in a case-sensitive way
 	 * @return <ul><li> -1 if this &lt; chars
 	 * <li> 0 if this has a prefix chars

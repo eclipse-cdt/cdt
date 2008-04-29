@@ -20,18 +20,15 @@ import org.eclipse.core.runtime.Status;
  * @since 3.0
  */
 public class CdtVariableStatus extends Status implements ICdtVariableStatus {
-	/*
-	 * String constants
-	 */
-	private static final String PREFIX = "BuildMacroStatus";	//$NON-NLS-1$
-	private static final String STATUS = PREFIX + ".status";	//$NON-NLS-1$
-	private static final String STATUS_MACRO_UNDEFINED = STATUS + ".macro.undefined";	//$NON-NLS-1$
-	private static final String STATUS_MACROS_REFERENCE_EACHOTHER = STATUS + ".reference.eachother";	//$NON-NLS-1$
-	private static final String STATUS_MACRO_REFERENCE_INCORRECT = STATUS + ".reference.incorrect";	//$NON-NLS-1$
-	private static final String STATUS_MACRO_NOT_STRING = STATUS + ".macro.not.string";	//$NON-NLS-1$
-	private static final String STATUS_MACRO_NOT_STRINGLIST = STATUS + ".macro.not.stringlist";	//$NON-NLS-1$
-	private static final String STATUS_ERROR = STATUS + ".error";	//$NON-NLS-1$
-	private static final String VALUE_UNDEFINED = PREFIX + ".value.undefined";	//$NON-NLS-1$
+//	private static final String PREFIX = "BuildMacroStatus";	//$NON-NLS-1$
+//	private static final String STATUS = PREFIX + ".status";	//$NON-NLS-1$
+//	private static final String STATUS_MACRO_UNDEFINED = STATUS + ".macro.undefined";	//$NON-NLS-1$
+//	private static final String STATUS_MACROS_REFERENCE_EACHOTHER = STATUS + ".reference.eachother";	//$NON-NLS-1$
+//	private static final String STATUS_MACRO_REFERENCE_INCORRECT = STATUS + ".reference.incorrect";	//$NON-NLS-1$
+//	private static final String STATUS_MACRO_NOT_STRING = STATUS + ".macro.not.string";	//$NON-NLS-1$
+//	private static final String STATUS_MACRO_NOT_STRINGLIST = STATUS + ".macro.not.stringlist";	//$NON-NLS-1$
+//	private static final String STATUS_ERROR = STATUS + ".error";	//$NON-NLS-1$
+//	private static final String VALUE_UNDEFINED = PREFIX + ".value.undefined";	//$NON-NLS-1$
 	
 	private String fMacroName;
 	private String fExpression;
@@ -42,17 +39,15 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 
 	/**
 	 * 
-	 * @param severity one of the IStatus.xxx severity statuses
-	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
+	 * @param severity as documented in {@link IStatus}
+	 * @param code as provided by {@link ICdtVariableStatus}.
 	 * @param message message, can be null. In this case the default message will
 	 *  be generated base upon the other status info
 	 * @param exception a low-level exception, or <code>null</code> if not
 	 *    applicable 
 	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
-	 * @param expression the string whose resolutinon caused caused this status creation or null if none
+	 * @param expression the string whose resolution caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-	 * @param contextType the context type used in the operation
-	 * @param contextData the context data used in the operation
 	 */
 	public CdtVariableStatus(int severity, 
 			int code, 
@@ -87,8 +82,6 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-	 * @param contextType the context type used in the operation
-	 * @param contextData the context data used in the operation
 	 */
 	public CdtVariableStatus( 
 			int code, 
@@ -108,13 +101,9 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 	 * Creates status with the IStatus.ERROR severity and with the default message
 	 * 
 	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
-	 * @param exception a low-level exception, or <code>null</code> if not
-	 *    applicable 
 	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
 	 * @param expression the string whose resolutinon caused caused this status creation or null if none
 	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-	 * @param contextType the context type used in the operation
-	 * @param contextData the context data used in the operation
 	 */
 	public CdtVariableStatus( 
 			int code, 

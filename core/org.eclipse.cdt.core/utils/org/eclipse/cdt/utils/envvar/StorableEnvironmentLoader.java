@@ -63,9 +63,6 @@ public abstract class StorableEnvironmentLoader {
 	 * this method should return the ISerializeInfo representing the information
 	 * of where the variable should be stored and loaded
 	 * If the given context is not supported this method should return null
-	 * 
-	 * @param context
-	 * @return
 	 */
 	protected abstract ISerializeInfo getSerializeInfo(Object context);
 
@@ -198,9 +195,9 @@ public abstract class StorableEnvironmentLoader {
 					CCorePlugin.PLUGIN_ID,
 					-1,
 					//TODO:ManagedMakeMessages.getResourceString(
-					"StorableEnvironmentLoader.storeOutputStream.wrong.arguments"
+					"StorableEnvironmentLoader.storeOutputStream.wrong.arguments" //$NON-NLS-1$
 					//)
-					, //$NON-NLS-1$
+					, 
 					null));
 		byte[] bytes= stream.toByteArray();
 		

@@ -16,13 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFunction {
+class CompositeCFunction extends CompositeCBinding implements IFunction {
 
 	public CompositeCFunction(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);

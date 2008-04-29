@@ -11,8 +11,8 @@
 package org.eclipse.cdt.utils.debug.stabs;
 
 import java.io.File;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.ISymbolReader;
 
@@ -21,7 +21,7 @@ public class StabsReader implements ISymbolReader {
 	byte[] stabData;
 	byte[] stabstrData;
 	boolean isLe;
-	List fileList;
+	List<String> fileList;
 	String[] files = null;
 	boolean parsed = false;
 	String currentFile;
@@ -31,7 +31,7 @@ public class StabsReader implements ISymbolReader {
 		stabstrData = stabstr;
 		isLe = littleEndian;
 		
-		fileList = new ArrayList();
+		fileList = new ArrayList<String>();
 	}
 
 	public String[] getSourceFiles() {
@@ -42,7 +42,7 @@ public class StabsReader implements ISymbolReader {
 
 			files = new String[fileList.size()];
 			for (int i = 0; i < fileList.size(); i++) {
-				files[i] = (String)fileList.get(i);
+				files[i] = fileList.get(i);
 			}
 		}
 
@@ -83,10 +83,10 @@ public class StabsReader implements ISymbolReader {
 
 	private String fixUpPath(String path) {
 		// some compilers generate extra back slashes
-		path = path.replaceAll("\\\\\\\\", "\\\\");
+		path = path.replaceAll("\\\\\\\\", "\\\\");  //$NON-NLS-1$//$NON-NLS-2$
 		
 		// translate any cygwin drive paths, e.g. //G/System/main.cpp or /cygdrive/c/system/main.c
-		if (path.startsWith("/cygdrive/") && ('/' == path.charAt(11))) {
+		if (path.startsWith("/cygdrive/") && ('/' == path.charAt(11))) { //$NON-NLS-1$
 			char driveLetter = path.charAt(10);
 			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
 
@@ -99,7 +99,7 @@ public class StabsReader implements ISymbolReader {
 		}
 
 		// translate any cygwin drive paths, e.g. //G/System/main.cpp or /cygdrive/c/system/main.c
-		if (path.startsWith("//") && ('/' == path.charAt(3))) {
+		if (path.startsWith("//") && ('/' == path.charAt(3))) { //$NON-NLS-1$
 			char driveLetter = path.charAt(2);
 			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
 

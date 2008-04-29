@@ -58,7 +58,6 @@ public interface ICdtVariable{
 
 	/**
 	 * Returns the macro name
-	 * @return
 	 */
     String getName();
     

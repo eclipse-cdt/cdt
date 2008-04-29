@@ -43,6 +43,7 @@ public class AsmModelBuilderTest extends BaseTestCase {
 		super(name);
 	}
 		
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
@@ -52,6 +53,7 @@ public class AsmModelBuilderTest extends BaseTestCase {
 		assertNotNull(fTU);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		  CProjectHelper.delete(fCProject);
 		  super.tearDown();
@@ -101,10 +103,10 @@ public class AsmModelBuilderTest extends BaseTestCase {
 
 	public void testAsmLabelRanges() throws Exception {
 		String source= fTU.getBuffer().getContents();
-		ICElement[] labels= (ICElement[]) fTU.getChildrenOfType(ICElement.ASM_LABEL).toArray(new ICElement[0]);
-		for (int i = 0; i < labels.length; i++) {
-			String name= labels[i].getElementName();
-			ISourceReference label= (ISourceReference)labels[i];
+		ICElement[] labels= fTU.getChildrenOfType(ICElement.ASM_LABEL).toArray(new ICElement[0]);
+		for (ICElement label2 : labels) {
+			String name= label2.getElementName();
+			ISourceReference label= (ISourceReference)label2;
 			ISourceRange range= label.getSourceRange();
 			assertEquals(source.substring(range.getIdStartPos(), range.getIdStartPos() + range.getIdLength()), name);
 			int endOfLabel= source.indexOf("/* end */", range.getIdStartPos());

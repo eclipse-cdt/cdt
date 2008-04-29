@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.PointerTypeClone;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -25,8 +24,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMPointerType;
 import org.eclipse.core.runtime.CoreException;
 
-class PDOMCPPPointerToMemberType extends PDOMPointerType 
-implements ICPPPointerToMemberType, IIndexType {
+class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerToMemberType {
 
 	private static final int TYPE = PDOMPointerType.RECORD_SIZE;
 	@SuppressWarnings("hiding")

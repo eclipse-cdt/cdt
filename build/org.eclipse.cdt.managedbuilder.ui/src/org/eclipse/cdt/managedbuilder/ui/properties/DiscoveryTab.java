@@ -594,4 +594,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		updateData();
 	}
 	protected void updateButtons() {} // Do nothing. No buttons to update.
+	
+	protected String getHelpContextId() {
+		return "proj_prop_discovery";
+	}
 }

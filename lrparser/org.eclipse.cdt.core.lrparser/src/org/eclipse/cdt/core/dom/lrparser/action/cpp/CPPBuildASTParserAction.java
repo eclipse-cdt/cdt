@@ -82,7 +82,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
@@ -1277,7 +1277,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 		IToken specifier = (IToken)astStack.pop();
 		int visibility = getAccessSpecifier(specifier);
-		ICPPASTVisiblityLabel visibilityLabel = nodeFactory.newVisibilityLabel(visibility);
+		ICPPASTVisibilityLabel visibilityLabel = nodeFactory.newVisibilityLabel(visibility);
 		setOffsetAndLength(visibilityLabel);
 		astStack.push(visibilityLabel);
 		
@@ -1289,9 +1289,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		int kind = token.getKind();
 		switch(kind) {
 			default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
-			case TK_private:   return ICPPASTVisiblityLabel.v_private;
-			case TK_public:    return ICPPASTVisiblityLabel.v_public;    
-			case TK_protected: return ICPPASTVisiblityLabel.v_protected;
+			case TK_private:   return ICPPASTVisibilityLabel.v_private;
+			case TK_public:    return ICPPASTVisibilityLabel.v_public;    
+			case TK_protected: return ICPPASTVisibilityLabel.v_protected;
 		}
 	}
 	

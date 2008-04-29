@@ -93,7 +93,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.action.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
@@ -468,7 +468,7 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTEnumerator(name, value);
 	}
 
-	public ICPPASTVisiblityLabel newVisibilityLabel(int visibility) {
+	public ICPPASTVisibilityLabel newVisibilityLabel(int visibility) {
 		return new CPPASTVisibilityLabel(visibility);
 	}
 

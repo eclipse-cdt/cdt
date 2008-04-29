@@ -37,19 +37,21 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
  */
 public class CodeFormatterTest extends BaseUITestCase {
 
-	private Map fOptions;
-	private Map fDefaultOptions;
+	private Map<String, String> fOptions;
+	private Map<String, String> fDefaultOptions;
 
 	public static TestSuite suite() {
 		return suite(CodeFormatterTest.class, "_");
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fDefaultOptions= DefaultCodeFormatterOptions.getDefaultSettings().getMap();
-		fOptions= new HashMap(fDefaultOptions);
+		fOptions= new HashMap<String, String>(fDefaultOptions);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
@@ -424,7 +426,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//namespace   X=
 	//   Y ::
-	// 	    Z ; 
+	// 	    Z ;
 
 	//namespace X = Y::Z;
 	public void testNamespaceAlias() throws Exception {
@@ -432,9 +434,9 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	//using
-	//   typename:: T 
+	//   typename:: T
 	//;
-	//using X:: 
+	//using X::
 	// T ;
 
 	//using typename ::T;
@@ -443,8 +445,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-	//using 
-	//  namespace 
+	//using
+	//  namespace
 	//    X ;
 
 	//using namespace X;
@@ -500,7 +502,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//		public virtual BarClass {
 	//};
 	public void testAlignmentOfClassDefinitionBaseClause1_Bug192656() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION,
 				Integer.toString(Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_FORCE));
 		assertFormatterResult();
 	}
@@ -511,7 +513,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//				public virtual BarClass {
 	//};
 	public void testAlignmentOfClassDefinitionBaseClause2_Bug192656() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION,
 				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_FORCE | Alignment.M_INDENT_ON_COLUMN));
 		assertFormatterResult();
 	}
@@ -527,7 +529,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	throw(int) {
 	//}
 	public void testAlignmentOfExceptionSpecificationInMethodDeclaration_Bug191980() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, 
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION,
 				Integer.toString(Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_FORCE | Alignment.M_INDENT_BY_ONE));
 		assertFormatterResult();
 	}
@@ -623,6 +625,15 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
 	public void testFormatterRegressions_Bug225858() throws Exception {
 		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		assertFormatterResult();
+	}
+
+	//typedef int int_;
+	//int_ const f(int_ const i);
+
+	//typedef int int_;
+	//int_ const f(int_ const i);
+	public void testPreserveWhitespaceInParameterDecl_Bug228997() throws Exception {
 		assertFormatterResult();
 	}
 }

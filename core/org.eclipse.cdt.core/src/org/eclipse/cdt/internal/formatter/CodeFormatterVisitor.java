@@ -1596,7 +1596,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					? align.fContinuationIndentation
 					: preferences.continuation_indentation;
 			Alignment listAlignment = scribe.createAlignment(
-					"listElements_"+align,//$NON-NLS-1$
+					"listElements_"+align, //$NON-NLS-1$
 					align.fMode,
 					elementsLength + (addEllipsis ? 1 : 0),
 					scribe.scanner.getCurrentPosition(),
@@ -2792,12 +2792,15 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				int nodeEndOffset= fileLocation.getNodeOffset() + fileLocation.getNodeLength();
 				scribe.restartAtOffset(nodeEndOffset);
 			}
+		} else if (scribe.currentAlignmentException == null) {
+			// print rest of node if any
+			skipNode(node);
 		}
 		continueNode(node.getParent());
 	}
 
 	/**
-	 * Formatting of node continues after completion of a chil node. Establish next skip region.
+	 * Formatting of node continues after completion of a child node. Establish next skip region.
 	 * 
 	 * @param node
 	 */
@@ -2851,9 +2854,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private void skipNode(IASTNode node) {
 		final IASTNodeLocation fileLocation= node.getFileLocation();
-		if (fileLocation != null) {
+		if (fileLocation != null && fileLocation.getNodeLength() > 0) {
 			final int endOffset= fileLocation.getNodeOffset() + fileLocation.getNodeLength();
-			final int currentOffset= scribe.scanner.getCurrentTokenEndPosition() + 1;
+			final int currentOffset= scribe.scanner.getCurrentPosition();
 			final int restLength= endOffset - currentOffset;
 			if (restLength > 0) {
 				scribe.printRaw(currentOffset, restLength);
@@ -2865,7 +2868,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		final IASTNodeLocation fileLocation= node.getFileLocation();
 		if (fileLocation != null) {
 			final int startOffset= fileLocation.getNodeOffset();
-			final int currentOffset= scribe.scanner.getCurrentTokenEndPosition() + 1;
+			final int currentOffset= scribe.scanner.getCurrentPosition();
 			final int restLength= startOffset - currentOffset;
 			if (restLength > 0) {
 				scribe.printRaw(currentOffset, restLength);
@@ -2879,7 +2882,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final int startOffset= fileLocation.getNodeOffset();
 			final int nextTokenOffset= getNextTokenOffset();
 			if (nextTokenOffset < startOffset) {
-				final int currentOffset= scribe.scanner.getCurrentTokenEndPosition() + 1;
+				final int currentOffset= scribe.scanner.getCurrentPosition();
 				final int restLength= startOffset - currentOffset;
 				if (restLength > 0) {
 					scribe.printRaw(currentOffset, restLength);

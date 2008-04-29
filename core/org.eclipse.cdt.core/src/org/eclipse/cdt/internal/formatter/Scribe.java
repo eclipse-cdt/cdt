@@ -47,6 +47,7 @@ public class Scribe {
 	// Most specific alignment.
 	public Alignment currentAlignment;
 	public Alignment memberAlignment;
+	public AlignmentException currentAlignmentException;
 
 	public Token currentToken;
 
@@ -505,19 +506,25 @@ public class Scribe {
 			relativeDepth++;
 		}
 		if (outerMostDepth >= 0) {
-			throw new AlignmentException(AlignmentException.LINE_TOO_LONG, outerMostDepth);
+			throwAlignmentException(AlignmentException.LINE_TOO_LONG, outerMostDepth);
 		}
 		// look for innermost breakable one
 		relativeDepth= 0;
 		targetAlignment= currentAlignment;
 		while (targetAlignment != null) {
 			if (targetAlignment.couldBreak()) {
-				throw new AlignmentException(AlignmentException.LINE_TOO_LONG, relativeDepth);
+				throwAlignmentException(AlignmentException.LINE_TOO_LONG, relativeDepth);
 			}
 			targetAlignment= targetAlignment.enclosing;
 			relativeDepth++;
 		}
 		// did not find any breakable location - proceed
+	}
+
+	private void throwAlignmentException(int kind, int relativeDepth) {
+		AlignmentException e= new AlignmentException(kind, relativeDepth);
+		currentAlignmentException= e;
+		throw e;
 	}
 
 	public void indent() {
@@ -1391,8 +1398,7 @@ public class Scribe {
 		if (e.relativeDepth > 0) { // if exception targets a distinct context
 			e.relativeDepth--; // record fact that current context got
 								// traversed
-			currentAlignment= currentAlignment.enclosing; // pop
-															// currentLocation
+			currentAlignment= currentAlignment.enclosing; // pop currentLocation
 			throw e; // rethrow
 		}
 		// reset scribe/scanner to restart at this given location
@@ -1400,6 +1406,7 @@ public class Scribe {
 		scanner.resetTo(currentAlignment.location.inputOffset, scanner.eofPosition - 1);
 		// clean alignment chunkKind so it will think it is a new chunk again
 		currentAlignment.chunkKind= 0;
+		currentAlignmentException= null;
 	}
 
 	void redoMemberAlignment(AlignmentException e) {
@@ -1408,6 +1415,7 @@ public class Scribe {
 		scanner.resetTo(memberAlignment.location.inputOffset, scanner.eofPosition - 1);
 		// clean alignment chunkKind so it will think it is a new chunk again
 		memberAlignment.chunkKind= 0;
+		currentAlignmentException= null;
 	}
 
 	public void reset() {

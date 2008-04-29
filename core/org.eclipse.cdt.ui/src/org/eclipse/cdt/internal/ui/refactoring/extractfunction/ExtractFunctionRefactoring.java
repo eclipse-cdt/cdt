@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -85,6 +86,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
@@ -328,7 +330,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		IASTNode node = firstNode;
 		boolean found = false;
-		boolean templateFunction = false;
 
 		while (node != null && !found) {
 			node = node.getParent();
@@ -338,7 +339,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 
 		if (found && node != null) {
-			templateFunction = node.getParent() instanceof ICPPASTTemplateDeclaration;
 
 			String title;
 			if (context.getType() == MethodContext.ContextType.METHOD) {
@@ -347,18 +347,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				title = Messages.ExtractFunctionRefactoring_CreateFunctionDef;
 			}
 
-			ASTRewrite rewriter = collector.rewriterForTranslationUnit(node
-					.getTranslationUnit());
-			getMethod(astMethodName, context, rewriter, node,
-					new TextEditGroup(title));
-
-			if (templateFunction) {
-				// egtodo
-//				methodContent = getTemplateDeclarationString(
-//						(ICPPASTTemplateDeclaration) node.getParent(),
-//						getTemplateParameterNames())
-//						+ methodContent;
-			}
+			ASTRewrite rewriter = collector.rewriterForTranslationUnit(node.getTranslationUnit());
+			addMethod(astMethodName, context, rewriter, node, new TextEditGroup(title));
 		}
 	}
 
@@ -372,75 +362,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		AddDeclarationNodeToClassChange.createChange(classDeclaration, info
 				.getVisibility(), methodDeclaration, false, collector);
 	}
-
-//  egtodo
-//	private Set<IASTName> getTemplateParameterNames() {
-//		Set<IASTName> names = new TreeSet<IASTName>(new Comparator<IASTName>() {
-//
-//			public int compare(IASTName o1, IASTName o2) {
-//				return o1.toString().compareTo(o2.toString());
-//			}
-//		});
-//		for (NameInformation nameInfo : container.getNames()) {
-//			IASTName declName = nameInfo.getDeclaration();
-//			IBinding binding = declName.resolveBinding();
-//			if (binding instanceof CPPVariable) {
-//				CPPVariable cppVariable = (CPPVariable) binding;
-//				IASTNode defNode = cppVariable.getDefinition();
-//				if (defNode.getParent().getParent() instanceof IASTSimpleDeclaration) {
-//					IASTSimpleDeclaration decl = (IASTSimpleDeclaration) defNode
-//							.getParent().getParent();
-//					if (decl.getDeclSpecifier() instanceof CPPASTNamedTypeSpecifier) {
-//						CPPASTNamedTypeSpecifier namedSpecifier = (CPPASTNamedTypeSpecifier) decl
-//								.getDeclSpecifier();
-//						if (namedSpecifier.getName().resolveBinding() instanceof CPPTemplateTypeParameter) {
-//							names.add(namedSpecifier.getName());
-//						}
-//					}
-//				}
-//
-//			} else if (binding instanceof CPPParameter) {
-//				CPPParameter parameter = (CPPParameter) binding;
-//				IASTNode decNode = parameter.getDeclarations()[0];
-//				if (decNode.getParent().getParent() instanceof ICPPASTParameterDeclaration) {
-//					ICPPASTParameterDeclaration paraDecl = (ICPPASTParameterDeclaration) decNode
-//							.getParent().getParent();
-//					if (paraDecl.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
-//						ICPPASTNamedTypeSpecifier namedDeclSpec = (ICPPASTNamedTypeSpecifier) paraDecl
-//								.getDeclSpecifier();
-//						if (namedDeclSpec.getName().resolveBinding() instanceof ICPPTemplateTypeParameter) {
-//							names.add(namedDeclSpec.getName());
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return names;
-//	}
-//
-//	private String getTemplateDeclarationString(
-//			ICPPASTTemplateDeclaration templateDeclaration, Set<IASTName> names) {
-//		if (names.isEmpty()) {
-//			return EMPTY_STRING;
-//		} else {
-//			StringBuffer buf = new StringBuffer();
-//
-//			buf.append(TEMPLATE_START);
-//			for (Iterator<IASTName> it = names.iterator(); it.hasNext();) {
-//				IASTName name = it.next();
-//				buf.append(TYPENAME);
-//				buf.append(name.toString());
-//
-//				if (it.hasNext()) {
-//					buf.append(COMMA_SPACE);
-//				}
-//			}
-//			buf.append('>');
-//			buf.append(CRefactoring.NEWLINE);
-//
-//			return buf.toString();
-//		}
-//	}
 
 	private boolean isMethodAllreadyDefined(
 			IASTSimpleDeclaration methodDeclaration,
@@ -688,8 +609,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return same.getObject().booleanValue();
 	}
 
-	private void getMethod(IASTName astMethodName, MethodContext context,
+	private void addMethod(IASTName astMethodName, MethodContext context,
 			ASTRewrite rewriter, IASTNode insertpoint, TextEditGroup group) {
+		
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		if (context.getType() == ContextType.METHOD) {
 			for (int i = 0; i < (context.getMethodQName().getNames().length - 1); i++) {
@@ -708,13 +630,29 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
 		func.setBody(compound);
+		
+		
+		if(insertpoint.getParent() instanceof ICPPASTTemplateDeclaration) {
+			
+			CPPASTTemplateDeclaration templateDeclaration = new CPPASTTemplateDeclaration();
+			templateDeclaration.setParent(unit);
+			
+			for(ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) insertpoint.getParent()).getTemplateParameters()) {
+				templateDeclaration.addTemplateParamter(templateParameter);
+			}
+			
+			templateDeclaration.setDeclaration(func);
 
-		ASTRewrite insertRW = rewriter.insertBefore(insertpoint.getParent(),
-				insertpoint, func, group);
-		insertRW = rewriter;
+			rewriter.insertBefore(insertpoint.getParent().getParent(), insertpoint.getParent(), templateDeclaration, group);
+
+		} else {
+			
+			rewriter.insertBefore(insertpoint.getParent(), insertpoint, func, group);
+		}
+		
 
 		extractedFunctionConstructionHelper.constructMethodBody(compound,
-				container.getNodesToWrite(), insertRW, group);
+				container.getNodesToWrite(), rewriter, group);
 
 		// Set return value
 		if (info.getReturnVariable() != null) {
@@ -733,7 +671,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				}
 				returnStmt.setReturnValue(expr);
 			}
-			insertRW.insertBefore(compound, null, returnStmt, group);
+			rewriter.insertBefore(compound, null, returnStmt, group);
 		}
 
 	}

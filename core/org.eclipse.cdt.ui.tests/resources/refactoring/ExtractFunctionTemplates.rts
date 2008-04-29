@@ -17,8 +17,7 @@ int tempFunct(){
 //=
 void test(){
 }
-template <typename T>
-void exp(T i)
+template<typename T> void exp(T i)
 {
     i++;
     i += 3;
@@ -29,7 +28,7 @@ int tempFunct(){
 	
 	T i;
 	i = 0;
-	exp(i);
+    exp(i);
 	
 	return 0;
 }
@@ -50,8 +49,7 @@ int tempFunct(T p){
 //=
 void test(){
 }
-template <typename T>
-void exp(T p)
+template<typename T> void exp(T p)
 {
     ++p;
     p + 4;
@@ -59,8 +57,7 @@ void exp(T p)
 
 template <typename T>
 int tempFunct(T p){
-
-	exp(p);
+    exp(p);
 	return 0;
 }
 
@@ -82,8 +79,7 @@ int tempFunct(){
 //=
 void test(){
 }
-template <typename T>
-T exp()
+template<typename T> T exp()
 {
     T p;
     p = 0;
@@ -93,8 +89,7 @@ T exp()
 
 template <typename T>
 int tempFunct(){
-
-	T p = exp();
+    T p = exp();
 	p + 2;
 	return 0;
 }

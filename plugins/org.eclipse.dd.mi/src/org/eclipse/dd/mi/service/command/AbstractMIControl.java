@@ -215,7 +215,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	
         	/*
         	 *  We are putting this one on the wire. We need to add it to the waiting list so
-        	 *  the user has the chance to cancel it when we tell them we are acknowleding it
+        	 *  the user has the chance to cancel it when we tell them we are acknowledging it
         	 *  has been officially accepted. They could choose to cancel it before we go and
         	 *  send it. That is why we put it into the QUEUE and then check to see if it  is
         	 *  still there.
@@ -235,8 +235,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		fCurrentThreadId = handle.getThreadId().intValue();
             		CommandHandle cmdHandle = new CommandHandle(
             		    new MIThreadSelect(handle.fCommand.getContext(), fCurrentThreadId), null);
+            		cmdHandle.generateTokenId();
             		fTxCommands.add(cmdHandle);
-            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getTokenId() + cmdHandle.getCommand()); //$NON-NLS-1$
             	}
 
             	// Before the command is sent, Check the Stack level and send it to 
@@ -248,10 +248,11 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		fCurrentStackLevel = handle.getStackFrameId().intValue();
             		CommandHandle cmdHandle = new CommandHandle(
             		    new MIStackSelectFrame(handle.fCommand.getContext(), fCurrentStackLevel), null);
+            		cmdHandle.generateTokenId();
             		fTxCommands.add(cmdHandle);
-            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getTokenId() + cmdHandle.getCommand()); //$NON-NLS-1$
             	}
-               	fTxCommands.add(handle);
+        		handle.generateTokenId();
+        		fTxCommands.add(handle);
             }
         }
         
@@ -336,7 +337,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
     }
     
     private void processCommandSent(CommandHandle commandHandle) {
-        MIPlugin.debug(MIPlugin.getDebugTime() + " " + commandHandle.getTokenId() + commandHandle.getCommand()); //$NON-NLS-1$
         for (ICommandListener processor : fCommandProcessors) {
             processor.commandSent(commandHandle);
         }
@@ -403,11 +403,15 @@ public abstract class AbstractMIControl extends AbstractDsfService
         CommandHandle(MICommand<MIInfo> c, DataRequestMonitor<MIInfo> d) {
             fCommand = c; 
             fRequestMonitor = d;
-            fTokenId = getNewTokenId() ;
+            fTokenId = -1; // Only initialize to a real value when needed
         }
         
         public MICommand<MIInfo> getCommand() { return fCommand; }
         public DataRequestMonitor<MIInfo> getRequestMonitor() { return fRequestMonitor; }
+        // This method allows us to generate the token Id when we area actually going to use
+        // it.  It is meant to help order the token ids based on when commands will actually
+        // be sent
+        public void generateTokenId() { fTokenId = getNewTokenId(); }
         public Integer getTokenId() { return fTokenId; }
         
         //public String getThreadId() { return null; } 
@@ -435,7 +439,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      *  This is the transmitter thread. When a command is given to this thread it has been
      *  considered to be sent, even if it has not actually been sent yet.  This assumption
      *  makes it easier from state management.  Whomever fill this pipeline handles all of
-     *  the required state notofication ( callbacks ). This thread simply physically gives
+     *  the required state notification ( callbacks ). This thread simply physically gives
      *  the message to the backend. 
      */
     
@@ -478,12 +482,17 @@ public abstract class AbstractMIControl extends AbstractDsfService
                  *   Construct the new command and push this command out the pipeline.
                  */
                 
-                String str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand();
+                final String str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand();
                 
                 try {
                     if (fOutputStream != null) {
                         fOutputStream.write(str.getBytes());
                         fOutputStream.flush();
+						getExecutor().execute(new DsfRunnable() {
+	                        public void run() {
+	                    		MIPlugin.debug(MIPlugin.getDebugTime() + " " + str); //$NON-NLS-1$
+	                        }
+	                    });
                     }
                 } catch (IOException e) {
                     // Shutdown thread in case of IO error.
@@ -717,6 +726,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             			CommandHandle comHandle = fCommandQueue.remove(0);
             			if ( comHandle != null ) {
             				processCommandSent(comHandle);
+                    		comHandle.generateTokenId();
             				fTxCommands.add(comHandle);
             			}
             		}

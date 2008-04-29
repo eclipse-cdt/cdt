@@ -49,7 +49,7 @@ public class ManageConfigRunner implements IConfigManager {
 			return false;
 		
 		ManageConfigDialog d = new ManageConfigDialog(CUIPlugin.getActiveWorkbenchShell(),
-				obs[0].getName()+ " : " + MANAGE_TITLE, obs[0]); //$NON-NLS-1$
+				obs[0].getName()+ ": " + MANAGE_TITLE, obs[0]); //$NON-NLS-1$
 		boolean result = false;
 		if (d.open() == Window.OK) {
 			if (doOk) {

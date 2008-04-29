@@ -102,6 +102,12 @@ public class ManageConfigDialog extends Dialog {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
+		table.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateButtons();
+			}});
+		
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setText(UIMessages.getString("ManageConfigDialog.1")); //$NON-NLS-1$
 		col.setWidth(100);
@@ -258,7 +264,11 @@ public class ManageConfigDialog extends Dialog {
 		int sel = table.getSelectionCount();
 		delBtn.setEnabled(sel > 0 & sel < table.getItemCount());
 		renBtn.setEnabled(sel == 1);
-		actBtn.setEnabled(sel == 1);
+		if (sel == 1) {
+			ICConfigurationDescription c = (ICConfigurationDescription)table.getSelection()[0].getData();
+			actBtn.setEnabled(c != null && !c.isActive());
+		} else
+			actBtn.setEnabled(false);
 	}
 
 	/**

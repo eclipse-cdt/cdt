@@ -62,9 +62,10 @@ public class ManagedProject21MakefileTests extends TestCase {
 	}
 
 	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
-		File testDir = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/" + projName));
+		Path path = new Path("resources/test21Projects/" + projName);
+		File testDir = CTestPlugin.getFileInPlugin(path);
 		if(testDir == null) {
-			fail("Test project directory " + testDir.getName() + " is missing.");
+			fail("Test project directory " + path + " is missing.");
 			return null;
 		}
 

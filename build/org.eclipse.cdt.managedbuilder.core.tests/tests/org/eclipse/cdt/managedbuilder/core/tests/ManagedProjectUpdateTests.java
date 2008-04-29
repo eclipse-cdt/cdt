@@ -67,7 +67,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 	private IProject[] createVersionProjects(String version){
 		File file = getVersionProjectsDir(version);
 		if(file == null) {
-			fail("Test project directory " + file.getName() + " is missing.");
+			fail("Test project directory is missing.");
 			return null;
 		}
 		

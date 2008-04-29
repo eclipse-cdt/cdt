@@ -137,7 +137,7 @@ public class OptionEnablementTests extends TestCase
 		IConfiguration cfg = null;
 		ITool tool = null;
 		if(cfgBo instanceof IResourceConfiguration){
-			rcCfg = (IResourceConfiguration)rcCfg;
+			rcCfg = (IResourceConfiguration)cfgBo;
 			cfg = rcCfg.getParent();
 			ITool tools[] = rcCfg.getTools();
 			for(int i = 0; i < tools.length; i++){

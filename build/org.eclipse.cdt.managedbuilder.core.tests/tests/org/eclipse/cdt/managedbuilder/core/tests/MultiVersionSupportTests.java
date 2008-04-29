@@ -479,7 +479,7 @@ public class MultiVersionSupportTests extends TestCase {
 		} 
 
 		if (file == null) {
-			fail("Test project directory " + file.getName()	//$NON-NLS-1$
+			fail("Test project directory " 	//$NON-NLS-1$
 					+ " is missing.");	//$NON-NLS-1$
 			return null;
 		}

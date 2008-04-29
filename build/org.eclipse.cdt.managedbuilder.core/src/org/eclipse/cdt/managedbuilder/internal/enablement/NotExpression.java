@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.enablement;
 
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;

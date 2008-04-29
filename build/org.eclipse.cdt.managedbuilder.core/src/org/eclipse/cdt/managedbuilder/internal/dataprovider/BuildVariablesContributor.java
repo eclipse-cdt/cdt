@@ -14,9 +14,7 @@ package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -29,7 +27,6 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 

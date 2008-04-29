@@ -11,7 +11,6 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;

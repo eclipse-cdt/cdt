@@ -1364,7 +1364,7 @@ public class CommonBuilder extends ACBuilder {
 				StringBuffer buf = new StringBuffer();
 				buf.append(ManagedMakeMessages.getString("CommonBuilder.23")).append(NEWLINE); //$NON-NLS-1$
 				String message = result.getMessage();
-				if(message != null || message.length() != 0){
+				if(message != null && message.length() != 0){
 					buf.append(message).append(NEWLINE);
 				}
 				

@@ -526,7 +526,7 @@ class UpdateManagedProject12 {
 			}
 		} catch (BuildException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject12.8",new String[]{newProject.getName(),e.getMessage()}), null)); //$NON-NLS-1$
+					ConverterMessages.getFormattedString("UpdateManagedProject12.8",new String[]{project.getName(),e.getMessage()}), null)); //$NON-NLS-1$
 		}
 		
 		monitor.worked(1);

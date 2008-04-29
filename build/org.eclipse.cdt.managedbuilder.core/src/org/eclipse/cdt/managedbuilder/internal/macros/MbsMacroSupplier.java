@@ -997,7 +997,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			tool = (ITool)parent;
 			optionRcInfo = tool.getParentResourceInfo();
 		} else if (parent instanceof IToolChain) {
-			tCh = (IToolChain)tCh;
+			tCh = (IToolChain)parent;
 			optionRcInfo = tCh.getParentFolderInfo();
 		}
 		

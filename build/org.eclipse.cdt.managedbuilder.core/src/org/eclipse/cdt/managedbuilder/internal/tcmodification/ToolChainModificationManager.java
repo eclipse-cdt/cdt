@@ -32,7 +32,6 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.extension.RulesMan
 import org.eclipse.cdt.managedbuilder.tcmodification.IFileInfoModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IFolderInfoModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
-import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.core.runtime.IPath;
 
 public class ToolChainModificationManager implements

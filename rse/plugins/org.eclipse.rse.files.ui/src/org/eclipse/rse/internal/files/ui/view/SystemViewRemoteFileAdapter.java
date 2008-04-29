@@ -51,6 +51,7 @@
  * Rupen Mardirossian (IBM)      - [210682] Copy collisions will use SystemCopyDialog now instead of renameDialog when there is a copy collision within the same connection
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * Rupen Mardirossian (IBM)      - [198728] Folder being copied across systems is added to original set of files in order to extract empty (sub)folders in doDrop method			
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1652,6 +1653,7 @@ public class SystemViewRemoteFileAdapter
 		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 		if (!doSuperTransferProperty && supportsSearch)
 		{
+			//flatset will contain all FILES that will be copied to workspace in UniversalFileTransferUtility and create corresponding folders.  Empty folders will be ignored
 			SystemRemoteResourceSet flatSet = new SystemRemoteResourceSet(set.getSubSystem(), set.getAdapter());
 			long totalByteSize = getFlatRemoteResourceSet(set.getResourceSet(), flatSet, monitor);
 			flatSet.setByteSize(totalByteSize);
@@ -1661,7 +1663,18 @@ public class SystemViewRemoteFileAdapter
 			    monitor.beginTask(_downloadMessage,  (int)totalByteSize);
 			    //monitor.done();
 			}
-
+			
+			//add folders to set that are being copied to the workspace in order to strip out empty folders in UniversalFileTransferUtility
+			for (int i=0;i<set.size();i++)
+			{
+				IRemoteFile remoteFile = (IRemoteFile)set.get(i);
+				//make sure it is a folder as files are being accounted for already
+				if(remoteFile.isDirectory())
+				{
+					flatSet.addResource(remoteFile);
+				}
+			}
+			
 			try
 			{
 				//SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(flatSet, monitor);

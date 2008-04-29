@@ -44,6 +44,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Rupen Mardirossian (IBM)      - [210682] Collisions when doing a copy operation across systems will us the SystemCopyDialog
  * Xuan Chen        (IBM)        - [229093] set charset of the temp file of the text remote file to its remote encoding
+ * Rupen Mardirossian (IBM)      - [198728] downloadResourcesToWorkspace now creates empty folders for copying across connections via createEmptyFolders method
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -65,6 +66,7 @@ import java.util.List;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
@@ -410,6 +412,7 @@ public class UniversalFileTransferUtility
 		List remoteFilesForDownload = new ArrayList();
 		List tempFilesForDownload = new ArrayList();
 		List remoteEncodingsForDownload = new ArrayList();
+		List emptyFolders = new ArrayList();
 
 		// step 1: pre-download processing
 		for (int i = 0; i < set.size() && !resultSet.hasMessage(); i++){
@@ -432,7 +435,7 @@ public class UniversalFileTransferUtility
 			}
 			else
 			{
-				if (srcFileOrFolder.isFile()) // file transfer
+				if (srcFileOrFolder.isFile()) // file transfer only
 				{
 					IResource tempResource = getTempFileFor(srcFileOrFolder);
 
@@ -460,21 +463,31 @@ public class UniversalFileTransferUtility
 						}
 					}
 				}
-				else if (srcFileOrFolder.isDirectory()) // recurse for folders and add to our consolidated resource set
+				else if (srcFileOrFolder.isDirectory()) // recurse for empty folders and add to our consolidated resource set
 				{
 					IResource tempFolder = getTempFileFor(srcFileOrFolder);
 					try
-					{
-						IRemoteFile[] children = srcFS.list(srcFileOrFolder,monitor);
-
-
-						SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
-						SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspaceMultiple(childSet, monitor);
-						if (childResults.hasMessage())
+					{	
+						//get contents of folder
+						IRemoteFile[] children = srcFS.list(srcFileOrFolder,IFileService.FILE_TYPE_FILES_AND_FOLDERS,monitor);
+						//check for empty folder and add to set
+						if(children==null || children.length==0)
 						{
-							resultSet.setMessage(childResults.getMessage());
+							emptyFolders.add(tempFolder);
 						}
-						resultSet.addResource(tempFolder);
+						//get all subfolders 
+						children=srcFS.list(srcFileOrFolder, IFileService.FILE_TYPE_FOLDERS, monitor);
+						if(!(children==null) && !(children.length==0))
+						{
+							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
+							//recurse with subfolders to check for empty folders
+							SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspaceMultiple(childSet, monitor);
+							if (childResults.hasMessage())
+							{
+								resultSet.setMessage(childResults.getMessage());
+							}
+							resultSet.addResource(tempFolder);
+						}
 					}
 					catch (SystemMessageException e)
 					{
@@ -515,7 +528,19 @@ public class UniversalFileTransferUtility
 		{
 
 		}
-
+		//Create empty folders
+		try
+		{
+			createEmptyFolders(monitor, emptyFolders);
+		}
+		catch(CoreException e)
+		{
+			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ISystemFileConstants.FILEMSG_CREATE_FILE_FAILED,
+					IStatus.ERROR, FileResources.FILEMSG_CREATE_FILE_FAILED, e);
+			resultSet.setMessage(errorMessage);
+		}
+		
 		// step 3: post download processing
 		if (!resultSet.hasMessage())
 		{
@@ -593,8 +618,49 @@ public class UniversalFileTransferUtility
 				}
 			}
 		}
-
 		return resultSet;
+	}
+
+	private static void createEmptyFolders(IProgressMonitor monitor, List emptyFolders) throws CoreException 
+	{
+		IContainer empty;
+		IFolder emptyFolder;
+		List emptyParent;
+		boolean go=false;
+		for(int i=0; i<emptyFolders.size();i++)
+		{
+			emptyParent = new ArrayList();
+			empty = (IContainer) emptyFolders.get(i);
+			go=true;
+			//check to see which parent folders need to be created
+			while(go)
+			{
+				empty = empty.getParent();
+				if(!empty.exists() && empty instanceof IFolder)
+				{
+					emptyParent.add(empty);
+				}
+				else
+				{
+					go=false;
+				}
+			}
+			//create empty parent folders
+			for(int j=emptyParent.size()-1;j>=0;j--)
+			{
+				emptyFolder = (IFolder) emptyParent.get(j);
+				if(!emptyFolder.exists())
+				{
+					emptyFolder.create(true, true, monitor);
+				}
+			}
+			//create empty folders
+			emptyFolder = (IFolder) emptyFolders.get(i);
+			if(!emptyFolder.exists())
+			{
+				emptyFolder.create(true, true, monitor);
+			}
+		}
 	}
 
 
@@ -610,7 +676,7 @@ public class UniversalFileTransferUtility
 		boolean ok = true;
 		SystemWorkspaceResourceSet resultSet = new SystemWorkspaceResourceSet();
 		IRemoteFileSubSystem srcFS = (IRemoteFileSubSystem)remoteSet.getSubSystem();
-
+		
 		if (!srcFS.isConnected())
 		{
 			return null;
@@ -619,6 +685,8 @@ public class UniversalFileTransferUtility
 		boolean doSuperTransferProperty = doSuperTransfer(srcFS);
 
 		List set = remoteSet.getResourceSet();
+		List emptyFolders = new ArrayList();
+		
 		for (int i = 0; i < set.size() && !resultSet.hasMessage(); i++)
 		{
 			if (monitor != null && monitor.isCanceled())
@@ -674,8 +742,12 @@ public class UniversalFileTransferUtility
 						try
 						{
 							IRemoteFile[] children = srcFS.list(srcFileOrFolder,monitor);
-
-
+							//check for empty folder and add to set
+							if(children==null || children.length==0)
+							{
+								emptyFolders.add(tempFolder);
+							}
+							
 							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
 							SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspace(childSet, monitor);
 							if (childResults.hasMessage())
@@ -693,7 +765,19 @@ public class UniversalFileTransferUtility
 			}
 		}
 
-
+		//Create empty folders
+		try
+		{
+			createEmptyFolders(monitor, emptyFolders);
+		}
+		catch(CoreException e)
+		{
+			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ISystemFileConstants.FILEMSG_CREATE_FILE_FAILED,
+					IStatus.ERROR, FileResources.FILEMSG_CREATE_FILE_FAILED, e);
+			resultSet.setMessage(errorMessage);
+		}
+		
 		// refresh and set IFile properties
 		for (int r = 0; r < resultSet.size(); r++)
 		{

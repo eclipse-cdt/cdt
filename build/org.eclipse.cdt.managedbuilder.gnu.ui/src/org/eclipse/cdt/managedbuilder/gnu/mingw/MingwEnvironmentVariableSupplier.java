@@ -58,6 +58,7 @@ public class MingwEnvironmentVariableSupplier implements
 	private IBuildEnvironmentVariable path;
 	
 	public static IPath getBinDir() {
+
 		IPath subPath = new Path("mingw\\bin");
 		// 1. Try the mingw directory in the platform install directory
 		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
@@ -71,7 +72,10 @@ public class MingwEnvironmentVariableSupplier implements
 			return binPath;
 		
 		// 3. Try looking if the mingw installer ran
-		String mingwPath = WindowsRegistry.getRegistry().getLocalMachineValue(
+		WindowsRegistry registry = WindowsRegistry.getRegistry();
+		if (registry==null) return null; // probably not even windows
+		
+		String mingwPath = registry.getLocalMachineValue(
 					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MinGW",
 					"InstallLocation");
 		if (mingwPath != null) {

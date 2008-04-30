@@ -13,21 +13,25 @@ package org.eclipse.cdt.core.parser;
 /**
  * @author jcamelon
  */
+
+@SuppressWarnings("nls")
 public class Directives {
 
-	public static final String POUND_DEFINE = "#define"; //$NON-NLS-1$
-	public static final String POUND_UNDEF = "#undef"; //$NON-NLS-1$
-	public static final String POUND_IF = "#if"; //$NON-NLS-1$
-	public static final String POUND_IFDEF = "#ifdef"; //$NON-NLS-1$
-	public static final String POUND_IFNDEF = "#ifndef"; //$NON-NLS-1$
-	public static final String POUND_ELSE = "#else"; //$NON-NLS-1$
-	public static final String POUND_ENDIF = "#endif"; //$NON-NLS-1$
-	public static final String POUND_INCLUDE = "#include"; //$NON-NLS-1$
-	public static final String POUND_LINE = "#line"; //$NON-NLS-1$
-	public static final String POUND_ERROR = "#error"; //$NON-NLS-1$
-	public static final String POUND_PRAGMA = "#pragma"; //$NON-NLS-1$
-	public static final String POUND_ELIF = "#elif"; //$NON-NLS-1$
-	public static final String POUND_BLANK = "#"; //$NON-NLS-1$
-	public static final String _PRAGMA = "_Pragma"; //$NON-NLS-1$
+	public static final String 
+		POUND_DEFINE  = "#define",
+		POUND_UNDEF   = "#undef",
+		POUND_IF      = "#if",
+		POUND_IFDEF   = "#ifdef",
+		POUND_IFNDEF  = "#ifndef",
+		POUND_ELSE    = "#else",
+		POUND_ENDIF   = "#endif",
+		POUND_INCLUDE = "#include",
+		POUND_LINE    = "#line",
+		POUND_ERROR   = "#error",
+		POUND_PRAGMA  = "#pragma",
+		POUND_ELIF    = "#elif",
+		POUND_BLANK   = "#",
+		_PRAGMA       = "_Pragma",
+	    DEFINED       = "defined";
 	
 }

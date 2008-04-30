@@ -27,9 +27,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.Directives;
-import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
@@ -37,6 +37,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 public class KeywordCompletionProposalComputer extends ParsingBasedProposalComputer {
 
+	private static final int MIN_KEYWORD_LENGTH = 5;
+	
 	@Override
 	protected List<ICompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
@@ -60,17 +62,30 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 
+		ICLanguageKeywords languageKeywords = null;
+		ITranslationUnit tu = context.getTranslationUnit();
+        if(tu != null) {
+        	ILanguage language = tu.getLanguage();
+        	if(language instanceof ICLanguageKeywords)
+        		languageKeywords = (ICLanguageKeywords)language;
+        }
+        	
+        if(languageKeywords == null)
+    		return Collections.emptyList();
+        
+		
 		if (inPreprocessorDirective(context)) {
 			// TODO split this into a separate proposal computer?
 			boolean needDirectiveKeyword= inPreprocessorKeyword(context);
-			String[] keywords= preprocessorKeywords;
 
 			// add matching preprocessor keyword proposals
 			ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
 			Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
-			for (int i = 0; i < keywords.length; ++i) {
-				String repString= keywords[i];
-				if (repString.startsWith(prefix) && keywords[i].length() > prefixLength) {
+			
+			for(String keyword : languageKeywords.getPreprocessorKeywords()) {
+				keyword = keyword + ' ';
+				String repString = keyword;
+				if (repString.startsWith(prefix) && keyword.length() > prefixLength) {
 					int repLength = prefixLength;
 					int repOffset = context.getInvocationOffset() - repLength;
 					if (prefix.charAt(0) == '#') {
@@ -82,28 +97,23 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 						continue;
 					}
 					proposals.add(new CCompletionProposal(repString, repOffset,
-							repLength, image, keywords[i], relevance, context.getViewer()));
+							repLength, image, keyword, relevance, context.getViewer()));
 				}
 			}	        
 		} else {
 	        if (!isValidContext(completionNode))
 	            return Collections.emptyList();
 	        
-	        ITranslationUnit tu = context.getTranslationUnit();
-	        
-	        String[] keywords = cppkeywords; // default to C++
-	        if (tu != null && tu.isCLanguage())
-	            keywords = ckeywords;
-	        
 			// add matching keyword proposals
 	        ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
 	        Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
-	        for (int i = 0; i < keywords.length; ++i) {
-	            if (keywords[i].startsWith(prefix) && keywords[i].length() > prefixLength) {
+	        
+	        for(String keyword : languageKeywords.getKeywords()) {
+	            if (keyword.startsWith(prefix) && keyword.length() > prefixLength && keyword.length() >= MIN_KEYWORD_LENGTH) {
 	                int repLength = prefixLength;
 	                int repOffset = context.getInvocationOffset() - repLength;
-	                proposals.add(new CCompletionProposal(keywords[i], repOffset,
-							repLength, image, keywords[i], relevance, context.getViewer()));
+	                proposals.add(new CCompletionProposal(keyword, repOffset,
+							repLength, image, keyword, relevance, context.getViewer()));
 	            }
 	        }
 		}
@@ -181,97 +191,4 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 		}
 		return false;
 	}
-
-    // These are the keywords we complete
-    // We only do the ones that are >= 5 characters long
-    private static String [] ckeywords = {
-        Keywords.BREAK,
-        Keywords.CONST,
-        Keywords.CONTINUE,
-        Keywords.DEFAULT,
-        Keywords.DOUBLE,
-        Keywords.EXTERN,
-        Keywords.FLOAT,
-        Keywords.INLINE,
-        Keywords.REGISTER,
-        Keywords.RESTRICT,
-        Keywords.RETURN,
-        Keywords.SHORT,
-        Keywords.SIGNED,
-        Keywords.SIZEOF,
-        Keywords.STATIC,
-        Keywords.STRUCT,
-        Keywords.SWITCH,
-        Keywords.TYPEDEF,
-        Keywords.UNION,
-        Keywords.UNSIGNED,
-        Keywords.VOLATILE,
-        Keywords.WHILE,
-        Keywords._BOOL,
-        Keywords._COMPLEX,
-        Keywords._IMAGINARY
-    };
-
-    private static String [] cppkeywords = {
-        Keywords.BREAK,
-        Keywords.CATCH,
-        Keywords.CLASS,
-        Keywords.CONST,
-        Keywords.CONST_CAST,
-        Keywords.CONTINUE,
-        Keywords.DEFAULT,
-        Keywords.DELETE,
-        Keywords.DOUBLE,
-        Keywords.DYNAMIC_CAST,
-        Keywords.EXPLICIT,
-        Keywords.EXPORT,
-        Keywords.EXTERN,
-        Keywords.FALSE,
-        Keywords.FLOAT,
-        Keywords.FRIEND,
-        Keywords.INLINE,
-        Keywords.MUTABLE,
-        Keywords.NAMESPACE,
-        Keywords.OPERATOR,
-        Keywords.PRIVATE,
-        Keywords.PROTECTED,
-        Keywords.PUBLIC,
-        Keywords.REGISTER,
-        Keywords.REINTERPRET_CAST,
-        Keywords.RETURN,
-        Keywords.SHORT,
-        Keywords.SIGNED,
-        Keywords.SIZEOF,
-        Keywords.STATIC,
-        Keywords.STATIC_CAST,
-        Keywords.STRUCT,
-        Keywords.SWITCH,
-        Keywords.TEMPLATE,
-        Keywords.THROW,
-        Keywords.TYPEDEF,
-        Keywords.TYPEID,
-        Keywords.TYPENAME,
-        Keywords.UNION,
-        Keywords.UNSIGNED,
-        Keywords.USING,
-        Keywords.VIRTUAL,
-        Keywords.VOLATILE,
-        Keywords.WCHAR_T,
-        Keywords.WHILE
-    };
-
-    private static String [] preprocessorKeywords = {
-        Directives.POUND_DEFINE + ' ',
-        Directives.POUND_ELIF + ' ',
-        Directives.POUND_ELSE,
-        Directives.POUND_ENDIF,
-        Directives.POUND_ERROR + ' ',
-        Directives.POUND_IF + ' ',
-        Directives.POUND_IFDEF + ' ',
-        Directives.POUND_IFNDEF + ' ',
-        Directives.POUND_INCLUDE + ' ',
-        Directives.POUND_PRAGMA + ' ',
-        Directives.POUND_UNDEF + ' ',
-        "defined" //$NON-NLS-1$
-    };
 }

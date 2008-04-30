@@ -327,7 +327,8 @@ public class KeywordSets {
 		PP_DIRECTIVES_C.add(Directives.POUND_ERROR);
 		PP_DIRECTIVES_C.add(Directives.POUND_PRAGMA);
 		PP_DIRECTIVES_C.add(Directives.POUND_ELIF);
-		PP_DIRECTIVES_C.add(Directives._PRAGMA );
+		PP_DIRECTIVES_C.add(Directives._PRAGMA);
+		PP_DIRECTIVES_C.add(Directives.DEFINED);
 	}
 
 	
@@ -348,6 +349,7 @@ public class KeywordSets {
 		PP_DIRECTIVES_CPP.add(Directives.POUND_ERROR);
 		PP_DIRECTIVES_CPP.add(Directives.POUND_PRAGMA);
 		PP_DIRECTIVES_CPP.add(Directives.POUND_ELIF);
+		PP_DIRECTIVES_CPP.add(Directives.DEFINED);
 	}
 	
 	private static final Set<String> ALL_C;

@@ -225,36 +225,50 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	}
 
 	
+	private String[] keywords = null;
+	private String[] builtinTypes = null;
+	private String[] preprocessorKeywords = null;
+	
+	
 	public String[] getKeywords() {
-		Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, getParserLanguage()));
-		
-		CharArrayIntMap additionalKeywords = getScannerExtensionConfiguration().getAdditionalKeywords();
-		if (additionalKeywords != null) {
-			for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
-				char[] name = iterator.next();
-				keywords.add(new String(name));
+		if(keywords == null) {
+			Set<String> keywordSet = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, getParserLanguage()));
+			
+			CharArrayIntMap additionalKeywords = getScannerExtensionConfiguration().getAdditionalKeywords();
+			if (additionalKeywords != null) {
+				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+					char[] name = iterator.next();
+					keywordSet.add(new String(name));
+				}
 			}
+			keywords = keywordSet.toArray(new String[keywordSet.size()]);
 		}
-		return keywords.toArray(new String[keywords.size()]);
+		return keywords;
 	}
 
 
 	public String[] getBuiltinTypes() {
-		Set<String> types = KeywordSets.getKeywords(KeywordSetKey.TYPES, getParserLanguage());
-		return types.toArray(new String[types.size()]);
+		if(builtinTypes == null) {
+			Set<String> types = KeywordSets.getKeywords(KeywordSetKey.TYPES, getParserLanguage());
+			builtinTypes = types.toArray(new String[types.size()]);
+		}
+		return builtinTypes;
 	}
 
 
 	public String[] getPreprocessorKeywords() {
-		Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, getParserLanguage()));
-		CharArrayIntMap additionalKeywords= getScannerExtensionConfiguration().getAdditionalPreprocessorKeywords();
-		if (additionalKeywords != null) {
-			for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
-				char[] name = iterator.next();
-				keywords.add(new String(name));
+		if(preprocessorKeywords == null) {
+			Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, getParserLanguage()));
+			CharArrayIntMap additionalKeywords= getScannerExtensionConfiguration().getAdditionalPreprocessorKeywords();
+			if (additionalKeywords != null) {
+				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+					char[] name = iterator.next();
+					keywords.add(new String(name));
+				}
 			}
+			preprocessorKeywords = keywords.toArray(new String[keywords.size()]);
 		}
-		return keywords.toArray(new String[keywords.size()]);
+		return preprocessorKeywords;
 	}
 	
 }

@@ -152,11 +152,13 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 				if ( document == null ) {
 					return false;
 				}
-				String fileName; // actually, absolute path, not just file name
+				String fileName = null; // actually, absolute path, not just file name
 				try {
 					fileName = getFileName( input );
 				}
 				catch( CoreException e ) {
+				}
+				if (fileName == null) {
 					return false;
 				}
 				IDebugTarget debugTarget = null;

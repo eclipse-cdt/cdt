@@ -94,10 +94,10 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		b_dispCompatible = setupCheck(usercomp, Messages.getString("ToolChainEditTab.0"), 2, GridData.BEGINNING); //$NON-NLS-1$
 		b_dispCompatible.setSelection(true);
 
-		setupLabel(usercomp, Messages.getString("ToolChainEditTab.1"), 2, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(usercomp, Messages.getString("ToolChainEditTab.1"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		c_toolchain = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 1;
 		c_toolchain.setLayoutData(gd);
 		c_toolchain.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -108,10 +108,10 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		st_toolchain = setupLabel(usercomp, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
 		st_toolchain.setForeground(red);
 
-		setupLabel(usercomp, Messages.getString("ToolChainEditTab.2"), 2, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(usercomp, Messages.getString("ToolChainEditTab.2"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		c_builder = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 1;
 		c_builder.setLayoutData(gd);
 		c_builder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -125,6 +125,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		// make table for tools list
 		if (page.isForFile()) {
 			single_tool_group = setupGroup(usercomp, Messages.getString("ToolChainEditTab.5"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
+			setupControl(single_tool_group, 2, GridData.FILL_BOTH);
 			c_tool = new Combo(single_tool_group, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
@@ -138,6 +139,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			st_tool.setForeground(red);
 		} else { // Folder or Project
 			tools_group = setupGroup(usercomp, Messages.getString("ToolChainEditTab.3"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
+			setupControl(tools_group, 2, GridData.FILL_BOTH);
 
 			text = new Text(tools_group, SWT.BORDER | SWT.WRAP | SWT.MULTI |
 					SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL);

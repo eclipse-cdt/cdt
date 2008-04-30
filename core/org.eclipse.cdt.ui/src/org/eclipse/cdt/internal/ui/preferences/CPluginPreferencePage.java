@@ -16,11 +16,17 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
@@ -123,7 +129,21 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 
 		
 	}
-	
+	@Override
+	protected Composite createNoteComposite(Font font, Composite composite,
+			String title, String message) {
+		Composite messageComposite = super.createNoteComposite(font, composite,
+				title, message);
+		Control[] children = messageComposite.getChildren();
+		if (children.length == 2 && (children[1] instanceof Label)) {
+			// this is temporary fix for problem that 3 line note does not displayed properly within the group
+			Label messageLabel = (Label) children[1];
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint=400;
+			messageLabel.setLayoutData(gd);
+		}
+		return messageComposite;
+	}
 	protected void addFiller(Composite composite) {
 		PixelConverter pixelConverter= new PixelConverter(composite);
 		Label filler= new Label(composite, SWT.LEFT );

@@ -14,7 +14,6 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;

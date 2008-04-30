@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ericsson and others.
+ * Copyright (c) 2007, 2008 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
 	// Service breakpoints tracking
 	// The breakpoints are stored per context and keyed on the back-end breakpoint reference
-	private Map<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>> fBreakpoints = 
+	private Map<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>> fBreakpoints =
 		new HashMap<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>>();
 
 	// Error messages
@@ -214,7 +214,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	}
 
 	/*
-	 * Asynchronous service initialization 
+	 * Asynchronous service initialization
 	 */
 	private void doInitialize(final RequestMonitor rm) {
 
@@ -256,7 +256,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	/*
 	 * When a watchpoint goes out of scope, it is automatically removed from
 	 * the back-end. To keep our internal state synchronized, we have to
-	 * remove it from our breakpoints map. 
+	 * remove it from our breakpoints map.
 	 */
 	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointScopeEvent e) {
@@ -270,7 +270,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	    }
 	}
 
-    @DsfServiceEventHandler 
+    @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
     }
 
@@ -448,6 +448,15 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			} else {
 				location = fileName + ":" + function;   //$NON-NLS-1$
 			}
+		} else if (!function.equals(NULL_STRING)) {
+			// function location without source
+			location = function;
+		} else if (location.length() > 0) {
+			// address location
+			if (Character.isDigit(location.charAt(0))) {
+				// numeric address needs '*' prefix
+				location = '*' + location;
+			}
 		}
 
 		return location;
@@ -472,6 +481,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
 		// Extract the relevant parameters (providing default values to avoid potential NPEs)
 		String  location       = formatLocation(attributes);
+
+		if (location.equals(NULL_STRING)) {
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		drm.done();
+			return;
+		}
+
 		Boolean isTemporary    = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_TEMPORARY, false);
 		Boolean isHardware     = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_HARDWARE,  false);
 		final String condition = (String)  getProperty(attributes, CONDITION,    NULL_STRING);
@@ -900,7 +916,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Queue the command
 		fConnection.queueCommand(
 			new MIBreakEnable(context, new int[] { reference }),
-		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
+		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 		        @Override
 		        protected void handleSuccess() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
@@ -936,7 +952,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Queue the command
 		fConnection.queueCommand(
 			new MIBreakDisable(context, new int[] { reference }),
-		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
+		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 		        @Override
 		        protected void handleSuccess() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);

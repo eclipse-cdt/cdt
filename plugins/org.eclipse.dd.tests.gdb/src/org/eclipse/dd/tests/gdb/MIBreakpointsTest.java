@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ericsson and others.
+ * Copyright (c) 2007, 2008 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.tests.gdb;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -176,7 +177,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         assert(fServicesTracker != null);
 
 		GDBControl gdbControl = fServicesTracker.getService(GDBControl.class);
-		fGdbControlDmc = gdbControl.getGDBDMContext(); 
+		fGdbControlDmc = gdbControl.getGDBDMContext();
         assert(fGdbControlDmc != null);
 		    
         fRunControl = fServicesTracker.getService(MIRunControl.class);
@@ -338,7 +339,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
         // Get a stack context (temporary - should be an MIcontainerDMC)
 		final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(fGdbControlDmc, expression);
-		final FormattedValueDMContext formattedValueDMC = SyncUtil.SyncGetFormattedValue(fExpressionService, 
+		final FormattedValueDMContext formattedValueDMC = SyncUtil.SyncGetFormattedValue(fExpressionService,
 				expressionDMC, IFormattedValues.DECIMAL_FORMAT);
 
 		// Create the DataRequestMonitor which will store the operation result in the wait object
@@ -390,7 +391,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		fWait.waitReset();
 
         // Set the Request Monitor
-        final DataRequestMonitor<IBreakpointDMContext[]> drm = 
+        final DataRequestMonitor<IBreakpointDMContext[]> drm =
             new DataRequestMonitor<IBreakpointDMContext[]>(fBreakpointService.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
@@ -432,7 +433,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		fWait.waitReset();
 
         // Set the Request Monitor
-        final DataRequestMonitor<IBreakpointDMData> drm = 
+        final DataRequestMonitor<IBreakpointDMData> drm =
             new DataRequestMonitor<IBreakpointDMData>(fBreakpointService.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
@@ -476,7 +477,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		fWait.waitReset();
 
 		// Set the Request Monitor
-        final DataRequestMonitor<IBreakpointDMContext> drm = 
+        final DataRequestMonitor<IBreakpointDMContext> drm =
             new DataRequestMonitor<IBreakpointDMContext>(fBreakpointService.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
@@ -515,7 +516,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		fWait.waitReset();
 
         // Set the Request Monitor
-        final RequestMonitor rm = 
+        final RequestMonitor rm =
             new RequestMonitor(fBreakpointService.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
@@ -547,14 +548,14 @@ public class MIBreakpointsTest extends BaseTestCase {
      * @param delta      the delta properties
      * ------------------------------------------------------------------------
      */
-    private void updateBreakpoint(final IBreakpointDMContext breakpoint, 
+    private void updateBreakpoint(final IBreakpointDMContext breakpoint,
     		final Map<String, Object> delta) throws InterruptedException
     {
     	// Clear the completion waiter
 		fWait.waitReset();
 
         // Set the Request Monitor
-        final RequestMonitor rm = 
+        final RequestMonitor rm =
             new RequestMonitor(fBreakpointService.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
@@ -621,7 +622,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that no BreakpointEvent was received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
     }
 
@@ -645,7 +646,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that no BreakpointEvent was received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
 	}
 
@@ -669,7 +670,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that no BreakpointEvent was received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
 	}
 
@@ -693,7 +694,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that no BreakpointEvent was received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
 	}
 
@@ -706,7 +707,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Create an address breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
-		breakpoint.put(ADDRESS_TAG, "0x0");
+		breakpoint.put(ADDRESS_TAG, "0x0z");
 
 		// Perform the test
 		String expected = BREAKPOINT_INSERTION_FAILURE;
@@ -716,8 +717,54 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that no BreakpointEvent was received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
+	}
+
+
+	// ------------------------------------------------------------------------
+	// insertBreakpoint_Address
+	// Set a breakpoint on an address
+	// Ensure that it is set correctly at the back-end.
+	// ------------------------------------------------------------------------
+	@Test
+	public void insertBreakpoint_Address() throws Throwable {
+
+		// Create an address breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		final BigInteger ADDRESS= new BigInteger("00affe00", 16);
+		breakpoint.put(ADDRESS_TAG, "0x"+ADDRESS.toString(16));
+
+		// Perform the test
+		IBreakpointDMContext ref = insertBreakpoint(fGdbControlDmc, breakpoint);
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent();
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
+		clearEventCounters();
+
+		// Ensure that the breakpoint was correctly installed
+		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
+		assertEquals("BreakpointService problem: breakpoint mismatch (wrong address)",
+				breakpoint1.getAddresses()[0].getValue(), ADDRESS);
+		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
+				breakpoint1.getCondition().equals(NO_CONDITION));
+		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
+				breakpoint1.getIgnoreCount() == 0);
+		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
+				breakpoint1.isEnabled());
+
+		// Ensure the BreakpointService holds only the right breakpoints
+		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
+				+ breakpoints.length, breakpoints.length == 1);
+		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
+		assertTrue("BreakpointService problem: breakpoint mismatch",
+				breakpoint1.equals(breakpoint2));
 	}
 
 	// ------------------------------------------------------------------------
@@ -740,9 +787,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -761,7 +808,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 1);
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -789,9 +836,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -810,7 +857,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 1);
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -837,9 +884,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -856,7 +903,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 1);
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -884,9 +931,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -903,7 +950,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 1);
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -931,9 +978,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -950,7 +997,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 1);
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -977,9 +1024,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1006,9 +1053,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1025,7 +1072,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 2 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 2 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 2);
 		MIBreakpointDMData svc_bp1 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		MIBreakpointDMData svc_bp2 = (MIBreakpointDMData) getBreakpoint(breakpoints[1]);
@@ -1063,9 +1110,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1086,9 +1133,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1105,7 +1152,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 2 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 2 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 2);
 		MIBreakpointDMData svc_bp1 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		MIBreakpointDMData svc_bp2 = (MIBreakpointDMData) getBreakpoint(breakpoints[1]);
@@ -1147,9 +1194,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1166,7 +1213,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "
 				+ watchpoints.length, watchpoints.length == 1);
 		MIBreakpointDMData watchpoint2 = (MIBreakpointDMData) getBreakpoint(watchpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -1193,9 +1240,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1212,7 +1259,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "
 				+ watchpoints.length, watchpoints.length == 1);
 		MIBreakpointDMData watchpoint2 = (MIBreakpointDMData) getBreakpoint(watchpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -1240,9 +1287,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1259,7 +1306,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "
 				+ watchpoints.length, watchpoints.length == 1);
 		MIBreakpointDMData watchpoint2 = (MIBreakpointDMData) getBreakpoint(watchpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -1290,9 +1337,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1302,15 +1349,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_REMOVED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_REMOVED event(s), received "
 				+ getBreakpointEventCount(BP_REMOVED), getBreakpointEventCount(BP_REMOVED) == 1);
 		clearEventCounters();
 
 		// Ensure the breakpoint was effectively removed
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 0 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 0 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 0);
 	}
 
@@ -1333,7 +1380,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that right BreakpointEvents were received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
 
 		// Create a line breakpoint
@@ -1349,15 +1396,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
 		// Ensure the breakpoint list is OK
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 1);
 
 		// Remove the installed breakpoint
@@ -1366,15 +1413,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_REMOVED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_REMOVED event(s), received "
 				+ getBreakpointEventCount(BP_REMOVED), getBreakpointEventCount(BP_REMOVED) == 1);
 		clearEventCounters();
 
 		// Ensure the breakpoint list is OK
 		breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 0 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 0 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 0);
 
 		// Remove the un-installed breakpoint
@@ -1384,12 +1431,12 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that right BreakpointEvents were received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
 
 		// Ensure the breakpoint list is OK
 		breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 0 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 0 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 0);
 
 		// Re-install the breakpoint
@@ -1399,9 +1446,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1412,12 +1459,12 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that right BreakpointEvents were received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
 
 		// Ensure that the existing breakpoint is unaffected
 		breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 1);
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(breakpoints[0]);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
@@ -1444,16 +1491,16 @@ public class MIBreakpointsTest extends BaseTestCase {
 			// Ensure that right BreakpointEvents were received
 			int expected = i + 1;
 			waitForBreakpointEvent();
-			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT event(s), received " 
+			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT event(s), received "
 					+ fBreakpointEventCount, fBreakpointEventCount ==  expected);
-			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT_ADDED event(s), received " 
+			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT_ADDED event(s), received "
 					+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == expected);
 		}
 		clearEventCounters();
 
 		// Get the list of breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fGdbControlDmc);
-		assertTrue("BreakpointService problem: expected " + 4 + " breakpoint(s), received " 
+		assertTrue("BreakpointService problem: expected " + 4 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 4);
 
 		// Remove the breakpoint one at a time in the following order: 1, 3, 2, 4
@@ -1471,9 +1518,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 			// Ensure that right BreakpointEvents were received
 			int expected = i + 1;
 			waitForBreakpointEvent();
-			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT event(s), received " 
+			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT event(s), received "
 					+ fBreakpointEventCount, fBreakpointEventCount == expected);
-			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT_REMOVED event(s), received " 
+			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT_REMOVED event(s), received "
 					+ getBreakpointEventCount(BP_REMOVED), getBreakpointEventCount(BP_REMOVED) == expected);
 
 	        // Ensure the breakpoint was effectively removed
@@ -1516,14 +1563,14 @@ public class MIBreakpointsTest extends BaseTestCase {
 				fWait.getMessage().contains(expected));
 
 		// Ensure that no BreakpointEvent was received
-		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
 	}
 
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_AddCondition
 	// Set a breakpoint and then add a condition.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_AddCondition() throws Throwable {
@@ -1540,9 +1587,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1554,9 +1601,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1569,7 +1616,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_RemoveCondition
 	// Set a conditional breakpoint and then remove the condition.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_RemoveCondition() throws Throwable {
@@ -1587,9 +1634,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1601,9 +1648,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1616,7 +1663,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_ModifyCondition
 	// Set a conditional breakpoint and then modify the condition.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_ModifyCondition() throws Throwable {
@@ -1634,9 +1681,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1648,9 +1695,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1663,7 +1710,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateWatchpoint_AddCondition
 	// Set a watchpoint and then add a condition.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateWatchpoint_AddCondition() throws Throwable {
@@ -1685,9 +1732,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1699,9 +1746,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1714,7 +1761,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateWatchpoint_RemoveCondition
 	// Set a conditional watchpoint and then remove the condition.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateWatchpoint_RemoveCondition() throws Throwable {
@@ -1737,9 +1784,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1751,9 +1798,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1766,7 +1813,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateWatchpoint_ModifyCondition
 	// Set a conditional watchpoint and then modify the condition.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateWatchpoint_ModifyCondition() throws Throwable {
@@ -1789,9 +1836,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1803,9 +1850,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1818,7 +1865,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_AddCount
 	// Set a breakpoint and then add an ignore count.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_AddCount() throws Throwable {
@@ -1835,9 +1882,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1849,9 +1896,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1864,7 +1911,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_RemoveCount
 	// Set a conditional breakpoint and then remove the count..
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_RemoveCount() throws Throwable {
@@ -1882,9 +1929,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1896,9 +1943,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1911,7 +1958,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_ModifyCount
 	// Set a conditional breakpoint and then modify the count.
-	// Ensure that the new breakpoint reflects the changes 
+	// Ensure that the new breakpoint reflects the changes
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_ModifyCount() throws Throwable {
@@ -1929,9 +1976,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1943,9 +1990,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -1985,9 +2032,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
-		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 2);
 		clearEventCounters();
 
@@ -2005,9 +2052,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -2022,9 +2069,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointEvent was received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint2.getNumber());
@@ -2062,9 +2109,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
-		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 2);
 		clearEventCounters();
 
@@ -2082,9 +2129,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -2099,9 +2146,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointEvent was received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint2.getNumber());
@@ -2115,9 +2162,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -2132,9 +2179,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure the BreakpointEvent was received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
@@ -2164,9 +2211,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2176,11 +2223,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
-		assertTrue("BreakpointService problem: breakpoint mismatch", 
+		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
 		clearEventCounters();
 	}
@@ -2204,9 +2251,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2216,11 +2263,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
-		assertTrue("BreakpointService problem: breakpoint mismatch", 
+		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
 		clearEventCounters();
 	}
@@ -2247,9 +2294,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2259,11 +2306,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
-		assertTrue("BreakpointService problem: breakpoint mismatch", 
+		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
 		clearEventCounters();
 
@@ -2293,9 +2340,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2307,9 +2354,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -2319,11 +2366,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
-		assertTrue("BreakpointService problem: breakpoint mismatch", 
+		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
 		clearEventCounters();
 
@@ -2354,9 +2401,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2366,11 +2413,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
-		assertTrue("BreakpointService problem: breakpoint mismatch", 
+		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
 		clearEventCounters();
 
@@ -2400,9 +2447,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2414,9 +2461,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -2426,11 +2473,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
-		assertTrue("BreakpointService problem: breakpoint mismatch", 
+		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
 		clearEventCounters();
 
@@ -2459,9 +2506,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2471,11 +2518,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
-		assertTrue("BreakpointService problem: watchpoint mismatch", 
+		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
 		clearEventCounters();
 
@@ -2504,9 +2551,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2516,11 +2563,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
-		assertTrue("BreakpointService problem: watchpoint mismatch", 
+		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
 		clearEventCounters();
 
@@ -2550,9 +2597,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2562,11 +2609,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
-		assertTrue("BreakpointService problem: watchpoint mismatch", 
+		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
 		clearEventCounters();
 
@@ -2601,9 +2648,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2615,9 +2662,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -2627,11 +2674,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
-		assertTrue("BreakpointService problem: watchpoint mismatch", 
+		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
 		clearEventCounters();
 
@@ -2666,9 +2713,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2680,9 +2727,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		clearEventCounters();
 
@@ -2692,11 +2739,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
-		assertTrue("BreakpointService problem: watchpoint mismatch", 
+		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
 		clearEventCounters();
 
@@ -2732,9 +2779,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -2744,11 +2791,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received " 
+		assertTrue("BreakpointEvent problem: expected " + 1 + " WATCHPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(WP_OOS), getBreakpointEventCount(WP_OOS) == 1);
-		assertTrue("BreakpointService problem: watchpoint mismatch", 
+		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
 		clearEventCounters();
 

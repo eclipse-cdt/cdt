@@ -135,18 +135,19 @@ public class SecuredThread extends Thread
 	}
 
 	 /**
+	  * 
+	  * As per bug 228335, this is commented out.
+      * 
 	  * When start() is called, a check is made to see if there is an ISystemService.   
 	  * If there is, the <code>ISystemService.executeThread(SecuredThread)</code> is called.
 	  * In this case, the run() method is invoked in a thread assigned from the running
 	  * work threads 
 	  * If there isn't, the <code>super.start()</code> is called.  
 	  * In this case. the run() method is invoked as a new thread.
-	  */
+	  
 	 public void start()
 	 {
-		  /*
-		   * As per bug 228335, this is commented out.
-		   * 
+
 	  try
 	  {
 
@@ -154,8 +155,7 @@ public class SecuredThread extends Thread
 	   if (systemService != null){
 	    systemService.executeThread(this);
 	   }
-	   else
-		   
+	   else		   
 	   {
 	    super.start();
 	   }
@@ -164,8 +164,7 @@ public class SecuredThread extends Thread
 	  {
 	   e.printStackTrace(new PrintWriter(System.err));
 	  }
-	  */
-		super.start();
 	 }
+	 */
 }
 

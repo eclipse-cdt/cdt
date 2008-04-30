@@ -23,6 +23,7 @@
  * Kevin Doyle (IBM) - [208778] new API getOutputSteam for getting an output stream in append mode
  * David McKnight (IBM) - [209704] added supportsEncodingConversion()
  * Martin Oberhuber (Wind River) - [cleanup] Fix API since tags
+ * David Dykstal (IBM) - [221211] clarifying javadoc on batch operations
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -177,6 +178,10 @@ public interface IFileService extends IService
 	/**
 	 * Copy files to the remote file system.  The remote target is denoted by
 	 * strings representing the parents and strings representing the files.
+	 * <p>
+	 * If an error occurs during the upload of a file, this operation stops on that file and a {@link SystemMessageException} is thrown.
+	 * Files uploaded before that file will remain uploaded. Files in the list after that file will not be uploaded.
+	 * The file on which the error occurs will not be uploaded.
 	 * @param localFiles - real files in the local file system.
 	 * @param remoteParents - strings designating the parent folders of the target for the files.
 	 * @param remoteFiles - strings designating the names of the files to be written on the remote system.
@@ -212,6 +217,10 @@ public interface IFileService extends IService
 
 	/**
 	 * Copy files from the remote file system to the local system.
+	 * <p>
+	 * If an error occurs during the download of a file, this operation stops on that file and a {@link SystemMessageException} is thrown.
+	 * Files downloaded before that file will remain downloaded. Files in the list after that file will not be downloaded.
+	 * The file on which the error occurs will not be downloaded.
 	 *
 	 * @param remoteParents - string designating the remote parents.
 	 * @param remoteFiles - Strings designating the remote files residing in the
@@ -269,6 +278,10 @@ public interface IFileService extends IService
 	/**
 	 * Get multiple abstract remote file handles for an array of specified
 	 * paths.
+	 * <p>
+	 * If an error occurs during the retrieval an item, this operation stops on that item and a {@link SystemMessageException} is thrown.
+	 * Items retrieved before that item will be returned. Items to be retrieved after that item will not be retrieved.
+	 * The items on which the error occurs will not be retrieved.
 	 *
 	 * @param remoteParents - the list of remote parents
 	 * @param names - the list of file names
@@ -287,6 +300,10 @@ public interface IFileService extends IService
 
 	/**
 	 * List the contents of multiple remote folders.
+	 * <p>
+	 * If an error occurs during the retrieval of the contents of a folder, this operation stops on that folder and a {@link SystemMessageException} is thrown.
+	 * Items retrieved before that folder will be returned. Items in folders after that folder will not be retrieved.
+	 * The items in the folder on which the error occurs will not be returned.
 	 *
 	 * @param remoteParents - the names of the parent directories on the remote
 	 *            file system from which to retrieve the collective child list.
@@ -311,6 +328,10 @@ public interface IFileService extends IService
 
 	/**
 	 * List the contents of multiple remote folders.
+	 * <p>
+	 * If an error occurs during the retrieval of the contents of a folder, this operation stops on that folder and a {@link SystemMessageException} is thrown.
+	 * Items retrieved before that folder will be returned. Items in folders after that folder will not be retrieved.
+	 * The items in the folder on which the error occurs will not be returned.
 	 *
 	 * @param remoteParents - the names of the parent directories on the remote
 	 *            file system from which to retrieve the collective child list.
@@ -403,6 +424,10 @@ public interface IFileService extends IService
 	 * exception during the operation. Without an exception thrown in such
 	 * cases, views may not be refreshed correctly to account for deleted
 	 * resources.
+	 * <p>
+	 * If an error occurs during the deletion of an item, this operation stops on that item and a {@link SystemMessageException} is thrown.
+	 * Items deleted before that item will remain deleted. Items specified after that item will not be deleted.
+	 * The item on which the error occurs will not be deleted.
 	 *
 	 * @param remoteParents the array of folders containing the files to delete
 	 * @param fileNames the names of the files or folders to delete
@@ -471,6 +496,10 @@ public interface IFileService extends IService
 
 	/**
 	 * Copy a set of files or folders to the specified destination.
+	 * <p>
+	 * If an error occurs during the copy of an item, this operation stops on that item and a {@link SystemMessageException} is thrown.
+	 * Items copied before that item will remain copied. Items copied after that item will not be copied.
+	 * The item on which the error occurs will not be copied.
 	 *
 	 * @param srcParents the folders containing each file or folder to copy
 	 * @param srcNames the names of the files or folders to copy

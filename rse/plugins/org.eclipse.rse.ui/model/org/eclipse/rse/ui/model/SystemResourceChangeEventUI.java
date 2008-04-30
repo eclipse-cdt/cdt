@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [226561] supply API markup in the javadoc
  ********************************************************************************/
 
 package org.eclipse.rse.ui.model;
@@ -23,6 +24,10 @@ import org.eclipse.swt.widgets.Item;
 /**
  * Event object sent to SystemResourceChangeListeners when a
  * remote system object is created, changed, removed, etc.
+ * This extends the base event object to include a reference to an 
+ * orginating viewer.
+ * @noextend This class is not intended to be subclassed by clients.
+ * The class is complete as is.
  * @see org.eclipse.rse.core.events.ISystemResourceChangeEvents
  */
 public class SystemResourceChangeEventUI extends SystemResourceChangeEvent {

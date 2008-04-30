@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [226561] supply API markup in the javadoc
  ********************************************************************************/
 
 package org.eclipse.rse.ui.model;
@@ -23,6 +24,12 @@ import org.eclipse.rse.core.model.AbstractSystemResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 
+/**
+ * A SystemRemoteElementResourceSet is used to gather objects together for operations
+ * that work on multiple objects.
+ * @noextend This class is not intended to be subclassed by clients.
+ * Extend {@link AbstractSystemResourceSet} instead.
+ */
 public class SystemRemoteElementResourceSet extends AbstractSystemResourceSet 
 {
 	private ISubSystem  				_subSystem;

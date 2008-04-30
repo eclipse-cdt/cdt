@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * David Dykstal (IBM) - [226561] add API markup to javadoc
  ********************************************************************************/
 
 package org.eclipse.rse.ui.filters;
@@ -29,7 +30,9 @@ import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 
 
 /**
- * 
+ * A set of utility methods for dealing with filter pools, models, etc.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SystemFilterUIHelpers 
 {

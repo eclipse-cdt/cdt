@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [226561] add API markup to javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters;
@@ -74,9 +74,11 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * Since we have decided to allow the same editing in both the Change Filter dialog
- *  and the Properties page, we have to abstract the meat of the change filter dialog
- *  into a re-usable composite. That is what this is, and it is used by both the 
- *  dialog and the property page.
+ * and the Properties page, we have to abstract the meat of the change filter dialog
+ * into a re-usable composite. That is what this is, and it is used by both the 
+ * dialog and the property page.
+ * @noextend This class is not intended to be subclassed by clients.
+ * This class is complete and should be used as is.
  */
 public class SystemChangeFilterPane extends SystemBaseForm
                 implements SelectionListener, ISystemFilterStringEditPaneListener, IMenuListener

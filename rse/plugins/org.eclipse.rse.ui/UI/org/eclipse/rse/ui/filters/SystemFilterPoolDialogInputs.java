@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David Dykstal (IBM) - [226561] add API markup to javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters;
@@ -28,6 +29,8 @@ import org.eclipse.rse.ui.filters.dialogs.SystemFilterDialogInputs;
 /**
  * A class capturing the attributes commonly needed by dialogs that
  * work with filter pools.
+ * @noextend This class is not intended to be subclassed by clients.
+ * This class is complete and should be used as is.
  */
 public class SystemFilterPoolDialogInputs extends SystemFilterDialogInputs
 {

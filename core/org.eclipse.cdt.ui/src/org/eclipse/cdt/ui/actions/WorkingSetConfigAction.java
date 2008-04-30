@@ -8,8 +8,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -113,7 +119,7 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 		private List wsets;
 		private List csets;
 		private Tree tree;
-		private Button b1, b2, b3, b4;
+		private Button b1, b2, b3, b4, bb;
 		
 		LocalDialog(Shell parentShell) {
 			super(parentShell);
@@ -362,6 +368,18 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 					}
 				}});
 
+	        bb = new Button(c, SWT.PUSH);
+	        bb.setText(UIMessages.getString("WorkingSetConfigAction.20")); //$NON-NLS-1$
+	        gd = new GridData(GridData.FILL_HORIZONTAL);
+	        gd.horizontalSpan = 2;
+        	bb.setLayoutData(gd);
+			bb.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					build();
+					LocalDialog.this.close();
+				}});
+			
 			initData();
 			return comp;
 		}
@@ -388,6 +406,7 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 			b1.setEnabled(en); // update
 			b3.setEnabled(en); // rename
 			b4.setEnabled(en); // delete
+			bb.setEnabled(wsets.getEnabled());
 		}
 		private void workingSetChanged() {
 //			tree.setRedraw(false);
@@ -490,6 +509,51 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 			box.setMessage(UIMessages.getString("WorkingSetConfigAction.12") + s); //$NON-NLS-1$
 			box.open();
 		}
+		
+		private void build() {
+			saveConfigSets();
+			saveActiveConfigs();
+			IProject[] ps = new IProject[tree.getItemCount()];
+			int cnt = 0;
+			for (TreeItem ti : tree.getItems()) 
+				ps[cnt++] = ((ICProjectDescription)ti.getData()).getProject();
+			Job buildJob = new BuildJob(ps);
+			buildJob.schedule();
+		}
+	}
+
+	private static final class BuildJob extends Job {
+		IProject[] ps;
+		
+		BuildJob(IProject[] _ps) {
+			super(UIMessages.getString("WorkingSetConfigAction.21")); //$NON-NLS-1$
+			ps = _ps;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			for (IProject p:ps) 
+				try {
+					setName(UIMessages.getString("WorkingSetConfigAction.21") + p.getName()); //$NON-NLS-1$
+					p.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+			} catch (CoreException e) {
+				return new Status(IStatus.ERROR, UIMessages.getString("WorkingSetConfigAction.22"), e.getLocalizedMessage()); //$NON-NLS-1$
+			}
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			monitor.done();
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
+		}
+
 	}
 	
 	private static class ConfigSet {

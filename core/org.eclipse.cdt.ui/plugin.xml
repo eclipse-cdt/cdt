@@ -763,9 +763,9 @@
             id="org.eclipse.cdt.ui.preferences.MarkOccurrencesPreferencePage"/>
       <page
             name="%ScalabilityPreferencePage.name"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.ScalabilityPreferencePage"
-            id="org.eclipse.cdt.ui.preferneces.CScalabilityPreferernces"/>
+            id="org.eclipse.cdt.ui.preferences.CScalabilityPreferences"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"

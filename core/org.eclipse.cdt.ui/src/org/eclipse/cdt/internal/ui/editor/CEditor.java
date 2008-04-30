@@ -95,7 +95,6 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
@@ -1346,22 +1345,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			//Alert users that scalability mode should be turned on
 			if (getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_ALERT)) {
 				MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-						Display.getCurrent().getActiveShell(), 
+						Display.getCurrent().getActiveShell(),
 						CEditorMessages.getString("Scalability.info"),  //$NON-NLS-1$
-						null, 
+						null,
 						CEditorMessages.getString("Scalability.message"),  //$NON-NLS-1$
-						MessageDialog.INFORMATION, 
-						new String[] {IDialogConstants.OK_LABEL}, 0, 
+						MessageDialog.INFORMATION,
+						new String[] {IDialogConstants.OK_LABEL}, 0,
 						CEditorMessages.getString("Scalability.reappear"),  //$NON-NLS-1$
 						false) {
 					@Override
-					protected void buttonPressed(int buttonId) {	
+					protected void buttonPressed(int buttonId) {
 						PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.SCALABILITY_ALERT, !getToggleState());
 						super.buttonPressed(buttonId);
 					}
-				};				
+				};
 				dialog.setBlockOnOpen(false);
-				dialog.open();				
+				dialog.open();
 			}
 		}
 	}
@@ -1584,7 +1583,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					return;
 				}
 
-				if (SemanticHighlightings.affectsEnablement(getPreferenceStore(), event)) {
+				if (SemanticHighlightings.affectsEnablement(getPreferenceStore(), event)
+						|| (isEnableScalablilityMode() && PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT.equals(property))) {
 					if (isSemanticHighlightingEnabled()) {
 						installSemanticHighlighting();
 						fSemanticManager.refresh();
@@ -1593,21 +1593,19 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					}
 					return;
 				}
-
+				
+				//For Scalability
+				if (isEnableScalablilityMode()) {
+					if (PreferenceConstants.SCALABILITY_RECONCILER.equals(property) ||
+							PreferenceConstants.SCALABILITY_SYNTAX_COLOR.equals(property)) {
+							asv.unconfigure();
+							asv.configure(getSourceViewerConfiguration());
+					}
+				}
+				
 				IContentAssistant c = asv.getContentAssistant();
 				if (c instanceof ContentAssistant) {
 					ContentAssistPreference.changeConfiguration((ContentAssistant) c, getPreferenceStore(), event);
-				}
-				
-				//For Scalability
-				if (PreferenceConstants.SCALABILITY_RECONCILER.equals(property)) {
-						((SourceViewer)getSourceViewer()).unconfigure();
-						getSourceViewer().configure(getSourceViewerConfiguration());
-				}
-				
-				if (PreferenceConstants.SCALABILITY_SYNTAX_COLOR.equals(property)) {
-					((SourceViewer)getSourceViewer()).unconfigure();
-					getSourceViewer().configure(getSourceViewerConfiguration());
 				}
 			}
 		} finally {
@@ -2819,7 +2817,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	protected String[] collectContextMenuPreferencePages() {
 		// Add C/C++ Editor relevant pages
 		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
-		String[] prefPageIds = new String[parentPrefPageIds.length + 10];
+		String[] prefPageIds = new String[parentPrefPageIds.length + 11];
 		int nIds = 0;
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"; //$NON-NLS-1$
@@ -2831,6 +2829,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CScalabilityPreferences"; //$NON-NLS-1$
 		System.arraycopy(parentPrefPageIds, 0, prefPageIds, nIds, parentPrefPageIds.length);
 		return prefPageIds;
 	}
@@ -2898,7 +2897,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	private boolean isSemanticHighlightingEnabled() {
-		return SemanticHighlightings.isEnabled(getPreferenceStore());
+		return SemanticHighlightings.isEnabled(getPreferenceStore()) && !(isEnableScalablilityMode() && getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT));
 	}
 
 	/**
@@ -3310,6 +3309,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	public boolean isParserBasedContentAssistDisabled() {
 		return getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST);
+	}
+	
+	/**
+	 * @return <code>true</code> if Content Assist auto activation is disabled.
+	 *
+	 * @since 5.0
+	 */
+	public boolean isContentAssistAutoActivartionDisabled() {
+		return getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION);
 	}
 	
 	/**

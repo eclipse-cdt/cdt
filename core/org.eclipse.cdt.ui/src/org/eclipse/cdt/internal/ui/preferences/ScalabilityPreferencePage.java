@@ -59,7 +59,11 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	
 	private Button fSyntaxColor;
 	
+	private Button fSemanticHighlighting;
+	
 	private Button fContentAssist;
+	
+	private Button fContentAssistAutoActivation;
 	
 	private Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
 	
@@ -72,7 +76,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	
 	public ScalabilityPreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
-		setDescription(PreferencesMessages.ScalabilityPreferencePage_description); 
+		setDescription(PreferencesMessages.ScalabilityPreferencePage_description);
 	}
 	
 	/**
@@ -104,7 +108,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
             SelectionListener listener= (SelectionListener)iter.next();
             listener.widgetSelected(null);
         }
-        fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));	
+        fLinesToTrigger.setStringValue(Integer.toString(prefs.getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
 	}
 
 	/*
@@ -114,7 +118,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.SCALABILITY_PREFERENCE_PAGE);
-	}	
+	}
 
 	/*
 	 * @see PreferencePage#createContents(Composite)
@@ -138,14 +142,14 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		
 		createDetectionSettings(composite);
 
-		new Separator().doFillIntoGrid(composite, nColumns);	
+		new Separator().doFillIntoGrid(composite, nColumns);
 		
 		createScalabilityModeSettings(composite);
 
-		new Separator().doFillIntoGrid(composite, nColumns);	
+		new Separator().doFillIntoGrid(composite, nColumns);
 		
 		String noteTitle= PreferencesMessages.ScalabilityPreferencePage_note;
-		String noteMessage= PreferencesMessages.ScalabilityPreferencePage_preferenceOnlyForNewViews; 
+		String noteMessage= PreferencesMessages.ScalabilityPreferencePage_preferenceOnlyForNewEditors;
 		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), composite, noteTitle, noteMessage);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -178,15 +182,8 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	private void createDetectionSettings( Composite parent ) {
 		Composite group = createGroupComposite( parent, 1, PreferencesMessages.ScalabilityPreferencePage_detection_group_label );
 		createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_detection_label,PreferenceConstants.SCALABILITY_ALERT);
-	}
-	
-	/**
-	 * Create the view setting preferences composite widget
-	 */
-	private void createScalabilityModeSettings( Composite parent ) {
-		Composite group = createGroupComposite( parent, 1, PreferencesMessages.ScalabilityPreferencePage_scalabilityMode_group_label );
-		
-		Composite comp = ControlFactory.createComposite( group, 2 );
+
+		Composite comp= new Composite(group, SWT.NONE);
 		fLinesToTrigger = new IntegerFieldEditor( PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, PreferencesMessages.ScalabilityPreferencePage_trigger_lines_label, comp);
 		GridData data = (GridData)fLinesToTrigger.getTextControl( comp ).getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
@@ -206,27 +203,42 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 			}
 		} );
 		
-		new Separator().doFillIntoGrid(group, 1);
+	}
+	
+	/**
+	 * Create the view setting preferences composite widget
+	 */
+	private void createScalabilityModeSettings( Composite parent ) {
+		Composite group = createGroupComposite( parent, 1, PreferencesMessages.ScalabilityPreferencePage_scalabilityMode_group_label );
 		
 		fEnableAll = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_scalabilityMode_label, PreferenceConstants.SCALABILITY_ENABLE_ALL);
 		fReconciler = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_reconciler_label, PreferenceConstants.SCALABILITY_RECONCILER);
-		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fReconciler);
+		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fReconciler, true);
 		
-		fContentAssist = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_label, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST);
-		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fContentAssist);
+		fSemanticHighlighting = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_semanticHighlighting_label, PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT);
+		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fSemanticHighlighting, true);
 		
 		fSyntaxColor = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_syntaxColor_label, PreferenceConstants.SCALABILITY_SYNTAX_COLOR);
-		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fSyntaxColor);
+		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fSyntaxColor, true);
+		
+		fContentAssist = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_label, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST);
+		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fContentAssist, true);
+		
+		fContentAssistAutoActivation = createCheckButton(group, PreferencesMessages.ScalabilityPreferencePage_contentAssist_autoActivation, PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION);
+		createDependency(fContentAssist, PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, fContentAssistAutoActivation, true);
+		createDependency(fEnableAll, PreferenceConstants.SCALABILITY_ENABLE_ALL, fContentAssistAutoActivation, false);
 	}
 	
-	private static void indent(Control control) {
+	private static void indent(Control control, GridData masterLayoutData) {
 		GridData gridData= new GridData();
-		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);		
+		gridData.horizontalIndent= masterLayoutData.horizontalIndent + 20;
+		control.setLayoutData(gridData);
 	}
 	
-	private void createDependency(final Button master, String masterKey, final Control slave) {
-		indent(slave);
+	private void createDependency(final Button master, String masterKey, final Control slave, boolean indent) {
+		if (indent) {
+			indent(slave, (GridData)master.getLayoutData());
+		}
 		boolean masterState= getPreferenceStore().getBoolean(masterKey);
 		slave.setEnabled(!masterState);
 		
@@ -269,7 +281,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		prefs.setValue(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, fLinesToTrigger.getIntValue());
 		CUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
-	}	
+	}
 	
 	/*
 	 * @see PreferencePage#performDefaults()
@@ -291,6 +303,6 @@ public class ScalabilityPreferencePage extends PreferencePage implements
             SelectionListener listener= (SelectionListener)iter.next();
             listener.widgetSelected(null);
         }
-        fLinesToTrigger.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));	
+        fLinesToTrigger.setStringValue(Integer.toString(prefs.getDefaultInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)));
 	}
 }

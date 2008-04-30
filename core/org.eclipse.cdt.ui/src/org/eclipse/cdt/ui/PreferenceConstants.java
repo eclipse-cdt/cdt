@@ -754,7 +754,7 @@ public class PreferenceConstants {
 	public static final String OUTLINE_LINK_TO_EDITOR = "org.eclipse.cdt.ui.outline.linktoeditor"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls whether include directives should be grouped in the 
+	 * A named preference that controls whether include directives should be grouped in the
 	 * C/C++ Projects view and the Project Explorer view.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -763,7 +763,7 @@ public class PreferenceConstants {
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls whether header and source files should be separated in the 
+	 * A named preference that controls whether header and source files should be separated in the
 	 * C/C++ Projects view and the Project Explorer view.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -1308,7 +1308,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String SCALABILITY_ENABLE_ALL = "enableScalabilityOptions"; //$NON-NLS-1$
+	public static final String SCALABILITY_ENABLE_ALL = "scalability.enableAll"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the editor's reconciler is disabled.
@@ -1318,7 +1318,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String SCALABILITY_RECONCILER = "reconciler"; //$NON-NLS-1$
+	public static final String SCALABILITY_RECONCILER = "scalability.reconciler"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference that controls whether syntax coloring is disabled.
@@ -1328,7 +1328,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String SCALABILITY_SYNTAX_COLOR = "syntaxColor"; //$NON-NLS-1$
+	public static final String SCALABILITY_SYNTAX_COLOR = "scalability.syntaxColor"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether parser-based content assist proposals are disabled.
@@ -1338,7 +1338,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String SCALABILITY_PARSER_BASED_CONTENT_ASSIST = "cdtContentAssist"; //$NON-NLS-1$
+	public static final String SCALABILITY_PARSER_BASED_CONTENT_ASSIST = "scalability.parserBasedContentAssist"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether users should be notified if scalability mode should be turned on.
@@ -1348,7 +1348,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String SCALABILITY_ALERT = "detectScalability"; //$NON-NLS-1$
+	public static final String SCALABILITY_ALERT = "scalability.detect"; //$NON-NLS-1$
 	
 	/**
 	 * The size of the file that will trigger scalability mode
@@ -1358,8 +1358,29 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String SCALABILITY_NUMBER_OF_LINES = "numberOfLines"; //$NON-NLS-1$
-
+	public static final String SCALABILITY_NUMBER_OF_LINES = "scalability.numberOfLines"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether syntax coloring is disabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_SEMANTIC_HIGHLIGHT = "scalability.semanticHighlight"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether the content assist auto activation is disabled in scalability mode.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION = "scalability.contentAssistAutoActivation"; //$NON-NLS-1$
+	
+	
 	/**
 	 * Returns the CDT-UI preference store.
 	 *
@@ -1548,7 +1569,9 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SCALABILITY_ENABLE_ALL, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_RECONCILER, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_SYNTAX_COLOR, false);
+		store.setDefault(PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, false);
+		store.setDefault(PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION, false);
     }
 
 

@@ -116,8 +116,14 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		//for scalability
 		if (fEditor != null && fEditor instanceof CEditor) {
 			CEditor editor = (CEditor)fEditor;
-			if (editor.isEnableScalablilityMode() && editor.isParserBasedContentAssistDisabled())
-				return null;
+			if (editor.isEnableScalablilityMode()) {
+				if (editor.isParserBasedContentAssistDisabled()) {
+					return null;
+				}
+				if (isAutoActivated() && editor.isContentAssistAutoActivartionDisabled()) {
+					return null;
+				}
+			}
 		}
 		
 		if (fCNComputed) return fCN;

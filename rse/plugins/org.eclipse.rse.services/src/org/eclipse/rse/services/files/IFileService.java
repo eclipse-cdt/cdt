@@ -243,8 +243,9 @@ public interface IFileService extends IService
 	/**
 	 * Get an abstract remote file handle for a specified path.
 	 *
-	 * @param remoteParent
-	 * @param name
+	 * @param remoteParent the name of the parent directory on the remote file
+	 *            system from which to retrieve the file.
+	 * @param name the name of the file to be retrieved.
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return the host file given the parent path and file name. Must not
 	 *         return <code>null</code>, non-existing files should be

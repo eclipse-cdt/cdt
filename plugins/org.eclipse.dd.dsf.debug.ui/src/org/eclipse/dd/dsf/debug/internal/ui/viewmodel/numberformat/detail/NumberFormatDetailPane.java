@@ -330,13 +330,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                          */
                         String[] formats = getData();
                         
-                        /*
-                         *  We sort the array to make the strings appear always in the same
-                         *  order. Since the gathering of the data is done as a multiple set
-                         *  of asynchronous requests, they complete in different orders.
-                         */
-                        java.util.Arrays.sort( formats );
-                        
                         final List<String> completedFormatStrings = new ArrayList<String>();
                         
                         final CountingRequestMonitor countingRm = new CountingRequestMonitor(finalService.getSession().getExecutor(), null) {
@@ -348,6 +341,12 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                     return;
                                 }
                                 
+                                /*
+                                 *  We sort the array to make the strings appear always in the same order.
+                                 */
+
+                                java.util.Collections.sort( completedFormatStrings );
+
                                 int len = completedFormatStrings.size() ;
                                 
                                 if ( len == 0 ) {
@@ -356,10 +355,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 else {
                                 	/*
                                 	 *  Add the HEADER which identifies what is being represented. When there
-                                	 *  are multiple selections in the view the detail pane contains multilple
-                                	 *  entries. They would be all munged together and even though the order
-                                	 *  of the detail entries is the order of the selections in the view it is
-                                	 *  very hard to know what goes with what. This makes it easy.
+                                	 *  are multiple selections in the view the detail pane contains multiple
+                                	 *  entries.  They would be all munged together and even though the order
+                                	 *  of the detail entries is the order of the selections in the view  and
+                                	 *  it is very hard to know what goes with what. This makes it easy.
                                 	 */
                                 	String finalResult = "Name : " + name + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
                                 	int cnt = 0 ;

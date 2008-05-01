@@ -22,6 +22,9 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	public static final String CATCH = "org.eclipse.cdt.debug.gdb.catch";
 	public static final String THROW = "org.eclipse.cdt.debug.gdb.throw";
 	public static final String SIGNAL_CATCH = "org.eclipse.cdt.debug.gdb.signal";
+	public static final String STOP_ON_FORK = "org.eclipse.cdt.debug.gdb.catch_fork";
+	public static final String STOP_ON_VFORK = "org.eclipse.cdt.debug.gdb.catch_vfork";
+	public static final String STOP_ON_EXEC = "org.eclipse.cdt.debug.gdb.catch_exec";
 	private String eventType;
 	private String arg;
 
@@ -44,6 +47,9 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 		if (getEventType().equals(CATCH)) return "catch";
 		if (getEventType().equals(THROW)) return "throw";
 		if (getEventType().equals(SIGNAL_CATCH)) return "signal";
+		if (getEventType().equals(STOP_ON_EXEC)) return "exec";
+		if (getEventType().equals(STOP_ON_FORK)) return "fork";
+		if (getEventType().equals(STOP_ON_VFORK)) return "vfork";
 		return "unknown";
 	}
 
@@ -76,6 +82,14 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 			 EventBreakpoint.CATCH;
 		} else if (miBreakpoint.getWhat().equals("exception throw")) {
 			return  EventBreakpoint.THROW;
+		} else if (miBreakpoint.getType().equals("catch signal")) {
+			return  EventBreakpoint.SIGNAL_CATCH;
+		} else if (miBreakpoint.getType().equals("catch fork")) {
+			return  EventBreakpoint.STOP_ON_FORK;
+		} else if (miBreakpoint.getType().equals("catch vfork")) {
+			return  EventBreakpoint.STOP_ON_VFORK;
+		} else if (miBreakpoint.getType().equals("catch exec")) {
+			return  EventBreakpoint.STOP_ON_EXEC;
 		}
 		return null; // not known/supported
 	}

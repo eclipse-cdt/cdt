@@ -33,13 +33,13 @@ public class BreakpointHitUpdatePolicy extends ManualUpdatePolicy {
     }
     
     @Override
-    public IElementUpdateTester getTesterTester(Object event) {
+    public IElementUpdateTester getElementUpdateTester(Object event) {
         if(event instanceof ISuspendedDMEvent) {
             ISuspendedDMEvent suspendedEvent = (ISuspendedDMEvent)event; 
             if(suspendedEvent.getReason().equals(StateChangeReason.BREAKPOINT)) {
-                return super.getTesterTester(REFRESH_EVENT);
+                return super.getElementUpdateTester(REFRESH_EVENT);
             }
         }
-        return super.getTesterTester(event);
+        return super.getElementUpdateTester(event);
     }
 }

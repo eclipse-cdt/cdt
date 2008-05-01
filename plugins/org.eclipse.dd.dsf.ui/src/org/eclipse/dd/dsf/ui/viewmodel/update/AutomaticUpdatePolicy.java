@@ -39,7 +39,7 @@ public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
         return "Automatic";
     }
 
-    public IElementUpdateTester getTesterTester(Object event) {
+    public IElementUpdateTester getElementUpdateTester(Object event) {
         return fgUpdateTester;
     }
 }

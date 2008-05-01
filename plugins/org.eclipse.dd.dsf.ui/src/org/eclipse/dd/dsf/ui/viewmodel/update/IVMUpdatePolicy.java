@@ -49,5 +49,5 @@ public interface IVMUpdatePolicy {
     /**
      * Creates an element tester for the given event.
      */
-    public IElementUpdateTester getTesterTester(Object event);
+    public IElementUpdateTester getElementUpdateTester(Object event);
 }

@@ -268,7 +268,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
     
     public void refresh() {
-        IElementUpdateTester elementTester =  getActiveUpdatePolicy().getTesterTester(ManualUpdatePolicy.REFRESH_EVENT);
+        IElementUpdateTester elementTester =  getActiveUpdatePolicy().getElementUpdateTester(ManualUpdatePolicy.REFRESH_EVENT);
         
         List<FlushMarkerKey> flushKeys = new LinkedList<FlushMarkerKey>();
 
@@ -557,7 +557,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
 
     @Override
     protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {   
-        IElementUpdateTester elementTester =  getActiveUpdatePolicy().getTesterTester(event);
+        IElementUpdateTester elementTester =  getActiveUpdatePolicy().getElementUpdateTester(event);
         
         List<FlushMarkerKey> flushKeys = new LinkedList<FlushMarkerKey>();
 

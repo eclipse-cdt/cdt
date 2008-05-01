@@ -79,7 +79,7 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
         return "Manual";
     }
 
-    public IElementUpdateTester getTesterTester(Object event) {
+    public IElementUpdateTester getElementUpdateTester(Object event) {
         if (event.equals(REFRESH_EVENT)) {
             return fgRefreshUpdateTester;
         } 

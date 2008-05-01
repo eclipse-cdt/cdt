@@ -57,11 +57,12 @@ public class Activator extends SystemBasePlugin {
 	
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		//Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
 
 		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_SOCKET_TIMEOUT);	
 		
 		// do keepalive
-		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_DO_KEEPALIVE);
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_DO_KEEPALIVE);
 		
 		// socket read timeout 
 		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT,  IDStoreDefaultPreferenceConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT);

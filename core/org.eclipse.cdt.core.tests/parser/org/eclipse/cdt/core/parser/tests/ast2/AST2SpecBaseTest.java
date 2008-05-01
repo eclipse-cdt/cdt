@@ -14,8 +14,6 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -44,7 +42,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * @author dsteffle
  */
-public class AST2SpecBaseTest extends TestCase {
+public class AST2SpecBaseTest extends AST2BaseTest {
     private static final IParserLogService NULL_LOG = new NullLogService();
 
 	public AST2SpecBaseTest() {

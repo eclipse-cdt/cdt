@@ -55,7 +55,6 @@ import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneMaxLengthAction;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneWordWrapAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.variables.IndexedValuePartition;
 import org.eclipse.debug.internal.ui.views.variables.details.DetailMessages;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -253,7 +252,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      */
     protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".SourceDetailPane"; //$NON-NLS-1$
     protected static final String DETAIL_SELECT_ALL_ACTION = IDebugView.SELECT_ALL_ACTION + ".SourceDetailPane"; //$NON-NLS-1$
-    protected static final String DETAIL_WORD_WRAP_ACTION = IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP;
+    protected static final String DETAIL_WORD_WRAP_ACTION = DsfDebugUIPlugin.PLUGIN_ID + ".detail_pane_word_wrap"; //$NON-NLS-1$
     protected static final String DETAIL_MAX_LENGTH_ACTION = "MaxLength"; //$NON-NLS-1$
     
     /**
@@ -301,7 +300,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             fModel = model;
         }
         
-        private void putInformationIntoDetailPane( final IFormattedDataDMContext finalDmc , final IFormattedValues finalService, 
+        private void putInformationIntoDetailPane( final IFormattedDataDMContext finalDmc , final IFormattedValues service, 
         										   final IProgressMonitor monitor, final String name ) {
 
             /*
@@ -314,7 +313,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
              */
             
             final DataRequestMonitor<String[]> getAvailableFormatsDone = 
-                new DataRequestMonitor<String[]>(finalService.getSession().getExecutor(), null) {
+                new DataRequestMonitor<String[]>(service.getExecutor(), null) {
                     @Override
                     protected void handleSuccess() {
                         if (monitor.isCanceled()) {
@@ -332,7 +331,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                         
                         final List<String> completedFormatStrings = new ArrayList<String>();
                         
-                        final CountingRequestMonitor countingRm = new CountingRequestMonitor(finalService.getSession().getExecutor(), null) {
+                        final CountingRequestMonitor countingRm = new CountingRequestMonitor(service.getExecutor(), null) {
                             @Override
                             protected void handleCompleted() {
                                 
@@ -356,8 +355,8 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 	/*
                                 	 *  Add the HEADER which identifies what is being represented. When there
                                 	 *  are multiple selections in the view the detail pane contains multiple
-                                	 *  entries.  They would be all munged together and even though the order
-                                	 *  of the detail entries is the order of the selections in the view  and
+                                	 *  entries.  They would be all compressed together  and even though  the 
+                                	 *  order of the  entries is the order of the selections in the view  and
                                 	 *  it is very hard to know what goes with what. This makes it easy.
                                 	 */
                                 	String finalResult = "Name : " + name + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -383,11 +382,11 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                             /*
                              *  Format has been validated. Get the formatted value.
                              */
-                            final FormattedValueDMContext valueDmc = finalService.getFormattedValueContext(finalDmc, str);
+                            final FormattedValueDMContext valueDmc = service.getFormattedValueContext(finalDmc, str);
                             
-                            finalService.getFormattedExpressionValue(
+                            service.getFormattedExpressionValue(
                                 valueDmc,
-                                new DataRequestMonitor<FormattedValueDMData>(finalService.getSession().getExecutor(), null) {
+                                new DataRequestMonitor<FormattedValueDMData>(service.getExecutor(), null) {
                                     @Override
                                     public void handleCompleted() {
                                         if (getStatus().isOK()) {
@@ -424,12 +423,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                 /*
                  *  Get the supported formats.
                  */
-                finalService.getExecutor().submit(new Runnable() {
-                    public void run() {
-                        finalService.getAvailableFormats(finalDmc, getAvailableFormatsDone);
-                    }
-                }
-            );
+                service.getAvailableFormats(finalDmc, getAvailableFormatsDone);
         }
         
         /* (non-Javadoc)
@@ -495,17 +489,23 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                          *  Get the name so we can construct the header which identifies the detail
                          *  set of values.
                          */
-                    	regService.getBitFieldData(
-                    			bitfieldDmc,
-                    			new DataRequestMonitor<IBitFieldDMData>(service.getSession().getExecutor(), null) {
-                    				@Override
-                    				public void handleCompleted() {
-                    					if (getStatus().isOK()) {
-                    						putInformationIntoDetailPane(bitfieldDmc , regService, monitor, getData().getName());
+                    	regService.getExecutor().submit(
+                    		new Runnable() {
+                    			public void run() {
+                    				regService.getBitFieldData(
+                    					bitfieldDmc,
+                    					new DataRequestMonitor<IBitFieldDMData>(regService.getExecutor(), null) {
+                    						@Override
+                    						public void handleCompleted() {
+                    							if (getStatus().isOK()) {
+                    								putInformationIntoDetailPane(bitfieldDmc , regService, monitor, getData().getName());
+                    							}
+                    						}
                     					}
-                    				}
+                    				);
                     			}
-                    	);
+                    		}
+                        );
                     }
                     else {
                         final IRegisterDMContext regDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IRegisterDMContext.class);
@@ -520,16 +520,22 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                              *  Get the name so we can construct the header which identifies the detail
                              *  set of values.
                              */
-                            regService.getRegisterData(
-                            	regDmc,
-                                new DataRequestMonitor<IRegisterDMData>(service.getSession().getExecutor(), null) {
-                                    @Override
-                                    public void handleCompleted() {
-                                        if (getStatus().isOK()) {
-                                        	putInformationIntoDetailPane(regDmc , regService, monitor, getData().getName());
-                                        }
-                                    }
-                                }
+                            regService.getExecutor().submit(
+                            	new Runnable() {
+                            		public void run() {
+                            			regService.getRegisterData(
+                                           	regDmc,
+                                            new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
+                                           		@Override
+                                           		public void handleCompleted() {
+                                           			if (getStatus().isOK()) {
+                                           				putInformationIntoDetailPane(regDmc , regService, monitor, getData().getName());
+                                           			}
+                                           		}
+                                           	}
+                            			);
+                            		}
+                            	}
                             );
                         }
                         else {
@@ -582,11 +588,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                         }
                     } else if (element instanceof IExpression) {
                         val = ((IExpression)element).getValue();
-                    }
-                    // When selecting a index partition, clear the pane
-                    if (val instanceof IndexedValuePartition) {
-                        detailComputed(null, ""); //$NON-NLS-1$
-                        val = null;
                     }
                     if (element instanceof String) {
                         message = (String) element;

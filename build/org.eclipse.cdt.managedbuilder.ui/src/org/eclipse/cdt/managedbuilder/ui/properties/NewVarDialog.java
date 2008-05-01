@@ -138,7 +138,7 @@ public class NewVarDialog extends Dialog {
 		fMacroNameEdit = new CCombo(comp, SWT.BORDER);
 		fMacroNameEdit.setItems(getMacroNames());
 		fMacroNameEdit.setFont(comp.getFont());
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData();	// don't use GridData.FILL_HORIZONTAL; see bugzilla 229793
 		gd.horizontalSpan = 2;
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + 50;
 		fMacroNameEdit.setLayoutData(gd);

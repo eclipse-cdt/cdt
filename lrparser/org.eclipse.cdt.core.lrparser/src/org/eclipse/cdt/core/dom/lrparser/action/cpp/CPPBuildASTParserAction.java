@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemove;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_Completion;
 import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
 
 import java.util.Collections;
@@ -88,7 +89,10 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
+import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoFunctionDeclaratorParser;
@@ -107,6 +111,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 @SuppressWarnings("restriction")
 public class CPPBuildASTParserAction extends BuildASTParserAction {
 
+	/** Allows code in this class to refer to the token kinds in CPPParsersym */
+	private final ITokenMap tokenMap;
 	
 	/** Used to create the AST node objects */
 	protected final ICPPASTNodeFactory nodeFactory;
@@ -119,12 +125,19 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public CPPBuildASTParserAction(ICPPASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
 		super(nodeFactory, parser, tu);
 		this.nodeFactory = nodeFactory;
+		this.tokenMap = new TokenMap(CPPParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 	}
-
+	
+	
+	private int baseKind(IToken token) {
+		return tokenMap.mapKind(token.getKind());
+	}
+	
 	@Override 
 	protected boolean isCompletionToken(IToken token) {
-		return token.getKind() == CPPParsersym.TK_Completion;
+		return baseKind(token) == TK_Completion;
 	}
+	
 	
 	
 	@Override
@@ -269,10 +282,10 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	private static int asICPPASTSimpleTypeConstructorExpressionType(IToken token) {
+	private int asICPPASTSimpleTypeConstructorExpressionType(IToken token) {
 		assert token != null;
 		
-		switch(token.getKind()) {
+		switch(baseKind(token)) {
 			case TK_char     : return ICPPASTSimpleTypeConstructorExpression.t_char;
 			case TK_wchar_t  : return ICPPASTSimpleTypeConstructorExpression.t_wchar_t;
 			case TK_bool     : return ICPPASTSimpleTypeConstructorExpression.t_bool;
@@ -765,7 +778,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	private static String createStringRepresentation(List<IToken> nameTokens) {
+	private String createStringRepresentation(List<IToken> nameTokens) {
 		StringBuilder sb = new StringBuilder();
 		IToken prev = null;
 		for(IToken t : nameTokens) {
@@ -778,13 +791,13 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	private static boolean needSpaceBetween(IToken prev, IToken iter) {
+	private boolean needSpaceBetween(IToken prev, IToken iter) {
 		// this logic was copied from BasicTokenDuple.createCharArrayRepresentation()
 		if(prev == null)
 			return false;
 		
-		int prevKind = prev.getKind();
-		int iterKind = iter.getKind();
+		int prevKind = baseKind(prev);
+		int iterKind = baseKind(iter);
 		
 		return  prevKind != TK_ColonColon && 
 				prevKind != TK_identifier && 
@@ -1047,8 +1060,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * object to determine how to set a specifier.
 	 */
 	protected void setSpecifier(ICPPASTDeclSpecifier node, IToken token) {
-		//TODO int kind = asC99Kind(token)
-		int kind = token.getKind();
+		int kind = baseKind(token);
 		switch(kind){
 			case TK_typedef:  node.setStorageClass(IASTDeclSpecifier.sc_typedef);    return;
 			case TK_extern:   node.setStorageClass(IASTDeclSpecifier.sc_extern);     return;
@@ -1082,7 +1094,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 				case TK_short:    n.setShort(true);    return;
 			}
 		}
-
 		
 	}
 	
@@ -1171,8 +1182,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	private static int getElaboratedTypeSpecifier(IToken token) {
-		int kind = token.getKind();
+	private int getElaboratedTypeSpecifier(IToken token) {
+		int kind = baseKind(token);
 		switch(kind) {
 			default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
 			case TK_struct: return IASTElaboratedTypeSpecifier.k_struct;
@@ -1213,7 +1224,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(declarators.isEmpty() && 
 		   declSpecifier instanceof ICPPASTNamedTypeSpecifier &&
 		   ruleTokens.size() >= 2 &&
-		   (nameToken = ruleTokens.get(ruleTokens.size() - 2)).getKind() == TK_identifier) {
+		   baseKind(nameToken = ruleTokens.get(ruleTokens.size() - 2)) == TK_identifier) {
 			
 			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
 			for(IToken t : ruleTokens.subList(0, ruleTokens.size()-1))
@@ -1246,23 +1257,24 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	public void consumeInitDeclaratorComplete() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-			
-		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
-		if(!(declarator instanceof IASTFunctionDeclarator))
-			return;
 		
-		IParser secondaryParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
-		IASTNode alternateDeclarator = runSecondaryParser(secondaryParser);
-	
-		if(alternateDeclarator == null || alternateDeclarator instanceof IASTProblemDeclaration)
-			return;
-		
-		astStack.pop();
-		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
-
-		setOffsetAndLength(ambiguityNode);
-		astStack.push(ambiguityNode); 
-		
+//		System.out.println(parser.getRuleTokens());
+//		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
+//		if(!(declarator instanceof IASTFunctionDeclarator))
+//			return;
+//		
+//		IParser secondaryParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
+//		IASTNode alternateDeclarator = runSecondaryParser(secondaryParser);
+//	
+//		if(alternateDeclarator == null || alternateDeclarator instanceof IASTProblemDeclaration)
+//			return;
+//		
+//		astStack.pop();
+//		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
+//
+//		setOffsetAndLength(ambiguityNode);
+//		astStack.push(ambiguityNode); 
+//		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
@@ -1285,8 +1297,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	private static int getAccessSpecifier(IToken token) {
-		int kind = token.getKind();
+	private int getAccessSpecifier(IToken token) {
+		int kind = baseKind(token);
 		switch(kind) {
 			default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
 			case TK_private:   return ICPPASTVisibilityLabel.v_private;
@@ -1396,8 +1408,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	private static int getCompositeTypeSpecifier(IToken token) {
-		int kind = token.getKind();
+	private int getCompositeTypeSpecifier(IToken token) {
+		final int kind = baseKind(token);
 		switch(kind) {
 			default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
 			case TK_struct: return IASTCompositeTypeSpecifier.k_struct;
@@ -1424,10 +1436,10 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     }
     
     
-    private static void addCVQualifiersToPointer(IASTPointer pointer, List<Object> tokens) {
+    private void addCVQualifiersToPointer(IASTPointer pointer, List<Object> tokens) {
     	for(Object t : tokens) {
     		IToken token = (IToken) t;
-			int kind = token.getKind(); // TODO this should be asXXXKind
+			int kind = baseKind(token);
 			switch(kind) {
 				default : assert false;
 				case TK_const:    pointer.setConst(true);    break;
@@ -1468,7 +1480,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     	 
     	 // find the last double colon by searching for it
     	 for(IToken t : reverseIterable(parser.getRuleTokens())) {
-    		 if(t.getKind() == TK_ColonColon) {
+    		 if(baseKind(t) == TK_ColonColon) {
     			 endOffset = endOffset(t);
     			 break;
     		 }
@@ -1518,7 +1530,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		}
  		
  		for(Object token : astStack.closeScope()) {
- 			int kind = ((IToken)token).getKind();
+ 			int kind = baseKind((IToken)token);
  			switch(kind) {
  				default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
  				case TK_const:    declarator.setConst(true); break;
@@ -1713,8 +1725,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     	if(TRACE_AST_STACK) System.out.println(astStack);
     }
     
-    private static int getTemplateParameterType(IToken token) {
-    	int kind = token.getKind();
+    private int getTemplateParameterType(IToken token) {
+    	int kind = baseKind(token);
     	switch(kind) {
     		default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
     		case TK_class:    return ICPPASTSimpleTypeTemplateParameter.st_class;

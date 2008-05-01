@@ -54,6 +54,7 @@ public class LRParserTestSuite extends TestSuite {
 			
 			addTestSuite(LRCPPSpecTest.class);
 			addTestSuite(LRCPPTests.class); 
+			addTestSuite(LRTemplateTests.class);
 		
 		}};
 	}	

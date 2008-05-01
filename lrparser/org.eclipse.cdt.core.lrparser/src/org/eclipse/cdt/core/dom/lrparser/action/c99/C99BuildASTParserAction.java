@@ -93,18 +93,14 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 	
 	
+	
+	private int baseKind(IToken token) {
+		return tokenMap.mapKind(token.getKind());
+	}
+	
 	@Override 
 	protected boolean isCompletionToken(IToken token) {
-		return asC99Kind(token) == TK_Completion;
-	}
-	
-	
-	private int asC99Kind(IToken token) {
-		return asC99Kind(token.getKind());
-	}
-	
-	private int asC99Kind(int tokenKind) {
-		return tokenMap.mapKind(tokenKind);
+		return baseKind(token) == TK_Completion;
 	}
 	
 	
@@ -203,7 +199,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			return;
 		IToken token = (IToken)specifier;
 		
-		int kind = asC99Kind(token);
+		int kind = baseKind(token);
 		switch(kind){
 			case TK_typedef:  node.setStorageClass(IASTDeclSpecifier.sc_typedef);  return;
 			case TK_extern:   node.setStorageClass(IASTDeclSpecifier.sc_extern);   return;
@@ -245,7 +241,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 */
 	private void collectArrayModifierTypeQualifiers(ICASTArrayModifier arrayModifier) {
 		for(Object o : astStack.closeScope()) {
-			switch(asC99Kind((IToken)o)) {
+			switch(baseKind((IToken)o)) {
 				case TK_const:    arrayModifier.setConst(true);    break;
 				case TK_restrict: arrayModifier.setRestrict(true); break;
 				case TK_volatile: arrayModifier.setVolatile(true); break;
@@ -350,7 +346,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 
 		for(Object o : astStack.closeScope()) {
 			IToken token = (IToken)o;			
-			switch(asC99Kind(token)) {
+			switch(baseKind(token)) {
 				default: assert false;
 				case TK_const:    pointer.setConst(true);    break;
 				case TK_volatile: pointer.setVolatile(true); break;
@@ -500,7 +496,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			if(o instanceof IToken) {
 				IToken token = (IToken) o;
 				// There is one identifier token on the stack
-				int kind = asC99Kind(token);
+				int kind = baseKind(token);
 				if(kind == TK_identifier || kind == TK_Completion) {
 					IASTName name = createName(token);
 					//name.setBinding(binding);
@@ -532,7 +528,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
 		
 		List<IToken> ruleTokens = parser.getRuleTokens();
-		if(ruleTokens.size() == 1 && asC99Kind(ruleTokens.get(0)) == TK_EndOfCompletion) 
+		if(ruleTokens.size() == 1 && baseKind(ruleTokens.get(0)) == TK_EndOfCompletion) 
 			return; // do not generate nodes for extra EOC tokens
 		
 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
@@ -558,7 +554,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		// Don't generate declaration nodes for extra EOC tokens
 		// TODO: the token type must be converted
-		if(asC99Kind(parser.getLeftIToken()) == C99Parsersym.TK_EndOfCompletion)
+		if(baseKind(parser.getLeftIToken()) == C99Parsersym.TK_EndOfCompletion)
 			return;
 		
 		IASTDeclSpecifier declSpecifier   = nodeFactory.newCSimpleDeclSpecifier();

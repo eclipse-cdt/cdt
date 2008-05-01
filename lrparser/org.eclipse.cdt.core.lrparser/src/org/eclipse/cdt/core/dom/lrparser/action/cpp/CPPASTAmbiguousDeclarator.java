@@ -28,6 +28,7 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
 	
 	
 	public CPPASTAmbiguousDeclarator(IASTDeclarator ... ds) {
+		System.out.println("CPPASTAmbiguousDeclarator created");
 		for(IASTDeclarator declarator : ds)
 			addDeclarator(declarator);
 	}
@@ -76,11 +77,10 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
                 
                 if( scope != null ) {
                     try {
-                        ASTInternal.flushCache(scope);
-                        IScope parentScope = scope.getParent(); // needed to fix bugs
-                        if(parentScope != null) {
-                        	ASTInternal.flushCache(parentScope);
-                        }
+                    	IScope parentScope = scope;
+                    	do {
+                    		ASTInternal.flushCache(parentScope);
+                    	} while((parentScope = parentScope.getParent()) != null);
                     } catch (DOMException de) {}
                 }
             }

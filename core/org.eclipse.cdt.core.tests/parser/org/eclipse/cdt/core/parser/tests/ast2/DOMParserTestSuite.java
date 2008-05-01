@@ -23,37 +23,35 @@ import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
  * @author jcamelon
  */
 public class DOMParserTestSuite extends TestCase {
-
-	public static Test suite() { 
+	public static Test suite() {
 		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
 		suite.addTest(AST2Tests.suite());
-		suite.addTestSuite( GCCTests.class );
-		suite.addTest( AST2CPPTests.suite() );
-		suite.addTest( AST2TemplateTests.suite() );
-		suite.addTestSuite( QuickParser2Tests.class );
-		suite.addTest( CompleteParser2Tests.suite() );
-		suite.addTest( DOMLocationTests.suite() );
-        suite.addTestSuite( DOMLocationMacroTests.class );
-        suite.addTest (ImageLocationTests.suite());
-		suite.addTest( DOMLocationInclusionTests.suite() );
-		suite.addTestSuite( AST2KnRTests.class );
-		suite.addTestSuite( AST2UtilTests.class );
-		suite.addTestSuite( AST2UtilOldTests.class );
-		suite.addTestSuite( AST2SelectionParseTest.class );		
-		suite.addTest( ASTNodeSelectorTest.suite());
-		suite.addTestSuite( CodeReaderCacheTest.class );
-		suite.addTestSuite( AST2CPPSpecTest.class );
-		suite.addTestSuite( AST2CPPSpecFailingTest.class );
-		suite.addTestSuite( AST2CSpecTest.class );
-		suite.addTestSuite( AST2CSpecFailingTest.class );
-		suite.addTestSuite( DOMSelectionParseTest.class );
-		suite.addTestSuite( GCCCompleteParseExtensionsTest.class );
+		suite.addTestSuite(GCCTests.class);
+		suite.addTest(AST2CPPTests.suite());
+		suite.addTest(AST2TemplateTests.suite());
+		suite.addTestSuite(QuickParser2Tests.class);
+		suite.addTest(CompleteParser2Tests.suite());
+		suite.addTest(DOMLocationTests.suite());
+		suite.addTestSuite(DOMLocationMacroTests.class);
+		suite.addTest(ImageLocationTests.suite());
+		suite.addTest(DOMLocationInclusionTests.suite());
+		suite.addTestSuite(AST2KnRTests.class);
+		suite.addTestSuite(AST2UtilTests.class);
+		suite.addTestSuite(AST2UtilOldTests.class);
+		suite.addTestSuite(AST2SelectionParseTest.class);
+		suite.addTest(ASTNodeSelectorTest.suite());
+		suite.addTestSuite(CodeReaderCacheTest.class);
+		suite.addTest(AST2CPPSpecTest.suite());
+		suite.addTest(AST2CPPSpecFailingTest.suite());
+		suite.addTestSuite(AST2CSpecTest.class);
+		suite.addTestSuite(AST2CSpecFailingTest.class);
+		suite.addTestSuite(DOMSelectionParseTest.class);
+		suite.addTestSuite(GCCCompleteParseExtensionsTest.class);
 		suite.addTestSuite(DOMPreprocessorInformationTest.class);
 		suite.addTest(CommentTests.suite());
 		suite.addTest(TaskParserTest.suite());
-		suite.addTest( CompletionTestSuite.suite() );
-		suite.addTestSuite( CharArrayMapTest.class );
+		suite.addTest(CompletionTestSuite.suite());
+		suite.addTestSuite(CharArrayMapTest.class);
 		return suite;
-	}	
-
+	}
 }

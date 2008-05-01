@@ -58,22 +58,22 @@ public class Activator extends SystemBasePlugin {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, 5000);	
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_SOCKET_TIMEOUT);	
 		
 		// do keepalive
-		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, true);
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_DO_KEEPALIVE);
 		
 		// socket read timeout 
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT,  3600000);
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT,  IDStoreDefaultPreferenceConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT);
 		
 		// keepalive response timeout
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT,  60000);		
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT,  IDStoreDefaultPreferenceConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT);		
 		
 		// show mismatched server warning
-		store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, true);
+		store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, IDStoreDefaultPreferenceConstants.DEFAULT_ALERT_MISMATCHED_SERVER);
 
 		// cache remote classes
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, true);				
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES);				
 	}
 
 	/**

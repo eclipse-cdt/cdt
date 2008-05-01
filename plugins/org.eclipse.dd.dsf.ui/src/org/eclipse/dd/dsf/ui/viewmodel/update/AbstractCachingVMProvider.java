@@ -208,8 +208,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         
     protected static String SELECTED_UPDATE_MODE = "org.eclipse.dd.dsf.ui.viewmodel.update.selectedUpdateMode";  //$NON-NLS-1$
 
-    private IVMUpdatePolicy fCurrentUpdatePolicy;
-    
     private IVMUpdatePolicy[] fAvailableUpdatePolicies;
 
     public Map<Object, RootElementMarkerKey> fRootMarkers = new HashMap<Object, RootElementMarkerKey>();
@@ -238,17 +236,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         fCacheListHead.fNext = fCacheListHead;
         fCacheListHead.fPrevious = fCacheListHead;
         
-        String updateModeId = (String)presentationContext.getProperty(SELECTED_UPDATE_MODE);
-        if (updateModeId != null) {
-            for (IVMUpdatePolicy updateMode : getAvailableUpdatePolicies()) {
-                if (updateMode.getID().equals(updateModeId)) {
-                    fCurrentUpdatePolicy = updateMode;
-                }
-            }
-        }
-        
         fAvailableUpdatePolicies = createUpdateModes();
-        fCurrentUpdatePolicy = fAvailableUpdatePolicies[0];
     }
     
     protected IVMUpdatePolicy[] createUpdateModes() {
@@ -260,11 +248,21 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
 
     public IVMUpdatePolicy getActiveUpdatePolicy() {
-        return fCurrentUpdatePolicy;
+        String updateModeId = (String)getPresentationContext().getProperty(SELECTED_UPDATE_MODE);
+        if (updateModeId != null) {
+            for (IVMUpdatePolicy updateMode : getAvailableUpdatePolicies()) {
+                if (updateMode.getID().equals(updateModeId)) {
+                    return updateMode;
+                }
+            }
+        }
+        
+        // Default to the first one.
+        return getAvailableUpdatePolicies()[0];
     }
 
     public void setActiveUpdatePolicy(IVMUpdatePolicy updatePolicy) {
-        fCurrentUpdatePolicy = updatePolicy;
+        getPresentationContext().setProperty(SELECTED_UPDATE_MODE, updatePolicy.getID());
     }
     
     public void refresh() {

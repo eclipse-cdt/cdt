@@ -50,19 +50,10 @@
             verticalRulerPreferenceValue="true">
       </specification>
    </extension>
+
    <extension
          point="org.eclipse.ui.viewActions">
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
-            targetID="org.eclipse.debug.ui.RegisterView">
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
-               label="Refresh"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
+      <!-- Variables View menu contributions -->
       <viewContribution
             id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
             targetID="org.eclipse.debug.ui.VariableView">
@@ -70,10 +61,174 @@
                class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
                id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
-               label="Refresh"
+               label="%action.refresh.label"
                toolbarPath="additions">
          </action>
+         
+         <menu id="numberFormat"
+               label="%menu.numberFormat"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex"
+               label="%action.setDefaultNumberFormatHex.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal"
+               label="%action.setDefaultNumberFormatDecimal.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal"
+               label="%action.setDefaultNumberFormatOctal.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary"
+               label="%action.setDefaultNumberFormatBinary.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural"
+               label="%action.setDefaultNumberFormatNatural.label"
+               menubarPath="numberFormat/additions"
+               state="true"
+               style="radio">
+         </action>
+         
+         <menu id="updatePolicy"
+               label="%menu.updatePolicy"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit"
+               label="%action.breakpointHitUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
+               label="%action.manualUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
+               label="%action.automaticUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               state="true"
+               style="radio">
+         </action>         
       </viewContribution>
+
+      <!-- Registers View menu contributions -->
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
+            targetID="org.eclipse.debug.ui.RegisterView">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+         
+         <menu id="numberFormat"
+               label="%menu.numberFormat"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex"
+               label="%action.setDefaultNumberFormatHex.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal"
+               label="%action.setDefaultNumberFormatDecimal.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal"
+               label="%action.setDefaultNumberFormatOctal.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary"
+               label="%action.setDefaultNumberFormatBinary.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural"
+               label="%action.setDefaultNumberFormatNatural.label"
+               menubarPath="numberFormat/additions"
+               state="true"
+               style="radio">
+         </action>
+         
+         <menu id="updatePolicy"
+               label="%menu.updatePolicy"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit"
+               label="%action.breakpointHitUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
+               label="%action.manualUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
+               label="%action.automaticUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               state="true"
+               style="radio">
+         </action>         
+         
+      </viewContribution>
+      
+      <!-- Expressions View menu contributions -->
       <viewContribution
             id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
             targetID="org.eclipse.debug.ui.ExpressionView">
@@ -81,184 +236,86 @@
                class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
                id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
-               label="Refresh"
+               label="%action.refresh.label"
                toolbarPath="additions">
          </action>
-      </viewContribution>
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.variable.updatePolicies"
-            targetID="org.eclipse.debug.ui.VariableView">
+         
+         <menu id="numberFormat"
+               label="%menu.numberFormat"
+               path="additions"/>
          <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
-               id="org.eclipse.dd.dsf.debug.ui.update.selectUpdatePolicy"
-               label="Update Policy"
-               menubarPath="additions">
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex"
+               label="%action.setDefaultNumberFormatHex.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
          </action>
-      </viewContribution>
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.register.updatePolicies"
-            targetID="org.eclipse.debug.ui.RegisterView">
          <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
-               id="org.eclipse.dd.dsf.debug.ui.update.selectUpdatePolicy"
-               label="Update Policy"
-               menubarPath="additions">
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal"
+               label="%action.setDefaultNumberFormatDecimal.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
          </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal"
+               label="%action.setDefaultNumberFormatOctal.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary"
+               label="%action.setDefaultNumberFormatBinary.label"
+               menubarPath="numberFormat/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural"
+               label="%action.setDefaultNumberFormatNatural.label"
+               menubarPath="numberFormat/additions"
+               state="true"
+               style="radio">
+         </action>
+         
+         <menu id="updatePolicy"
+               label="%menu.updatePolicy"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit"
+               label="%action.breakpointHitUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
+               label="%action.manualUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
+               label="%action.automaticUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               state="true"
+               style="radio">
+         </action>         
+         
       </viewContribution>
    </extension>
-   
-      <extension point="org.eclipse.ui.viewActions">
-      <viewContribution
-            targetID="org.eclipse.debug.ui.RegisterView"
-            id="org.eclipse.debug.ui.PulldownActions">
-         <menu id="numberFormat"
-               label="Number Format"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Hex_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Hex"
-               label="Hex"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Decimal_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Decimal"
-               label="Decimal"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Octal_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Octal"
-               label="Octal"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Binary_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Binary"
-               label="Binary"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Natural_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Natural"
-               label="Natural"
-               menubarPath="numberFormat/additions"
-               state="true"
-               style="radio">
-         </action>
-      </viewContribution>
-   </extension>
-   
-   <extension point="org.eclipse.ui.viewActions">
-      <viewContribution
-            targetID="org.eclipse.debug.ui.VariableView"
-            id="org.eclipse.debug.ui.PulldownActions">
-         <menu id="numberFormat"
-               label="Number Format"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Hex_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Hex"
-               label="Hex"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Decimal_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Decimal"
-               label="Decimal"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Octal_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Octal"
-               label="Octal"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Binary_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Binary"
-               label="Binary"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Natural_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Natural"
-               label="Natural"
-               menubarPath="numberFormat/additions"
-               state="true"
-               style="radio">
-         </action>
-      </viewContribution>
-   </extension>   
-   
-   <extension point="org.eclipse.ui.viewActions">
-      <viewContribution
-            targetID="org.eclipse.debug.ui.ExpressionView"
-            id="org.eclipse.debug.ui.PulldownActions">
-         <menu id="numberFormat"
-               label="Number Format"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Hex_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Hex"
-               label="Hex"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Decimal_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Decimal"
-               label="Decimal"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Octal_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Octal"
-               label="Octal"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Binary_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Binary"
-               label="Binary"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
-               helpContextId="com.windriver.ide.debug.internal.ui.NumberFormat.Natural_helpContext"
-               id="com.windriver.ide.debug.internal.ui.NumberFormat.Natural"
-               label="Natural"
-               menubarPath="numberFormat/additions"
-               state="true"
-               style="radio">
-         </action>
-      </viewContribution>
-   </extension>    
    
 	<extension 
 	    point="org.eclipse.debug.ui.detailPaneFactories">

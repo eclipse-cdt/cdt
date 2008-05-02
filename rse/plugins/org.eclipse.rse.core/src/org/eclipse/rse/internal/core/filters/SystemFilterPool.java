@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - removing implementation of ISystemFilterSavePolicies, ISystemFilterConstants
  * David Dykstal (IBM) - 142806: refactoring persistence framework
@@ -37,32 +37,32 @@ import org.eclipse.rse.internal.references.SystemPersistableReferencedObject;
 
 
 /**
- * This is a system filter pool, which is a means of grouping filters
- * and managing them as a list.
+ * A system filter pool is a means of grouping filters and managing them as a
+ * list.
  * <p>
- * To enable filters themselves to be automous and sharable, it is decided
- *  that no data will be persisted in the filter pool itself. Rather, all
- *  attributes other than the list of filters are transient and as such it is
- *  the responsibility of the programmer using a filter pool to set these
- *  attributes after creating or restoring a filter pool. Typically, this is
- *  what a filter pool manager (SystemFilterPoolManager) will do for you.
+ * To enable filters themselves to be autonomous and sharable, it is decided
+ * that no data will be persisted in the filter pool itself. Rather, all
+ * attributes other than the list of filters are transient and as such it is the
+ * responsibility of the programmer using a filter pool to set these attributes
+ * after creating or restoring a filter pool. Typically, this is what a filter
+ * pool manager (SystemFilterPoolManager) will do for you.
  */
-/** 
- * @lastgen class SystemFilterPoolImpl extends SystemPersistableReferencedObjectImpl implements SystemFilterPool, SystemFilterSavePolicies, SystemFilterConstants, SystemFilterContainer, IAdaptable
- */
-public class SystemFilterPool extends SystemPersistableReferencedObject 
+public class SystemFilterPool extends SystemPersistableReferencedObject
        implements ISystemFilterPool, IAdaptable
 {
-	
-	/**
+
+    /**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 *
 	 * @see #getName()
 	 */
 	protected static final String NAME_EDEFAULT = null;
 
     private String name;
-	/**
+
+    /**
 	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+	 *
 	 * @see #getType()
 	 */
 	protected static final String TYPE_EDEFAULT = null;
@@ -73,9 +73,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     private boolean initialized = false;
     protected boolean specialCaseNoDataRestored = false;
     private boolean debug = false;
-	protected static final String DELIMITER = SystemFilterPoolReference.DELIMITER;        	
-	
-	/**
+    protected static final String DELIMITER = SystemFilterPoolReference.DELIMITER;
+
+    	/**
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected String type = TYPE_EDEFAULT;
@@ -201,7 +201,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	/**
 	 * Default constructor
 	 */
-	public SystemFilterPool(String poolName, boolean allowNestedFilters, boolean isDeletable) 
+	public SystemFilterPool(String poolName, boolean allowNestedFilters, boolean isDeletable)
 	{
 		super();
 		helpers = new SystemFilterContainerCommonMethods();
@@ -212,7 +212,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
         setDeletable(isDeletable); // mof attribute
         setSupportsNestedFilters(allowNestedFilters); // cascades to each filter
  	}
-	
+
     /*
      * Private helper method to core initialization, from either createXXX or restore.
      */
@@ -223,7 +223,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	}
 
 
-	protected List internalGetFilters()	
+	protected List internalGetFilters()
 	{
 		return filters;
 	}
@@ -239,7 +239,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	else
     	  return null;
     }
-    	
+
     /**
      * Set whether filters in this pool support nested filters.
      * Important to note this is stored in every filter as well as this filter pool.
@@ -250,7 +250,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	ISystemFilter[] filters = getSystemFilters();
     	if (filters != null)
     	  for (int idx=0; idx<filters.length; idx++)
-    	     filters[idx].setSupportsNestedFilters(supports);   	
+    	     filters[idx].setSupportsNestedFilters(supports);
     }
 
 	/**
@@ -267,13 +267,13 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      */
     public void setSupportsDuplicateFilterStrings(boolean supports)
     {
-    	setSupportsDuplicateFilterStringsGen(supports); 
+    	setSupportsDuplicateFilterStringsGen(supports);
     	ISystemFilter[] filters = getSystemFilters();
     	if (filters != null)
     	  for (int idx=0; idx<filters.length; idx++)
-    	     filters[idx].setSupportsDuplicateFilterStrings(supports);   	
+    	     filters[idx].setSupportsDuplicateFilterStrings(supports);
     }
-    
+
 	/**
 	 * @param newSupportsDuplicateFilterStrings
 	 */
@@ -289,14 +289,14 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      */
 	public void setStringsCaseSensitive(boolean supports)
     {
-    	this.setStringsCaseSensitiveGen(supports); 
+    	this.setStringsCaseSensitiveGen(supports);
     	ISystemFilter[] filters = getSystemFilters();
     	if (filters != null)
     	  for (int idx=0; idx<filters.length; idx++)
-    	     filters[idx].setStringsCaseSensitive(supports);   	
+    	     filters[idx].setStringsCaseSensitive(supports);
     	setDirty(true);
     }
-	
+
 	private void setStringsCaseSensitiveGen(boolean newStringsCaseSensitive)
 	{
 		stringsCaseSensitive = newStringsCaseSensitive;
@@ -310,7 +310,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     public void setSystemFilterPoolManager(ISystemFilterPoolManager mgr)
     {
     	this.mgr = mgr;
-    }    
+    }
     /**
      * Return the filter pool manager managing this collection of filter pools and their filters.
      */
@@ -327,7 +327,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	{
 		this.filterPoolData = data;
 	}
-	
+
 	/**
 	 * Return transient data set via setFilterPoolData.
 	 */
@@ -335,29 +335,29 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	{
 		return filterPoolData;
 	}
-	
+
 	public String getId()
 	{
 		return getProvider().getId();
 	}
-	
+
 	/**
 	 * @see ISystemFilterPool#getName()
 	 */
-	public String getName() 
+	public String getName()
 	{
 		return name;
 	}
-	
-	public String getDescription() 
+
+	public String getDescription()
 	{
 		return RSECoreMessages.RESID_MODELOBJECTS_FILTERPOOL_DESCRIPTION;
 	}
-	
+
 	/**
 	 * Set the name of this filter pool.
 	 */
-	public void setName(String name) 
+	public void setName(String name)
 	{
 		if (this.name == null || !this.name.equals(name) )
 		{
@@ -379,7 +379,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	  return type;
     }
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * Allows tools to have typed filter pools
 	 */
 	public String getTypeGen()
@@ -452,7 +452,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 */
 	public boolean areStringsCaseSensitive()
 	{
-		return isStringsCaseSensitive();	
+		return isStringsCaseSensitive();
 	}
     /**
      * Clone this filter pools' attributes and filters into another filter pool.
@@ -484,7 +484,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	//if (ourType != null)
         //  targetPool.setType(ourType);
         targetPool.setType(getType());
-        
+
        	targetPool.setDeletable(isDeletable());
        	targetPool.setSupportsNestedFilters(isSupportsNestedFilters());
 
@@ -492,7 +492,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	//if (ourDefault != null)
         //  targetPool.setDefault(ourDefault);
         targetPool.setDefault(isDefault());
-           
+
         targetPool.setSupportsDuplicateFilterStrings(supportsDuplicateFilterStrings());
         targetPool.setRelease(getRelease());
         //targetPool.setNonDeletable(isNonDeletable());
@@ -502,8 +502,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
           targetPool.setSingleFilterStringOnly(isSingleFilterStringOnly());
         if (isSetStringsCaseSensitive())
           targetPool.setStringsCaseSensitive(isStringsCaseSensitive());
-          
-          
+
+
         ISystemFilter[] filters = getSystemFilters();
         if ((filters!=null) && (filters.length>0))
         {
@@ -540,7 +540,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     }
 
     /**
-     * Creates a new system filter within this pool. 
+     * Creates a new system filter within this pool.
      * This filter will inherit/store the following attributes from this pool:
      * <ul>
      *   <li>supportsNestedFilters
@@ -549,9 +549,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * </ul>
      * @param aliasName The name to give the new filter. Must be unique for this pool.
      * @param filterStrings The list of String objects that represent the filter strings.
-     */    
+     */
     public ISystemFilter createSystemFilter(String aliasName, String[] filterStrings)
-    {    	
+    {
     	ISystemFilter newFilter = helpers.createSystemFilter(internalGetFilters(), this, aliasName, filterStrings);
     	newFilter.setSupportsNestedFilters(supportsNestedFilters());
     	newFilter.setStringsCaseSensitive(areStringsCaseSensitive());
@@ -572,14 +572,14 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	names.toArray(result);
     	return result;
     }
-    
+
     /**
      * Return how many filters are defined in this filter container
      */
     public int getSystemFilterCount()
-    {    	
-    	return helpers.getSystemFilterCount(internalGetFilters());    	
-    }      
+    {
+    	return helpers.getSystemFilterCount(internalGetFilters());
+    }
     /**
      * Return a filter object, given its aliasname.
      * Can be used to test if an aliasname is already used (non-null return).
@@ -649,7 +649,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
         ISystemFilter result = helpers.cloneSystemFilter(internalGetFilters(), filter, aliasName);
     	setDirty(true);
     	return result;
-    }    
+    }
 
     /**
      * Return a given filter's zero-based location
@@ -658,7 +658,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     {
     	return helpers.getSystemFilterPosition(internalGetFilters(),filter);
     }
-    
+
     /**
      * Move a given filter to a given zero-based location
      */
@@ -667,7 +667,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	helpers.moveSystemFilter(internalGetFilters(),pos,filter);
     	setDirty(true);
     }
-        
+
     /**
 	 * This is the method required by the IAdaptable interface.
 	 * Given an adapter class type, return an object castable to the type, or
@@ -675,8 +675,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 */
     public Object getAdapter(Class adapterType)
     {
-   	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
-    }   
+   	    return Platform.getAdapterManager().getAdapter(this, adapterType);
+    }
 
     /**
      * Order filters according to user preferences.
@@ -695,12 +695,12 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	filters.clear();
     	for (int idx=0; idx<filterArray.length; idx++)
     	{
-    	   filters.add(filterArray[idx]); 
+    	   filters.add(filterArray[idx]);
     	}
         helpers.invalidateCache();
     }
 
-    
+
     // -----------------------
     // SAVE/RESTORE METHODS...
     // -----------------------
@@ -714,7 +714,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	while (i.hasNext())
     	  ((SystemFilter)i.next()).initializeFilterStrings();
     }
-    
+
     /**
      * When saving one file per filter, we store the relative order of each filter
      * within each filter. After restoring, the filters are ordered by their file
@@ -728,7 +728,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	if (debug)
     	  printFilterList("Before sorting"); //$NON-NLS-1$
         helpers.invalidateCache(); // force re-gen of array from java.util.List on next getSystemFilters() request
-    	ISystemFilter[] filterArray = getSystemFilters(); // convert java.util.List to array    	
+    	ISystemFilter[] filterArray = getSystemFilters(); // convert java.util.List to array
     	boolean[] processed = new boolean[filterArray.length];
     	//for (int idx=0;idx<processed.length;idx++)
     	   //processed[idx] = false;
@@ -742,7 +742,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	boolean stop = false;
     	//int timeout = factorial(totalCount);
     	//System.out.println("Factorial of " + totalCount + " = " + timeout);
-    	int timeout = totalCount + 1; 
+    	int timeout = totalCount + 1;
     	while ((processedCount != totalCount) && (round < timeout))
     	{
     	  nextHighest = 9999;
@@ -780,7 +780,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
         if (debug)
     	  printFilterList("After sorting"); //$NON-NLS-1$
     }
-    
+
     private void printFilterList(String tagLine)
     {
     	ISystemFilter[] filters = getSystemFilters();
@@ -797,7 +797,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	/**
 	 * Return the unique reference name of this object.
 	 * <p>
-	 * As required by the {@link org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject IRSEPersistableReferencedObject} 
+	 * As required by the {@link org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject IRSEPersistableReferencedObject}
 	 * interface.
 	 */
 	public String getReferenceName()
@@ -823,7 +823,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 */
 	public boolean isSupportsNestedFilters()
 	{
@@ -859,7 +859,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 */
 	public boolean isSupportsDuplicateFilterStrings()
 	{
@@ -867,7 +867,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * In what release was this created? Typically, will be the version and release
 	 * times 10, as in 40 or 51.
 	 */
@@ -965,12 +965,12 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 			setDirty(true);
 		}
 	}
-	
+
 	public boolean commit()
 	{
 		return getPersistableParent().commit();
 	}
-	
+
 	public IRSEPersistableContainer getPersistableParent() {
 		ISystemProfile profile = null;
 		ISystemFilterPoolManager filterPoolManager = getSystemFilterPoolManager();
@@ -979,7 +979,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		}
 		return profile;
 	}
-	
+
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		List children = new ArrayList(10);
 		children.addAll(Arrays.asList(getSystemFilters()));
@@ -988,5 +988,5 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		children.toArray(result);
 		return result;
 	}
-	
+
 }

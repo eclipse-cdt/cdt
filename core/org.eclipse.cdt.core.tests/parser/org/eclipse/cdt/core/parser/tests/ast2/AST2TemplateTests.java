@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -2427,5 +2428,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testUserDefinedConversions_226231() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction fn= bh.assertNonProblem("foo(cx", 3, ICPPFunction.class);
+	}
+	
+	//	template<int x>
+	//	class A {};
+	//
+	//	const int i= 1;
+	//	A<i> a1;
+	public void _testNonTypeArgumentIsIDExpression_229942() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		assertInstance(col.getName(4).getParent(), ICPPASTTemplateId.class);
+		assertInstance(col.getName(5).getParent(), IASTIdExpression.class);
 	}
 }

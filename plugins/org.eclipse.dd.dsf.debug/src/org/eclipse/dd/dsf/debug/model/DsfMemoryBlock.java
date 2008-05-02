@@ -32,6 +32,7 @@ import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -40,6 +41,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockUpdatePolicy;
 import org.eclipse.debug.core.model.MemoryByte;
 
 /**
@@ -48,9 +50,13 @@ import org.eclipse.debug.core.model.MemoryByte;
  * 
  * It performs its read/write functions using the MemoryService.
  */
-public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension
+public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension, IMemoryBlockUpdatePolicy
 {
-    private final IMemoryDMContext fContext;
+	private final static String UPDATE_POLICY_AUTOMATIC = "Automatic"; //$NON-NLS-1$
+	private final static String UPDATE_POLICY_MANUAL = "Manual"; //$NON-NLS-1$
+	private final static String UPDATE_POLICY_BREAKPOINT = "On Breakpoint"; //$NON-NLS-1$
+	
+	private final IMemoryDMContext fContext;
     private final ILaunch fLaunch;
     private final IDebugTarget fDebugTarget;
     private final DsfMemoryBlockRetrieval fRetrieval;
@@ -62,6 +68,8 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     private int fLength;
     private int fWordSize;
     private MemoryByte[] fBlock;
+    
+    private String fUpdatePolicy = UPDATE_POLICY_AUTOMATIC;
     
     private ArrayList<Object> fConnections = new ArrayList<Object>();
 
@@ -263,12 +271,37 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	public MemoryByte[] getBytesFromOffset(BigInteger offset, long units) throws DebugException {
 		return getBytesFromAddress(fBlockAddress.add(offset), units);
 	}
-
+	
+	private boolean fUseCachedData = false;
+	
+	public void clearCache() {
+		fUseCachedData = false;
+	}
+	
+	@DsfServiceEventHandler 
+    public void handleCacheSuspendEvent(IRunControl.ISuspendedDMEvent e) {
+		e.getReason();
+		if(e.getReason() == StateChangeReason.BREAKPOINT)
+			fUseCachedData = false;
+	}
+	
+	private boolean isUseCacheData()
+	{
+		if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT))
+			return fUseCachedData;
+		else if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL))
+			return fUseCachedData;
+		else
+			return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
 	 */
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
-
+		if(isUseCacheData() && fBlockAddress.compareTo(address) == 0 && units * getAddressableSize() <= fBlock.length)
+			return fBlock;
+		
 		MemoryByte[] block = fetchMemoryBlock(address, units);
 		int newLength = (block != null) ? block.length : 0;
 
@@ -325,6 +358,11 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		fBlock = block;
 		fBlockAddress = address;
 		fLength = newLength;
+		
+		if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT))
+			fUseCachedData = true;
+		else if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL))
+			fUseCachedData = true;
 
 		return fBlock;
 	}
@@ -537,4 +575,21 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		}
 	}
 
+	public String[] getUpdatePolicies() {
+		return new String[] {UPDATE_POLICY_AUTOMATIC, UPDATE_POLICY_MANUAL, UPDATE_POLICY_BREAKPOINT};
+	}
+    
+    public String getUpdatePolicy()
+    {
+    	return fUpdatePolicy;
+    }
+    
+    public void setUpdatePolicy(String policy)
+    {
+    	fUpdatePolicy = policy;
+    }
+    
+    public String getUpdatePolicyDescription(String id) {
+		return id;
+	}
 }

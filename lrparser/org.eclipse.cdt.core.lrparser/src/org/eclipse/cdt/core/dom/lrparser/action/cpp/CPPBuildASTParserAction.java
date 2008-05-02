@@ -700,29 +700,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	/**
 	 * The template keyword is optional but must be the leftmost token.
+	 * 
+	 * This just throws away the template keyword.
 	 */
-	@Deprecated public void consumeNameWithTemplateKeyword() { 
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+	public void consumeNameWithTemplateKeyword() { 
+		if(TRACE_ACTIONS) 
+			DebugUtil.printMethodTrace();
 		
 		IASTName name = (IASTName) astStack.pop();
-		boolean hasTemplateKeyword = astStack.pop() == PLACE_HOLDER;
 		
-		if(hasTemplateKeyword)
-			name = addTemplateKeyword(parser.getLeftIToken(), name);
-		
+		astStack.pop(); // pop the template keyword
+
 		astStack.push(name);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
-	
-	
-	@Deprecated private IASTName addTemplateKeyword(final IToken templateKeyword, final IASTName name) {
-		IASTName replacement = nodeFactory.newName((templateKeyword + " " + name).toCharArray()); //$NON-NLS-1$
-		int offset = offset(templateKeyword);
-		int length = length(name) + (offset(name) - offset); 
-		setOffsetAndLength(replacement, offset, length);
-		return replacement;
-	}
+
 	
 	
 	
@@ -1257,24 +1250,23 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	public void consumeInitDeclaratorComplete() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+
+		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
+		if(!(declarator instanceof IASTFunctionDeclarator))
+			return;
 		
-//		System.out.println(parser.getRuleTokens());
-//		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
-//		if(!(declarator instanceof IASTFunctionDeclarator))
-//			return;
-//		
-//		IParser secondaryParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
-//		IASTNode alternateDeclarator = runSecondaryParser(secondaryParser);
-//	
-//		if(alternateDeclarator == null || alternateDeclarator instanceof IASTProblemDeclaration)
-//			return;
-//		
-//		astStack.pop();
-//		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
-//
-//		setOffsetAndLength(ambiguityNode);
-//		astStack.push(ambiguityNode); 
-//		
+		IParser secondaryParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
+		IASTNode alternateDeclarator = runSecondaryParser(secondaryParser);
+	
+		if(alternateDeclarator == null || alternateDeclarator instanceof IASTProblemDeclaration)
+			return;
+		
+		astStack.pop();
+		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
+
+		setOffsetAndLength(ambiguityNode);
+		astStack.push(ambiguityNode); 
+		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	

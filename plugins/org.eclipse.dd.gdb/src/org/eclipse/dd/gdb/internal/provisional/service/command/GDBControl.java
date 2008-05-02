@@ -50,6 +50,7 @@ import org.eclipse.dd.mi.service.command.CLIEventProcessor;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.MIRunControlEventProcessor;
+import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.dd.mi.service.command.commands.MICommand;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
@@ -73,18 +74,17 @@ public class GDBControl extends AbstractMIControl {
     /**
      * Event indicating that the back end process process has started.
      */
-    public static class StartedEvent extends AbstractDMEvent<GDBControlDMContext> {
-        public StartedEvent(GDBControlDMContext context) {
+    public static class GDBStartedEvent extends AbstractDMEvent<GDBControlDMContext> {
+        public GDBStartedEvent(GDBControlDMContext context) {
             super(context);
         }
     }
-
     
     /**
      * Event indicating that the back end process has terminated.
      */
-    public static class ExitedEvent extends AbstractDMEvent<GDBControlDMContext> {
-        public ExitedEvent(GDBControlDMContext context) {
+    public static class GDBExitedEvent extends AbstractDMEvent<GDBControlDMContext> {
+        public GDBExitedEvent(GDBControlDMContext context) {
             super(context);
         }
     }
@@ -351,7 +351,16 @@ public class GDBControl extends AbstractMIControl {
     					@Override
     					protected void handleSuccess() {
     						// After the break-insert is done, execute the -exec-run or -exec-continue command.
-    						queueCommand(execCommand, new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+    						queueCommand(
+    						    execCommand, 
+    						    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+    						        @Override
+    						        protected void handleSuccess() {
+    						            getSession().dispatchEvent(
+    						                new InferiorStartedDMEvent(getGDBDMContext()), getProperties());
+    						            super.handleSuccess();
+    						        }
+    						    });
     					}
     				});
     	}
@@ -406,7 +415,7 @@ public class GDBControl extends AbstractMIControl {
     }
         
     @DsfServiceEventHandler 
-    public void eventDispatched(ExitedEvent e) {
+    public void eventDispatched(GDBExitedEvent e) {
         // Handle our "GDB Exited" event and stop processing commands.
         stopCommandProcessing();
     }
@@ -433,7 +442,7 @@ public class GDBControl extends AbstractMIControl {
                         Thread.interrupted();
                     } finally {
                         fExited = true;
-                        getSession().dispatchEvent(new ExitedEvent(fControlDmc) {}, getProperties());
+                        getSession().dispatchEvent(new GDBExitedEvent(fControlDmc) {}, getProperties());
                     }
                 }
             }
@@ -705,7 +714,7 @@ public class GDBControl extends AbstractMIControl {
         public void initialize(final RequestMonitor requestMonitor) {
             getSession().addServiceEventListener(GDBControl.this, null);
             register(new String[]{ ICommandControl.class.getName(), AbstractMIControl.class.getName() }, new Hashtable<String,String>());
-            getSession().dispatchEvent(new StartedEvent(getGDBDMContext()), getProperties());
+            getSession().dispatchEvent(new GDBStartedEvent(getGDBDMContext()), getProperties());
             requestMonitor.done();
         }
 

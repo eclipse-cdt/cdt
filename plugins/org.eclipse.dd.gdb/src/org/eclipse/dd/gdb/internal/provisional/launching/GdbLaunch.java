@@ -174,7 +174,7 @@ public class GdbLaunch extends Launch
     
     ///////////////////////////////////////////////////////////////////////////
     // IServiceEventListener
-    @DsfServiceEventHandler public void eventDispatched(GDBControl.ExitedEvent event) {
+    @DsfServiceEventHandler public void eventDispatched(GDBControl.GDBExitedEvent event) {
         shutdownSession(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     }
 

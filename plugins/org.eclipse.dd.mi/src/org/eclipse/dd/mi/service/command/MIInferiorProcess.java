@@ -32,6 +32,10 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
+import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
@@ -62,6 +66,31 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
 public class MIInferiorProcess extends Process 
     implements IEventListener, ICommandListener 
 {
+    
+    /**
+     * Event indicating that the GDB inferior process has started.  This event
+     * implements the {@link IStartedMDEvent} from the IRunControl service. 
+     */
+    public static class InferiorStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IStartedDMEvent
+    {
+        public InferiorStartedDMEvent(IExecutionDMContext context) {
+            super(context);
+        }
+    }        
+    
+    /**
+     * Event indicating that the GDB inferior process has exited.  This event
+     * implements the {@link IExitedMDEvent} from the IRunControl service. 
+     */
+    public static class InferiorExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IExitedDMEvent
+    {
+        public InferiorExitedDMEvent(IExecutionDMContext context) {
+            super(context);
+        }
+    }        
+
     public enum State { RUNNING, STOPPED, TERMINATED }
 
     private final OutputStream fOutputStream;
@@ -77,6 +106,8 @@ public class MIInferiorProcess extends Process
 
     private final AbstractMIControl fCommandControl;
 
+    private final IExecutionDMContext fExecutionDMContext;
+    
     @ConfinedToDsfExecutor("fSession#getExecutor")
     private boolean fDisposed = false;
     
@@ -100,20 +131,59 @@ public class MIInferiorProcess extends Process
     
     int inferiorPID;
 
+    /**
+     * Creates an inferior process object which uses the given output stream 
+     * to write the user standard input into.
+     *  
+     * @param commandControl Command control that this inferior process belongs to.
+     * @param inferiorExecCtx The execution context controlling the execution 
+     * state of the inferior process.
+     * @param gdbOutputStream The output stream to use to write user IO into.
+     */
     @ConfinedToDsfExecutor("fSession#getExecutor")
+    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
+        this(commandControl, inferiorExecCtx, gdbOutputStream, null);
+    }
+
+    /**
+     * @deprecated {@link #MIInferiorProcess(AbstractMIControl, IExecutionDMContext, OutputStream)} 
+     * should be used instead.
+     */
+    @ConfinedToDsfExecutor("fSession#getExecutor")
+    @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, OutputStream gdbOutputStream) {
-        this(commandControl, gdbOutputStream, null);
+        this(commandControl, null, gdbOutputStream, null);
     }
 
+    /**
+     * Creates an inferior process object which uses the given terminal 
+     * to write the user standard input into.
+     *  
+     * @param commandControl Command control that this inferior process belongs to.
+     * @param inferiorExecCtx The execution context controlling the execution 
+     * state of the inferior process.
+     * @param p The terminal to use to write user IO into.
+     */
     @ConfinedToDsfExecutor("fSession#getExecutor")
+    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
+        this(commandControl, inferiorExecCtx, null, p);
+    }
+
+    /**
+     * @deprecated Should use {@link #MIInferiorProcess(AbstractMIControl, IExecutionDMContext, PTY)}
+     * instead.
+     */
+    @ConfinedToDsfExecutor("fSession#getExecutor")
+    @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, PTY p) {
-        this(commandControl, null, p);
+        this(commandControl, null, null, p);
     }
 
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    private MIInferiorProcess(AbstractMIControl commandControl, final OutputStream gdbOutputStream, PTY p) {
+    private MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext execCtx, final OutputStream gdbOutputStream, PTY p) {
         fCommandControl = commandControl;
         fSession = commandControl.getSession();
+        fExecutionDMContext = execCtx;
         
         commandControl.addEventListener(this);
         commandControl.addCommandListener(this);
@@ -327,6 +397,11 @@ public class MIInferiorProcess extends Process
         if (fState == State.TERMINATED) return;
         fState = state;
         if (fState == State.TERMINATED) {
+            if (fExecutionDMContext != null) {
+                getSession().dispatchEvent(
+                    new InferiorExitedDMEvent(fExecutionDMContext), 
+                    fCommandControl.getProperties());
+            }
             closeIO();
         }
         notifyAll();

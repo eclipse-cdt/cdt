@@ -143,7 +143,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         
         // The initializeControl method should be called after the GdbControl class has
         // be initialized (in the ServicesLaunchSequence above.)  This is because it is the 
-        // GdbControl class that will trigger the launch cleanup through a GDBControl.ExitedEvent
+        // GdbControl class that will trigger the launch cleanup through a GDBControl.GDBExitedEvent
         launch.initializeControl();
 
         // Add the CLI and "inferior" process objects to the launch.

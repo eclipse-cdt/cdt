@@ -31,7 +31,7 @@ import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBProcessData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.StartedEvent;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.GDBStartedEvent;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.events.MIInferiorExitEvent;
@@ -121,13 +121,13 @@ public class ContainerVMNode extends AbstractDMVMNode
                   e instanceof IRunControl.IContainerSuspendedDMEvent) 
         {
             return IModelDelta.CONTENT;
-        } else if (e instanceof GDBControl.ExitedEvent || 
+        } else if (e instanceof GDBControl.GDBExitedEvent || 
                    e instanceof MIInferiorExitEvent || 
                    e instanceof MIInferiorSignalExitEvent) 
         {
             return IModelDelta.CONTENT;
         }
-        if (e instanceof StartedEvent) {
+        if (e instanceof GDBStartedEvent) {
             return IModelDelta.EXPAND | IModelDelta.SELECT;
         }
         return IModelDelta.NO_CHANGE;
@@ -144,13 +144,13 @@ public class ContainerVMNode extends AbstractDMVMNode
             if (containerCtx != null) {
                 parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
             }
-        } else if (e instanceof GDBControl.ExitedEvent || 
+        } else if (e instanceof GDBControl.GDBExitedEvent || 
             e instanceof MIInferiorExitEvent || 
             e instanceof MIInferiorSignalExitEvent) 
         {
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
         } 
-        if (e instanceof StartedEvent) {
+        if (e instanceof GDBStartedEvent) {
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);
         }
 

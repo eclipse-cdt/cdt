@@ -27,11 +27,11 @@ class GDBInferiorProcess extends MIInferiorProcess {
 
     
     public GDBInferiorProcess(GDBControl commandControl, PTY p) {
-        super(commandControl, p);
+        super(commandControl, commandControl.getGDBDMContext(), p);
     }
 
     public GDBInferiorProcess(GDBControl commandControl, OutputStream gdbOutputStream) {
-        super(commandControl, gdbOutputStream);
+        super(commandControl, commandControl.getGDBDMContext(), gdbOutputStream);
     }
 
     @Override

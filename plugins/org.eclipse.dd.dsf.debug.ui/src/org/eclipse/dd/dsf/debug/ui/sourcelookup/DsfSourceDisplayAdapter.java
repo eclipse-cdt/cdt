@@ -539,7 +539,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
 
     @DsfServiceEventHandler
     public void eventDispatched(IRunControl.IExitedDMEvent e) {
-        startAnnotationClearingJob(e.getDMContext());        
+        startAnnotationClearingJob(e.getDMContext());
     }
 
     @DsfServiceEventHandler
@@ -549,6 +549,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
     
     @DsfServiceEventHandler
     public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+        if (e.getReason() == StateChangeReason.STEP) {
+            startAnnotationClearingJob(e.getDMContext());
+        }
         fPrevModelContext = null;
     }
 }

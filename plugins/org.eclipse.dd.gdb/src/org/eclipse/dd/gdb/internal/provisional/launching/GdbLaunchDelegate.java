@@ -186,7 +186,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     
 	protected int promptForProcessID(ILaunchConfiguration config) throws CoreException {
 		IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null); //$NON-NLS-1$//$NON-NLS-2$
-		IStatus processPrompt = new Status(IStatus.INFO, "org.eclipse.cdt.launch", 100, "", null); //$NON-NLS-1$//$NON-NLS-2$
+		IStatus processPrompt = new Status(IStatus.INFO, "org.eclipse.dd.gdb.ui", 100, "", null); //$NON-NLS-1$//$NON-NLS-2$
 		// consult a status handler
 		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
 		if (prompter != null) {

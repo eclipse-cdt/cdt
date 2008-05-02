@@ -34,12 +34,16 @@ public class LaunchImages {
 	}	
 
 	private static final String T_TABS = "full/view16/"; //$NON-NLS-1$
+	private static final String T_OBJS = "full/obj16/"; //$NON-NLS-1$
 
 	public static String IMG_VIEW_MAIN_TAB = NAME_PREFIX + "main_tab.gif"; //$NON-NLS-1$
 	public static String IMG_VIEW_DEBUGGER_TAB = NAME_PREFIX + "debugger_tab.gif"; //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_TAB_MAIN= createManaged(T_TABS, IMG_VIEW_MAIN_TAB);
 	public static final ImageDescriptor DESC_TAB_DEBUGGER = createManaged(T_TABS, IMG_VIEW_DEBUGGER_TAB);
+
+	public static String IMG_OBJS_EXEC= NAME_PREFIX + "exec_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_EXEC = createManaged(T_OBJS, IMG_OBJS_EXEC);
 
 	public static void initialize() {
 	}

@@ -36,5 +36,14 @@
          </enabledWhen>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.eclipse.dd.gdb.internal.ui.launching.ProcessPrompter"
+            code="100"
+            id="org.eclipse.dd.gdb.ui.processPrompter"
+            plugin="org.eclipse.dd.gdb.ui">
+      </statusHandler>
+   </extension>
    
 </plugin>

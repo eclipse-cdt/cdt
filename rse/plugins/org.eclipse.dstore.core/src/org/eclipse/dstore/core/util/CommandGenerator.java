@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.util;
@@ -29,6 +30,9 @@ import org.eclipse.dstore.core.model.DataStoreResources;
  * Command instances are instances of command descriptors.  Each command instance contains a set of data arguments
  * and a status object, that represents the current state of a command.  After a command instance is created,
  * it is referenced in the command log for the DataStore.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CommandGenerator
 {

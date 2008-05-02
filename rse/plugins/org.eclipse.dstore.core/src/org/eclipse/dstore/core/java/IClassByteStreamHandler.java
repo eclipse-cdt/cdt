@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2003, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  ********************************************************************************/
 
 package org.eclipse.dstore.core.java;
@@ -21,6 +21,7 @@ package org.eclipse.dstore.core.java;
  * The IClassByteStreamHandler interface is used to abstract file read and write operations
  * across the network. 
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IClassByteStreamHandler
 {

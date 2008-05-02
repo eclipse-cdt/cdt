@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * Noriaki Takatsu  (IBM) - [227905] prevent double invocations of finished in ConncetionEstablisher
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -26,6 +27,9 @@ import org.eclipse.dstore.core.util.Receiver;
 /**
  * The ServerReciever is responsible for recieving data from
  * the client side.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ServerReceiver extends Receiver
 {

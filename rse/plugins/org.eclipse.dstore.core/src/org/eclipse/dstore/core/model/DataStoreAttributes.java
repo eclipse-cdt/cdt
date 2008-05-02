@@ -14,6 +14,7 @@
  * David McKnight (IBM) - update version to 9.0.0
  * David McKnight (IBM) - [220892] version back to 8.1.0 since protocol hasn't changed
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -21,6 +22,9 @@ package org.eclipse.dstore.core.model;
 /**
  * This class is used to store attributes that are required for configuring a
  * remote connection.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DataStoreAttributes
 {

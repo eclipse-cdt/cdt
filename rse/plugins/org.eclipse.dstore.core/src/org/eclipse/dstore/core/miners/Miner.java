@@ -15,6 +15,7 @@
  *  Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  Noriaki Takatsu    (IBM)   [229146] [multithread] changes to stop Miner threads when clients disconnect
+ *  David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -38,6 +39,9 @@ import org.eclipse.dstore.core.server.SystemServiceManager;
  * The DataStore framework knows how to load and route commands to miners
  * because it interfaces miners through the restricted set of interfaces declared here.
  * To add a new miner, developers must extend this class and implement the abstract methods declared here.
+ * 
+ * @noinstantiate This class is not intended to be instantiated by clients.  The dstore server infrastructure
+ *    will take care of loading the Miner.
  */
 public abstract class Miner extends Handler
 implements ISchemaExtender

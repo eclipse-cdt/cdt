@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  ********************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -21,6 +21,9 @@ import java.util.List;
 /**
  * ConnectionStatus represents the state of a connection.  This class is
  * used for feedback, when a client attempts to connect to a server.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients. 
  */
 public class ConnectionStatus
 {

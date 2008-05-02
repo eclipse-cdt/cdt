@@ -20,6 +20,7 @@
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * Noriaki Takatsu  (IBM) - [226074] process for getStatus() API
  * Noriaki Takatsu  (IBM) - [226237] [dstore] Move the place where the ServerLogger instance is made
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -39,12 +40,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 
+import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.ISSLProperties;
-import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.internal.core.server.ServerAttributes;
 import org.eclipse.dstore.internal.core.server.ServerCommandHandler;
 import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
@@ -57,7 +58,9 @@ import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
 /**
  * ConnectionEstablisher is responsible for managing the server DataStore and 
  * facilitating the communication between client and server DataStores.
- *
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConnectionEstablisher
 {

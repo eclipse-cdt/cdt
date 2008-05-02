@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight (IBM) - [193426] don't display exceptions
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -47,7 +48,8 @@ import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
 /**
  * This class is the DataStore daemon. It is used for authenticating users,
  * launching DataStore servers under particular user IDs, and providing a client
- * with enough information to conntect to a launched server.
+ * with enough information to connect to a launched server.
+ * 
  */
 public class ServerLauncher extends Thread {
 

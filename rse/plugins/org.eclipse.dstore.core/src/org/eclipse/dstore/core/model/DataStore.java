@@ -22,6 +22,7 @@
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [227881] [dstore][threaded] There is no chance to set client object for getUserPreferencesDirectory()
  * Norikai Takatsu  (IBM) - [228156] [dstore] DataElementRemover thread doesn't terminate after a client disconnects the server
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -74,7 +75,8 @@ import org.eclipse.dstore.internal.core.util.XMLparser;
  * <code>DataStore</code>, either directly via a <code>IDomainNotifier</code> or indirectly over the communication
  * layer through a client <code>DataStore</code>.  
  * </p>
- *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients. 
  */
 public final class DataStore
 {
@@ -2148,6 +2150,7 @@ public final class DataStore
 	/**
 	 * Adds a preference change listener to the DataStore
 	 * @param listener
+	 * @since 3.0
 	 */
 	public void addDataStorePreferenceListener(IDataStorePreferenceListener listener){
 		_dataStorePreferenceListeners.add(listener);

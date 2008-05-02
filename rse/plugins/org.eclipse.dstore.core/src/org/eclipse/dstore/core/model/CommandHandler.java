@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -33,6 +34,9 @@ import org.eclipse.dstore.core.util.CommandGenerator;
  * The CommandHandler is the means by which the DataStore sends information or files from
  * the client to the remote tools.
  * </p>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class CommandHandler extends Handler
 {

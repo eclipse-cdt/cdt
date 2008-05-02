@@ -18,6 +18,7 @@
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM) - [220892][dstore] Backward compatibility: Server and Daemon should support old clients
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -81,6 +82,9 @@ import org.eclipse.dstore.internal.extra.DomainNotifier;
  * newly launched DataStore.  Otherwise, a DataStore is expected to be running on
  * the remote machine under the same port that the client tries to connect to.
  * </li>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * 
  */
 public class ClientConnection
 {
@@ -111,12 +115,12 @@ public class ClientConnection
 	private ArrayList _loaders;
 
 
-	public static String INCOMPATIBLE_SERVER_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
-	public static String INCOMPATIBLE_CLIENT_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
-	public static String SERVER_OLDER = "Older DataStore Server."; //$NON-NLS-1$
-	public static String CLIENT_OLDER = "Older DataStore Client."; //$NON-NLS-1$
-	public static String INCOMPATIBLE_PROTOCOL = "Incompatible Protocol."; //$NON-NLS-1$
-	public static String CANNOT_CONNECT = "Cannot connect to server."; //$NON-NLS-1$
+	public final static String INCOMPATIBLE_SERVER_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
+	public final static String INCOMPATIBLE_CLIENT_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
+	public final static String SERVER_OLDER = "Older DataStore Server."; //$NON-NLS-1$
+	public final static String CLIENT_OLDER = "Older DataStore Client."; //$NON-NLS-1$
+	public final static String INCOMPATIBLE_PROTOCOL = "Incompatible Protocol."; //$NON-NLS-1$
+	public final static String CANNOT_CONNECT = "Cannot connect to server."; //$NON-NLS-1$
 
 	/**
 	 * Creates a new ClientConnection instance
@@ -724,6 +728,7 @@ public class ClientConnection
 	 * 
 	 * @param daemonPort the port of the daemon
 	 * @return the status of the connection
+	 * @since 3.0
 	 */
 	public ConnectionStatus connectDaemon(int daemonPort, int timeout) {
 		ConnectionStatus result = new ConnectionStatus(true);

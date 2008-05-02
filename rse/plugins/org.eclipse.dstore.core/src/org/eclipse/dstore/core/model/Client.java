@@ -13,6 +13,7 @@
  *  Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
  *  Jacob Garcowski    (IBM)   [225175] [dstore] [dstore] error handling change for Client
  *  David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ *  David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -20,6 +21,9 @@ package org.eclipse.dstore.core.model;
 import org.eclipse.dstore.core.server.IServerLogger;
 import org.eclipse.dstore.core.server.ServerReceiver;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class Client 
 {
 	public  String _userid;

@@ -15,6 +15,7 @@
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ *  David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -27,7 +28,8 @@ import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
  * Server is the standard way of instantiating and controlling a remote DataStore.
  * The server runs a ConnectionEstablisher which manages client connections to
  * the DataStore.
- *
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class Server implements Runnable
 {

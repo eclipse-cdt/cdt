@@ -318,8 +318,14 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 				}
 				else
 				{
-				    Thread.sleep(100);
-
+					try
+					{
+						Thread.sleep(100);
+					}
+					catch (InterruptedException e)
+					{
+						continue;
+					}
 				    if (WaitThreshold > 0) // update timer count if
                         // threshold not reached
                         --WaitThreshold; // decrement the timer count

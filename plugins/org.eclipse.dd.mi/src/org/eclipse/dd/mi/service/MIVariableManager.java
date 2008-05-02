@@ -922,11 +922,10 @@ public class MIVariableManager implements ICommandControl {
 	    // which the value can change.
 		private Map<String, MIVariableObject> modifiableDescendants;
 
-		public MIRootVariableObject(VariableObjectId id, IExpressionDMContext exprCtx) {
+		public MIRootVariableObject(VariableObjectId id) {
 			super(id, null);
 			currentState = STATE_NOT_CREATED;
 			modifiableDescendants = new HashMap<String, MIVariableObject>();
-			fControlContext = DMContexts.getAncestorOfType(exprCtx, MIControlDMContext.class);
 		}
 
 		public MIControlDMContext getControlDMContext() { return fControlContext; }
@@ -955,6 +954,7 @@ public class MIVariableManager implements ICommandControl {
 			if (currentState == STATE_NOT_CREATED) {
 				
 				currentState = STATE_CREATING;
+				fControlContext = DMContexts.getAncestorOfType(exprCtx, MIControlDMContext.class);
 
 				fCommandControl.queueCommand(
 						new MIVarCreate(exprCtx, exprCtx.getExpression()), 
@@ -1439,7 +1439,7 @@ public class MIVariableManager implements ICommandControl {
 
 		// Variable objects that are created directly like this, are considered ROOT variable objects
 		// in comparison to variable objects that are children of other variable objects.
-		final MIRootVariableObject newVarObj = new MIRootVariableObject(id, exprCtx);
+		final MIRootVariableObject newVarObj = new MIRootVariableObject(id);
 		
 		// We must put this object in our map right away, in case it is 
 		// requested again, before it completes its creation.

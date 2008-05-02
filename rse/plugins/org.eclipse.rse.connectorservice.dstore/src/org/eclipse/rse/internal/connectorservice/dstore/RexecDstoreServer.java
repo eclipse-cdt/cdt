@@ -17,7 +17,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [221095] [dstore][launcher] Specified REXEC port number is not used
- * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
+ * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short     
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -63,7 +63,7 @@ public class RexecDstoreServer implements IServerLauncher
 	private boolean isModeChecked = false;
 	private boolean checkPort =true;
 	private boolean logInfo = false;
-	private int _socketTimeoutValue = 5000;
+	private int _socketTimeoutValue = IDStoreDefaultPreferenceConstants.DEFAULT_PREF_SOCKET_TIMEOUT;
 
 	private static char[] ebcdictounicode =
 		{

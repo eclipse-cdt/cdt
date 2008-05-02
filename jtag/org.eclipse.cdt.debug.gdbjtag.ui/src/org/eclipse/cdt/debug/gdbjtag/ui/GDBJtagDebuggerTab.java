@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,18 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
 
 import java.io.File;
 
+import org.eclipse.cdt.debug.gdbjtag.core.Activator;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
+import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContribution;
+import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContributionFactory;
+import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryDescriptor;
@@ -43,24 +48,26 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @author Doug Schaefer
+ * @author Doug Schaefer, Adrian Petrescu
  *
  */
 public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 
+	private static final String TAB_NAME = "Debugger";
+	
 	private CommandFactoryDescriptor[] cfDescs;
 	
 	private Text gdbCommand;
-	private Text gdbinitFile;
 	private Combo commandFactory;
 	private Combo miProtocol;
 	private Button verboseMode;
 	private Button useRemote;
 	private Text ipAddress;
 	private Text portNumber;
+	private Combo jtagDevice;
 	
 	public String getName() {
-		return "Debugger";
+		return TAB_NAME;
 	}
 
 	public Image getImage() {
@@ -83,10 +90,9 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		group.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
-		group.setText("GDB Setup");
+		group.setText(Messages.getString("GDBJtagDebuggerTab.gdbSetupGroup_Text"));
 		
 		createCommandControl(group);
-		createInitFileControl(group);
 		createCommandFactoryControl(group);
 		createProtocolControl(group);
 		createVerboseModeControl(group);
@@ -122,7 +128,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		comp.setLayoutData(gd);
 		
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("GDB Command:");
+		label.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandLabel"));
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -137,59 +143,18 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 
 		Button button = new Button(comp, SWT.NONE);
-		button.setText("Browse...");
+		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse"));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				browseButtonSelected("Select gdb", gdbCommand);
+				browseButtonSelected(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse_Title"), gdbCommand);
 			}
 		});
 		
 		button = new Button(comp, SWT.NONE);
-		button.setText("Variables...");
+		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandVariable"));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				variablesButtonSelected(gdbCommand);
-			}
-		});
-	}
-	
-	private void createInitFileControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		comp.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		comp.setLayoutData(gd);
-		
-		Label label = new Label(comp, SWT.NONE);
-		label.setText("GDB Init File:");
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		label.setLayoutData(gd);
-		
-		gdbinitFile = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gdbinitFile.setLayoutData(gd);
-		gdbinitFile.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		Button button = new Button(comp, SWT.NONE);
-		button.setText("Browse...");
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				browseButtonSelected("Select .gdbinit file", gdbinitFile);
-			}
-		});
-		
-		button = new Button(comp, SWT.NONE);
-		button.setText("Variables...");
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				variablesButtonSelected(gdbinitFile);
 			}
 		});
 	}
@@ -199,7 +164,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		GridLayout layout = new GridLayout(2, false);
 		comp.setLayout(layout);
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("Command Set:");
+		label.setText(Messages.getString("GDBJtagDebuggerTab.commandFactoryLabel"));
 		
 		commandFactory = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		
@@ -223,7 +188,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		GridLayout layout = new GridLayout(2, false);
 		comp.setLayout(layout);
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("Protocol Version:");
+		label.setText(Messages.getString("GDBJtagDebuggerTab.miProtocolLabel"));
 		
 		miProtocol = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		miProtocol.addModifyListener(new ModifyListener() {
@@ -254,7 +219,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 	
 	private void createVerboseModeControl(Composite parent) {
 		verboseMode = new Button(parent, SWT.CHECK);
-		verboseMode.setText("Verbose console mode");
+		verboseMode.setText(Messages.getString("GDBJtagDebuggerTab.verboseModeLabel"));
 		verboseMode.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -268,10 +233,10 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		group.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
-		group.setText("Remote Target");
+		group.setText(Messages.getString("GDBJtagDebuggerTab.remoteGroup_Text"));
 		
 		useRemote = new Button(group, SWT.CHECK);
-		useRemote.setText("Use remote target");
+		useRemote.setText(Messages.getString("GDBJtagDebuggerTab.useRemote_Text"));
 		useRemote.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				useRemoteChanged();
@@ -285,7 +250,26 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(layout);
 		
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("Host name or IP address:");
+		label.setText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceLabel"));
+		
+		jtagDevice = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
+		
+		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
+			getInstance().getGDBJtagDeviceContribution();
+		for (int i = 0; i < availableDevices.length; i++) {
+			jtagDevice.add(availableDevices[i].getDeviceName());
+		}
+		
+		jtagDevice.select(0);
+		jtagDevice.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateDeviceIpPort(jtagDevice.getText());
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		label = new Label(comp, SWT.NONE);
+		label.setText(Messages.getString("GDBJtagDebuggerTab.ipAddressLabel"));
 		ipAddress = new Text(comp, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 100;
@@ -297,7 +281,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 		
 		label = new Label(comp, SWT.NONE);
-		label.setText("Port number:");
+		label.setText(Messages.getString("GDBJtagDebuggerTab.portNumberLabel"));
 		portNumber = new Text(comp, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 100;
@@ -314,8 +298,33 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	/**
+	 * @param text
+	 */
+	protected void updateDeviceIpPort(String selectedDeviceName) {
+		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
+			getInstance().getGDBJtagDeviceContribution();
+		IGDBJtagDevice selectedDevice = null;
+		for (int i = 0; i < availableDevices.length; i++) {
+			String name = availableDevices[i].getDeviceName();
+			if (name.equals(selectedDeviceName)) {
+				try {
+					selectedDevice = availableDevices[i].getDevice();
+				} catch (NullPointerException e) {
+					return;
+				}
+				break;
+			}
+		}
+		String ip = selectedDevice.getDefaultIpAddress();
+		ipAddress.setText(ip);
+		String port = selectedDevice.getDefaultPortNumber();
+		portNumber.setText(port);
+	}
+
 	private void useRemoteChanged() {
 		boolean enabled = useRemote.getSelection();
+		jtagDevice.setEnabled(enabled);
 		ipAddress.setEnabled(enabled);
 		portNumber.setEnabled(enabled);
 	}
@@ -324,9 +333,6 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		try {
 			String gdbCommandAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
 			gdbCommand.setText(gdbCommandAttr);
-			
-			String gdbinitFileAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
-			gdbinitFile.setText(gdbinitFileAttr);
 			
 			CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();
 			CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(IGDBJtagConstants.DEBUGGER_ID);
@@ -342,10 +348,11 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 			String miProtocolAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, defDesc.getMIVersions()[0]);
 			int n = miProtocol.getItemCount();
 			for (int i = 0; i < n; ++i) {
-				if (miProtocol.getItem(i).equals(miProtocolAttr))
+				if (miProtocol.getItem(i).equals(miProtocolAttr)) {
 					miProtocol.select(i);
+				}
 			}
-
+			
 			boolean verboseModeAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
 			verboseMode.setSelection(verboseModeAttr);
 
@@ -358,6 +365,13 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 			
 			int portNumberAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 			portNumber.setText(String.valueOf(portNumberAttr));
+			
+			String jtagDeviceString = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
+			for (int i = 0; i < jtagDevice.getItemCount(); i++) {
+				if (jtagDevice.getItem(i).equals(jtagDeviceString)) {
+					jtagDevice.select(i);
+				}
+			}
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());
 		}
@@ -365,13 +379,10 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim());
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, gdbinitFile.getText().trim());
-		
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, commandFactory.getText());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, miProtocol.getText());
-		
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, verboseMode.getSelection());
-		
+		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, jtagDevice.getText());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ipAddress.getText().trim());
 		try {
@@ -383,15 +394,11 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
-		
 		CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();
 		CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(IGDBJtagConstants.DEBUGGER_ID);
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, defDesc.getName());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, defDesc.getMIVersions()[0]);
-		
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
-		
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.ui;
 
@@ -19,7 +20,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.gdbremote.ui";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.gdbjtag.ui";
 
 	// The shared instance
 	private static Activator plugin;

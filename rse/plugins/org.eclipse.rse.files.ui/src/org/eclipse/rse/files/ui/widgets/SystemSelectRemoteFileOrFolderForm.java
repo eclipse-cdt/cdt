@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [229752] [api][regression] SystemSelectRemoteFileOrFolderForm.getInputProvider() cannot be overriden
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -198,7 +199,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	 * Returns the input provider that drives the contents of the tree
 	 * Subclasses can override to provide custom tree contents
 	 */
-	private ISystemSelectRemoteObjectAPIProvider getInputProvider()
+	protected ISystemSelectRemoteObjectAPIProvider getInputProvider()
 	{
 		if (inputProvider == null)
 		{

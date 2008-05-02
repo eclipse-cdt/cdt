@@ -324,6 +324,8 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 					}
 					catch (InterruptedException e)
 					{
+						// Continue waiting in case of spurious interrupt.
+					    // We check the progress monitor to listen for Eclipse Shutdown.
 						continue;
 					}
 				    if (WaitThreshold > 0) // update timer count if
@@ -375,6 +377,8 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 					}
 					catch (InterruptedException e)
 					{
+						// Continue waiting in case of spurious interrupt.
+					    // We check the progress monitor to listen for Eclipse Shutdown.
 						continue;
 					}
 					

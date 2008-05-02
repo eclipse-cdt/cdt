@@ -202,6 +202,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
      * @param update Update object to fill in.
      * @return true if service IS found, indicating that it's OK to proceed.  
      */
+    @Deprecated
     protected boolean checkService(Class<? extends IDsfService> serviceClass, String filter, IViewerUpdate update) {
         if (getServicesTracker().getService(serviceClass, filter) == null) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 

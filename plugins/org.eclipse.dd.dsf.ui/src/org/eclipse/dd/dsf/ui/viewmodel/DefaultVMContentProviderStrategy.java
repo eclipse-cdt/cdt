@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -287,13 +288,13 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
     private void updateChildrenWithCounts(final IChildrenUpdate update, IVMNode node, Integer[] nodeElementCounts) {
         // Create the multi request monitor to mark update when querying all 
         // children nodes is finished.
-        final MultiRequestMonitor<RequestMonitor> elementsMultiRequestMon = 
-            new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), null) { 
-                @Override
-                protected void handleCompleted() {
-                    update.done();
-                }
-            };
+        CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), null) {
+            @Override
+            protected void handleCompleted() {
+                update.done();
+            }
+        };
+        int multiRmCount = 0;
 
         // Iterate through all child nodes and if requested range matches, call them to 
         // get their elements.
@@ -316,7 +317,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                         nodes[i],
                         new VMChildrenUpdate(
                             update, elementsStartIdx, elementsLength,   
-                            elementsMultiRequestMon.add(new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), null) { 
+                            new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), multiRm) { 
                                 @Override
                                 protected void handleCompleted() {
                                     // Workaround for a bug caused by an optimization in the viewer:
@@ -332,16 +333,17 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                                             }
                                         }
                                     }
-                                    elementsMultiRequestMon.requestMonitorDone(this);
+                                    super.handleCompleted();
                                 }
-                            }))
+                            })
                         ); 
+                    multiRmCount++;
                 }
             }
         }
         
         // Guard against invalid queries.
-        assert !elementsMultiRequestMon.getRequestMonitors().isEmpty(); 
+        multiRm.setDoneCount(multiRmCount);
     }
 
     /**

@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * A dialog for showing SystemMessages and optionally asking the user for Yes /
  * No / Ok / Cancel type of response.
- * 
+ *
  * The client may choose to construct and open the dialog itself, or use one of
  * the provided static factory methods, which construct the dialog and
  * synchronously open it without thread switch (must be called on the UI
@@ -509,9 +509,14 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	}
 
 	/**
-	 * opens the dialog with an optional Yes/No or OK, Details button for an Inquiry/Question message.
-	 * Eats up the IndicatorException, so only call this when you know what you are doing!
-	 * @since 3.0 taking a boolean arg
+	 * opens the dialog with an optional Yes/No or OK, Details button for an
+	 * Inquiry/Question message. Eats up the IndicatorException, so only call
+	 * this when you know what you are doing!
+	 *
+	 * Before RSE 3.0, this method had no arguments. Since RSE 3.0, it is taking
+	 * a boolean argument.
+	 * 
+	 * @since org.eclipse.rse.ui 3.0
 	 */
 	public boolean openQuestionNoException(boolean showYesNo)
 	{

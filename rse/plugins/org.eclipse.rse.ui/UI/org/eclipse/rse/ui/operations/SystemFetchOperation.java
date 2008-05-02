@@ -160,7 +160,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	public class PromptForPassword implements Runnable
 	{
 		public SubSystem _ss;
-		private boolean isCancelled = false;
+		private volatile boolean isCancelled = false;
 		public PromptForPassword(SubSystem ss)
 		{
 			_ss = ss;
@@ -183,7 +183,11 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		}
 
 		/**
-		 * @since org.eclipse.rse.ui 3.0 renamed from isCanceled to isCancelled
+		 * Test whether this operation is cancelled.
+		 *
+		 * This method was renamed from isCanceled to isCancelled in RSE 3.0.
+		 *
+		 * @since org.eclipse.rse.ui 3.0
 		 * @return true if cancelled
 		 */
 		public boolean isCancelled() {

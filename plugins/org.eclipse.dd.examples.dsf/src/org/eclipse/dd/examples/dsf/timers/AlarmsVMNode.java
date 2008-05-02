@@ -44,8 +44,14 @@ class AlarmsVMNode extends AbstractDMVMNode
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         // Check that the services are available
-        if (!checkService(AlarmService.class, null, update)) return;
-        if (!checkService(TimerService.class, null, update)) return;
+        if ( getServicesTracker().getService(AlarmService.class) == null ) {
+            handleFailedUpdate(update);
+            return;
+        }
+        if ( getServicesTracker().getService(TimerService.class) == null ) {
+            handleFailedUpdate(update);
+            return;
+        }
 
         // Find the trigger and timer contexts.  If not found, fail.
         TriggerDMContext alarmDmc = findDmcInPath(

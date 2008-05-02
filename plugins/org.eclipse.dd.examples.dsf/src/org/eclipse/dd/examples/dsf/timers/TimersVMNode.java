@@ -84,12 +84,14 @@ class TimersVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        if (!checkService(AlarmService.class, null, update)) return;
+    	if ( getServicesTracker().getService(TimerService.class) == null ) {
+            handleFailedUpdate(update);
+            return;
+    	}
 
         // Retrieve the timer DMContexts, create the corresponding VMCs array, and 
         // set them as result.
-        TimerDMContext[] timers = 
-            getServicesTracker().getService(TimerService.class).getTimers();
+        TimerDMContext[] timers = getServicesTracker().getService(TimerService.class).getTimers();
         fillUpdateWithVMCs(update, timers);
         update.done();
     }
@@ -118,14 +120,17 @@ class TimersVMNode extends AbstractDMVMNode
             update.getViewerInput(), update.getElementPath(), TimerDMContext.class);
         
         // If either update or service are not valid, fail the update and exit.
-        if (!checkDmc(dmc, update) || 
-            !checkService(TimerService.class, null, update)) 
-        {
-           return;
+        if ( dmc == null ) {
+        	handleFailedUpdate(update);
+            return;
         }
         
-        TimerService timerService = 
-            getServicesTracker().getService(TimerService.class, null);
+        TimerService timerService = getServicesTracker().getService(TimerService.class, null);
+        if ( timerService == null ) {
+            handleFailedUpdate(update);
+            return;
+    	}
+        
         int value = timerService.getTimerValue(dmc);
         
         if (value == -1) {

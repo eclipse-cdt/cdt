@@ -182,8 +182,25 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
      * appropriate error message is set in the update.
      * @param dmc Data Model Context (DMC) to check.
      * @param update Update to handle in case the DMC is null.
-     * @return true if the DMC is NOT null, indicating that it's OK to proceed.  
+     * @return true if the DMC is NOT null, indicating that it's OK to proceed. 
+     * 
+     *  This method has been deprecated. Users should simply perform this functionality in-line
+     *  
+     *  Example :
+     *  
+     *      IExampleDmc dmc = final TimerDMContext dmc = findDmcInPath(...)
+     *      if ( dmc == null ) {
+     *          handleFailedUpdate(update);
+     *          //
+     *          // Perform whatever cleanup or completion is needed because of a lack of 
+     *          // a valid data model context.
+     *          //
+     *          ........
+     *          return;
+     *      }
      */
+    
+    @Deprecated
     protected boolean checkDmc(IDMContext dmc, IViewerUpdate update) {
         if (dmc == null) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 
@@ -200,7 +217,21 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
      * @param serviceClass Service class to find.
      * @param filter Service filter to use in addition to the service class name.
      * @param update Update object to fill in.
-     * @return true if service IS found, indicating that it's OK to proceed.  
+     * @return true if service IS found, indicating that it's OK to proceed. 
+     * 
+     *  This method has been deprecated. Users should simply perform this functionality in-line
+     *  
+     *  Example :
+     *  
+     *      IExampleService service = getServicesTracker().getService(IExampleService.class,null);
+     *      if ( service == null ) {
+     *          handleFailedUpdate(update);
+     *          //
+     *          // Perform whatever cleanup or completion is needed because of a lack of the service.
+     *          //
+     *          ........
+     *          return;
+     *      }
      */
     @Deprecated
     protected boolean checkService(Class<? extends IDsfService> serviceClass, String filter, IViewerUpdate update) {

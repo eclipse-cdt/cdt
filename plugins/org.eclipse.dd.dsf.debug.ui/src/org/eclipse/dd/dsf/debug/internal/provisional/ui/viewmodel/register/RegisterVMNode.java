@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.I
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValueVMContext;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -159,9 +160,13 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      */
     private void updateFormattedRegisterValue(final ILabelUpdate update, final int labelIndex, final IRegisterDMContext dmc)
     {
-        if (!checkService(IRegisters.class, null, update)) return;
-        
         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+        
+        if ( regService == null ) {
+        	handleFailedUpdate(update);
+            return;
+        }
+        
         /*
          *  First select the format to be used. This involves checking so see that the preference
          *  page format is supported by the register service. If the format is not supported then 
@@ -259,7 +264,11 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             }
         );
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
+     */
     
     public void update(final ILabelUpdate[] updates) {
         try {
@@ -274,15 +283,29 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
     }
 
-    
+    /*
+     *  Updates the labels which are controlled by the column being requested.
+     */
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
+        	
             final IRegisterDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisters.IRegisterDMContext.class);
-            if (!checkDmc(dmc, update) || !checkService(IRegisters.class, null, update)) continue;
+            if ( dmc == null ) {
+            	handleFailedUpdate(update);
+                continue;
+            }
+            
+            IRegisters regService = getServicesTracker().getService(IRegisters.class);
+            if ( regService == null ) {
+            	handleFailedUpdate(update);
+                continue;
+            }
+            
             
             getDMVMProvider().getModelData(
-                this, update, 
-        		getServicesTracker().getService(IRegisters.class),
+                this, 
+                update, 
+                regService,
         		dmc,             
         		new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), null) { 
                 @Override
@@ -409,10 +432,21 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
+     */
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        if (!checkService(IRegisters.class, null, update)) return;
-        getServicesTracker().getService(IRegisters.class).getRegisters(
+        
+        IRegisters regService = getServicesTracker().getService(IRegisters.class);
+        
+        if ( regService == null ) {
+        	handleFailedUpdate(update);
+            return;
+        }
+        
+        regService.getRegisters(
             createCompositeDMVMContext(update),
             new DataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), null) { 
                 @Override
@@ -427,21 +461,20 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             });            
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#createVMContext(org.eclipse.dd.dsf.datamodel.IDMContext)
+     */
     @Override
     protected IDMVMContext createVMContext(IDMContext dmc) {
         return new RegisterVMC(dmc);
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
+     */
     public int getDeltaFlags(Object e) {
-        /* In theory we want each node to act independently in terms of events. It might be
-         * the case that we would only have elements of this type at the root level.  It is
-         * the case that the current layout model always starts with the GROUPS followed by
-         * REGISTERS followed by BITFIELDS. But if we do this when a run-control event  has
-         * occured we generate a DELTA for every element,  which can create  a massive list
-         * of entries all of which say update the entire view. So for now we will just have
-         * the GROUP LAYOUT node do this.  Later we need to revisit the logic and make sure
-         * there is a way for the nodes to operate independently and efficiently.
-         */
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
         }
@@ -450,10 +483,14 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             return IModelDelta.CONTENT;
         }
         
+        if (e instanceof IMemory.IMemoryChangedEvent) {
+            return IModelDelta.CONTENT;
+        }
+        
         if (e instanceof IRegisters.IRegisterChangedDMEvent) {
             /*
-             *  Logically one would think that STATE should be specified here. But we specifiy CONTENT
-             *  as well so that if there are subregisters ( BIT FIELDS ) they will be forced to update
+             *  Logically one would think that STATE should be specified here.  But we specify  CONTENT
+             *  as well so that if there are sub-registers ( BIT FIELDS ) they will be forced to update
              *  and show new values when the total register changes.
              */
             return IModelDelta.CONTENT;
@@ -467,6 +504,10 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, int, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
@@ -477,6 +518,11 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);;
         } 
         
+        if (e instanceof IMemory.IMemoryChangedEvent) {
+            // Mark the parent delta indicating that elements were added and/or removed.
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        }
+
         if (e instanceof IRegisters.IRegisterChangedDMEvent) {
             parentDelta.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.CONTENT | IModelDelta.STATE );
         } 
@@ -539,6 +585,11 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     	
         return null;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode#testElementForExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
     @Override
     protected void testElementForExpression(Object element, IExpression expression, final DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {
@@ -580,6 +631,10 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode#associateExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression)
+     */
     @Override
     protected void associateExpression(Object element, IExpression expression) {
         if (element instanceof RegisterVMC) {
@@ -587,6 +642,10 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
+     */
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if (event instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -597,9 +656,17 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             return IModelDelta.CONTENT;            
         }
 
+        if (event instanceof IMemory.IMemoryChangedEvent) {
+        	return IModelDelta.CONTENT;
+        }
+        
         return IModelDelta.NO_CHANGE;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
@@ -607,9 +674,18 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             // Mark the parent delta indicating that elements were added and/or removed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
+        
+        if (event instanceof IMemory.IMemoryChangedEvent) {
+        	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        }
+        
         rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
         if (event instanceof IRegisters.IRegisterChangedDMEvent) {
@@ -620,6 +696,10 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             parentDelta.addNode(element, IModelDelta.STATE);
         } 
         
+        if (event instanceof IMemory.IMemoryChangedEvent) {
+            parentDelta.addNode(element, IModelDelta.CONTENT);
+        }
+        
         if (event instanceof PropertyChangeEvent && 
             ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
         {
@@ -629,7 +709,10 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         rm.done();
     }
 
-    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
+     */
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             return new TextCellEditor(parent);
@@ -648,6 +731,10 @@ public class RegisterVMNode extends AbstractExpressionVMNode
       return null;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
+     */
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return new RegisterCellModifier( 
             getDMVMProvider(), fFormattedPrefStore, fSyncRegisterDataAccess );

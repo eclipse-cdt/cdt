@@ -68,10 +68,10 @@ import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings({"restriction", "nls"})
 public class VariableVMNode extends AbstractExpressionVMNode 
-    implements IElementEditor, IElementLabelProvider 
+    implements IElementEditor, IElementLabelProvider
 {
     
-    private final static int MAX_STRING_VALUE_LENGTH = 40;
+    //private final static int MAX_STRING_VALUE_LENGTH = 40;
     
     public int getDeltaFlags(Object e) {
         /*
@@ -408,11 +408,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
                                 
                                 // Color based on change history
-                                FormattedValueDMData oldData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(
-                                    VariableVMNode.this, update, valueDmc);
+                                FormattedValueDMData oldData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(VariableVMNode.this, update, valueDmc);
 
-                        		IExpressionDMData oldDMData = (IExpressionDMData) getDMVMProvider().getArchivedModelData(
-                                    VariableVMNode.this, update, dmc); 
+                        		IExpressionDMData oldDMData = (IExpressionDMData) getDMVMProvider().getArchivedModelData(VariableVMNode.this, update, dmc); 
                                 /* Commented out, to be replaced.  See bug 225612.
                                 String oldStringValue = oldDMData == null ? null : oldDMData.getStringValue();*/
                                 
@@ -421,9 +419,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         			/* Commented out, to be replaced.  See bug 225612.
                         			|| (oldStringValue != null && !oldStringValue.equals(stringValue))) {*/
                                     update.setBackground(
-                                        DebugUIPlugin.getPreferenceColor(
-                                            IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),
-                                        labelIndex);
+                                        DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(), labelIndex);
                                 }
 
                                 update.done();

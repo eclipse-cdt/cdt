@@ -29,6 +29,7 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.I
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier.BitFieldEditorStyle;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -69,9 +70,8 @@ import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
 public class RegisterBitFieldVMNode extends AbstractExpressionVMNode 
-    implements IElementEditor, IElementLabelProvider 
+    implements IElementEditor, IElementLabelProvider
 {
-
     protected class BitFieldVMC extends DMVMContext
         implements IFormattedValueVMContext
     {
@@ -271,7 +271,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         );
     }
     
-    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
+     */
     public void update(final ILabelUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
@@ -285,17 +288,25 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
 
-    
+    /*
+     * Updates the requested label based on the specified column.
+     */
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             
-            if (!checkService(IRegisters.class, null, update)) continue;
+        	final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+            
+            if ( regService == null ) {
+            	handleFailedUpdate(update);
+                continue;
+            }
             
             final IBitFieldDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisters.IBitFieldDMContext.class);
             
             getDMVMProvider().getModelData(
-                this, update, 
-				getServicesTracker().getService(IRegisters.class),
+                this, 
+                update, 
+				regService,
                 dmc, 
                 new DataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), null) { 
                     @Override
@@ -422,6 +433,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
+     */
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         final IRegisterDMContext regDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisterDMContext.class);
@@ -431,9 +446,15 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             return;
         }          
         
-        if (!checkService(IRegisters.class, null, update)) return;
+        IRegisters regService = getServicesTracker().getService(IRegisters.class);
         
-        getServicesTracker().getService(IRegisters.class).getBitFields(
+        if ( regService == null ) {
+        	handleFailedUpdate(update);
+            return;
+        }
+        
+        
+        regService.getBitFields(
             regDmc,
             new DataRequestMonitor<IBitFieldDMContext[]>(getSession().getExecutor(), null) {
                 @Override
@@ -449,11 +470,19 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             });            
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#createVMContext(org.eclipse.dd.dsf.datamodel.IDMContext)
+     */
     @Override
     protected IDMVMContext createVMContext(IDMContext dmc) {
         return new BitFieldVMC(dmc);
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
+     */
     public int getDeltaFlags(Object e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -463,6 +492,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             return IModelDelta.STATE;
         }
 
+        if (e instanceof IMemory.IMemoryChangedEvent) {
+            return IModelDelta.CONTENT;
+        }
+        
         if (e instanceof PropertyChangeEvent && 
             ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
         {
@@ -472,6 +505,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, int, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
@@ -479,14 +516,17 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         } 
 
         if (e instanceof IRegisters.IBitFieldChangedDMEvent) {
-            
             /*
              *  Create a delta indicating the bit field has changed.
              */
             parentDelta.addNode( createVMContext(((IRegisters.IBitFieldChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
 
-        if (e instanceof PropertyChangeEvent && 
+        if (e instanceof IMemory.IMemoryChangedEvent) {
+        	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        }
+        
+        if (e instanceof PropertyChangeEvent &&
             ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
         {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
@@ -495,6 +535,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
+     */
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         
         if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
@@ -541,6 +585,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         return null;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
+     */
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         
         /*
@@ -628,6 +676,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         return null;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode#testElementForExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
     @Override
     protected void testElementForExpression(Object element, IExpression expression, final DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {
@@ -670,6 +722,10 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode#associateExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression)
+     */
     @Override
     protected void associateExpression(Object element, IExpression expression) {
         if (element instanceof BitFieldVMC) {
@@ -677,33 +733,56 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
+     */
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if (event instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
         }
 
         if (event instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
+            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) {
             return IModelDelta.CONTENT;            
         }
 
+        if (event instanceof IMemory.IMemoryChangedEvent) {
+            return IModelDelta.CONTENT;
+        }
+        
         return IModelDelta.NO_CHANGE;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
     {
         if (event instanceof ISuspendedDMEvent) {
             // Mark the parent delta indicating that elements were added and/or removed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        } else if (event instanceof IRegisters.IRegisterChangedDMEvent) {
+        }
+        else if (event instanceof IRegisters.IRegisterChangedDMEvent) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
+        else if (event instanceof IMemory.IMemoryChangedEvent) {
+        	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        }
         rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
+    	if (event instanceof IMemory.IMemoryChangedEvent) {
+    		parentDelta.addNode(element, IModelDelta.STATE);
+        }
+    	
         if (event instanceof IBitFieldChangedDMEvent) {
             parentDelta.addNode(element, IModelDelta.STATE);
         } 

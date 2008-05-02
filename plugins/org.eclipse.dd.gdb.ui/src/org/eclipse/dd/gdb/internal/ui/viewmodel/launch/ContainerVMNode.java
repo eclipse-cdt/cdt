@@ -54,9 +54,14 @@ public class ContainerVMNode extends AbstractDMVMNode
 
 	@Override
 	protected void updateElementsInSessionThread(IChildrenUpdate update) {
-      if (!checkService(AbstractMIControl.class, null, update)) return;
       
-      MIControlDMContext containerCtx = getServicesTracker().getService(AbstractMIControl.class).getControlDMContext();
+      AbstractMIControl controlService = getServicesTracker().getService(AbstractMIControl.class);
+      if ( controlService == null ) {
+              handleFailedUpdate(update);
+              return;
+      }
+      
+      MIControlDMContext containerCtx = controlService.getControlDMContext();
       update.setChild(createVMContext(containerCtx), 0); 
       update.done();
 	}
@@ -77,9 +82,12 @@ public class ContainerVMNode extends AbstractDMVMNode
 	
 	protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
-            if (!checkService(GDBRunControl.class, null, update)) continue;
-            final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
-
+        	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+            if ( runControl == null ) {
+                handleFailedUpdate(update);
+                continue;
+            }
+            
             final GDBControlDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), GDBControlDMContext.class);
 
             String imageKey = null;

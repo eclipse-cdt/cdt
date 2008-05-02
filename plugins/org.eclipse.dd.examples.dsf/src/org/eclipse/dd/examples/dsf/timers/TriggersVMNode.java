@@ -85,10 +85,12 @@ class TriggersVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        if (!checkService(AlarmService.class, null, update)) return;
+        if ( getServicesTracker().getService(AlarmService.class) == null ) {
+            handleFailedUpdate(update);
+            return;
+    	}
 
-        TriggerDMContext[] triggers = 
-            getServicesTracker().getService(AlarmService.class).getTriggers();
+        TriggerDMContext[] triggers = getServicesTracker().getService(AlarmService.class).getTriggers();
         fillUpdateWithVMCs(update, triggers);
         update.done();
     }
@@ -119,16 +121,19 @@ class TriggersVMNode extends AbstractDMVMNode
         TriggerDMContext triggerCtx = findDmcInPath( 
             update.getViewerInput(), update.getElementPath(), TriggerDMContext.class);
         
-        // If either update or service are not valid, fail the update and exit.
-        if (!checkDmc(triggerCtx, update) || 
-            !checkService(AlarmService.class, null, update)) 
-        {
+        // If either update or service are not valid, fail the update and return.
+        if ( triggerCtx == null ) {
+        	handleFailedUpdate(update);
             return;
         }
         
+        AlarmService alarmService = getServicesTracker().getService(AlarmService.class, null); 
+        if ( alarmService == null ) {
+            handleFailedUpdate(update);
+            return;
+    	}
+        
         // Calculate and set the update properties.
-        AlarmService alarmService = 
-            getServicesTracker().getService(AlarmService.class, null); 
         int value = alarmService.getTriggerValue(triggerCtx);
         
         if (value == -1) {

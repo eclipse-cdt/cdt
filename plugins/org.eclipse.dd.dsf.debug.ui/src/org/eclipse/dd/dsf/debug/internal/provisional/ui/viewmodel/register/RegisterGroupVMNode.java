@@ -58,7 +58,6 @@ import org.eclipse.swt.widgets.Composite;
 public class RegisterGroupVMNode extends AbstractExpressionVMNode
     implements IElementEditor, IElementLabelProvider
 {
-
     protected class RegisterGroupVMC extends DMVMContext
     {
         private IExpression fExpression;
@@ -134,10 +133,21 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return fSyncRegisterDataAccess;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
+     */
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        if (!checkService(IRegisters.class, null, update)) return;
-        getServicesTracker().getService(IRegisters.class).getRegisterGroups(
+    	
+        IRegisters regService = getServicesTracker().getService(IRegisters.class);
+        
+        if ( regService == null ) {
+        	handleFailedUpdate(update);
+            return;
+        }
+        
+        regService.getRegisterGroups(
             createCompositeDMVMContext(update),
             new DataRequestMonitor<IRegisterGroupDMContext[]>(getSession().getExecutor(), null) { 
                 @Override
@@ -151,12 +161,19 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                 }}); 
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#createVMContext(org.eclipse.dd.dsf.datamodel.IDMContext)
+     */
     @Override
     protected IDMVMContext createVMContext(IDMContext dmc) {
         return new RegisterGroupVMC(dmc);
     }
 
-    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
+     */
     public void update(final ILabelUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
@@ -170,15 +187,28 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         }
     }
 
-    
+    /*
+     *  Updates the labels with the required information for each visible column.
+     */
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
+        	
             final IRegisterGroupDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisterGroupDMContext.class);
-            if (!checkDmc(dmc, update) || !checkService(IRegisters.class, null, update)) continue;
+            if ( dmc == null ) {
+            	handleFailedUpdate(update);
+                continue;
+            }
+            
+            IRegisters regService = getServicesTracker().getService(IRegisters.class);
+            if ( regService == null ) {
+            	handleFailedUpdate(update);
+                continue;
+            }
             
             getDMVMProvider().getModelData(
-                this, update, 
-                getServicesTracker().getService(IRegisters.class, null),
+                this, 
+                update, 
+                regService,
                 dmc, 
                 new DataRequestMonitor<IRegisterGroupDMData>(getSession().getExecutor(), null) { 
                     @Override
@@ -214,6 +244,9 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         }
     }
 
+    /*
+     * Based on the specified visible column, provide the appropriate value/label.
+     */
     protected void fillColumnLabel(IRegisterGroupDMContext dmContext, IRegisterGroupDMData dmData,
                                    String columnId, int idx, ILabelUpdate update) 
     {
@@ -247,7 +280,11 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
             update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP), idx);
         }
     }
-    
+   
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
+     */
     public int getDeltaFlags(Object e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -261,6 +298,10 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, int, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that indicates all groups have changed
@@ -277,6 +318,10 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         rm.done();
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#canParseExpression(org.eclipse.debug.core.model.IExpression)
+     */
     public boolean canParseExpression(IExpression expression) {
         return parseExpressionForGroupName(expression.getExpressionText()) != null;
     }
@@ -298,6 +343,10 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return null;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
+     */
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if (event instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -306,6 +355,10 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
@@ -316,6 +369,10 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
         if (event instanceof IRegisters.IGroupsChangedDMEvent) {
@@ -327,6 +384,10 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode#testElementForExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
     @Override
     protected void testElementForExpression(Object element, IExpression expression, final DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {
@@ -368,6 +429,10 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode#associateExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression)
+     */
     @Override
     protected void associateExpression(Object element, IExpression expression) {
         if (element instanceof RegisterGroupVMC) {
@@ -375,15 +440,22 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
+     */
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             return new TextCellEditor(parent);
         } 
         return null;
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
+     */
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return fWatchExpressionCellModifier;
     }
-
 }

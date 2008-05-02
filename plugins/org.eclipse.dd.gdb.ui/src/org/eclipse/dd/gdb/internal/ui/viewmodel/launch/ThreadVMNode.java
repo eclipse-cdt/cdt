@@ -61,26 +61,30 @@ public class ThreadVMNode extends AbstractDMVMNode
 
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-    	 if (!checkService(IRunControl.class, null, update)) return;
-         final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
+    	IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+    	if ( runControl == null ) {
+    		handleFailedUpdate(update);
+    		return;
+    	}
 
-         if (contDmc == null) {
-             handleFailedUpdate(update);
-             return;
-         } 
-  
-         getServicesTracker().getService(IRunControl.class).getExecutionContexts(contDmc, 
-    			 new DataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), null){
-    	                @Override
-						public void handleCompleted() {
-    	                    if (!isSuccess()) {
-    	                        handleFailedUpdate(update);
-    	                        return;
-    	                    }
-    	                    fillUpdateWithVMCs(update, getData());
-                            update.done();
-    	                }
-    			 });
+    	final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
+    	if (contDmc == null) {
+    		handleFailedUpdate(update);
+    		return;
+    	} 
+
+    	runControl.getExecutionContexts(contDmc, 
+    			new DataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), null){
+    				@Override
+    				public void handleCompleted() {
+    					if (!isSuccess()) {
+    						handleFailedUpdate(update);
+    						return;
+    					}
+    					fillUpdateWithVMCs(update, getData());
+    					update.done();
+    				}
+    			});
     }
 
 
@@ -195,8 +199,11 @@ public class ThreadVMNode extends AbstractDMVMNode
     
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
-            if (!checkService(GDBRunControl.class, null, update)) continue;
-            final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+        	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+            if ( runControl == null ) {
+                    handleFailedUpdate(update);
+                    continue;
+            }
             
             final IMIExecutionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
 
@@ -220,7 +227,11 @@ public class ThreadVMNode extends AbstractDMVMNode
 
                     // We're in a new dispatch cycle, and we have to check whether the 
                     // service reference is still valid.
-                    if (!checkService(GDBRunControl.class, null, update)) return;
+                    final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+                    if ( runControl == null ) {
+                        handleFailedUpdate(update);
+                        return;
+                    }
 
                     final StateChangeReason reason = getData().getStateChangeReason();
 

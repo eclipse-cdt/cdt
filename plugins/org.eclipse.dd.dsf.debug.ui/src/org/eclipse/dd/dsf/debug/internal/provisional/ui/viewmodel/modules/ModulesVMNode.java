@@ -42,7 +42,11 @@ public class ModulesVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        if (!checkService(IModules.class, null, update)) return;
+    	
+        if ( getServicesTracker().getService(IModules.class) == null ) {
+            handleFailedUpdate(update);
+            return;
+    	}
         
         final ISymbolDMContext symDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), ISymbolDMContext.class) ;
         
@@ -83,7 +87,16 @@ public class ModulesVMNode extends AbstractDMVMNode
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             final IModuleDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IModuleDMContext.class);
-            if (!checkDmc(dmc, update) || !checkService(IModules.class, null, update)) continue;
+            // If either update or service are not valid, fail the update and exit.
+            if ( dmc == null ) {
+            	handleFailedUpdate(update);
+                continue;
+            }
+            if ( getServicesTracker().getService(IModules.class) == null ) {
+                handleFailedUpdate(update);
+                continue;
+        	}
+            
             // Use  different image for loaded and unloaded symbols when event to report loading of symbols is implemented.
             update.setImageDescriptor(DsfDebugUIPlugin.getImageDescriptor(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_LOADED), 0);
       

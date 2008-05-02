@@ -71,7 +71,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        if (!checkService(IStack.class, null, update)) return;
+    	
+        if ( getServicesTracker().getService(IStack.class) == null ) {
+                handleFailedUpdate(update);
+                return;
+        }
         
         final IExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
         if (execDmc == null) {
@@ -88,7 +92,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
                         // Failed to retrieve frames.  If we are stepping, we 
                         // might still be able to retrieve just the top stack 
                         // frame, which would still be useful in Debug View.
-                        if (!checkService(IRunControl.class, null, update)) return;                        
+                        if ( getServicesTracker().getService(IRunControl.class) == null ) {
+                        	handleFailedUpdate(update);
+                        	return;
+                        }
                         if (getServicesTracker().getService(IRunControl.class).isStepping(execDmc)) {
                             getElementsTopStackFrameOnly(update);
                         } else {
@@ -121,8 +128,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                    if (!checkService(IStack.class, null, update)) return;
-
+                	if ( getServicesTracker().getService(IStack.class) == null ) {
+                		handleFailedUpdate(update);
+                		return;
+                	}
+                
                     getServicesTracker().getService(IStack.class).getTopFrame(
                         execDmc, 
                         new DataRequestMonitor<IFrameDMContext>(getExecutor(), null) { 
@@ -173,7 +183,16 @@ public class StackFramesVMNode extends AbstractDMVMNode
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             final IFrameDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IFrameDMContext.class);
-            if (!checkDmc(dmc, update) || !checkService(IStack.class, null, update)) continue;
+            
+            if ( dmc == null ) {
+            	handleFailedUpdate(update);
+            	continue;
+            }
+            if ( getServicesTracker().getService(IStack.class) == null ) {
+            	handleFailedUpdate(update);
+            	continue;
+            }
+        
             
             getDMVMProvider().getModelData(
                 this, update, 

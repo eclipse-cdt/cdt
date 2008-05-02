@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
@@ -21,6 +23,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 @SuppressWarnings("restriction")
 public class LRGCCTests extends GCCTests {
 
+	public static TestSuite suite() {
+    	return suite(LRGCCTests.class);
+    }
+	
 	public LRGCCTests() {}
 	public LRGCCTests(String name) { super(name); }
 

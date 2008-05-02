@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -27,6 +29,10 @@ import org.eclipse.core.resources.IFile;
 
 @SuppressWarnings("restriction")
 public class LRSelectionParseTest extends AST2SelectionParseTest {
+	
+	public static TestSuite suite() {
+    	return new TestSuite(LRSelectionParseTest.class);
+    }
 	
 	public LRSelectionParseTest() {}
 	public LRSelectionParseTest(String name) { super(name); }

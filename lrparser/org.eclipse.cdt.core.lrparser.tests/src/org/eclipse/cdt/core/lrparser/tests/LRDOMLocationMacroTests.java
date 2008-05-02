@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
@@ -21,15 +23,12 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 @SuppressWarnings("restriction")
 public class LRDOMLocationMacroTests extends DOMLocationMacroTests {
 
-	 
-    public LRDOMLocationMacroTests() {
-		super();
-	}
-
-
-	public LRDOMLocationMacroTests(String name) {
-		super(name);
-	}
+	public static TestSuite suite() {
+    	return suite(LRDOMLocationMacroTests.class);
+    }
+	
+    public LRDOMLocationMacroTests() {}
+	public LRDOMLocationMacroTests(String name) { super(name); }
 
 
 	@Override

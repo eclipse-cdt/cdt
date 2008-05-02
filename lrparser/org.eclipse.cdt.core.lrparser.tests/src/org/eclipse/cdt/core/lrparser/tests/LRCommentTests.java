@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -23,7 +25,11 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 @SuppressWarnings("restriction")
 public class LRCommentTests extends CommentTests {
 
+	public static TestSuite suite() {
+        return suite(LRCommentTests.class);
+    }
 	 
+	
     @Override
     @SuppressWarnings("unused")
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems )  throws ParserException {

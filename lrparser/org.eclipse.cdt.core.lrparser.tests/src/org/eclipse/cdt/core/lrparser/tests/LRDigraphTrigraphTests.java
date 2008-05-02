@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.lrparser.tests;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -41,6 +42,10 @@ import org.eclipse.cdt.core.model.ILanguage;
 @SuppressWarnings("nls")
 public class LRDigraphTrigraphTests extends TestCase {
 
+	public static TestSuite suite() {
+    	return new TestSuite(LRCSpecTests.class);
+    }
+	
 	
 	public LRDigraphTrigraphTests() { }
 	public LRDigraphTrigraphTests(String name) { super(name); }

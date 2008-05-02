@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.lrparser.tests;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
@@ -21,6 +22,10 @@ import org.eclipse.cdt.core.parser.tests.ast2.CompleteParser2Tests;
 
 public class LRCompleteParser2Tests extends CompleteParser2Tests {
 
+	public static TestSuite suite() {
+        return suite(LRCompleteParser2Tests.class);
+    }
+	
 	@Override
 	@SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse(String code, boolean expectedToPass,

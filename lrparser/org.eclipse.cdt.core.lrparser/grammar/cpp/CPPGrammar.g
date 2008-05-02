@@ -1791,6 +1791,8 @@ template_argument_list_opt
       | $empty
       
 
+-- TODO there are ambiguities here, for example f<i>, i could be variable or type
+-- may need to double parse
 template_argument
     ::= assignment_expression
       | type_id

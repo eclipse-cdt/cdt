@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.util;
 
 import java.io.PrintStream;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -41,8 +42,14 @@ import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
@@ -261,14 +268,14 @@ public class ASTPrinter {
 	}
 
 	
-	private static class ProblemVisitor extends CASTVisitor {
+	private static class ProblemVisitor extends ASTVisitor {
 		private PrintStream out;
 		
 		ProblemVisitor(PrintStream out) {
 			this.out = out;
-			shouldVisitProblems = true;
-			shouldVisitDeclarations = true;
-			shouldVisitStatements = true;
+			shouldVisitProblems = 
+			shouldVisitDeclarations = 
+			shouldVisitStatements = 
 			shouldVisitExpressions = true;
 		}
 
@@ -301,28 +308,36 @@ public class ASTPrinter {
 	}
 	
 	
-	private static class PrintVisitor extends CASTVisitor {
+	/**
+	 * This visitor extends from CPPASTVisitor but you can still
+	 * apply it to a plain C AST and it will print everything
+	 * except designators.
+	 */
+	private static class PrintVisitor extends CPPASTVisitor {
 
-		
 		private PrintStream out;
 		private int indentLevel = 0;
 		
 		PrintVisitor(PrintStream out) {
 			this.out = out;
-			shouldVisitDesignators = true;
-			shouldVisitNames = true;
-			shouldVisitDeclarations = true;
-			shouldVisitInitializers = true;
-			shouldVisitParameterDeclarations = true;
-			shouldVisitDeclarators = true;
-			shouldVisitDeclSpecifiers = true;
-			shouldVisitExpressions = true;
-			shouldVisitStatements = true;
-			shouldVisitTypeIds = true;
-			shouldVisitEnumerators = true;
-			shouldVisitTranslationUnit = true;
-			shouldVisitProblems = true;
+			shouldVisitNames = 
+			shouldVisitDeclarations = 
+			shouldVisitInitializers = 
+			shouldVisitParameterDeclarations = 
+			shouldVisitDeclarators = 
+			shouldVisitDeclSpecifiers = 
+			shouldVisitExpressions = 
+			shouldVisitStatements = 
+			shouldVisitTypeIds = 
+			shouldVisitEnumerators = 
+			shouldVisitTranslationUnit = 
+			shouldVisitProblems = 
+			shouldVisitDesignators =
+			shouldVisitBaseSpecifiers = 
+			shouldVisitNamespaces =
+			shouldVisitTemplateParameters = true;
 		}
+		
 		
 		private void print(IASTNode node) {
 			ASTPrinter.print(out, indentLevel,  node);
@@ -332,12 +347,12 @@ public class ASTPrinter {
 			ASTPrinter.print(out, indentLevel, binding);
 		}
 
-		@Override
-		public int visit(ICASTDesignator designator) {
-			print(designator);
-			indentLevel++;
-			return super.visit(designator);
-		}
+//		@Override
+//		public int visit(ICASTDesignator designator) {
+//			print(designator);
+//			indentLevel++;
+//			return super.visit(designator);
+//		}
 		
 		@Override
 		public int visit(IASTDeclaration declaration) {
@@ -442,12 +457,33 @@ public class ASTPrinter {
 			return super.visit(typeId);
 		}
 
-		
 		@Override
-		public int leave(ICASTDesignator designator) {
-			indentLevel--;
-			return super.leave(designator);
+		public int visit(ICPPASTBaseSpecifier baseSpecifier) {
+			print(baseSpecifier);
+			indentLevel++;
+			return super.visit(baseSpecifier);
 		}
+
+		@Override
+		public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+			print(namespaceDefinition);
+			indentLevel++;
+			return super.visit(namespaceDefinition);
+		}
+
+		@Override
+		public int visit(ICPPASTTemplateParameter templateParameter) {
+			print(templateParameter);
+			indentLevel++;
+			return super.visit(templateParameter);
+		}
+		
+		
+//		@Override
+//		public int leave(ICASTDesignator designator) {
+//			indentLevel--;
+//			return super.leave(designator);
+//		}
 
 		@Override
 		public int leave(IASTDeclaration declaration) {
@@ -519,6 +555,24 @@ public class ASTPrinter {
 		public int leave(IASTTypeId typeId) {
 			indentLevel--;
 			return super.leave(typeId);
+		}
+		
+		@Override
+		public int leave(ICPPASTBaseSpecifier baseSpecifier) {
+			indentLevel--;
+			return super.leave(baseSpecifier);
+		}
+
+		@Override
+		public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
+			indentLevel--;
+			return super.leave(namespaceDefinition);
+		}
+
+		@Override
+		public int leave(ICPPASTTemplateParameter templateParameter) {
+			indentLevel--;
+			return super.leave(templateParameter);
 		}
 		
 	}	

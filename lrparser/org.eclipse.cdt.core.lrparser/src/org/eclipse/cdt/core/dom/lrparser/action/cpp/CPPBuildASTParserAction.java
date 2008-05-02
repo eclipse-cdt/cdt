@@ -409,22 +409,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	
 
-	private static OverloadableOperator getOverloadableOperator(List<IToken> tokens) {
+	private OverloadableOperator getOverloadableOperator(List<IToken> tokens) {
 		if(tokens.size() == 1) {
 			// TODO this is a hack that I did to save time
 			LPGTokenAdapter coreToken = (LPGTokenAdapter) tokens.get(0);
 			return OverloadableOperator.valueOf(coreToken.getWrappedToken());
 		}
-		else if(matchTokens(tokens, TK_new, TK_LeftBracket, TK_RightBracket)) {
+		else if(matchTokens(tokens, tokenMap, TK_new, TK_LeftBracket, TK_RightBracket)) {
 			return OverloadableOperator.NEW_ARRAY;
 		}
-		else if(matchTokens(tokens, TK_delete, TK_LeftBracket, TK_RightBracket)) {
+		else if(matchTokens(tokens, tokenMap, TK_delete, TK_LeftBracket, TK_RightBracket)) {
 			return OverloadableOperator.DELETE_ARRAY;
 		}
-		else if(matchTokens(tokens, TK_LeftBracket, TK_RightBracket)) {
+		else if(matchTokens(tokens, tokenMap, TK_LeftBracket, TK_RightBracket)) {
 			return OverloadableOperator.BRACKET;
 		}
-		else if(matchTokens(tokens, TK_LeftParen, TK_RightParen)) {
+		else if(matchTokens(tokens, tokenMap, TK_LeftParen, TK_RightParen)) {
 			return OverloadableOperator.PAREN;
 		}
 		
@@ -1209,7 +1209,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		List<IToken> ruleTokens = parser.getRuleTokens();
 		
 		// do not generate nodes for extra EOC tokens
-		if(matchTokens(ruleTokens, CPPParsersym.TK_EndOfCompletion)) {
+		if(matchTokens(ruleTokens, tokenMap, TK_EndOfCompletion)) {
 			return;
 		}
 		if(declSpecifier == null) { // can happen if implicit int is used
@@ -1715,6 +1715,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     	IASTTypeId typeId = hasTypeId ? (IASTTypeId)astStack.pop() : null;
     	
     	IASTName name = (IASTName)astStack.pop();
+    	if(name == null)
+    		name = nodeFactory.newName();
+    	
     	int type = getTemplateParameterType(parser.getLeftIToken()); 
     	
     	ICPPASTSimpleTypeTemplateParameter templateParameter = nodeFactory.newSimpleTypeTemplateParameter(type, name, typeId);
@@ -1746,18 +1749,54 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      * 
      * This method detects the incorrect parse, throws away the incorrect AST fragment,
      * and replaces it with the correct AST fragment.
+     * 
+     * Yes its a hack, but it took way less time to just do this than to refactor the grammar.
+     * 
+     * TODO: there are more ambiguities with templates, maybe some double parsing is in order.
      */
     public void consumeTemplateParamterDeclaration() {
     	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+
+    	List<IToken> ruleTokens = parser.getRuleTokens();
     	
-    	if(matchTokens(parser.getRuleTokens(), TK_class, TK_identifier)) {
-    		astStack.pop(); // throw away the ICPPASTParameterDeclaration
-    		IASTName name = createName(parser.getRightIToken());
-    		astStack.push(name);
+    	if(matchTokens(ruleTokens, tokenMap, TK_class)) {
+    		astStack.pop();
+    		astStack.push(null);
     		consumeSimpleTypeTemplateParameter(false);
+    	}
+    	else if(matchTokens(ruleTokens, tokenMap, TK_class, TK_identifier)) {
+    		astStack.pop();
+    		astStack.push(createName(ruleTokens.get(1)));
+    		consumeSimpleTypeTemplateParameter(false);
+    	}
+    	else if(matchTokens(ruleTokens, tokenMap, TK_class, TK_Assign, TK_identifier)) {
+    		astStack.pop();
+    		IASTName typeName = createName(ruleTokens.get(3));
+    		fixTemplateParameterDeclarationWithInitializer(null, typeName);
+    	}
+    	else if(matchTokens(ruleTokens, tokenMap, TK_class, TK_identifier, TK_Assign, TK_identifier)) {
+    		astStack.pop();
+    		IASTName name = createName(ruleTokens.get(1));
+    		IASTName typeName = createName(ruleTokens.get(3));
+    		fixTemplateParameterDeclarationWithInitializer(name, typeName);
     	}
     	
     	if(TRACE_AST_STACK) System.out.println(astStack);
+    }
+    
+    
+    /**
+     * Manually create the AST for a template parameter with initializer.
+     */
+    private void fixTemplateParameterDeclarationWithInitializer(IASTName name, IASTName typeName) {
+    	astStack.push(name);
+		ICPPASTNamedTypeSpecifier namedTypeSpecifier = nodeFactory.newCPPNamedTypeSpecifier(typeName, false);
+		setOffsetAndLength(namedTypeSpecifier, offset(typeName), length(typeName));
+		IASTDeclarator declarator = nodeFactory.newDeclarator(nodeFactory.newName());
+		IASTTypeId typeId = nodeFactory.newTypeId(namedTypeSpecifier, declarator);
+		setOffsetAndLength(typeId, offset(typeName), length(typeName));
+		astStack.push(typeId);
+		consumeSimpleTypeTemplateParameter(true);
     }
     
     

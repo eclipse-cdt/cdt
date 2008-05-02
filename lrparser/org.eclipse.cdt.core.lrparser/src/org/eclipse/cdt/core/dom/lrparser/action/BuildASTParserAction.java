@@ -297,12 +297,12 @@ public abstract class BuildASTParserAction {
 	 * 
 	 * @throws NullPointerException if source or pattern is null
 	 */
-	public static boolean matchTokens(List<IToken> source, Integer ... pattern) {
+	public static boolean matchTokens(List<IToken> source, ITokenMap tokenMap, Integer ... pattern) {
 		if(source.size() != pattern.length) // throws NPE if either parameter is null
 			return false;
 		
 		for(int i = 0, n = pattern.length; i < n; i++) {
-			if(source.get(i).getKind() != pattern[i].intValue())
+			if(tokenMap.mapKind(source.get(i).getKind()) != pattern[i].intValue())
 				return false;
 		}
 		return true;
@@ -352,7 +352,6 @@ public abstract class BuildASTParserAction {
 	 * was not parsed.
 	 */
 	public void consumeEmpty() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		astStack.push(null);
 	}
 

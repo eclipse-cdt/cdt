@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -34,6 +35,11 @@ import org.eclipse.cdt.core.model.ILanguage;
 @SuppressWarnings("nls")
 public class LRCompletionParseTest extends TestCase {
 
+	public static TestSuite suite() {
+        return new TestSuite(LRCompletionParseTest.class);
+    }
+	
+	
 	public LRCompletionParseTest() { }
 	public LRCompletionParseTest(String name) { super(name); }
 	

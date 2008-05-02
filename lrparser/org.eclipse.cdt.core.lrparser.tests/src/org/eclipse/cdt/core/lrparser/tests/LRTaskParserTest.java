@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
@@ -21,6 +23,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 @SuppressWarnings("restriction")
 public class LRTaskParserTest extends TaskParserTest {
 
+	public static TestSuite suite() {
+    	return new TestSuite(LRTaskParserTest.class);
+    }
+	
 	@Override
 	@SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {

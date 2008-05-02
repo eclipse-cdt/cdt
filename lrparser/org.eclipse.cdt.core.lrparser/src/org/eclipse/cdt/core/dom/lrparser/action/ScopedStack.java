@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.lrparser.action;
 
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -79,11 +80,11 @@ public class ScopedStack<T> {
 	}
 	
 	/**
-	 * Marks the stack then pushes all the items in the given list.
+	 * Opens a scope then pushes all the items in the given list.
 	 * 
 	 * @throws NullPointerException if items is null
 	 */
-	public void openScope(List<T> items) {
+	public void openScope(Collection<T> items) {
 		openScope();
 		for(T item : items)
 			push(item);

@@ -32,6 +32,8 @@ import java.security.cert.CertificateFactory;
 
 
 /**
+ * This class is used for managing the DStore keystore for use with the DStore communication framework.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

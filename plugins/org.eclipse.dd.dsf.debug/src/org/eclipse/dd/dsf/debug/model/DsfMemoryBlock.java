@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
+import org.eclipse.dd.dsf.debug.memory.IMemoryBlockUpdatePolicy;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
@@ -41,7 +42,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.core.model.IMemoryBlockUpdatePolicy;
 import org.eclipse.debug.core.model.MemoryByte;
 
 /**

@@ -12,10 +12,10 @@
 
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.memory;
 
+import org.eclipse.dd.dsf.debug.memory.IMemoryBlockUpdatePolicy;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockUpdatePolicy;
 import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;

@@ -48,7 +48,6 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.ExpressionService.ExpressionInfo;
 import org.eclipse.dd.mi.service.ExpressionService.MIExpressionDMC;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetAttributes;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetChildCount;
@@ -402,7 +401,7 @@ public class MIVariableManager implements ICommandControl {
                 rm.done();
             } else {
                 fCommandControl.queueCommand(
-                        new MIVarShowAttributes(fControlDmc, getGdbName()), 
+                        new MIVarShowAttributes(getRootToUpdate().getControlDMContext(), getGdbName()), 
                         new DataRequestMonitor<MIVarShowAttributesInfo>(fSession.getExecutor(), rm) {
                             @Override
                             protected void handleSuccess() {
@@ -490,7 +489,7 @@ public class MIVariableManager implements ICommandControl {
 				} else {
 					// We must first set the new format and then evaluate the variable
 					fCommandControl.queueCommand(
-							new MIVarSetFormat(fControlDmc, getGdbName(), dmc.getFormatID()), 
+							new MIVarSetFormat(getRootToUpdate().getControlDMContext(), getGdbName(), dmc.getFormatID()), 
 							new DataRequestMonitor<MIVarSetFormatInfo>(fSession.getExecutor(), rm) {
 								@Override
 								protected void handleCompleted() {
@@ -526,7 +525,7 @@ public class MIVariableManager implements ICommandControl {
 		 */
 		private void evaluate(final DataRequestMonitor<FormattedValueDMData> rm) {
 			fCommandControl.queueCommand(
-					new MIVarEvaluateExpression(fControlDmc, getGdbName()), 
+					new MIVarEvaluateExpression(getRootToUpdate().getControlDMContext(), getGdbName()), 
 					new DataRequestMonitor<MIVarEvaluateExpressionInfo>(fSession.getExecutor(), rm) {
 						@Override
 						protected void handleCompleted() {
@@ -563,7 +562,7 @@ public class MIVariableManager implements ICommandControl {
 		private void resetFormatToNatural() {
 			if (!getCurrentFormat().equals(IFormattedValues.NATURAL_FORMAT)) {
 				fCommandControl.queueCommand(
-						new MIVarSetFormat(fControlDmc, getGdbName(), IFormattedValues.NATURAL_FORMAT), 
+						new MIVarSetFormat(getRootToUpdate().getControlDMContext(), getGdbName(), IFormattedValues.NATURAL_FORMAT), 
 						new DataRequestMonitor<MIVarSetFormatInfo>(fSession.getExecutor(), null) {
 							@Override
 							protected void handleCompleted() {
@@ -629,7 +628,7 @@ public class MIVariableManager implements ICommandControl {
 	        // be called here with a fully created object.
 	        // Also no need to lock the object, since getting the children won't affect other operations
 	        fCommandControl.queueCommand(
-	        		new MIVarListChildren(fControlDmc, getGdbName()),
+	        		new MIVarListChildren(getRootToUpdate().getControlDMContext(), getGdbName()),
 	        		new DataRequestMonitor<MIVarListChildrenInfo>(fSession.getExecutor(), rm) {
 	        			@Override
 	        			protected void handleSuccess() {
@@ -746,7 +745,7 @@ public class MIVariableManager implements ICommandControl {
 	        						// To build the child id, we need the fully qualified expression which we
 	        						// can get from -var-info-path-expression starting from GDB 6.7 
 	        						fCommandControl.queueCommand(
-	        								new MIVarInfoPathExpression(fControlDmc, child.getVarName()),
+	        								new MIVarInfoPathExpression(getRootToUpdate().getControlDMContext(), child.getVarName()),
 	    	        						new DataRequestMonitor<MIVarInfoPathExpressionInfo>(fSession.getExecutor(), childPathRm) {
 	        	        						@Override
 	        	        						protected void handleCompleted() {
@@ -873,7 +872,7 @@ public class MIVariableManager implements ICommandControl {
 
 			// No need to be in ready state or to lock the object
 			fCommandControl.queueCommand(
-					new MIVarAssign(fControlDmc, getGdbName(), value),
+					new MIVarAssign(getRootToUpdate().getControlDMContext(), getGdbName(), value),
 					new DataRequestMonitor<MIVarAssignInfo>(fSession.getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
@@ -912,18 +911,26 @@ public class MIVariableManager implements ICommandControl {
 		protected static final int STATE_NOT_CREATED = 10;
 		protected static final int STATE_CREATING = 11;
 		
+		// The control context within which this variable object was created
+		// It only needs to be stored in the Root VarObj since any children
+		// will have the same control context
+	    private MIControlDMContext fControlContext = null;
+	    
 		private boolean outOfDate = false;
 		
 	    // Modifiable descendants are any variable object that is a descendant or itself for
 	    // which the value can change.
 		private Map<String, MIVariableObject> modifiableDescendants;
 
-		public MIRootVariableObject(VariableObjectId id) {
+		public MIRootVariableObject(VariableObjectId id, IExpressionDMContext exprCtx) {
 			super(id, null);
 			currentState = STATE_NOT_CREATED;
 			modifiableDescendants = new HashMap<String, MIVariableObject>();
+			fControlContext = DMContexts.getAncestorOfType(exprCtx, MIControlDMContext.class);
 		}
-		
+
+		public MIControlDMContext getControlDMContext() { return fControlContext; }
+
 		public boolean isUpdating() { return currentState == STATE_UPDATING; }
 
 		public boolean isOutOfDate() { return outOfDate; }
@@ -1047,7 +1054,7 @@ public class MIVariableManager implements ICommandControl {
 				// of a variable object, we immediately set it back to natural with a second
 				// var-set-format command.  This is done in the getValue() method
 				fCommandControl.queueCommand(
-						new MIVarUpdate(fControlDmc, getGdbName()),
+						new MIVarUpdate(getRootToUpdate().getControlDMContext(), getGdbName()),
 						new DataRequestMonitor<MIVarUpdateInfo>(fSession.getExecutor(), rm) {
 							@Override
 							protected void handleCompleted() {
@@ -1117,7 +1124,7 @@ public class MIVariableManager implements ICommandControl {
 		public void deleteInGdb() {
 		    if (getGdbName() != null) {
 	    		fCommandControl.queueCommand(
-	    				new MIVarDelete(fControlDmc, getGdbName()),
+	    				new MIVarDelete(getRootToUpdate().getControlDMContext(), getGdbName()),
 	    				new DataRequestMonitor<MIVarDeleteInfo>(fSession.getExecutor(), null));
 		        // Nothing to do in the requestMonitor, since the object was already
 		        // removed from our list before calling this method.
@@ -1147,6 +1154,7 @@ public class MIVariableManager implements ICommandControl {
 	 */
 	private class VariableObjectId {
 		String fExpression = null;
+		String fControlId = null;
 		Integer fThreadId = null;
 		Integer fFrameId = null;
 		
@@ -1155,8 +1163,9 @@ public class MIVariableManager implements ICommandControl {
 			if (other instanceof VariableObjectId) {
 				VariableObjectId otherId = (VariableObjectId) other;
 				return (fExpression == null ? otherId.fExpression == null : fExpression.equals(otherId.fExpression)) &&
+    				(fControlId == null ? otherId.fControlId == null : fControlId.equals(otherId.fControlId)) &&
     				(fThreadId == null ? otherId.fThreadId == null : fThreadId.equals(otherId.fThreadId)) &&
-    				(fFrameId == null ? otherId.fFrameId == null : fFrameId.equals(otherId.fFrameId));
+                    (fFrameId == null ? otherId.fFrameId == null : fFrameId.equals(otherId.fFrameId));
 			}
 			return false;
 		}
@@ -1164,12 +1173,21 @@ public class MIVariableManager implements ICommandControl {
 		@Override
 		public int hashCode() {
 			return (fExpression == null ? 0 : fExpression.hashCode()) + 
-			       (fThreadId == null ? 0 : fThreadId.hashCode()) +
+		           (fControlId == null ? 0 : fControlId.hashCode()) +
+		           (fThreadId == null ? 0 : fThreadId.hashCode()) +
 			       (fFrameId  == null ? 0 : fFrameId.hashCode());
 		}
 
 		public void generateId(IExpressionDMContext exprCtx, final RequestMonitor rm) {
 			fExpression = exprCtx.getExpression();
+
+			MIControlDMContext controlCtx = DMContexts.getAncestorOfType(exprCtx, MIControlDMContext.class);
+			if (controlCtx == null) {
+				rm.done();
+				return;
+			}
+
+			fControlId = controlCtx.getCommandControlFilter();
 
 			IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(exprCtx, IMIExecutionDMContext.class);
 			if (execCtx == null) {
@@ -1200,7 +1218,8 @@ public class MIVariableManager implements ICommandControl {
 		}
 		
 		public void generateId(String childFullExp, VariableObjectId parentId) {
-			// The thread and frame are the same as the parent
+			// The control, thread and frame are the same as the parent
+			fControlId = parentId.fControlId;
 			fThreadId = parentId.fThreadId;
 			fFrameId = parentId.fFrameId;
 			// The expression here must be the one that is part of IExpressionContext for this child
@@ -1294,12 +1313,6 @@ public class MIVariableManager implements ICommandControl {
 	// same name but refer to a different context
 	private final IStack fStackService;
 	private IExpressions fExpressionService;
-	
-	// The top level context.  It is used to operate on variable objects
-	// that have already been created, since those objects are referenced
-	// by name, irrespective of context.
-	// We do need a context, for when we will have multiple MIRunControls (multiple GDBs)
-	private final MIControlDMContext fControlDmc;
 
 	// Typically, there will only be one listener, since only the ExpressionService will use this class
     private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
@@ -1324,7 +1337,6 @@ public class MIVariableManager implements ICommandControl {
 		fCommandControl = tracker.getService(ICommandControl.class);
 		fStackService  = tracker.getService(IStack.class);
 		fExpressionService = tracker.getService(IExpressions.class);
-		fControlDmc = ((AbstractMIControl)fCommandControl).getControlDMContext();
 		
 		// Register to receive service events for this session.
         fSession.addServiceEventListener(this, null);
@@ -1427,7 +1439,7 @@ public class MIVariableManager implements ICommandControl {
 
 		// Variable objects that are created directly like this, are considered ROOT variable objects
 		// in comparison to variable objects that are children of other variable objects.
-		final MIRootVariableObject newVarObj = new MIRootVariableObject(id);
+		final MIRootVariableObject newVarObj = new MIRootVariableObject(id, exprCtx);
 		
 		// We must put this object in our map right away, in case it is 
 		// requested again, before it completes its creation.

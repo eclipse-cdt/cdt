@@ -44,34 +44,36 @@ esac
 if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3436a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
-    if [ -d eclipse-3.4M6-${ep_arch} ]; then
-      rm -rf eclipse-3.4M6-${ep_arch}
+    if [ -d eclipse-3.4M7-${ep_arch} ]; then
+      rm -rf eclipse-3.4M7-${ep_arch}
     fi
-    mkdir eclipse-3.4M6-${ep_arch}
-    cd eclipse-3.4M6-${ep_arch}
+    mkdir eclipse-3.4M7-${ep_arch}
+    cd eclipse-3.4M7-${ep_arch}
   else
     rm -rf eclipse
   fi
-  # Eclipse SDK 3.4M6: Need the SDK so we can link into docs
+  # Eclipse SDK 3.4M7: Need the SDK so we can link into docs
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M6-200803301350/eclipse-SDK-3.4M6-${ep_arch}.tar.gz"
-  tar xfvz eclipse-SDK-3.4M6-${ep_arch}.tar.gz
-  rm eclipse-SDK-3.4M6-${ep_arch}.tar.gz
-  # Remove P2 due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=225537
-  # See http://wiki.eclipse.org/Equinox_p2_Removal
-  rm -rf eclipse/configuration/* eclipse/configuration/.settings
-  cp ../eclipse-3.3-linux-gtk-ppc/eclipse/configuration/config.ini eclipse/configuration
-  cp -f ../eclipse-3.3-linux-gtk-ppc/eclipse/eclipse.ini eclipse/
-  rm -rf eclipse/features/org.eclipse.equinox.p2.user.ui*
-  rm -f eclipse/plugins/org.eclipse.equinox.p2.*
-  rm -rf eclipse/p2
-  # </Remove P2>
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M7-200805020100/eclipse-SDK-3.4M7-${ep_arch}.tar.gz"
+  tar xfvz eclipse-SDK-3.4M7-${ep_arch}.tar.gz
+  rm eclipse-SDK-3.4M7-${ep_arch}.tar.gz
+  if false ; then
+    # Remove P2 due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=225537
+    # See http://wiki.eclipse.org/Equinox_p2_Removal
+    rm -rf eclipse/configuration/* eclipse/configuration/.settings
+    cp ../eclipse-3.3-linux-gtk-ppc/eclipse/configuration/config.ini eclipse/configuration
+    cp -f ../eclipse-3.3-linux-gtk-ppc/eclipse/eclipse.ini eclipse/
+    rm -rf eclipse/features/org.eclipse.equinox.p2.user.ui*
+    rm -f eclipse/plugins/org.eclipse.equinox.p2.*
+    rm -rf eclipse/p2
+    # </Remove P2>
+  fi
   cd "${curdir2}"
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -e eclipse ]; then 
       rm eclipse
     fi
-    ln -s eclipse-3.4M6-${ep_arch}/eclipse eclipse
+    ln -s eclipse-3.4M7-${ep_arch}/eclipse eclipse
   fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
@@ -115,12 +117,12 @@ if [ ! -f eclipse/plugins/org.eclipse.emf.doc_2.4.0.v200804012208.jar ]; then
   unzip -o emf-sdo-xsd-SDK-2.4.0M6.zip
   rm emf-sdo-xsd-SDK-2.4.0M6.zip 
 fi
-if [ ! -f eclipse/plugins/org.junit_3.8.2.v200711021030/junit.jar ]; then
+if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M6-200803301350/eclipse-test-framework-3.4M6.zip"
-  unzip -o eclipse-test-framework-3.4M6.zip
-  rm eclipse-test-framework-3.4M6.zip
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M7-200805020100/eclipse-test-framework-3.4M7.zip"
+  unzip -o eclipse-test-framework-3.4M7.zip
+  rm eclipse-test-framework-3.4M7.zip
 fi
 if [ ! -f eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   echo "Getting RXTX..."
@@ -130,8 +132,8 @@ if [ ! -f eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=M5_34
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080206-0010.jar \
+baseBuilderTag=vI20080502-0100
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080326-1300.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build/pdebuild.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."

@@ -7,16 +7,21 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Pawel Piech (WindRiver) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=228063
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
+import org.eclipse.cdt.debug.core.model.ITargetProperties;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,7 +36,7 @@ import org.eclipse.ui.actions.ActionDelegate;
  */
 public class ToggleInstructionStepModeActionDelegate extends ActionDelegate implements IViewActionDelegate, IPropertyChangeListener {
 
-	private ICDebugTarget fTarget = null;
+	private ISteppingModeTarget fTarget = null;
 	
 	private IAction fAction = null;
 
@@ -62,12 +67,13 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
-		ICDebugTarget target = getTarget();
-		if ( target != null )
-			target.removePropertyChangeListener( this );
-		setTarget( null );
-		setAction( null );
-	}
+        ISteppingModeTarget target = getTarget();
+        if ( target != null && target instanceof ITargetProperties ) {
+            ((ITargetProperties)target).removePropertyChangeListener( this );
+        }
+        setTarget( null );
+        setAction( null );
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
@@ -83,18 +89,18 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	 */
 	public void run( IAction action ) {
 		boolean enabled = getAction().isChecked();
-		ICDebugTarget target = getTarget();
-		if ( target != null ) {
-			target.enableInstructionStepping( enabled );
-			if ( enabled ) {
-				try {
-					getView().getSite().getPage().showView( ICDebugUIConstants.ID_DISASSEMBLY_VIEW );
-				}
-				catch( PartInitException e ) {
-					CDebugUIPlugin.log( e.getStatus() );
-				}
-			}
-		}
+        ISteppingModeTarget target = getTarget();
+        if ( target != null ) {
+            target.enableInstructionStepping( enabled );
+            if ( enabled ) {
+                try {
+                    getView().getSite().getPage().showView( ICDebugUIConstants.ID_DISASSEMBLY_VIEW );
+                }
+                catch( PartInitException e ) {
+                    CDebugUIPlugin.log( e.getStatus() );
+                }
+            }
+        }
 	}
 
 	/* (non-Javadoc)
@@ -108,30 +114,41 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged( IAction action, ISelection selection ) {
-		ICDebugTarget newTarget = null;
-		if ( selection instanceof IStructuredSelection ) {
-			newTarget = getTargetFromSelection( ((IStructuredSelection)selection).getFirstElement() );
-		}
-		ICDebugTarget oldTarget = getTarget();
-		if ( oldTarget != null && !oldTarget.equals( newTarget ) ) {
-			oldTarget.removePropertyChangeListener( this );
-			setTarget( null );
-			action.setChecked( false );
-		}
-		if ( newTarget != null && !newTarget.isTerminated() && !newTarget.isDisconnected() ) {
-			setTarget( newTarget );
-			newTarget.addPropertyChangeListener( this );
-			action.setChecked( newTarget.isInstructionSteppingEnabled() );
-		}
-		action.setEnabled( newTarget != null && newTarget.supportsInstructionStepping() 
-						   && !newTarget.isTerminated() && !newTarget.isDisconnected() );
+	    ISteppingModeTarget newTarget = null;
+        if ( selection instanceof IStructuredSelection ) {
+            newTarget = getTargetFromSelection( ((IStructuredSelection)selection).getFirstElement() );
+        }
+        ISteppingModeTarget oldTarget = getTarget();
+        if ( oldTarget != null && !oldTarget.equals( newTarget ) ) {
+            if ( oldTarget instanceof ITargetProperties ) {
+                ((ITargetProperties)oldTarget).removePropertyChangeListener( this );
+            }
+            setTarget( null );
+            action.setChecked( false );
+        }
+        if ( newTarget != null && !isTerminated( newTarget ) ) {
+            setTarget( newTarget );
+            if ( newTarget instanceof ITargetProperties ) {
+                ((ITargetProperties)newTarget).addPropertyChangeListener( this );
+            }
+            action.setChecked( newTarget.isInstructionSteppingEnabled() );
+        }
+        action.setEnabled( 
+                newTarget != null 
+                && newTarget.supportsInstructionStepping() 
+                && !isTerminated( newTarget ) ); 
 	}
 
-	private ICDebugTarget getTarget() {
+	private boolean isTerminated( ISteppingModeTarget target ) {
+        return ( (target instanceof ITerminate && ((ITerminate)target).isTerminated())
+                 || (target instanceof IDisconnect && ((IDisconnect)target).isDisconnected()) );
+    }
+	
+	private ISteppingModeTarget getTarget() {
 		return this.fTarget;
 	}
 
-	private void setTarget( ICDebugTarget target ) {
+	private void setTarget( ISteppingModeTarget target ) {
 		this.fTarget = target;
 	}
 

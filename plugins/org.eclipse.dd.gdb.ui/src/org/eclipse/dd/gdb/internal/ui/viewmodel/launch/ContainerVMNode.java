@@ -32,10 +32,9 @@ import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBProcessD
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.GDBStartedEvent;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
-import org.eclipse.dd.mi.service.command.events.MIInferiorExitEvent;
-import org.eclipse.dd.mi.service.command.events.MIInferiorSignalExitEvent;
+import org.eclipse.dd.mi.service.command.MIInferiorProcess;
+import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
+import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -43,26 +42,29 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
+
 @SuppressWarnings("restriction")
 public class ContainerVMNode extends AbstractDMVMNode 
     implements IElementLabelProvider
 {
 
+    
 	public ContainerVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IRunControl.IExecutionDMContext.class);
 	}
 
 	@Override
 	protected void updateElementsInSessionThread(IChildrenUpdate update) {
-      
-      AbstractMIControl controlService = getServicesTracker().getService(AbstractMIControl.class);
+      GDBControl controlService = getServicesTracker().getService(GDBControl.class);
       if ( controlService == null ) {
               handleFailedUpdate(update);
               return;
       }
       
-      MIControlDMContext containerCtx = controlService.getControlDMContext();
-      update.setChild(createVMContext(containerCtx), 0); 
+      MIInferiorProcess inferiorProcess = controlService.getInferiorProcess();
+      if (inferiorProcess != null && inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
+          update.setChild(createVMContext(inferiorProcess.getExecutionContext()), 0);
+      }
       update.done();
 	}
 
@@ -121,14 +123,12 @@ public class ContainerVMNode extends AbstractDMVMNode
                   e instanceof IRunControl.IContainerSuspendedDMEvent) 
         {
             return IModelDelta.CONTENT;
-        } else if (e instanceof GDBControl.GDBExitedEvent || 
-                   e instanceof MIInferiorExitEvent || 
-                   e instanceof MIInferiorSignalExitEvent) 
-        {
+        } else if (e instanceof GDBControl.GDBExitedEvent || e instanceof InferiorExitedDMEvent) {
             return IModelDelta.CONTENT;
-        }
-        if (e instanceof GDBStartedEvent) {
-            return IModelDelta.EXPAND | IModelDelta.SELECT;
+        } else if (e instanceof GDBStartedEvent) {
+            return IModelDelta.EXPAND;
+        } else if (e instanceof InferiorStartedDMEvent) {
+            return IModelDelta.EXPAND | IModelDelta.SELECT;            
         }
         return IModelDelta.NO_CHANGE;
     }
@@ -144,13 +144,11 @@ public class ContainerVMNode extends AbstractDMVMNode
             if (containerCtx != null) {
                 parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
             }
-        } else if (e instanceof GDBControl.GDBExitedEvent || 
-            e instanceof MIInferiorExitEvent || 
-            e instanceof MIInferiorSignalExitEvent) 
-        {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-        } 
-        if (e instanceof GDBStartedEvent) {
+        } else if (e instanceof GDBControl.GDBExitedEvent || e instanceof InferiorExitedDMEvent) {
+            parentDelta.setFlags(parentDelta.getFlags() |  IModelDelta.CONTENT);
+        } else if (e instanceof GDBStartedEvent) {
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
+        } else if (e instanceof InferiorStartedDMEvent) {
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);
         }
 

@@ -392,6 +392,10 @@ public class MIInferiorProcess extends Process
     public State getState() { 
         return fState;
     }
+
+    public IExecutionDMContext getExecutionContext() {
+        return fExecutionDMContext;
+    }
     
     synchronized void setState(State state) {
         if (fState == State.TERMINATED) return;

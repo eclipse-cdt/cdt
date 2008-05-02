@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.ui.launching;
 
-import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;

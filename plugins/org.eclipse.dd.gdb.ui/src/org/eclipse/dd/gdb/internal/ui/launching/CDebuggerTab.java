@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,15 +35,13 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
-import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
-import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
-import org.eclipse.cdt.launch.ui.ICDTLaunchHelpContextIds;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
+import org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -546,11 +544,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab#setInitializeDefault(boolean)
-	 */
 	protected void setInitializeDefault(boolean init) {
 		super.setInitializeDefault(init);
 	}

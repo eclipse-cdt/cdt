@@ -2021,7 +2021,29 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPFunction fn= bh.assertNonProblem("makeClosure(this", 11, ICPPFunction.class);
     }
 
-	//    class A {};
+    // template<class _T1, class _T2>
+    // struct pair {
+    //   typedef _T1 first_type;
+    // };
+    //
+    // template <typename _Key, typename _Tp>
+    // struct map {
+    //   typedef pair<_Key, _Tp> value_type;
+    // };
+    //
+    // template <class _C>
+    // typename _C::value_type GetPair(_C& collection, typename _C::value_type::first_type key);
+    // 
+    // int main(map<int, int> x) {
+    //   GetPair(x, 1);
+    // }
+    public void _testBug229917() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		IBinding b0 = bh.assertNonProblem("_C::value_type GetPair", 2, IBinding.class);
+		ICPPFunction fn = bh.assertNonProblem("GetPair(x", 7, ICPPFunction.class);
+    }
+
+    //    class A {};
 	//
 	//    template <class T> class C {
 	//    public:

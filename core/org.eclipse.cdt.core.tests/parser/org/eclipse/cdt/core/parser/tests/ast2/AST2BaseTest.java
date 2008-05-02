@@ -445,21 +445,24 @@ public class AST2BaseTest extends BaseTestCase {
     	
     	public IBinding assertProblem(String section, int len) {
     		IBinding binding= binding(section, len);
-    		assertTrue("Non-ProblemBinding for name: "+section, binding instanceof IProblemBinding);
+    		assertTrue("Non-ProblemBinding for name: " + section.substring(0, len),
+    				binding instanceof IProblemBinding);
     		return binding;
     	}
     	
     	public IBinding assertNonProblem(String section, int len) {
     		IBinding binding= binding(section, len);
-    		assertTrue("ProblemBinding for name: "+section, !(binding instanceof IProblemBinding));
+    		assertTrue("ProblemBinding for name: " + section.substring(0, len),
+    				!(binding instanceof IProblemBinding));
     		return binding;
     	}
     	
     	public <T extends IBinding> T assertNonProblem(String section, int len, Class<T> type, Class... cs) {
     		IBinding binding= binding(section, len);
-    		assertTrue("ProblemBinding for name: "+section, !(binding instanceof IProblemBinding));
+    		assertTrue("ProblemBinding for name: " + section.substring(0, len),
+    				!(binding instanceof IProblemBinding));
     		assertInstance(binding, type);
-    		for(Class c : cs) {
+    		for (Class c : cs) {
     			assertInstance(binding, c);
     		}
     		return type.cast(binding);

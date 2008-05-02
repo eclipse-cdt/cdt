@@ -416,5 +416,65 @@
          </action>
       </viewerContribution>
    </extension>
+   
+      
+   <!-- memory update policy -->
+   <extension point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.debug.ui.MemoryView.updatePolicy"
+            targetID="org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.memory.SelectUpdatePolicyAction"
+               id="org.eclipse.debug.ui.views.memory.update.selectUpdatePolicy"
+               label="Update Policy"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"
+            id="org.eclipse.debug.ui.memory.renderingviewpane.2.updatepolicy">
+         <action
+               label="Update Policy"
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.memory.SelectUpdatePolicyAction"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.updatepolicy"/>
+      </viewerContribution>   
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"
+            id="org.eclipse.debug.ui.memory.renderingviewpane.1.updatepolicy">
+         <action
+               label="Update Policy"
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.memory.SelectUpdatePolicyAction"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.updatepolicy"/>
+      </viewerContribution>   
+   </extension>   
+    <extension
+         point="org.eclipse.ui.viewActions">
+    <viewContribution
+            targetID="org.eclipse.debug.ui.MemoryView"
+            id="org.eclipse.debug.ui.memoryView.toolbar">
+    	<action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.memory.RefreshAction"
+               icon="icons/refresh.gif"
+               id="org.eclipse.debug.ui.MemoryView.memoryViewRefresh"
+               label="Refresh"
+               toolbarPath="additions">
+         </action>
+         </viewContribution>
+    </extension>
+    <extension
+         point="org.eclipse.ui.viewActions">
+	    <viewContribution
+	            id="org.eclipse.debug.ui.MemoryView.updatepolicy"
+	            targetID="org.eclipse.debug.ui.MemoryView">
+	         <action
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.memory.SelectUpdatePolicyAction"
+	               id="org.eclipse.debug.ui.MemoryView.updatepolicy"
+	               label="Update Policy"
+	               menubarPath="additions">
+	         </action>
+	     </viewContribution>
+     </extension>
 
 </plugin>

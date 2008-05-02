@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  * Xuan Chen        (IBM)        - [228707] get NPE when click ok on the properties page of an I5/OS IFS file
+ * David McKnight   (IBM)        - [230001] Property page contains invalid values
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -229,7 +230,13 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 			};
 
 			// default encoding field
-			defaultEncoding = file.getParentRemoteFile().getEncoding();
+			IRemoteFile parentFile = file.getParentRemoteFile();
+			if (parentFile == null){
+				defaultEncoding = file.getParentRemoteFileSubSystem().getRemoteEncoding();
+			}
+			else {
+				defaultEncoding = parentFile.getEncoding();
+			}
 
 			String defaultEncodingLabel = SystemFileResources.RESID_PP_FILE_ENCODING_DEFAULT_LABEL;
 			int idx = defaultEncodingLabel.indexOf('%');

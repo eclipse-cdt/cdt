@@ -10,13 +10,13 @@
  *     Wind River Systems - Ted Williams - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.dd.dsf.debug.memory;
+package org.eclipse.dd.dsf.debug.internal.provisional.model;
 
 /*
  * This interface is EXPERIMENTAL.
 */
 
-public interface IMemoryBlockUpdatePolicy 
+public interface IMemoryBlockUpdatePolicyProvider 
 {
 	public String[] getUpdatePolicies();
 

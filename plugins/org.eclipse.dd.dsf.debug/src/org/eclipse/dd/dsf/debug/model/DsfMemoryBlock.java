@@ -28,7 +28,7 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
-import org.eclipse.dd.dsf.debug.memory.IMemoryBlockUpdatePolicy;
+import org.eclipse.dd.dsf.debug.internal.provisional.model.IMemoryBlockUpdatePolicyProvider;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
@@ -50,7 +50,7 @@ import org.eclipse.debug.core.model.MemoryByte;
  * 
  * It performs its read/write functions using the MemoryService.
  */
-public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension, IMemoryBlockUpdatePolicy
+public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension, IMemoryBlockUpdatePolicyProvider
 {
 	private final static String UPDATE_POLICY_AUTOMATIC = "Automatic"; //$NON-NLS-1$
 	private final static String UPDATE_POLICY_MANUAL = "Manual"; //$NON-NLS-1$

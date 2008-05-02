@@ -300,8 +300,15 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             fModel = model;
         }
         
-        private void putInformationIntoDetailPane( final IFormattedDataDMContext finalDmc , final IFormattedValues service, 
-        										   final IProgressMonitor monitor, final String name ) {
+        /*
+         *  This is the routine which will actually process the various format requests
+         *  for a given element.  It is expected and required that this routine will be
+         *  called from within a DSF executor.
+         */
+        private void putInformationIntoDetailPane( final IFormattedDataDMContext finalDmc , 
+        		 								   final IFormattedValues service, 
+        										   final IProgressMonitor monitor, 
+        										   final String name ) {
 
             /*
              *  Now that we can process this one. Find out how many formats we can
@@ -449,10 +456,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                  *  Make sure this is an element we want to deal with.
                  */
                 if ( element instanceof IDMVMContext) {
-                    
-                    IFormattedValues service = null;
-                    IFormattedDataDMContext dmc = null;
-                    
                     /*
                      *  We are specifically looking to support the following Data Model Contexts
                      *  
@@ -480,15 +483,12 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                     final IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IBitFieldDMContext.class);
 
                     if ( bitfieldDmc != null ) {
-                    	dmc = bitfieldDmc ;
-                    	service = tracker.getService(IRegisters.class);
-
-                    	final IRegisters regService = (IRegisters) service;
-
                     	/*
                          *  Get the name so we can construct the header which identifies the detail
                          *  set of values.
                          */
+                    	final IRegisters regService = tracker.getService(IRegisters.class);
+                    	
                     	regService.getExecutor().submit(
                     		new Runnable() {
                     			public void run() {
@@ -511,15 +511,12 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                         final IRegisterDMContext regDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IRegisterDMContext.class);
 
                         if ( regDmc != null ) {
-                            dmc = regDmc ;
-                            service = tracker.getService(IRegisters.class);
-                            
-                            final IRegisters regService = (IRegisters) service;
-                            
                             /*
                              *  Get the name so we can construct the header which identifies the detail
                              *  set of values.
                              */
+                        	final IRegisters regService = tracker.getService(IRegisters.class);
+                        	
                             regService.getExecutor().submit(
                             	new Runnable() {
                             		public void run() {
@@ -539,22 +536,30 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                             );
                         }
                         else {
-                            IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IExpressionDMContext.class);
+                            final IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IExpressionDMContext.class);
 
                             if ( exprDmc != null ) {
-                                dmc = exprDmc ;
-                                service = tracker.getService(IExpressions.class); 
-                                putInformationIntoDetailPane(exprDmc , service, monitor, exprDmc.getExpression());
+                                final IExpressions exprService = tracker.getService(IExpressions.class);;
+                                
+                                exprService.getExecutor().submit(
+                                    new Runnable() {
+                                    	public void run() {
+                                    		putInformationIntoDetailPane(exprDmc , exprService, monitor, exprDmc.getExpression());
+                                    	}
+                                    }
+                                );
+                            }
+                            else {
+                            	/*
+                            	 *  For whatever reason we are seeing some form of context we do not handle. So we 
+                            	 *  will skip this one  and try and process any remaining ones.  At least this way
+                            	 *  we can fill the detail pane with those we do understand.
+                            	 */
+                            	continue;
                             }
                         }
                     }
                     
-                    /*
-                     *  If the desired Data Model Context is null then we are not going to
-                     *  process this data.
-                     */
-                    if ( dmc == null ) return Status.OK_STATUS;
-
                     /*
                      *  We need to wait until all the values are in. This causes the work
                      *  to in effect be synchronous,  but if we do not wait  then when we

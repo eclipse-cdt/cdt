@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [225902] [dstore] use C_NOTIFICATION command to wake up the server
+ * David McKnight   (IBM)        - [229947] [dstore] [dstore] interruption to Thread.sleep()  should not stop waitForUpdate()
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
@@ -362,8 +363,15 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 				}
 				else 
 				{
-                    Thread.sleep(100);
-                    
+					try
+					{
+						Thread.sleep(100);
+					}
+					catch (InterruptedException e)
+					{
+						continue;
+					}
+					
                     if (WaitThreshold > 0) // update timer count if
                         // threshold not reached
                         --WaitThreshold; // decrement the timer count

@@ -12,6 +12,10 @@
 
 package org.eclipse.dd.dsf.debug.memory;
 
+/*
+ * This interface is EXPERIMENTAL.
+*/
+
 public interface IMemoryBlockUpdatePolicy 
 {
 	public String[] getUpdatePolicies();

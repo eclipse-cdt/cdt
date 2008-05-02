@@ -5,14 +5,13 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo     (MontaVista) - initial API and implementation
+ * Anna Dushistova(MontaVista) - [229479][rseterminal][api] terminals.core should not force load terminals.ui
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.terminals.core;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.ui.SystemBasePlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -40,25 +39,6 @@ public class Activator extends SystemBasePlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        // make sure that org.eclipse.rse.terminals.ui plugin is loaded
-        // Decouple from the current Thread
-        new Thread("terminals.ui adapter loader") { //$NON-NLS-1$
-            public void run() {
-
-                try {
-                    Bundle bundle = Platform
-                            .getBundle("org.eclipse.rse.terminals.ui");
-                    if (bundle != null) {
-                        bundle
-                                .loadClass("org.eclipse.rse.internal.terminals.ui.TerminalServiceHelper");
-
-                    }
-                } catch (ClassNotFoundException e) {
-                    logError(e.getLocalizedMessage(), e);
-                }
-
-            }
-        }.start();
     }
 
     /*

@@ -1344,7 +1344,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	/**
-	 * @param indexerSetupParticipant
+	 * @param participant
 	 * @param project
 	 */
 	public void notifyIndexerSetup(IndexerSetupParticipant participant,	ICProject project) {
@@ -1368,5 +1368,15 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				addProject(project);
 			}
 		}
+	}
+	
+	/**
+	 * @param project
+	 * @return whether the specified project has been registered. If a project has
+	 * been registered, clients can call joinIndexer with the knowledge tasks have
+	 * been enqueued.
+	 */
+	public boolean isProjectRegistered(ICProject project) {
+		return getIndexer(project) != null;
 	}
 }

@@ -70,9 +70,11 @@ public class GeneratePDOM implements ISafeRunnable {
 		try {
 			final IIndexManager im = CCorePlugin.getIndexManager();
 			for (int i = 0; i < 20; i++) {
-				im.joinIndexer(Integer.MAX_VALUE, new NullProgressMonitor());
-				if (!im.isIndexerSetupPostponed(cproject)) {
-					break;
+				if(CCoreInternals.getPDOMManager().isProjectRegistered(cproject)) {
+					im.joinIndexer(Integer.MAX_VALUE, new NullProgressMonitor());
+					if (!im.isIndexerSetupPostponed(cproject)) {
+						break;
+					}
 				}
 				Thread.sleep(200);
 			}

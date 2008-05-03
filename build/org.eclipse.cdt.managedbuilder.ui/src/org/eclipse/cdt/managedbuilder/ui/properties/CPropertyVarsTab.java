@@ -116,7 +116,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	private static final EnvCmp comparator = new EnvCmp(); 
 
 	private ICConfigurationDescription cfgd = null;
-	private IStorableCdtVariables vars = null;
+	private IStorableCdtVariables prefvars = null;
 	
 	//currently the "CWD" and "PWD" macros are not displayed in UI
 	private static final String fHiddenMacros[] = new String[]{
@@ -293,8 +293,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 					fUserSup.createMacro(macro, cfgd);
 			}
 		}
-		else if (vars != null)
-			vars.createMacro(macro);
+		else if (chkVars())
+			prefvars.createMacro(macro);
 		updateData();
 	}
 	
@@ -329,8 +329,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 						else		
 							fUserSup.deleteMacro(macros[i].getName(), cfgd);
 					}
-					else if (vars != null)
-						vars.deleteMacro(macros[i].getName());
+					else if (chkVars())
+						prefvars.deleteMacro(macros[i].getName());
 				}
 				updateData();
 			}
@@ -344,7 +344,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	private ICdtVariable[] getSelectedUserMacros(){
 		if(tv == null)	return null;
 		List<ICdtVariable> list = ((IStructuredSelection)tv.getSelection()).toList();
-		return (ICdtVariable[])list.toArray(new ICdtVariable[list.size()]);
+		return list.toArray(new ICdtVariable[list.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -362,8 +362,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				} else
 					fUserSup.deleteAll(cfgd);
 			}
-			else if (vars != null)
-				vars.deleteAll();
+			else if (chkVars())
+				prefvars.deleteAll();
 			updateData();
 		}
 	}
@@ -484,13 +484,18 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	public void updateData(ICResourceDescription _cfgd) {
 		if (_cfgd == null) {
 			cfgd = null;
-			if (vars == null)
-				vars = fUserSup.getWorkspaceVariablesCopy();
+			chkVars();
 		} else {
 			cfgd = _cfgd.getConfiguration();
-			vars = null;
+			prefvars = null;
 		}
 		updateData();
+	}
+	
+	private boolean chkVars() {
+		if (prefvars == null)
+			prefvars = fUserSup.getWorkspaceVariablesCopy();
+		return (prefvars != null);
 	}
 	
 	private void checkVariableIntegrity() {
@@ -533,9 +538,10 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		updateLbs(lb1, lb2);
 		
 		if (cfgd == null) {
+			chkVars();
 			if (fShowSysMacros) {
 				List<ICdtVariable> lst = new ArrayList<ICdtVariable>(_vars.length);
-				ICdtVariable[] uvars = vars.getMacros();
+				ICdtVariable[] uvars = prefvars.getMacros();
 				for (int i=0; i<uvars.length; i++) {
 					lst.add(uvars[i]);
 					for (int j=0; j<_vars.length; j++) {
@@ -550,9 +556,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 					if (_vars[j] != null && !vmgr.isUserVariable(_vars[j], null)) 
 						lst.add(_vars[j]);
 				}
-				_vars = (ICdtVariable[])lst.toArray(new ICdtVariable[lst.size()]);
+				_vars = lst.toArray(new ICdtVariable[lst.size()]);
 			} else {
-				_vars = vars.getMacros();
+				_vars = prefvars.getMacros();
 			}
 		}
 		
@@ -589,7 +595,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	 */
 	private boolean isUserVar(ICdtVariable v) {
 		if (cfgd == null)
-			return vars.contains(v);
+			return chkVars() && prefvars.contains(v);
 		if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
 			ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
 			for (int i=0; i<cfs.length; i++)
@@ -633,7 +639,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				ICdtVariable[] vs = fUserSup.getMacros(src.getConfiguration());
 				fUserSup.setMacros(vs, dst.getConfiguration());
 			}
-		} else if (vars != null)
+		} else if (chkVars())
 			fUserSup.storeWorkspaceVariables(true);
 	}
 
@@ -642,17 +648,17 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	 * should be stored explicitly on "OK".  
 	 */
 	protected void performOK() {
-		if (vars != null) try {
-			if (fUserSup.setWorkspaceVariables(vars))
+		if (chkVars()) try {
+			if (fUserSup.setWorkspaceVariables(prefvars))
 				if (page instanceof PrefPage_Abstract)
 					PrefPage_Abstract.isChanged = true;
 		} catch (CoreException e) {}
-		vars = null;
+		prefvars = null;
 		super.performOK();
 	}
 	
 	protected void performCancel() {
-		vars = null;
+		prefvars = null;
 		super.performCancel();
 	}
 
@@ -681,6 +687,5 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				return 0;
 		}
 	}
-	
 
 }

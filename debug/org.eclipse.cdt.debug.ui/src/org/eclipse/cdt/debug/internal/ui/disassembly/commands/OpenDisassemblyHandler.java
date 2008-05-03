@@ -30,7 +30,6 @@ public class OpenDisassemblyHandler extends AbstractHandler {
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
      */
-    @Override
     public Object execute( ExecutionEvent event ) throws ExecutionException {
         ISelection s = HandlerUtil.getActiveMenuSelection( event );
         if ( s instanceof IStructuredSelection ) {

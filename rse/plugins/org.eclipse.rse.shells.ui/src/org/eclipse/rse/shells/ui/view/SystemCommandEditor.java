@@ -16,6 +16,7 @@
  *                                API to the user actions plugin
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * Radoslav Gerganov (ProSyst) - [221392] [shells] Undo command doesn't work with Eclipse 3.4M5
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -37,6 +38,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -54,6 +57,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -75,7 +79,7 @@ public class SystemCommandEditor extends SourceViewer
 	private IViewSite _site;
 	private Vector listeners = new Vector();
 	
-	private TextViewerAction _undoAction = null;
+	private Action _undoAction = null;
 	private TextViewerAction  _cutAction = null;
 	private TextViewerAction _copyAction = null;
 	private TextViewerAction _pasteAction = null;
@@ -129,7 +133,6 @@ public class SystemCommandEditor extends SourceViewer
 		{
 			public void textChanged(TextEvent event)
 			{
-				updateUndoAction();
 				if (ignoreChanges || !getTextWidget().isEnabled())
 					return;
 				String cmdText = getCommandText();
@@ -198,10 +201,12 @@ public class SystemCommandEditor extends SourceViewer
 	}
 	private void fillContextMenu(IMenuManager menu)
 	{
-		menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
-		menu.appendToGroup(
-			ITextEditorActionConstants.GROUP_UNDO,
-			(IAction) fGlobalActions.get(ITextEditorActionConstants.UNDO));
+		if (fGlobalActions.containsKey(ITextEditorActionConstants.UNDO)) {
+			menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
+			menu.appendToGroup(
+				ITextEditorActionConstants.GROUP_UNDO,
+				(IAction) fGlobalActions.get(ITextEditorActionConstants.UNDO));
+		}
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 		menu.appendToGroup(
 			ITextEditorActionConstants.GROUP_EDIT,
@@ -233,11 +238,12 @@ public class SystemCommandEditor extends SourceViewer
 	}
 	private void initializeActions()
 	{
-		_undoAction = new TextViewerAction(this, UNDO);
-		_undoAction.setText(SystemResources.ACTION_UNDO_LABEL); 
-		_undoAction.setToolTipText(SystemResources.ACTION_UNDO_TOOLTIP);
-		fGlobalActions.put(ITextEditorActionConstants.UNDO, _undoAction);
-		_undoAction.setEnabled(false); // defect 46369		
+		IUndoManager undoManager = getUndoManager();
+		if (undoManager instanceof IUndoManagerExtension) {
+			IUndoManagerExtension undoManagerExt = (IUndoManagerExtension) undoManager;
+			_undoAction = new UndoActionHandler(_site, undoManagerExt.getUndoContext());
+			fGlobalActions.put(ITextEditorActionConstants.UNDO, _undoAction);
+		}
 
 		_cutAction = new TextViewerAction(this, CUT);
 		_cutAction.setText(SystemResources.ACTION_CUT_LABEL); 
@@ -324,16 +330,7 @@ public class SystemCommandEditor extends SourceViewer
 		while (iterator.hasNext())
 			updateAction((String) iterator.next());
 	}
-	protected void updateUndoAction()
-	{
-		Object obj = fGlobalActions.get(ITextEditorActionConstants.UNDO);
-		if (obj instanceof IAction)
-		{
-			IAction action = (IAction) obj;
-			if (action instanceof IUpdate)
-				 ((IUpdate) action).update();
-		}
-	}
+
 	protected void updateAction(String actionId)
 	{
 		Object obj = fGlobalActions.get(actionId);

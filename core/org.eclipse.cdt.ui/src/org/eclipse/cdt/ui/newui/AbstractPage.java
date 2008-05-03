@@ -32,6 +32,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -61,6 +63,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -587,13 +590,10 @@ implements
 			if (cfgIndex == -1 && cfgDescs[i].isActive()) 
 				cfgIndex = i;
 		}
-		// Handling of All/Multiple configurations can be disabled
-		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI)) {
-			if (cfgDescs.length > 1) // "All cfgs" - shown if at least 2 cfgs available
-				configSelector.add(UIMessages.getString("AbstractPage.4")); //$NON-NLS-1$
-			if (cfgDescs.length > 2)// "Multi cfgs" - shown if at least 3 cfgs available
-				configSelector.add(UIMessages.getString("AbstractPage.5")); //$NON-NLS-1$
-		}
+		if (cfgDescs.length > 1) // "All cfgs" - shown if at least 2 cfgs available
+			configSelector.add(UIMessages.getString("AbstractPage.4")); //$NON-NLS-1$
+		if (cfgDescs.length > 2)// "Multi cfgs" - shown if at least 3 cfgs available
+			configSelector.add(UIMessages.getString("AbstractPage.5")); //$NON-NLS-1$
 		configSelector.select(cfgIndex);
 		handleConfigSelection();
 	}
@@ -1096,4 +1096,15 @@ implements
 		return getDefaultsButton();
 	}
 
+	@Override
+	public void performHelp() {
+		if (currentTab != null && currentTab instanceof AbstractCPropertyTab) {
+			String s = ((AbstractCPropertyTab)currentTab).getHelpContextId();
+			if (s != null) {
+				IContext context= HelpSystem.getContext(s);
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
+//				PlatformUI.getWorkbench().getHelpSystem().displayHelp(s);
+			}
+		}
+	}
 }

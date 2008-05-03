@@ -15,10 +15,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -31,10 +28,8 @@ import org.eclipse.swt.widgets.Label;
 public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
 	private static final int SPACING = 5; // for radio buttons layout
-	private static final Color RED  = CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_RED);
     private static final Color BLUE = CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_BLUE);
 
-    private Button enable_multi;
     private Group dGrp;
     private Group wGrp;
     private Button d_1;
@@ -50,20 +45,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		g.verticalSpacing = SPACING;
 		usercomp.setLayout(g);
 
-		Label l = new Label(usercomp, SWT.CENTER | SWT.BORDER);
-		l.setText(UIMessages.getString("PropertyMultiCfgTab.0")); //$NON-NLS-1$
-		l.setForeground(RED);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
-		
-        enable_multi = new Button(usercomp, SWT.CHECK);
-        enable_multi.setText(UIMessages.getString("PropertyMultiCfgTab.1")); //$NON-NLS-1$
-        enable_multi.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        enable_multi.addSelectionListener(new SelectionAdapter () {
-			public void widgetSelected(SelectionEvent e) {
-				setStates();
-			}});
-        
         dGrp = new Group(usercomp, SWT.NONE);
         dGrp.setText(UIMessages.getString("PropertyMultiCfgTab.3")); //$NON-NLS-1$
         dGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -72,7 +53,7 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
         fl.marginWidth = SPACING;
         dGrp.setLayout(fl);
         
-        l = new Label(dGrp, SWT.WRAP | SWT.CENTER);
+        Label l = new Label(dGrp, SWT.WRAP | SWT.CENTER);
         l.setText(
        		UIMessages.getString("PropertyMultiCfgTab.4") //$NON-NLS-1$
         );
@@ -100,8 +81,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
         w_1 = new Button(wGrp, SWT.RADIO);
         w_1.setText(UIMessages.getString("PropertyMultiCfgTab.11")); //$NON-NLS-1$
         
-		enable_multi.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI));
-		
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE)) {
 			case CDTPrefUtil.DMODE_CONJUNCTION: d_1.setSelection(true); break;
 			case CDTPrefUtil.DMODE_DISJUNCTION: d_2.setSelection(true); break;
@@ -113,12 +92,9 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 			case CDTPrefUtil.WMODE_REPLACE: w_1.setSelection(true); break;
 			default: w_0.setSelection(true); break;
 		}
-		
-		setStates();
 	}
 
 	protected void performOK() {
-		CDTPrefUtil.setBool(CDTPrefUtil.KEY_MULTI, enable_multi.getSelection());
 		int x = 0;
 		if (d_1.getSelection()) 
 			x = CDTPrefUtil.DMODE_CONJUNCTION;
@@ -134,23 +110,12 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 	}
 	
 	protected void performDefaults() {
-		enable_multi.setSelection(false);
 		d_1.setSelection(true);
 		d_2.setSelection(false);
 		w_0.setSelection(true);
 		w_1.setSelection(false);
 	}
 
-	private void setStates() {
-		boolean b = enable_multi.getSelection();
-		d_1.setEnabled(b);
-		d_2.setEnabled(b);
-		w_0.setEnabled(b);
-		w_1.setEnabled(b);
-		dGrp.setEnabled(b);
-		wGrp.setEnabled(b);
-	}
-	
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK(); }
 	protected void updateData(ICResourceDescription cfg) {}  // Do nothing. Data is read once after creation
 	protected void updateButtons() {} // Do nothing. No buttons to update

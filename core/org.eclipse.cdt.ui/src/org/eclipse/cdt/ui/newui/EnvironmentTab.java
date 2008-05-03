@@ -153,10 +153,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		usercomp.setLayout(new GridLayout(2, true));
+		usercomp.setLayout(new GridLayout(3, true));
 		Label l1 = new Label(usercomp, SWT.LEFT);
 		l1.setText(UIMessages.getString("EnvironmentTab.0")); //$NON-NLS-1$
-		l1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		l1.setLayoutData(gd);
 		table = new Table(usercomp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -197,14 +199,16 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			tc.setWidth(100);
 		}
 		                    
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 3;
 	    table.setLayoutData(gd);
 	    
 	    b1 = new Button(usercomp, SWT.RADIO);
 	    b1.setText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
 	    b1.setToolTipText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
-	    b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    gd = new GridData(GridData.FILL_HORIZONTAL);
+	    gd.horizontalSpan = 2; 
+	    b1.setLayoutData(gd);
 	    b1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -228,7 +232,9 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    b2 = new Button(usercomp, SWT.RADIO);
 	    b2.setText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
 	    b2.setToolTipText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
-	    b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    gd = new GridData(GridData.FILL_HORIZONTAL);
+	    gd.horizontalSpan = 2; 
+	    b2.setLayoutData(gd);
 	    b2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

@@ -686,12 +686,11 @@ public class CPPSemantics {
 			if (!data.contentAssist && (data.problem != null || data.hasResults()))
 				return;
 			
-			//if still not found, loop and check our containing scope
+			// if still not found, loop and check our containing scope
 			if (data.qualified() && !(scope instanceof ICPPTemplateScope)) {
-				if (!data.usingDirectives.isEmpty())
-					data.usingDirectivesOnly = true;
-				else
+				if (data.usingDirectives.isEmpty())
 					break;
+				data.usingDirectivesOnly = true;
 			}
 			
 			if (blockItem != null)
@@ -1228,16 +1227,15 @@ public class CPPSemantics {
 	    IASTName[] resultArray = null;
 	    
 	    IASTDeclaration declaration = null;
-	    if (node instanceof ICPPASTTemplateDeclaration)
+	    if (node instanceof ICPPASTTemplateDeclaration) {
 			declaration = ((ICPPASTTemplateDeclaration)node).getDeclaration();
-	    else if (node instanceof IASTDeclaration) 
+	    } else if (node instanceof IASTDeclaration) { 
 	        declaration = (IASTDeclaration) node;
-		else if (node instanceof IASTDeclarationStatement)
+	    } else if (node instanceof IASTDeclarationStatement) {
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
-		else if (node instanceof ICPPASTCatchHandler)
+	    } else if (node instanceof ICPPASTCatchHandler) {
 			declaration = ((ICPPASTCatchHandler)node).getDeclaration();
-		else if (node instanceof ICPPASTForStatement && checkAux)
-        {
+	    } else if (node instanceof ICPPASTForStatement && checkAux) {
 			ICPPASTForStatement forStatement = (ICPPASTForStatement) node;
 			if (forStatement.getConditionDeclaration() == null) {
 				if (forStatement.getInitializerStatement() instanceof IASTDeclarationStatement)

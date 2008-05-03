@@ -1643,9 +1643,18 @@ public class CommonBuilder extends ACBuilder {
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
 			buf = new StringBuffer();
-			
-			sBuilder.build(consoleOutStream, consoleOutStream, monitor);
-
+			int result = sBuilder.build(consoleOutStream, consoleOutStream, monitor);
+			//Throw a core exception indicating that the clean command failed
+			if(result == StepBuilder.STATUS_ERROR_LAUNCH)
+			{
+			    try
+			    {
+			        consoleOutStream.close();
+			    }
+			    catch(IOException e){}
+			    Status status = new Status(Status.INFO, ManagedBuilderCorePlugin.getUniqueIdentifier(), "Failed to exec delete command");//$NON-NLS-1
+			    throw new CoreException(status);
+			}
 			// Report a successful clean
 			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, curProject.getName());
 			buf.append(successMsg);

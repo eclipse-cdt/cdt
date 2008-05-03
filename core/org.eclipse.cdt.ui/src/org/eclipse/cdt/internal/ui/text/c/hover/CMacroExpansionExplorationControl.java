@@ -219,22 +219,19 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 
 	protected void registerCommandHandlers() {
         IHandler backwardHandler= new AbstractHandler() {
-            @Override
-			public Object execute(ExecutionEvent event) throws ExecutionException {
+            public Object execute(ExecutionEvent event) throws ExecutionException {
                 backward();
                 return null;
             }
         };
         IHandler forwardHandler= new AbstractHandler() {
-            @Override
-			public Object execute(ExecutionEvent event) throws ExecutionException {
+            public Object execute(ExecutionEvent event) throws ExecutionException {
                 forward();
                 return null;
             }
         };
         IHandler gotoDefinitionHandler= new AbstractHandler() {
-            @Override
-			public Object execute(ExecutionEvent event) throws ExecutionException {
+            public Object execute(ExecutionEvent event) throws ExecutionException {
                 gotoMacroDefinition();
                 return null;
             }

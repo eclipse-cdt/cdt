@@ -604,15 +604,19 @@ public class BuildDescription implements IBuildDescription {
 		ToolInfoHolder h = null;
 		if(rcInfo instanceof IFileInfo){
 			IFileInfo fi = (IFileInfo)rcInfo;
-			tool = fi.getToolsToInvoke()[0]; 
-			String exts[] = tool.getAllInputExtensions();
-			String locString = location.toString();
-			for(int i = 0; i < exts.length; i++){
-				String e = exts[i];
-				if(locString.endsWith(e)){
-					inputType = tool.getInputType(e);
-					ext = e;
-				}
+			ITool[] tools = fi.getToolsToInvoke();
+			if(tools.length > 0 )
+			{
+			    tool = fi.getToolsToInvoke()[0]; 
+			    String exts[] = tool.getAllInputExtensions();
+			    String locString = location.toString();
+			    for(int i = 0; i < exts.length; i++){
+			        String e = exts[i];
+			        if(locString.endsWith(e)){
+			            inputType = tool.getInputType(e);
+			            ext = e;
+			        }
+			    }
 			}
 		} else {
 			h = getToolInfo(rc);

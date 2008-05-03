@@ -151,7 +151,7 @@ public class BuildGroup extends CViewActionGroup {
 	protected void makeActions() {
 		Shell shell = getCView().getSite().getShell();
 
-		buildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
+		buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		buildAction.setText(CViewMessages.getString("BuildAction.label")); //$NON-NLS-1$
 
 		cleanAction = new BuildAction(shell, IncrementalProjectBuilder.CLEAN_BUILD);

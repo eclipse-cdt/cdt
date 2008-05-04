@@ -32,8 +32,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IContext;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -63,7 +61,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -1095,7 +1092,7 @@ implements
 	public Button getDButton() {
 		return getDefaultsButton();
 	}
-
+/*
 	@Override
 	public void performHelp() {
 		if (currentTab != null && currentTab instanceof AbstractCPropertyTab) {
@@ -1107,4 +1104,5 @@ implements
 			}
 		}
 	}
+*/	
 }

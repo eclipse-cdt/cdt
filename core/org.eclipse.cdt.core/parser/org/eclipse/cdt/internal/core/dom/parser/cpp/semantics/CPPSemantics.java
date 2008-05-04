@@ -649,7 +649,7 @@ public class CPPSemantics {
 				// store using-directives found in this block or namespace for later use.
 				if ((!data.hasResults() || !data.qualified() || data.contentAssist) && scope instanceof ICPPNamespaceScope) {
 					final ICPPNamespaceScope blockScope= (ICPPNamespaceScope) scope;
-					if (! (blockScope instanceof ICPPBlockScope)) {
+					if (!(blockScope instanceof ICPPBlockScope)) {
 						data.visited.put(blockScope);	// namespace has been searched.
 						if (data.tu != null) {
 							data.tu.handleAdditionalDirectives(blockScope);
@@ -776,7 +776,7 @@ public class CPPSemantics {
 	
 				//if the inheritanceChain already contains the parent, then that 
 				//is circular inheritance
-				if (! data.inheritanceChain.containsKey(parent)) {
+				if (!data.inheritanceChain.containsKey(parent)) {
 					//is this name define in this scope?
 					if (ASTInternal.isFullyCached(parent)) {
 						if (data.astName != null && !data.contentAssist) {
@@ -1395,7 +1395,7 @@ public class CPPSemantics {
 				return alias;
 		} else if (declaration instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
-			if (! ((ICPPASTDeclSpecifier) functionDef.getDeclSpecifier()).isFriend()) {
+			if (!((ICPPASTDeclSpecifier) functionDef.getDeclSpecifier()).isFriend()) {
 				IASTFunctionDeclarator declarator = functionDef.getDeclarator();
 				
 				//check the function itself
@@ -1562,7 +1562,9 @@ public class CPPSemantics {
 	      
 	    final boolean indexBased= data.tu != null && data.tu.getIndex() != null;	    
 	    @SuppressWarnings("unchecked")
-	    ObjectSet<IFunction> fns= ObjectSet.EMPTY_SET, templateFns= ObjectSet.EMPTY_SET;
+	    ObjectSet<IFunction> fns= ObjectSet.EMPTY_SET;
+	    @SuppressWarnings("unchecked")
+	    ObjectSet<IFunction> templateFns= ObjectSet.EMPTY_SET;
 	    IBinding type = null;
 	    IBinding obj  = null;
 	    IBinding temp = null;

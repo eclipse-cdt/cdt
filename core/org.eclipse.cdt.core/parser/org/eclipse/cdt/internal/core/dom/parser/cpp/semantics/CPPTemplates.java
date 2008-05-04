@@ -1223,6 +1223,7 @@ public class CPPTemplates {
 		}
 		return false;
 	}
+
 	static public boolean deduceTemplateArgument(ObjectMap map, IType p, IType a) throws DOMException {
 		boolean pIsAReferenceType = (p instanceof ICPPReferenceType);
 		p = getParameterTypeForDeduction(p);
@@ -1308,6 +1309,8 @@ public class CPPTemplates {
 						}
 					}
 					return true;
+				} else if (p instanceof ICPPInternalUnknown) {
+					return true;  // An unknown type may match anything.
 				} else {
 					return p.isSameType(a);
 				}
@@ -1330,7 +1333,6 @@ public class CPPTemplates {
 	 * for each occurrence of that parameter in the function parameter list
 	 * @throws DOMException
 	 */
-
 	static private IType[] createArgsForFunctionTemplateOrdering(ICPPFunctionTemplate template) throws DOMException{
 		ICPPTemplateParameter[] paramList = template.getTemplateParameters();
 		int size = paramList.length;

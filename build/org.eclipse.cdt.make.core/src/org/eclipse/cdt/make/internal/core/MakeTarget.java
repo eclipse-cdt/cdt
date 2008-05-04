@@ -292,7 +292,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, getBuildAttribute(IMakeTarget.BUILD_TARGET, "")); //$NON-NLS-1$
 		info.setEnvironment(getExpandedEnvironment());
 		info.setAppendEnvironment(appendEnvironment());
-		if (container != null) {
+		if (container != null && container != project) {
 			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, container.getFullPath().toString());
 		}
 		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), builderID);

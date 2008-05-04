@@ -125,7 +125,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		}
 	}
 
-	private Control createAppearancePage(Composite parent) {
+	private Control createBehaviorBlock(Composite parent) {
 		Composite behaviorComposite= ControlFactory.createGroup(parent, PreferencesMessages.CEditorPreferencePage_GeneralAppearanceGroupTitle, 1);
 		
 		GridLayout layout = new GridLayout();
@@ -141,12 +141,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCode;
 		addCheckBox(behaviorComposite, label, CEditor.INACTIVE_CODE_ENABLE, 0);
 
-		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_ensureNewline;
-		addCheckBox(behaviorComposite, label, PreferenceConstants.ENSURE_NEWLINE_AT_EOF, 0);
-		
-		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_removeTrailingWhitespace;
-		addCheckBox(behaviorComposite, label, PreferenceConstants.REMOVE_TRAILING_WHITESPACE, 0);
-		
 		Label l = new Label(behaviorComposite, SWT.LEFT);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
@@ -234,6 +228,22 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		return behaviorComposite;
 	}
 
+	private Control createSaveActionsBlock(Composite parent) {
+		Composite saveActionsComposite= ControlFactory.createGroup(parent, PreferencesMessages.CEditorPreferencePage_SaveActionsTitle, 1);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		saveActionsComposite.setLayout(layout);
+
+		String label = PreferencesMessages.CEditorPreferencePage_behaviorPage_removeTrailingWhitespace;
+		addCheckBox(saveActionsComposite, label, PreferenceConstants.REMOVE_TRAILING_WHITESPACE, 0);
+
+		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_ensureNewline;
+		addCheckBox(saveActionsComposite, label, PreferenceConstants.ENSURE_NEWLINE_AT_EOF, 0);
+		
+		return saveActionsComposite;
+	}
+
 	private void handleAppearanceColorListSelection() {
 		int i = fAppearanceColorList.getSelectionIndex();
 		String key = fAppearanceColorListModel[i][1];
@@ -286,7 +296,10 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		createHeader(parent);
 
 		ControlFactory.createEmptySpace(parent, 2);
-		createAppearancePage(parent);
+		createBehaviorBlock(parent);
+
+		ControlFactory.createEmptySpace(parent, 2);
+		createSaveActionsBlock(parent);
 
 		ControlFactory.createEmptySpace(parent, 2);
 		

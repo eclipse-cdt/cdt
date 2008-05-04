@@ -178,6 +178,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_wrapStrings;
 	public static String CEditorPreferencePage_escapeStrings;
 	public static String CEditorPreferencePage_GeneralAppearanceGroupTitle;
+	public static String CEditorPreferencePage_SaveActionsTitle;
 	public static String CEditorPreferencePage_SelectDocToolDescription;
 	public static String CEditorPreferencePage_smartPaste;
 

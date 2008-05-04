@@ -1497,8 +1497,8 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_ESCAPE_STRINGS, false);
 		store.setDefault(PreferenceConstants.EDITOR_AUTO_INDENT, true);
 
-		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);
-		store.setDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, false);
+		store.setDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, true);
+		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, true);
 
 		// formatter profile
 		store.setDefault(PreferenceConstants.FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);

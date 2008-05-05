@@ -114,7 +114,7 @@ public class ClientConnection
 
 	private ArrayList _loaders;
 
-
+	// changed these to final since they are constants (that don't change)
 	public final static String INCOMPATIBLE_SERVER_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
 	public final static String INCOMPATIBLE_CLIENT_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
 	public final static String SERVER_OLDER = "Older DataStore Server."; //$NON-NLS-1$

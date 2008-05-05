@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
-import org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionClearAll;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionCopy;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionCut;

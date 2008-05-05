@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.terminals.core;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.eclipse.rse.internal.subsystems.terminals.core.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
@@ -12,11 +11,6 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Export-Package: org.eclipse.rse.internal.subsystems.terminals.core;x-internal:=true,
- org.eclipse.rse.subsystems.terminals.core;
-  uses:="org.eclipse.rse.services,
-   org.eclipse.rse.core.subsystems,
-   org.eclipse.rse.core.model,
-   org.eclipse.rse.internal.services.terminals",
+Export-Package: org.eclipse.rse.subsystems.terminals.core,
  org.eclipse.rse.subsystems.terminals.core.elements
 Bundle-ActivationPolicy: lazy

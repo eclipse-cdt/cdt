@@ -1198,21 +1198,32 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : Collections.emptyList();
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
 		List<IToken> ruleTokens = parser.getRuleTokens();
+		IToken nameToken = null;
+		
 		
 		// do not generate nodes for extra EOC tokens
 		if(matchTokens(ruleTokens, tokenMap, TK_EndOfCompletion)) {
 			return;
 		}
-		if(declSpecifier == null) { // can happen if implicit int is used
+		
+		// In the case that a single completion token is parsed then it needs
+		// to be interpreted as a named type specifier for content assist to work.
+		else if(matchTokens(ruleTokens, tokenMap, TK_Completion, TK_EndOfCompletion)) {
+			IASTName name = createName(parser.getLeftIToken());
+			declSpecifier = nodeFactory.newCPPNamedTypeSpecifier(name, false);
+			setOffsetAndLength(declSpecifier, offset(name), length(name));
+			declarators = Collections.emptyList(); // throw away the bogus declarator
+		}
+		
+		// can happen if implicit int is used
+		else if(declSpecifier == null) { 
 			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
 			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
 		}
-
 		
 		// bug 80171, check for situation similar to: static var;
 		// this will get parsed wrong, the following is a hack to rebuild the AST as it should have been parsed
-		IToken nameToken = null;
-		if(declarators.isEmpty() && 
+		else if(declarators.isEmpty() && 
 		   declSpecifier instanceof ICPPASTNamedTypeSpecifier &&
 		   ruleTokens.size() >= 2 &&
 		   baseKind(nameToken = ruleTokens.get(ruleTokens.size() - 2)) == TK_identifier) {

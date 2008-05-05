@@ -28,7 +28,6 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
 	
 	
 	public CPPASTAmbiguousDeclarator(IASTDeclarator ... ds) {
-		System.out.println("CPPASTAmbiguousDeclarator created");
 		for(IASTDeclarator declarator : ds)
 			addDeclarator(declarator);
 	}

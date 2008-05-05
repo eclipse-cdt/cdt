@@ -23,34 +23,33 @@ public class BasicCompletionTest extends CompletionTestBase {
 	private void testVar(IASTCompletionNode node) throws Exception {
 		IASTName[] names = node.getNames();
 		assertEquals(1, names.length);
-		IBinding[] bindings = names[0].getCompletionContext().findBindings(
-				names[0], true);
+		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		assertEquals(1, bindings.length);
 		IVariable var = (IVariable)bindings[0];
 		assertEquals("blah", var.getName());
 	}
 	
 	public void testVar() throws Exception {
-		StringBuffer code = new StringBuffer();
-		code.append("int blah = 4;");
-		code.append("int two = bl");
-		testVar(getGPPCompletionNode(code.toString()));
-		testVar(getGCCCompletionNode(code.toString()));
+		String code = 
+			"int blah = 4;" +
+			"int two = bl";
+		
+		testVar(getGPPCompletionNode(code));
+		testVar(getGCCCompletionNode(code));
 	}
 
 	public void testFunction() throws Exception {
-		StringBuffer code = new StringBuffer();
-		code.append("void func(int x) { }");
-		code.append("void func2() { fu");
+		String code =
+			"void func(int x) { }" +
+			"void func2() { fu";
 		
 		// C++
-		IASTCompletionNode node = getGPPCompletionNode(code.toString());
+		IASTCompletionNode node = getGPPCompletionNode(code);
 		IASTName[] names = node.getNames();
 		// There are three names, one as an expression, one that isn't connected, one as a declaration
 		assertEquals(3, names.length);
 		// The expression points to our functions
-		IBinding[] bindings = names[0].getCompletionContext().findBindings(
-				names[0], true);
+		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
@@ -61,13 +60,12 @@ public class BasicCompletionTest extends CompletionTestBase {
 		assertNull(names[2].getTranslationUnit());
 
 		// C
-		node = getGCCCompletionNode(code.toString());
+		node = getGCCCompletionNode(code);
 		names = node.getNames();
 		// There are two names, one as an expression, one as a declaration
 		assertEquals(2, names.length);
 		// The expression points to our functions
-		bindings = sortBindings(names[0].getCompletionContext().findBindings(
-				names[0], true));
+		bindings = sortBindings(names[0].getCompletionContext().findBindings(names[0], true));
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
@@ -77,22 +75,21 @@ public class BasicCompletionTest extends CompletionTestBase {
 	}
 
 	public void testTypedef() throws Exception {
-		StringBuffer code = new StringBuffer();
-		code.append("typedef int blah;");
-		code.append("bl");
+		String code = 
+			"typedef int blah;" +
+			"bl";
 		
 		// C++
-		IASTCompletionNode node = getGPPCompletionNode(code.toString());
+		IASTCompletionNode node = getGPPCompletionNode(code);
 		IASTName[] names = node.getNames();
 		assertEquals(2, names.length);
 		assertNull(names[0].getTranslationUnit());
-		IBinding[] bindings = names[1].getCompletionContext().findBindings(
-				names[1], true);
+		IBinding[] bindings = names[1].getCompletionContext().findBindings(names[1], true);
 		assertEquals(1, bindings.length);
 		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 		
 		// C
-		node = getGCCCompletionNode(code.toString());
+		node = getGCCCompletionNode(code);
 		names = node.getNames();
 		assertEquals(1, names.length);
 		bindings = names[0].getCompletionContext().findBindings(names[0], true);
@@ -101,28 +98,28 @@ public class BasicCompletionTest extends CompletionTestBase {
 	}
 	
 	public void testBug181624() throws Exception {
-		StringBuffer code = new StringBuffer();
-		code.append("void foo() {");
-		code.append("  switch (");
+		String code = 
+			"void foo() {" +
+			"  switch (";
 		
 		// C++
-		IASTCompletionNode node = getGPPCompletionNode(code.toString());
+		IASTCompletionNode node = getGPPCompletionNode(code);
 		assertNotNull(node);
 		
 		// C
-		node = getGCCCompletionNode(code.toString());
+		node = getGCCCompletionNode(code);
 		assertNotNull(node);
 		
-		code = new StringBuffer();
-		code.append("void foo() {");
-		code.append("  while (");
+		code = 
+			"void foo() {" +
+			"  while (";
 		
 		// C++
-		node = getGPPCompletionNode(code.toString());
+		node = getGPPCompletionNode(code);
 		assertNotNull(node);
 		
 		// C
-		node = getGCCCompletionNode(code.toString());
+		node = getGCCCompletionNode(code);
 		assertNotNull(node);
 	}
 }

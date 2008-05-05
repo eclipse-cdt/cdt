@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.lrparser.tests;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -24,7 +23,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.prefix.BasicCompletionTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "nls"})
 public class LRCompletionBasicTest extends BasicCompletionTest {
 
 	public static TestSuite suite() {
@@ -52,41 +51,52 @@ public class LRCompletionBasicTest extends BasicCompletionTest {
 	protected ILanguage getCPPLanguage() {
 		return ISOCPPLanguage.getDefault();
 	}
+
 	
 	@Override
 	public void testFunction() throws Exception {
-		StringBuffer code = new StringBuffer();
-		code.append("void func(int x) { }");//$NON-NLS-1$
-		code.append("void func2() { fu");//$NON-NLS-1$
+		String code =
+			"void func(int x) { }" +
+			"void func2() { fu";
+		
+		// C++
+		IASTCompletionNode node = getGPPCompletionNode(code);
+		IBinding[] bindings = LRCompletionParseTest.getBindings(node.getNames());
+		
+		assertEquals(2, bindings.length);
+		assertEquals("func", ((IFunction)bindings[0]).getName());
+		assertEquals("func2", ((IFunction)bindings[1]).getName());
 
 		// C
-		IASTCompletionNode node = getGCCCompletionNode(code.toString());
-		IASTName[] names = node.getNames();
+		node = getGCCCompletionNode(code);
+		bindings = LRCompletionParseTest.getBindings(node.getNames());
 
-		// There is only one name, for now
-		assertEquals(2, names.length);
-		// The expression points to our functions
-		IBinding[] bindings = sortBindings(names[1].getCompletionContext().findBindings(names[1], true));
-		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
-		assertEquals("func", ((IFunction)bindings[0]).getName());//$NON-NLS-1$
-		assertEquals("func2", ((IFunction)bindings[1]).getName());//$NON-NLS-1$
-		
+		assertEquals("func", ((IFunction)bindings[0]).getName());
+		assertEquals("func2", ((IFunction)bindings[1]).getName());
 	}
+	
 
 	@Override
 	public void testTypedef() throws Exception {
-		StringBuffer code = new StringBuffer();
-		code.append("typedef int blah;");//$NON-NLS-1$
-		code.append("bl");//$NON-NLS-1$
+		String code = 
+			"typedef int blah;" +
+			"bl";
+		
+		// C++
+		IASTCompletionNode node = getGPPCompletionNode(code);
+		IBinding[] bindings = LRCompletionParseTest.getBindings(node.getNames());
+
+		assertEquals(1, bindings.length);
+		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 		
 		// C
-		IASTCompletionNode node = getGCCCompletionNode(code.toString());
-		IASTName[] names = node.getNames();
-		assertEquals(1, names.length);
-		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
+		node = getGCCCompletionNode(code);
+		bindings = LRCompletionParseTest.getBindings(node.getNames());
+		
 		assertEquals(1, bindings.length);
-		assertEquals("blah", ((ITypedef)bindings[0]).getName());//$NON-NLS-1$
+		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 	}
+	
 	
 }

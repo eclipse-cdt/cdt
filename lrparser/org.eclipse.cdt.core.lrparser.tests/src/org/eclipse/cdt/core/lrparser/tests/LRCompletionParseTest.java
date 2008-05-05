@@ -56,7 +56,7 @@ public class LRCompletionParseTest extends TestCase {
 	};
 	
 	
-	protected IBinding[] getBindings(IASTName[] names) {
+	public static IBinding[] getBindings(IASTName[] names) {
 		List<IBinding> bindings = new ArrayList<IBinding>();
 		
 		for(IASTName name : names)

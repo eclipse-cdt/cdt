@@ -23,10 +23,10 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 
 /**
  * An interface used to drive properties into a subsystem during host creation.
- * 
- * @noimplement This is an internal interface for use in the framework.
- *              Potential clients should extend one of the implementations or
- *              implement one of the extensions.
+ *
+ * This is an internal interface for use in the framework. Potential clients
+ * should extend one of the implementations or implement one of the extensions.
+ *
  * @since org.eclipse.rse.core 3.0
  */
 public interface ISubSystemConfigurator {

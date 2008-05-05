@@ -837,36 +837,45 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	// Methods for encoding and decoding remote objects for drag and drop, and clipboard copy
 	// --------------------------------------------------------------------------------------
 
+
+	// --------------
+	// Methods for encoding and decoding remote objects for drag and drop, and
+	// clipboard copy
+	// ------------------------------------------------------------------------
+	// --------------
+
 	/**
 	 * Return the remote object that corresponds to the specified unique ID.
 	 * <p>
-	 * Since the abstract subsystem implementation does not know anything
-	 * about the specific kinds of resources managed by concrete
-	 * implementations, this method can only resolve filter references.
-	 * </p><p>
-	 * <strong>subsystem implementations must override this method
-	 * in order to resolve IDs for the remote objects they manage,
-	 * to support drag and drop, clipboard copy and other remote object
-	 * resolving schemes.</strong>
-	 * Extenders that want to support filters should call
-	 * <code>super.getObjectWithAbsoluteName(key)</code>
-	 * when they do not find a reference for the key themselves.
+	 * Since the abstract subsystem implementation does not know anything about
+	 * the specific kinds of resources managed by concrete implementations, this
+	 * method can only resolve filter references.
 	 * </p>
-	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectResolver#getObjectWithAbsoluteName(String, IProgressMonitor)
+	 * <p>
+	 * <strong>subsystem implementations must override this method in order to
+	 * resolve IDs for the remote objects they manage, to support drag and drop,
+	 * clipboard copy and other remote object resolving schemes.</strong>
+	 * Extenders that want to support filters should call
+	 * <code>super.getObjectWithAbsoluteName(key)</code> when they do not find a
+	 * reference for the key themselves.
+	 * </p>
 	 *
-	 * @param key the unique id of the remote object.
-	 *     Must not be <code>null</code>.
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectResolver#
+	 * 	getObjectWithAbsoluteName(String, IProgressMonitor)
+	 *
+	 * @param key the unique id of the remote object. Must not be
+	 * 		<code>null</code>.
 	 * @param monitor the progress monitor
-	 * @return the remote object instance, or <code>null</code> if no
-	 *     object is found with the given id.
-	 * @throws Exception in case an error occurs contacting the remote
-	 *     system while retrieving the requested remote object.
-	 *     Extenders are encouraged to throw {@link SystemMessageException}
-	 *     in order to support good user feedback in case of errors.
-	 *     Since exceptions should only occur while retrieving new
-	 *     remote objects during startup, clients are typically allowed
-	 *     to ignore these exceptions and treat them as if the remote
-	 *     object were simply not there.
+	 * @return the remote object instance, or <code>null</code> if no object is
+	 * 	found with the given id.
+	 * @throws Exception in case an error occurs contacting the remote system
+	 * 		while retrieving the requested remote object. Extenders are
+	 * 		encouraged to throw {@link SystemMessageException} in order to
+	 * 		support good user feedback in case of errors. Since exceptions
+	 * 		should only occur while retrieving new remote objects during
+	 * 		startup, clients are typically allowed to ignore these exceptions
+	 * 		and treat them as if the remote object were simply not there.
+	 * @since 3.0
 	 */
 	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
 	{
@@ -1697,7 +1706,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			msg = SubSystemConfiguration.getConnectingMessage(getHostName(), getConnectorService().getPort());
 			SystemBasePlugin.logInfo(msg);
 
-			if (!isOffline()){	
+			if (!isOffline()){
 				if (!implicitConnect(true, mon, msg, totalWorkUnits)){
 					String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
 					throw new Exception(msgTxt);
@@ -3182,34 +3191,47 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	/* Service Subsystem support */
 
 	/**
-	 * Perform the subsystem specific processing required to complete a subsystem configuration switch for a
-	 * service subsystem. The subsystem will typically query this configuration for interesting properties or
-	 * policies. It should also reset any state to a fresh start.
-	 * This supplied implementation does nothing. Subclasses may override if they implement a service subsystem.
-	 * @param newConfiguration the configuration this subsystem should use from this point.
+	 * Perform the subsystem specific processing required to complete a
+	 * subsystem configuration switch for a service subsystem. The subsystem
+	 * will typically query this configuration for interesting properties or
+	 * policies. It should also reset any state to a fresh start. This supplied
+	 * implementation does nothing. Subclasses may override if they implement a
+	 * service subsystem.
+	 *
+	 * @param newConfiguration the configuration this subsystem should use from
+	 * 		this point.
+	 * @since 3.0
 	 */
 	protected void internalSwitchSubSystemConfiguration(ISubSystemConfiguration newConfiguration) {
 	}
 
 	/**
-	 * Determine if a service subsystem is capable of switching to this new configuration.
-	 * This is usually a test of this configuration's type against the type expected by this subsystem.
-	 * This supplied implementation returns false. Subclasses should override if they implement a service subsystem.
+	 * Determine if a service subsystem is capable of switching to this new
+	 * configuration. This is usually a test of this configuration's type
+	 * against the type expected by this subsystem. This supplied implementation
+	 * returns false. Subclasses should override if they implement a service
+	 * subsystem.
+	 *
 	 * @param configuration the configuration to which this subsystem may switch
-	 * @return true if this subsystem is capable of switching to this configuration, false otherwise. This implementation
-	 * returns false.
+	 * @return true if this subsystem is capable of switching to this
+	 * 	configuration, false otherwise. This implementation returns false.
 	 * @see ISubSystem#canSwitchTo(ISubSystemConfiguration)
+	 * @since 3.0
 	 */
 	public boolean canSwitchTo(ISubSystemConfiguration configuration) {
 		return false;
 	}
 
 	/**
-	 * Switch to use another subsystem configuration. This default implementation will test if the subsystem is a
-	 * service subsystem and if the subsystem is compatible with the suggested configuration. If it is the switch will
-	 * be performed and internalSwitchSubSystemConfiguration will be called.
+	 * Switch to use another subsystem configuration. This default
+	 * implementation will test if the subsystem is a service subsystem and if
+	 * the subsystem is compatible with the suggested configuration. If it is
+	 * the switch will be performed and internalSwitchSubSystemConfiguration
+	 * will be called.
+	 * 
 	 * @see ISubSystem#switchServiceFactory(ISubSystemConfiguration)
 	 * @see #internalSwitchSubSystemConfiguration(ISubSystemConfiguration)
+	 * @since 3.0
 	 */
 	public void switchServiceFactory(final ISubSystemConfiguration config) {
 		if (config != getSubSystemConfiguration() && canSwitchTo(config)) {
@@ -3227,9 +3249,12 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 	/**
 	 * Return the service type for this subsystem.
-	 * @return the default implementation returns null. Subclasses that implement service subsystems
-	 * should return a type as specified in the interface.
-	 * @see org.eclipse.rse.core.subsystems.ISubSystem#getServiceType()
+	 *
+	 * @return the default implementation returns null. Subclasses that
+	 * 	implement service subsystems should return a type as specified in the
+	 * 	interface.
+	 * @see ISubSystem#getServiceType()
+	 * @since 3.0
 	 */
 	public Class getServiceType() {
 		return null;

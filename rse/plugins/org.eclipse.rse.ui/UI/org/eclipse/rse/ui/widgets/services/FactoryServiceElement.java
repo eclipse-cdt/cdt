@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [217556] remove service subsystem types
  *******************************************************************************/
@@ -31,54 +31,66 @@ import org.eclipse.rse.services.IService;
 public class FactoryServiceElement extends ServiceElement
 {
 
-	private ISubSystemConfiguration _factory;	
+	private ISubSystemConfiguration _factory;
 	private ServiceElement[] _children;
 
 
+	/**
+	 * Constructor. Used to accept an IServiceSubSystemConfiguration before RSE
+	 * 3.0
+	 * 
+	 * @since 3.0
+	 */
 	public FactoryServiceElement(IHost host, ISubSystemConfiguration factory)
 	{
 		super(host, null);
 		_factory = factory;
 	}
-	
+
 	public String getName()
 	{
 		return _factory.getId();
 	}
-	
+
 	public String getDescription()
 	{
 		return _factory.getDescription();
 	}
-	
+
+	/**
+	 * Return the subsystem configuration related to this service element. Used
+	 * to return an IServiceSubSystemConfiguration before RSE 3.0.
+	 *
+	 * @since 3.0
+	 */
 	public ISubSystemConfiguration getFactory()
 	{
 		return _factory;
 	}
-	
+
 	public IConnectorService getConnectorService()
 	{
 		IHost host = getHost();
 		IConnectorService connectorService = _factory.getConnectorService(host);
 		return connectorService;
 	}
-	
+
 	public IService getService()
 	{
 		IHost host = getHost();
 		IService service = _factory.getService(host);
 		return service;
 	}
-	
+
 	public ServiceElement[] getChildren()
 	{
 		if (_children == null)
 		{
 			IHost host = getHost();
-			
+
 			ServiceServiceElement serviceElement = new ServiceServiceElement(host, this, getService());
-		
-			IConnectorService connectorService = getConnectorService();		
+
+			IConnectorService connectorService = getConnectorService();
 			if (connectorService != null && !(connectorService instanceof IDelegatingConnectorService))
 			{
 				_children = new ServiceElement[2];
@@ -101,9 +113,9 @@ public class FactoryServiceElement extends ServiceElement
 			}
 		}
 		return _children;
-		
+
 	}
-	
+
 	public boolean hasChildren()
 	{
 		return true;
@@ -141,7 +153,7 @@ public class FactoryServiceElement extends ServiceElement
 		}
 		}
 	}
-	
+
 	public void revert()
 	{
 		ServiceElement[] children = getChildren();

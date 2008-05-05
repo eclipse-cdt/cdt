@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
@@ -21,8 +21,10 @@ import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 
 /**
  * Common interface for dialogs or wizards that work with filter pools.
+ * 
+ * @since 3.0
  */
-public interface SystemFilterPoolDialogInterface 
+public interface SystemFilterPoolDialogInterface
 {
 
 
@@ -33,7 +35,7 @@ public interface SystemFilterPoolDialogInterface
     /**
      * Return an object containing user-specified information pertinent to filter pool actions
      */
-    public SystemFilterPoolDialogOutputs getFilterPoolDialogOutputs();    
+    public SystemFilterPoolDialogOutputs getFilterPoolDialogOutputs();
     /**
      * Set the help context id for this wizard
      */

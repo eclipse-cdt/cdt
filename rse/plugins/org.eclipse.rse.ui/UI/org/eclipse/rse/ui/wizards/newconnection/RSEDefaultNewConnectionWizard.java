@@ -436,7 +436,11 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	}
 
 	/**
-	 * Return the first additional page to show when user presses Next on the main page
+	 * Return the first additional page to show when user presses Next on the
+	 * main page. In RSE 3.0, the ISystemNewConnectionWizardPage return type was
+	 * moved from org.eclipse.rse.core into a UI plugin.
+	 * 
+	 * @since 3.0
 	 */
 	protected ISystemNewConnectionWizardPage getFirstAdditionalPage() {
 		if ((subsystemConfigurationSuppliedWizardPages != null) && (subsystemConfigurationSuppliedWizardPages.length > 0)) {

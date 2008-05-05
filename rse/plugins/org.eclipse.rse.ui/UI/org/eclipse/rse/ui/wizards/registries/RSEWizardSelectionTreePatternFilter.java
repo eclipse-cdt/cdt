@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Uwe Stieber (Wind River) - [209193] RSE new connection wizard shows empty categories if typing something into the filter
  *******************************************************************************/
@@ -38,24 +38,27 @@ public class RSEWizardSelectionTreePatternFilter extends PatternFilter {
 
 	/**
 	 * Constructor.<br>
-	 * Creates a new pattern filter instance with the passed in
-	 * wizard page associated as parent.
-	 * 
+	 * Creates a new pattern filter instance with the passed in wizard page
+	 * associated as parent.
+	 *
 	 * @param page The parent wizard page or <code>null</code>.
+	 * @since 3.0
 	 */
 	public RSEWizardSelectionTreePatternFilter(WizardPage page) {
 		parentPage = page;
 	}
+
 	
 	/**
 	 * Returns the associated parent wizard parent.
-	 * 
+	 *
 	 * @return The parent wizard page or <code>null</code> if none.
+	 * @since 3.0
 	 */
 	protected WizardPage getParentWizardPage() {
 		return parentPage;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.PatternFilter#isElementVisible(org.eclipse.jface.viewers.Viewer, java.lang.Object)
 	 */
@@ -67,7 +70,7 @@ public class RSEWizardSelectionTreePatternFilter extends PatternFilter {
 			// A system type must be associated with such tree element, otherwise it is filtered out
 			IRSESystemType systemType = ((RSENewConnectionWizardSelectionTreeElement)element).getSystemType();
 			if (systemType == null) return false;
-			
+
 			// if the page is restricted to a set of system types, check on them first
 			WizardPage wizardPage = getParentWizardPage();
 			if (wizardPage instanceof RSENewConnectionWizardSelectionPage) {
@@ -76,7 +79,7 @@ public class RSEWizardSelectionTreePatternFilter extends PatternFilter {
 					if (!Arrays.asList(restricted).contains(systemType)) return false;
 				}
 			}
-			
+
 			// First, adapt the system type to a viewer filter and pass on the select request
 			// to the viewer filter adapter if available
 			ViewerFilter filter = (ViewerFilter)(systemType.getAdapter(ViewerFilter.class));
@@ -87,7 +90,7 @@ public class RSEWizardSelectionTreePatternFilter extends PatternFilter {
 			// Second, double check if the system type passed the viewer filter but is disabled.
 			if (!systemType.isEnabled()) return false;
 		}
-		
+
 		return super.isElementVisible(viewer, element);
 	}
 
@@ -113,8 +116,8 @@ public class RSEWizardSelectionTreePatternFilter extends PatternFilter {
 			}
 
 		}
-		
+
 		return super.isLeafMatch(viewer, element);
 	}
-	
+
 }

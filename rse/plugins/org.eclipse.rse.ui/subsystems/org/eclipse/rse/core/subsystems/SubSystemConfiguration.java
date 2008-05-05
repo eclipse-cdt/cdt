@@ -960,25 +960,33 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Creates a new subsystem instance that is associated with the given connection object.
-	 * SystemRegistryImpl calls this when a new connection is created, and appliesToSystemType returns true.
+	 * Creates a new subsystem instance that is associated with the given
+	 * connection object. SystemRegistryImpl calls this when a new connection is
+	 * created, and appliesToSystemType returns true.
 	 * <p>
 	 * This method doe sthe following:
 	 * <ul>
-	 *   <li>calls {@link #createSubSystemInternal(IHost)} to create the subsystem
-	 *   <li>does initialization of common attributes
-	 *   <li>if {@link #supportsFilters()}, creates a {@link org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager} for the
-	 *           subsystem to manage references to filter pools
-	 *   <li>if (@link #supportsServerLaunchProperties()}, calls {@link #createServerLauncher(IConnectorService)}, to create
-	 *           the server launcher instance to associate with this subsystem.}.
-	 *   <li>calls {@link #initializeSubSystem(ISubSystem, ISubSystemConfigurator[])} so subclasses can
-	 *           do their thing to initialize the subsystem.
-	 *   <li>finally, saves the subsystem to disk.
+	 * <li>calls {@link #createSubSystemInternal(IHost)} to create the subsystem
+	 * <li>does initialization of common attributes
+	 * <li>if {@link #supportsFilters()}, creates a {@link
+	 * org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager} for the
+	 * subsystem to manage references to filter pools
+	 * <li>if (@link #supportsServerLaunchProperties()}, calls {@link
+	 * #createServerLauncher(IConnectorService)}, to create the server launcher
+	 * instance to associate with this subsystem.}.
+	 * <li>calls {@link #initializeSubSystem(ISubSystem,
+	 * ISubSystemConfigurator[])} so subclasses can do their thing to initialize
+	 * the subsystem.
+	 * <li>finally, saves the subsystem to disk.
 	 * </ul>
+	 * 
 	 * @param conn The connection to create a subsystem for
-	 * @param creatingConnection true if we are creating a connection, false if just creating
-	 *          another subsystem for an existing connection.
-	 * @param configurators configurators that inject properties into this new subsystem or null if there are none
+	 * @param creatingConnection true if we are creating a connection, false if
+	 * 		just creating another subsystem for an existing connection.
+	 * @param configurators configurators that inject properties into this new
+	 * 		subsystem or null if there are none. Used to take
+	 * 		ISystemNewConnectionWizardPage[] before RSE 3.0.
+	 * @since 3.0
 	 */
 	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISubSystemConfigurator[] configurators)
 	{
@@ -1193,12 +1201,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public abstract ISubSystem createSubSystemInternal(IHost conn);
 
 	/**
-	 * Initialize subsystems after creation (<i>Overridable</i>).
-	 * The default behavior is to add a reference to the default filter pool for this subsystem configuration,
-	 * if there is one. Typically subclasses call <samp>super().initializeSubSystem(...)</samp>
-	 * to get this default behavior, then extend it.
+	 * Initialize subsystems after creation (<i>Overridable</i>). The default
+	 * behavior is to add a reference to the default filter pool for this
+	 * subsystem configuration, if there is one. Typically subclasses call
+	 * <samp>super().initializeSubSystem(...)</samp> to get this default
+	 * behavior, then extend it.
+	 *
 	 * @param ss - The subsystem that was created via createSubSystemInternal
-	 * @param configurators an array of {@link ISubSystemConfigurator} used to inject values into this subsystem or null if there are none
+	 * @param configurators an array of {@link ISubSystemConfigurator} used to
+	 * 		inject values into this subsystem or null if there are none. Used to
+	 * 		take ISystemNewConnectionWizardPage[] before RSE 3.0
+	 * @since 3.0
 	 */
 	protected void initializeSubSystem(ISubSystem ss, ISubSystemConfigurator[] configurators) {
 		if (supportsFilters()) {
@@ -1422,8 +1435,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Overridable entry for child classes to supply their own flavour of ISystemFilterPoolWrapperInformation for
-	 *  the new filter wizards.
+	 * Overridable entry for child classes to supply their own flavor of
+	 * ISystemFilterPoolWrapperInformation for the new filter wizards.
+	 *
+	 * @return an ISystemFilterPoolWrapperInformation instead of a
+	 * 	SystemFilterPoolWrapperInformation since 3.0
+	 * @since 3.0
 	 */
 	protected ISystemFilterPoolWrapperInformation getNewFilterWizardPoolWrapperInformation()
 	{
@@ -2776,11 +2793,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Return true if deferred queries are supported.
-	 * By default, they are supported. Override for different behavior.
+	 * Return true if deferred queries are supported. By default, they are
+	 * supported. Override for different behavior.
 	 *
 	 * @return <code>true</code> if deferred queries are supported.
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#supportsDeferredQueries()
+	 * @see ISubSystemConfiguration#supportsDeferredQueries()
 	 */
 	public boolean supportsDeferredQueries()
 	{
@@ -2792,44 +2809,65 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 
 	/**
-	 * This default implementation does nothing.
-	 * Service subsystems must override as defined in the interface.
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#setConnectorService(org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.subsystems.IConnectorService)
+	 * {@inheritDoc}
+	 * <p>
+	 * This default implementation does nothing. Service subsystems must
+	 * override as defined in the interface.
+	 *
+	 * @see ISubSystemConfiguration#setConnectorService(IHost,
+	 * 	IConnectorService)
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void setConnectorService(IHost host, IConnectorService connectorService) {
 	}
 
 	/**
-	 * This default implementation returns null.
-	 * Service subsystem configurations must override as defined in the interface.
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.core.model.IHost)
+	 * {@inheritDoc}
+	 * <p>
+	 * This default implementation returns <code>null</code>. Service subsystem
+	 * configurations must override as defined in the interface.
+	 *
+	 * @see ISubSystemConfiguration#getConnectorService(IHost)
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public IConnectorService getConnectorService(IHost host) {
 		return null;
 	}
 
 	/**
-	 * This default implementation returns null.
-	 * Service subsystem configurations must override as defined in the interface.
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getServiceType()
+	 * {@inheritDoc}
+	 * <p>
+	 * This default implementation returns <code>null</code>. Service subsystem
+	 * configurations must override as defined in the interface.
+	 *
+	 * @see ISubSystemConfiguration#getServiceType()
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public Class getServiceType() {
 		return null;
 	}
 
 	/**
-	 * This default implementation returns null.
-	 * Service subsystem configurations must override as defined in the interface.
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getServiceImplType()
+	 * {@inheritDoc}
+	 * <p>
+	 * This default implementation returns <code>null</code>. Service subsystem
+	 * configurations must override as defined in the interface.
+	 *
+	 * @see ISubSystemConfiguration#getServiceImplType()
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public Class getServiceImplType() {
 		return null;
 	}
 
 	/**
-	 * This default implementation returns null.
-	 * Service subsystem configurations must override as defined in the interface.
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getService(org.eclipse.rse.core.model.IHost)
+	 * {@inheritDoc}
+	 * <p>
+	 * This default implementation returns <code>null</code>. Service subsystem
+	 * configurations must override as defined in the interface.
+	 *
+	 * @see ISubSystemConfiguration#getService(IHost)
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public IService getService(IHost host) {
 		return null;

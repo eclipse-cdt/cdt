@@ -34,8 +34,13 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
- * This is a base class that a provider of root nodes to the remote systems tree viewer part can
- * use as a parent class.
+ * This is a base class that a provider of root nodes to the remote systems tree
+ * viewer part can use as a parent class.
+ *
+ * This class existed in RSE 1.0, was made "internal" for RSE 2.0 and restored
+ * as API for RSE 3.0.
+ * 
+ * @since 3.0
  */
 public abstract class SystemAbstractAPIProvider
        implements ISystemViewInputProvider

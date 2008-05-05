@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Debug Services Framework GDB Launch Plug-in
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.gdb.launch; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dd.gdb,

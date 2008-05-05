@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Debug Services Framework GDB UI Plug-in
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.gdb.ui;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.dd.gdb.internal.ui.GdbUIPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

@@ -75,13 +75,13 @@ public class CompletionTests extends AbstractContentAssistTest {
 //
 //extern C1* gfC1();
 //C2* gfC2();
-//	
-//enum E1 {e11, e12};	
+//
+//enum E1 {e11, e12};
 //
 //class C1 {
 //public:
-//		enum E2 {e21, e22};	
-//	
+//		enum E2 {e21, e22};
+//
 //		C1* fMySelf;
 //		void iam1();
 //
@@ -117,7 +117,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 //
 //		C3* m123();
 //		C3* m13();
-//	
+//
 //  	template<typename T> T tConvert();
 //private:
 //		void m3private();
@@ -395,14 +395,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"T1", "T2", "T3", "TClass"
 		};
-		assertCompletionResults(fCursorOffset, expected, 
+		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//namespace ns {void nsfunc(){C/*cursor*/
 	public void testTypes_NamespaceScope() throws Exception {
 		final String[] expected= {
-				"C1", "C2", "C3", "CNS"	
+				"C1", "C2", "C3", "CNS"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
@@ -422,7 +422,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"e11", "e12", "E1"
 		};
-		assertCompletionResults(fCursorOffset, expected, 
+		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
@@ -431,7 +431,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"e11", "e12", "e21", "e22", "E1", "E2"
 		};
-		assertCompletionResults(fCursorOffset, expected, 
+		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
@@ -703,7 +703,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//#i/*cursor*/
 	public void testCompletePreprocessorDirective() throws Exception {
 		final String[] expected= {
-				"#if ", "#ifdef ", "#ifndef ", "#include "
+				"#if", "#ifdef", "#ifndef", "#include"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
@@ -830,7 +830,7 @@ public class CompletionTests extends AbstractContentAssistTest {
     // } my_struct;
     //
     // void func(my_struct s);
-    // 
+    //
     // void test() {
     //    fun/*cursor*/
 	public void testFunctionWithTypedefToAnonymousType_bug192787() throws Exception {
@@ -847,7 +847,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testBindingsWithoutDeclaration() throws Exception {
 		// gC1all, gStruct, gnsClass, gnsStruct: fix for 214146, type from a source file is not proposed.
 		final String[] expected= {
-			"gC1", "gC2", "gfC1()", "gfC2()", 
+			"gC1", "gC2", "gfC1()", "gfC2()",
 			"gns::", "gnsFunc()", "gnsTemp",
 			"gFunc()", "gTemp"
 		};

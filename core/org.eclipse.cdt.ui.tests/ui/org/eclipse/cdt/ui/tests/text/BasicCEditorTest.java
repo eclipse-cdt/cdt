@@ -77,13 +77,15 @@ public class BasicCEditorTest extends BaseUITestCase {
 	private TestDocListener fDocListener= new TestDocListener();
 
 	public static Test suite() {
-		return new TestSuite(BasicCEditorTest.class); 
+		return new TestSuite(BasicCEditorTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown () throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 		if (fCProject != null)
@@ -185,6 +187,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 	//		return 0;
 	//	}
 	//}
+	//
 	public void testEditNewTranslationUnit() throws Exception {
 		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
 		IFile newFile= createFile(fCProject.getProject(), "Point.cpp", "");
@@ -222,7 +225,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		setUpEditor(newFile);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
-		content= fDocument.get();
+		content= fDocument.get().trim();
 		assertEquals("Save failed", newContent, content);
 		// check reconciler
 		ITranslationUnit tUnit= (ITranslationUnit)fEditor.getInputCElement();
@@ -352,6 +355,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		fAccessor.invoke("handleKeyDown", new Object[] {event});
 		
 		new DisplayHelper() {
+			@Override
 			protected boolean condition() {
 				return fDocListener.fDocChanged;
 			}

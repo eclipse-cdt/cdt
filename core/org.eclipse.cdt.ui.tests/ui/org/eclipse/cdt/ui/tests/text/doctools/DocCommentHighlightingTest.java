@@ -17,7 +17,6 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -89,6 +88,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
@@ -97,10 +97,10 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		// source positions depend on Windows line separator
 		adjustLineSeparator(fSourceViewer.getDocument(), "\r\n");
-		fEditor.doSave(new NullProgressMonitor());
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 	}
 
+	@Override
 	protected void tearDown () throws Exception {
 		EditorTestHelper.closeAllEditors();
 

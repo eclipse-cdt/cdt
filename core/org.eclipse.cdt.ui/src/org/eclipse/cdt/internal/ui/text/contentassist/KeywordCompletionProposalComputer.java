@@ -83,9 +83,8 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 			Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
 			
 			for(String keyword : languageKeywords.getPreprocessorKeywords()) {
-				keyword = keyword + ' ';
-				String repString = keyword;
-				if (repString.startsWith(prefix) && keyword.length() > prefixLength) {
+				if (keyword.startsWith(prefix) && keyword.length() > prefixLength) {
+					String repString = keyword + ' ';
 					int repLength = prefixLength;
 					int repOffset = context.getInvocationOffset() - repLength;
 					if (prefix.charAt(0) == '#') {
@@ -99,7 +98,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 					proposals.add(new CCompletionProposal(repString, repOffset,
 							repLength, image, keyword, relevance, context.getViewer()));
 				}
-			}	        
+			}
 		} else {
 	        if (!isValidContext(completionNode))
 	            return Collections.emptyList();
@@ -150,7 +149,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 	 * Test whether the invocation offset is inside or before the preprocessor directive keyword.
 	 * 
 	 * @param context  the invocation context
-	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword 
+	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword
 	 */
 	private boolean inPreprocessorKeyword(CContentAssistInvocationContext context) {
 		IDocument doc = context.getDocument();

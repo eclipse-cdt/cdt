@@ -15,5 +15,6 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dd.dsf.debug.model,
  org.eclipse.dd.dsf.debug.service,
  org.eclipse.dd.dsf.debug.service.command,
+ org.eclipse.dd.dsf.debug.internal.provisional.model,
  org.eclipse.dd.dsf.debug.sourcelookup
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

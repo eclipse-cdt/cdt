@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
-imimport java.io.ByteArrayInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +54,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 /**
  * An operation which does the actual work of copying objects from the local
  * file system into the workspace.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RemoteFileImportOperation extends WorkspaceModifyOperation {
@@ -98,7 +98,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * If <code>setCreateContainerStructure</code> is set to false then the container
 	 * structure created is relative to the root file system object.
 	 * </p>
-	 * 
+	 *
 	 * @param containerPath the full path of the destination container within the
 	 *   workspace
 	 * @param source the root file system object to import
@@ -588,7 +588,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	/**
 	 * Queries the user whether the resource with the specified path should be
 	 * overwritten by a file system object that is being imported.
-	 * 
+	 *
 	 * @param path the workspace path of the resource that needs to be overwritten
 	 * @return <code>true</code> to overwrite, <code>false</code> to not overwrite
 	 * @exception OperationCanceledException if cancelled

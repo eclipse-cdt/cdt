@@ -303,6 +303,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		if (shell == null || shell.isDisposed() || !shell.isVisible() || !shell.isEnabled())
 		{
 			// get a new shell
+			// FIXME it looks like actions could be contributed into a wrong shell with this.
 			Shell[] shells = Display.getCurrent().getShells();
 			Shell lshell = null;
 			for (int i = 0; i < shells.length && lshell == null; i++)

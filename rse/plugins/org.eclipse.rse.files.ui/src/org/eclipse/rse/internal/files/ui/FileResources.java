@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
+ * Rupen Mardirossian (IBM)		 - [227213] Added RESID_CONFLICT_COPY_PATTERN to be used for copying resources to parent folder.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -171,6 +172,9 @@ public class FileResources extends NLS
 	public static String RESID_CONFLICT_DOWNLOAD_MESSAGE_REMOTECHANGED;
 	public static String RESID_CONFLICT_DOWNLOAD_REPLACELOCAL;
 	public static String RESID_CONFLICT_DOWNLOAD_OPENWITHLOCAL;
+	
+	// Resource conflict constants
+	public static String RESID_CONFLICT_COPY_PATTERN;
 
 	// RSE Cache Preferences
 	public static String RESID_PREF_CACHE_CLEAR;

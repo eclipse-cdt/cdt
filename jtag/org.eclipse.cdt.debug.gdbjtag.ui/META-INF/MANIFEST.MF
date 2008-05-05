@@ -15,6 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.core.variables,
  org.eclipse.cdt.managedbuilder.ui,
- org.eclipse.ui.ide
+ org.eclipse.ui.ide,
+ org.eclipse.cdt.debug.core
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName

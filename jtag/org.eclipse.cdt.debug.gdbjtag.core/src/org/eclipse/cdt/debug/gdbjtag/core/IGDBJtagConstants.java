@@ -34,6 +34,7 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_INIT_COMMANDS = Activator.PLUGIN_ID + ".initCommands"; //$NON-NLS-1$
 	public static final String ATTR_DELAY = Activator.PLUGIN_ID + ".delay"; //$NON-NLS-1$
 	public static final String ATTR_DO_RESET = Activator.PLUGIN_ID + ".doReset"; //$NON-NLS-1$
+	public static final String ATTR_DO_HALT = Activator.PLUGIN_ID + ".doHalt"; //$NON-NLS-1$
 	public static final String ATTR_LOAD_IMAGE = Activator.PLUGIN_ID + ".loadImage"; //$NON-NLS-1$
 	public static final String ATTR_LOAD_SYMBOLS = Activator.PLUGIN_ID + ".loadSymbols"; //$NON-NLS-1$
 	public static final String ATTR_IMAGE_FILE_NAME = Activator.PLUGIN_ID + ".imageFileName"; //$NON-NLS-1$
@@ -48,6 +49,7 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_RUN_COMMANDS = Activator.PLUGIN_ID + ".runCommands"; //$NON-NLS-1$
 	
 	public static final boolean DEFAULT_DO_RESET = true;
+	public static final boolean DEFAULT_DO_HALT = true;
 	public static final int DEFAULT_DELAY = 3;
 	public static final boolean DEFAULT_LOAD_IMAGE = false;
 	public static final boolean DEFAULT_LOAD_SYMBOLS = false;

@@ -14,10 +14,13 @@ package org.eclipse.cdt.debug.gdbjtag.ui;
 
 import java.io.File;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -52,6 +55,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	Text initCommands;
 	Text delay;
 	Button doReset;
+	Button doHalt;
 	
 	Button loadImage;
 	Text imageFileName;
@@ -137,7 +141,13 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		group.setLayoutData(gd);
 		group.setText(Messages.getString("GDBJtagStartupTab.initGroup_Text"));
 		
-		doReset = new Button(group, SWT.CHECK);
+		Composite comp = new Composite(group, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		comp.setLayout(layout);
+		
+		doReset = new Button(comp, SWT.CHECK);
 		doReset.setText(Messages.getString("GDBJtagStartupTab.doReset_Text"));
 		doReset.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -145,16 +155,9 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
-		Composite comp = new Composite(group, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		comp.setLayout(layout);
-		
-		Label delayLabel = new Label(comp, SWT.NONE);
-		delayLabel.setText(Messages.getString("GDBJtagStartupTab.delayLabel_Text"));
 		delay = new Text(comp, SWT.BORDER);
 		gd = new GridData();
+		gd.horizontalSpan = 1;
 		gd.widthHint = 60;
 		delay.setLayoutData(gd);
 		delay.addVerifyListener(new VerifyListener() {
@@ -164,6 +167,23 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		});
 		delay.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		comp = new Composite(group, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginHeight = 0;
+		comp.setLayout(layout);
+		
+		doHalt = new Button(comp, SWT.CHECK);
+		doHalt.setText(Messages.getString("GDBJtagStartupTab.doHalt_Text"));
+		gd = new GridData();
+		gd.horizontalSpan = 1;
+		doHalt.setLayoutData(gd);
+		doHalt.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -441,15 +461,95 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (!super.isValid(launchConfig))
+			return false;
+		setErrorMessage(null);
+		setMessage(null);
+
+		if (loadImage.getSelection()) {
+			if (imageFileName.getText().trim().length() == 0) {
+				setErrorMessage(Messages.getString("GDBJtagStartupTab.imageFileName_not_specified"));
+				return false;
+			}
+
+			String path;
+			try {
+				path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName.getText().trim());
+				IPath filePath = new Path(path);
+				if (!filePath.toFile().exists()) {
+					setErrorMessage(Messages.getString("GDBJtagStartupTab.imageFileName_does_not_exist"));
+					return false;
+				}
+			} catch (CoreException e) {
+				Activator.getDefault().getLog().log(e.getStatus());
+			}
+		} else {
+			setErrorMessage(null);
+		}
+		if (loadSymbols.getSelection()) {
+			if (symbolsFileName.getText().trim().length() == 0) {
+				setErrorMessage(Messages.getString("GDBJtagStartupTab.symbolsFileName_not_specified"));
+				return false;
+			}
+			String path;
+			try {
+				path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName.getText().trim());
+				IPath filePath = new Path(path);
+				if (!filePath.toFile().exists()) {
+					setErrorMessage(Messages.getString("GDBJtagStartupTab.symbolsFileName_does_not_exist"));
+					return false;
+				}
+			} catch (CoreException e) {
+				Activator.getDefault().getLog().log(e.getStatus());
+			}
+		} else {
+			setErrorMessage(null);
+		}
+		
+		if (setPcRegister.getSelection()) {
+			if (pcRegister.getText().trim().length() == 0) {
+				setErrorMessage(Messages.getString("GDBJtagStartupTab.pcRegister_not_specified"));
+				return false;
+			}
+		} else {
+			setErrorMessage(null);
+		}
+		if (setStopAt.getSelection()) {
+			if (stopAt.getText().trim().length() == 0) {
+				setErrorMessage(Messages.getString("GDBJtagStartupTab.stopAt_not_specified"));
+			}
+		} else {
+			setErrorMessage(null);
+		}
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+//	protected void updateLaunchConfigurationDialog() {
+//		super.updateLaunchConfigurationDialog();
+//		isValid(getLaunchConfigurationDialog());
+//	}
+	
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			initCommands.setText(configuration.getAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, "")); //$NON-NLS-1$
 			doReset.setSelection(configuration.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET));
 			doResetChanged();
+			doHalt.setSelection(configuration.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, IGDBJtagConstants.DEFAULT_DO_HALT));
 			delay.setText(String.valueOf(configuration.getAttribute(IGDBJtagConstants.ATTR_DELAY, IGDBJtagConstants.DEFAULT_DELAY)));
 			loadImage.setSelection(configuration.getAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE));
 			loadImageChanged();
-			imageFileName.setText(configuration.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, "")); //$NON-NLS-1$
+			String defaultImageFileName = configuration.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
+			if (defaultImageFileName.equals("")) {
+				defaultImageFileName = configuration.getWorkingCopy().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
+			}
+			imageFileName.setText(defaultImageFileName);
 			imageOffset.setText(configuration.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, "")); //$NON-NLS-1$
 			loadSymbols.setSelection(configuration.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS));
 			loadSymbolsChanged();
@@ -473,6 +573,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, initCommands.getText());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_DELAY, Integer.parseInt(delay.getText()));
 		configuration.setAttribute(IGDBJtagConstants.ATTR_DO_RESET, doReset.getSelection());
+		configuration.setAttribute(IGDBJtagConstants.ATTR_DO_HALT, doHalt.getSelection());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, loadImage.getSelection());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, imageFileName.getText().trim());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, imageOffset.getText());
@@ -493,6 +594,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
 		configuration.setAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, ""); //$NON-NLS-1$
 		configuration.setAttribute(IGDBJtagConstants.ATTR_DO_RESET, true);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_DO_HALT, true);
 	}
 
 }

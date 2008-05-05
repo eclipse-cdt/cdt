@@ -118,6 +118,12 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			gdbJtagDevice.doReset(commands);
 			int defaultDelay = gdbJtagDevice.getDefaultDelay();
 			gdbJtagDevice.doDelay(config.getAttribute(IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
+			executeGDBScript(getGDBScript(commands), miSession);
+		}
+		
+		// Run device-specific code to halt the board
+		if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, true)) {
+			commands = new ArrayList();
 			gdbJtagDevice.doHalt(commands);
 			executeGDBScript(getGDBScript(commands), miSession);
 		}
@@ -170,9 +176,12 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 		
 		ArrayList commands = new ArrayList();
 		// Set program counter
-		String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, ""));
-		gdbJtagDevice.doSetPC(pcRegister, commands);
-		executeGDBScript(getGDBScript(commands), miSession);
+		boolean setPc = config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER);
+		if (setPc) {
+			String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, ""));
+			gdbJtagDevice.doSetPC(pcRegister, commands);
+			executeGDBScript(getGDBScript(commands), miSession);
+		}
 		
 		// execute run script
 		monitor.beginTask("Executing run commands", 1);

@@ -98,7 +98,7 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doStopAt(java.lang.String, java.util.Collection)
 	 */
 	public void doStopAt(String stopAt, Collection commands) {
-		String cmd = "break " + stopAt;
+		String cmd = "tbreak " + stopAt;
 		addCmd(commands, cmd);
 	}
 	

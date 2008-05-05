@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
@@ -36,6 +36,7 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -46,7 +47,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * Any input into the system viewer must register an adapter that implements this interface.
  * <p>
  * This interface supports a union of all the methods needed to support a TreeViewer
- *  content provider and label provider. The {@link org.eclipse.rse.internal.ui.view.SystemViewLabelAndContentProvider} 
+ *  content provider and label provider. The {@link org.eclipse.rse.internal.ui.view.SystemViewLabelAndContentProvider}
  *  delegates to objects of this interface almost completely. It gets such an
  *  object by calling:</p>
  * <pre><code>
@@ -57,7 +58,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * This interface also supports IPropertySource via inheritance, so we can feed the
  * PropertySheet.
  * </p>
- * <p>For remote resource objects, their adapter should also implement 
+ * <p>For remote resource objects, their adapter should also implement
  * {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter}
  * </p>
  * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter
@@ -65,7 +66,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragDropAdapter, IActionFilter
 {
 	public static final IAction[] noActions = new IAction[0];
-	
+
     /**
      * Set the shell to be used by any method that requires it.
      * This is set by the Label and Content providers that retrieve this adapter.
@@ -91,7 +92,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
      */
     public Shell getShell();
 	/**
-	 * Return the current viewer, as set via setViewer or its deduced from the 
+	 * Return the current viewer, as set via setViewer or its deduced from the
 	 *  setInput input object if set. May be null so test it.
 	 */
 	public Viewer getViewer();
@@ -100,22 +101,22 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
      * May be used by an adapter to retrieve context-sensitive information.
      */
     public ISystemViewInputProvider getInput();
-    	
-  	   	
+
+
     /**
      * Get the subsystem that corresponds to this object if one exists.
-     * 
+     *
      * @param element The element to be identified. May be of type
      *                {@link IContextObject} (including the context of the element),
      *                {@link String} (giving the absolute path of a remote object),
      *                or the actual remote data element itself.
      */
-	public ISubSystem getSubSystem(Object element);	
-	
+	public ISubSystem getSubSystem(Object element);
+
 	/**
 	 * Wrapper to getPropertyValue(Object key) that takes an argument
 	 * for determining whether to return a raw value or formatted value.
-	 * 
+	 *
 	 */
 	public Object getPropertyValue(Object key, boolean formatted);
 
@@ -127,7 +128,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 */
 	public IPropertyDescriptor[] getUniquePropertyDescriptors();
 
-	
+
 	/**
 	 * This is your opportunity to add actions to the popup menu for the given selection.
 	 * <p>
@@ -144,24 +145,27 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 *   <li>{@link org.eclipse.rse.ui.actions.SystemBaseDialogAction SystemBaseWizardAction}. For an action that presents a {@link org.eclipse.rse.ui.wizards.AbstractSystemWizard wizard}.
 	 *   <li>{@link org.eclipse.rse.ui.actions.SystemBaseSubMenuAction SystemBaseSubMenuAction}. For an action that cascades into a submenu with other actions.
 	 * </ul>
-	 * 
+	 *
 	 * @param menu the popup menu you can contribute to
 	 * @param selection the current selection in the calling tree or table view
 	 * @param parent the shell of the calling tree or table view
-	 * @param menuGroup the default menu group to place actions into if you don't care where they. Pass this to the SystemMenuManager {@link org.eclipse.rse.ui.SystemMenuManager#add(String,IAction) add} method. 
+	 * @param menuGroup the default menu group to place actions into if you don't care where they. Pass this to the SystemMenuManager {@link org.eclipse.rse.ui.SystemMenuManager#add(String,IAction) add} method.
 	 */
 	public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell parent, String menuGroup);
 	/**
-	 * Returns an image descriptor for the image. More efficient than getting the image.
+	 * Returns an image descriptor for the image. More efficient than getting
+	 * the image. Implements {@link IWorkbenchAdapter#getImageDescriptor(Object)
+	 * }.
+	 *
 	 * @param element The element for which an image is desired
 	 */
 	public ImageDescriptor getImageDescriptor(Object element);
 	/**
-	 * Return the label for this object
+	 * Return the label for this object.
 	 */
 	public String getText(Object element);
 	/**
-	 * Return the alternate label for this object
+	 * Return the alternate label for this object.
 	 */
 	public String getAlternateText(Object element);
 	/**
@@ -169,75 +173,79 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 */
 	public String getName(Object element);
 	/**
-	 * Return a value for the type property for this object
+	 * Return a value for the type property for this object.
 	 */
-	public String getType(Object element);	
+	public String getType(Object element);
 	/**
-	 * Return the string to display in the status line when the given object is selected
+	 * Return the string to display in the status line when the given object is
+	 * selected.
 	 */
 	public String getStatusLineText(Object element);
-	
-	
+
+
 	/**
 	 * Returns whether the specified element is represented as existing.  Note that
 	 * it's possible that the represented element will been seen to exist when on
 	 * a remote host it may not - that is because this call does not query the host.
-	 * 
+	 *
 	 * @param element the element to check
 	 * @return true if the element exists
 	 * @since 3.0
 	 */
 	public boolean exists(Object element);
-	
+
 	/**
-	 * Return the parent of this object
+	 * Return the parent of this object. This is required by eclipse UI
+	 * adapters, but we try desperately not to use in the RSE. So, you are
+	 * probably safe returning null, but if you can return a parent, why not, go
+	 * for it.
 	 */
 	public Object getParent(Object element);
-	
 
-	
+
+
 	/**
 	 * Return the children of this model object.
 	 *
 	 * When {@link #supportsDeferredQueries(ISubSystem)} returns false,
 	 * this query will be called in the dispatch thread, so the implementation
 	 * needs to make sure that SWT thread exceptions are avoided.
-	 *  
+	 *
 	 * @param element the model object to query
 	 * @param monitor the progress monitor
 	 * @return the children of element
 	 */
 	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor);
-	
+
 	/**
 	 * Return the children of this object.
-	 * 
+	 *
 	 * When a contextObject is passed in instead of an adaptable model
 	 * object, the adapter needs handle both the model object as well
 	 * as the associated filter.
-	 * 
+	 *
 	 * When {@link #supportsDeferredQueries(ISubSystem)} returns false,
 	 * this query will be called in the dispatch thread, so the implementation
 	 * needs to make sure that SWT thread exceptions are avoided.
-	 * 
+	 *
 	 * @param contextObject a wrapper object that contains the model object plus context information
 	 * @param monitor the progress monitor
 	 * @return the children of the model object in contextObject that matches the filter in contextObject
 	 */
 	public Object[] getChildren(IContextObject contextObject, IProgressMonitor monitor);
-	
+
 	/**
 	 * Return the children of this object, using the given Expand-To filter
 	 */
     public Object[] getChildrenUsingExpandToFilter(Object element, String expandToFilter);
-	
+
     /**
-	 * Return true if this object has children. 
+	 * Return true if this object has children.
 	 * <p>
 	 * In case this adapter returns true for {@link #supportsDeferredQueries(ISubSystem)},
 	 * it is expected that the underlying subsystem caches the hasChildren() attribute
-	 * such that it does not necessarily perform a server round trip. In this case, it 
-	 * has more the semantics of "can have children". In that case, 
+	 * such that it does not necessarily perform a server round trip. In this case, it
+	 * has more the semantics of "can have children". In that case,
 	 * a deferred {@link #getChildren(IAdaptable, IProgressMonitor)}
 	 * call is still allowed to return an empty array indicating no children.
 	 * </p>
@@ -245,7 +253,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * @return <code>true</code> if this element can have children.
 	 */
 	public boolean hasChildren(IAdaptable element);
-	
+
 	/**
 	 * Return true if this object has children.
 	 * @see #hasChildren(IAdaptable)
@@ -253,15 +261,15 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * @return <code>true</code> if this element can have children.
 	 */
 	public boolean hasChildren(IContextObject element);
-	
+
     /**
      * Return true if this object is a "prompting" object that prompts the user when expanded.
      * For such objects, we do not try to save and restore their expansion state on F5 or between
      * sessions
      */
-    public boolean isPromptable(Object element);	
-    
-    
+    public boolean isPromptable(Object element);
+
+
     /**
      * Return true if this object is a "remote" object.  A remote object is defined as an object
      * that is not part of the base RSE artifacts (hosts, subsystems, filters).  This method is used
@@ -272,20 +280,20 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
      * @return true if the object is remote
      */
     public boolean isRemote(Object element);
-		
+
 	/**
 	 * Set input object for property source queries. This is called by the
 	 * SystemViewAdaptorFactory before returning this adapter object.
 	 * Handled automatically if you start with AbstractSystemViewAdaptor.
-	 */	
-	public void setPropertySourceInput(Object propertySourceInput);		
+	 */
+	public void setPropertySourceInput(Object propertySourceInput);
 
     /**
-     * User has double clicked on an object. If you want to do something special, 
-     *  do it and return true. Otherwise return false to have the viewer do the default behaviour.   
+     * User has double clicked on an object. If you want to do something special,
+     *  do it and return true. Otherwise return false to have the viewer do the default behaviour.
      */
     public boolean handleDoubleClick(Object element);
-    	
+
 	// ------------------------------------------
 	// METHODS TO SUPPORT GLOBAL DELETE ACTION...
 	// ------------------------------------------
@@ -315,7 +323,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 */
 	public boolean doDeleteBatch(Shell shell, List resourceSet, IProgressMonitor monitor)
 		throws Exception;
-	
+
 	// ------------------------------------------
 	// METHODS TO SUPPORT COMMON RENAME ACTION...
 	// ------------------------------------------
@@ -330,31 +338,31 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 */
 	public boolean canRename(Object element);
 	/**
-	 * Perform the rename on the given item. 
+	 * Perform the rename on the given item.
 	 * @since 3.0
 	 */
 	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor)
-	    throws Exception;	
-	    
-	    
-	    
+	    throws Exception;
+
+
+
 	/**
 	 * Return a validator for verifying the new name is correct.
-	 * If you return null, no error checking is done on the new name!! 
+	 * If you return null, no error checking is done on the new name!!
 	 * Suggest you use at least UniqueStringValidator or a subclass to ensure
 	 *  new name is at least unique.
 	 */
-    public ISystemValidator getNameValidator(Object element);	
+    public ISystemValidator getNameValidator(Object element);
     /**
      * Form and return a new canonical (unique) name for this object, given a candidate for the new
      *  name. This is called by the generic multi-rename dialog to test that all new names are unique.
      *  To do this right, sometimes more than the raw name itself is required to do uniqueness checking.
      * <p>
      *  For example, two connections or filter pools can have the same name if they are
-     *  in different profiles. Two iSeries QSYS objects can have the same name if their object types 
-     *  are different. 
+     *  in different profiles. Two iSeries QSYS objects can have the same name if their object types
+     *  are different.
      * <p>
-     * This method returns a name that can be used for uniqueness checking because it is qualified 
+     * This method returns a name that can be used for uniqueness checking because it is qualified
      *  sufficiently to make it unique.
      */
     public String getCanonicalNewName(Object element, String newName);
@@ -386,11 +394,11 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * Return true if we should show the refresh action in the popup for the given element.
 	 */
 	public boolean showOpenViewActions(Object element);
-	
+
 	/**
 	 * Return true if we should show the generic show in table action in the popup for the given element.
 	 */
-	public boolean showGenericShowInTableAction(Object element);	
+	public boolean showGenericShowInTableAction(Object element);
 
 	// ------------------------------------------------------------
 	// METHODS FOR SAVING AND RESTORING EXPANSION STATE OF VIEWER...
@@ -412,15 +420,15 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 */
 	public String getMementoHandleKey(Object element);
     /**
-     * Somtimes we don't want to remember an element's expansion state, such as for temporarily inserted 
+     * Somtimes we don't want to remember an element's expansion state, such as for temporarily inserted
      *  messages. In these cases return false from this method. The default is true
      */
     public boolean saveExpansionState(Object element);
     public void selectionChanged(Object element);    // d40615
-    
-	public void setFilterString(String filterString);	
+
+	public void setFilterString(String filterString);
 	public String getFilterString();
-	
+
 	/**
 	 * Return whether deferred queries are supported. By default
 	 * they are not supported.  Subclasses must override this to

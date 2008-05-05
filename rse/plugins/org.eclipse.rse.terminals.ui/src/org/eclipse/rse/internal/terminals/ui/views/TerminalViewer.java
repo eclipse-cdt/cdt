@@ -21,7 +21,8 @@
  * Radoslav Gerganov(ProSyst)    - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  * Yu-Fen Kuo       (MontaVista) - Adapted from SystemCommandsViewPart
  * Anna Dushistova  (MontaVista) - Adapted from SystemCommandsViewPart
- * Yu-Fen Kuo (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Yu-Fen Kuo       (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Anna Dushistova  (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -38,8 +39,6 @@ import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
-import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
@@ -68,9 +67,6 @@ public class TerminalViewer extends ViewPart implements ISelectionListener,
         ISelectionService selectionService = getSite().getWorkbenchWindow()
                 .getSelectionService();
         selectionService.addSelectionListener(this);
-
-        SystemWidgetHelpers.setHelp(tabFolder, RSEUIPlugin.HELPPREFIX
-                + "ucmd0000"); //$NON-NLS-1$
 
         ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 

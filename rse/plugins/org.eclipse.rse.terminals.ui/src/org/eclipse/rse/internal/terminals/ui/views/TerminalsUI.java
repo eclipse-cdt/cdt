@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Yu-Fen Kuo       (MontaVista) - Adapted from SystemCommandsUI
+ * Anna Dushistova  (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  ********************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui.views;
@@ -56,7 +57,6 @@ public class TerminalsUI {
             viewer = (TerminalViewer) page.showView(TerminalViewer.VIEW_ID);
             page.bringToTop(viewer);
         } catch (PartInitException e) {
-            e.printStackTrace();
             SystemBasePlugin.logError(Activator
                     .getResourceString("TerminalsUI.cannotOpenView.error"), e); //$NON-NLS-1$
         }

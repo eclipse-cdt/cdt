@@ -7,12 +7,14 @@
  * Contributors:
  * Anna Dushistova (MontaVista) - initial API and implementation
  * Yu-Fen Kuo (MontaVista)      - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Anna Dushistova (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
@@ -42,7 +44,7 @@ public class RSETerminalConnectorImpl extends TerminalConnectorImpl {
             try {
                 getInputStream().close();
             } catch (Exception exception) {
-                exception.printStackTrace();
+            	RSECorePlugin.getDefault().getLogger().logError("Error while closing input stream", exception); //$NON-NLS-1$
             }
         }
 
@@ -50,7 +52,7 @@ public class RSETerminalConnectorImpl extends TerminalConnectorImpl {
             try {
                 getTerminalToRemoteStream().close();
             } catch (Exception exception) {
-                exception.printStackTrace();
+            	RSECorePlugin.getDefault().getLogger().logError("Error while closing terminal-to-remote stream", exception); //$NON-NLS-1$
             }
         }
     }

@@ -6,6 +6,7 @@
  *
  * Contributors:
  * Anna Dushistova (MontaVista) - initial API and implementation
+ * Anna Dushistova (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -14,6 +15,7 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.internal.services.terminals.ITerminalService;
 import org.eclipse.rse.internal.terminals.ui.TerminalServiceHelper;
@@ -53,9 +55,8 @@ public class RSETerminalConnectionThread extends Thread {
 			}
             fConn.setInputStream(shell.getInputStream());
             fConn.setOutputStream(shell.getOutputStream());
-        } catch (SystemMessageException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (SystemMessageException e) {
+        	RSECorePlugin.getDefault().getLogger().logError("Error launching terminal", e); //$NON-NLS-1$
         }
         fConn.setTerminalHostShell(shell);
         fControl.setState(TerminalState.CONNECTED);
@@ -69,8 +70,7 @@ public class RSETerminalConnectionThread extends Thread {
         } catch (InterruptedIOException e) {
             // we got interrupted: we are done...
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	RSECorePlugin.getDefault().getLogger().logError("Error while reading data", e); //$NON-NLS-1$
         } catch (InterruptedException e) {
         }
         // when reading is done, we set the state to closed
@@ -82,16 +82,6 @@ public class RSETerminalConnectionThread extends Thread {
      */
     void disconnect() {
         interrupt();
-        synchronized (this) {
-            try {
-                // do not close the connection
-                // TerminalServiceHelper.getTerminalSubSystem(fConn.host)
-                // .disconnect();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
     }
 
     /**

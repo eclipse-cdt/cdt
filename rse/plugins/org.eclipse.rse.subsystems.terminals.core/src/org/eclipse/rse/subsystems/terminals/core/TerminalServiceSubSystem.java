@@ -5,8 +5,9 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Yu-Fen Kuo (MontaVista) - initial API and implementation
- * Yu-Fen Kuo (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Yu-Fen Kuo      (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo      (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Anna Dushistova (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.terminals.core;
@@ -31,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
 public final class TerminalServiceSubSystem extends SubSystem implements
         ITerminalServiceSubSystem, ICommunicationsListener {
 
-    protected ITerminalService _hostService;
+    protected ITerminalService _hostService = null;
 
     private ArrayList children;
 
@@ -52,12 +53,14 @@ public final class TerminalServiceSubSystem extends SubSystem implements
     protected TerminalServiceSubSystem(IHost host,
             IConnectorService connectorService) {
         super(host, connectorService);
+        children = new ArrayList();
     }
 
     public TerminalServiceSubSystem(IHost host,
             IConnectorService connectorService, ITerminalService hostService) {
         super(host, connectorService);
         _hostService = hostService;
+        children = new ArrayList();
     }
 
     public ITerminalService getTerminalService() {
@@ -69,34 +72,28 @@ public final class TerminalServiceSubSystem extends SubSystem implements
 	}
 
 	public void addChild(TerminalElement element) {
-        if (children == null) {
-            children = new ArrayList();
-            // if this is first shell, start listening so that on disconnect, we
-            // persist
-            getConnectorService().addCommunicationsListener(this);
-        }
-        children.add(element);
+		synchronized (children) {
+            children.add(element);
+		}
         Display.getDefault().asyncExec(new Refresh(this));
     }
 
     public void removeChild(TerminalElement element) {
-        if (children != null) {
-            children.remove(element);
-        }
-        if (children == null) {
-            getConnectorService().removeCommunicationsListener(this);
-        }
-        Display.getDefault().asyncExec(new Refresh(this));
+		synchronized (children) {
+            if (children.size() > 0) {
+                children.remove(element);
+            }
+		}
+		Display.getDefault().asyncExec(new Refresh(this));
     }
 
     public void removeChild(String terminalTitle) {
-        if (children != null) {
+        if (children.size() > 0) {
             TerminalElement element = getChild(terminalTitle);
             if (element != null){
-                children.remove(element);
-                if (children == null) {
-                    getConnectorService().removeCommunicationsListener(this);
-                }
+        		synchronized (children) {
+                    children.remove(element);
+        		}
                 Display.getDefault().asyncExec(new Refresh(this));
             }
         }
@@ -163,7 +160,7 @@ public final class TerminalServiceSubSystem extends SubSystem implements
             try {
                 removeTerminalElement(element);
             } catch (Exception e) {
-                e.printStackTrace();
+            	RSECorePlugin.getDefault().getLogger().logError("Error removing terminal", e); //$NON-NLS-1$
             }
 
         }

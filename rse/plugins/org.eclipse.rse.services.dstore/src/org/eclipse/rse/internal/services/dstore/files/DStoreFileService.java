@@ -397,7 +397,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		//	    transferSuccessful = true;
 			}
 		}
-
 		catch (FileNotFoundException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
@@ -426,11 +425,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 				if (bufInputStream != null)
 					bufInputStream.close();
-
-				if (isCancelled)
-				{
-					throw new RemoteFileCancelledException();
-				}
 			}
 			catch (IOException e)
 			{
@@ -438,6 +432,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				throw new RemoteFileIOException(e);
 			}
 
+
+			if (isCancelled)
+			{
+				throw new RemoteFileCancelledException();
+			}
 		}
 
 		return true;
@@ -620,15 +619,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				if (bufInputStream != null)
 					bufInputStream.close();
 
-				if (isCancelled)
-				{
-					throw new RemoteFileCancelledException();
-				}
+
 			}
 			catch (IOException e)
 			{
 //				UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
 				throw new RemoteFileIOException(e);
+			}
+			
+			if (isCancelled)
+			{
+				throw new RemoteFileCancelledException();
 			}
 
 			if (totalBytes > 0)
@@ -721,6 +722,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				{
 					dlistener.waitForUpdate();
 				}
+				
 				catch (InterruptedException e)
 				{
 					// cancel monitor if it's still not cancelled
@@ -734,6 +736,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				}
 			}
 		}
+
 		catch (Exception e)
 		{
 			throw new RemoteFileIOException(e);
@@ -841,7 +844,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		catch (IOException e)
 		{
-			throw new RemoteFileIOException(e);
+			return false;
 		}
 		return true;
 	}
@@ -2065,12 +2068,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				return true;
 			}
 		}
-		else {
-			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
+		throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
 					IStatus.ERROR,
 					CommonMessages.MSG_ERROR_UNEXPECTED));
-		}
 	}
 
 	public boolean setReadOnly(String parent, String name,
@@ -2093,17 +2094,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				}
 				catch (Exception e)
 				{
-
+					throw new RemoteFileIOException(e);
 				}
 				return true;
 			}
 		}
-		else {
-			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
-					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
-					IStatus.ERROR,
-					CommonMessages.MSG_ERROR_UNEXPECTED));
-		}
+		throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
+				ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+				IStatus.ERROR,
+				CommonMessages.MSG_ERROR_UNEXPECTED));
 	}
 
 	/**
@@ -2128,6 +2127,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					getStatusMonitor(ds).waitForUpdate(status);
 				}
 				catch (Exception e) {
+					throw new RemoteFileIOException(e);
 				}
 
 				remoteEncoding = encodingElement.getValue();
@@ -2230,6 +2230,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					    permissionsInt = accessInt; // leave permissions in decimal
 					}
 					catch (Exception e){
+						throw new RemoteFileIOException(e);
 					}
 
 					// user

@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.terminals.ssh;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.eclipse.rse.internal.subsystems.terminals.ssh.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
@@ -16,5 +15,4 @@ Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.rse.internal.subsystems.terminals.ssh;x-internal:=true,
- org.eclipse.rse.subsystems.terminals.ssh
+Export-Package: org.eclipse.rse.subsystems.terminals.ssh

@@ -12,7 +12,7 @@
 
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.memory;
 
-import org.eclipse.dd.dsf.debug.memory.IMemoryBlockUpdatePolicy;
+import org.eclipse.dd.dsf.debug.internal.provisional.model.IMemoryBlockUpdatePolicyProvider;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -38,9 +38,9 @@ public class RefreshAction implements IViewActionDelegate {
 
 	public void run(IAction action) {
 		
-		if(fMemoryBlock instanceof IMemoryBlockUpdatePolicy)
+		if(fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider)
 		{
-			((IMemoryBlockUpdatePolicy) fMemoryBlock).clearCache();
+			((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).clearCache();
 			IMemoryRenderingContainer containers[] = fView.getMemoryRenderingContainers();
 			for(int i = 0; i < containers.length; i++)
 			{

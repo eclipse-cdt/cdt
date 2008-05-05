@@ -12,7 +12,7 @@
 
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.memory;
 
-import org.eclipse.dd.dsf.debug.memory.IMemoryBlockUpdatePolicy;
+import org.eclipse.dd.dsf.debug.internal.provisional.model.IMemoryBlockUpdatePolicyProvider;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -69,7 +69,7 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
 
 		@Override
 		public void run() {
-            ((IMemoryBlockUpdatePolicy) fMemoryBlock).setUpdatePolicy(fID);
+            ((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).setUpdatePolicy(fID);
             fUpdatePolicy = fID;
         }
     
@@ -115,13 +115,13 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
     		
     		if(fMemoryBlock != null)
     		{
-    			if(fMemoryBlock instanceof IMemoryBlockUpdatePolicy)
+    			if(fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider)
     	    	{
-    	    		String currentPolicy = ((IMemoryBlockUpdatePolicy) fMemoryBlock).getUpdatePolicy();
+    	    		String currentPolicy = ((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).getUpdatePolicy();
     	    		if(fUpdatePolicy == null)
     	    			fUpdatePolicy = currentPolicy;
     	    		
-    	    		((IMemoryBlockUpdatePolicy) fMemoryBlock).setUpdatePolicy(fUpdatePolicy);
+    	    		((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).setUpdatePolicy(fUpdatePolicy);
     	    	}
     		}
     	}
@@ -147,9 +147,9 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
     }
 
     private void fillMenu(Menu menu) {
-    	if(fMemoryBlock instanceof IMemoryBlockUpdatePolicy)
+    	if(fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider)
     	{
-    		IMemoryBlockUpdatePolicy blockPolicy = (IMemoryBlockUpdatePolicy) fMemoryBlock;
+    		IMemoryBlockUpdatePolicyProvider blockPolicy = (IMemoryBlockUpdatePolicyProvider) fMemoryBlock;
     		
     		String currentPolicy = blockPolicy.getUpdatePolicy();
     		

@@ -13,7 +13,6 @@
 package org.eclipse.rse.subsystems.terminals.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -34,7 +33,7 @@ public final class TerminalServiceSubSystem extends SubSystem implements
 
     protected ITerminalService _hostService = null;
 
-    private ArrayList children;
+    private ArrayList children = new ArrayList();
 
     public class Refresh implements Runnable {
         private TerminalServiceSubSystem _ss;
@@ -53,14 +52,12 @@ public final class TerminalServiceSubSystem extends SubSystem implements
     protected TerminalServiceSubSystem(IHost host,
             IConnectorService connectorService) {
         super(host, connectorService);
-        children = new ArrayList();
     }
 
     public TerminalServiceSubSystem(IHost host,
             IConnectorService connectorService, ITerminalService hostService) {
         super(host, connectorService);
         _hostService = hostService;
-        children = new ArrayList();
     }
 
     public ITerminalService getTerminalService() {
@@ -79,47 +76,41 @@ public final class TerminalServiceSubSystem extends SubSystem implements
     }
 
     public void removeChild(TerminalElement element) {
-		synchronized (children) {
-            if (children.size() > 0) {
+    	if(element!=null){
+		    synchronized (children) {
                 children.remove(element);
-            }
-		}
-		Display.getDefault().asyncExec(new Refresh(this));
+		    }
+		    Display.getDefault().asyncExec(new Refresh(this));
+    	}
     }
 
     public void removeChild(String terminalTitle) {
-        if (children.size() > 0) {
-            TerminalElement element = getChild(terminalTitle);
-            if (element != null){
-        		synchronized (children) {
-                    children.remove(element);
-        		}
-                Display.getDefault().asyncExec(new Refresh(this));
-            }
-        }
-        
+        removeChild(getChild(terminalTitle));
     }
     public TerminalElement getChild(String terminalTitle) {
-        if (children != null) {
-            Iterator iterator = children.iterator();
-            while (iterator.hasNext()){
-                TerminalElement element = (TerminalElement)iterator.next();
-                if (element.getName().equals(terminalTitle))
-                    return element;
-            }
+        Object[] children = getChildren();
+        for (int i = 0, e = children.length; i < e; i++) {
+            TerminalElement element = (TerminalElement)children[i];
+            if (element.getName().equals(terminalTitle))
+                return element;
         }
         return null;
     }
     public Object[] getChildren() {
-        if (children != null)
-            return children.toArray();
-        return null;
+        Object[] result;
+        synchronized (children) {
+            result = (Object[]) children
+                    .toArray(new Object[children.size()]);
+        }
+        return result;
     }
 
     public boolean hasChildren() {
-        if (children != null && children.size() > 0)
-            return true;
-        return false;
+        synchronized (children) {
+            if (children.size() > 0)
+                return true;
+            return false;
+        }
     }
 
     public void setTerminalService(ITerminalService service) {
@@ -151,21 +142,20 @@ public final class TerminalServiceSubSystem extends SubSystem implements
         return true;
     }
     public void cancelAllTerminals() {
-        if (children == null || children.size() == 0)
+        if (children.size() == 0)
             return;
-
-        for (int i = children.size() - 1; i >= 0; i--) {
-            TerminalElement element = (TerminalElement) children.get(i);
-
+        Object[] terminals = getChildren();
+        for (int i = terminals.length-1; i >= 0; i--) {
+            TerminalElement element = (TerminalElement)terminals[i];
             try {
                 removeTerminalElement(element);
             } catch (Exception e) {
             	RSECorePlugin.getDefault().getLogger().logError("Error removing terminal", e); //$NON-NLS-1$
             }
-
         }
-
-        children.clear();
+        synchronized(children){
+            children.clear();
+        }
         Display.getDefault().asyncExec(new Refresh(this));
 
     }

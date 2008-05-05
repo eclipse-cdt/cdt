@@ -1578,6 +1578,7 @@ member_declaration
           /. $Build  consumeMemberDeclarationQualifiedId();  $EndBuild ./ 
       | using_declaration  
       | template_declaration
+      | explicit_specialization  -- is this spec?
       | visibility_label 
       | ERROR_TOKEN
           /. $Build  consumeDeclarationProblem();  $EndBuild ./

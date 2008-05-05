@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  * Martin Oberhuber (wind River) - [203105] Decouple recursive plugin activation of UI adapters
@@ -20,20 +20,19 @@
 
 package org.eclipse.rse.internal.subsystems.files.core;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends Plugin {
 
 	//The shared instance.
 	private static Activator plugin;
-	
+
 	public static final String PLUGIN_ID = "org.eclipse.rse.subsystems.files.core"; //$NON-NLS-1$
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -63,14 +62,4 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.subsystems.files.core", path); //$NON-NLS-1$
-	}
 }

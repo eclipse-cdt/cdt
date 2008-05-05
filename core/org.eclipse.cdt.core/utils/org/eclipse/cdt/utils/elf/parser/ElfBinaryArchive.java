@@ -36,7 +36,7 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive#getObjects()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()
 	 */
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {
@@ -67,8 +67,6 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 	}
 	
 	/**
-	 * @param headers
-	 * @param children2
 	 * @deprecated use {@link ElfBinaryArchive#createArchiveMembers(ARHeader[])} 
 	 */
 	@Deprecated

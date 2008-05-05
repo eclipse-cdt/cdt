@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class MachOBinaryShared extends MachOBinaryObject implements IBinaryShared {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param type
-	 */
 	protected MachOBinaryShared(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.SHARED);
 	}

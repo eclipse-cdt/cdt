@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class PEBinaryShared extends PEBinaryObject implements IBinaryShared {
 
-	/**
-	 * @param parser
-	 * @param p
-	 * @param type
-	 */
 	public PEBinaryShared(IBinaryParser parser, IPath p) {
 		super(parser, p, IBinaryFile.SHARED);
 	}

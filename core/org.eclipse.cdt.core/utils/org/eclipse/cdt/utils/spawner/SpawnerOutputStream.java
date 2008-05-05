@@ -11,15 +11,15 @@
 package org.eclipse.cdt.utils.spawner;
 
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class SpawnerOutputStream extends OutputStream {
 	private int fd;
 
 	/**
-	 * Fome a Unix valid file descriptor set a Reader.
-	 * @param desc file descriptor.
+	 * From a Unix valid file descriptor set a Reader.
+	 * @param fd file descriptor.
 	 */
 	public SpawnerOutputStream(int fd) {
 		this.fd = fd;

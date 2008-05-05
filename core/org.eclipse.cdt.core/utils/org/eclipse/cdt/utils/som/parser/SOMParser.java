@@ -148,9 +148,6 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 		return new SOMBinaryArchive(this, path);
 	}
 
-	/**
-	 * @return
-	 */
 	protected DefaultGnuToolFactory createGNUToolFactory() {
 		return new DefaultGnuToolFactory(this);
 	}
@@ -158,6 +155,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IGnuToolFactory.class)) {

@@ -18,14 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 public interface IASTDeclarationAmbiguity extends IASTDeclaration
 {
 
-    /**
-     * @param decl
-     */
     public void addDeclaration( IASTDeclaration decl );
     
-    /**
-     * @return
-     */
     public IASTDeclaration [] getDeclarations();
     
 }

@@ -1154,7 +1154,7 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param fragment the fragment to check
-	 * @param second the array to check
+	 * @param name the array to check
 	 * @param startIndex the starting index
 	 * @param isCaseSensitive check whether or not the equality should be case sensitive
 	 * @return true if the name contains the fragment at the starting index startIndex according to the 
@@ -1916,8 +1916,8 @@ public final class CharOperation {
 	 */
 	public static final int occurencesOf(char toBeFound, char[] array) {
 		int count = 0;
-		for (int i = 0; i < array.length; i++)
-			if (toBeFound == array[i])
+		for (char element : array)
+			if (toBeFound == element)
 				count++;
 		return count;
 	}
@@ -2116,9 +2116,9 @@ public final class CharOperation {
 	 * </li>
 	 * </ol>
 	 * 
-	 * @param the given array
+	 * @param array the given array
 	 * @param toBeReplaced characters to be replaced
-	 * @param the replacement characters
+	 * @param replacementChars the replacement characters
 	 * @return a new array of characters with substitutions or the given array if none
 	 * @exception NullPointerException if the given array is null
 	 */
@@ -2564,7 +2564,7 @@ public final class CharOperation {
 	 * </li>
 	 * </ol>
 	 * 
-	 * @param chars the given array
+	 * @param array the given array
 	 * @return a string which is the concatenation of the given array using the '.' as a separator
 	 */
 	final static public String toString(char[][] array) {

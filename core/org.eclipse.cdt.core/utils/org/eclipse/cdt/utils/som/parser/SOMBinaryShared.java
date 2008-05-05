@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class SOMBinaryShared extends SOMBinaryObject implements IBinaryShared {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param type
-	 */
 	protected SOMBinaryShared(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.SHARED);
 	}

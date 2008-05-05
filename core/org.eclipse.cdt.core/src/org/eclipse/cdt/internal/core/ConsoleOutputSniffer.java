@@ -31,9 +31,6 @@ public class ConsoleOutputSniffer {
     	private StringBuffer currentLine = new StringBuffer();
     	private OutputStream outputStream = null;
         
-    	/**
-		 * @param consoleErrorStream
-		 */
 		public ConsoleOutputStream(OutputStream outputStream) {
 			this.outputStream = outputStream;
 		}
@@ -144,8 +141,6 @@ public class ConsoleOutputSniffer {
 	 * Returns an output stream that will be sniffed.
 	 * This stream should be hooked up so the command
 	 * output stream goes into here.
-	 * 
-	 * @return
 	 */
 	public OutputStream getOutputStream() {
 	    incNOpens();
@@ -156,8 +151,6 @@ public class ConsoleOutputSniffer {
 	 * Returns an error stream that will be sniffed.
 	 * This stream should be hooked up so the command
 	 * error stream goes into here.
-	 * 
-	 * @return
 	 */
 	public OutputStream getErrorStream() {
 	    incNOpens();

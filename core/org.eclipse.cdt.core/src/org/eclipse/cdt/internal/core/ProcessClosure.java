@@ -200,8 +200,6 @@ public class ProcessClosure {
 	 * The same functionality as "isAlive()"
 	 * but does not affect out streams,
 	 * because they can be shared among processes
-	 * 
-	 * @return
 	 */
 	public boolean isRunning() {
 		if (fProcess != null) {

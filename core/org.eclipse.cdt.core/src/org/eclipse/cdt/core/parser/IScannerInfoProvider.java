@@ -18,9 +18,6 @@ public interface IScannerInfoProvider {
 	/**
 	 * The receiver will answer the current state of the build information for the 
 	 * resource specified in the argument.
-	 * 
-	 * @param resource
-	 * @return
 	 */
 	public IScannerInfo getScannerInformation(IResource resource); 	
 

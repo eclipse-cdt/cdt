@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class CygwinPEBinaryShared extends CygwinPEBinaryObject implements IBinaryShared {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param type
-	 */
 	protected CygwinPEBinaryShared(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.SHARED);
 	}

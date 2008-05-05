@@ -13,31 +13,23 @@ package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
-
+/**
+ * Interface for providing a configuration for the preprocessor. 
+ * @see IExtendedScannerInfo
+ */
 public interface IScannerInfo {
 	/**
-	 * Answers a <code>Map</code> containing all the defined preprocessor 
-	 * symbols and their values as string tuples, (symbol_name, symbol_value).
+	 * Returns a <code>Map</code> containing all the defined preprocessor 
+	 * symbols and their values.
 	 * Symbols defined without values have an empty string for a value. For 
 	 * example,-Dsymbol=value would have a map entry (symbol,value). A symbol
-	 * defined as -Dsymbol would have a map entry of (symbol,"").
-	 * 
-	 * If there are no defined symbols, the receiver will return 
-	 * an empty Map, never <code>null</code>. 
-	 *  
-	 * @return
+	 * defined as -Dsymbol= would have a map entry of (symbol,"").
 	 */
 	public Map<String, String> getDefinedSymbols();
 
 	/**
-	 * Answers a <code>String</code> array containing the union of all the 
-	 * built-in include search paths followed by the user-defined include 
-	 * search paths. 
-	 * 
-	 * If there are no paths defined, the receiver will return an empty 
-	 * array, never <code>null</code>
-	 * 
-	 * @return
+	 * Returns an array of paths that are searched when processing an include directive.
+	 * see {@link IExtendedScannerInfo#getLocalIncludePath()}
 	 */
 	public String[] getIncludePaths();
 }

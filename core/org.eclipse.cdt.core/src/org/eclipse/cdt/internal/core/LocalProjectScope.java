@@ -48,7 +48,7 @@ public class LocalProjectScope implements IScopeContext {
 	 * Create and return a new local project scope for the given project. The given
 	 * project must not be <code>null</code>.
 	 * 
-	 * @param context the project
+	 * @param projectName the name of the project
 	 * @exception IllegalArgumentException if the project is <code>null</code>
 	 */
 	public LocalProjectScope(String projectName) {
@@ -106,8 +106,7 @@ public class LocalProjectScope implements IScopeContext {
 	private static void deletePrefs(Preferences prefs) throws BackingStoreException {
 		prefs.clear();
 		String[] children= prefs.childrenNames();
-		for (int i = 0; i < children.length; i++) {
-			String child = children[i];
+		for (String child : children) {
 			prefs.node(child).removeNode();
 		}
 		prefs.flush();
@@ -116,16 +115,14 @@ public class LocalProjectScope implements IScopeContext {
 
 	private static void copyPrefs(Preferences prefs, Preferences target) throws BackingStoreException {
 		String[] keys= prefs.keys();
-		for (int i = 0; i < keys.length; i++) {
-			String key = keys[i];
+		for (String key : keys) {
 			String val= prefs.get(key, null);
 			if (val != null) {
 				target.put(key, val);
 			}
 		}
 		String[] children= prefs.childrenNames();
-		for (int i = 0; i < children.length; i++) {
-			String child = children[i];
+		for (String child : children) {
 			copyPrefs(prefs.node(child), target.node(child));
 		}
 		target.flush();

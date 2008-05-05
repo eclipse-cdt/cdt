@@ -43,9 +43,6 @@ public class ParserUtil
 	private static IParserLogService parserLogService = new ParserLogService(DebugLogConstants.PARSER );
 	private static IParserLogService scannerLogService = new ParserLogService(DebugLogConstants.SCANNER );
 
-	/**
-	 * @return
-	 */
 	public static IParserLogService getScannerLogService() {
 		return scannerLogService;
 	}
@@ -107,10 +104,6 @@ public class ParserUtil
 		return InternalParserUtil.createFileReader(finalPath);
 	}
 
-	/**
-	 * @param finalPath
-	 * @return
-	 */
 	public static IResource getResourceForFilename(String finalPath) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		if( workspace == null )
@@ -136,9 +129,9 @@ public class ParserUtil
 
             // note for findFilesForLocation(IPath): This method does not consider whether resources actually exist at the given locations.
             // so only return the first IFile found that is accessible
-            for(int i=0; i<files.length; i++) {
-            	if (files[i].isAccessible())
-            		return files[i];
+            for (IFile file : files) {
+            	if (file.isAccessible())
+            		return file;
             }
             
     		return null;
@@ -149,11 +142,6 @@ public class ParserUtil
         }
 	}
 
-	/**
-	 * @param resultingResource
-	 * @param workingCopies
-	 * @return
-	 */
 	protected static char[] findWorkingCopy(IResource resultingResource, Iterator<IWorkingCopy> workingCopies) {
 		if( parserLogService.isTracing() )
 			parserLogService.traceLog( "Attempting to find the working copy for " + resultingResource.getName() ); //$NON-NLS-1$

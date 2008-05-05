@@ -105,7 +105,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getName()
 	 */
 	@Override
 	public String getName() {

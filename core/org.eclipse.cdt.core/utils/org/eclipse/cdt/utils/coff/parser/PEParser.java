@@ -85,7 +85,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
+	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
 	 */
 	public String getFormat() {
 		return "PE"; //$NON-NLS-1$
@@ -132,42 +132,22 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 		return 512;
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	protected IBinaryExecutable createBinaryExecutable(IPath path) {
 		return new PEBinaryExecutable(this, path);
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	protected IBinaryObject createBinaryCore(IPath path) {
 		return new PEBinaryObject(this, path, IBinaryFile.CORE);
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	protected IBinaryObject createBinaryObject(IPath path) {
 		return new PEBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	protected IBinaryShared createBinaryShared(IPath path) {
 		return new PEBinaryShared(this, path);
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
 		return new PEBinaryArchive(this, path);
 	}

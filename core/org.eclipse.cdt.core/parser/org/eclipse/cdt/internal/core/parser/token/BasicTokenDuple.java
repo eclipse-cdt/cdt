@@ -43,16 +43,10 @@ public class BasicTokenDuple implements ITokenDuple {
 	protected final IToken firstToken, lastToken;
 
 	
-	/**
-	 * @return
-	 */
 	public IToken getFirstToken() {
 		return firstToken;
 	}
 
-	/**
-	 * @return
-	 */
 	public IToken getLastToken() {
 		return lastToken;
 	}
@@ -317,9 +311,6 @@ public class BasicTokenDuple implements ITokenDuple {
 		return TokenFactory.createTokenDuple( getToken( startIndex ), getToken( endIndex) );
     }
 
-    /**
-     * @param endIndex
-     */
     public IToken getToken(int index)
     {
         if( index < 0 ) return null;

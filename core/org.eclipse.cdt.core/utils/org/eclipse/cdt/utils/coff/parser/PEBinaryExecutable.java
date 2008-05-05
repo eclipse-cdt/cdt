@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class PEBinaryExecutable extends PEBinaryObject implements IBinaryExecutable {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param isCorefile
-	 */
 	public PEBinaryExecutable(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.EXECUTABLE);
 	}

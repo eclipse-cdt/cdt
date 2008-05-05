@@ -519,10 +519,6 @@ public class SOM {
 		return buffer.toString();
 	}
 	
-	/**
-	 * @param hints
-	 * @return
-	 */
 	public static boolean isSOMHeader(byte[] hints) {
 		if (hints != null && hints[0] == 0x02 && 
 			(hints[1] == (byte)0xb || hints[1] == (byte)0x10 || hints[1] == (byte)0x14) ) {
@@ -531,11 +527,6 @@ public class SOM {
 		return false;
 	}
 
-	/**
-	 * @param hints
-	 * @return
-	 * @throws IOException
-	 */
 	public static Attribute getAttributes(byte[] hints) throws IOException {
 		SOM emptyXCoff = new SOM();
 		emptyXCoff.filehdr = new SOM.FileHeader(hints, false); // big endian
@@ -544,11 +535,6 @@ public class SOM {
 		return attribute;
 	}
 
-	/**
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 */
 	public static Attribute getAttributes(String file) throws IOException {
 		SOM xcoff = new SOM(file);
 		Attribute attribute = xcoff.getAttributes();

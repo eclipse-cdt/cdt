@@ -31,15 +31,9 @@ public class ParserMessages {
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private ParserMessages() {
 	}
-	/**
-	 * @param key
-	 * @return
-	 */
+
 	public static String getString(String key) {
 		if( resourceBundle == null )
 			return '#' + key +'#';

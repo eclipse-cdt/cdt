@@ -19,19 +19,13 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 public interface ICdtVariableSupplier {
 	
 	/**
-	 * 
 	 * @param macroName macro name
-	 * @param contextType context type
-	 * @param contextData context data
 	 * @return IBuildMacro
 	 */
 	public ICdtVariable getVariable(String macroName,
 			IVariableContextInfo context);
 	
 	/**
-	 * 
-	 * @param contextType context type
-	 * @param contextData context data
 	 * @return IBuildMacro[]
 	 */
 	public ICdtVariable[] getVariables(IVariableContextInfo context);

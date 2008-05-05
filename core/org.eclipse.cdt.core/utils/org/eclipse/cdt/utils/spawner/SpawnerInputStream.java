@@ -20,8 +20,8 @@ class SpawnerInputStream extends InputStream {
 	private int fd;
 
 	/**
-	 * Fome a Unix valid file descriptor set a Reader.
-	 * @param desc file descriptor.
+	 * From a Unix valid file descriptor set a Reader.
+	 * @param fd file descriptor.
 	 */
 	public SpawnerInputStream(int fd) {
 		this.fd = fd;

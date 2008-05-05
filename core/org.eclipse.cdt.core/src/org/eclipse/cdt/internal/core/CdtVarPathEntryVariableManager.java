@@ -92,9 +92,9 @@ public class CdtVarPathEntryVariableManager implements
 		public ICdtVariable[] getVariables(IVariableContextInfo context) {
 			ICdtVariable vars[] = fUserVarSupplier.getMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
 			List list = new ArrayList();
-			for(int i = 0; i < vars.length; i++){
-				if(getVariablePath(vars[i]) != null)
-					list.add(vars[i]);
+			for (ICdtVariable var : vars) {
+				if(getVariablePath(var) != null)
+					list.add(var);
 			}
 			return (ICdtVariable[])list.toArray(new ICdtVariable[list.size()]);
 		}
@@ -225,15 +225,14 @@ public class CdtVarPathEntryVariableManager implements
 	}
 	
 	/**
-	 * @see org.eclipse.core.resources.
-	 * IPathEntryVariableManager#addChangeListener(IPathEntryVariableChangeListener)
+	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#addChangeListener(IPathEntryVariableChangeListener)
 	 */
 	public void addChangeListener(IPathEntryVariableChangeListener listener) {
 		fListeners.add(listener);
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.
+	 * @see org.eclipse.cdt.core.resources.
 	 * IPathEntryVariableManager#removeChangeListener(IPathEntryVariableChangeListener)
 	 */
 	public void removeChangeListener(IPathEntryVariableChangeListener listener) {
@@ -259,10 +258,10 @@ public class CdtVarPathEntryVariableManager implements
 	}
 	
 	private void fireEvent(ICdtVariable vars[], int type){
-		for(int i = 0; i < vars.length; i++){
-			IPath path = getVariablePath(vars[i]);
+		for (ICdtVariable var : vars) {
+			IPath path = getVariablePath(var);
 			if(path != null)
-				fireVariableChangeEvent(vars[i].getName(), path, type);
+				fireVariableChangeEvent(var.getName(), path, type);
 		}
 		
 	}

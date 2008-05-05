@@ -34,7 +34,7 @@ public class MachOBinaryArchive extends BinaryFile implements IBinaryArchive {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive#getObjects()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()
 	 */
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {

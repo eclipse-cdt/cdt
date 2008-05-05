@@ -22,8 +22,6 @@ public interface IIndexLocationConverter {
 	/**
 	 * Convert a raw string in an internal IIndexFragment implementation specific format to 
 	 * an IIndexFileLocation or null if the internal format could not be translated.
-	 * @param raw
-	 * @return
 	 */
 	public abstract IIndexFileLocation fromInternalFormat(String raw);
 

@@ -87,7 +87,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
+	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
 	 */
 	public String getFormat() {
 		return "ELF"; //$NON-NLS-1$
@@ -107,10 +107,6 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 		return 128;
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
 		return new ElfBinaryArchive(this, path);
 	}

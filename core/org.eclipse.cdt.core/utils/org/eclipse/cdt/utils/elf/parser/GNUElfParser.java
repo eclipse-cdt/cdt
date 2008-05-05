@@ -23,7 +23,7 @@ public class GNUElfParser extends ElfParser {
 	private IGnuToolFactory toolFactory; 
 	
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
+	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
 	 */
 	@Override
 	public String getFormat() {
@@ -71,9 +71,6 @@ public class GNUElfParser extends ElfParser {
 		return new GNUElfBinaryArchive(this, path);
 	}
 	
-	/**
-	 * @return
-	 */
 	protected IGnuToolFactory createGNUToolFactory() {
 		return new DefaultGnuToolFactory(this);
 	}

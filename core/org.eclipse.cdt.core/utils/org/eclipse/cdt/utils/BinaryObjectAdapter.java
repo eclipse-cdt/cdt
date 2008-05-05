@@ -66,7 +66,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getBSS()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getBSS()
 	 */
 	public long getBSS() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -77,7 +77,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getCPU()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getCPU()
 	 */
 	public String getCPU() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -88,7 +88,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getData()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getData()
 	 */
 	public long getData() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -99,7 +99,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getText()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getText()
 	 */
 	public long getText() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -110,7 +110,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#hasDebug()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#hasDebug()
 	 */
 	public boolean hasDebug() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -121,7 +121,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#isLittleEndian()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#isLittleEndian()
 	 */
 	public boolean isLittleEndian() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -132,7 +132,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryExecutable#getNeededSharedLibs()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable#getNeededSharedLibs()
 	 */
 	public String[] getNeededSharedLibs() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -143,7 +143,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryShared#getSoName()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryShared#getSoName()
 	 */
 	public String getSoName() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
@@ -154,7 +154,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getName()
 	 */
 	public String getName() {
 		return getPath().lastSegment().toString();
@@ -166,7 +166,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getSymbols()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	public abstract ISymbol[] getSymbols();
 	public abstract IAddressFactory getAddressFactory();

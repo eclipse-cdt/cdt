@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 public interface ITypeContainer extends IType{
     /**
      * get the type this contains
-     * @return
      * @throws DOMException
      */
     IType getType() throws DOMException;

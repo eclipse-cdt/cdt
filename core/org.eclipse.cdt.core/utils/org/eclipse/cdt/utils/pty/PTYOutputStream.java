@@ -11,8 +11,8 @@
 package org.eclipse.cdt.utils.pty;
 
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.eclipse.cdt.utils.pty.PTY.MasterFD;
 
@@ -21,8 +21,8 @@ public class PTYOutputStream extends OutputStream {
 	MasterFD master;
 
 	/**
-	 * Fome a Unix valid file descriptor set a Reader.
-	 * @param desc file descriptor.
+	 * From a Unix valid file descriptor set a Reader.
+	 * @param fd file descriptor.
 	 */
 	public PTYOutputStream(MasterFD fd) {
 		master = fd;

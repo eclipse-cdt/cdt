@@ -31,6 +31,7 @@ import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff.Symbol;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -54,11 +55,6 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		super(parser, path, header);
 	}
 	
-	/**
-	 * @param parser
-	 * @param path
-	 * @param executable
-	 */
 	public CygwinPEBinaryObject(IBinaryParser parser, IPath path, int type) {
 		super(parser, path, type);
 	}
@@ -136,9 +132,6 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		return null;
 	}
 
-	/**
-	 * @return
-	 */
 	protected CygPath getCygPath() {
 		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
@@ -159,7 +152,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	/**
 	 * @throws IOException
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
 	@Override
 	public InputStream getContents() throws IOException {
@@ -274,14 +267,14 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 */
 	@Override
 	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List list) {
-		for (int i = 0; i < peSyms.length; i++) {
-			if (peSyms[i].isFunction() || peSyms[i].isPointer() || peSyms[i].isArray()) {
-				String name = peSyms[i].getName(table);
+		for (Symbol peSym : peSyms) {
+			if (peSym.isFunction() || peSym.isPointer() || peSym.isArray()) {
+				String name = peSym.getName(table);
 				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {
 					continue;
 				}
-				int type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
-				IAddress addr = new Addr32(peSyms[i].n_value);
+				int type = peSym.isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
+				IAddress addr = new Addr32(peSym.n_value);
 				int size = 4;
 				if (symbolLoadingCPPFilt != null) {
 					try {
@@ -333,6 +326,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {

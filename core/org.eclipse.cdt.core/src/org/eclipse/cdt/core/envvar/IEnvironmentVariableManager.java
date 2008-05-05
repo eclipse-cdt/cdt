@@ -28,10 +28,10 @@ public interface IEnvironmentVariableManager{
 	 * 
 	 * @return the reference to the IBuildEnvironmentVariable interface representing 
 	 * the variable of a given name
-	 * @param variableName environment variable name
+	 * @param name environment variable name
 	 * if environment variable names are case insensitive in the current OS, 
 	 * the environment variable provider will query the getVariable method of suppliers always
-	 * passing it the uppercase variable name not depending on the case of the variableName
+	 * passing it the upper-case variable name not depending on the case of the variableName
 	 * passed to the IEnvironmentVariableProvider.getVariable() method. This will prevent the 
 	 * supplier from answering different values for the same variable given the names that differ
 	 * only by case. E.g. if the current OS does not support case sensitive variables both of the 
@@ -41,12 +41,6 @@ public interface IEnvironmentVariableManager{
 	 *   provider.getVariable("foo",level,includeParentContexts);
 	 *
 	 * will result in asking suppliers for the "FOO" variable
-	 *
-	 * @param level could be one of the following:
-	 *    1. IConfiguration to represent the configuration
-	 *    2. IManagedProject to represent the managed project
-	 *    3. IWorkspace to represent the workspace
-	 *    4. null to represent the system environment passed to eclipse
 	 */
 	public IEnvironmentVariable getVariable(String name, ICConfigurationDescription cfg, boolean resolveMacros);
 

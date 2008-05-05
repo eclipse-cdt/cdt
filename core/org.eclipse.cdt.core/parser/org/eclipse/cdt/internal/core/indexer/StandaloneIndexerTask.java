@@ -70,7 +70,6 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 
 	/**
 	 * Return the indexer.
-	 * @return
 	 */
 	final public StandaloneIndexer getIndexer() {
 		return fIndexer;

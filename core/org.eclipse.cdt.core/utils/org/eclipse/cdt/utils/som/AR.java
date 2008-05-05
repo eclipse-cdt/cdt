@@ -96,14 +96,6 @@ public class AR {
 			return temp;
 		}
 
-		/**
-		 *  Create a new SOM object for the object file.
-		 *
-		 * @throws IOException 
-		 *    Not a valid SOM object file.
-		 * @return A new SOM object.  
-		 * @see SOM#SOM( String, long )
-		 */
 		public long getObjectDataOffset() {
 			return somOffset;
 		}
@@ -292,15 +284,15 @@ public class AR {
 		loadHeaders();
 
 		count = 0;
-		for (int i = 0; i < memberHeaders.length; i++) {
-			object_name = memberHeaders[i].getObjectName();
+		for (ARHeader memberHeader : memberHeaders) {
+			object_name = memberHeader.getObjectName();
 			if (names != null && !stringInStrings(object_name, names))
 				continue;
 
 			object_name = "" + count + "_" + object_name; //$NON-NLS-1$ //$NON-NLS-2$
 			count++;
 
-			byte[] data = memberHeaders[i].getObjectData();
+			byte[] data = memberHeader.getObjectData();
 			File output = new File(outdir, object_name);
 			names_used.add(object_name);
 
@@ -313,8 +305,8 @@ public class AR {
 	}
 
 	private boolean stringInStrings(String str, String[] set) {
-		for (int i = 0; i < set.length; i++)
-			if (str.compareTo(set[i]) == 0)
+		for (String element : set)
+			if (str.compareTo(element) == 0)
 				return true;
 		return false;
 	}

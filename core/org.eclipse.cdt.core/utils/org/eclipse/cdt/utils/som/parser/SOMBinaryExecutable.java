@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class SOMBinaryExecutable extends SOMBinaryObject implements IBinaryExecutable {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param header
-	 */
 	public SOMBinaryExecutable(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.EXECUTABLE);
 	}

@@ -43,8 +43,6 @@ public interface ICodeReaderCache {
 	 * The units are relative to the implementation of the cache.  It could be
 	 * the total number of objects in the cache, or the total space the cache is 
 	 * using in MB.
-	 * 
-	 * @return
 	 */
 	public int getCurrentSpace();
 

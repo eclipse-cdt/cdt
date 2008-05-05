@@ -71,7 +71,6 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	/**
 	 * Returns the factory that provides CodeReaders for files included
 	 * by the source code being parsed.
-	 * @return
 	 */
 	public ICodeReaderFactory getCodeReaderFactory() {
 		return fCodeReaderFactory;

@@ -164,7 +164,6 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the collection of valid file extensions for C/C++ source.
-	 * @return
 	 */
 	public Set getValidSourceUnitNames() {
 		return fValidSourceUnitNames;
@@ -179,7 +178,6 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the IScannerInfo that provides include paths and defined symbols.
-	 * @return
 	 */
 	public IScannerInfo getScannerInfo() {
 		return fScanner;
@@ -187,7 +185,6 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the ILanguageMapper that determines the ILanguage for a file.
-	 * @return
 	 */
 	public ILanguageMapper getLanguageMapper() {
 		return fMapper;
@@ -195,7 +192,6 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the logger.
-	 * @return
 	 */
 	public IParserLogService getParserLog() {
 		return fLog;
@@ -204,7 +200,6 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Returns true if indexing activities should be shown.
 	 * Otherwise, this method returns false.
-	 * @return
 	 */
 	public boolean getShowActivity() {
 		return fShowActivity;
@@ -220,7 +215,6 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Returns true if problems during indexing should be shown.
 	 * Otherwise, this method returns false.
-	 * @return
 	 */
 	public boolean getShowProblems() {
 		return fShowProblems;
@@ -236,7 +230,6 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Returns true if statistics should be gathered during indexing.
 	 * Otherwise, this method returns false..
-	 * @return
 	 */
 	public boolean getTraceStatistics() {
 		return fTraceStatistics;
@@ -269,7 +262,6 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the progress information.
-	 * @return
 	 */
 	public synchronized IndexerProgress getProgressInformation() {
 		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
@@ -277,7 +269,6 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the update options specified.
-	 * @return
 	 */
 	public int getUpdateOptions() {
 		return fUpdateOptions;
@@ -357,8 +348,8 @@ public abstract class StandaloneIndexer {
 			File file = new File(path);
 			if (file.isDirectory()) {
 				String[] files = file.list(filter);
-				for (int i = 0; i < files.length; i++) {
-					added.add(files[i]);
+				for (String file2 : files) {
+					added.add(file2);
 				}
 			}
 			else {				
@@ -377,7 +368,6 @@ public abstract class StandaloneIndexer {
 
 	/**
 	 * Return the type of references the parser should skip.
-	 * @return
 	 */
 	public int getSkipReferences() {
 		return fSkipReferences;
@@ -393,7 +383,6 @@ public abstract class StandaloneIndexer {
 
 	/**
 	 * Returns an array of files that should be parsed up front.
-	 * @return
 	 */
 	public String[] getFilesToParseUpFront() {
 		return fFilesToParseUpFront;
@@ -409,7 +398,6 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the exclusion filter for this indexer.
-	 * @return
 	 */
 	public FilenameFilter getExclusionFilter() {
 		return fExclusionFilter;

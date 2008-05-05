@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class MachOBinaryExecutable extends MachOBinaryObject implements IBinaryExecutable {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param isCoreFile
-	 */
 	public MachOBinaryExecutable(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.EXECUTABLE);
 	}

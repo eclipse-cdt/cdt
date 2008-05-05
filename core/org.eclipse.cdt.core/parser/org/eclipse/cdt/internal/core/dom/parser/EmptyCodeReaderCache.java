@@ -29,13 +29,11 @@ import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 public class EmptyCodeReaderCache implements ICodeReaderCache {
 
 	/**
-	 * Creates a new CodeReader and returns it.
-	 * @param key
-	 * @return
+	 * Creates a new CodeReader for the given file location.
 	 */
-	public CodeReader get(String key) {
+	public CodeReader get(String location) {
 		CodeReader ret = null;
-		ret = InternalParserUtil.createFileReader(key);
+		ret = InternalParserUtil.createFileReader(location);
 		return ret;
 	}
 	
@@ -43,16 +41,13 @@ public class EmptyCodeReaderCache implements ICodeReaderCache {
 	 * This provides support for PartialWorkingCopyCodeReaderFactory.
 	 * @param finalPath
 	 * @param workingCopies
-	 * @return
 	 */
-	public CodeReader createReader( String finalPath, Iterator<IWorkingCopy> workingCopies ) {
+	public CodeReader createReader(String finalPath, Iterator<IWorkingCopy> workingCopies ) {
 		return InternalParserUtil.createFileReader(finalPath);
 	}
 
 	/**
 	 * Returns null.
-	 * @param key
-	 * @return
 	 */
 	public CodeReader remove(String key) {
 		return null;

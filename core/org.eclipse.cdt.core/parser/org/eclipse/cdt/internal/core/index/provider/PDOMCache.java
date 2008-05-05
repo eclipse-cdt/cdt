@@ -37,7 +37,6 @@ class PDOMCache {
 
 	/**
 	 * Returns the instance of the cache
-	 * @return
 	 */
 	public static PDOMCache getInstance() {
 		synchronized(singletonMutex) {

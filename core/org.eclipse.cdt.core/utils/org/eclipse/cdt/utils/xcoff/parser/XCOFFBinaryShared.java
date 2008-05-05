@@ -18,11 +18,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class XCOFFBinaryShared extends XCOFFBinaryObject implements IBinaryShared {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param type
-	 */
 	public XCOFFBinaryShared(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.SHARED);
 	}

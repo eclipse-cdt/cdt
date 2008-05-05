@@ -210,7 +210,6 @@ public interface IIndexFragment {
 
 	/**
 	 * Returns the linkages that are contained in this fragment
-	 * @return
 	 */
 	IIndexLinkage[] getLinkages();
 	
@@ -221,7 +220,7 @@ public interface IIndexFragment {
 	 *    <li>PROPERTY_FRAGMENT_FORMAT_ID</li>
 	 *    <li>PROPERTY_FRAGMENT_FORMAT_VERSION</li>
 	 *    </ul>
-	 * @param key a case-sensitive identifier for a property, or null
+	 * @param propertyName a case-sensitive identifier for a property, or null
 	 * @return the value associated with the key, or null if either no such property is set, or the specified key was null
 	 * @throws CoreException
 	 * @see IIndexFragment#PROPERTY_FRAGMENT_ID

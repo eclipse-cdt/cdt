@@ -58,10 +58,6 @@ public class PartialWorkingCopyCodeReaderFactory
 		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
     }
     
-	/**
-	 * @param path
-	 * @return
-	 */
 	protected CodeReader checkWorkingCopyThenCache(String path) {
 		char [] buffer = ParserUtil.findWorkingCopyBuffer( path, createWorkingCopyIterator() );
 		if( buffer != null )

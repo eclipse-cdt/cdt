@@ -17,19 +17,20 @@ package org.eclipse.cdt.core.parser;
 public interface IExtendedScannerInfo extends IScannerInfo {
 
 	/**
-	 * @return
+	 * Return an array of files which will be preprocessed before parsing the translation-unit in order
+	 * to populate the macro-dictionary.
 	 */
 	public String [] getMacroFiles();
 
 	/**
-	 * @return
+	 * Return an array of files that will be parsed before parsing the translation-unit as if the these
+	 * files were included using include directives.
 	 */
 	public String [] getIncludeFiles();
 
 	/**
-     * Get local inclusions?
-     * 
-	 * @return
+	 * Return an array of paths that is searched after the current directory, when an include directive 
+	 * with double-quotes is processed.
 	 */
 	public String [] getLocalIncludePath();
 }

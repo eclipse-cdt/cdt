@@ -23,21 +23,16 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 public interface IASTInternalScope {
     /**
      * Return the physical IASTNode that this scope was created for
-     * @return
      */
     public IASTNode getPhysicalNode() throws DOMException;
 
 	/**
 	 * Set whether or not all the names in this scope have been cached
-	 * 
-	 * @param b
 	 */
 	public void setFullyCached(boolean b) throws DOMException;
 
 	/**
 	 * whether or not this scope's cache contains all the names
-	 * 
-	 * @return
 	 */
 	public boolean isFullyCached() throws DOMException;
 	

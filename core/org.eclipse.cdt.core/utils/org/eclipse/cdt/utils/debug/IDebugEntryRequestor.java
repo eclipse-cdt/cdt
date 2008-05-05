@@ -72,8 +72,6 @@ public interface IDebugEntryRequestor {
 
 	/**
 	 * Integer constant.
-	 * @param name
-	 * @param address.
 	 */
 	void acceptIntegerConst(String name, int value);
 

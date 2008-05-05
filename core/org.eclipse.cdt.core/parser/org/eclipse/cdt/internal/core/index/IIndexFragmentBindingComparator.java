@@ -12,12 +12,12 @@ package org.eclipse.cdt.internal.core.index;
 
 public interface IIndexFragmentBindingComparator {
 	/**
-	 * Compares to index fragment bindings, or returns {@link Integer.MIN_VALUE} if the comparator is
+	 * Compares to index fragment bindings, or returns {@link Integer#MIN_VALUE} if the comparator is
 	 * not capable of comparing the two objects because of their run-time type.
 	 * <p>
 	 * Compares two index fragment bindings using the following scheme:
 	 * <ul>
-	 * <li>Compares the fully qualfied names, by pair-wise lexicographic comparison
+	 * <li>Compares the fully qualified names, by pair-wise lexicographic comparison
 	 * of individual name components, starting with the innermost scoped name. If
 	 * all pair-wise comparisons are equal, then the comparison routine continues, otherwise returning
 	 * <ul>

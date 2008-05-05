@@ -21,12 +21,6 @@ import org.eclipse.cdt.core.parser.ParserFactory;
  */
 public class InternalParserUtil extends ParserFactory {
 
-	
-
-	/**
-	 * @param finalPath
-	 * @return
-	 */
 	public static CodeReader createFileReader(String finalPath) {
 		File includeFile = new File(finalPath);
 		if (includeFile.exists() && includeFile.isFile()) 

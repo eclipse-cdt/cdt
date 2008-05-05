@@ -71,7 +71,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getSymbols()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	@Override
 	public ISymbol[] getSymbols() {

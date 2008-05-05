@@ -73,7 +73,6 @@ public class ProcessParameter {
 	
 	/**
 	 * Return the Element name.
-	 * @return
 	 */
 	public String getName() {
 		return name;
@@ -81,7 +80,6 @@ public class ProcessParameter {
 	
 	/**
 	 * Returns the Element Type.
-	 * @return
 	 */
 	public byte getType() {
 		return type;
@@ -96,7 +94,6 @@ public class ProcessParameter {
 
 	/**
 	 * Checks whether the element in external. 
-	 * @return
 	 */
 	public boolean isExternal() {
 		return external;

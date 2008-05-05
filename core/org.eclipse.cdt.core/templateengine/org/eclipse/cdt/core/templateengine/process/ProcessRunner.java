@@ -29,16 +29,13 @@ public abstract class ProcessRunner {
 	
 	/**
 	 * Returns the Process Parameters.
-	 * @return
 	 */
 	public ProcessParameter[] getProcessParameters() {
 		return params;
 	}
 	
 	/**
-	 * Checks the whether the arguments are matching to Requied Parameters.
-	 * @param args
-	 * @return
+	 * Checks the whether the arguments are matching the required parameters.
 	 */
 	protected final boolean areArgumentsMatchingRequiredParameters(ProcessArgument[] args) {
 		if ((params == null && args != null) || (params != null && args == null)) {
@@ -60,9 +57,7 @@ public abstract class ProcessRunner {
 	
 	/**
 	 * Return the String containing the mismatching message
-	 * if the arguments are not matching to Requied Parameters.
-	 * @param args
-	 * @return
+	 * if the arguments are not matching the required parameters.
 	 */
 	public String getArgumentsMismatchMessage(ProcessArgument[] args) {
 		if (params == null && args != null) {
@@ -88,11 +83,7 @@ public abstract class ProcessRunner {
 	}
 
 	/**
-	 * Returns the process message based on the pameters.
-	 * @param processId
-	 * @param code
-	 * @param msg
-	 * @return
+	 * Returns the process message based on the parameters.
 	 */
 	protected final String getProcessMessage(String processId, int code, String msg) {
 		switch (code) {

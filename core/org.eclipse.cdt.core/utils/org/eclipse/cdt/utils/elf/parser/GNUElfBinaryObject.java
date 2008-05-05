@@ -120,7 +120,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 
 	/**
 	 * @throws IOException
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
 	@Override
 	public InputStream getContents() throws IOException {

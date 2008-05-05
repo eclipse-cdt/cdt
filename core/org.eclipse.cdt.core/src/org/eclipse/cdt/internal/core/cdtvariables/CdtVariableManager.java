@@ -92,11 +92,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return null;
 	}
 	
-	/**
-	 * @param contextType
-	 * @param contextData
-	 * @return
-	 */
 	public IVariableContextInfo getMacroContextInfo(
 			int contextType,
 			Object contextData){
@@ -175,8 +170,8 @@ public class CdtVariableManager implements ICdtVariableManager {
 	
 	private int getContextType(ICConfigurationDescription des){
 		if(des != null)
-			return DefaultVariableContextInfo.CONTEXT_CONFIGURATION;
-		return DefaultVariableContextInfo.CONTEXT_WORKSPACE;
+			return ICoreVariableContextInfo.CONTEXT_CONFIGURATION;
+		return ICoreVariableContextInfo.CONTEXT_WORKSPACE;
 	}
 
 	public IVariableSubstitutor getMacroSubstitutor(IVariableContextInfo info, String inexistentMacroValue, String listDelimiter){

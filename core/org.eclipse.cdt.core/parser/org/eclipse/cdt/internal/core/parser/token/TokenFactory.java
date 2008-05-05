@@ -250,16 +250,10 @@ public class TokenFactory {
 			return array[ currentIndex - 1 ];
 		}
 		
-		/**
-		 * @return
-		 */
 		public boolean isEmpty() {
 			return (currentIndex == 0 );
 		}
 
-		/**
-		 * @param i
-		 */
 		public BraceCounter(int i) {
 			key = i; 
 			clear();
@@ -274,11 +268,6 @@ public class TokenFactory {
 		
 	}
 
-	/**
-	 * @param first
-	 * @param last
-	 * @return
-	 */
 	public static char[] createCharArrayRepresentation(IToken first, IToken last) {
 		return BasicTokenDuple.createCharArrayRepresentation(first, last);
 	}

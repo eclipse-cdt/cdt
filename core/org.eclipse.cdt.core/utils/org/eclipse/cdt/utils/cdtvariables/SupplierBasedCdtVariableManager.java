@@ -19,12 +19,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
 public class SupplierBasedCdtVariableManager {
-	/**
-	 * @param macroName
-	 * @param contextInfo
-	 * @param includeParentContexts
-	 * @return
-	 */
+
 	static public ICdtVariable getVariable(String macroName, IVariableContextInfo contextInfo, boolean includeParentContexts) {
  		if(contextInfo == null || macroName == null)
 			return null;
@@ -32,8 +27,8 @@ public class SupplierBasedCdtVariableManager {
 		do{
 			ICdtVariableSupplier suppliers[] = contextInfo.getSuppliers();
 			if(suppliers != null){
-				for(int i = 0; i < suppliers.length; i++){
-					ICdtVariable macro = suppliers[i].getVariable(macroName, contextInfo);
+				for (ICdtVariableSupplier supplier : suppliers) {
+					ICdtVariable macro = supplier.getVariable(macroName, contextInfo);
 					if(macro != null)
 						return macro;
 				}
@@ -43,11 +38,6 @@ public class SupplierBasedCdtVariableManager {
 		return null;
 	}
 
-	/**
-	 * @param contextInfo
-	 * @param includeParentContexts
-	 * @return
-	 */
 	static public ICdtVariable[] getVariables(IVariableContextInfo contextInfo,
 			boolean includeParentContexts) {
 		if(contextInfo == null)
@@ -65,8 +55,8 @@ public class SupplierBasedCdtVariableManager {
 				for(int i = suppliers.length - 1; i >= 0; i--){
 					ICdtVariable macros[] = suppliers[i].getVariables(contextInfo);
 					if(macros != null){
-						for(int j = 0; j < macros.length; j++){
-							map.put(macros[j].getName(),macros[j]);
+						for (ICdtVariable macro : macros) {
+							map.put(macro.getName(),macro);
 						}
 					}
 				}

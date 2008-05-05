@@ -24,16 +24,12 @@ public interface ICompositesFactory {
 	/**
 	 * Returns a composite (in the sense of potentially spanning multiple index fragments - i.e. not to be confused
 	 * with ICompositeType) type for the specified type.
-	 * @param index
-	 * @param type
-	 * @return
 	 */
 	public IType getCompositeType(IIndexType rtype) throws DOMException;
 
 	/**
 	 * Returns a composite (index context carrying) binding for the specified binding. It does not
 	 * matter which fragment the specified binding comes from
-	 * @param index the context to construct the composite binding for
 	 * @param binding a binding that will be used when searching for information to return from the composite
 	 * binding methods
 	 * @return a composite (index context carrying) binding for the specified binding
@@ -42,9 +38,6 @@ public interface ICompositesFactory {
 
 	/**
 	 * Identifies common bindings, calls getCompositeBindings
-	 * @param index
-	 * @param bindings
-	 * @return
 	 */
 	public IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[][] bindings);
 }

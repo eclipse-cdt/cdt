@@ -746,17 +746,17 @@ public class XCoff32 {
 		}
 		try {
 			SectionHeader[] sections = getSectionHeaders();
-			for (int i = 0; i < sections.length; i++) {
-				buffer.append(sections[i]);
+			for (SectionHeader section : sections) {
+				buffer.append(section);
 			}
 		} catch (IOException e) {
 		}
 
 		try {
 			Symbol[] table = getSymbols();
-			for (int i = 0; i < table.length; i++) {
-				buffer.append(table[i]).append("n_name = "); //$NON-NLS-1$
-				buffer.append(table[i].getName(getStringTable())).append(NL);
+			for (Symbol element : table) {
+				buffer.append(element).append("n_name = "); //$NON-NLS-1$
+				buffer.append(element.getName(getStringTable())).append(NL);
 			}
 		} catch (IOException e) {
 		}
@@ -795,10 +795,6 @@ public class XCoff32 {
 		}
 	}
 
-	/**
-	 * @param hints
-	 * @return
-	 */
 	public static boolean isXCOFF32Header(byte[] hints) {
 		if (hints != null && hints[0] == 0x01 && (hints[1] == (byte)0xdf) ) {
 			return true;
@@ -806,11 +802,6 @@ public class XCoff32 {
 		return false;
 	}
 
-	/**
-	 * @param hints
-	 * @return
-	 * @throws IOException
-	 */
 	public static Attribute getAttributes(byte[] hints) throws IOException {
 		XCoff32 emptyXCoff = new XCoff32();
 		emptyXCoff.filehdr = new XCoff32.FileHeader(hints, false); // big endian
@@ -819,11 +810,6 @@ public class XCoff32 {
 		return attribute;
 	}
 
-	/**
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 */
 	public static Attribute getAttributes(String file) throws IOException {
 		XCoff32 xcoff = new XCoff32(file);
 		Attribute attribute = xcoff.getAttributes();

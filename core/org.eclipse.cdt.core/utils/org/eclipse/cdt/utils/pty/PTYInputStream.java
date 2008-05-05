@@ -22,8 +22,8 @@ class PTYInputStream extends InputStream {
 	MasterFD master;
 
 	/**
-	 * Fome a Unix valid file descriptor set a Reader.
-	 * @param desc file descriptor.
+	 * From a Unix valid file descriptor set a Reader.
+	 * @param fd file descriptor.
 	 */
 	public PTYInputStream(MasterFD fd) {
 		master = fd;

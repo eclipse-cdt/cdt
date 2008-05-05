@@ -41,7 +41,9 @@
  * David McKnight    (IBM)       - [220379] [api] Provide a means for contributing custom BIDI encodings
  * David McKnight    (IBM)       - [225573] [dstore] client not falling back to single operation when missing batch descriptors (due to old server)
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
- * David McKnight     (IBM)    - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
+ * David McKnight     (IBM)      - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * David McKnight     (IBM)      - [221211] [api][breaking][files] need batch operations to indicate which operations were successful
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -80,6 +82,7 @@ import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
@@ -98,6 +101,8 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.PendingHostFilePermissions;
+import org.eclipse.rse.services.files.RemoteFileCancelledException;
+import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
 public class DStoreFileService extends AbstractDStoreService implements IFileService, IFilePermissionsService
@@ -268,7 +273,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 
 	public boolean upload(InputStream inputStream, String remoteParent, String remoteFile, boolean isBinary,
-			String hostEncoding, IProgressMonitor monitor)
+			String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		BufferedInputStream bufInputStream = null;
 
@@ -396,26 +401,22 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		catch (FileNotFoundException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		catch (UnsupportedEncodingException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		catch (IOException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);			
 		}
 		catch (Exception e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		finally
 		{
@@ -428,15 +429,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 				if (isCancelled)
 				{
-					return false;
-					//throw new RemoteFileCancelledException();
+					throw new RemoteFileCancelledException();
 				}
 			}
 			catch (IOException e)
 			{
 //				UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//				throw new RemoteFileIOException(e);
-				return false;
+				throw new RemoteFileIOException(e);
 			}
 
 		}
@@ -446,7 +445,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 
 	public boolean upload(File file, String remoteParent, String remoteFile, boolean isBinary,
-			String srcEncoding, String hostEncoding, IProgressMonitor monitor)
+			String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		FileInputStream inputStream = null;
 		BufferedInputStream bufInputStream = null;
@@ -595,26 +594,22 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		catch (FileNotFoundException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		catch (UnsupportedEncodingException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		catch (IOException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		catch (Exception e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//			throw new RemoteFileIOException(e);
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		finally
 		{
@@ -627,15 +622,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 				if (isCancelled)
 				{
-					return false;
-					//throw new RemoteFileCancelledException();
+					throw new RemoteFileCancelledException();
 				}
 			}
 			catch (IOException e)
 			{
 //				UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-//				throw new RemoteFileIOException(e);
-				return false;
+				throw new RemoteFileIOException(e);
 			}
 
 			if (totalBytes > 0)
@@ -680,7 +673,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		if (!makeSureLocalExists(localFile))
 		{
-			return false;
+			FileNotFoundException e = new FileNotFoundException();
+			throw new RemoteFileIOException(e);
 		}
 
 
@@ -742,7 +736,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		catch (Exception e)
 		{
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 
 	//long t2 = System.currentTimeMillis();
@@ -761,6 +755,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			catch (Exception e)
 			{
+				throw new RemoteFileIOException(e);
 			}
 		}
 
@@ -775,7 +770,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
 			{
 				if (!isBinary){ // do standard conversion if this is text!
-					String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+					String localEncoding = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 
 					IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(encoding, this);
 
@@ -801,9 +796,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			{
 				//SystemMessage msg = getMessage();
 				//throw new SystemMessageException(msg);
-				//UnsupportedEncodingException e = new UnsupportedEncodingException(resultChild.getName());
+				UnsupportedEncodingException e = new UnsupportedEncodingException(resultChild.getName());
 				//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
-				//throw new RemoteFileIOException(e);
+				throw new RemoteFileIOException(e);
 			}
 
 			else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION))
@@ -846,7 +841,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		catch (IOException e)
 		{
-			return false;
+			throw new RemoteFileIOException(e);
 		}
 		return true;
 	}
@@ -913,7 +908,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 			if (!makeSureLocalExists(localFile))
 			{
-				return false;
+				FileNotFoundException e = new FileNotFoundException();
+				throw new RemoteFileIOException(e);
 			}
 
 			long fileLength = DStoreHostFile.getFileLength(de.getSource());
@@ -942,11 +938,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			DataElement subject = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));
 
 			DataElement status = ds.command(queryCmd, argList, subject);
-			if (status == null)
-			{
-				System.out.println("no download descriptor for "+remoteElement); //$NON-NLS-1$
-				return false;
-			}
 
 			DownloadListener dlistener = new DownloadListener(status, localFile, remotePath, fileLength, monitor);
 			downloadListeners.add(dlistener);
@@ -981,7 +972,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			catch (Exception e)
 			{
-				return false;
+				throw new RemoteFileIOException(e);
 			}
 
 			// now wait till we have all the bytes local
@@ -1000,6 +991,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				}
 				catch (Exception e)
 				{
+					throw new RemoteFileIOException(e);
 				}
 			}
 
@@ -1018,7 +1010,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					{
 						// do standard conversion if this is text!
 						if (!isBinaries[i]){ // do standard conversion if this is text!
-							String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+							String localEncoding = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 							IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncodings[i], this);
 
 							codePageConverter.convertFileFromRemoteEncoding(remoteElement.getName(), localFile, hostEncodings[i], localEncoding, this);
@@ -1369,7 +1361,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_DELETE, monitor);
-		if (status == null) return false;
+		if (status == null) 
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+					IStatus.ERROR,
+					CommonMessages.MSG_ERROR_UNEXPECTED));
+
 		if (null != monitor && monitor.isCanceled())
 		{
 			//This operation has been cancelled by the user.
@@ -1484,8 +1481,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 
 
-
-		if (status == null) return false;
+		if (status == null)
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+					IStatus.ERROR,
+					CommonMessages.MSG_ERROR_UNEXPECTED));
+		
 		if (null != monitor && monitor.isCanceled())
 		{
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
@@ -1720,7 +1721,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			return true;
 		}
-		return false;
+		else {
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+					IStatus.ERROR,
+					CommonMessages.MSG_ERROR_UNEXPECTED));
+		}
 	}
 
 	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException
@@ -2059,8 +2065,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				return true;
 			}
 		}
-
-		return false;
+		else {
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+					IStatus.ERROR,
+					CommonMessages.MSG_ERROR_UNEXPECTED));
+		}
 	}
 
 	public boolean setReadOnly(String parent, String name,
@@ -2088,7 +2098,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				return true;
 			}
 		}
-		return false;
+		else {
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+					IStatus.ERROR,
+					CommonMessages.MSG_ERROR_UNEXPECTED));
+		}
 	}
 
 	/**

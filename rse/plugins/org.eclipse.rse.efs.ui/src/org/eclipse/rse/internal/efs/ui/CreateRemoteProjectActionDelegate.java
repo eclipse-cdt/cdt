@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Remy Chi Jian Suen (IBM) - [192906][efs] No Error when trying to Create Remote Project when project with name exists
  * Martin Oberhuber (Wind River) - [182350] Support creating remote project on Windows Drive
+ * Remy Chi Jian Suen (IBM) - [202098][efs][nls] Improve error message when creating a remote project with existing name
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs.ui;
@@ -48,6 +49,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.efs.Activator;
 import org.eclipse.rse.internal.efs.RSEFileSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -185,14 +187,12 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 		IProject editProject = root.getProject(projectName);
 
 		try {
-			//FIXME re-enable for 3.0 -- just allowing editProject.create() throw for now to avoid NLS change
-			//Should apply the patch from bug 192906 to Messages.java and messages.properties
-//			if (editProject.exists())
-//			{
-//				throw new CoreException(new Status(IStatus.ERROR,
-//						Activator.getDefault().getBundle().getSymbolicName(),
-//						NLS.bind(Messages.CreateRemoteProjectActionDelegate_PROJECT_EXISTS, directoryName)));
-//			}
+			if (editProject.exists())
+			{
+				throw new CoreException(new Status(IStatus.ERROR,
+						Activator.getDefault().getBundle().getSymbolicName(),
+						NLS.bind(Messages.CreateRemoteProjectActionDelegate_PROJECT_EXISTS, projectName)));
+			}
 	
 			IProjectDescription description = root.getWorkspace().newProjectDescription(projectName);
 			String hostNameOrAddr = directory.getParentRemoteFileSubSystem().getHost().getHostName();

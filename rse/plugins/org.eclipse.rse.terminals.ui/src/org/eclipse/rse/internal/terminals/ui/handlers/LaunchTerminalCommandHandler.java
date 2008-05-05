@@ -15,7 +15,7 @@
  * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Yu-Fen Kuo       (MontaVista) - Adapted from SystemCommandAction
- * Anna Dushistova  (MontaVista) - [227535] Adapted from  LaunchTerminalAction to remove dependecy from files.core
+ * Anna Dushistova  (MontaVista) - [227535] Adapted from  LaunchTerminalAction to remove dependency from files.core
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.handlers;
 

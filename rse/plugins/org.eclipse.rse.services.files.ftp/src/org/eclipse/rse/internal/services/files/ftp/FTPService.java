@@ -99,6 +99,7 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.model.IPropertySet;
@@ -109,6 +110,7 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -756,9 +758,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#upload(org.eclipse.core.runtime.IProgressMonitor, java.io.File, java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String)
 	 */
-	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
+	public void upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
-		boolean retValue = true;
     	remoteParent = checkEncoding(remoteParent);
     	remoteFile = checkEncoding(remoteFile);
 
@@ -779,7 +780,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			{
 				try
 				{
-					retValue = internalUpload(localFile, remoteParent, remoteFile, isBinary, srcEncoding, hostEncoding, progressMonitor);
+					internalUpload(localFile, remoteParent, remoteFile, isBinary, srcEncoding, hostEncoding, progressMonitor);
 				}
 				finally {
 					_commandMutex.release();
@@ -792,17 +793,14 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		} finally {
 			progressMonitor.end();
 		}
-
-		return retValue;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#upload(org.eclipse.core.runtime.IProgressMonitor, java.io.InputStream, java.lang.String, java.lang.String, boolean, java.lang.String)
 	 */
-	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
+	public void upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
-		boolean retValue = true;
     	remoteParent = checkEncoding(remoteParent);
     	remoteFile = checkEncoding(remoteFile);
 
@@ -818,31 +816,24 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			 while( (readCount = bis.read(buffer)) > 0)
 			 {
 			      bos.write(buffer, 0, readCount);
-			      if (monitor!=null){
+			      if (monitor!=null) {
 					if (monitor.isCanceled()) {
-						retValue = false;
 						break;
 					}
-				}
+				  }
 			 }
 			 bos.close();
-
-			 if(retValue == true){
-				retValue = upload(tempFile, remoteParent, remoteFile, isBinary, null, hostEncoding, monitor);
-			 }
+			 upload(tempFile, remoteParent, remoteFile, isBinary, null, hostEncoding, monitor);
 
 		}
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);
 	  }
 
-	  return retValue;
-
 	}
 
-	private boolean internalUpload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, MyProgressMonitor progressMonitor) throws IOException, RemoteFileIOException
+	private void internalUpload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, MyProgressMonitor progressMonitor) throws IOException, RemoteFileIOException, SystemMessageException
 	{
-		boolean retValue = true;
 
 		InputStream input = null;
 		OutputStream output = null;
@@ -867,22 +858,17 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 					output.write(buffer, 0, readCount);
 					progressMonitor.count(readCount);
 					if (progressMonitor.isCanceled()) {
-						retValue = false;
-						break;
+						throw new RemoteFileCancelledException();
 					}
 				}
-				if (retValue) {
-					output.flush();
-				}
+				output.flush();
 				output.close();
 				output = null;
 				ftpClient.completePendingCommand();
 			} else {
 				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()));
 			}
-			if(retValue==false)	{
-				ftpClient.deleteFile(remoteFile);
-			}
+			ftpClient.deleteFile(remoteFile);
 
 		}finally{
 			try {
@@ -891,8 +877,6 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				if (output!=null) output.close();
 			}
 		}
-
-		return retValue;
 	}
 
 
@@ -900,9 +884,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#download(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.io.File, boolean, java.lang.String)
 	 */
-	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
+	public void download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
-		boolean retValue = true;
 
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
@@ -919,7 +902,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			{
 				try
 				{
-					retValue = internalDownload(remoteParent, remoteFile, localFile, isBinary, hostEncoding, progressMonitor);
+					internalDownload(remoteParent, remoteFile, localFile, isBinary, hostEncoding, progressMonitor);
 				}
 				finally
 				{
@@ -934,14 +917,10 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			progressMonitor.end();
 
 		}
-
-		return retValue;
 	}
 
-	private boolean internalDownload(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, MyProgressMonitor progressMonitor) throws SystemMessageException, IOException
+	private void internalDownload(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, MyProgressMonitor progressMonitor) throws SystemMessageException, IOException
 	{
-		boolean retValue = true;
-
 		InputStream input = null;
 		OutputStream output = null;
 
@@ -968,17 +947,20 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				output = new FileOutputStream(localFile);
 				byte[] buffer = new byte[4096];
 				int readCount;
+				boolean ok = true;
 				while((readCount = input.read(buffer)) > 0)
 				{
 					output.write(buffer, 0, readCount);
 					progressMonitor.count(readCount);
 					if (progressMonitor.isCanceled()) {
-						retValue = false;
+						ok = false;
 						break;
 					}
 				}
 
-				if (retValue) output.flush();
+				if (ok) {
+					output.flush();
+				}
 				input.close();
 				input = null;
 				ftpClient.completePendingCommand();
@@ -996,8 +978,6 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				if (output!=null) output.close();
 			}
 		}
-
-		return retValue;
 	}
 
 
@@ -1040,8 +1020,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#delete(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
 	 */
-	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
-		boolean hasSucceeded = false;
+	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
     	remoteParent = checkEncoding(remoteParent);
     	fileName = checkEncoding(fileName);
 
@@ -1053,7 +1032,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			if (_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 				try {
 					FTPClient ftpClient = getFTPClient();
-					hasSucceeded = internalDelete(ftpClient, remoteParent, fileName, file.isFile(), progressMonitor);
+					internalDelete(ftpClient, remoteParent, fileName, file.isFile(), progressMonitor);
 				}
 				catch (IOException e)
 				{
@@ -1066,11 +1045,9 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		} finally {
 			progressMonitor.end();
 		}
-		// Can only return true since !hasSucceeded always leads to Exception
-		return hasSucceeded;
 	}
 
-	private boolean internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, MyProgressMonitor monitor)
+	private void internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, MyProgressMonitor monitor)
 			throws RemoteFileException, IOException
 	{
 		if(monitor.isCanceled())
@@ -1079,64 +1056,54 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		}
 
 		clearCache(parentPath);
-		boolean hasSucceeded = FTPReply.isPositiveCompletion(ftpClient.cwd(parentPath));
+		FTPReply.isPositiveCompletion(ftpClient.cwd(parentPath));
 		monitor.worked(1);
 
-		if(hasSucceeded)
+		if(isFile)
 		{
-			if(isFile)
-			{
-				hasSucceeded = ftpClient.deleteFile(fileName);
-				monitor.worked(1);
-			}
-			else
-			{
-				hasSucceeded = ftpClient.removeDirectory(fileName);
-				monitor.worked(1);
-			}
+			ftpClient.deleteFile(fileName);
+			monitor.worked(1);
+		}
+		else
+		{
+			ftpClient.removeDirectory(fileName);
+			monitor.worked(1);
 		}
 
-		if(!hasSucceeded){
-			if(isFile)
-			{
-				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+concat(parentPath,fileName)+")")); //$NON-NLS-1$ //$NON-NLS-2$
+		if(isFile)
+		{
+			throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+concat(parentPath,fileName)+")")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		else //folder recursively
+		{
+			String newParentPath = concat(parentPath,fileName);
+
+			ftpClient.changeWorkingDirectory(newParentPath);
+			FTPFile[] fileNames = ftpClient.listFiles();
+
+			for (int i = 0; i < fileNames.length; i++) {
+				String curName = fileNames[i].getName();
+				if (curName == null || curName.equals(".") || curName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+					continue;
+				}
+				internalDelete(ftpClient, newParentPath, curName, fileNames[i].isFile(), monitor);
 			}
-			else //folder recursively
+
+			//remove empty folder
+			ftpClient.changeWorkingDirectory(parentPath);
+			boolean hasSucceeded = ftpClient.removeDirectory(fileName);
+			if (!hasSucceeded)
 			{
-				String newParentPath = concat(parentPath,fileName);
-
-				ftpClient.changeWorkingDirectory(newParentPath);
-				FTPFile[] fileNames = ftpClient.listFiles();
-
-				for (int i = 0; i < fileNames.length; i++) {
-					String curName = fileNames[i].getName();
-					if (curName == null || curName.equals(".") || curName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-						continue;
-					}
-					hasSucceeded = internalDelete(ftpClient, newParentPath, curName, fileNames[i].isFile(), monitor);
-				}
-
-				//remove empty folder
-				ftpClient.changeWorkingDirectory(parentPath);
-				hasSucceeded = ftpClient.removeDirectory(fileName);
-				if (!hasSucceeded)
-				{
-					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString() + " (" + concat(parentPath, fileName) + ")")); //$NON-NLS-1$ //$NON-NLS-2$
-				}
+				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString() + " (" + concat(parentPath, fileName) + ")")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-
-		// Can only return true since !hasSucceeded always leads to Exception
-		return hasSucceeded;
-
 	}
 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#rename(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException {
-		boolean success = false;
+	public void rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException {
     	remoteParent = checkEncoding(remoteParent);
     	oldName = checkEncoding(oldName);
     	newName = checkEncoding(newName);
@@ -1152,7 +1119,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()));
 				}
 
-				success = ftpClient.rename(oldName, newName);
+				boolean success = ftpClient.rename(oldName, newName);
 
 				if(!success)
 				{
@@ -1165,26 +1132,19 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				_commandMutex.release();
 			}
 		}
-
-		return success;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#rename(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String, org.eclipse.rse.services.files.IHostFile)
 	 */
-	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) {
-		boolean hasSucceeded = false;
-
+	public void rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) {
 		oldFile.renameTo(newName);
-
-		return hasSucceeded;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#move(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException{
-		boolean success = false;
+	public void move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException{
     	srcParent = checkEncoding(srcParent);
     	srcName = checkEncoding(srcName);
     	tgtParent = checkEncoding(tgtParent);
@@ -1200,7 +1160,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 				clearCache(srcParent);
 				clearCache(tgtParent);
-				success = ftpClient.rename(source, target);
+				boolean success = ftpClient.rename(source, target);
 
 				if(!success)
 				{
@@ -1214,7 +1174,6 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}
 
 		}
-		return success;
 	}
 
 	/* (non-Javadoc)
@@ -1261,10 +1220,9 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     	try {
 			File tempFile = File.createTempFile("ftp", "temp");  //$NON-NLS-1$  //$NON-NLS-2$
 			tempFile.deleteOnExit();
-			boolean success = upload(tempFile, remoteParent, fileName, _isBinaryFileType, null, null, monitor);
-
-			if(!success)
-			{
+			try {
+				upload(tempFile, remoteParent, fileName, _isBinaryFileType, null, null, monitor);
+			} catch (SystemMessageException e) {
 				throw new RemoteFileIOException(new Exception(getFTPClient().getReplyString()));
 			}
 		}
@@ -1279,10 +1237,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
      * (non-Javadoc)
      * @see org.eclipse.rse.services.files.IFileService#copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
+    public void copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
-    	boolean success = false;
-
     	srcParent = checkEncoding(srcParent);
     	srcName = checkEncoding(srcName);
     	tgtParent = checkEncoding(tgtParent);
@@ -1302,7 +1258,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
 
-				success = internalCopy(getFTPClient(), srcParent, srcName, tgtParent, tgtName, remoteHostFile.isDirectory(), progressMonitor);
+				internalCopy(getFTPClient(), srcParent, srcName, tgtParent, tgtName, remoteHostFile.isDirectory(), progressMonitor);
 			}
 			catch(IOException e)
 			{
@@ -1312,18 +1268,14 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				_commandMutex.release();
 			}
 		}
-
-    return success;
     }
 
-    private boolean internalCopy(FTPClient ftpClient, String srcParent, String srcName, String tgtParent, String tgtName, boolean isDirectory, MyProgressMonitor monitor) throws SystemMessageException, IOException
+    private void internalCopy(FTPClient ftpClient, String srcParent, String srcName, String tgtParent, String tgtName, boolean isDirectory, MyProgressMonitor monitor) throws SystemMessageException, IOException
     {
     	if (monitor.isCanceled())
 		{
 			throw new RemoteFileCancelledException();
 		}
-
-    	boolean success = false;
 
     	if(isDirectory)
 		{
@@ -1331,7 +1283,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     		//create folder
     		// TODO what happens if the destination folder already exists?
 			// Success=true or false?
-    		success = ftpClient.makeDirectory(concat(tgtParent,tgtName));
+    		ftpClient.makeDirectory(concat(tgtParent,tgtName));
 
     		//copy contents
     		String newSrcParentPath = concat(srcParent,srcName);
@@ -1346,7 +1298,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 					continue;
 				}
 				// TODO should we bail out in case a single file fails?
-				success = internalCopy(ftpClient, newSrcParentPath, curName, newTgtParentPath, curName, fileNames[i].isDirectory(), monitor);
+				internalCopy(ftpClient, newSrcParentPath, curName, newTgtParentPath, curName, fileNames[i].isDirectory(), monitor);
 			}
 
 		}
@@ -1363,33 +1315,21 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 			//Use binary raw transfer since the file will be uploaded again
 			try {
-				success = internalDownload(srcParent, srcName, tempFile, true, null, monitor);
-				if (success) {
-					success = internalUpload(tempFile, tgtParent, tgtName, true, null, null, monitor);
-				}
+				internalDownload(srcParent, srcName, tempFile, true, null, monitor);
+				internalUpload(tempFile, tgtParent, tgtName, true, null, null, monitor);
 			} finally {
 				tempFile.delete();
 			}
 		}
 
-    	return success;
-
     }
 
-	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException
+	public void copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException
 	{
-		boolean hasSucceeded = false;
-
 		for(int i=0; i<srcNames.length; i++)
 		{
-			hasSucceeded = copy(srcParents[i], srcNames[i], tgtParent, srcNames[i], monitor);
-			if(!hasSucceeded)
-			{
-				break;
-			}
+			copy(srcParents[i], srcNames[i], tgtParent, srcNames[i], monitor);
 		}
-
-		return hasSucceeded;
 	}
 
 	public boolean isCaseSensitive()
@@ -1570,21 +1510,19 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#setLastModified(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, long)
 	 */
-	public boolean setLastModified(String parent, String name,
+	public void setLastModified(String parent, String name,
 			long timestamp, IProgressMonitor monitor) throws SystemMessageException
 	{
 		// not applicable for FTP
-		return false;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#setReadOnly(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
 	 */
-	public boolean setReadOnly(String parent, String name,
+	public void setReadOnly(String parent, String name,
 			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException {
 
-		boolean result = false;
 		FTPHostFile file = getFileInternal(parent,name, monitor);
 
 		int userPermissions = file.getUserPermissions();
@@ -1601,20 +1539,22 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		}
 		int newPermissions = userPermissions * 100 + groupPermissions * 10 + otherPermissions;
 
-		if (newPermissions==oldPermissions) {
-			result = true;
+		if (newPermissions == oldPermissions) {
+			// do nothing
 		} else if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
 				clearCache(parent);
-				result =_ftpClient.sendSiteCommand("CHMOD "+newPermissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+				_ftpClient.sendSiteCommand("CHMOD "+newPermissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
-				result = false;
+				String pluginId = Activator.getDefault().getBundle().getSymbolicName();
+				String messageText = e.getLocalizedMessage();
+				SystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText, e); 
+				throw new SystemMessageException(message);
 			} finally {
 				_commandMutex.release();
 			}
 		}
 
-		return result;
 	}
 
 	/*

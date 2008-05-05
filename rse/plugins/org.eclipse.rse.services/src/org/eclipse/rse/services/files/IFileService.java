@@ -31,6 +31,7 @@ package org.eclipse.rse.services.files;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -69,8 +70,8 @@ public interface IFileService extends IService
 	 * return from the query.
 	 *
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
-	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
-	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int,List,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int[],List,IProgressMonitor)
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
@@ -86,8 +87,8 @@ public interface IFileService extends IService
 	 * return from the query.
 	 *
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
-	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
-	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int,List,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int[],List,IProgressMonitor)
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
@@ -105,8 +106,8 @@ public interface IFileService extends IService
 	 * return from the query.
 	 *
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
-	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
-	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int,List,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int[],List,IProgressMonitor)
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
@@ -151,11 +152,10 @@ public interface IFileService extends IService
 	 * @param isBinary - indicates whether the file is text or binary
 	 * @param hostEncoding - the tgt encoding of the file (if text)
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return true if the file was uploaded
 	 * @throws SystemMessageException if an error occurs.
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
-	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
+	public void upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a
@@ -167,12 +167,11 @@ public interface IFileService extends IService
 	 * @param srcEncoding - the src encoding of the file (if text)
 	 * @param hostEncoding - the tgt encoding of the file (if text)
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return true if the file was uploaded
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
 	 */
-	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
+	public void upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
 
 	/**
@@ -189,14 +188,13 @@ public interface IFileService extends IService
 	 * @param srcEncodings - the src encodings of the files (if text)
 	 * @param hostEncodings - the tgt encodings of the files (if text)
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return true if the files were uploaded
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
-	public boolean uploadMultiple(File[] localFiles, String[] remoteParents, String[] remoteFiles, boolean[] isBinary, String[] srcEncodings, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
+	public void uploadMultiple(File[] localFiles, String[] remoteParents, String[] remoteFiles, boolean[] isBinary, String[] srcEncodings, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
 
 
 	/**
@@ -208,12 +206,11 @@ public interface IFileService extends IService
 	 * @param isBinary - indicates whether the file is text on binary
 	 * @param hostEncoding - the encoding on the host (if text)
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return true if the file was copied from the remote system.
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
 	 */
-	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
+	public void download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Copy files from the remote file system to the local system.
@@ -230,13 +227,12 @@ public interface IFileService extends IService
 	 * @param isBinary - indicates whether the files are text on binary
 	 * @param hostEncodings - the encodings on the host (if text)
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return true if the files were copied from the remote system.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the {@link RemoteFileException} family.
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
-	public boolean downloadMultiple(String[] remoteParents, String[] remoteFiles, File[] localFiles, boolean[] isBinary, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
+	public void downloadMultiple(String[] remoteParents, String[] remoteFiles, File[] localFiles, boolean[] isBinary, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
 
 
 
@@ -317,15 +313,14 @@ public interface IFileService extends IService
 	 *            some other type. For each remoteParent, there must be a
 	 *            corresponding fileType. For the default list of available file
 	 *            types see <code>IFileServiceContants</code>
+	 * @param hostFiles a list to which the found {@link IHostFile} objects will be appended
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the collective list of host files that reside in each of the
-	 *         remoteParents with it's corresponding filter.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
-	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException;
+	public void listMultiple(String[] remoteParents, String[] fileFilters, int[] fileTypes, List hostFiles, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * List the contents of multiple remote folders.
@@ -345,15 +340,14 @@ public interface IFileService extends IService
 	 *            other type. All results will be of the specified type. For the
 	 *            default list of available file types see
 	 *            <code>IFileServiceContants</code>
+	 * @param hostFiles a list to which the found {@link IHostFile} objects will be appended
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the collective list of host files that reside in each of the
-	 *         remoteParents with it's corresponding filter.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
-	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int fileType, IProgressMonitor monitor) throws SystemMessageException;
+	public void listMultiple(String[] remoteParents, String[] fileFilters, int fileType, List hostFiles, IProgressMonitor monitor) throws SystemMessageException;
 
 
 	/**
@@ -413,11 +407,10 @@ public interface IFileService extends IService
 	 * @param remoteParent the folder containing the file to delete
 	 * @param fileName the name of the file or folder to delete
 	 * @param monitor the progress monitor
-	 * @return true if successful
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 */
-	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
+	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Delete a set of files or folders on the host. Should throw an exception
@@ -433,12 +426,10 @@ public interface IFileService extends IService
 	 * @param remoteParents the array of folders containing the files to delete
 	 * @param fileNames the names of the files or folders to delete
 	 * @param monitor the progress monitor
-	 * @return <code>true</code> if all delete operations are successful,
-	 *         <code>false</code> otherwise.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 */
-	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException;
+	public void deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Rename a file or folder on the host.
@@ -447,11 +438,10 @@ public interface IFileService extends IService
 	 * @param oldName the old name of the file or folder to rename
 	 * @param newName the new name for the file
 	 * @param monitor the progress monitor
-	 * @return true if successful
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 */
-	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException;
+	public void rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Rename a file or folder on the host.
@@ -461,11 +451,10 @@ public interface IFileService extends IService
 	 * @param newName the new name for the file
 	 * @param oldFile the file to update with the change
 	 * @param monitor the progress monitor
-	 * @return true if successful
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 */
-	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException;
+	public void rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Move the file or folder specified to a different remote path.
@@ -475,11 +464,10 @@ public interface IFileService extends IService
 	 * @param tgtParent the destination folder for the move
 	 * @param tgtName the name of the moved file or folder
 	 * @param monitor the progress monitor
-	 * @return true if the file was moved
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 */
-	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
+	public void move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Copy the file or folder to the specified destination.
@@ -489,11 +477,10 @@ public interface IFileService extends IService
 	 * @param tgtParent the destination folder for the copy
 	 * @param tgtName the name of the copied file or folder
 	 * @param monitor the progress monitor
-	 * @return true if the file was copied successfully
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 */
-	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
+	public void copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Copy a set of files or folders to the specified destination.
@@ -506,12 +493,10 @@ public interface IFileService extends IService
 	 * @param srcNames the names of the files or folders to copy
 	 * @param tgtParent the destination folder for the copy
 	 * @param monitor the progress monitor
-	 * @return <code>true</code> if all files were copied, <code>false</code>
-	 *         or exception otherwise.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 */
-	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException;
+	public void copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Indicates whether the file system is case sensitive.
@@ -536,11 +521,9 @@ public interface IFileService extends IService
 	 * @param timestamp the new timestamp in milliseconds from January 1, 1970,
 	 *            00:00:00 UTC.
 	 * @param monitor the progress monitor
-	 * @return true if the file timestamp was changed successfully
-	 * 
 	 * @see IHostFile#getModifiedDate()
 	 */
-	public boolean setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException;
+	public void setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Set the read-only permission of the specified file or folder.
@@ -550,10 +533,8 @@ public interface IFileService extends IService
 	 * @param readOnly indicates whether to make the file read-only or
 	 *            read-write
 	 * @param monitor the progress monitor
-	 * @return true if the read-only permission was changed successfully, or the
-	 *         permission already was as desired
 	 */
-	public boolean setReadOnly(String parent, String name, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
+	public void setReadOnly(String parent, String name, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Gets the remote encoding.

@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemOutputRemoteTypes
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
@@ -70,7 +70,7 @@ public class TerminalViewElementAdapter extends AbstractSystemViewAdapter
                 TerminalElement cmdShell = (TerminalElement) firstSelection;
                 if (showInTerminalViewAction == null) {
                     showInTerminalViewAction = new ShowInTerminalViewAction(
-                            shell);
+                            getShell());
 
                 }
                 menu.add(ISystemContextMenuConstants.GROUP_OPEN,
@@ -91,7 +91,7 @@ public class TerminalViewElementAdapter extends AbstractSystemViewAdapter
         actions.clear();
         if (actions.size() == 0) {
             if (closeTerminalAction == null) {
-                closeTerminalAction = new RemoveTerminalAction(shell);
+                closeTerminalAction = new RemoveTerminalAction(getShell());
             }
             actions.add(closeTerminalAction);
         }

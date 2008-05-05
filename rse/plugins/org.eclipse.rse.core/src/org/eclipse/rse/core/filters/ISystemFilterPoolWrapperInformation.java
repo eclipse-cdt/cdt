@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
@@ -19,15 +19,16 @@
 package org.eclipse.rse.core.filters;
 
 /**
- * The system filter wizard allows callers to pass a list of wrapper objects
- * for the user to select a filter pool. Effectively, this prompting for 
- * euphemisms to filter pools. This requires an array of wrapper objects,
- * and requires replacement text for the pool prompt and tooltip text, and 
- * the verbiage above it. 
+ * The system filter wizard allows callers to pass a list of wrapper objects for
+ * the user to select a filter pool. Effectively, this prompting for euphemisms
+ * to filter pools. This requires an array of wrapper objects, and requires
+ * replacement text for the pool prompt and tooltip text, and the verbiage above
+ * it.
  * <p>
  * This is all encapsulated in this interface. There is also a class offered
  * that implements all this and is populated via setters.
- * @noextend This interface is not intended to be extended by clients.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemFilterPoolWrapperInformation {
 
@@ -53,7 +54,7 @@ public interface ISystemFilterPoolWrapperInformation {
 	 * Get the wrapper to preselect in the list.
 	 */
 	public ISystemFilterPoolWrapper getPreSelectWrapper();
-	
+
 	/**
 	 * Add a wrapper object
 	 * @since 3.0

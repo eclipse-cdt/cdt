@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
@@ -18,9 +18,10 @@
 package org.eclipse.rse.core.filters;
 
 /**
- * The system filter wizard allows callers to pass a list of wrapper objects
- * for the user to select a filter pool.
- * @noextend This interface is not intended to be extended by clients.
+ * The system filter wizard allows callers to pass a list of wrapper objects for
+ * the user to select a filter pool.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemFilterPoolWrapper {
 

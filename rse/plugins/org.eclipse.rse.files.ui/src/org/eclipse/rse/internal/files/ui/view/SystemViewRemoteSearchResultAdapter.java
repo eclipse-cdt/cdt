@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemOutputRemoteTypes
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
@@ -84,7 +84,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			super("Goto Line");
 			_gotoLine = gotoLine;
 		}
-		
+
 		public IStatus run(IProgressMonitor monitor)
 		{
 			try
@@ -94,26 +94,26 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 				Thread.sleep(1000);
 			}
 			catch (Exception e)
-			{				
+			{
 			}
 			PlatformUI.getWorkbench().getDisplay().asyncExec(_gotoLine);
 			return Status.OK_STATUS;
 		}
 	}
-	
-	
-	
+
+
+
 	public class DelayedGotoSearchResult implements Runnable {
 		private IRemoteFile _file;
 		private IHostSearchResult _searchResult;
-		
+
 		public DelayedGotoSearchResult(IRemoteFile file, IHostSearchResult searchResult) {
 			_file = file;
 			_searchResult = searchResult;
 		}
-		
+
 		public void run() {
-			
+
 			if (checkEditorOpen()) {
 				SystemRemoteFileSearchOpenWithMenu.handleGotoLine(_file, _searchResult);
 			}
@@ -122,7 +122,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 				job.schedule();
 			}
 		}
-		
+
 		private boolean checkEditorOpen()
 		{
 			IWorkbench desktop = PlatformUI.getWorkbench();
@@ -155,39 +155,39 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			return false;
 		}
 	}
-	
+
 
 	protected IPropertyDescriptor[] _propertyDescriptors;
 
-	
+
 	private SystemCopyToClipboardAction _copyOutputAction = null;
 
 	public SystemViewRemoteSearchResultAdapter() {
 	}
-	
+
 	/**
 	 * We should not add common actions such as compile and user actions for this adapter.
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#addCommonRemoteActions(org.eclipse.rse.ui.SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)
 	 */
 	public void addCommonRemoteActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup) {
-		
+
 		if (selection != null && !selection.isEmpty()) {
-			
+
 			Iterator iter = selection.iterator();
-			
+
 			boolean found = false;
-			
+
 			// go through selections and see if there is one IHostSearchResult
 			// if there is, we do not add any common remote actions
-			while (iter.hasNext()) { 
+			while (iter.hasNext()) {
 				Object obj = iter.next();
-				
+
 				if (obj instanceof IHostSearchResult) {
 					found = true;
 					break;
 				}
 			}
-			
+
 			if (!found) {
 				super.addCommonRemoteActions(menu, selection, shell, menuGroup);
 			}
@@ -216,11 +216,11 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			{
 				if (firstSelection instanceof IHostSearchResult)
 				{
-				//	IHostSearchResult result = (IHostSearchResult) firstSelection;					
+				//	IHostSearchResult result = (IHostSearchResult) firstSelection;
 					//SystemSearchCreateEditLineActions createActions = new SystemSearchCreateEditLineActions();
-					//createActions.create(menu, selection, shell, menuGroup);					
+					//createActions.create(menu, selection, shell, menuGroup);
 					MenuManager submenu = new MenuManager(FileResources.ResourceNavigator_openWith, ISystemContextMenuConstants.GROUP_OPENWITH);
-					    
+
 					SystemRemoteFileSearchOpenWithMenu openWithMenu = new SystemRemoteFileSearchOpenWithMenu();
 					openWithMenu.updateSelection(selection);
 					submenu.add(openWithMenu);
@@ -237,7 +237,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	/**
 	 * Returns the parent of the search result (i.e. IHostSearchResults)
 	 */
-	public Object getParent(Object element) 
+	public Object getParent(Object element)
 	{
 		if (element instanceof IHostSearchResult)
 		{
@@ -290,7 +290,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	 * @param output the search result
 	 * @return the associated remote file
 	 */
-	public static IRemoteFile outputToFile(IHostSearchResult output) 
+	public static IRemoteFile outputToFile(IHostSearchResult output)
 	{
 		return (IRemoteFile)output.getParent();
 	}
@@ -304,7 +304,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		boolean result = false;
 		if (element instanceof IHostSearchResult)
 		{
-			
+
 			IHostSearchResult searchResult = (IHostSearchResult) element;
 			IRemoteFile file = outputToFile(searchResult);
 			if (file != null && file.isFile())
@@ -315,7 +315,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 
 				if (result)
 				{
-					if (line > 0) 
+					if (line > 0)
 					{
 						DelayedGotoSearchResult dgoto = new DelayedGotoSearchResult(file, searchResult);
 						Display.getDefault().asyncExec(dgoto);
@@ -329,7 +329,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	}
 
 
-	
+
 	/**
 	 * Returns the associated subsystem for this search result
 	 */
@@ -339,7 +339,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		{
 			IHostSearchResult output = (IHostSearchResult) element;
 			Object parent = output.getParent();
-			
+
 			if (parent instanceof IRemoteFile) {
 				return ((IRemoteFile)parent).getParentRemoteFileSubSystem();
 			}
@@ -357,15 +357,15 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		if (element instanceof IHostSearchResult)
 		{
 			IHostSearchResult searchResult = (IHostSearchResult)element;
-			
+
 			StringBuffer buf = new StringBuffer();
-			
+
 			String str = getAbsoluteParentName(element);
-			
+
 			if (str == null) {
 			    return null;
 			}
-			
+
 			// create the absolute name with this format
 			// remoteFilePath:SEARCH<searchString:index>
 			buf.append(str);
@@ -375,10 +375,10 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			buf.append(IHostSearchResult.SEARCH_RESULT_INDEX_DELIMITER);
 			buf.append(searchResult.getIndex());
 			buf.append(IHostSearchResult.SEARCH_RESULT_CLOSE_DELIMITER);
-			
+
 			return buf.toString();
 		}
-		
+
 		return null;
 	}
 
@@ -388,15 +388,15 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	public String getAbsoluteParentName(Object element)
 	{
 	    Object parent = getParent(element);
-	    
+
 	    if ((parent != null) && (parent instanceof IRemoteFile)) {
 	        ISystemRemoteElementAdapter parentAdapter = SystemAdapterHelpers.getRemoteAdapter(parent);
-	        
+
 	        if (parentAdapter != null) {
 	            return parentAdapter.getAbsoluteName(parent);
 	        }
 	    }
-	    
+
 		return null;
 	}
 
@@ -456,10 +456,10 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	}
 
 	/**
-	  * Some view has updated the name or properties of this remote object. As a result, the 
+	  * Some view has updated the name or properties of this remote object. As a result, the
 	  *  remote object's contents need to be refreshed. You are given the old remote object that has
 	  *  old data, and you are given the new remote object that has the new data. For example, on a
-	  *  rename the old object still has the old name attribute while the new object has the new 
+	  *  rename the old object still has the old name attribute while the new object has the new
 	  *  new attribute.
 	  * <p>
 	  * This is called by viewers like SystemView in response to rename and property change events.
@@ -489,16 +489,16 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 
 	/**
 	  * Given a remote object, return the unqualified names of the objects contained in that parent. This is
-	  *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not 
+	  *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not
 	  *  enough to just enumerate all the objects in the parent for this purpose, because duplicate
-	  *  names are allowed if the types are different, such as on iSeries. In this case return only 
+	  *  names are allowed if the types are different, such as on iSeries. In this case return only
 	  *  the names which should be used to do name-uniqueness validation on a rename operation.
 	  */
 	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return null;
 	}
-	
+
 	public IPropertyDescriptor[] getUniquePropertyDescriptors()
 	{
 		return new IPropertyDescriptor[0];
@@ -507,7 +507,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	/**
 	 * Returns the unique property descriptors for a search result
 	 */
-	protected org.eclipse.ui.views.properties.IPropertyDescriptor[] internalGetPropertyDescriptors()
+	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
 	{
 		if (_propertyDescriptors == null)
 		{
@@ -516,7 +516,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 
 			// path
 			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PATH, SystemViewResources.RESID_PROPERTY_FILE_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PATH_TOOLTIP);
-			
+
 			// char start
 			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SEARCH_LINE, FileResources.RESID_PROPERTY_SEARCH_LINE_LABEL, FileResources.RESID_PROPERTY_SEARCH_LINE_TOOLTIP);
 			//_propertyDescriptors[++idx] = createSimplePropertyDescriptor(P_SEARCH_CHAR_END, SystemViewResources.RESID_PROPERTY_SEARCH_CHAR_END_ROOT);
@@ -528,7 +528,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	* Returns the current collection of property descriptors.
 	* By default returns descriptors for name and type only.
 	* Override if desired.
-	* @return an array containing all descriptors.  
+	* @return an array containing all descriptors.
 	*/
 	protected Object internalGetPropertyValue(Object key)
 	{
@@ -550,7 +550,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			{
 			    return new Integer(output.getCharEnd());
 			}
-			*/			    
+			*/
 		}
 
 		return null;
@@ -570,7 +570,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			return imageDescriptor;
 		}
 		else
-		{ // return some default	 
+		{ // return some default
 			ImageDescriptor imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
 			return imageDescriptor;
 		}
@@ -640,7 +640,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 
 	/**
 	 * Perform the rename action. By default does nothing. Override if your object is renamable.
-	 * Return true if this was successful. Return false if it failed and you issued a msg. 
+	 * Return true if this was successful. Return false if it failed and you issued a msg.
 	 * Throw an exception if it failed and you want to use the generic msg.
 	 */
 	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
@@ -662,7 +662,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	}
 
 	/**
-	 * Indicates whether the specified object can be copied 
+	 * Indicates whether the specified object can be copied
 	 * @param element the object to copy
 	 */
 	public boolean canDrag(Object element)
@@ -678,7 +678,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	/**
 	 * Copy the specified remote output object.  This method returns a string representing
 	 * the text of the remote output;
-	 * 
+	 *
 	 * @param element the output to copy
 	 * @param sameSystemType not applicable for remote output
 	 * @param monitor the progress monitor
@@ -700,7 +700,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			return getText(element);
 		}
 	}
-	
+
 	/**
 	  * Return true if it is valid for the src object to be dropped in the target
 	  * @param src the object to drop
@@ -733,7 +733,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Indicates whether the search result can be opened in an editor
 	 */
@@ -767,7 +767,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return a filter string that corresponds to this object.
 	 * @param object the object to obtain a filter string for
@@ -777,12 +777,12 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	{
 		return null;
 	}
-	
 
-	
+
+
 	/**
 	 * Returns the current value for the named property.
-	 * 
+	 *
 	 * @param property the name or key of the property as named by its property descriptor
 	 * @param formatted indication of whether to return the value in formatted or raw form
 	 * @return the current value of the given property
@@ -808,9 +808,9 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			{
 			    Object context = cmdShell.getContext();
 			    if (context instanceof IRemoteFile)
-			    {			        
+			    {
 			        IRemoteFile cwd = (IRemoteFile)context;
-		        	return cwd.getAbsolutePath();			        
+		        	return cwd.getAbsolutePath();
 			    }
 			    else
 			     {

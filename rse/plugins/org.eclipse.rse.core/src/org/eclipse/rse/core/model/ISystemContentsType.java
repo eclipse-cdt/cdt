@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  *******************************************************************************/
@@ -18,9 +18,10 @@
 package org.eclipse.rse.core.model;
 
 /**
- * Common interface for representing different contents types of
- * artifacts that can be stored in an IRemoteContainer.
- * @noextend This interface is not intended to be extended by clients.
+ * Common interface for representing different contents types of artifacts that
+ * can be stored in an IRemoteContainer.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemContentsType {
 	/*

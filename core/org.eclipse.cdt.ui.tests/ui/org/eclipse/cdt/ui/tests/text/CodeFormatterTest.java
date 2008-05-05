@@ -636,4 +636,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testPreserveWhitespaceInParameterDecl_Bug228997() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void f() { throw 42; }
+	
+	//void f() {
+	//	throw 42;
+	//}
+	public void testSpaceAfterThrowKeyword_Bug229774() throws Exception {
+		assertFormatterResult();
+	}
+
 }

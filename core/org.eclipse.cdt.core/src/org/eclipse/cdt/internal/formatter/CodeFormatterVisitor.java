@@ -129,7 +129,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
@@ -1983,9 +1982,28 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			operand.accept(this);
 			break;
+		case IASTUnaryExpression.op_throw:
+			scribe.printNextToken(Token.t_throw, scribe.printComment());
+			if (peekNextToken() != Token.tLPAREN) {
+				scribe.space();
+			}
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_typeid:
+			scribe.printNextToken(Token.t_typeid, scribe.printComment());
+			if (peekNextToken() != Token.tLPAREN) {
+				scribe.space();
+			}
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_typeof:
+		case IASTUnaryExpression.op_alignOf:
 		default:
-			scribe.printNextToken(peekNextToken(), preferences.insert_space_before_unary_operator);
+			int operatorToken= peekNextToken();
+			scribe.printNextToken(operatorToken, preferences.insert_space_before_unary_operator);
 			if (preferences.insert_space_after_unary_operator) {
+				scribe.space();
+			} else if (operatorToken == Token.tIDENTIFIER && peekNextToken() != Token.tLPAREN) {
 				scribe.space();
 			}
 			operand.accept(this);
@@ -2493,7 +2511,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
 				// avoid explicit space if followed by pointer operator
 				int nextToken= peekNextToken();
-				if (nextToken != IToken.tSTAR && nextToken != IToken.tAMPER) {
+				if (nextToken != Token.tSTAR && nextToken != Token.tAMPER) {
 					scribe.space();
 				}
 			} else {
@@ -2509,7 +2527,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.printNextToken(Token.t_return);
 		final IASTExpression expression = node.getReturnValue();
 		if (expression != null) {
-			scribe.space();
+//			if (peekNextToken() != Token.tLPAREN) {
+				scribe.space();
+//			}
 			expression.accept(this);
 		}
 		// sometimes the return expression is null, when it should not

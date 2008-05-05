@@ -38,6 +38,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.rse.services.AbstractService;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 
@@ -186,7 +187,7 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	 * @since 2.0
 	 */
 	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException {
-		return System.getProperty("file.encoding"); //$NON-NLS-1$
+		return SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 	}
 
 	/**

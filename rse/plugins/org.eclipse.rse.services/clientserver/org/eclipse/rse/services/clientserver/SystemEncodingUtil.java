@@ -13,7 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM) [215847]SystemEncodingUtil needs to convert to unsigned when checking xml file
- * 
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -31,6 +31,8 @@ public class SystemEncodingUtil {
 	
 	private static SystemEncodingUtil instance;
 	public static String ENCODING_UTF_8 = "UTF-8"; //$NON-NLS-1$
+	
+	private DefaultEncodingProvider _defaultEncodingProvider = new DefaultEncodingProvider();
 
 	/**
 	 * Constructor to create the utility class.
@@ -52,6 +54,51 @@ public class SystemEncodingUtil {
 		return instance;
 	}
 	
+
+
+	   /**
+	    * Provider for the default encodings that RSE uses.
+	    * Clients may subclass this class, and override methods.
+	    * @since org.eclipse.rse.services 3.0
+	    */
+	   public static class DefaultEncodingProvider {
+
+	      /**
+	       * Return the default encoding for local workspace resources.
+	       * Clients may override.
+	       * @return String the local default encoding.
+	       */
+	      public String getLocalDefaultEncoding() {
+	          return System.getProperty("file.encoding"); //$NON-NLS-1$
+	      }
+	   }
+
+   /**
+    * Change the default encoding provider.
+    *
+    * This is a system-wide change, and clients will not be notified
+    * of changed default encodings due to changing the provider. Therefore,
+    * changing the provider should be done only once during early system 
+    * startup.
+    * 
+    * @param p the new encoding provider.
+    */
+	public void setDefaultEncodingProvider(DefaultEncodingProvider p) {
+	    _defaultEncodingProvider = p;
+	}
+
+	/**
+	 * Returns the local default encoding as provided by the default encoding 
+	 * provider.  This method should be called after RSE startup is complete
+	 * in order to get the proper default workspace encoding.    
+	 * 
+	 * @return the local default encoding
+	 */
+	public String getLocalDefaultEncoding() {
+	   return _defaultEncodingProvider.getLocalDefaultEncoding();
+	}
+
+	   
 	/**
 	 * Gets the encoding of the environment. This is the encoding being used by the JVM,
 	 * which by default is the machine encoding, unless changed explicitly.

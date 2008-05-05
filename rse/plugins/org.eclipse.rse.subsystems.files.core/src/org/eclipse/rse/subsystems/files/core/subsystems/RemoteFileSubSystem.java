@@ -75,6 +75,7 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -1466,7 +1467,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			return encoding;
 		}
 		else {
-			return System.getProperty("file.encoding"); //$NON-NLS-1$
+			return SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 		}
 	}
 }

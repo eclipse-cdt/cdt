@@ -10,10 +10,11 @@
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
-import java.io.ByteArrayInputStream;
+imimport java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +50,6 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-
 // Similar to org.eclipse.ui.wizards.datatransfer.ImportOperation
 /**
  * An operation which does the actual work of copying objects from the local
@@ -463,7 +463,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 			// 030820: added the following kludge to circumvent problem in
 			// artemis.  (artemis 3 will fix this)
 			// TODO remove for 6.0
-			String encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+			String encoding = ((UniFilePlus) fileObject).remoteFile.getEncoding();
 			if (encoding.startsWith("CP")) //$NON-NLS-1$
 			{
 				encoding = "Cp" + encoding.substring(2); //$NON-NLS-1$

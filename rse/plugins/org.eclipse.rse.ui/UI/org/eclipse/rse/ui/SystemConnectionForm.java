@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -49,6 +50,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.dialogs.ISystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -959,7 +961,8 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 				otherEncodingCombo.setText(defaultEncoding);
 			}
 			else {
-				otherEncodingCombo.setText(System.getProperty("file.encoding")); //$NON-NLS-1$
+				String workspaceDefault = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
+				otherEncodingCombo.setText(workspaceDefault); //$NON-NLS-1$
 			}
 		}
 		

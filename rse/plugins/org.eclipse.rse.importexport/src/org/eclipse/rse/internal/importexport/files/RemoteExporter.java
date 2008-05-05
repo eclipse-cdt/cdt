@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -99,7 +99,9 @@ class RemoteExporter {
 			// for windows
 			dest = dest.replace('/', sep);
 		}
-		rfss.upload(file.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, dest, System.getProperty("file.encoding"), new NullProgressMonitor()); //$NON-NLS-1$
+		String localEncoding = file.getCharset();
+		String hostEncoding = Utilities.getIRemoteFile(_host, dest).getEncoding();
+		rfss.upload(file.getLocation().makeAbsolute().toOSString(), localEncoding, dest, hostEncoding, new NullProgressMonitor()); //$NON-NLS-1$
 	}
 
 	/**

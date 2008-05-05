@@ -7,6 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -36,6 +38,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.logging.Logger;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 
 /**
  * This is a job named "Initialize RSE". It is instantiated and run during
@@ -203,6 +206,16 @@ public final class RSEInitJob extends Job {
 			}
 			submonitor.done();
 		}
+		
+		// set the default encoding provider
+		SystemEncodingUtil encodingUtil = SystemEncodingUtil.getInstance();
+		encodingUtil.setDefaultEncodingProvider(
+				new SystemEncodingUtil.DefaultEncodingProvider(){
+					   public String getLocalDefaultEncoding() {
+						   return ResourcesPlugin.getEncoding();						  
+					   }
+				});
+		
 		initializerPhase.done();
 		// finish up - propogate cancel if necessary
 		if (monitor.isCanceled()) {

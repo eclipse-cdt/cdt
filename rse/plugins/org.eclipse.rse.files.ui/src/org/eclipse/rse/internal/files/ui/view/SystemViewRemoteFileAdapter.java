@@ -52,6 +52,7 @@
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * Rupen Mardirossian (IBM)      - [198728] Folder being copied across systems is added to original set of files in order to extract empty (sub)folders in doDrop method			
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2569,9 +2570,9 @@ public class SystemViewRemoteFileAdapter
 						}
 						else
 						{
-
-							//System.out.println("how do we get here!??");
-
+							// Not sure how we can get here since if the source and target subsystems are different, then a doDrag() needs to 
+							// occur, resulting in a local resource (i.e. IFile) rather than a remote resource (i.e. IRemoteFile).
+							// TODO investigate to see if we can get rid of this code
 							if (srcFileOrFolder.isFile())
 							{
 								try
@@ -2597,6 +2598,7 @@ public class SystemViewRemoteFileAdapter
 									String newPath = newPathBuf.toString();
 
 									monitor.subTask(copyMessage.getLevelOneText());
+									
 									targetFS.upload(srcFileOrFolder.getAbsolutePath(), SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 
 									result = targetFS.getRemoteFileObject(targetFolder, name, monitor);

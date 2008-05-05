@@ -31,6 +31,7 @@
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * Kevin Doyle		(IBM)		 - [224162] SystemEditableRemoteFile.saveAs does not work because FileServiceSubSytem.upload does invalid check
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1523,11 +1524,12 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				}
 				else {
 					// using text mode so the char set needs to be local
-					String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 					if (properties.getLocalEncoding() != null){
-						localEncoding = properties.getLocalEncoding();
-					}					
-					file.setCharset(localEncoding, null);
+						String localEncoding = properties.getLocalEncoding();
+						file.setCharset(localEncoding, null);
+					}			
+					
+					// otherwise, the default charset is inherited so no need to set					
 				}
 			}
 		}

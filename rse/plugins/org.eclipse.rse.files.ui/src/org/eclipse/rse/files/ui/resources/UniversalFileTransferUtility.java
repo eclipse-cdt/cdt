@@ -45,6 +45,7 @@
  * Rupen Mardirossian (IBM)      - [210682] Collisions when doing a copy operation across systems will us the SystemCopyDialog
  * Xuan Chen        (IBM)        - [229093] set charset of the temp file of the text remote file to its remote encoding
  * Rupen Mardirossian (IBM)      - [198728] downloadResourcesToWorkspace now creates empty folders for copying across connections via createEmptyFolders method
+ * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -280,12 +281,12 @@ public class UniversalFileTransferUtility
 					else 
 					{
 						// using text mode so the char set needs to be local
-						String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 						SystemIFileProperties properties = new SystemIFileProperties(tempFile);
 						if (properties.getLocalEncoding() != null){
-							localEncoding = properties.getLocalEncoding();
+							String localEncoding = properties.getLocalEncoding();
+							tempFile.setCharset(localEncoding, null);
 						}					
-						tempFile.setCharset(localEncoding, null);
+						// otherwise, the default charset is inherited so no need to set					
 					}
 				}
 			}
@@ -588,11 +589,11 @@ public class UniversalFileTransferUtility
 								else 
 								{
 									// using text mode so the char set needs to be local
-									String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 									if (properties.getLocalEncoding() != null){
-										localEncoding = properties.getLocalEncoding();
+										String localEncoding = properties.getLocalEncoding();
+										tempFile.setCharset(localEncoding, null);
 									}					
-									tempFile.setCharset(localEncoding, null);
+									// otherwise, the default charset is inherited so no need to set					
 								}
 							}
 						}
@@ -970,7 +971,8 @@ public class UniversalFileTransferUtility
 			// copy remote file to workspace
 			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
 			listener.addIgnoreFile(tempFile);
-			String encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+			String encoding = tempFile.getParent().getDefaultCharset();
+
 			download(srcFileOrFolder, tempFile, encoding, monitor);
 			listener.removeIgnoreFile(tempFile);
 			if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))

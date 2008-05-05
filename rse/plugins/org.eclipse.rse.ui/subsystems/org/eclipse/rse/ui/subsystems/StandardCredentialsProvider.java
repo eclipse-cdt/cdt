@@ -158,22 +158,25 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	}
 
 	/**
-	 * @noimplement
-	 * Acquires the credentials (userid and password) for this connector service.
-	 * The search order for the password is as follows:</p>
+	 * Acquires the credentials (userid and password) for this connector
+	 * service. The search order for the password is as follows:
+	 * </p>
 	 * <ol>
-	 * <li>First check if the password is already known by this
-	 * connector service and that it is still valid.
-	 * <li>If password not known then look in the password
-	 * store and verify that it is still valid.
-	 * <li>If a valid password is not found or is to be reacquired
-	 * then prompt the user
+	 * <li>First check if the password is already known by this connector
+	 * service and that it is still valid.
+	 * <li>If password not known then look in the password store and verify that
+	 * it is still valid.
+	 * <li>If a valid password is not found or is to be re-acquired then prompt
+	 * the user
 	 * </ol>
-	 * @param reacquire if true then present the prompt even
-	 * if the password was found and is valid.
-	 * @throws OperationCanceledException if user is prompted and user
-	 * cancels that prompt or if {@link #isSuppressed()} is true.
-	 * @since 3.0 throws {@link OperationCanceledException} rather than {@link InterruptedException}
+	 *
+	 * @param reacquire if true then present the prompt even if the password was
+	 * 		found and is valid.
+	 * @throws OperationCanceledException if user is prompted and user cancels
+	 * 		that prompt or if {@link #isSuppressed()} is true. Before RSE 3.0,
+	 * 		the method would have thrown {@link InterruptedException} in that
+	 * 		case.
+	 * @since 3.0
 	 */
 	public final void acquireCredentials(boolean reacquire) throws OperationCanceledException {
 		if (isSuppressed()) {

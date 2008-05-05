@@ -480,10 +480,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Return vendor of this subsystem configuration. This comes from the xml
 	 * "vendor" attribute of the extension point.
 	 *
-	 * @noextend This method is not intended to be extended by clients. It will
-	 *           likely be declared <tt>final</tt> in the next release in
-	 *           order to ensure consistency with static xml markup in the
-	 *           extension.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 * 	by clients. It will likely be declared <tt>final</tt> in the next
+	 * 	release in order to ensure consistency with static xml markup in the
+	 * 	extension.
 	 */
 	public String getVendor()
 	{
@@ -494,10 +494,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Return name of this subsystem configuration. This comes from the xml
 	 * "name" attribute of the extension point.
 	 *
-	 * @noextend This method is not intended to be extended by clients. It will
-	 *           likely be declared <tt>final</tt> in the next release in
-	 *           order to ensure consistency with static xml markup in the
-	 *           extension.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 * 	by clients. It will likely be declared <tt>final</tt> in the next
+	 * 	release in order to ensure consistency with static xml markup in the
+	 * 	extension.
 	 */
 	public String getName()
 	{
@@ -508,10 +508,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Return name of this subsystem configuration. This comes from the xml
 	 * "description" attribute of the extension point.
 	 *
-	 * @noextend This method is not intended to be extended by clients. It will
-	 *           likely be declared <tt>final</tt> in the next release in
-	 *           order to ensure consistency with static xml markup in the
-	 *           extension.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 * 	by clients. It will likely be declared <tt>final</tt> in the next
+	 * 	release in order to ensure consistency with static xml markup in the
+	 * 	extension.
 	 */
 	public String getDescription()
 	{
@@ -522,10 +522,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Return unique id of this subsystem configuration. This comes from the xml
 	 * "id" attribute of the extension point.
 	 *
-	 * @noextend This method is not intended to be extended by clients. It will
-	 *           likely be declared <tt>final</tt> in the next release in
-	 *           order to ensure consistency with static xml markup in the
-	 *           extension.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 * 	by clients. It will likely be declared <tt>final</tt> in the next
+	 * 	release in order to ensure consistency with static xml markup in the
+	 * 	extension.
 	 */
 	public String getId()
 	{
@@ -538,10 +538,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
 	 *
-	 * @noextend This method is not intended to be extended by clients. It will
-	 *           likely be declared <tt>final</tt> in the next release in
-	 *           order to ensure consistency with static xml markup in the
-	 *           extension.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 * 	by clients. It will likely be declared <tt>final</tt> in the next
+	 * 	release in order to ensure consistency with static xml markup in the
+	 * 	extension.
 	 */
 	public String getCategory()
 	{
@@ -553,11 +553,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * from static declaration in the
 	 * <tt>org.eclipse.rse.core.subsystemConfigurations</tt> and
 	 * <tt>org.eclipse.rse.core.systemTypes</tt> extension points.
-	 *
-	 * @noextend This method is not intended to be extended by clients. It will
-	 *           likely be declared <tt>final</tt> in the next release in
-	 *           order to ensure consistency with static xml markup in the
-	 *           extension.
+	 * 
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 * 	by clients. It will likely be declared <tt>final</tt> in the next
+	 * 	release in order to ensure consistency with static xml markup in the
+	 * 	extension.
 	 */
 	public IRSESystemType[] getSystemTypes()
 	{
@@ -979,7 +979,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * the subsystem.
 	 * <li>finally, saves the subsystem to disk.
 	 * </ul>
-	 * 
+	 *
 	 * @param conn The connection to create a subsystem for
 	 * @param creatingConnection true if we are creating a connection, false if
 	 * 		just creating another subsystem for an existing connection.

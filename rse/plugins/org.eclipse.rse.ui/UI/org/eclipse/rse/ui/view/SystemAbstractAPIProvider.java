@@ -39,7 +39,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  *
  * This class existed in RSE 1.0, was made "internal" for RSE 2.0 and restored
  * as API for RSE 3.0.
- * 
+ *
  * @since 3.0
  */
 public abstract class SystemAbstractAPIProvider
@@ -64,7 +64,9 @@ public abstract class SystemAbstractAPIProvider
 	 */
 	protected SystemMessageObject nullObject     = null;
 	/**
-	 * @since org.eclipse.rse.ui 3.0 renamed from canceledObject
+	 * This field was renamed from canceledObject in RSE 3.0.
+	 * 
+	 * @since org.eclipse.rse.ui 3.0
 	 * @deprecated don't use this field
 	 */
 	protected SystemMessageObject cancelledObject = null;
@@ -119,21 +121,23 @@ public abstract class SystemAbstractAPIProvider
  		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
  	}
 
-    /**
-	 * <i>Callable by subclasses. Do not override.</i><br>
+	/**
 	 * In getChildren, return <samp>checkForEmptyList(children, parent,
 	 * true/false)</samp> versus your array directly. This method checks for a
 	 * null array which is not allowed and replaces it with an empty array. If
 	 * true is passed then it returns the "Empty list" message object if the
-	 * array is null or empty
+	 * array is null or empty.
+	 * <p>
+	 * <i>Callable by subclasses. Do not override.</i> <br>
 	 *
 	 * @param children The list of children.
 	 * @param parent The parent for the children.
-	 * @param returnNullMsg <code>true</code> if an "Empty List" message
-	 *            should be returned.
+	 * @param returnNullMsg <code>true</code> if an "Empty List" message should
+	 * 		be returned.
 	 * @return The list of children, a list with the "Empty List" message object
-	 *         or an empty list.
-	 * @noextend This method is not intended to be extended by clients.
+	 * 	or an empty list.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 * 	by clients.
 	 */
     protected Object[] checkForEmptyList(Object[] children, Object parent, boolean returnNullMsg) {
     	if ((children == null) || (children.length == 0)) {

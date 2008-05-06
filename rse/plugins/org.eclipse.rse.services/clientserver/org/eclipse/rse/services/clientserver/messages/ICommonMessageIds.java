@@ -10,12 +10,13 @@
  *
  * Contributors:
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Martin Oberhuber (Wind River) - [226374] [api] Need default SystemMessageException specialisations
  ********************************************************************************/
 package org.eclipse.rse.services.clientserver.messages;
 
 /**
  * Common Global Message IDs to be used with the RSE SystemMessages mechanism.
- * 
+ *
  * Clients may use these IDs when creating message objects, or when calling
  * {@link org.eclipse.rse.ui.SystemBasePlugin#getPluginMessage(String)}. The
  * message IDs uniquely identify a particular situation each, and are used for
@@ -38,6 +39,8 @@ public interface ICommonMessageIds {
 
 	public static final String MSG_OPERATION_FAILED      = "RSEG1066"; 		 //$NON-NLS-1$
 	public static final String MSG_OPERATION_CANCELLED   = "RSEG1067";		 //$NON-NLS-1$
+	public static final String MSG_OPERATION_UNSUPPORTED = "RSEG9999";//FIXME //$NON-NLS-1$
+	public static final String MSG_OPERATION_SECURITY_VIOLATION = "RSEG9999";//FIXME //$NON-NLS-1$
 
 	public static final String MSG_EXCEPTION_OCCURRED = "RSEG1003"; //$NON-NLS-1$
 	public static final String MSG_EXCEPTION_DELETING = "RSEG1063"; //$NON-NLS-1$
@@ -48,6 +51,7 @@ public interface ICommonMessageIds {
 
 	public static final String MSG_COMM_AUTH_FAILED 		= "RSEC1002"; //$NON-NLS-1$
 	public static final String MSG_COMM_PWD_INVALID			= "RSEC1004"; //$NON-NLS-1$
+	public static final String MSG_COMM_NETWORK_ERROR = "RSEC9999"; //FIXME //$NON-NLS-1$
 
 	public static final String MSG_EXPAND_FAILED    = "RSEG1098"; //$NON-NLS-1$
 	public static final String MSG_EXPAND_CANCELLED = "RSEG1067"; //$NON-NLS-1$

@@ -12,14 +12,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [226374] [api] Need default SystemMessageException specialisations
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
 import java.util.ResourceBundle;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemRemoteMessageException;
 
 
 /**
@@ -32,8 +32,11 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * original exception from the remote system.
  * <p>
  * Use {#link getRemoteException()} to retrieve that wrapped exception, if any.
+ * Extends SystemRemoteMessageException since 3.0
+ *
+ * @since 3.0
  */
-public class RemoteFileException extends SystemMessageException
+public class RemoteFileException extends SystemRemoteMessageException
 {
 	/**
 	 * A serialVersionUID is recommended for all serializable classes.
@@ -41,7 +44,6 @@ public class RemoteFileException extends SystemMessageException
 	 * This should be updated if there is a schema change for this class.
 	 */
 	private static final long serialVersionUID = 1L;
-	private Exception wrappedException = null;
 
 	/**
 	 * Constructor for RemoteFileException with an error message for getMessage() to return.
@@ -79,8 +81,7 @@ public class RemoteFileException extends SystemMessageException
 	 */
 	public RemoteFileException(String msg, Exception remoteException)
 	{
-		super(msg);
-		wrappedException = remoteException;
+		super(msg, remoteException);
 	}
 
 	/**
@@ -99,17 +100,8 @@ public class RemoteFileException extends SystemMessageException
 	 */
 	public RemoteFileException(SystemMessage msg, Exception remoteException)
 	{
-		super(msg);
-		wrappedException = remoteException;
+		super(msg, remoteException);
 	}
-    /**
-     * @return the original remote exception
-     */
-    public Exception getRemoteException()
-    {
-    	return wrappedException;
-    }
-
 
 	private static String getString(ResourceBundle bundle, String key)
 	{

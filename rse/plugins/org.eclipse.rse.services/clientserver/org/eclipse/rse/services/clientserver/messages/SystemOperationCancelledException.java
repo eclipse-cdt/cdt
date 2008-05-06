@@ -12,24 +12,23 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
- * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
- * Martin Oberhuber (Wind River) - [226374] [api] Need default SystemMessageException specialisations
+ * Martin Oberhuber (Wind River) - [226374] [api] Derived from RemoteFileCancelledException
  *******************************************************************************/
 
-package org.eclipse.rse.services.files;
+package org.eclipse.rse.services.clientserver.messages;
 
-import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.rse.internal.services.Activator;
 
 /**
- * Exception thrown when attempting a file operation and the user cancelled it
- * before it could be completed. Used to extend RemoteFileException before 3.0
- * 
- * @deprecated use SystemOperationCancelledException
+ * Exception thrown when attempting an operation and the user cancelled it
+ * before it could be completed.
+ *
  * @since 3.0
  */
-public class RemoteFileCancelledException extends SystemOperationCancelledException {
+public class SystemOperationCancelledException extends SystemMessageException {
 
 	/**
 	 * A serialVersionUID is recommended for all serializable classes. This
@@ -37,11 +36,21 @@ public class RemoteFileCancelledException extends SystemOperationCancelledExcept
 	 * schema change for this class.
 	 */
 	private static final long serialVersionUID = 1L;
+	private static SystemMessage myMessage = null;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
-	public RemoteFileCancelledException() {
-		super();
+	public SystemOperationCancelledException() {
+		super(getMyMessage());
 	}
+
+	private static SystemMessage getMyMessage() {
+		if (myMessage == null) {
+			myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_OPERATION_CANCELLED, IStatus.ERROR,
+					CommonMessages.MSG_OPERATION_CANCELLED);
+		}
+		return myMessage;
+	}
+
 }

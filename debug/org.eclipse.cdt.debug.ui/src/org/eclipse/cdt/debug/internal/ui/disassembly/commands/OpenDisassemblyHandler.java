@@ -31,7 +31,7 @@ public class OpenDisassemblyHandler extends AbstractHandler {
      * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
      */
     public Object execute( ExecutionEvent event ) throws ExecutionException {
-        ISelection s = HandlerUtil.getActiveMenuSelection( event );
+        ISelection s = HandlerUtil.getCurrentSelection( event );
         if ( s instanceof IStructuredSelection ) {
             Object element = ((IStructuredSelection)s).getFirstElement();
             IWorkbenchSite site = HandlerUtil.getActiveSite( event );

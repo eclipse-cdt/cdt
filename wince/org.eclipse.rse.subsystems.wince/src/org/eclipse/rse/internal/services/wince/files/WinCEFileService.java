@@ -9,6 +9,7 @@
  *    Radoslav Gerganov - derived from SftpFileService and LocalFileService
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Radoslav Gerganov (ProSyst) - [221211] [api][breaking][files] need batch operations to indicate which operations were successful
+ * Martin Oberhuber (Wind River) - [221211] Throw SystemUnsupportedOperationException for WinCE setLastModified() and setReadOnly()
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -31,6 +32,7 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
@@ -314,9 +316,11 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
   }
 
   public void setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException {
+	  throw new SystemUnsupportedOperationException(org.eclipse.rse.internal.subsystems.files.wince.Activator.PLUGIN_ID, "setLastModified"); //$NON-NLS-1$
   }
 
   public void setReadOnly(String parent, String name, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException {
+	  throw new SystemUnsupportedOperationException(org.eclipse.rse.internal.subsystems.files.wince.Activator.PLUGIN_ID, "setReadOnly"); //$NON-NLS-1$
   }
 
   public void upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary,

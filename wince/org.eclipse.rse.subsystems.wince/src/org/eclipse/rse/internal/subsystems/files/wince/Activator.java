@@ -20,7 +20,9 @@ public class Activator extends SystemBasePlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
+	public final static String PLUGIN_ID = "org.eclipse.rse.subsystems.wince"; //$NON-NLS-1$
+
 	/**
 	 * The constructor
 	 */
@@ -53,7 +55,7 @@ public class Activator extends SystemBasePlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
   protected void initializeImageRegistry() {
     //TODO
   }

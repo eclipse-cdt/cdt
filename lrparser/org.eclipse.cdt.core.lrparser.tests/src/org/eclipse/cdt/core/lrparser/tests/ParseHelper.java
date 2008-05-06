@@ -13,12 +13,12 @@ package org.eclipse.cdt.core.lrparser.tests;
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -37,7 +37,7 @@ public class ParseHelper {
 	
 	static int testsRun = 0;
 	
-	private static class NameResolver extends CPPASTVisitor {
+	private static class NameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
 		}

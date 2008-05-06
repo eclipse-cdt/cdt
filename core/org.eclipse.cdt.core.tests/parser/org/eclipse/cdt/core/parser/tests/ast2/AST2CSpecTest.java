@@ -33,7 +33,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 */
 	public void test4s6() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("#ifdef _ _STDC_IEC_559_ _ /* FE_UPWARD defined */\n"); //$NON-NLS-1$
+		buffer.append("#ifdef __STDC_IEC_559__ /* FE_UPWARD defined */\n"); //$NON-NLS-1$
 		buffer.append("fesetround(FE_UPWARD);\n"); //$NON-NLS-1$
 		buffer.append("#endif\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), false, 0);

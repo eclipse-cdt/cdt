@@ -10,26 +10,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2CSpecTest;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2CSpecFailingTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-@SuppressWarnings({"restriction", "nls"})
-public class LRCSpecTests extends AST2CSpecTest {
+@SuppressWarnings("restriction")
+public class LRCSpecFailingTest extends AST2CSpecFailingTest {
 
 	public static TestSuite suite() {
-    	return suite(LRCSpecTests.class);
+        return suite(LRCSpecFailingTest.class);
     }
 	
-	public LRCSpecTests() { } 
-	public LRCSpecTests(String name) { super(name); }
+	public LRCSpecFailingTest() { } 
+	public LRCSpecFailingTest(String name) { super(name); }
 
 	
 	@Override
@@ -44,38 +44,11 @@ public class LRCSpecTests extends AST2CSpecTest {
 		return ParseHelper.parse(code, language, true, checkBindings, expectedProblemBindings );
     }
 	
-	protected ILanguage getCLanguage() {
+	protected BaseExtensibleLanguage getCLanguage() {
 		return C99Language.getDefault();
 	}
 	
-	protected ILanguage getCPPLanguage() {
+	protected BaseExtensibleLanguage getCPPLanguage() {
 		return ISOCPPLanguage.getDefault();
 	}
-
-	
-	@Override // example code needs to be nested in a function body
-	public void test5_1_2_3s15() throws Exception {
-		String code =
-			"//#include <stdio.h>\n" +
-			"int foo() { \n" +
-			"int sum;\n" +
-			"char *p;\n" +
-			"sum = sum * 10 - '0' + (*p++ = getchar());\n" +
-			"sum = (((sum * 10) - '0') + ((*(p++)) = (getchar())));\n" +
-			"} \n";
-		
-		parseCandCPP(code, false, 0);
-	}	
-
-
-	
-	@Override
-	public void test6_7_2_1s17() throws Exception { // what the heck is offsetof
-		try {
-			super.test6_7_2_1s17();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	
 }

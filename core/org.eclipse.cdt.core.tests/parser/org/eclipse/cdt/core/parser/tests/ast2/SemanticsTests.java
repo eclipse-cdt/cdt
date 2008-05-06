@@ -22,6 +22,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class SemanticsTests extends AST2BaseTest {
 
+	public SemanticsTests() {}
+	public SemanticsTests(String name) { super(name); }
+	
+
 	//	class A {};
 	//	class B {};
 	//

@@ -29,33 +29,33 @@ public class LRParserTestSuite extends TestSuite {
 	public static Test suite() {
 		return new TestSuite() {{
 		
-			addTestSuite(LRTests.class); // has some tests that do fail
-			
-			addTestSuite(LRCSpecTests.class); // a couple of failures
-			addTestSuite(LRKnRTests.class); // mostly fail due to ambiguities
-			
-			// The majority of the content assist test are in the ui tests plugin
+			addTestSuite(LRCommentTests.class);
+			addTestSuite(LRCompleteParser2Tests.class);
 			addTestSuite(LRCompletionBasicTest.class);	
 			addTestSuite(LRCompletionParseTest.class);
-			// this one still has a lot of failing tests though
-			addTestSuite(LRSelectionParseTest.class);
-			
-			addTestSuite(LRDOMLocationInclusionTests.class);
-			addTestSuite(LRDOMLocationTests.class);
-			addTestSuite(LRDOMLocationMacroTests.class);
-			addTestSuite(LRDOMPreprocessorInformationTest.class);
-			addTestSuite(LRCommentTests.class);
-			addTestSuite(LRDigraphTrigraphTests.class);
-			addTestSuite(LRGCCTests.class);
-			addTestSuite(LRUtilOldTests.class);
-			addTestSuite(LRUtilTests.class);
-			addTestSuite(LRCompleteParser2Tests.class);
-			addTestSuite(LRTaskParserTest.class);
-			
+			addTestSuite(LRCPPSpecFailingTest.class);
 			addTestSuite(LRCPPSpecTest.class);
 			addTestSuite(LRCPPTests.class); 
+			addTestSuite(LRCSpecFailingTest.class);
+			addTestSuite(LRCSpecTests.class); // a couple of failures
+			addTestSuite(LRDigraphTrigraphTests.class);
+			addTestSuite(LRDOMLocationInclusionTests.class);
+			addTestSuite(LRDOMLocationMacroTests.class);
+			addTestSuite(LRDOMLocationTests.class);
+			addTestSuite(LRDOMPreprocessorInformationTest.class);
+			addTestSuite(LRGCCTests.class);
+			addTestSuite(LRImageLocationTests.class);
+			addTestSuite(LRKnRTests.class); // mostly fail due to ambiguities
+			addTestSuite(LRNodeSelectorTest.class);
+			addTestSuite(LRQuickParser2Tests.class);
+			addTestSuite(LRSelectionParseTest.class); // this one still has a lot of failing tests though
+			addTestSuite(LRSemanticsTests.class);
+			addTestSuite(LRTaskParserTest.class);
 			addTestSuite(LRTemplateTests.class);
-		
+			addTestSuite(LRTests.class); // has some tests that do fail
+			addTestSuite(LRUtilOldTests.class);
+			addTestSuite(LRUtilTests.class);
+
 		}};
 	}	
 }

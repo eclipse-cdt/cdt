@@ -47,37 +47,37 @@ public class LRKnRTests extends AST2KnRTests {
 	}
     
     // TODO: Failing tests, will get around to fixing these bugs
-    
-    @Override
-	public void testKRCProblem3() throws Exception {
-    	try {
-    		super.testKRCProblem3();
-    		fail();
-    	} catch(Throwable _) { }
-    }
-    
-    @Override
-	public void testKRCProblem4() throws Exception  {
-    	try {
-    		super.testKRCProblem4();
-    		fail();
-    	} catch(Throwable _) { }
-    }
-
-    @Override
-	public void testKRCProblem5() throws Exception  {
-    	try {
-    		super.testKRCProblem5();
-    		fail();
-    	} catch(Throwable _) { }
-    }
-    
-    @Override
-    public void testKRCProblem2() throws Exception  {
-    	try {
-    		super.testKRCProblem2();
-    		fail();
-    	} catch(Throwable _) { }
-    }
+//    
+//    @Override
+//	public void testKRCProblem3() throws Exception {
+//    	try {
+//    		super.testKRCProblem3();
+//    		fail();
+//    	} catch(Throwable _) { }
+//    }
+//    
+//    @Override
+//	public void testKRCProblem4() throws Exception  {
+//    	try {
+//    		super.testKRCProblem4();
+//    		fail();
+//    	} catch(Throwable _) { }
+//    }
+//
+//    @Override
+//	public void testKRCProblem5() throws Exception  {
+//    	try {
+//    		super.testKRCProblem5();
+//    		fail();
+//    	} catch(Throwable _) { }
+//    }
+//    
+//    @Override
+//    public void testKRCProblem2() throws Exception  {
+//    	try {
+//    		super.testKRCProblem2();
+//    		fail();
+//    	} catch(Throwable _) { }
+//    }
     
 }

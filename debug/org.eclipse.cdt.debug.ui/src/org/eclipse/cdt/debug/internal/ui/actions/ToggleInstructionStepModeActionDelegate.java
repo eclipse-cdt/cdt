@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.ITargetProperties;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -66,6 +67,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
         ISteppingModeTarget target = getTarget();
         if ( target != null && target instanceof ITargetProperties ) {
@@ -78,6 +80,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init( IAction action ) {
 		setAction( action );
 		action.setChecked( false );
@@ -87,12 +90,13 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		boolean enabled = getAction().isChecked();
         ISteppingModeTarget target = getTarget();
         if ( target != null ) {
             target.enableInstructionStepping( enabled );
-            if ( enabled ) {
+            if ( enabled && target instanceof ICDebugTarget ) {
                 try {
                     getView().getSite().getPage().showView( ICDebugUIConstants.ID_DISASSEMBLY_VIEW );
                 }
@@ -106,6 +110,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent( IAction action, Event event ) {
 		run( action );
 	}
@@ -113,6 +118,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 	    ISteppingModeTarget newTarget = null;
         if ( selection instanceof IStructuredSelection ) {
@@ -133,10 +139,10 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
             }
             action.setChecked( newTarget.isInstructionSteppingEnabled() );
         }
-        action.setEnabled( 
-                newTarget != null 
-                && newTarget.supportsInstructionStepping() 
-                && !isTerminated( newTarget ) ); 
+        action.setEnabled(
+                newTarget != null
+                && newTarget.supportsInstructionStepping()
+                && !isTerminated( newTarget ) );
 	}
 
 	private boolean isTerminated( ISteppingModeTarget target ) {
@@ -160,12 +166,20 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 		this.fAction = action;
 	}
 
-	private ICDebugTarget getTargetFromSelection( Object element ) {
+	private ISteppingModeTarget getTargetFromSelection( Object element ) {
+		ISteppingModeTarget target= null;
 		if ( element instanceof IDebugElement ) {
-			IDebugTarget target = ((IDebugElement)element).getDebugTarget();
-			return ( target instanceof ICDebugTarget ) ? (ICDebugTarget)target : null;
+			IDebugTarget debugTarget = ((IDebugElement)element).getDebugTarget();
+			if (debugTarget instanceof ISteppingModeTarget) {
+				target= (ISteppingModeTarget) debugTarget;
+			}
 		}
-		return null;
+		if (target == null) {
+			if (element instanceof IAdaptable) {
+				target= (ISteppingModeTarget) ((IAdaptable)element).getAdapter(ISteppingModeTarget.class);
+			}
+		}
+		return target;
 	}
 
 	private IViewPart getView() {

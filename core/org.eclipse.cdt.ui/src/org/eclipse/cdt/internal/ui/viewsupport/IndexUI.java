@@ -394,7 +394,7 @@ public class IndexUI {
 		return result[0];
 	}
 
-	public static String getFleNotIndexedMessage(ICElement input) {
+	public static String getFileNotIndexedMessage(ICElement input) {
 		ITranslationUnit tu= null;
 		if (input instanceof ISourceReference) {
 			ISourceReference ref= (ISourceReference) input;

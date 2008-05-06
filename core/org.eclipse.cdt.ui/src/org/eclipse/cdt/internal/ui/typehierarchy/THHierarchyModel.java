@@ -319,7 +319,7 @@ class THHierarchyModel {
 					fGraph= graph;
 					THGraphNode inputNode= fGraph.getInputNode();
 					if (!fGraph.isFileIndexed()) {
-						fView.setMessage(IndexUI.getFleNotIndexedMessage(fInput));
+						fView.setMessage(IndexUI.getFileNotIndexedMessage(fInput));
 					}
 					else if (inputNode == null) {
 						fView.setMessage(Messages.THHierarchyModel_errorComputingHierarchy);

@@ -210,12 +210,12 @@ public class IBViewPart extends ViewPart
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					IIndex index= CCorePlugin.getIndexManager().getIndex(input.getCProject());
+					final ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
+					IIndex index= CCorePlugin.getIndexManager().getIndex(projects);
 					index.acquireReadLock();
 					try {
 						if (!IndexUI.isIndexed(index, input)) {
-							final String msg = IndexUI
-									.getFleNotIndexedMessage(input);
+							final String msg = IndexUI.getFileNotIndexedMessage(input);
 							display.asyncExec(new Runnable() {
 								public void run() {
 									if (fTreeViewer.getInput() == input) {

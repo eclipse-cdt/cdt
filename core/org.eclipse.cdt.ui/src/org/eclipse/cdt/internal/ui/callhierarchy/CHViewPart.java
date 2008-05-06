@@ -175,7 +175,7 @@ public class CHViewPart extends ViewPart {
 
 	public void reportNotIndexed(ICElement input) {
 		if (input != null && getInput() == input) {
-			setMessage(IndexUI.getFleNotIndexedMessage(input));
+			setMessage(IndexUI.getFileNotIndexedMessage(input));
 		}
 	}
 

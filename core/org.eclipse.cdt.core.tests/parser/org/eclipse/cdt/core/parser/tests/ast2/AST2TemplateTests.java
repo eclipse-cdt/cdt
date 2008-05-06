@@ -2459,4 +2459,28 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(col.getName(4).getParent(), ICPPASTTemplateId.class);
 		assertInstance(col.getName(5).getParent(), IASTIdExpression.class);
 	}
+	
+	//  // From discussion in 207840. See 14.3.4.
+	//	class A {};
+	//
+	//	template<typename T>
+	//	class B {};
+	//
+	//	template<typename T = A>
+	//	class C {};
+	//
+	//	B b1;
+	//	B<> b2; // error - no default args
+	//
+	//	C c1;   
+	//	C<> c2; // ok - default args
+	public void _testMissingTemplateArgumentLists() throws Exception {
+		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("B b1", 1);
+		ba.assertNonProblem("B<> b2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);
+		ba.assertProblem("B<> b2", 3);
+		ba.assertProblem("C c1", 1);
+		ba.assertNonProblem("C<> c2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);
+		ba.assertNonProblem("C<> c2", 3, ICPPTemplateInstance.class, ICPPClassType.class);
+	}
 }

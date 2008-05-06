@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
+ * Radoslav Gerganov (ProSyst)   - [229956][regression][shells][local] Content assist is broken in CVS HEAD
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -26,6 +27,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -305,7 +307,12 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 		}
 		else if (object instanceof IAdaptable)
 		{
+			// load org.eclipse.rse.files.ui for adapters in order to be able to perform "content assist" in a local shell, see bug#229956
 			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) object).getAdapter(ISystemViewElementAdapter.class);
+			if (adapter == null) {
+				adapter = (ISystemViewElementAdapter) Platform.getAdapterManager().loadAdapter(object, 
+						ISystemViewElementAdapter.class.getName());
+			}
 			descriptor = adapter.getImageDescriptor(object);
 		}
 

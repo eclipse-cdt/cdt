@@ -36,6 +36,7 @@
  * Kevin Doyle		(IBM)		 - [224162] SystemEditableRemoteFile.saveAs does not work because FileServiceSubSytem.upload does invalid check
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
+ * Martin Oberhuber (Wind River) - [221211] Fix markStale() for delete() operation with exceptions
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -858,8 +859,11 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		IFileService service = getFileService();
 		String parent = folderOrFile.getParentPath();
 		String name = folderOrFile.getName();
-		service.delete(parent, name, monitor);
-		folderOrFile.markStale(true);
+		try {
+			service.delete(parent, name, monitor);
+		} finally {
+			folderOrFile.markStale(true);
+		}
 		return true;
 	}
 
@@ -900,9 +904,12 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		String srcName = sourceFolderOrFile.getName();
 		String tgtParent = targetFolder.getAbsolutePath();
 		removeCachedRemoteFile(sourceFolderOrFile);
-		service.move(srcParent, srcName, tgtParent, newName, monitor);
-		sourceFolderOrFile.markStale(true);
-		targetFolder.markStale(true);
+		try {
+			service.move(srcParent, srcName, tgtParent, newName, monitor);
+		} finally {
+			sourceFolderOrFile.markStale(true);
+			targetFolder.markStale(true);
+		}
 		return true;
 	}
 

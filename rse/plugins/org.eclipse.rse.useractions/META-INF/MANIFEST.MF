@@ -21,6 +21,10 @@ Require-Bundle: org.eclipse.core.resources,
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.useractions;x-internal:=true,
+ org.eclipse.rse.internal.useractions.api.files.compile;x-internal:=true,
+ org.eclipse.rse.internal.useractions.api.files.uda;x-internal:=true,
+ org.eclipse.rse.internal.useractions.api.ui.compile;x-internal:=true,
+ org.eclipse.rse.internal.useractions.api.ui.uda;x-internal:=true,
  org.eclipse.rse.internal.useractions.files.compile;x-internal:=true,
  org.eclipse.rse.internal.useractions.files.uda;x-internal:=true,
  org.eclipse.rse.internal.useractions.ui;x-internal:=true,
@@ -28,10 +32,6 @@ Export-Package: org.eclipse.rse.internal.useractions;x-internal:=true,
  org.eclipse.rse.internal.useractions.ui.uda;x-internal:=true,
  org.eclipse.rse.internal.useractions.ui.uda.actions;x-internal:=true,
  org.eclipse.rse.internal.useractions.ui.uda.util;x-internal:=true,
- org.eclipse.rse.internal.useractions.ui.validators;x-internal:=true,
- org.eclipse.rse.useractions.files.compile,
- org.eclipse.rse.useractions.files.uda,
- org.eclipse.rse.useractions.ui.compile,
- org.eclipse.rse.useractions.ui.uda
+ org.eclipse.rse.internal.useractions.ui.validators;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -25,6 +25,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.UserActionsPersistenceUtil;
+import org.eclipse.rse.internal.useractions.api.ui.compile.SystemCascadingCompileAction;
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -36,7 +37,6 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
-import org.eclipse.rse.useractions.ui.compile.SystemCascadingCompileAction;
 import org.eclipse.swt.widgets.Shell;
 
 /**

@@ -12,7 +12,7 @@
  *                                API to the user actions plugin
  * Xuan Chen        (IBM)    - [225617] [useraction][api] Remove Team view support inside user action.
  *******************************************************************************/
-package org.eclipse.rse.useractions.ui.compile;
+package org.eclipse.rse.internal.useractions.api.ui.compile;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
@@ -21,6 +21,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
+import org.eclipse.rse.internal.useractions.api.files.compile.ISystemCompileManagerAdapter;
 import org.eclipse.rse.internal.useractions.files.compile.UniversalCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
@@ -31,19 +32,24 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
-import org.eclipse.rse.useractions.files.compile.ISystemCompileManagerAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * The action that displays the Work With -> Compile Commands menu item
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction {
-	
+
 	private ISubSystem subsystem = null;
 	private ISubSystemConfiguration subsystemFactory = null;
 	private ISystemProfile profile = null;
 	private SystemCompileManager compileManager = null;
-	
+
 	/**
 	 * Constructor
 	 * @param shell The Shell of the parent UI for this dialog
@@ -61,7 +67,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 		setHelp(RSEUIPlugin.HELPPREFIX + "actnwwcc"); //$NON-NLS-1$
 		setAvailableOffline(true);
 	}
-	
+
 	public SystemWorkWithCompileCommandsAction(Shell shell, boolean fromCascadingCompileAction, ISubSystem subSystem, SystemCompileManager compileManager)
 	{
 		this(shell, fromCascadingCompileAction);
@@ -72,7 +78,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 			subsystemFactory = subsystem.getSubSystemConfiguration();
 			profile = subSystem.getSystemProfile();
 		}
-		
+
 	}
 
 	/**
@@ -117,7 +123,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 				subsystemFactory = ((SystemTeamViewSubSystemConfigurationNode) inputObject).getSubSystemConfiguration();
 				profile = ((SystemTeamViewSubSystemConfigurationNode) inputObject).getProfile();
 			}
-			*/ 
+			*/
 			else {
 				ISystemRemoteElementAdapter rmtAdapter = SystemAdapterHelpers.getRemoteAdapter(inputObject);
 				if (rmtAdapter != null) subsystem = rmtAdapter.getSubSystem(inputObject);
@@ -130,9 +136,9 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 			if (subsystemFactory == null) subsystemFactory = subsystem.getSubSystemConfiguration();
 			if (profile == null) profile = subsystem.getSystemProfile();
 		}
-	
-		if (null == compileManager)	 
-		{	 
+
+		if (null == compileManager)
+		{
 			 if (inputObject instanceof IAdaptable) {
 				 ISystemCompileManagerAdapter	adapter = (ISystemCompileManagerAdapter)((IAdaptable)inputObject).getAdapter(ISystemCompileManagerAdapter.class);
 				 if (null != adapter)
@@ -141,13 +147,13 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 				 }
 			 }
 		}
-			 
+
 		if (null == compileManager)
 		{
 			 compileManager = new UniversalCompileManager();
 			 compileManager.setSubSystemFactory(subsystemFactory);
 		}
-			 
+
 		if (null != compileManager)
 		{
 				 if (profile != null)
@@ -155,9 +161,9 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 					 currProfile = compileManager.getCompileProfile(profile);
 					 currProfiles = compileManager.getAllCompileProfiles();
 				 }
-			
+
 				caseSensitive = subsystemFactory.isCaseSensitive();
-		
+
 				SystemWorkWithCompileCommandsDialog dlg = new SystemWorkWithCompileCommandsDialog(shell, compileManager, currProfile);
 				/* FIXME - currProfiles cannot be null since above stuff was commented out
 				 if (currProfiles != null) {
@@ -166,7 +172,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 				 */
 				dlg.setProfiles(currProfiles);
 				dlg.setCaseSensitive(caseSensitive);
-				
+
 				return dlg;
 		}
 		return null;

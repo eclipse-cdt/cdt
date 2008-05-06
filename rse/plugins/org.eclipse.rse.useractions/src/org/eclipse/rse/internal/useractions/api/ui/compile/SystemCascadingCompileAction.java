@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
-package org.eclipse.rse.useractions.ui.compile;
+package org.eclipse.rse.internal.useractions.api.ui.compile;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -28,6 +28,12 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Cascading Compile-> menu for remote compilable resources.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public class SystemCascadingCompileAction extends SystemBaseSubMenuAction implements IMenuListener {
 	private boolean isPrompt;

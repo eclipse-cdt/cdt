@@ -8,10 +8,10 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
- * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
+ * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
-package org.eclipse.rse.useractions.ui.compile;
+package org.eclipse.rse.internal.useractions.api.ui.compile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +38,22 @@ import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
- * This is the action for an individual compile command, either prompted or not prompted.
- * The label for the action is simply the compile command's label. If promptable, then "..." is appended.
+ * This is the action for an individual compile command, either prompted or not
+ * prompted. The label for the action is simply the compile command's label. If
+ * promptable, then "..." is appended.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public class SystemCompileAction extends SystemBaseAction {
 	private SystemCompileCommand compileCmd;
 	private boolean isPrompt;
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	public SystemCompileAction(Shell shell, SystemCompileCommand compileCommand, boolean isPrompt) {
 		super(

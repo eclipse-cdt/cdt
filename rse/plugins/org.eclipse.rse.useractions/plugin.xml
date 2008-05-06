@@ -7,7 +7,7 @@
      <menuContribution locationURI="popup:org.eclipse.rse.ui.view.systemView">
         <menu id="org.eclipse.rse.ui.useractions.compile.menu"
               label="%DynamicLabel.CompileActionNode">
-           <dynamic class="org.eclipse.rse.useractions.ui.compile.SystemDynamicCompileMenu"
+           <dynamic class="org.eclipse.rse.internal.useractions.api.ui.compile.SystemDynamicCompileMenu"
                      id="org.eclipse.ui.rse.ui.views.dynamiccompilemenu">
            </dynamic>
            <visibleWhen>
@@ -24,7 +24,7 @@
         </menu>
       	<menu id="org.eclipse.rse.ui.useractions.useraction.menu"
               label="%DynamicLabel.UserActionNode">
-           <dynamic class="org.eclipse.rse.useractions.ui.uda.SystemDynamicUserActionMenu"
+           <dynamic class="org.eclipse.rse.internal.useractions.api.ui.uda.SystemDynamicUserActionMenu"
                     id="org.eclipse.ui.rse.ui.views.dynamicuseractionmenu">
            </dynamic>
            <visibleWhen>

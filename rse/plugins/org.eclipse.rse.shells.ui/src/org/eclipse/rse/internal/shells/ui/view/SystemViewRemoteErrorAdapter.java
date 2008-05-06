@@ -13,9 +13,12 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Radoslav Gerganov (ProSyst)   - [229725] Right click popup menu inside Local Shell view has two copy entries
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
+
+import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
@@ -41,8 +44,16 @@ public class SystemViewRemoteErrorAdapter extends SystemViewRemoteOutputAdapter
 	 */
 	public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup)
 	{
-	    super.addActions(menu, selection, shell, menuGroup);
-
+		Iterator iter = selection.iterator();
+		// check if the selection contains only IRemoteError objects
+		while (iter.hasNext()) {
+			Object current = iter.next();
+			if (!(current instanceof IRemoteError)) {
+				return;
+			}
+		}
+		// add the same context menu actions as for IRemoteOutput
+		super.addActions(menu, selection, shell, menuGroup);
 	}
 	
 	public IPropertyDescriptor[] getUniquePropertyDescriptors()

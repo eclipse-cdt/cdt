@@ -74,7 +74,7 @@ public class LRSelectionParseTest extends AST2SelectionParseTest {
 		String fileName = file.getLocation().toOSString();
 		ICodeReaderFactory fileCreator = SavedCodeReaderFactory.getInstance();
 		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(fileName);
-		return ParseHelper.parse(reader, language, scanInfo, fileCreator, expectNoProblems, true, 0);
+		return ParseHelper.parse(reader, language, scanInfo, fileCreator, expectNoProblems, true, 0, null);
 	}
 
 	@Override

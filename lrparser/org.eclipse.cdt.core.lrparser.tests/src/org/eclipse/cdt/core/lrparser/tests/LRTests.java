@@ -47,6 +47,10 @@ public class LRTests extends AST2Tests {
     	return ParseHelper.parse(code, language, expectNoProblems);
     }
     
+    @Override
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, @SuppressWarnings("unused") boolean parseComments) throws ParserException {
+		return parse(code,lang, useGNUExtensions, expectNoProblems );
+	}
     
     protected ILanguage getC99Language() {
     	return C99Language.getDefault();

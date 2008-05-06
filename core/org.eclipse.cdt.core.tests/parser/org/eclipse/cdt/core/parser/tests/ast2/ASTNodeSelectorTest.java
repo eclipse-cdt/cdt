@@ -34,9 +34,9 @@ public class ASTNodeSelectorTest extends AST2BaseTest {
 		return suite(ASTNodeSelectorTest.class);
 	}
 
-	private String fCode;
-	private IASTTranslationUnit fTu;
-	private IASTNodeSelector fSelector;
+	protected String fCode;
+	protected IASTTranslationUnit fTu;
+	protected IASTNodeSelector fSelector;
 	
 	public ASTNodeSelectorTest() {
 	}
@@ -51,7 +51,7 @@ public class ASTNodeSelectorTest extends AST2BaseTest {
 		createTranslationUnit();
 	}
 
-	private void createTranslationUnit() throws IOException {
+	protected void createTranslationUnit() throws IOException {
 		fCode= getContents(1)[0].toString();
         CodeReader codeReader = new CodeReader(fCode.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();

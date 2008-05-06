@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import java.io.IOException;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -37,6 +39,14 @@ public class LRNodeSelectorTest extends ASTNodeSelectorTest {
     	return ParseHelper.parse(code, language, expectNoProblems);
     }
     
+	@Override
+	protected void createTranslationUnit() throws IOException {
+		fCode= getContents(1)[0].toString();
+        fTu = ParseHelper.parse(fCode, getCPPLanguage(), false);
+        fSelector= fTu.getNodeSelector(null);
+	}
+	
+	
     protected ILanguage getC99Language() {
     	return C99Language.getDefault();
     }

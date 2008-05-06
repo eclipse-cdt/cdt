@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
+
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -411,8 +413,10 @@ public class AST2BaseTest extends BaseTestCase {
 	}
 	
 	protected StringBuffer[] getContents(int sections) throws IOException {
-		return TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
+		CTestPlugin plugin = CTestPlugin.getDefault();
+		if(plugin == null)
+			throw new AssertionFailedError("This test must be run as a JUnit plugin test");
+		return TestSourceReader.getContentsForTest(plugin.getBundle(), "parser", getClass(), getName(), sections);
 	}
 	
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {

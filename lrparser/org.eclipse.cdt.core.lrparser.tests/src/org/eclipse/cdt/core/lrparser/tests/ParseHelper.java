@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -32,31 +35,42 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Mike Kucera
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "nls"})
 public class ParseHelper {
 	
 	static int testsRun = 0;
 	
-	private static class NameResolver extends ASTVisitor {
+	
+	
+	static protected class NameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
 		}
-		public int numProblemBindings = 0;
+		
+		public List<IASTName> nameList = new ArrayList<IASTName>();
+		public List<String> problemBindings = new ArrayList<String>();
 		public int numNullBindings = 0;
 		
+		
 		@Override
-		public int visit( IASTName name ){
-			//System.out.println("Visit Name: '" + name.toString() + "'");
+		public int visit(IASTName name) {
+			nameList.add(name);
 			IBinding binding = name.resolveBinding();
-			if (binding instanceof IProblemBinding) {
-				numProblemBindings++;
-				//System.out.println("Problem Binding: " + name);
-			}
-			if (binding == null) {
+			if (binding instanceof IProblemBinding)
+				problemBindings.add(name.toString());
+			if (binding == null)
 				numNullBindings++;
-				//System.out.println("Null Binding: " + name);
-			}
 			return PROCESS_CONTINUE;
+		}
+		
+		public IASTName getName(int idx) {
+			if(idx < 0 || idx >= nameList.size())
+				return null;
+			return nameList.get(idx);
+		}
+		
+		public int size() { 
+			return nameList.size(); 
 		}
 	}
 	
@@ -64,22 +78,26 @@ public class ParseHelper {
 
 	public static IASTTranslationUnit parse(char[] code, ILanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
 		CodeReader codeReader = new CodeReader(code);
-		return parse(codeReader, lang, new ScannerInfo(), null, expectNoProblems, checkBindings, expectedProblemBindings);
+		return parse(codeReader, lang, new ScannerInfo(), null, expectNoProblems, checkBindings, expectedProblemBindings, null);
 	}
 	
 	public static IASTTranslationUnit parse(String code, ILanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
 		return parse(code.toCharArray(), lang, expectNoProblems, checkBindings, expectedProblemBindings);
 	}
 	
-	
 	public static IASTTranslationUnit parse(String code, ILanguage lang, boolean expectNoProblems) {
 		return parse(code, lang, expectNoProblems, false, 0);
 	}
 
+	public static IASTTranslationUnit parse(String code, ILanguage lang, String[] problems) {
+		CodeReader codeReader = new CodeReader(code.toCharArray());
+    	return parse(codeReader, lang, new ScannerInfo(), null, true, true, problems.length, problems);
+	}
 
-
+	
 	public static IASTTranslationUnit parse(CodeReader codeReader, ILanguage language, IScannerInfo scanInfo, 
-			                                ICodeReaderFactory fileCreator, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
+			                                ICodeReaderFactory fileCreator, boolean expectNoProblems, 
+			                                boolean checkBindings, int expectedProblemBindings, String[] problems) {
 		testsRun++;
 		
 		IASTTranslationUnit tu;
@@ -90,26 +108,32 @@ public class ParseHelper {
 		}
 
 		// should parse correctly first before we look at the bindings
-        if(expectNoProblems )
-        {
-			if (CVisitor.getProblems(tu).length != 0) {
-				throw new AssertionFailedError(" CVisitor has AST Problems " ); //$NON-NLS-1$
+        if(expectNoProblems) {
+        	
+        	// this should work for C++ also, CVisitor.getProblems() and CPPVisitor.getProblems() are exactly the same code!
+			if (CVisitor.getProblems(tu).length != 0) { 
+				throw new AssertionFailedError(" CVisitor has AST Problems " ); 
 			}
-			
-			// TODO: actually collect preprocessor problems
 			if (tu.getPreprocessorProblems().length != 0) {
-				throw new AssertionFailedError(" C TranslationUnit has Preprocessor Problems " ); //$NON-NLS-1$
+				throw new AssertionFailedError(" C TranslationUnit has Preprocessor Problems " );
 			}
         }
 
         // resolve all bindings
 		if (checkBindings) {
-
 			NameResolver res = new NameResolver();
 	        tu.accept( res );
-			if (res.numProblemBindings != expectedProblemBindings )
-				throw new AssertionFailedError("Expected " + expectedProblemBindings + " problem(s), encountered " + res.numProblemBindings ); //$NON-NLS-1$ //$NON-NLS-2$
+			if(res.problemBindings.size() != expectedProblemBindings)
+				throw new AssertionFailedError("Expected " + expectedProblemBindings + " problem(s), encountered " + res.problemBindings.size());
 			
+			if(problems != null) {
+				for(int i = 0; i < problems.length; i++) {
+					String expected = problems[i];
+					String actual = res.problemBindings.get(i);
+					if(!expected.equals(actual))
+						throw new AssertionFailedError(String.format("Problem binding not equal, expected: %s, got: %s", expected, actual));
+				}
+			}
 		}
 		
 		return tu;

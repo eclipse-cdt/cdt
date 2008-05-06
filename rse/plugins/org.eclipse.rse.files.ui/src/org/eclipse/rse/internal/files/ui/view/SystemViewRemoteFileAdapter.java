@@ -53,10 +53,12 @@
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * Rupen Mardirossian (IBM)      - [198728] Folder being copied across systems is added to original set of files in order to extract empty (sub)folders in doDrop method			
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * Rupen Mardirossian (IBM)      - [227213] Copy and pasting to the parent folder will create a "Copy of" that resource
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -157,6 +159,7 @@ import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -2118,9 +2121,9 @@ public class SystemViewRemoteFileAdapter
 					}
 					else if (first instanceof IRemoteFile)
 					{
-						//List toCopy = new ArrayList();
-						//List toCopyNames = new ArrayList();
-						List toCopyBatch = new ArrayList();
+						List toCopy = new ArrayList();
+						List toCopyNames = new ArrayList();
+						//List toCopyBatch = new ArrayList();
 						List existing = new ArrayList();
 						boolean overwrite=false;
 
@@ -2151,36 +2154,63 @@ public class SystemViewRemoteFileAdapter
 
 
 							String name = srcFileOrFolder.getName();
-
+							String originalName = srcFileOrFolder.getName();
+							int count = 1;
+							boolean go = true;
+							
 							// same systemfor
-							if (sameSystem)
+							if (sameSystem) 
 							{
 								try
 								{
-									if (!targetFolder.getAbsolutePath().equals(srcFileOrFolder.getAbsolutePath()) && !targetFolder.getAbsolutePath().equals(srcFileOrFolder.getParentRemoteFile().getAbsolutePath()))
+									if (!targetFolder.getAbsolutePath().equals(srcFileOrFolder.getAbsolutePath()))
 									{
-
-										// should be better doing a query for all in the set
-										IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name, monitor);
-										if (existingFileOrFolder.exists())
+										//Handle resources being copied to their parent folder.  Name = "Copy of " + name
+										if(targetFolder.getAbsolutePath().equals(srcFileOrFolder.getParentRemoteFile().getAbsolutePath()))
 										{
-											/*RenameRunnable rr = new RenameRunnable(existingFileOrFolder, toCopyNames);
-											Display.getDefault().syncExec(rr);
-											name = rr.getNewName();
-											*/
-											existing.add(existingFileOrFolder);
+											name = MessageFormat.format(FileResources.RESID_CONFLICT_COPY_PATTERN, new Object[] { 
+												    new Integer(count), originalName });
+											while(go)
+											{
+												IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name, monitor);
+												if (existingFileOrFolder.exists())
+												{
+													count++;
+													name = MessageFormat.format(FileResources.RESID_CONFLICT_COPY_PATTERN, new Object[] { 
+														    new Integer(count), originalName });
+												}
+												else
+												{
+													toCopy.add(srcFileOrFolder);
+													toCopyNames.add(name);
+													go = false;
+												}
+											}
 										}
-
-										if (name != null)
+										else
 										{
-											//toCopy.add(srcFileOrFolder);
-											//toCopyNames.add(name);
-											toCopyBatch.add(srcFileOrFolder);
+											// should be better doing a query for all in the set
+											IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name, monitor);
+											if (existingFileOrFolder.exists())
+											{
+												/*RenameRunnable rr = new RenameRunnable(existingFileOrFolder, toCopyNames);
+												Display.getDefault().syncExec(rr);
+												name = rr.getNewName();
+												*/
+												existing.add(existingFileOrFolder);
+											}
+	
+											if (name != null)
+											{
+												toCopy.add(srcFileOrFolder);
+												toCopyNames.add(name);
+												//toCopyBatch.add(srcFileOrFolder);
+											}
+											/*else if (name != null)
+											{
+												toCopyBatch.add(srcFileOrFolder);
+											}*/
 										}
-										/*else if (name != null)
-										{
-											toCopyBatch.add(srcFileOrFolder);
-										}*/
 									}
 								}
 								catch (Exception e)
@@ -2201,9 +2231,13 @@ public class SystemViewRemoteFileAdapter
 							Display.getDefault().syncExec(rr);
 							overwrite = rr.getOk();
 						}
-
-						//Following code for renaming dialog copying procedures is not required
-						/*if(existing.size()==0 || overwrite)
+						
+						
+						
+						//Following code used originally with the rename dialog which no longer exists
+						//Resources will be copied with same names if an overwrite is desired from the user
+						//Resources that are copied to their parent will be renamed to "Copy of " + name of source 
+						if(existing.size()==0 || overwrite)
 						{
 							for (int x = 0; x < toCopy.size(); x++)
 							{
@@ -2284,9 +2318,9 @@ public class SystemViewRemoteFileAdapter
 									e.printStackTrace();
 								}
 							}
-						}*/
+						}
 						// deal with batch copies now
-						if(existing.size()==0 || overwrite)
+						/*if(existing.size()==0 || overwrite)
 						{
 							IRemoteFile[] srcFileOrFolders = new IRemoteFile[toCopyBatch.size()];
 							for (int x = 0; x < toCopyBatch.size(); x++)
@@ -2363,7 +2397,7 @@ public class SystemViewRemoteFileAdapter
 									e.printStackTrace();
 								}
 							}
-						}
+						}*/
 					}
 				}
 			}

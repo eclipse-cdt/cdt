@@ -35,7 +35,7 @@ public class SystemOperationFailedException extends SystemRemoteMessageException
 
 	/**
 	 * Default Constructor.
-	 * Clients are encouraged to use the more specific constructor with pluginId and operationPerformed instead of this one.   
+	 * Clients are encouraged to use the more specific constructor with pluginId and operationPerformed instead of this one.
 	 *
 	 * @param remoteException the initial cause of this exception
 	 */
@@ -44,8 +44,19 @@ public class SystemOperationFailedException extends SystemRemoteMessageException
 	}
 
 	/**
+	 * Constructor with plugin ID and plain text failure information. Clients
+	 * are encouraged to use the more specific constructor with pluginId and
+	 * remoteException instead of this one.
+	 *
+	 * @param msg message about failed operation
+	 */
+	public SystemOperationFailedException(String pluginId, String msg) {
+		super(getMyMessage(pluginId, msg, null), null);
+	}
+
+	/**
 	 * Constructor with plugin ID.
-	 * Clients are encouraged to use the more specific constructor with pluginId and operationPerformed instead of this one.   
+	 * Clients are encouraged to use the more specific constructor with pluginId and operationPerformed instead of this one.
 	 *
 	 * @param remoteException the initial cause of this exception
 	 */
@@ -64,27 +75,30 @@ public class SystemOperationFailedException extends SystemRemoteMessageException
 
 	private static SystemMessage getMyMessage(String pluginId, String operationPerformed, Exception remoteException) {
 
-		String message = remoteException.getMessage();
-		if (message == null) {
-			message = remoteException.getClass().getName();
+		String message = operationPerformed;
+		String secondLevel = null;
+		if (remoteException != null) {
+			message = remoteException.getMessage();
+			if (message == null) {
+				message = remoteException.getClass().getName();
+			}
+			Throwable cause = remoteException.getCause();
+			if (cause != null) {
+				secondLevel = cause.getMessage();
+				if (secondLevel == null) {
+					secondLevel = cause.getClass().getName();
+					if (secondLevel.equals(message)) {
+						secondLevel = null;
+					}
+				}
+			}
+			if (operationPerformed != null) {
+				// FIXME Use Java MessageFormat for better formatting
+				secondLevel = (secondLevel != null) ? operationPerformed + " : " + secondLevel : operationPerformed; //$NON-NLS-1$
+			}
 		}
 		String msgTxt = NLS.bind(CommonMessages.MSG_OPERATION_FAILED, message);
 
-		String secondLevel = null;
-		Throwable cause = remoteException.getCause();
-		if (cause != null) {
-			secondLevel = cause.getMessage();
-			if (secondLevel == null) {
-				secondLevel = cause.getClass().getName();
-				if (secondLevel.equals(message)) {
-					secondLevel = null;
-				}
-			}
-		}
-		if (operationPerformed != null) {
-			// FIXME Use Java MessageFormat for better formatting
-			secondLevel = (secondLevel != null) ? operationPerformed + " : " + secondLevel : operationPerformed; //$NON-NLS-1$
-		}
 		SystemMessage msg = new SimpleSystemMessage(pluginId, ICommonMessageIds.MSG_OPERATION_FAILED,
 				IStatus.ERROR, msgTxt, secondLevel);
 		return msg;

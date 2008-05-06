@@ -778,6 +778,8 @@ public class CPPVisitor {
 					return ((ICPPASTIfStatement)parent).getScope();
 				} else if (parent instanceof ICPPASTWhileStatement) {
 					return ((ICPPASTWhileStatement)parent).getScope();
+				} else if (parent instanceof ICPPASTTemplateDeclaration) {
+					return ((ICPPASTTemplateDeclaration)parent).getScope();
 				}
 			} else if (node instanceof IASTStatement) {
 		        return getContainingScope((IASTStatement) node); 
@@ -886,18 +888,30 @@ public class CPPVisitor {
 		        name = (IASTName) parent;
 		        parent = name.getParent();
 		    }
-	        ICPPASTTemplateDeclaration decl = CPPTemplates.getTemplateDeclaration(name);
-	        if (decl != null)
-	            return decl.getScope();
+	        ICPPASTTemplateDeclaration tmplDecl = CPPTemplates.getTemplateDeclaration(name);
+	        if (tmplDecl != null)
+	            return tmplDecl.getScope();
 	            
 			if (parent instanceof ICPPASTQualifiedName) {
-				IASTName[] names = ((ICPPASTQualifiedName) parent).getNames();
+				final ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
+				final IASTName[] names = qname.getNames();
 				int i = 0;
 				for (; i < names.length; i++) {
 					if (names[i] == name) break;
 				}
+				if (i == 0) {
+					if (qname.isFullyQualified()) {
+						return parent.getTranslationUnit().getScope();
+					} 
+					for (int j=1; j < names.length; j++) {
+						tmplDecl = CPPTemplates.getTemplateDeclaration(names[j]);
+						if (tmplDecl != null) {
+							return getContainingScope(tmplDecl);
+						}
+					}
+				}
 				if (i > 0) {
-					IBinding binding = names[i - 1].resolveBinding();
+					IBinding binding = names[i-1].resolveBinding();
 					while (binding instanceof ITypedef) {
 						IType t = ((ITypedef)binding).getType();
 						if (t instanceof IBinding)
@@ -925,11 +939,7 @@ public class CPPVisitor {
 						}
 						return scope;
 					}
-				}
-				else if (((ICPPASTQualifiedName)parent).isFullyQualified())
-				{
-				   return parent.getTranslationUnit().getScope();
-				}
+				} 
 			} else if (parent instanceof ICPPASTFieldReference) {
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference)parent;
 				IASTExpression owner = fieldReference.getFieldOwner();

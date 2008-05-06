@@ -773,63 +773,79 @@ public class CPPTemplates {
 		return result;
 	}
 
+	/**
+	 * Checks whether a given name corresponds to a template declaration and returns the ast node for it.
+	 * This works for the name of a template-definition and also for a name needed to qualify a member
+	 * definition:
+	 * <pre>
+	 * template &lttypename T&gt void MyTemplate&ltT&gt::member() {}
+	 * </pre>
+	 * @param name a name for which the corresponding template declaration is searched for.
+	 * @return the template declaration or <code>null</code> if <code>name</code> does not
+	 * correspond to a template declaration.
+	 */
 	public static ICPPASTTemplateDeclaration getTemplateDeclaration(IASTName name) {
-		if (name == null) return null;
+		if (name == null) {
+			return null;
+		}
 
 		IASTNode parent = name.getParent();
 		while (parent instanceof IASTName) {
 		    parent = parent.getParent();
 		}
 		if (parent instanceof IASTDeclSpecifier) {
-		    parent = parent.getParent();
+			if (parent instanceof IASTCompositeTypeSpecifier == false 
+					&& parent instanceof IASTElaboratedTypeSpecifier == false) {
+				return null;
+			}
+			parent = parent.getParent();
 		} else {
 			while (parent instanceof IASTDeclarator) {
 			    parent = parent.getParent();
 			}
 		}
-		if (parent instanceof IASTDeclaration && parent.getParent() instanceof ICPPASTTemplateDeclaration) {
-		    parent = parent.getParent();
-		} else {
+		if (parent instanceof IASTDeclaration == false) {
 			return null;
 		}
-
+		
+		parent = parent.getParent();
 		if (parent instanceof ICPPASTTemplateDeclaration) {
 		    ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) parent;
-		    while (templateDecl.getParent() instanceof ICPPASTTemplateDeclaration)
-		        templateDecl = (ICPPASTTemplateDeclaration) templateDecl.getParent();
 
-			IASTName[] ns = null;
+			IASTName[] ns;
 			if (name instanceof ICPPASTQualifiedName) {
 				ns = ((ICPPASTQualifiedName) name).getNames();
 				name = ns[ns.length - 1];
 			} else if (name.getParent() instanceof ICPPASTQualifiedName) {
 				ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
-			}
-			if (ns != null) {
-				IASTDeclaration currDecl = templateDecl;
-				for (int j = 0; j < ns.length; j++) {
-					if (ns[j] == name) {
-						if (ns[j] instanceof ICPPASTTemplateId || j + 1 == ns.length) {
-							if (currDecl instanceof ICPPASTTemplateDeclaration)
-								return (ICPPASTTemplateDeclaration) currDecl;
-							return null;
-						}
-					}
-					if (ns[j] instanceof ICPPASTTemplateId) {
-						if (currDecl instanceof ICPPASTTemplateDeclaration)
-							currDecl = ((ICPPASTTemplateDeclaration) currDecl).getDeclaration();
-						else
-							return null; //??? this would imply bad ast or code
-					}
-				}
 			} else {
-				while (templateDecl.getDeclaration() instanceof ICPPASTTemplateDeclaration) {
-					templateDecl = (ICPPASTTemplateDeclaration) templateDecl.getDeclaration();
-				}
+				// one name: use innermost template declaration
 				return templateDecl;
 			}
+			
+			// start with outermost template declaration
+		    while (templateDecl.getParent() instanceof ICPPASTTemplateDeclaration)
+		        templateDecl = (ICPPASTTemplateDeclaration) templateDecl.getParent();
+		    
+			for (int j = 0; j < ns.length; j++) {
+				final IASTName singleName = ns[j];
+				if (singleName == name) {
+					if (singleName instanceof ICPPASTTemplateId || j == ns.length-1) {
+						return templateDecl;
+					}
+					return null;
+				}
+				if (singleName instanceof ICPPASTTemplateId) {
+					final IASTDeclaration next= templateDecl.getDeclaration();
+					if (next instanceof ICPPASTTemplateDeclaration) {
+						templateDecl= (ICPPASTTemplateDeclaration) next;
+					} else {
+						return null;
+					}
+				}
+			}
 		}
-		return  null;
+		return null;
 	}
 
 	public static IASTName getTemplateName(ICPPASTTemplateDeclaration templateDecl) {

@@ -15,9 +15,6 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
-
-import java.util.Iterator;
-
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -1525,6 +1522,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		CR = (ICPPTemplateParameter) col.getName(14).resolveBinding();
 		assertSame(CR, T);
+
+		CR = (ICPPTemplateParameter) col.getName(16).resolveBinding();
+		assertSame(CR, T);
 	}
 	
 	// template <class T> class Array {};                    
@@ -2055,7 +2055,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     //
     // template <class _C>
     // typename _C::value_type GetPair(_C& collection, typename _C::value_type::first_type key);
-    public void _testBug229917_2() throws Exception {
+    public void testBug229917_2() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		IBinding b0 = bh.assertNonProblem("value_type GetPair", 10, IBinding.class);
     }
@@ -2168,8 +2168,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 		tu.accept(col);
 		
 		IASTName name;
-		for (Iterator i = col.nameList.iterator(); i.hasNext();) {
-			name = (IASTName) i.next();
+		for (Object element : col.nameList) {
+			name = (IASTName) element;
 			assertFalse(name.resolveBinding() instanceof IProblemBinding);
 		}
 		

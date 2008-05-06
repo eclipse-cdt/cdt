@@ -771,7 +771,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			try {
 				ICDIBreakpoint b = null;
-				int breakpointType = ICDIBreakpoint.REGULAR;
+				int breakpointType = ICBreakpointTyped.REGULAR;
 				ICBreakpoint icbreakpoint = breakpoints[i];
 				if (icbreakpoint instanceof ICBreakpointTyped) {
 					breakpointType = ((ICBreakpointTyped) icbreakpoint).getType();

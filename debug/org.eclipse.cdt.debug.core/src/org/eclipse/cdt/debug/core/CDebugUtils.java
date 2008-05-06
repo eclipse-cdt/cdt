@@ -29,7 +29,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
@@ -465,10 +464,10 @@ public class CDebugUtils {
 			String typeString = null;
 			int type = ((ICBreakpointTyped) breakpoint).getType();
 			switch (type) {
-			case ICDIBreakpoint.HARDWARE:
+			case ICBreakpointTyped.HARDWARE:
 				typeString = DebugCoreMessages.getString("CDebugUtils.10");
 				break;
-			case ICDIBreakpoint.TEMPORARY:
+			case ICBreakpointTyped.TEMPORARY:
 				typeString = DebugCoreMessages.getString("CDebugUtils.11");
 				break;
 			}

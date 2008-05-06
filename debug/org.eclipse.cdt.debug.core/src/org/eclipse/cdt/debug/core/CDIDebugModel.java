@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
@@ -205,7 +204,7 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
-		attributes.put( ICBreakpointTyped.TYPE, ICDIBreakpoint.REGULAR );
+		attributes.put( ICBreakpointTyped.TYPE, ICBreakpointTyped.REGULAR );
 		return new CLineBreakpoint( resource, attributes, register );
 	}
 

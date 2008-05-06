@@ -56,7 +56,6 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressFactoryManagement;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
@@ -69,6 +68,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
@@ -1309,11 +1309,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void setInternalTemporaryBreakpoint( ICDILocation location ) throws DebugException {
 		try {
 			if (location instanceof ICDIFunctionLocation) {
-				getCDITarget().setFunctionBreakpoint( ICDIBreakpoint.TEMPORARY, (ICDIFunctionLocation)location, null, false );
+				getCDITarget().setFunctionBreakpoint( ICBreakpointTyped.TEMPORARY, (ICDIFunctionLocation)location, null, false );
 			} else if (location instanceof ICDILineLocation) {
-				getCDITarget().setLineBreakpoint( ICDIBreakpoint.TEMPORARY, (ICDILineLocation)location, null, false );
+				getCDITarget().setLineBreakpoint( ICBreakpointTyped.TEMPORARY, (ICDILineLocation)location, null, false );
 			} else if (location instanceof ICDIAddressLocation) {
-				getCDITarget().setAddressBreakpoint( ICDIBreakpoint.TEMPORARY, (ICDIAddressLocation)location, null, false );
+				getCDITarget().setAddressBreakpoint( ICBreakpointTyped.TEMPORARY, (ICDIAddressLocation)location, null, false );
 			} else {
 				// ???
 				targetRequestFailed("not_a_location", null); //$NON-NLS-1$

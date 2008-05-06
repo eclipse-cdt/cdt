@@ -41,12 +41,22 @@ public class GeneratePDOM implements ISafeRunnable {
 	protected String[] applicationArguments;
 	protected File targetLocation;
 	protected String indexerID;
-
+	protected boolean deleteOnExit;
+	
 	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation, String indexerID) {
 		this.pm= pm;
 		this.applicationArguments= applicationArguments;
 		this.targetLocation= targetLocation;
 		this.indexerID= indexerID;
+	}
+	
+	/**
+	 * When set, the project created by the associated {@link IExportProjectProvider} will
+	 * be deleted after {@link #run()} completes. By default this is not set.
+	 * @param deleteOnExit
+	 */
+	public void setDeleteOnExit(boolean deleteOnExit) {
+		this.deleteOnExit= deleteOnExit;
 	}
 
 	public final void run() throws CoreException {
@@ -97,6 +107,10 @@ public class GeneratePDOM implements ISafeRunnable {
 		} catch(InterruptedException ie) {
 			String msg= MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed, new Object[] {ie.getMessage()});
 			throw new CoreException(CCorePlugin.createStatus(msg, ie));
+		} finally {
+			if(deleteOnExit) {
+				cproject.getProject().delete(true, new NullProgressMonitor());
+			}
 		}
 	}
 

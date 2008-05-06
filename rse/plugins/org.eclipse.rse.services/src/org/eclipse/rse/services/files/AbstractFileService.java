@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
+ * Martin Oberhuber (Wind River) - [221211] Fix progress monitor and cancellation for multi operations
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -33,27 +34,58 @@ package org.eclipse.rse.services.files;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.rse.services.AbstractService;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 
 
 public abstract class AbstractFileService extends AbstractService implements IFileService
 {
+	/**
+	 * Perform a single progress tick for default multi-operations, provided
+	 * that a valid progress monitor is passed in:
+	 * <ul>
+	 * <li>Checks the monitor for cancellation and throws
+	 * SystemOperationCancelledException if it is
+	 * <li>Creates a SubMonitor for a single progress tick on the original
+	 * monitor
+	 * </ul>
+	 *
+	 * @param monitor Progress Monitor to use
+	 * @return A valid progress monitor usable for a single work item. Client is
+	 * 	responsible for calling done() on the subMonitor when done.
+	 * @throws SystemOperationCancelledException in case the user cancelled
+	 * @since 3.0
+	 */
+	protected IProgressMonitor progressTick(IProgressMonitor monitor) throws SystemMessageException {
+		if (monitor == null) {
+			return new NullProgressMonitor();
+		}
+		if (monitor.isCanceled()) {
+			throw new SystemOperationCancelledException();
+		}
+		return new SubProgressMonitor(monitor, 1);
+	}
 
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 
 	public void getFileMultiple(String remoteParents[], String names[], List hostFiles, IProgressMonitor monitor)
 								throws SystemMessageException
 	{
+		if (monitor != null)
+			monitor.beginTask("", remoteParents.length); //$NON-NLS-1$
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			hostFiles.add(getFile(remoteParents[i], names[i], monitor));
+			IProgressMonitor subMonitor = progressTick(monitor);
+			hostFiles.add(getFile(remoteParents[i], names[i], subMonitor));
+			subMonitor.done();
 		}
 	}
 
@@ -67,13 +99,17 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 			String[] fileFilters, int fileTypes[], List hostFiles, IProgressMonitor monitor)
 			throws SystemMessageException {
 
+		if (monitor != null)
+			monitor.beginTask("", remoteParents.length); //$NON-NLS-1$
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileTypes[i], monitor);
+			IProgressMonitor subMonitor = progressTick(monitor);
+			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileTypes[i], subMonitor);
 			for (int j = 0; j < result.length; j++)
 			{
 				hostFiles.add(result[j]);
 			}
+			subMonitor.done();
 		}
 
 	}
@@ -82,13 +118,17 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 			String[] fileFilters, int fileType, List hostFiles, IProgressMonitor monitor)
 			throws SystemMessageException {
 
+		if (monitor != null)
+			monitor.beginTask("", remoteParents.length); //$NON-NLS-1$
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileType, monitor);
+			IProgressMonitor subMonitor = progressTick(monitor);
+			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileType, subMonitor);
 			for (int j = 0; j < result.length; j++)
 			{
 				hostFiles.add(result[j]);
 			}
+			subMonitor.done();
 		}
 
 	}
@@ -125,9 +165,13 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 
 	public void deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
+		if (monitor != null)
+			monitor.beginTask("", remoteParents.length); //$NON-NLS-1$
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			delete(remoteParents[i], fileNames[i], monitor);
+			IProgressMonitor subMonitor = progressTick(monitor);
+			delete(remoteParents[i], fileNames[i], subMonitor);
+			subMonitor.done();
 		}
 	}
 
@@ -138,14 +182,18 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 			File[] localFiles, boolean[] isBinaries, String[] hostEncodings,
 			IProgressMonitor monitor) throws SystemMessageException
 	{
+		if (monitor != null)
+			monitor.beginTask("", remoteParents.length); //$NON-NLS-1$
 		for (int i = 0; i < remoteParents.length; i++)
 		{
+			IProgressMonitor subMonitor = progressTick(monitor);
 			String remoteParent = remoteParents[i];
 			String remoteFile = remoteFiles[i];
 			File localFile = localFiles[i];
 			boolean isBinary = isBinaries[i];
 			String hostEncoding = hostEncodings[i];
-			download(remoteParent, remoteFile, localFile, isBinary, hostEncoding, monitor);
+			download(remoteParent, remoteFile, localFile, isBinary, hostEncoding, subMonitor);
+			subMonitor.done();
 		}
 	}
 
@@ -157,9 +205,11 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 			String[] hostEncodings, IProgressMonitor monitor)
 			throws SystemMessageException
 	{
-		boolean result = true;
+		if (monitor != null)
+			monitor.beginTask("", remoteParents.length); //$NON-NLS-1$
 		for (int i = 0; i < localFiles.length; i++)
 		{
+			IProgressMonitor subMonitor = progressTick(monitor);
 			File localFile = localFiles[i];
 			String remoteParent = remoteParents[i];
 			String remoteFile = remoteFiles[i];
@@ -167,7 +217,8 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 			boolean isBinary = isBinaries[i];
 			String srcEncoding = srcEncodings[i];
 			String hostEncoding = hostEncodings[i];
-			upload(localFile, remoteParent, remoteFile, isBinary, srcEncoding, hostEncoding, monitor);
+			upload(localFile, remoteParent, remoteFile, isBinary, srcEncoding, hostEncoding, subMonitor);
+			monitor.done();
 		}
 	}
 
@@ -192,7 +243,7 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	 * Gets the output stream to write/append to a remote file. The default
 	 * implementation returns <code>null</code>. Clients can override to
 	 * return an output stream to the file.
-	 * 
+	 *
 	 * @deprecated use
 	 *             {@link #getOutputStream(String, String, int, IProgressMonitor)}
 	 *             instead

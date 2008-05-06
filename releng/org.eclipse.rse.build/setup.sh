@@ -132,7 +132,8 @@ if [ ! -f eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=vI20080502-0100
+#baseBuilderTag=vI20080502-0100
+baseBuilderTag=M7_34
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080326-1300.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build/pdebuild.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then

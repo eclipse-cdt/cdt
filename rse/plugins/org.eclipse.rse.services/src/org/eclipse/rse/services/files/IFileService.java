@@ -24,6 +24,7 @@
  * David McKnight (IBM) - [209704] added supportsEncodingConversion()
  * Martin Oberhuber (Wind River) - [cleanup] Fix API since tags
  * David Dykstal (IBM) - [221211] clarifying javadoc on batch operations
+ * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -154,6 +155,8 @@ public interface IFileService extends IService
 	 * @param monitor the monitor for this potentially long running operation
 	 * @throws SystemMessageException if an error occurs.
 	 * Typically this would be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -170,6 +173,8 @@ public interface IFileService extends IService
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -209,6 +214,8 @@ public interface IFileService extends IService
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -282,18 +289,14 @@ public interface IFileService extends IService
 	 *
 	 * @param remoteParents - the list of remote parents
 	 * @param names - the list of file names
+	 * @param hostFiles a list to which the retrieved {@link IHostFile} objects will be appended
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the host files given the parent paths and file names. This is
-	 *         basically a batch version of getFile(). Must not return
-	 *         <code>null</code>, non-existing files should be reported with
-	 *         an IHostFile object where {@link IHostFile#exists()} returns
-	 *         <code>false</code>.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
-	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor) throws SystemMessageException;
+	public void getFileMultiple(String remoteParents[], String names[], List hostFiles, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * List the contents of multiple remote folders.
@@ -409,6 +412,8 @@ public interface IFileService extends IService
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -428,6 +433,8 @@ public interface IFileService extends IService
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -440,6 +447,8 @@ public interface IFileService extends IService
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -453,6 +462,8 @@ public interface IFileService extends IService
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -466,6 +477,8 @@ public interface IFileService extends IService
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -479,6 +492,8 @@ public interface IFileService extends IService
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -495,6 +510,8 @@ public interface IFileService extends IService
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -522,6 +539,8 @@ public interface IFileService extends IService
 	 *            00:00:00 UTC.
 	 * @param monitor the progress monitor
 	 * @see IHostFile#getModifiedDate()
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -533,6 +552,8 @@ public interface IFileService extends IService
 	 * @param readOnly indicates whether to make the file read-only or
 	 *            read-write
 	 * @param monitor the progress monitor
+	 *
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void setReadOnly(String parent, String name, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
 

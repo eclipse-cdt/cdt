@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
+ * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -47,15 +48,13 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 
-	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor)
+	public void getFileMultiple(String remoteParents[], String names[], List hostFiles, IProgressMonitor monitor)
 								throws SystemMessageException
 	{
-		List results = new ArrayList();
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			results.add(getFile(remoteParents[i], names[i], monitor));
+			hostFiles.add(getFile(remoteParents[i], names[i], monitor));
 		}
-		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
 
 	public IHostFile[] list(String remoteParent, String fileFilter,

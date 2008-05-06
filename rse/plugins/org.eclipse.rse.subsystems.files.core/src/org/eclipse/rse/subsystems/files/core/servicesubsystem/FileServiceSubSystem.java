@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Kevin Doyle		(IBM)		 - [224162] SystemEditableRemoteFile.saveAs does not work because FileServiceSubSytem.upload does invalid check
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -386,7 +387,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 
 		RemoteFileContext context = getDefaultContext();
-		IHostFile[] nodes = getFileService().getFileMultiple(parentPaths, names, monitor);
+		List hostFiles = new ArrayList(10);
+		getFileService().getFileMultiple(parentPaths, names, hostFiles, monitor);
+		IHostFile[] nodes = new IHostFile[hostFiles.size()];
+		hostFiles.toArray(nodes);
 		return getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, nodes);
 	}
 

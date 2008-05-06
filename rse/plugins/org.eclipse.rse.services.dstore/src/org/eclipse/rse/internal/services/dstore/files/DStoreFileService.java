@@ -881,7 +881,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 
 			// I think the de should be reused since getElement should find it?
-			getFileMultiple(parents, names, monitor);
+			getFileMultiple(parents, names, new ArrayList(10), monitor);
 		}
 
 
@@ -1134,7 +1134,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	/**
 	 * Mass query of individual files
 	 */
-	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor)
+	public void getFileMultiple(String remoteParents[], String names[], List hostFiles, IProgressMonitor monitor)
 		throws SystemMessageException
 	{
 		DataElement[] subjects = getSubjectsFor(remoteParents, names);
@@ -1148,7 +1148,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		dsQueryCommandMulti(subjects, null, queryStrings, monitor);
 
-		return convertToHostFiles(subjects, "*");		 //$NON-NLS-1$
+		IHostFile[] result = convertToHostFiles(subjects, "*");		 //$NON-NLS-1$
+		hostFiles.addAll(Arrays.asList(result));
 	}
 
 	/**

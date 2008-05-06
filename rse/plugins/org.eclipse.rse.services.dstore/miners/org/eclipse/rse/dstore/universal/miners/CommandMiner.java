@@ -16,6 +16,7 @@
  * David McKnight  (IBM)  - [202822] cancelled output should be created before thread cleanup
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * Noriaki Takatsu (IBM)  - [230399] [multithread] changes to stop CommandMiner threads when clients disconnect
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -25,6 +26,7 @@ package org.eclipse.rse.dstore.universal.miners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
@@ -279,6 +281,20 @@ public class CommandMiner extends Miner
 				if ((!theThread.isAlive()) || (stopIn < System.currentTimeMillis()))
 					done = true;
 		}
+	}
+	
+	public void finish()
+	{
+		Iterator pools = _threads.entrySet().iterator();
+		while (pools.hasNext())
+		{
+			Map.Entry entry = (Map.Entry)pools.next();
+			CommandMinerThread process = (CommandMinerThread) entry.getValue();
+			process.sendExit();;
+		}
+		
+		_threads.clear();
+		super.finish();
 	}
 
 	public String getVersion()

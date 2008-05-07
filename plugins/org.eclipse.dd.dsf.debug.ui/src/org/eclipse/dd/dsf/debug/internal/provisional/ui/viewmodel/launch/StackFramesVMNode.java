@@ -283,7 +283,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         
         // Add the address
         if (dmData.getAddress() != null) {
-            label.append(dmData.getAddress());
+            label.append("- 0x" + dmData.getAddress().toString(16)); //$NON-NLS-1$
         }
             
         // Set the label to the result listener

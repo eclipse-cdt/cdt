@@ -29,6 +29,7 @@ public class CommonMessages extends NLS {
 	public static String MSG_COMM_AUTH_FAILED;
 	public static String MSG_COMM_AUTH_FAILED_DETAILS;
 	public static String MSG_COMM_NETWORK_ERROR;
+	public static String MSG_LOCK_TIMEOUT;
 
 	public static String MSG_EXPAND_FAILED;
 	public static String MSG_EXPAND_CANCELLED;

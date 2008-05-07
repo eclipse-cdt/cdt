@@ -1174,4 +1174,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	
     	assertInstance(s1.getClassType().getScope(), ICPPTemplateScope.class);
     }
+    
+	//    typedef signed int SI;
+	//
+	//    template <SI x>
+	//    class A {};
+
+	//    const SI y= 99;
+	//    A<y> ay;
+    public void _testNonTypeTemplateParameter_207840() {
+    	ICPPVariable b0= getBindingFromASTName("y>", 1, ICPPVariable.class);
+    	ICPPClassType b1= getBindingFromASTName("A<y>", 1, ICPPClassType.class, ICPPTemplateDefinition.class);
+    	ICPPTemplateInstance b2= getBindingFromASTName("A<y>", 4, ICPPTemplateInstance.class, ICPPClassType.class);
+    	ObjectMap args= b2.getArgumentMap();
+    	assertEquals(1, args.size());
+    }
 }

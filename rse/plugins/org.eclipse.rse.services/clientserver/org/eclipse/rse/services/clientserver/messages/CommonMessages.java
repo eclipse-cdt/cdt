@@ -56,6 +56,8 @@ public class CommonMessages extends NLS {
 	public static String MSG_OPERATION_UNSUPPORTED;
 	public static String MSG_OPERATION_SECURITY_VIOLATION;
 
+	public static String MSG_ELEMENT_NOT_FOUND;
+
 	public static String MSG_RESOLVE_PROGRESS;
 
 	public static String MSG_QUERY_PROGRESS;

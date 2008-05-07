@@ -47,6 +47,8 @@ public interface ICommonMessageIds {
 	public static final String MSG_EXCEPTION_RENAMING = "RSEG1064"; //$NON-NLS-1$
 	public static final String MSG_EXCEPTION_MOVING   = "RSEG1065"; //$NON-NLS-1$
 
+	public static final String MSG_ELEMENT_NOT_FOUND = "RSEG9999";//FIXME //$NON-NLS-1$
+
 	public static final String MSG_ERROR_UNEXPECTED   = "RSEG8002"; //$NON-NLS-1$
 	public static final String MSG_LOCK_TIMEOUT = "RSEG9999";//FIXME //$NON-NLS-1$
 

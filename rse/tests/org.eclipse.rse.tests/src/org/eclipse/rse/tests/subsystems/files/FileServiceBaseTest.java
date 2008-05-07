@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others. 
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Xuan Chen (IBM) - initial API and implementation
  *   - <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
  *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
@@ -52,7 +52,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	protected IRemoteFile tempDir;
 	protected String tempDirPath;
 	protected IProgressMonitor mon = new NullProgressMonitor();
-	
+
 	public static int TYPE_FILE = 0;
 	public static int TYPE_FOLDER = 1;
 
@@ -63,7 +63,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	public FileServiceBaseTest(String name) {
 		super(name);
 	}
-	
+
 	public void setUp() throws Exception {
 		super.setUp();
 		setupFileSubSystem();
@@ -82,7 +82,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			fail("Problem encountered: " + e.getStackTrace().toString());
 		}
 	}
-	
+
 	public void tearDown() throws Exception {
 		try {
 			fss.delete(tempDir, mon);
@@ -92,11 +92,11 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 		}
 		super.tearDown();
 	}
-	
+
 	public boolean isWindows() {
-		return fss.getHost().getSystemType().isWindows(); 
+		return fss.getHost().getSystemType().isWindows();
 	}
-	
+
 	public String getTestFileName() {
 		//Return a filename for testing that exposes all characters valid on the file system
 		if (!isWindows()) {
@@ -106,13 +106,13 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 		//Fallback: Windows TODO: test unicode
 		return "a !@#${a}'` file%^&()_ =[]~+-;,."; //$NON-NLS-1$
 	}
-	
-	
+
+
 	public IRemoteFile copySourceFileOrFolder(String sourceFullName, String sourceName, String targetFolderFullName) throws Exception
 	{
 		boolean ok = false;
 		IRemoteFile result = null;
-		IRemoteFile originalTargetArchiveFile = fss.getRemoteFileObject(sourceFullName, mon); 
+		IRemoteFile originalTargetArchiveFile = fss.getRemoteFileObject(sourceFullName, mon);
 		IRemoteFile targetFolder = fss.getRemoteFileObject(targetFolderFullName, mon);
 		ok = fss.copy(originalTargetArchiveFile, targetFolder, sourceName, mon);
 		if (ok)
@@ -121,24 +121,24 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			result = fss.getRemoteFileObject(getNewAbsoluteName(targetFolder, sourceName), mon);
 		}
 		//Need to call resolveFilterString of the parent to make sure the newly copied child
-		//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
+		//is added to the DStore map.  Otherwise, next time when query it, it will just created a
 		//default filter string.  And the dstore server cannot handler it correctly.
 		fss.resolveFilterString(targetFolder, null, mon);
 		return result;
 	}
-	
+
 	public IRemoteFile createFileOrFolder(String targetFolderName, String fileOrFolderName, boolean isFolder) throws Exception
 	{
 		return createFileOrFolder(fss, targetFolderName, fileOrFolderName, isFolder);
 	}
-	
+
 	public IRemoteFile createFileOrFolder(IFileServiceSubSystem inputFss, String targetFolderName, String fileOrFolderName, boolean isFolder) throws Exception
 	{
 		IRemoteFile result = null;
 		System.out.println("createFileOrFolder: targetFolderName is " + targetFolderName);
 		IRemoteFile targetFolder = inputFss.getRemoteFileObject(targetFolderName, mon);
 		String fileOrFolderAbsName = getNewAbsoluteName(targetFolder, fileOrFolderName);
-		IRemoteFile newFileOrFolderPath = inputFss.getRemoteFileObject(fileOrFolderAbsName, mon); 
+		IRemoteFile newFileOrFolderPath = inputFss.getRemoteFileObject(fileOrFolderAbsName, mon);
 		if (isFolder)
 		{
 			result = inputFss.createFolder(newFileOrFolderPath, mon);
@@ -148,17 +148,17 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			result = inputFss.createFile(newFileOrFolderPath, mon);
 		}
 		//Need to call resolveFilterString of the parent to make sure the newly created child
-		//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
+		//is added to the DStore map.  Otherwise, next time when query it, it will just created a
 		//default filter string.  And the dstore server cannot handler it correctly.
 		inputFss.resolveFilterString(targetFolder, null, mon);
 		return result;
 	}
-	
+
 	public Object getChildFromFolder(IRemoteFile folderToCheck, String childName) throws Exception
 	{
 		return getChildFromFolder(fss, folderToCheck, childName);
 	}
-	
+
 	public Object getChildFromFolder(IFileServiceSubSystem inputFss, IRemoteFile folderToCheck, String childName) throws Exception
 	{
 		//then check the result of copy
@@ -171,16 +171,17 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			if (thisName.equals(childName))
 			{
 				foundChild = children[i];
+				break;
 			}
 		}
 		return foundChild;
 	}
-	
+
 	public void checkFolderContents(IRemoteFile folderToCheck, String[] names, int[] types) throws Exception
 	{
 		checkFolderContents(fss, folderToCheck, names, types);
 	}
-	
+
 	public void checkFolderContents(IFileServiceSubSystem inputFss, IRemoteFile folderToCheck, String[] names, int[] types) throws Exception
 	{
 		//the folder returned by the create API did not get the right attributes.
@@ -217,32 +218,32 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			}
 		}
 	}
-	
+
 	protected static String getNewAbsoluteName(IRemoteFile parentFolder, String newName)
 	{
 		String newAbsName = null;
-        char sep = parentFolder.getSeparatorChar();		
+        char sep = parentFolder.getSeparatorChar();
         String parentFolderPath = parentFolder.getAbsolutePath();
-        
+
         // hack by Mike to allow virtual files and folders.
         if (parentFolder instanceof IVirtualRemoteFile)
         {
-        	sep = '/';             	
+        	sep = '/';
         }
         else if (parentFolder.isArchive())
         {
         	sep = '/';
         	parentFolderPath = parentFolderPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR;
         }
-               	
+
        	if ((parentFolderPath.length()==1) && (parentFolderPath.charAt(0)=='/') &&
             (parentFolderPath.charAt(0)==sep))
-       	  newAbsName = sep + newName; 
+       	  newAbsName = sep + newName;
         else
-	      newAbsName = parentFolderPath + sep + newName; 
+	      newAbsName = parentFolderPath + sep + newName;
 	    return newAbsName;
 	}
-	
+
 	//----------------------------------------------------------------------
 	// <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
 	//----------------------------------------------------------------------
@@ -262,12 +263,12 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	protected IFileStore createDir(String string, boolean clear) throws CoreException {
 		return createDir(EFS.getFileSystem(EFS.SCHEME_FILE).getStore(new Path(string)), clear);
 	}
-	
+
 	/**
 	 * Create a file with random content. If a resource exists in the same path,
 	 * the resource is deleted.
 	 * <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
-	 * 
+	 *
 	 * @param target the file to create
 	 * @param content content of the new file
 	 * @throws CoreException in case of failure
@@ -279,7 +280,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 		IFileInfo info = target.fetchInfo();
 		assertTrue(info.exists() && !info.isDirectory());
 	}
-	
+
 	/**
 	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
 	 * Asserts that a stream closes successfully. Null streams
@@ -296,7 +297,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			fail("Failed close in assertClose");
 		}
 	}
-	
+
 	/**
 	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
 	 * Return an input stream with some the specified text to use
@@ -307,7 +308,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	public InputStream getContents(String text) {
 		return new ByteArrayInputStream(text.getBytes());
 	}
-	
+
 	/**
 	 * <copied code from org.eclipse.core.tests.resources/ResourceTest.java (Copyright IBM) >
 	 *
@@ -335,12 +336,12 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			assertClose(b);
 		}
 	}
-	
+
 	/**
 	 * Copy the data from the input stream to the output stream.
 	 * Close both streams when finished.
 	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
-	 * 
+	 *
 	 * @param input input stream
 	 * @param output output stream
 	 */
@@ -359,12 +360,12 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			assertTrue(e.toString(), false);
 		}
 	}
-	
+
 	/**
 	 * Return String with some random text to use
 	 * as contents for a file resource.
 	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
-	 * 
+	 *
 	 * @return the result random string
 	 */
 	protected String getRandomString() {
@@ -393,14 +394,14 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 				return "these are my contents";
 		}
 	}
-	
+
 	/**
 	 * Setup the file subsystem used for this testcase
 	 */
-	protected void setupFileSubSystem() 
+	protected void setupFileSubSystem()
 	{
 		IHost localHost = getLocalSystemConnection();
-		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
 		for (int i=0; i<ss.length; i++) {
 			if (ss[i] instanceof IFileServiceSubSystem) {

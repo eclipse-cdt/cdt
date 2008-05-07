@@ -1538,19 +1538,20 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (isVirtual || isArchive)
 		{
 			moveByCopy(srcParent, srcName, tgtParent, tgtName, monitor);
+			return;
 		}
 		else
 		{
 			try
 			{
 				rename("", src, tgt, monitor); //$NON-NLS-1$
+				return;
 			}
 			catch (SystemMessageException e)
 			{
 				moveByCopy(srcParent, srcName, tgtParent, tgtName, monitor);
+				return;
 			}
-			// movedOk should never be false otherwise the last DataElement status was null
-			moveByCopy(srcParent, srcName, tgtParent, tgtName, monitor);
 		}
 
 /*
@@ -2038,6 +2039,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				// first modify the source attribute to temporarily be the date field
 				de.setAttribute(DE.A_SOURCE, timestamp + "");			 //$NON-NLS-1$
 				ds.command(setCmd, de, true);
+				return;
 			}
 		}
 		throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
@@ -2068,6 +2070,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				{
 					throw new RemoteFileIOException(e);
 				}
+				return;
 			}
 		}
 		throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,

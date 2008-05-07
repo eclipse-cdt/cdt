@@ -184,7 +184,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             for (;;) {
-                int checkHashcode = LA(1).hashCode();
+            	final IToken startToken= LA(1);
                 // required at least one initializer list
                 // get designator list
                 List<IASTNode> newDesignators = designatorList();
@@ -208,18 +208,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     desigInitializer.setOperandInitializer(initializer);
                     result.addInitializer(desigInitializer);
                 }
-                // can end with just a '}'
-                if (LT(1) == IToken.tRBRACE)
-                    break;
-                // can end with ", }"
+                // can end with ", }" or "}"
                 if (LT(1) == IToken.tCOMMA)
                     consume();
                 if (LT(1) == IToken.tRBRACE)
                     break;
-                if (checkHashcode == LA(1).hashCode()) {
-                    IToken l2 = LA(1);
-                    throwBacktrack(startingOffset, l2.getEndOffset()
-                            - startingOffset);
+                
+                final IToken nextToken= LA(1);
+                if (nextToken.getType() == IToken.tEOC) {
+                	return result;
+                }
+                if (nextToken == startToken) {
+                    throwBacktrack(startingOffset, nextToken.getEndOffset() - startingOffset);
                     return null;
                 }
 

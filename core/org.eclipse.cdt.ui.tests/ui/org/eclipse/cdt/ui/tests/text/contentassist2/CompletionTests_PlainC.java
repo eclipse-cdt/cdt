@@ -928,4 +928,15 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected= {"pIShell"};
 		assertCompletionResults(expected);
 	}
+	
+	//	enum {enum0, enum1, enum2};
+	//	typedef struct {
+	//	   int byte1;
+	//	   int byte2;
+	//	} MYSTRUCT_TYPE;
+	//	static const MYSTRUCT_TYPE myArrayOfStructs[] = {{enum/*cursor*/
+	public void testCompletionInInitializerList_Bug230389() throws Exception {
+		final String[] expected= {"enum0", "enum1", "enum2"};
+		assertCompletionResults(expected);
+	}
 }

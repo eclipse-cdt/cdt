@@ -203,6 +203,10 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertContentAssistResults(offset, expected, true, compareType);
 	}
 	
+	protected void assertCompletionResults(String[] expected) throws Exception {
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
 	//void gfunc() {C1 v; v.m/*cursor*/
 	public void _testLocalVariable() throws Exception {
 		// fails because of additional m1private(void)
@@ -1131,5 +1135,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testCompletionAfterLessThan_Bug229062() throws Exception {
 		final String[] expected= {"blocal"};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	//	enum {enum0, enum1, enum2};
+	//	typedef struct {
+	//	   int byte1;
+	//	   int byte2;
+	//	} MYSTRUCT_TYPE;
+	//	static const MYSTRUCT_TYPE myArrayOfStructs[] = {{enum/*cursor*/
+	public void testCompletionInInitializerList_Bug230389() throws Exception {
+		final String[] expected= {"enum0", "enum1", "enum2"};
+		assertCompletionResults(expected);
 	}
 }

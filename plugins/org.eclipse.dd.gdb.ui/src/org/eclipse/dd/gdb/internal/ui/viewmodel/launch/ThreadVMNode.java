@@ -312,7 +312,10 @@ public class ThreadVMNode extends AbstractDMVMNode
                         rm.done();
                     }
                 });
+        } else {
+            
+            rm.done();
         }
 
-  	 }
+    }
 }

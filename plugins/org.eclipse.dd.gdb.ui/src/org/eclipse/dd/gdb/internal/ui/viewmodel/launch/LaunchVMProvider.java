@@ -27,6 +27,10 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.GDBExitedEvent;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.GDBStartedEvent;
+import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
+import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -133,6 +137,16 @@ public class LaunchVMProvider extends AbstractDMVMProvider
     
     @Override
     protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
+        // Never skip the process lifecycle events.
+        if (eventToSkip instanceof InferiorExitedDMEvent || 
+            eventToSkip instanceof InferiorStartedDMEvent ||
+            eventToSkip instanceof GDBStartedEvent ||
+            eventToSkip instanceof GDBExitedEvent) 
+        {
+            return false;
+        }
+        
+
         // To optimize view performance when stepping rapidly, skip events that came 
         // before the last suspended events.  However, the debug view can get suspended
         // events for different threads, so make sure to skip only the events if they

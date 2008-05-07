@@ -117,10 +117,8 @@ public class ContainerVMNode extends AbstractDMVMNode
     }
 
     public int getDeltaFlags(Object e) {
-        if(e instanceof IStartedDMEvent || e instanceof IExitedDMEvent) {
-            return IModelDelta.CONTENT;
-        } else if(e instanceof IRunControl.IContainerResumedDMEvent || 
-                  e instanceof IRunControl.IContainerSuspendedDMEvent) 
+        if(e instanceof IRunControl.IContainerResumedDMEvent || 
+           e instanceof IRunControl.IContainerSuspendedDMEvent) 
         {
             return IModelDelta.CONTENT;
         } else if (e instanceof GDBControl.GDBExitedEvent || e instanceof InferiorExitedDMEvent) {
@@ -129,6 +127,8 @@ public class ContainerVMNode extends AbstractDMVMNode
             return IModelDelta.EXPAND;
         } else if (e instanceof InferiorStartedDMEvent) {
             return IModelDelta.EXPAND | IModelDelta.SELECT;            
+        } if(e instanceof IStartedDMEvent || e instanceof IExitedDMEvent) {
+            return IModelDelta.CONTENT;
         }
         return IModelDelta.NO_CHANGE;
     }
@@ -138,18 +138,20 @@ public class ContainerVMNode extends AbstractDMVMNode
     	   e instanceof IRunControl.IContainerSuspendedDMEvent) 
     	{
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+        } else if (e instanceof GDBControl.GDBExitedEvent || e instanceof InferiorExitedDMEvent) {
+            // Note: we must process the inferior started/exited events before the thread's 
+            // started/exited events otherwise the inferior's handlers would never be called.
+            parentDelta.setFlags(parentDelta.getFlags() |  IModelDelta.CONTENT);
+        } else if (e instanceof GDBStartedEvent) {
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
+        } else if (e instanceof InferiorStartedDMEvent) {
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);
         } else if (e instanceof IStartedDMEvent || e instanceof IExitedDMEvent) {
             IContainerDMContext containerCtx = DMContexts.getAncestorOfType(
                 ((IDMEvent<?>)e).getDMContext(), IContainerDMContext.class);
             if (containerCtx != null) {
                 parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
             }
-        } else if (e instanceof GDBControl.GDBExitedEvent || e instanceof InferiorExitedDMEvent) {
-            parentDelta.setFlags(parentDelta.getFlags() |  IModelDelta.CONTENT);
-        } else if (e instanceof GDBStartedEvent) {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
-        } else if (e instanceof InferiorStartedDMEvent) {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);
         }
 
     	requestMonitor.done();

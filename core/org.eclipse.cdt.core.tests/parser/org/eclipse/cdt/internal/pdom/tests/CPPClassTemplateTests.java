@@ -65,7 +65,10 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		}
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().reindex(cproject);
+		for(int i=0; i<5 && !CCoreInternals.getPDOMManager().isProjectRegistered(cproject); i++) {
+			Thread.sleep(200);
+		}
+		assertTrue(CCoreInternals.getPDOMManager().isProjectRegistered(cproject));
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 		pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();

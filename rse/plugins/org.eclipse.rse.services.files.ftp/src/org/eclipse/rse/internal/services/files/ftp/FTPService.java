@@ -111,16 +111,17 @@ import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemLockTimeoutException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
+import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
-import org.eclipse.rse.services.files.RemoteFileCancelledException;
-import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -571,7 +572,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     	fileName = checkEncoding(fileName);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 		}
 
@@ -611,7 +612,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 				if(!listFiles(monitor))
 				{
-					throw new RemoteFileCancelledException();
+					throw new SystemOperationCancelledException();
 				}
 
 				synchronized(_fCachePreviousFiles) {
@@ -646,6 +647,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			} finally {
 				_commandMutex.release();
 		    }
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 
 		return file;
@@ -671,7 +674,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     	parentPath = checkEncoding(parentPath);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 		}
 
@@ -701,7 +704,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 				if(!listFiles(monitor))
 				{
-					throw new RemoteFileCancelledException();
+					throw new SystemOperationCancelledException();
 				}
 
 				synchronized (_fCachePreviousFiles) {
@@ -743,6 +746,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			} finally {
 				_commandMutex.release();
 		    }
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
@@ -765,7 +770,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 		}
 		else{
@@ -785,6 +790,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				finally {
 					_commandMutex.release();
 			    }
+			} else {
+				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 			}
 		} catch (SystemMessageException e) {
 			throw e;
@@ -818,7 +825,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			      bos.write(buffer, 0, readCount);
 			      if (monitor!=null) {
 					if (monitor.isCanceled()) {
-						break;
+						throw new SystemOperationCancelledException();
 					}
 				  }
 			 }
@@ -858,7 +865,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 					output.write(buffer, 0, readCount);
 					progressMonitor.count(readCount);
 					if (progressMonitor.isCanceled()) {
-						throw new RemoteFileCancelledException();
+						throw new SystemOperationCancelledException();
 					}
 				}
 				output.flush();
@@ -889,7 +896,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 		}
 
@@ -908,6 +915,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				{
 					_commandMutex.release();
 				}
+			} else {
+				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 			}
 		} catch (FileNotFoundException e) {
 			throw new RemoteFileIOException(e);
@@ -947,20 +956,15 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				output = new FileOutputStream(localFile);
 				byte[] buffer = new byte[4096];
 				int readCount;
-				boolean ok = true;
 				while((readCount = input.read(buffer)) > 0)
 				{
 					output.write(buffer, 0, readCount);
 					progressMonitor.count(readCount);
 					if (progressMonitor.isCanceled()) {
-						ok = false;
-						break;
+						throw new SystemOperationCancelledException();
 					}
 				}
-
-				if (ok) {
-					output.flush();
-				}
+				output.flush();
 				input.close();
 				input = null;
 				ftpClient.completePendingCommand();
@@ -1041,6 +1045,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				finally {
 					_commandMutex.release();
 				}
+			} else {
+				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 			}
 		} finally {
 			progressMonitor.end();
@@ -1048,53 +1054,58 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	}
 
 	private void internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, MyProgressMonitor monitor)
-			throws RemoteFileException, IOException
+			throws SystemMessageException, IOException
 	{
 		if(monitor.isCanceled())
 		{
-			throw new RemoteFileCancelledException();
+			throw new SystemOperationCancelledException();
 		}
 
 		clearCache(parentPath);
-		FTPReply.isPositiveCompletion(ftpClient.cwd(parentPath));
+		boolean hasSucceeded = FTPReply.isPositiveCompletion(ftpClient.cwd(parentPath));
 		monitor.worked(1);
 
-		if(isFile)
+		if(hasSucceeded)
 		{
-			ftpClient.deleteFile(fileName);
-			monitor.worked(1);
-		}
-		else
-		{
-			ftpClient.removeDirectory(fileName);
-			monitor.worked(1);
-		}
-
-		if(isFile)
-		{
-			throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+concat(parentPath,fileName)+")")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		else //folder recursively
-		{
-			String newParentPath = concat(parentPath,fileName);
-
-			ftpClient.changeWorkingDirectory(newParentPath);
-			FTPFile[] fileNames = ftpClient.listFiles();
-
-			for (int i = 0; i < fileNames.length; i++) {
-				String curName = fileNames[i].getName();
-				if (curName == null || curName.equals(".") || curName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-					continue;
-				}
-				internalDelete(ftpClient, newParentPath, curName, fileNames[i].isFile(), monitor);
-			}
-
-			//remove empty folder
-			ftpClient.changeWorkingDirectory(parentPath);
-			boolean hasSucceeded = ftpClient.removeDirectory(fileName);
-			if (!hasSucceeded)
+			if(isFile)
 			{
-				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString() + " (" + concat(parentPath, fileName) + ")")); //$NON-NLS-1$ //$NON-NLS-2$
+				hasSucceeded = ftpClient.deleteFile(fileName);
+				monitor.worked(1);
+			}
+			else
+			{
+				hasSucceeded = ftpClient.removeDirectory(fileName);
+				monitor.worked(1);
+			}
+		}
+
+		if(!hasSucceeded){
+			if(isFile)
+			{
+				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+concat(parentPath,fileName)+")")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			else //folder recursively
+			{
+				String newParentPath = concat(parentPath,fileName);
+
+				ftpClient.changeWorkingDirectory(newParentPath);
+				FTPFile[] fileNames = ftpClient.listFiles();
+
+				for (int i = 0; i < fileNames.length; i++) {
+					String curName = fileNames[i].getName();
+					if (curName == null || curName.equals(".") || curName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+						continue;
+					}
+					internalDelete(ftpClient, newParentPath, curName, fileNames[i].isFile(), monitor);
+				}
+
+				//remove empty folder
+				ftpClient.changeWorkingDirectory(parentPath);
+				hasSucceeded = ftpClient.removeDirectory(fileName);
+				if (!hasSucceeded)
+				{
+					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString() + " (" + concat(parentPath, fileName) + ")")); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 	}
@@ -1131,6 +1142,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}finally {
 				_commandMutex.release();
 			}
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 	}
 
@@ -1172,7 +1185,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}finally {
 				_commandMutex.release();
 			}
-
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 	}
 
@@ -1205,7 +1219,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}finally {
 				_commandMutex.release();
 			}
-
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 
 		return getFile(remoteParent, folderName, monitor);
@@ -1246,7 +1261,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
     	if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 		}
 
@@ -1267,6 +1282,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			finally {
 				_commandMutex.release();
 			}
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
     }
 
@@ -1274,7 +1291,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     {
     	if (monitor.isCanceled())
 		{
-			throw new RemoteFileCancelledException();
+			throw new SystemOperationCancelledException();
 		}
 
     	if(isDirectory)
@@ -1513,7 +1530,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	public void setLastModified(String parent, String name,
 			long timestamp, IProgressMonitor monitor) throws SystemMessageException
 	{
-		// not applicable for FTP
+		throw new SystemUnsupportedOperationException(Activator.PLUGIN_ID, "setLastModified"); //$NON-NLS-1$
 	}
 
 	/*
@@ -1548,7 +1565,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			} catch (IOException e) {
 				String pluginId = Activator.getDefault().getBundle().getSymbolicName();
 				String messageText = e.getLocalizedMessage();
-				SystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText, e); 
+				SystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText, e);
 				throw new SystemMessageException(message);
 			} finally {
 				_commandMutex.release();
@@ -1564,7 +1581,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 
 		if (monitor != null && monitor.isCanceled()){
-			throw new RemoteFileCancelledException();
+			throw new SystemOperationCancelledException();
 		}
 
 		InputStream stream = null;
@@ -1599,7 +1616,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     	remoteFile = checkEncoding(remoteFile);
 
 		if (monitor != null && monitor.isCanceled()){
-			throw new RemoteFileCancelledException();
+			throw new SystemOperationCancelledException();
 		}
 
 		OutputStream stream = null;

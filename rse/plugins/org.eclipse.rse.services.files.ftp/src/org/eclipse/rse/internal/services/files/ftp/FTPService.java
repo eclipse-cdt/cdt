@@ -844,10 +844,9 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		InputStream input = null;
 		OutputStream output = null;
+		FTPClient ftpClient = getFTPClient();
 
 		try{
-
-			FTPClient ftpClient = getFTPClient();
 			clearCache(remoteParent);
 			ftpClient.changeWorkingDirectory(remoteParent);
 			setFileType(isBinary);
@@ -875,8 +874,9 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			} else {
 				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()));
 			}
+		} catch (SystemOperationCancelledException e) {
 			ftpClient.deleteFile(remoteFile);
-
+			throw e;
 		}finally{
 			try {
 				if (input!=null) input.close();

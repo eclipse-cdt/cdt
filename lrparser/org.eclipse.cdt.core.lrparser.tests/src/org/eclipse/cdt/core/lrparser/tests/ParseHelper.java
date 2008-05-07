@@ -78,7 +78,7 @@ public class ParseHelper {
 
 	public static IASTTranslationUnit parse(char[] code, ILanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
 		CodeReader codeReader = new CodeReader(code);
-		return parse(codeReader, lang, new ScannerInfo(), null, expectNoProblems, checkBindings, expectedProblemBindings, null);
+		return parse(codeReader, lang, new ScannerInfo(), null, expectNoProblems, checkBindings, expectedProblemBindings, null, expectNoProblems);
 	}
 	
 	public static IASTTranslationUnit parse(String code, ILanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
@@ -91,13 +91,29 @@ public class ParseHelper {
 
 	public static IASTTranslationUnit parse(String code, ILanguage lang, String[] problems) {
 		CodeReader codeReader = new CodeReader(code.toCharArray());
-    	return parse(codeReader, lang, new ScannerInfo(), null, true, true, problems.length, problems);
+    	return parse(codeReader, lang, new ScannerInfo(), null, true, true, problems.length, problems, true);
 	}
 
 	
+	/**
+	 * TODO thats WAY too many parameters, need to use a parameter object, need to refactor the
+	 * DOM parser test suite so that its a lot cleaner.
+	 * 
+	 * @param codeReader
+	 * @param language
+	 * @param scanInfo
+	 * @param fileCreator
+	 * @param checkSyntaxProblems
+	 * @param checkBindings
+	 * @param expectedProblemBindings
+	 * @param problems
+	 * @param checkPreprocessorProblems
+	 * @return
+	 */
 	public static IASTTranslationUnit parse(CodeReader codeReader, ILanguage language, IScannerInfo scanInfo, 
-			                                ICodeReaderFactory fileCreator, boolean expectNoProblems, 
-			                                boolean checkBindings, int expectedProblemBindings, String[] problems) {
+			                                ICodeReaderFactory fileCreator, boolean checkSyntaxProblems, 
+			                                boolean checkBindings, int expectedProblemBindings, String[] problems,
+			                                boolean checkPreprocessorProblems) {
 		testsRun++;
 		
 		IASTTranslationUnit tu;
@@ -108,14 +124,17 @@ public class ParseHelper {
 		}
 
 		// should parse correctly first before we look at the bindings
-        if(expectNoProblems) {
+        if(checkSyntaxProblems) {
         	
         	// this should work for C++ also, CVisitor.getProblems() and CPPVisitor.getProblems() are exactly the same code!
 			if (CVisitor.getProblems(tu).length != 0) { 
 				throw new AssertionFailedError(" CVisitor has AST Problems " ); 
 			}
+        }
+        
+        if(checkPreprocessorProblems) {
 			if (tu.getPreprocessorProblems().length != 0) {
-				throw new AssertionFailedError(" C TranslationUnit has Preprocessor Problems " );
+				throw new AssertionFailedError(language.getName() + " TranslationUnit has Preprocessor Problems " );
 			}
         }
 

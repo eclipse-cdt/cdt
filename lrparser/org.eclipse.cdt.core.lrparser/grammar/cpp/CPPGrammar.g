@@ -1144,6 +1144,7 @@ type_name_specifier  -- all identifiers of some kind
           /. $Build  consumeQualifiedId(false);  $EndBuild ./
       | 'typename' dcolon_opt nested_name_specifier template_opt template_id_name
           /. $Build  consumeQualifiedId(true);  $EndBuild ./
+      | 'typename' identifier_name
 
 
 -- used for forward declaration and incomplete types
@@ -1666,6 +1667,11 @@ access_specifier_keyword_opt
 
 
 conversion_function_id_name
+    ::= conversion_function_id
+      | conversion_function_id '<' <openscope-ast> template_argument_list_opt '>'
+          /. $Build  consumeTemplateId();  $EndBuild ./
+          
+conversion_function_id
     ::= 'operator' conversion_type_id
           /. $Build  consumeConversionName(); $EndBuild ./
 

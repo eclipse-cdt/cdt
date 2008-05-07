@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.dom.lrparser.cpp;
 
 public interface CPPNoFunctionDeclaratorParsersym {
     public final static int
-      TK_asm = 61,
+      TK_asm = 62,
       TK_auto = 49,
       TK_bool = 15,
       TK_break = 78,
@@ -106,7 +106,7 @@ public interface CPPNoFunctionDeclaratorParsersym {
       TK_RightShift = 88,
       TK_LeftShift = 89,
       TK_LT = 28,
-      TK_GT = 62,
+      TK_GT = 61,
       TK_LE = 93,
       TK_GE = 94,
       TK_EQ = 97,
@@ -202,8 +202,8 @@ public interface CPPNoFunctionDeclaratorParsersym {
                  "LeftBrace",
                  "namespace",
                  "throw",
-                 "asm",
                  "GT",
+                 "asm",
                  "class",
                  "Comma",
                  "delete",

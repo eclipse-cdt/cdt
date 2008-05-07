@@ -13,7 +13,6 @@ package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.AbstractSetFormatStyle;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 
-@SuppressWarnings("restriction")
 public class SetDefaultFormatDecimal extends AbstractSetFormatStyle {
 
     @Override

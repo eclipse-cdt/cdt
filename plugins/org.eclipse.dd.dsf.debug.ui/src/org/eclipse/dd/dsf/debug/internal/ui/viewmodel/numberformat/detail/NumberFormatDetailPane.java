@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Randy Rohrbach (Wind River Systems, Inc.) - extended implementation
+ *     Wind River Systems, Inc. - extended implementation
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +28,10 @@ import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport.DetailPaneMaxLengthAction;
+import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport.DetailPaneWordWrapAction;
+import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport.MessagesForDetailPane;
+import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport.TextViewerAction;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
@@ -40,22 +43,11 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
+import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
-import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneMaxLengthAction;
-import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneWordWrapAction;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.variables.details.DetailMessages;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -288,7 +280,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     class DetailJob extends Job implements IValueDetailListener {
         
         private IStructuredSelection fElements;
-        private IDebugModelPresentation fModel;
         private boolean fFirst = true;
         private IProgressMonitor fMonitor;
         private boolean fComputed = false;
@@ -297,7 +288,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             super("compute variable details"); //$NON-NLS-1$
             setSystem(true);
             fElements = elements;
-            fModel = model;
         }
         
         /*
@@ -584,33 +574,23 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                     }
                 }
                 else {
-                    IValue val = null;
-                    if (element instanceof IVariable) {
-                        try {
-                            val = ((IVariable)element).getValue();
-                        } catch (DebugException e) {
-                            detailComputed(null, e.getStatus().getMessage());
-                        }
-                    } else if (element instanceof IExpression) {
-                        val = ((IExpression)element).getValue();
-                    }
+//                    IValue val = null;
+//                    if (element instanceof IVariable) {
+//                        try {
+//                            val = ((IVariable)element).getValue();
+//                        } catch (DebugException e) {
+//                            detailComputed(null, e.getStatus().getMessage());
+//                        }
+//                    } else if (element instanceof IExpression) {
+//                        val = ((IExpression)element).getValue();
+//                    }
                     if (element instanceof String) {
                         message = (String) element;
                     }
-                    if (val != null && !monitor.isCanceled()) {
-                        fModel.computeDetail(val, this);
-                        synchronized (this) {
-                            try {
-                                // wait for a max of 30 seconds for result, then cancel
-                                wait(30000);
-                                if (!fComputed) {
-                                    fMonitor.setCanceled(true);
-                                }
-                            } catch (InterruptedException e) {
-                                break;
-                            }
-                        }
-                    }               
+                    else {
+                    	message = element.toString();
+                    }
+                    fComputed = true;
                 }
                 // If no details were computed for the selected variable, clear the pane
                 // or use the message, if the variable was a java.lang.String
@@ -658,7 +638,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 insert = "\n" + result; //$NON-NLS-1$
                             }
                             try {
-                                int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+                                int max = DsfDebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
                                 if (max > 0 && insert.length() > max) {
                                     insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
                                 }
@@ -669,7 +649,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                     getDetailDocument().replace(length, 0,insert);
                                 }
                             } catch (BadLocationException e) {
-                                DebugUIPlugin.log(e);
+                            	DsfDebugUIPlugin.log(e);
                             }
                         }
                         return Status.OK_STATUS;
@@ -688,7 +668,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      * The model presentation used to produce the string details for a 
      * selected variable.
      */
-    private VariablesViewModelPresentation fModelPresentation;
     private String fDebugModelIdentifier;
     
     /**
@@ -713,7 +692,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      */
     private IDocument fDetailDocument;
     private DetailJob fDetailJob = null;
-    private final String fPositionLabelPattern = DetailMessages.DefaultDetailPane_56;
+    private final String fPositionLabelPattern = MessagesForDetailPane.DetailPane_LabelPattern;
     private final PositionLabelValue fLineLabel = new PositionLabelValue();
     private final PositionLabelValue fColumnLabel = new PositionLabelValue();
     private final Object[] fPositionLabelPatternArguments = new Object[] {fLineLabel, fColumnLabel };
@@ -724,14 +703,12 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      */
     public Control createControl(Composite parent) {
         
-        fModelPresentation = new VariablesViewModelPresentation();
-        
         createSourceViewer(parent);
         
         if (isInView()){
             createViewSpecificComponents();
             createActions();
-            DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+            DsfDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
             JFaceResources.getFontRegistry().addListener(this);
         }
         
@@ -748,10 +725,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         // Create & configure a SourceViewer
         fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
         fSourceViewer.setDocument(getDetailDocument());
-        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
-        fSourceViewer.getTextWidget().setWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
+        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
+        fSourceViewer.getTextWidget().setWordWrap(DsfDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
         fSourceViewer.setEditable(false);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDebugHelpContextIds.DETAIL_PANE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDsfDebugUIConstants.DETAIL_PANE);
         Control control = fSourceViewer.getControl();
         GridData gd = new GridData(GridData.FILL_BOTH);
         control.setLayoutData(gd);  
@@ -820,15 +797,15 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     private void createActions() {
        
         TextViewerAction textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
-        textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
+        textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_SELECT_ALL_ACTION);
         setAction(DETAIL_SELECT_ALL_ACTION, textAction);
         
         textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
-        textAction.configureAction(DetailMessages.DefaultDetailPane__Copy_8, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
+        textAction.configureAction(MessagesForDetailPane.DetailPane_Copy, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_COPY_ACTION);
         setAction(DETAIL_COPY_ACTION, textAction);
         
         setSelectionDependantAction(DETAIL_COPY_ACTION);
@@ -907,7 +884,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             if (fDetailJob != null) {
                 fDetailJob.cancel();
             }
-            fDetailJob = new DetailJob(selection, fModelPresentation);
+            fDetailJob = new DetailJob(selection, null);
             fDetailJob.schedule();
         }
     }
@@ -931,7 +908,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         fSelectionActions.clear();
         
         if (fDetailJob != null) fDetailJob.cancel();
-        if (fModelPresentation != null) fModelPresentation.dispose();
         fDebugModelIdentifier = null; // Setting this to null makes sure the source viewer is reconfigured with the model presentation after disposal
         if (fSourceViewer != null && fSourceViewer.getControl() != null) fSourceViewer.getControl().dispose();
         
@@ -941,7 +917,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             
             getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
             
-            DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+            DsfDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
             JFaceResources.getFontRegistry().removeListener(this);  
         }
     }
@@ -950,7 +926,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      * @see org.eclipse.debug.ui.IDetailPane#getDescription()
      */
     public String getDescription() {
-        return MessagesForNumberFormatDetail.NumberFormatDetailPane_description;
+        return MessagesForDetailPane.NumberFormatDetailPane_Description;
     }
 
     /* (non-Javadoc)
@@ -964,7 +940,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      * @see org.eclipse.debug.ui.IDetailPane#getName()
      */
     public String getName() {
-        return MessagesForNumberFormatDetail.NumberFormatDetailPane_name;
+        return MessagesForDetailPane.NumberFormatDetailPane_Name;
     }
     
     /* (non-Javadoc)
@@ -1008,20 +984,9 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      * currently being displayed
      */
     protected void configureDetailsViewer() {
-        LazyModelPresentation mp = (LazyModelPresentation)fModelPresentation.getPresentation(getDebugModel());
-        SourceViewerConfiguration svc = null;
-        if (mp != null) {
-            try {
-                svc = mp.newDetailsViewerConfiguration();
-            } catch (CoreException e) {
-                DebugUIPlugin.errorDialog(fSourceViewer.getControl().getShell(), DetailMessages.DefaultDetailPane_Error_1, DetailMessages.DefaultDetailPane_2, e); 
-            }
-        }
+        SourceViewerConfiguration svc = new SourceViewerConfiguration();
         
-        if (svc == null) {
-            svc = new SourceViewerConfiguration();
-            fSourceViewer.setEditable(false);
-        }
+        fSourceViewer.setEditable(false);
         fSourceViewer.unconfigure();
         fSourceViewer.configure(svc);
         
@@ -1189,13 +1154,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      */
     public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
-        if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
-            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
-        } else if (propertyName.equals(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
+        if (propertyName.equals(IDsfDebugUIConstants.DETAIL_PANE_FONT)) {
+            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
+        } else if (propertyName.equals(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
             display(fLastDisplayed);
-        } else if (propertyName.equals(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
-            fSourceViewer.getTextWidget().setWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
-            getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));    
+        } else if (propertyName.equals(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
+            fSourceViewer.getTextWidget().setWordWrap(DsfDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+            getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DsfDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));    
         }
     }
 }

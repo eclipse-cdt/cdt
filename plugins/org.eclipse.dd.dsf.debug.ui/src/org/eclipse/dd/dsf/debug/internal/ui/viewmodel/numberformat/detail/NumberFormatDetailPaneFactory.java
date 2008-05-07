@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Randy Rohrbach (Wind River Systems, Inc.) - initial implementation
+ *     Wind River Systems, Inc. - initial implementation
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport.MessagesForDetailPane;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.debug.ui.IDetailPaneFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -52,7 +53,7 @@ public class NumberFormatDetailPaneFactory implements IDetailPaneFactory {
      */
     public String getDetailPaneName(String id) {
         if (id.equals(NumberFormatDetailPane.ID)){
-            return MessagesForNumberFormatDetail.NumberFormatDetailPane_name;
+            return MessagesForDetailPane.NumberFormatDetailPane_Name;
         }
         return null;
     }
@@ -62,7 +63,7 @@ public class NumberFormatDetailPaneFactory implements IDetailPaneFactory {
      */
     public String getDetailPaneDescription(String id) {
         if (id.equals(NumberFormatDetailPane.ID)){
-            return MessagesForNumberFormatDetail.NumberFormatDetailPane_description;
+            return MessagesForDetailPane.NumberFormatDetailPane_Description;
         }
         return null;
     }

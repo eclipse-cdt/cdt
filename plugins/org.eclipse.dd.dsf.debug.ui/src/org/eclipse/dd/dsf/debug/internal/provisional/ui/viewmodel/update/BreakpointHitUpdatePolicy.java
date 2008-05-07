@@ -29,7 +29,7 @@ public class BreakpointHitUpdatePolicy extends ManualUpdatePolicy {
     
     @Override
     public String getName() {
-        return "Breakpoint Hit";
+        return "Breakpoint Hit"; //$NON-NLS-1$
     }
     
     @Override

@@ -29,7 +29,6 @@ public class FormattedValuePreferenceStore implements IFormattedValuePreferenceS
         return fgSingletonReference;
     }
     
-    @SuppressWarnings("restriction")
     public String getCurrentNumericFormat( IPresentationContext context ) {
         
         Object prop = context.getProperty( IDebugVMConstants.CURRENT_FORMAT_STORAGE );

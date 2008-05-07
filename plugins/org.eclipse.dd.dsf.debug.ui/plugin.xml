@@ -7,6 +7,10 @@
      		delegateClass="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate"/>
   </extension>
 
+   <extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.eclipse.dd.dsf.debug.ui.PreferenceInitializer"/>
+   </extension>
+	
    <extension point="org.eclipse.ui.editors.annotationTypes">
       <type
          name="org.eclipse.dd.debug.currentIP">
@@ -331,7 +335,7 @@
 	      	</enablement>      
         </detailFactories>
         <detailFactories
-              class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModuleDetailPaneFactory"
+              class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.detail.ModuleDetailPaneFactory"
               id="org.eclipse.dd.dsf.debug.ui.viewmodel.moduleDetailPaneFactory">
         </detailFactories>
     </extension>

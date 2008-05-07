@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Randy Rohrbach (Wind River Systems, Inc.) - extended implementation
+ *     Wind River Systems, Inc. - extended implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail;
+package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.ITextOperationTarget;

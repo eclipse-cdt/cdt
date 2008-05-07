@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson AB		  - Modules view for DSF implementation
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules;
 

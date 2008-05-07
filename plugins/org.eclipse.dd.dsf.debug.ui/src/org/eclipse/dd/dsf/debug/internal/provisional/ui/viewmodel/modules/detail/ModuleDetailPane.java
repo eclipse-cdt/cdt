@@ -11,12 +11,11 @@
  *     Wind River Systems -  adopted to use with Modules view
  *     Ericsson AB		  -  Modules view for DSF implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules;
+package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.detail;
 
 
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.cdt.debug.internal.ui.views.modules.ModulesMessages;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,20 +28,15 @@ import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
-import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail.TextViewerAction;
+import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport.MessagesForDetailPane;
+import org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport.TextViewerAction;
 import org.eclipse.dd.dsf.debug.service.IModules;
 import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMData;
+import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane;
-import org.eclipse.debug.internal.ui.views.variables.details.DetailMessages;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -78,7 +72,7 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 /**
  * 
  */
-public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, IPropertyChangeListener {
+public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdaptable, IPropertyChangeListener {
 
     /**
      * These are the IDs for the actions in the context menu
@@ -106,7 +100,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         if (isInView()){
             createViewSpecificComponents();
             createActions();
-            DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+            DsfDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
             JFaceResources.getFontRegistry().addListener(this);
         }
         return fSourceViewer.getControl();
@@ -128,11 +122,6 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
             return;
         }
         
-        Object firstElement = selection.getFirstElement();
-        if (firstElement != null && firstElement instanceof IDebugElement) {
-            String modelID = ((IDebugElement)firstElement).getModelIdentifier();
-        }
-        
         synchronized (this) {
             if (fDetailJob != null) {
                 fDetailJob.cancel();
@@ -150,17 +139,18 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         if (fDetailJob != null) {
             fDetailJob.cancel();
         }
-        fDetailDocument.set("");
+        fDetailDocument.set(""); //$NON-NLS-1$
         fSourceViewer.setEditable(false);
     }
     
+	@Override
 	public void dispose() {
 		super.dispose();
         if (fDetailJob != null) fDetailJob.cancel();
         if (fSourceViewer != null && fSourceViewer.getControl() != null) fSourceViewer.getControl().dispose();
         
         if (isInView()){
-        	DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+        	DsfDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
             JFaceResources.getFontRegistry().removeListener(this);  
         }
 		
@@ -182,6 +172,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         }
         return false;
 	}
+	
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
         if (ITextViewer.class.equals(adapter)) {
             return fSourceViewer;
@@ -191,8 +183,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
 	
 	public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
-        if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
-            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
+        if (propertyName.equals(IDsfDebugUIConstants.DETAIL_PANE_FONT)) {
+            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
         }
 	}
     
@@ -207,10 +199,10 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         // Create & configure a SourceViewer
         fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
         fSourceViewer.setDocument(getDetailDocument());
-        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
-        fSourceViewer.getTextWidget().setWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
+        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
+        fSourceViewer.getTextWidget().setWordWrap(DsfDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
         fSourceViewer.setEditable(false);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDebugHelpContextIds.DETAIL_PANE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDsfDebugUIConstants.DETAIL_PANE);
         Control control = fSourceViewer.getControl();
         GridData gd = new GridData(GridData.FILL_BOTH);
         control.setLayoutData(gd);  
@@ -254,7 +246,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         
         // Add a focus listener to update actions when details area gains focus
         fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
-            public void focusGained(FocusEvent e) {
+            @Override
+			public void focusGained(FocusEvent e) {
                 
                 getViewSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
                 
@@ -264,7 +257,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
                 getViewSite().getActionBars().updateActionBars();
             }
             
-            public void focusLost(FocusEvent e) {
+            @Override
+			public void focusLost(FocusEvent e) {
                 
                 getViewSite().setSelectionProvider(null);
                 
@@ -320,15 +314,15 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
      */
     private void createActions() {
         TextViewerAction textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
-        textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
+        textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_SELECT_ALL_ACTION);
         setAction(DETAIL_SELECT_ALL_ACTION, textAction);
         
         textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
-        textAction.configureAction(DetailMessages.DefaultDetailPane__Copy_8, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
+        textAction.configureAction(MessagesForDetailPane.DetailPane_Copy, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_COPY_ACTION);
         setAction(DETAIL_COPY_ACTION, textAction);
 
         setSelectionDependantAction(DETAIL_COPY_ACTION);
@@ -361,33 +355,6 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
             /*
              *  Make sure this is an element we want to deal with.
              */
-//            if ( fElement instanceof DMVMContext) {
-//                IModules service = null;
-//                IModuleDMContext dmc = null ;
-//                
-//                IModuleDMContext modDmc = DMContexts.getAncestorOfType(((DMVMContext) fElement).getDMC(), IModuleDMContext.class);
-//                DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), ((DMVMContext) fElement).getDMC().getSessionId());
-//                
-//                if ( modDmc != null ) {
-//                    dmc = modDmc ;
-//                    service = tracker.getService(IModules.class); 
-//                }
-//                
-//                /*
-//                 *  If the desired Data Model Context is null then we are not going to
-//                 *  process this data.
-//                 */
-//                if ( dmc == null ) return Status.OK_STATUS;
-//
-//                final DataRequestMonitor<IModuleDMData> modData = 
-//                    new DataRequestMonitor<IModuleDMData>(service.getSession().getExecutor(), null) {
-//                        @Override
-//                        protected void handleSuccess() {
-//                        	detailComputed(getModuleDetail(getData()));
-//                        }
-//                    };
-//                    service.getModuleData(modDmc, modData);
-//            }
             IModuleDMContext dmc = null;
             if (fElement instanceof IDMVMContext) {
                 IDMContext vmcdmc = ((IDMVMContext)fElement).getDMContext();
@@ -400,7 +367,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
             
             /*
              * Create the query to write the value to the service. Note: no need to
-             * guard agains RejectedExecutionException, because
+             * guard against RejectedExecutionException, because
              * DsfSession.getSession() above would only return an active session.
              */
             GetModuleDetailsQuery query = new GetModuleDetailsQuery(dmc);
@@ -456,40 +423,39 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         String type = null;
 //        switch( module.getType() ) {
 //            case ICModule.EXECUTABLE:
-//                type = ModulesMessages.getString( "ModulesView.1" ); //$NON-NLS-1$
+//                type = ModulesMessages.getString( "ModulesView.Executable" ); //$NON-NLS-1$
 //                break;
 //            case ICModule.SHARED_LIBRARY:
-//                type = ModulesMessages.getString( "ModulesView.2" ); //$NON-NLS-1$
+//                type = ModulesMessages.getString( "ModulesView.SharedLibrary" ); //$NON-NLS-1$
 //                break;
 //        }
-        type = ModulesMessages.getString( "ModulesView.2" ); //$NON-NLS-1$
+        type = ModulesMessages.getString( "ModulesView.SharedLibrary" ); //$NON-NLS-1$
         if ( type != null ) {
-            sb.append( ModulesMessages.getString( "ModulesView.3" ) ); //$NON-NLS-1$
+            sb.append( ModulesMessages.getString( "ModulesView.Type" ) ); //$NON-NLS-1$
             sb.append( type );
             sb.append( '\n' );
         }
         
         // Symbols flag
-        sb.append( ModulesMessages.getString( "ModulesView.4" ) ); //$NON-NLS-1$
-        sb.append( ( module.isSymbolsLoaded()) ? ModulesMessages.getString( "ModulesView.5" ) : ModulesMessages.getString( "ModulesView.6" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        sb.append( ModulesMessages.getString( "ModulesView.Symbols" ) ); //$NON-NLS-1$
+        sb.append( ( module.isSymbolsLoaded()) ? ModulesMessages.getString( "ModulesView.Loaded" ) : ModulesMessages.getString( "ModulesView.NotLoaded" ) ); //$NON-NLS-1$ //$NON-NLS-2$
         sb.append( '\n' );
 
         // Symbols file
-        sb.append( ModulesMessages.getString( "ModulesView.7" ) ); //$NON-NLS-1$
+        sb.append( ModulesMessages.getString( "ModulesView.SymbolsFile" ) ); //$NON-NLS-1$
         sb.append( module.getFile());
         sb.append( '\n' );
+        
         // Base address
         String baseAddress = module.getBaseAddress();
-            sb.append( ModulesMessages.getString( "ModulesView.9" ) ); //$NON-NLS-1$
-            sb.append( baseAddress );
-//            sb.append( baseAddress.toHexAddressString() );
-            sb.append( '\n' );
-//        }
-//        
+        sb.append( ModulesMessages.getString( "ModulesView.BaseAddress" ) ); //$NON-NLS-1$
+        sb.append( baseAddress );
+        sb.append( '\n' );
+            
         // Size
         long size = module.getSize();
         if ( size > 0 ) { 
-            sb.append( ModulesMessages.getString( "ModulesView.10" ) ); //$NON-NLS-1$
+            sb.append( ModulesMessages.getString( "ModulesView.Size" ) ); //$NON-NLS-1$
             sb.append( size );
             sb.append( '\n' );
         }

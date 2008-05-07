@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson AB		  - Modules view for DSF implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules;
+package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.detail;
 
 import java.util.HashSet;
 import java.util.Set;

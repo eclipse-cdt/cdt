@@ -98,7 +98,6 @@ public class AbstractSetFormatStyle implements IViewActionDelegate, IDebugContex
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    @SuppressWarnings("restriction")
     public void run(IAction action) {
         
         /*

@@ -28,7 +28,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.rse.internal.services.Activator;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationFailedException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
@@ -43,6 +42,8 @@ import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperation
  */
 public class ArchiveHandlerManager
 {
+	private static final String PLUGIN_ID = "clientserver"; //$NON-NLS-1$
+
 	/**
 	 * The string that separates the virtual part of an absolute path from the
 	 * real part.
@@ -110,7 +111,7 @@ public class ArchiveHandlerManager
 		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
 		if (handler == null || !handler.exists()) {
-			throw new SystemUnsupportedOperationException(Activator.PLUGIN_ID, "No handler for " + file); //$NON-NLS-1$
+			throw new SystemUnsupportedOperationException(PLUGIN_ID, "No archive handler for " + file); //$NON-NLS-1$
 		}
 		return handler.getVirtualChildren(virtualpath, null);
 	}
@@ -308,11 +309,11 @@ public class ArchiveHandlerManager
 				catch (InvocationTargetException e)
 				{
 					//Throwable target = e.getCause();
-					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
+					throw new SystemOperationFailedException(PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
 				}
 				catch (Exception e)
 				{
-					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
+					throw new SystemOperationFailedException(PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
 				}
 				_handlers.put(file, handler);
 				return handler;
@@ -507,7 +508,7 @@ public class ArchiveHandlerManager
 	{
 		if (!isRegisteredArchive(newFile.getName()))
 		{
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive, because " //$NON-NLS-1$
+			throw new SystemOperationFailedException(PLUGIN_ID, "Could not create new archive, because " //$NON-NLS-1$
 					+ newFile + " is not a registered type of archive."); //$NON-NLS-1$
 		}
 
@@ -515,12 +516,12 @@ public class ArchiveHandlerManager
 		{
 			if (!newFile.isFile())
 			{
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
+				throw new SystemOperationFailedException(PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
 						+ newFile + " is not a file."); //$NON-NLS-1$
 			}
 			if (!newFile.delete())
 			{
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
+				throw new SystemOperationFailedException(PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
 						+ newFile + " could not be deleted."); //$NON-NLS-1$
 			}
 		}
@@ -529,13 +530,13 @@ public class ArchiveHandlerManager
 		{
 			if (!newFile.createNewFile())
 			{
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
+				throw new SystemOperationFailedException(PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
 						+ newFile + " could not be created."); //$NON-NLS-1$
 			}
 		}
 		catch (IOException e)
 		{
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive: " + newFile, e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(PLUGIN_ID, "Could not create new archive: " + newFile, e); //$NON-NLS-1$
 		}
 
 		ISystemArchiveHandler handler = getRegisteredHandler(newFile);

@@ -1024,7 +1024,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#delete(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
 	 */
-	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
     	remoteParent = checkEncoding(remoteParent);
     	fileName = checkEncoding(fileName);
 
@@ -1035,12 +1035,21 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 			if (_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 				try {
+					//Try to delete even if it looked like the file doesn't exist,
+					//since existence might have been cached and be out-of-date
 					FTPClient ftpClient = getFTPClient();
 					internalDelete(ftpClient, remoteParent, fileName, file.isFile(), progressMonitor);
 				}
 				catch (IOException e)
 				{
+					if (!file.exists())
+						return false;
 					throw new RemoteFileIOException(e);
+				}
+				catch (SystemMessageException e) {
+					if (!file.exists())
+						return false;
+					throw e;
 				}
 				finally {
 					_commandMutex.release();
@@ -1051,6 +1060,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		} finally {
 			progressMonitor.end();
 		}
+		return true;
 	}
 
 	private void internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, MyProgressMonitor monitor)

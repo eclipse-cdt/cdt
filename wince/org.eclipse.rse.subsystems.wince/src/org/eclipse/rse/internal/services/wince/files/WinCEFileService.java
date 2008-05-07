@@ -189,14 +189,14 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     }
   }
 
-  public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
+  public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
     String fullPath = concat(remoteParent, fileName);
     IRapiSession session = sessionProvider.getSession();
     try {
       if (isDirectory(session, fullPath)) {
         // recursive delete if it is a directory
         RapiFindData[] allFiles = session.findAllFiles(concat(fullPath, "*"), Rapi.FAF_NAME); //$NON-NLS-1$
-        for (int i = 0 ; i < allFiles.length ; i++) {
+        for (int i = 0; i < allFiles.length; i++) {
           delete(fullPath, allFiles[i].fileName, monitor);
         }
         session.removeDirectory(fullPath);
@@ -208,6 +208,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       //FIXME error handling
       throw new RemoteFileException(e.getMessage(), e);
     }
+    return true;
   }
 
   public void download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding,

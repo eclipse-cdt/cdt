@@ -406,16 +406,19 @@ public interface IFileService extends IService
 
 	/**
 	 * Delete a file or folder on the host.
-	 *
+	 * 
 	 * @param remoteParent the folder containing the file to delete
 	 * @param fileName the name of the file or folder to delete
 	 * @param monitor the progress monitor
-	 * @throws SystemMessageException if an error occurs. Typically this would
-	 *             be one of those in the RemoteFileException family.
-	 *
+	 * @return <code>true</code> if the requested element was successfully
+	 * 	deleted, or <code>false</code> if the element had not existed in the
+	 * 	first place so the operation was a silent no-op.
+	 * @throws SystemMessageException if an error occurs or the user canceled
+	 * 		the operation.
+	 * 
 	 * @since org.eclipse.rse.services 3.0
 	 */
-	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Delete a set of files or folders on the host. Should throw an exception

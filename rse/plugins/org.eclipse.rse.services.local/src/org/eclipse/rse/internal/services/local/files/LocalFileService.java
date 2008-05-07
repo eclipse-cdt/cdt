@@ -1015,7 +1015,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		return new LocalVirtualHostFile(child);
 	}
 
-	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (fileName.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
@@ -1026,23 +1026,30 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			remoteParent = remoteParent + ArchiveHandlerManager.VIRTUAL_SEPARATOR;
 		}
+		boolean result = true;
 		File fileToDelete = new File(remoteParent, fileName);
 		if (ArchiveHandlerManager.isVirtual(fileToDelete.getAbsolutePath()))
 		{
-			deleteFromArchive(fileToDelete, monitor);
+			result = deleteFromArchive(fileToDelete, monitor);
 		}
 		else if (ArchiveHandlerManager.getInstance().isArchive(fileToDelete))
 		{
-			deleteArchive(fileToDelete);
+			result = deleteArchive(fileToDelete);
 		}
 		if (fileToDelete.isDirectory())
 		{
-			deleteContents(fileToDelete, monitor);
+			result = deleteContents(fileToDelete, monitor);
 		}
 		else
 		{
-			fileToDelete.delete();
+			result = fileToDelete.delete();
 		}
+		if (!result && fileToDelete.exists()) {
+			// Deletion failed without specification why... likely a Security
+			// problem?
+			throw new RemoteFileSecurityException(null);
+		}
+		return result;
 	}
 
 	public void deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
@@ -1099,9 +1106,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
 			checkArchiveOperationStatusThread.start();
 		}
-		boolean returnValue = handler.delete(child.fullName, archiveOperationMonitor);
-		if (!returnValue)
-		{
+		try {
+			return handler.delete(child.fullName, archiveOperationMonitor);
+		} catch (SystemMessageException e) {
 			if (monitor != null && monitor.isCanceled())
 			{
 				//This operation has been cancelled by the user.
@@ -1109,12 +1116,12 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
 			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED, destination);
-			String msgDetails = LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED_DETAILS;
+			//String msgDetails = LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED_DETAILS;
 			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ILocalMessageIds.FILEMSG_DELETE_VIRTUAL_FAILED,
-					IStatus.ERROR, msgTxt, msgDetails));
+					IStatus.ERROR,
+					msgTxt, e));
 		}
-		return true;
 	}
 
 	protected boolean deleteArchive(File file)

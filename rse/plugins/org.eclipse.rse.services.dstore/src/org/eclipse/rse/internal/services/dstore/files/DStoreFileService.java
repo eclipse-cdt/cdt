@@ -1351,7 +1351,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	}
 
-	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
@@ -1374,7 +1374,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		// When running a server older than 2.0.1 success is not set for directories, so we must
 		// check if the source message is an empty string
 		if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
-			return;
+			return true;
 		}
 		String msgTxt = NLS.bind(ServiceResources.FILEMSG_DELETE_FILE_FAILED, FileSystemMessageUtil.getSourceLocation(status));
 		String msgDetails = ServiceResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;

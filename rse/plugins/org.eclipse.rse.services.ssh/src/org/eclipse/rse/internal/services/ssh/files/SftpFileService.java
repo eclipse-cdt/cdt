@@ -891,7 +891,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		return result;
 	}
 
-	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String fullPath = concat(remoteParent, fileName);
 		Activator.trace("SftpFileService.delete.waitForLock"); //$NON-NLS-1$
@@ -912,6 +912,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				}
 				if (attrs==null) {
 					//doesn't exist, nothing to do
+					return false;
 				} else if (attrs.isDir()) {
 					try {
 						getChannel("SftpFileService.delete.rmdir").rmdir(fullPathRecoded); //$NON-NLS-1$
@@ -941,6 +942,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		} else {
 			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
+		return true;
 	}
 
 	public void rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException

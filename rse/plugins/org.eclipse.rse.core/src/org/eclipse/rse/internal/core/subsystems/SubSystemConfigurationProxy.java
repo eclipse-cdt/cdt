@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David Dykstal (IBM) - [197036] delay the creation of filterPoolManagers when restoring
+ * David McKnight (IBM) - [230997] subsystem configuration extension without "description" screws up RSE init
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.subsystems;
@@ -82,8 +83,15 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		// Read the single attributes from the configuration element
 		this.element = element;
 		this.id = element.getAttribute("id"); //$NON-NLS-1$
-		this.name = element.getAttribute("name").trim(); //$NON-NLS-1$
-		this.description = element.getAttribute("description").trim(); //$NON-NLS-1$
+		
+		this.name = element.getAttribute("name"); //$NON-NLS-1$
+		if (this.name != null)
+			this.name = this.name.trim();
+
+		this.description = element.getAttribute("description"); //$NON-NLS-1$
+		if (this.description != null)
+			this.description = this.description.trim();
+
 		this.systemTypeIds = element.getAttribute("systemTypeIds"); //$NON-NLS-1$
 		this.vendor = element.getAttribute("vendor"); //$NON-NLS-1$
 		this.category = element.getAttribute("category"); //$NON-NLS-1$

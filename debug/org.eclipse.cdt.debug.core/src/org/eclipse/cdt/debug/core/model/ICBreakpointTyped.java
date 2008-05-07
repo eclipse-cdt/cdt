@@ -27,7 +27,7 @@ public interface ICBreakpointTyped {
 	/**
 	 * A bit-wise qualifier (the only one); not a type in and of itself. All
 	 * types are even values (including zero). The least significant bit can be
-	 * turned on to further qualify the breakpoint as a one that the user
+	 * turned on to further qualify the breakpoint as one that the user
 	 * doesn't see. It is typically installed programatically by the debugger,
 	 * hit once and then uninstalled.
 	 */

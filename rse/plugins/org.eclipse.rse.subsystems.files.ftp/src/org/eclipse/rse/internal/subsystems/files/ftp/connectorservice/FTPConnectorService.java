@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,6 +22,7 @@
  * David McKnight (IBM) - [196632] [ftp] Passive mode setting does not work
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Martin Oberhuber (Wind River) - [203500] Support encodings for FTP paths
+ * David Dykstal (IBM) - [221211] handling newly defined exceptions from file service
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -39,9 +40,9 @@ import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
 import org.eclipse.rse.internal.subsystems.files.ftp.FTPSubsystemResources;
 import org.eclipse.rse.internal.subsystems.files.ftp.parser.FTPClientConfigFactory;
+import org.eclipse.rse.services.clientserver.messages.SystemRemoteSecurityException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
-import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -93,12 +94,12 @@ public class FTPConnectorService extends StandardConnectorService
 		return propertySet;
 	}
 	
-	protected void internalConnect(IProgressMonitor monitor)  throws RemoteFileException, IOException
+	protected void internalConnect(IProgressMonitor monitor)  throws SystemRemoteSecurityException, IOException
 	{
 		internalConnect();
 	}
 
-	private void internalConnect() throws RemoteFileException, IOException
+	private void internalConnect() throws SystemRemoteSecurityException, IOException
 	{
 		IPropertySet propertySet = getPropertySet();
 		SystemSignonInformation info = getSignonInformation();

@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.cdt.gnu.debug"
-      label="CDT GNU Toolchain Debug Support"
+      label="%featureName"
       version="5.0.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="%providerName">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      %description
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+      %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
 
-   <requires>
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/ganymede"/>
+   </url>
 
+   <requires>
       <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
@@ -30,7 +33,7 @@
       <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.core.variables" version="3.1.100" match="compatible"/>
       <import feature="org.eclipse.cdt.platform" version="5.0.0.qualifier"/>
-	  <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
       <import plugin="org.eclipse.cdt.ui" version="5.0.0" match="compatible"/>
       <import plugin="org.eclipse.cdt.debug.core" version="5.0.0" match="compatible"/>
       <import plugin="org.eclipse.cdt.debug.mi.core" version="5.0.0" match="compatible"/>

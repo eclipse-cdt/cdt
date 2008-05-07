@@ -20,7 +20,7 @@ package org.eclipse.rse.services.clientserver.messages;
 
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.services.clientserver.IClientServerConstants;
 
 /**
  * Exception thrown when attempting an operation and the user cancelled it
@@ -47,7 +47,7 @@ public class SystemOperationCancelledException extends SystemMessageException {
 
 	private static SystemMessage getMyMessage() {
 		if (myMessage == null) {
-			myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_OPERATION_CANCELLED, IStatus.ERROR,
+			myMessage = new SimpleSystemMessage(IClientServerConstants.PLUGIN_ID, ICommonMessageIds.MSG_OPERATION_CANCELLED, IStatus.ERROR,
 					CommonMessages.MSG_OPERATION_CANCELLED);
 		}
 		return myMessage;

@@ -45,9 +45,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.eclipse.rse.internal.services.Activator;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.SystemArchiveUtil;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.SystemUniversalZipEntry;
+import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
@@ -555,13 +555,13 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					return retVal;
 				}
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (Exception e)
 		{
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally
 		{
@@ -632,7 +632,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		catch (Exception e)
 		{
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally
 		{
@@ -759,7 +759,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			try {
 				openZipFile();
 			} catch (IOException ioe) {
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not open the ZipFile " + _file.toString(), ioe); //$NON-NLS-1$
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not open the ZipFile " + _file.toString(), ioe); //$NON-NLS-1$
 			}
 			try {
 				safeGetEntry(fullVirtualName);
@@ -855,7 +855,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		catch (IOException e) {
 			if (closeZipFile)
 				closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 	}
 
@@ -885,7 +885,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		if (!_exists)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		int mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
 		if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
 		{
@@ -960,7 +960,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					return;
 				}
 				if (closeZipFile) closeZipFile();
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 			}
 			finally
 			{
@@ -970,7 +970,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		else
 		{
-			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+			throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 		}
 	}
 
@@ -1008,13 +1008,13 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		if (!_exists)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 
 		if (!destinationParent.isDirectory())
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		dir = ArchiveHandlerManager.cleanUpVirtualPath(dir);
 		if (!_virtualFS.containsKey(dir))
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 
 		String name;
 		int charsToTrim;
@@ -1048,7 +1048,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			{
 				if (!SystemArchiveUtil.delete(destination))
 				{
-					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not overwrite directory " + destination); //$NON-NLS-1$
+					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not overwrite directory " + destination); //$NON-NLS-1$
 				}
 			}
 
@@ -1056,7 +1056,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			{
 				if (!destination.mkdirs())
 				{
-					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not overwrite directory " + destination); //$NON-NLS-1$
+					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not overwrite directory " + destination); //$NON-NLS-1$
 				}
 			}
 		}
@@ -1084,7 +1084,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		if (newChildren.length == 0)
 		{
 			//it is a error situation, or the operation has been cancelled.
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		}
 		extractVirtualFile(dir + '/', topFile, sourceEncoding, isText, archiveOperationMonitor);
 
@@ -1110,7 +1110,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				{
 					if (!nextFile.mkdirs())
 					{
-						throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create folder " + nextFile.toString()); //$NON-NLS-1$
+						throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not create folder " + nextFile.toString()); //$NON-NLS-1$
 					}
 				}
 				else
@@ -1141,7 +1141,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		{
 			if (!file.createNewFile())
 			{
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "File already exists: " + file.toString()); //$NON-NLS-1$
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "File already exists: " + file.toString()); //$NON-NLS-1$
 			}
 			else
 			{
@@ -1156,7 +1156,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			else
 			{
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create " + file.toString()); //$NON-NLS-1$
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not create " + file.toString()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -1177,7 +1177,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		if (!_exists)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
 
 		if (exists(virtualPath + "/" + name, archiveOperationMonitor)) //$NON-NLS-1$
@@ -1234,18 +1234,18 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					catch (IOException e)
 					{
 						closeZipFile();
-						throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not add a file.", e); //$NON-NLS-1$
+						throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not add a file.", e); //$NON-NLS-1$
 					}
 					closeZipFile();
 				}
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 
 		}
 		catch(Exception e)
 		{
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally
 		{
@@ -1288,7 +1288,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			boolean closeZipFile, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		if (!_exists)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 
 		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
 		try
@@ -1309,7 +1309,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 							throw new SystemOperationCancelledException();
 						}
 						if (!files[i].exists() || !files[i].canRead()) {
-							throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Cannot read: " + files[i]); //$NON-NLS-1$
+							throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Cannot read: " + files[i]); //$NON-NLS-1$
 						}
 						String fullVirtualName = getFullVirtualName(virtualPath, names[i]);
 						if (exists(fullVirtualName, archiveOperationMonitor))
@@ -1381,11 +1381,11 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					if (closeZipFile) closeZipFile();
 				}
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (IOException ioe) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, ioe);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, ioe);
 		}
 		finally
 		{
@@ -1799,14 +1799,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					return true;
 				}
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (IOException e)
 		{
 			if (!(outputTempFile == null)) outputTempFile.delete();
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not delete " + fullVirtualName, e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not delete " + fullVirtualName, e); //$NON-NLS-1$
 		}
 		finally
 		{
@@ -1852,10 +1852,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			throws SystemMessageException
 	{
 		if (!_exists)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 
 		if (!file.exists() || !file.canRead()) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Cannot read: " + file); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Cannot read: " + file); //$NON-NLS-1$
 		}
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		if (!exists(fullVirtualName, archiveOperationMonitor))
@@ -1913,7 +1913,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			if (!(outputTempFile == null))
 				outputTempFile.delete();
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not replace " + file.getName(), e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not replace " + file.getName(), e); //$NON-NLS-1$
 		}
 		if (closeZipFile)
 			closeZipFile();
@@ -1928,7 +1928,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		if (!_exists)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		if (!exists(fullVirtualName, archiveOperationMonitor))
@@ -1979,7 +1979,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			if (!(outputTempFile == null))
 				outputTempFile.delete();
 			closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not replace " + fullVirtualName, e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not replace " + fullVirtualName, e); //$NON-NLS-1$
 		}
 		closeZipFile();
 	}
@@ -2005,14 +2005,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			throws SystemMessageException
 	{
 		if (!_exists)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		newFullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(newFullVirtualName);
 		VirtualChild vc = getVirtualFile(fullVirtualName, archiveOperationMonitor);
 		if (!vc.exists())
 		{
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "The virtual file " + fullVirtualName + " does not exist."); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "The virtual file " + fullVirtualName + " does not exist."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		File outputTempFile = null;
 		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
@@ -2089,14 +2089,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			else
 			{
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (IOException e)
 		{
 			if (!(outputTempFile == null)) outputTempFile.delete();
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not rename " + fullVirtualName, e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not rename " + fullVirtualName, e); //$NON-NLS-1$
 		}
 		finally
 		{
@@ -2168,7 +2168,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			catch (IOException e)
 			{
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not extract virtual file: " + fullNames[i], e); //$NON-NLS-1$
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not extract virtual file: " + fullNames[i], e); //$NON-NLS-1$
 			}
 		}
 		return files;
@@ -2210,7 +2210,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		if (!_exists)
 		{
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		}
 		if (exists(name, archiveOperationMonitor))
 		{
@@ -2263,7 +2263,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					return true;
 				}
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (IOException e)
@@ -2271,7 +2271,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			System.out.println();
 			System.out.println(e.getMessage());
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not add a file.", e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not add a file.", e); //$NON-NLS-1$
 		}
 		finally
 		{
@@ -2435,7 +2435,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		catch (IOException e)
 		{
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		_exists = true;
 	}
@@ -2481,7 +2481,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			SystemSearchStringMatchLocator locator = new SystemSearchStringMatchLocator(bufReader, matcher);
 			matches = locator.locateMatches();
 		} catch (IOException e) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 
 		closeZipFile();
@@ -2527,7 +2527,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			entry = safeGetEntry(fullVirtualName);
 		} catch (IOException e) {
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		if (closeZipFile)
 			closeZipFile();
@@ -2564,7 +2564,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		catch (IOException e)
 		{
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		if (closeZipFile) closeZipFile();
 		return entry.getCompressedSize();
@@ -2594,7 +2594,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			entry = safeGetEntry(fullVirtualName);
 		} catch (IOException e) {
 			if (closeZipFile) closeZipFile();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		if (closeZipFile)
 			closeZipFile();
@@ -2696,7 +2696,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		if (!_exists)
 		{
 			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		}
 
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
@@ -2777,7 +2777,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		if (!_exists)
 		{
 			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		}
 
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
@@ -2850,7 +2850,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 				}
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (Exception e)

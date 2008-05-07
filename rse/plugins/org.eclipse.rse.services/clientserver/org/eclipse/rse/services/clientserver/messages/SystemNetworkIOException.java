@@ -14,7 +14,7 @@ package org.eclipse.rse.services.clientserver.messages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 
-import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.services.clientserver.IClientServerConstants;
 
 /**
  * Exception thrown in case of errors due to network I/O Problems.
@@ -31,13 +31,13 @@ public class SystemNetworkIOException extends SystemRemoteMessageException {
 
 	/**
 	 * Default Constructor.
-	 * Clients are encouraged to use the more specific constructor with pluginId instead of this one.   
+	 * Clients are encouraged to use the more specific constructor with pluginId instead of this one.
 	 *
 	 *
 	 * @param remoteException exception from communication layer.
 	 */
 	public SystemNetworkIOException(Exception remoteException) {
-		super(getMyMessage(Activator.PLUGIN_ID, remoteException), remoteException);
+		super(getMyMessage(IClientServerConstants.PLUGIN_ID, remoteException), remoteException);
 	}
 
 	/**

@@ -23,7 +23,7 @@ package org.eclipse.rse.services.clientserver.archiveutils;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -313,7 +313,7 @@ public final class VirtualChild {
 			}
 			catch (IOException e)
 			{
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "VirtualChild.getExtractedFile()", e); //$NON-NLS-1$
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "VirtualChild.getExtractedFile()", e); //$NON-NLS-1$
 			}
 		}
 
@@ -367,7 +367,7 @@ public final class VirtualChild {
 			throws SystemMessageException
 	{
 		if (_handler == null)
-			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+			throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 		if (_extractedFile == null ||
 		    _extractedFile.lastModified() != getTimeStamp() ||
 		    !destination.getAbsolutePath().equals(_extractedFile.getAbsolutePath())

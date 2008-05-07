@@ -14,7 +14,7 @@ package org.eclipse.rse.services.clientserver.messages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 
-import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.services.clientserver.IClientServerConstants;
 
 /**
  * Generic exception thrown when anything fails and a child exception is
@@ -40,7 +40,7 @@ public class SystemOperationFailedException extends SystemRemoteMessageException
 	 * @param remoteException the initial cause of this exception
 	 */
 	public SystemOperationFailedException(Exception remoteException) {
-		super(getMyMessage(Activator.PLUGIN_ID, null, remoteException), remoteException);
+		super(getMyMessage(IClientServerConstants.PLUGIN_ID, null, remoteException), remoteException);
 	}
 
 	/**

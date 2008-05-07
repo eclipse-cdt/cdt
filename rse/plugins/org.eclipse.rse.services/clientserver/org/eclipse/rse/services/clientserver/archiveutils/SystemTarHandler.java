@@ -47,9 +47,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.rse.internal.services.Activator;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.SystemArchiveUtil;
+import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.SystemReentrantMutex;
@@ -937,7 +937,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 				if (inStream == null) {
 					destination.setLastModified(entry.getModificationTime());
-					throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+					throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 				}
 				//Need to make sure destination file exists.
 				if (!destination.exists())
@@ -960,7 +960,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			}
 		}
 		catch (IOException e) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally {
 
@@ -1009,12 +1009,12 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		if (!destinationParent.exists()) {
 
 			if (!destinationParent.mkdirs()) {
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Create folder " + destinationParent); //$NON-NLS-1$
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Create folder " + destinationParent); //$NON-NLS-1$
 			}
 		}
 		// otherwise if the destination directory does exist, but is not a directory, then quit
 		else if (!destinationParent.isDirectory()) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "No folder: " + destinationParent); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "No folder: " + destinationParent); //$NON-NLS-1$
 		}
 
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
@@ -1031,7 +1031,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				VirtualChild dir = vfs.getEntry(fullVirtualName);
 
 				if (dir == null || !dir.isDirectory) {
-					throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+					throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 				}
 
 				if (destination == null) {
@@ -1059,7 +1059,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 				// if the directory does not exist, try to create it
 				if (!topDir.exists() && !topDir.mkdirs()) {
-					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Create folder " + topDir); //$NON-NLS-1$
+					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Create folder " + topDir); //$NON-NLS-1$
 				}
 				else {
 					extractVirtualFile(fullVirtualName, topDir, archiveOperationMonitor);
@@ -1092,7 +1092,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 		catch (IOException e)
 		{
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally
 		{
@@ -1165,14 +1165,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 		catch (Exception e)
 		{
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally
 		{
 			releaseMutex(mutexLockStatus);
 		}
 		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
-		throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+		throw new SystemUnexpectedErrorException(IClientServerConstants.PLUGIN_ID);
 	}
 
 	/**
@@ -1220,7 +1220,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 					if (!files[i].exists() || !files[i].canRead()) {
 						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
-						throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Cannot read: " + files[i]); //$NON-NLS-1$
+						throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Cannot read: " + files[i]); //$NON-NLS-1$
 					}
 
 					// if the entry already exists, then we should do a replace
@@ -1315,7 +1315,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				outputTempFile.delete();
 			}
 			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally
 		{
@@ -1662,11 +1662,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			updateCache();
 		}
 		catch (IOException e) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 
 		if (!file.exists() && !file.canRead()) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Cannot read " + file); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Cannot read " + file); //$NON-NLS-1$
 		}
 
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
@@ -1746,7 +1746,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			replaceFile(outputTempFile, false);
 		}
 		catch (IOException e) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 	}
 
@@ -1837,12 +1837,12 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				// we just did
 				replaceFile(outputTempFile, false);
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (IOException e) {
 			if (!(outputTempFile == null)) outputTempFile.delete();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not delete " + fullVirtualName, e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not delete " + fullVirtualName, e); //$NON-NLS-1$
 		}
 		finally
 		{
@@ -1915,7 +1915,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 				// if the virtual file to be renamed does not exist, then quit
 				if (!child.exists()) {
-					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Not exists: " + child); //$NON-NLS-1$
+					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Not exists: " + child); //$NON-NLS-1$
 				}
 
 				// open a new temp file which will be our destination for the new tar file
@@ -2000,12 +2000,12 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			}
 			else
 			{
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (IOException e) {
 			if (!(outputTempFile == null)) outputTempFile.delete();
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not rename " + fullVirtualName, e); //$NON-NLS-1$
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Could not rename " + fullVirtualName, e); //$NON-NLS-1$
 		}
 		finally
 		{
@@ -2152,7 +2152,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				extractVirtualFile(fullNames[i], files[i], archiveOperationMonitor);
 			}
 			catch (IOException e) {
-				throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+				throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 			}
 		}
 
@@ -2250,7 +2250,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				// since we have already updated to the cache
 				replaceFile(outputTempFile, false);
 			} else {
-				throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+				throw new SystemLockTimeoutException(IClientServerConstants.PLUGIN_ID);
 			}
 		}
 		catch (IOException e) {
@@ -2270,7 +2270,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			{
 				outputTempFile.delete();
 			}
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 		finally
 		{
@@ -2380,7 +2380,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			modTimeDuringCache = file.lastModified();
 		}
 		catch (IOException e) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 	}
 
@@ -2425,7 +2425,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			}
 		}
 		catch (IOException e) {
-			throw new SystemOperationFailedException(Activator.PLUGIN_ID, e);
+			throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, e);
 		}
 	}
 
@@ -2598,7 +2598,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 	public void add(InputStream stream, String virtualPath, String name, String sourceEncoding, String targetEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
-		throw new SystemUnsupportedOperationException(Activator.PLUGIN_ID, "add"); //$NON-NLS-1$
+		throw new SystemUnsupportedOperationException(IClientServerConstants.PLUGIN_ID, "add"); //$NON-NLS-1$
 	}
 
 	public void add(File file, String virtualPath, String name, String sourceEncoding, String targetEncoding, ISystemFileTypes typeRegistery,
@@ -2608,7 +2608,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 	public void replace(String fullVirtualName, InputStream stream, String name, String sourceEncoding, String targetEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
-		throw new SystemUnsupportedOperationException(Activator.PLUGIN_ID, "replace"); //$NON-NLS-1$
+		throw new SystemUnsupportedOperationException(IClientServerConstants.PLUGIN_ID, "replace"); //$NON-NLS-1$
 	}
 
 	/**

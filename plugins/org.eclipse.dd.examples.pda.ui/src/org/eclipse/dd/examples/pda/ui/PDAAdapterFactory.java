@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2006, 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,13 +46,13 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
  * The adapter factory is the central point of control of view model and other
- * UI adapters of a DSF-based debugger.  As new launches are created and 
+ * UI adapters of a DSF-based debugger.  As new launches are created and
  * old ones removed, this factory manages the life cycle of the associated
- * UI adapters.    
+ * UI adapters.
  * <p>
  * As a platform adapter factory, this factory only  provides adapters for
  * the launch object.  Adapters for all other objects in the DSF model hierarchy
- * are registered with the DSF session. 
+ * are registered with the DSF session.
  * </p>
  */
 @ThreadSafe
@@ -95,8 +95,8 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);
             
             // Initialize retargetable command handler.
-            fStepIntoCommand = new DsfStepIntoCommand(session);
-            fStepOverCommand = new DsfStepOverCommand(session);
+            fStepIntoCommand = new DsfStepIntoCommand(session, null);
+            fStepOverCommand = new DsfStepOverCommand(session, null);
             fStepReturnCommand = new DsfStepReturnCommand(session);
             fSuspendCommand = new DsfSuspendCommand(session);
             fResumeCommand = new DsfResumeCommand(session);
@@ -116,9 +116,9 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             };
             session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);
             
-            // Register the launch as an adapter This ensures that the launch, 
-            // and debug model ID will be associated with all DMContexts from this 
-            // session.  
+            // Register the launch as an adapter This ensures that the launch,
+            // and debug model ID will be associated with all DMContexts from this
+            // session.
             session.registerModelAdapter(ILaunch.class, fLaunch);
         }
         
@@ -135,33 +135,33 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             session.unregisterModelAdapter(IStepReturnHandler.class);
             session.unregisterModelAdapter(ISuspendHandler.class);
             session.unregisterModelAdapter(IResumeHandler.class);
-            session.unregisterModelAdapter(ITerminateHandler.class);            
+            session.unregisterModelAdapter(ITerminateHandler.class);
             fStepIntoCommand.dispose();
             fStepOverCommand.dispose();
             fStepReturnCommand.dispose();
             fSuspendCommand.dispose();
             fResumeCommand.dispose();
             fTerminateCommand.dispose();
-        }        
-    }        
+        }
+    }
 
-    private Map<PDALaunch, LaunchAdapterSet> fLaunchAdapterSets = 
+    private Map<PDALaunch, LaunchAdapterSet> fLaunchAdapterSets =
         Collections.synchronizedMap(new HashMap<PDALaunch, LaunchAdapterSet>());
     
     public PDAAdapterFactory() {
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
 
-    // This IAdapterFactory method returns adapters for the PDA launch object only.  
+    // This IAdapterFactory method returns adapters for the PDA launch object only.
     @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
     public Object getAdapter(Object adaptableObject, Class adapterType) {
-        if (!(adaptableObject instanceof PDALaunch)) return null; 
+        if (!(adaptableObject instanceof PDALaunch)) return null;
 
         PDALaunch launch = (PDALaunch)adaptableObject;
 
         // Find the correct set of adapters based on the launch.  If not found
-        // it means that we have a new launch, and we have to create a 
-        // new set of adapters. 
+        // it means that we have a new launch, and we have to create a
+        // new set of adapters.
         LaunchAdapterSet adapterSet;
         synchronized(fLaunchAdapterSets) {
             adapterSet = fLaunchAdapterSets.get(launch);
@@ -183,7 +183,7 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
     }
 
     public void launchesRemoved(ILaunch[] launches) {
-        // Dispose the set of adapters for a launch only after the launch is 
+        // Dispose the set of adapters for a launch only after the launch is
         // removed from the view.  If the launch is terminated, the adapters
         // are still needed to populate the contents of the view.
         for (ILaunch launch : launches) {
@@ -194,7 +194,7 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
                         fLaunchAdapterSets.remove(pdaLaunch).dispose();
                     }
                 }
-            }                
+            }
         }
     }
 

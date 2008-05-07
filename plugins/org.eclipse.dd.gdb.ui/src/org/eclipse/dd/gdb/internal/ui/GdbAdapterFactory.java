@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2006, 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.IRestart;
+import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
@@ -22,6 +23,7 @@ import org.eclipse.dd.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepReturnCommand;
+import org.eclipse.dd.dsf.debug.ui.actions.DsfSteppingModeTarget;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfSuspendCommand;
 import org.eclipse.dd.dsf.debug.ui.contexts.DsfSuspendTrigger;
 import org.eclipse.dd.dsf.debug.ui.sourcelookup.DsfSourceDisplayAdapter;
@@ -50,13 +52,13 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
  * This implementation of platform adapter factory only retrieves the adapters
- * for the launch object.  But it also manages the creation and destruction 
- * of the session-based adapters which are returned by the 
+ * for the launch object.  But it also manages the creation and destruction
+ * of the session-based adapters which are returned by the
  * IDMContext.getAdapter() methods.
  */
 @ThreadSafe
 @SuppressWarnings({"restriction"})
-public class GdbAdapterFactory 
+public class GdbAdapterFactory
     implements IAdapterFactory, ILaunchesListener2
 {
     @Immutable
@@ -73,6 +75,7 @@ public class GdbAdapterFactory
         final DsfTerminateCommand fTerminateCommand;
         final IDebugModelProvider fDebugModelProvider;
         final DsfSuspendTrigger fSuspendTrigger;
+		final DsfSteppingModeTarget fSteppingModeTarget;
 
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
@@ -87,14 +90,16 @@ public class GdbAdapterFactory
             }
             session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);
             
-            fStepIntoCommand = new DsfStepIntoCommand(session);
-            fStepOverCommand = new DsfStepOverCommand(session);
+            fSteppingModeTarget= new DsfSteppingModeTarget();
+            fStepIntoCommand = new DsfStepIntoCommand(session, fSteppingModeTarget);
+            fStepOverCommand = new DsfStepOverCommand(session, fSteppingModeTarget);
             fStepReturnCommand = new DsfStepReturnCommand(session);
             fSuspendCommand = new DsfSuspendCommand(session);
             fResumeCommand = new DsfResumeCommand(session);
             fRestartCommand = new GdbRestartCommand(session, fLaunch);
             fTerminateCommand = new DsfTerminateCommand(session);
             fSuspendTrigger = new DsfSuspendTrigger(session, fLaunch);
+            session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
             session.registerModelAdapter(IStepOverHandler.class, fStepOverCommand);
             session.registerModelAdapter(IStepReturnHandler.class, fStepReturnCommand);
@@ -112,10 +117,10 @@ public class GdbAdapterFactory
             session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);
 
             /*
-             * Registering the launch as an adapter, ensures that this launch, 
-             * and debug model ID will be associated with all DMContexts from this 
-             * session.  
-             */  
+             * Registering the launch as an adapter, ensures that this launch,
+             * and debug model ID will be associated with all DMContexts from this
+             * session.
+             */
             session.registerModelAdapter(ILaunch.class, fLaunch);
         }
         
@@ -127,13 +132,14 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(ISourceDisplay.class);
             if (fSourceDisplayAdapter != null) fSourceDisplayAdapter.dispose();
             
+            session.unregisterModelAdapter(ISteppingModeTarget.class);
             session.unregisterModelAdapter(IStepIntoHandler.class);
             session.unregisterModelAdapter(IStepOverHandler.class);
             session.unregisterModelAdapter(IStepReturnHandler.class);
             session.unregisterModelAdapter(ISuspendHandler.class);
             session.unregisterModelAdapter(IResumeHandler.class);
             session.unregisterModelAdapter(IRestart.class);
-            session.unregisterModelAdapter(ITerminateHandler.class);            
+            session.unregisterModelAdapter(ITerminateHandler.class);
             fStepIntoCommand.dispose();
             fStepOverCommand.dispose();
             fStepReturnCommand.dispose();
@@ -142,12 +148,12 @@ public class GdbAdapterFactory
             fRestartCommand.dispose();
             fTerminateCommand.dispose();
             fSuspendTrigger.dispose();
-        }        
+        }
         
         
-    }        
+    }
 
-    private Map<GdbLaunch, SessionAdapterSet> fLaunchAdapterSets = 
+    private Map<GdbLaunch, SessionAdapterSet> fLaunchAdapterSets =
         Collections.synchronizedMap(new HashMap<GdbLaunch, SessionAdapterSet>());
     
     public GdbAdapterFactory() {
@@ -155,17 +161,17 @@ public class GdbAdapterFactory
     }
 
     /**
-     * This method only actually returns adapters for the launch object.  
+     * This method only actually returns adapters for the launch object.
      */
     @SuppressWarnings("unchecked")
     public Object getAdapter(Object adaptableObject, Class adapterType) {
-        if (!(adaptableObject instanceof GdbLaunch)) return null; 
+        if (!(adaptableObject instanceof GdbLaunch)) return null;
 
         GdbLaunch launch = (GdbLaunch)adaptableObject;
 
         // Find the correct set of adapters based on the launch session-ID.  If not found
-        // it means that we have a new launch and new session, and we have to create a 
-        // new set of adapters. 
+        // it means that we have a new launch and new session, and we have to create a
+        // new set of adapters.
         DsfSession session = launch.getSession();
         if (session == null) return null;
 
@@ -182,20 +188,20 @@ public class GdbAdapterFactory
         if (adapterType.equals(IElementContentProvider.class)) return adapterSet.fViewModelAdapter;
         else if (adapterType.equals(IModelProxyFactory.class)) return adapterSet.fViewModelAdapter;
         else if (adapterType.equals(IColumnPresentationFactory.class)) return adapterSet.fViewModelAdapter;
-        else if (adapterType.equals(ISuspendTrigger.class)) return adapterSet.fSuspendTrigger; 
+        else if (adapterType.equals(ISuspendTrigger.class)) return adapterSet.fSuspendTrigger;
         else return null;
     }
 
     @SuppressWarnings("unchecked")
     public Class[] getAdapterList() {
-        return new Class[] { 
-            IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class, 
-            IColumnPresentationFactory.class 
+        return new Class[] {
+            IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class,
+            IColumnPresentationFactory.class
             };
     }
 
     public void launchesRemoved(ILaunch[] launches) {
-        // Dispose the set of adapters for a launch only after the launch is 
+        // Dispose the set of adapters for a launch only after the launch is
         // removed.
         for (ILaunch launch : launches) {
             if (launch instanceof GdbLaunch) {
@@ -204,7 +210,7 @@ public class GdbAdapterFactory
                         fLaunchAdapterSets.remove(launch).dispose();
                     }
                 }
-            }                
+            }
         }
     }
 

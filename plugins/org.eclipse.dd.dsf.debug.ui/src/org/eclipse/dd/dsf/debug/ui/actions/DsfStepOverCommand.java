@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2006, 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,13 @@ public class DsfStepOverCommand implements IStepOverHandler {
 
     private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
+	private final DsfSteppingModeTarget fSteppingMode;
     
-    public DsfStepOverCommand(DsfSession session) {
+    public DsfStepOverCommand(DsfSession session, DsfSteppingModeTarget steppingMode) {
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), session.getId());
-    }    
+        fSteppingMode = steppingMode;
+    }
 
     public void dispose() {
         fTracker.dispose();
@@ -44,10 +46,11 @@ public class DsfStepOverCommand implements IStepOverHandler {
             return;
         }
         
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
+        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
+            final StepType stepType= getStepType();
             @Override public void doExecute() {
-                getStepQueueMgr().canEnqueueStep(
-                    getContext(), StepType.STEP_OVER,
+				getStepQueueMgr().canEnqueueStep(
+                    getContext(), stepType,
                     new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -59,17 +62,27 @@ public class DsfStepOverCommand implements IStepOverHandler {
         });
     }
     
-    public boolean execute(final IDebugCommandRequest request) {
+	public boolean execute(final IDebugCommandRequest request) {
         if (request.getElements().length != 1) {
             request.done();
             return false;
         }
         
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
+        final StepType stepType= getStepType();
+        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
             @Override public void doExecute() {
-                getStepQueueMgr().enqueueStep(getContext(), StepType.STEP_OVER);
+                getStepQueueMgr().enqueueStep(getContext(), stepType);
             }
         });
         return true;
     }
+
+    /**
+	 * @return the currently active step type
+	 */
+	protected final StepType getStepType() {
+		boolean instructionSteppingEnabled= fSteppingMode != null && fSteppingMode.isInstructionSteppingEnabled();
+		return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_OVER : StepType.STEP_OVER;
+	}
+
 }

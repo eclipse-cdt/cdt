@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2006, 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,13 @@ public class DsfStepIntoCommand implements IStepIntoHandler {
 
     private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
+	private final DsfSteppingModeTarget fSteppingMode;
     
-    public DsfStepIntoCommand(DsfSession session) {
+    public DsfStepIntoCommand(DsfSession session, DsfSteppingModeTarget steppingMode) {
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), session.getId());
-    }    
+        fSteppingMode = steppingMode;
+    }
 
     public void dispose() {
         fTracker.dispose();
@@ -44,10 +46,11 @@ public class DsfStepIntoCommand implements IStepIntoHandler {
             return;
         }
     	
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
+        final StepType stepType= getStepType();
+        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
             @Override public void doExecute() {
                 getStepQueueMgr().canEnqueueStep(
-                    getContext(), StepType.STEP_INTO,
+                    getContext(), stepType,
                     new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -65,11 +68,21 @@ public class DsfStepIntoCommand implements IStepIntoHandler {
             return false;
         }
     	
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
+        final StepType stepType= getStepType();
+        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
             @Override public void doExecute() {
-                getStepQueueMgr().enqueueStep(getContext(), StepType.STEP_INTO);
+				getStepQueueMgr().enqueueStep(getContext(), stepType);
             }
         });
         return true;
     }
+
+
+    /**
+	 * @return the currently active step type
+	 */
+	protected final StepType getStepType() {
+		boolean instructionSteppingEnabled= fSteppingMode != null && fSteppingMode.isInstructionSteppingEnabled();
+		return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_INTO : StepType.STEP_INTO;
+	}
 }

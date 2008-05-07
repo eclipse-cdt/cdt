@@ -18,6 +18,7 @@
  * Michael Scharf (Wind River) - [189774] Ctrl+V does not work in the command input field.
  * Michael Scharf (Wind River) - [217999] Duplicate context menu entries in Terminal
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
+ * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -65,6 +66,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 public class TerminalView extends ViewPart implements ITerminalView, ITerminalListener {
@@ -192,7 +194,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// The second argument to showView() is a unique String identifying the
 			// secondary view instance.  If it ever matches a previously used secondary
 			// view identifier, then this call will not create a new Terminal view,
-			// which is undesireable.  Therefore, we append the current time in
+			// which is undesirable.  Therefore, we append the current time in
 			// milliseconds to the secondary view identifier to ensure it is always
 			// unique.  This code runs only when the user clicks the New Terminal
 			// button, so there is no risk that this code will run twice in a single
@@ -367,6 +369,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		setupContextMenus();
 		setupListeners(wndParent);
 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(wndParent, TerminalViewPlugin.HELPPREFIX + "terminal_page"); //$NON-NLS-1$
+
 		onTerminalStatus();
 		onTerminalFontChanged();
 	}
@@ -392,6 +396,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected void setupControls(Composite wndParent) {
 		ITerminalConnector[] connectors = makeConnectors();
 		fCtlTerminal = TerminalViewControlFactory.makeControl(this, wndParent, connectors);
+
 		String connectionType=fStore.get(STORE_CONNECTION_TYPE);
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].load(getStore(connectors[i]));

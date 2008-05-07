@@ -523,6 +523,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				handler.add(file, path, newName, sourceEncoding, targetEncoding, isText, archiveOperationMonitor);
 			}
 		} catch (SystemMessageException e) {
+			//e.printStackTrace();
 			if (null != monitor && monitor.isCanceled())
 			{
 				//This operation has been cancelled by the user.
@@ -1192,7 +1193,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				// for 192705, we need to throw an exception when rename fails
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, child.fullName);
 				//String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
-				e.printStackTrace();
+				//e.printStackTrace();
 				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_RENAME_FILE_FAILED,
 						IStatus.ERROR,

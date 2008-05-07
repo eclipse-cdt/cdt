@@ -1120,6 +1120,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 					if (exists(fullVirtualName, archiveOperationMonitor)) {
 						replace(fullVirtualName, file, name, archiveOperationMonitor);
 						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+						return;
 					}
 					else {
 						File[] files = new File[1];
@@ -1128,6 +1129,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 						names[0] = name;
 						add(files, virtualPath, names, archiveOperationMonitor);
 						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+						return;
 					}
 				}
 				else {
@@ -1157,6 +1159,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 					add(sources, virtualPath, newNames, archiveOperationMonitor);
 					setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+					return;
 				}
 			}
 		}
@@ -1228,6 +1231,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 						replace(fullVirtualName, files[i], names[i], archiveOperationMonitor);
 						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+						return;
 					}
 				}
 
@@ -1670,6 +1674,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		// if the virtual file does not exist, we actually want to add
 		if (!exists(fullVirtualName, archiveOperationMonitor)) {
 			add(file, fullVirtualName, name, archiveOperationMonitor);
+			return;
 		}
 
 		try {

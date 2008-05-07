@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh;
@@ -31,7 +31,9 @@ public class Activator extends Plugin {
 
 	//The shared instance.
 	private static Activator plugin;
-	
+
+	public static final String PLUGIN_ID = "org.eclipse.rse.services.ssh"; //$NON-NLS-1$
+
 	/**
 	 * The constructor.
 	 */

@@ -68,8 +68,11 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.messages.SystemLockTimeoutException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
+import org.eclipse.rse.services.clientserver.messages.SystemUnexpectedErrorException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.HostFilePermissions;
 import org.eclipse.rse.services.files.IFilePermissionsService;
@@ -77,7 +80,6 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
-import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -377,10 +379,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		return fChannelSftp;
 	}
 
-	protected void progressTick(IProgressMonitor monitor, int ticks) throws RemoteFileCancelledException {
+	protected void progressTick(IProgressMonitor monitor, int ticks) throws SystemOperationCancelledException {
 		if (monitor!=null) {
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 			monitor.worked(ticks);
 		}
@@ -463,7 +465,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				fDirChannelMutex.release();
 			}
 		} else {
-			throw new RemoteFileCancelledException();
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 		if (node==null) {
 			node = new SftpHostFile(remoteParent, fileName, false, false, false, 0, 0);
@@ -540,7 +542,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				if (haveSubMonitor) monitor.done(); else progressTick(monitor, 40);
 			}
 		} else {
-			throw new RemoteFileCancelledException();
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
@@ -660,7 +662,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode);
 			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			} else {
 				SftpATTRS attr = channel.stat(dst);
 				attr.setACMODTIME(attr.getATime(), (int)(localFile.lastModified()/1000));
@@ -786,7 +788,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			channel.get(remotePathRecoded, localFile.getAbsolutePath(), sftpMonitor, mode);
 			Activator.trace("SftpFileService.download "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			} else {
 				SftpATTRS attr = channel.stat(remotePathRecoded);
 				localFile.setLastModified(1000L * attr.getMTime());
@@ -861,7 +863,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				fDirChannelMutex.release();
 			}
 		} else {
-			throw new RemoteFileCancelledException();
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 		return result;
 	}
@@ -884,7 +886,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				fDirChannelMutex.release();
 			}
 		} else {
-			throw new RemoteFileCancelledException();
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 		return result;
 	}
@@ -919,6 +921,9 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 							//throw new RemoteFolderNotEmptyException();
 							String fullPathQuoted = PathUtility.enQuoteUnix(fullPathRecoded);
 							int rv = runCommand("rm -rf "+fullPathQuoted, monitor); //$NON-NLS-1$
+							if (rv != 0) {
+								throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+							}
 						} else {
 							throw e;
 						}
@@ -933,6 +938,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 	}
 
@@ -950,6 +957,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 	}
 
@@ -1032,7 +1041,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		Activator.trace("SftpFileService.move "+srcName); //$NON-NLS-1$
 		String fullPathOld = PathUtility.enQuoteUnix(recode(concat(srcParent, srcName)));
 		String fullPathNew = PathUtility.enQuoteUnix(recodeSafe(concat(tgtParent, tgtName)));
-		runCommand("mv "+fullPathOld+' '+fullPathNew, monitor); //$NON-NLS-1$
+		int rv = runCommand("mv " + fullPathOld + ' ' + fullPathNew, monitor); //$NON-NLS-1$
+		if (rv != 0) {
+			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+		}
 	}
 
 	public void copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException {
@@ -1042,7 +1054,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		Activator.trace("SftpFileService.copy "+srcName); //$NON-NLS-1$
 		String fullPathOld = PathUtility.enQuoteUnix(recode(concat(srcParent, srcName)));
 		String fullPathNew = PathUtility.enQuoteUnix(recodeSafe(concat(tgtParent, tgtName)));
-		runCommand("cp -Rp "+fullPathOld+' '+fullPathNew, monitor); //$NON-NLS-1$
+		int rv = runCommand("cp -Rp " + fullPathOld + ' ' + fullPathNew, monitor); //$NON-NLS-1$
+		if (rv != 0) {
+			throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+		}
 	}
 
 	public void copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException
@@ -1093,6 +1108,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 	}
 
@@ -1123,6 +1140,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 	}
 
@@ -1197,7 +1216,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			throw makeSystemMessageException(e);
 		}
 		if (monitor.isCanceled()) {
-			throw new RemoteFileCancelledException();
+			throw new SystemOperationCancelledException();
 		}
 		return stream;
 	}

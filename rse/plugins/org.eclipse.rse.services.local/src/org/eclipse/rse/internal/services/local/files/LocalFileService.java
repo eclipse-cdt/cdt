@@ -1207,6 +1207,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	{
 		File sourceFolderOrFile = new File(srcParent, srcName);
 		File targetFolder = new File(tgtParent, tgtName);
+		boolean movedOk = false;
 		boolean sourceIsVirtual = ArchiveHandlerManager.isVirtual(sourceFolderOrFile.getAbsolutePath());
 		boolean targetIsVirtual = ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath());
 		boolean targetIsArchive = ArchiveHandlerManager.getInstance().isArchive(targetFolder);
@@ -1219,25 +1220,26 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			File fileToMove = new File(srcParent, srcName);
 			File newFile = new File(tgtParent, tgtName);
-			fileToMove.renameTo(newFile);
-			return;
+			//Try plain Java Filesystem move first
+			movedOk = fileToMove.renameTo(newFile);
 		}
 
-		copy(srcParent, srcName, tgtParent, tgtName, monitor);
-		try
+		if (!movedOk)
 		{
-			delete(srcParent, srcName, monitor);
-		}
-		catch (SystemMessageException exc)
-		{
-			if (monitor.isCanceled())
+			copy(srcParent, srcName, tgtParent, tgtName, monitor);
+			try {
+				delete(srcParent, srcName, monitor);
+			} catch (SystemMessageException exc)
 			{
-				//This mean the copy operation is ok, but delete operation has been cancelled by user.
-				//The delete() call will take care of recovered from the cancel operation.
-				//So we need to make sure to remove the already copied file/folder.
-				delete(tgtParent, tgtName, null);
+				if (monitor.isCanceled())
+				{
+					//This mean the copy operation is ok, but delete operation has been cancelled by user.
+					//The delete() call will take care of recovered from the cancel operation.
+					//So we need to make sure to remove the already copied file/folder.
+					delete(tgtParent, tgtName, null);
+				}
+				throw exc;
 			}
-			throw exc;
 		}
 	}
 

@@ -875,22 +875,19 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				try
 				{
 					fileToCreate.createNewFile();
-					if (ArchiveHandlerManager.getInstance().isArchive(fileToCreate))
-					{
-						try {
-							ArchiveHandlerManager.getInstance().createEmptyArchive(fileToCreate);
-						} catch (SystemMessageException e) {
-							SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-									ILocalMessageIds.FILEMSG_ARCHIVE_CORRUPTED,
-									IStatus.ERROR,
-									LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED, e);
-							throw new SystemMessageException(msg);
-						}
-					}
 				}
-				catch (Exception e)
+				catch (IOException e)
 				{
 					throw new RemoteFileSecurityException(e);
+				}
+				if (ArchiveHandlerManager.getInstance().isArchive(fileToCreate)) {
+					try {
+						ArchiveHandlerManager.getInstance().createEmptyArchive(fileToCreate);
+					} catch (SystemMessageException e) {
+						SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ILocalMessageIds.FILEMSG_ARCHIVE_CORRUPTED, IStatus.ERROR,
+								LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED, e);
+						throw new SystemMessageException(msg);
+					}
 				}
 			}
 		}
@@ -1195,6 +1192,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				// for 192705, we need to throw an exception when rename fails
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, child.fullName);
 				//String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
+				e.printStackTrace();
 				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_RENAME_FILE_FAILED,
 						IStatus.ERROR,
@@ -1413,6 +1411,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 						IStatus.ERROR,
 						msgTxt, e));
 			}
+			return true;
 		}
 
 		if (null != monitor)

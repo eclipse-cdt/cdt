@@ -124,7 +124,19 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		_file = file;
 		_vfsLastModified = _file.lastModified();
-		if (openZipFile())
+
+		//ignore error opening non-existing zipfile in constructor,
+		//because we might want to be creating the zipfile
+		boolean zipFileOpen = false;
+		if (_file.exists()) {
+			try {
+				openZipFile();
+				zipFileOpen = true;
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+		if (zipFileOpen)
 		{
 			buildTree();
 			closeZipFile();
@@ -1678,8 +1690,12 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		String oldName = _file.getAbsolutePath();
 		_zipfile.close();
 		File oldFile = new File(oldName + "old"); //$NON-NLS-1$
-		System.out.println(_file.renameTo(oldFile));
-		System.out.println(outputTempFile.renameTo(_file));
+		if (!_file.renameTo(oldFile)) {
+			throw new IOException("Failed to rename " + oldFile); //$NON-NLS-1$
+		}
+		if (!outputTempFile.renameTo(_file)) {
+			throw new IOException("Failed to rename " + _file); //$NON-NLS-1$
+		}
 		_vfsLastModified = _file.lastModified();
 		_zipfile = new ZipFile(_file);
 		oldFile.delete();
@@ -2114,10 +2130,11 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		if (i == -1)
 		{
 			fullRename(fullVirtualName, newName, archiveOperationMonitor);
+		} else {
+			String fullNewName = fullVirtualName.substring(0, i+1) + newName;
+			fullRename(fullVirtualName, fullNewName, archiveOperationMonitor);
+			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 		}
-		String fullNewName = fullVirtualName.substring(0, i+1) + newName;
-		fullRename(fullVirtualName, fullNewName, archiveOperationMonitor);
-		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 	}
 
 

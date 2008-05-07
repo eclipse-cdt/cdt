@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -323,13 +324,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPTemplateParameter) {
 			if (binding instanceof ICPPTemplateTypeParameter) {
 				pdomBinding = new PDOMCPPTemplateTypeParameter(pdom, parent, (ICPPTemplateTypeParameter)binding);
-			} 
+			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
+				pdomBinding = new PDOMCPPTemplateNonTypeParameter(pdom, parent, (ICPPTemplateNonTypeParameter)binding);
+			}
 // TODO other template parameter types
 //			else if (binding instanceof ICPPTemplateTemplateParameter) {
 //				pdomBinding = new PDOMCPPTemplateTemplateParameter(pdom, parent, (ICPPTemplateTemplateParameter)binding);
-//			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
-//				pdomBinding = new PDOMCPPTemplateNonTypeParameter(pdom, parent, (ICPPTemplateNonTypeParameter)binding);
-//			}
 		} else if (binding instanceof ICPPField) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
 				pdomBinding = new PDOMCPPField(pdom, parent, (ICPPField) binding);
@@ -906,8 +906,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 // TODO other template parameter types
 //		case CPP_TEMPLATE_TEMPLATE_PARAMETER:
 //			return new PDOMCPPTemplateTemplateParameter(pdom, record);
-//		case CPP_TEMPLATE_NON_TYPE_PARAMETER:
-//			return new PDOMCPPTemplateNonTypeParameter(pdom, record);
+		case CPP_TEMPLATE_NON_TYPE_PARAMETER:
+			return new PDOMCPPTemplateNonTypeParameter(pdom, record);
 		case CPP_FIELD_SPECIALIZATION:
 			return new PDOMCPPFieldSpecialization(pdom, record);
 		case CPP_FUNCTION_SPECIALIZATION:

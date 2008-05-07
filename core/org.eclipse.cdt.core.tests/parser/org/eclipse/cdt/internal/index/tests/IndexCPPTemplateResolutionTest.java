@@ -1182,7 +1182,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//    const SI y= 99;
 	//    A<y> ay;
-    public void _testNonTypeTemplateParameter_207840() {
+    public void testNonTypeTemplateParameter_207840() {
     	ICPPVariable b0= getBindingFromASTName("y>", 1, ICPPVariable.class);
     	ICPPClassType b1= getBindingFromASTName("A<y>", 1, ICPPClassType.class, ICPPTemplateDefinition.class);
     	ICPPTemplateInstance b2= getBindingFromASTName("A<y>", 4, ICPPTemplateInstance.class, ICPPClassType.class);

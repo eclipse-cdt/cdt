@@ -104,7 +104,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static int version(int major, int minor) {
 		return major << 16 + minor;
 	}
-	public static final int MAJOR_VERSION = 57; 
+	public static final int MAJOR_VERSION = 58; 
 	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
 	
 	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
@@ -171,6 +171,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  55 - generalization of local bindings (bug 215783)
 	 *  56 - using directives (bug 216527)
 	 *  57.0 - macro references (bug 156561)
+	 *  58.0 - non-type parameters (bug 207840)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

@@ -55,7 +55,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 5;
 	
-	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, ICPPVariable variable) throws CoreException {
+	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, IVariable variable) throws CoreException {
 		super(pdom, parent, variable.getNameCharArray());
 		
 		try {
@@ -92,7 +92,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		pdom.getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
-	protected byte encodeFlags(ICPPVariable variable) throws DOMException {
+	protected byte encodeFlags(IVariable variable) throws DOMException {
 		return PDOMCPPAnnotation.encodeAnnotation(variable);
 	}
 	

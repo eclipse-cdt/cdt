@@ -13,13 +13,14 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 
-	public CompositeCPPVariable(ICompositesFactory cf, ICPPVariable delegate) {
+	public CompositeCPPVariable(ICompositesFactory cf, IVariable delegate) {
 		super(cf, delegate);
 	}
 	

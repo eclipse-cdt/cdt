@@ -90,6 +90,7 @@ import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
@@ -102,7 +103,6 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.PendingHostFilePermissions;
-import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -112,10 +112,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	protected org.eclipse.dstore.core.model.DataElement _uploadLogElement = null;
 	protected Map _fileElementMap;
 	protected Map _dstoreFileMap;
-	
+
 	private int _bufferUploadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
-	
+
 	protected ISystemFileTypes _fileTypeRegistry;
 	private String remoteEncoding;
 
@@ -182,7 +182,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	}
 
 	protected int getBufferDownloadSize()
-	{				
+	{
 		return _bufferDownloadSize;
 	}
 
@@ -411,7 +411,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		catch (IOException e)
 		{
 //			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
-			throw new RemoteFileIOException(e);			
+			throw new RemoteFileIOException(e);
 		}
 		catch (Exception e)
 		{
@@ -436,7 +436,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 			if (isCancelled)
 			{
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 		}
 	}
@@ -625,10 +625,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 //				UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error writing file " + remotePath, e);
 				throw new RemoteFileIOException(e);
 			}
-			
+
 			if (isCancelled)
 			{
-				throw new RemoteFileCancelledException();
+				throw new SystemOperationCancelledException();
 			}
 
 			if (totalBytes > 0)
@@ -714,7 +714,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				{
 					dlistener.waitForUpdate();
 				}
-				
+
 				catch (InterruptedException e)
 				{
 					// cancel monitor if it's still not cancelled
@@ -1356,7 +1356,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_DELETE, monitor);
-		if (status == null) 
+		if (status == null)
 			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
 					IStatus.ERROR,
@@ -1479,7 +1479,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
 					IStatus.ERROR,
 					CommonMessages.MSG_ERROR_UNEXPECTED));
-		
+
 		if (null != monitor && monitor.isCanceled())
 		{
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,

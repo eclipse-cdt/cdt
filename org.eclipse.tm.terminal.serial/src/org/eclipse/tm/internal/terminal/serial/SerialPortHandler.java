@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - extracted from TerminalControl
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
+ * Martin Oberhuber (Wind River) - [221184] Redesign Serial Terminal Ownership Handling
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -22,11 +23,9 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
@@ -69,21 +68,25 @@ public class SerialPortHandler implements
 	}
 
 	public void onSerialOwnershipRequested(Object data) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				String[] args = new String[] { fConn.getSerialSettings().getSerialPort() };
-				String strMsg = MessageFormat.format(SerialMessages.PORT_IN_USE, args);
-				// [168197] Replace JFace MessagDialog by SWT MessageBox
-				//if (!MessageDialog.openQuestion(fControl.getShell(), SerialMessages.PROP_TITLE, strMsg))
-				MessageBox mb = new MessageBox(fControl.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-				mb.setText(SerialMessages.PROP_TITLE);
-				mb.setMessage(strMsg);
-				if (mb.open() != SWT.YES)
-					return;
-				fConn.disconnect();
-			}
-
-		});
+		//Bug 221184: We immediately release the port on any ownership request
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			StackTraceElement[] elems = e.getStackTrace();
+			final String requester = elems[elems.length - 4].getClassName();
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					fConn.disconnect();
+					String req = requester;
+					String myPackage = this.getClass().getPackage().getName();
+					if (req.startsWith(myPackage)) {
+						req = SerialMessages.ANOTHER_TERMINAL;
+					}
+					fControl.displayTextInTerminal(NLS.bind(SerialMessages.OWNERSHIP_GRANTED, req));
+				}
+			});
+			fConn.disconnect();
+		}
 	}
 
 	// SerialPortEventListener interface

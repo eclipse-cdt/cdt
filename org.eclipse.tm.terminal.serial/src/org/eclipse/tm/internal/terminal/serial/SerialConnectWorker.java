@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [207158] improve error message when port not available
  * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
  * Martin Oberhuber (Wind River) - [206884] Update Terminal Ownership ID to "org.eclipse.tm.terminal.serial"
+ * Martin Oberhuber (Wind River) - [221184] Redesign Serial Terminal Ownership Handling
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -27,6 +28,10 @@ import gnu.io.SerialPort;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -129,29 +134,61 @@ public class SerialConnectWorker extends Thread {
 			}
 			fConn.setSerialPortHandler(new SerialPortHandler(fConn,fControl));
 			fConn.setSerialPortIdentifier(CommPortIdentifier.getPortIdentifier(portName));
-			int timeoutInMs = s.getTimeout() * 1000;
 
-			serialPort=(SerialPort) fConn.getSerialPortIdentifier().open(strID,timeoutInMs);
-			serialPort.setSerialPortParams(s.getBaudRate(), s.getDataBits(), s.getStopBits(), s.getParity());
-			serialPort.setFlowControlMode(s.getFlowControl());
-			serialPort.addEventListener(fConn.getSerialPortHandler());
-			serialPort.notifyOnDataAvailable(true);
-			fConn.getSerialPortIdentifier().addPortOwnershipListener(fConn.getSerialPortHandler());
-			fConn.setSerialPort(serialPort);
-			fControl.setState(TerminalState.CONNECTED);
+			//Bug 221184: Warn about serial port already in use
+			String currentOwner = fConn.getSerialPortIdentifier().getCurrentOwner();
+			if (strID.equals(currentOwner)) {
+				currentOwner = SerialMessages.ANOTHER_TERMINAL;
+			}
+			final int[] answer = { SWT.YES };
+			final String fPortName = portName;
+			final String fCurrentOwner = currentOwner;
+			if (currentOwner != null) {
+				Display.getDefault().syncExec(new Runnable() {
+					public void run() {
+						MessageBox mb = new MessageBox(fControl.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+						mb.setText(SerialMessages.PROP_TITLE);
+						mb.setMessage(NLS.bind(SerialMessages.PORT_IN_USE, fPortName, fCurrentOwner));
+						answer[0] = mb.open();
+					}
+				});
+			}
+
+			if (answer[0] != SWT.YES) {
+				// don't try to steal the port
+				fControl.setState(TerminalState.CLOSED);
+				fConn.setSerialPortHandler(null);
+				return;
+			} else {
+				// Try to steal the port -- may throw PortInUseException
+				int timeoutInMs = s.getTimeout() * 1000;
+				serialPort = (SerialPort) fConn.getSerialPortIdentifier().open(strID, timeoutInMs);
+				serialPort.setSerialPortParams(s.getBaudRate(), s.getDataBits(), s.getStopBits(), s.getParity());
+				serialPort.setFlowControlMode(s.getFlowControl());
+				serialPort.addEventListener(fConn.getSerialPortHandler());
+				serialPort.notifyOnDataAvailable(true);
+				fConn.getSerialPortIdentifier().addPortOwnershipListener(fConn.getSerialPortHandler());
+				fConn.setSerialPort(serialPort);
+				if (fCurrentOwner != null) {
+					fControl.displayTextInTerminal(NLS.bind(SerialMessages.PORT_STOLEN, fPortName, fCurrentOwner));
+
+				}
+				fControl.setState(TerminalState.CONNECTED);
+			}
+
 		} catch (PortInUseException portInUseException) {
 			fControl.setState(TerminalState.CLOSED);
 			String theOwner = portInUseException.currentOwner;
 			if (strID.equals(theOwner)) {
-				theOwner = "another Terminal View";
+				theOwner = SerialMessages.ANOTHER_TERMINAL;
 			}
-			fControl.displayTextInTerminal("Connection Error!\r\n" +portName+" is already in use by "+ theOwner);
+			fControl.displayTextInTerminal(NLS.bind(SerialMessages.PORT_NOT_STOLEN, portName, theOwner));
 		} catch (NoSuchPortException e) {
 			fControl.setState(TerminalState.CLOSED);
 			String msg=e.getMessage();
 			if(msg==null)
 				msg=portName;
-			fControl.displayTextInTerminal("No such port: \"" + msg+"\"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			fControl.displayTextInTerminal(NLS.bind(SerialMessages.NO_SUCH_PORT, msg));
 
 		} catch (Exception exception) {
 			Logger.logException(exception);

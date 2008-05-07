@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -115,9 +116,10 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 		} catch (DOMException e) {
 			return ObjectMap.EMPTY_MAP;
 		}
-
-		ObjectMap map = new ObjectMap(params.length);
-		for (int i = 0; i < params.length; i++) {
+		// lengths should be equal, be defensive
+		final int len= Math.min(params.length, arg.length);
+		ObjectMap map = new ObjectMap(len);
+		for (int i = 0; i < len; i++) {
 			map.put(params[i], arg[i]);
 		}
 

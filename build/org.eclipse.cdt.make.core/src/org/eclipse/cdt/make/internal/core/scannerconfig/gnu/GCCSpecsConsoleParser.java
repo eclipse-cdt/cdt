@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
@@ -38,8 +41,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	private IScannerInfoCollector fCollector = null;
 	
 	private boolean expectingIncludes = false;
-	private List symbols = new ArrayList();
-	private List includes = new ArrayList();
+	private List<String> symbols = new ArrayList<String>();
+	private List<String> includes = new ArrayList<String>();
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
@@ -94,12 +97,18 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
 	 */
 	public void shutdown() {
-		Map scannerInfo = new HashMap();
+		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
 		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
 		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
-		if (fCollector != null) fCollector.contributeToScannerConfig(fProject, scannerInfo);
+		if (fCollector != null) {
+			if (fCollector instanceof PerProjectSICollector) {
+				((PerProjectSICollector) fCollector).contributeToScannerConfig(fProject, scannerInfo, true);
+			} else {
+				fCollector.contributeToScannerConfig(fProject, scannerInfo);
+			}
+		}
 		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
-				"Include paths", includes, new ArrayList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
+				"Include paths", includes, Collections.emptyList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
 	}
 
 }

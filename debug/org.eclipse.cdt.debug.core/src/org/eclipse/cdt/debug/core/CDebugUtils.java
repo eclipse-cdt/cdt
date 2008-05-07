@@ -31,7 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICValue;
@@ -460,14 +460,14 @@ public class CDebugUtils {
 	}
 	
 	protected static StringBuffer appendBreakpointType( ICBreakpoint breakpoint, StringBuffer label ) throws CoreException {
-		if (breakpoint instanceof ICBreakpointTyped) {
+		if (breakpoint instanceof ICBreakpointType) {
 			String typeString = null;
-			int type = ((ICBreakpointTyped) breakpoint).getType();
+			int type = ((ICBreakpointType) breakpoint).getType();
 			switch (type) {
-			case ICBreakpointTyped.HARDWARE:
+			case ICBreakpointType.HARDWARE:
 				typeString = DebugCoreMessages.getString("CDebugUtils.10");
 				break;
-			case ICBreakpointTyped.TEMPORARY:
+			case ICBreakpointType.TEMPORARY:
 				typeString = DebugCoreMessages.getString("CDebugUtils.11");
 				break;
 			}

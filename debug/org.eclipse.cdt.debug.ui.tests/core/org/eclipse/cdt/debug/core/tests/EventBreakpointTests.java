@@ -22,7 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement3;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.cdi.model.EventBreakpoint;
 
@@ -55,7 +55,7 @@ public class EventBreakpointTests extends AbstractDebugTest {
 	void setBreakOnMain() throws CDIException {
 		ICDILocation location = null;
 		location = currentTarget.createFunctionLocation("", "main"); //$NON-NLS-1$	
-		currentTarget.setFunctionBreakpoint(ICBreakpointTyped.TEMPORARY, (ICDIFunctionLocation) location, null, false);
+		currentTarget.setFunctionBreakpoint(ICBreakpointType.TEMPORARY, (ICDIFunctionLocation) location, null, false);
 
 	}
 
@@ -81,7 +81,7 @@ public class EventBreakpointTests extends AbstractDebugTest {
 		currentTarget.deleteAllBreakpoints();
 		pause();
 		assertTrue(currentTarget instanceof ICDIBreakpointManagement3);
-		((ICDIBreakpointManagement3) currentTarget).setEventBreakpoint(type, arg, ICBreakpointTyped.REGULAR, null, false, true);
+		((ICDIBreakpointManagement3) currentTarget).setEventBreakpoint(type, arg, ICBreakpointType.REGULAR, null, false, true);
 		pause();
 		breakpoints = currentTarget.getBreakpoints();
 		assertNotNull(breakpoints);

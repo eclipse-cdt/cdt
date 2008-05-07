@@ -33,7 +33,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
@@ -424,11 +424,11 @@ public class BreakpointManager extends Manager {
 				}
 			} else {
 				// add the new breakpoint and fire CreatedEvent
-				int type = ICBreakpointTyped.REGULAR;
+				int type = ICBreakpointType.REGULAR;
 				if (miBreakpoint.isHardware()) {
-					type = ICBreakpointTyped.HARDWARE;
+					type = ICBreakpointType.HARDWARE;
 				} else if (miBreakpoint.isTemporary()) {
-					type = ICBreakpointTyped.TEMPORARY;
+					type = ICBreakpointType.TEMPORARY;
 				}
 				String[] tids = null;
 				String tid = miBreakpoint.getThreadId();
@@ -861,7 +861,7 @@ public class BreakpointManager extends Manager {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[EXCEPTION_THROW_IDX] == null) {
 					FunctionLocation location = new FunctionLocation(null, EXCEPTION_FUNCS[id]);
-					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICBreakpointTyped.REGULAR, location, null, enabled);
+					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICBreakpointType.REGULAR, location, null, enabled);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					miBreakpoints = bp.getMIBreakpoints();
@@ -873,7 +873,7 @@ public class BreakpointManager extends Manager {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[id] == null) {
 					FunctionLocation location = new FunctionLocation(null, EXCEPTION_FUNCS[id]);
-					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICBreakpointTyped.REGULAR, location, null, enabled);
+					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICBreakpointType.REGULAR, location, null, enabled);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					if (miBreakpoints != null) {

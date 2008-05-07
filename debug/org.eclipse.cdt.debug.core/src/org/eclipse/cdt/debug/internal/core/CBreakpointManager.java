@@ -64,7 +64,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
@@ -771,10 +771,10 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			try {
 				ICDIBreakpoint b = null;
-				int breakpointType = ICBreakpointTyped.REGULAR;
+				int breakpointType = ICBreakpointType.REGULAR;
 				ICBreakpoint icbreakpoint = breakpoints[i];
-				if (icbreakpoint instanceof ICBreakpointTyped) {
-					breakpointType = ((ICBreakpointTyped) icbreakpoint).getType();
+				if (icbreakpoint instanceof ICBreakpointType) {
+					breakpointType = ((ICBreakpointType) icbreakpoint).getType();
 				}
 				if ( icbreakpoint instanceof ICFunctionBreakpoint ) {
 					ICFunctionBreakpoint breakpoint = (ICFunctionBreakpoint)icbreakpoint; 

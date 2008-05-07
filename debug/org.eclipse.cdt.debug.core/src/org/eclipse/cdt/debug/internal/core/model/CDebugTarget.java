@@ -68,7 +68,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
@@ -1309,11 +1309,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void setInternalTemporaryBreakpoint( ICDILocation location ) throws DebugException {
 		try {
 			if (location instanceof ICDIFunctionLocation) {
-				getCDITarget().setFunctionBreakpoint( ICBreakpointTyped.TEMPORARY, (ICDIFunctionLocation)location, null, false );
+				getCDITarget().setFunctionBreakpoint( ICBreakpointType.TEMPORARY, (ICDIFunctionLocation)location, null, false );
 			} else if (location instanceof ICDILineLocation) {
-				getCDITarget().setLineBreakpoint( ICBreakpointTyped.TEMPORARY, (ICDILineLocation)location, null, false );
+				getCDITarget().setLineBreakpoint( ICBreakpointType.TEMPORARY, (ICDILineLocation)location, null, false );
 			} else if (location instanceof ICDIAddressLocation) {
-				getCDITarget().setAddressBreakpoint( ICBreakpointTyped.TEMPORARY, (ICDIAddressLocation)location, null, false );
+				getCDITarget().setAddressBreakpoint( ICBreakpointType.TEMPORARY, (ICDIAddressLocation)location, null, false );
 			} else {
 				// ???
 				targetRequestFailed("not_a_location", null); //$NON-NLS-1$

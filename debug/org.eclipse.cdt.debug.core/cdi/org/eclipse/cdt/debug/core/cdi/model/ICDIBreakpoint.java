@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 
 /**
  * 
@@ -32,11 +32,11 @@ import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
  */
 public interface ICDIBreakpoint extends ICDIObject {
 	/** @deprecated use ICBreakpointTyped.REGULAR */
-	final static public int REGULAR =  ICBreakpointTyped.REGULAR;
+	final static public int REGULAR =  ICBreakpointType.REGULAR;
 	/** @deprecated use ICBreakpointTyped.TEMPORARY */
-	final static public int TEMPORARY = ICBreakpointTyped.TEMPORARY;
+	final static public int TEMPORARY = ICBreakpointType.TEMPORARY;
 	/** @deprecated use ICBreakpointTyped.HARDWARE */
-	final static public int HARDWARE = ICBreakpointTyped.HARDWARE;
+	final static public int HARDWARE = ICBreakpointType.HARDWARE;
 	/**
 	 * Returns whether this breakpoint is temporary.
 	 * 

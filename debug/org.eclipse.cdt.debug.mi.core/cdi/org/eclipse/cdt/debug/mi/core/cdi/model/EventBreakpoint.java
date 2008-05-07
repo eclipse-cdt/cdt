@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
@@ -29,7 +29,7 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	private String arg;
 
 	public EventBreakpoint(Target target, String event, String arg, ICDICondition cond, boolean enabled) {
-		super(target, ICBreakpointTyped.REGULAR, cond, enabled);
+		super(target, ICBreakpointType.REGULAR, cond, enabled);
 		this.eventType = event;
 		this.arg = arg==null?"":arg;
 	}

@@ -21,7 +21,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -42,7 +42,7 @@ import org.eclipse.debug.core.model.Breakpoint;
 /**
  * The base class for all C/C++ specific breakpoints.
  */
-public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ICBreakpointTyped, IDebugEventSetListener {
+public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ICBreakpointType, IDebugEventSetListener {
 
     /**
      * Map of breakpoint extensions.  The keys to the map are debug model IDs 

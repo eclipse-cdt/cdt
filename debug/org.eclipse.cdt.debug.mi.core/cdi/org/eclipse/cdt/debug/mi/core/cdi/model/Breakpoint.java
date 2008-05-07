@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpointTyped;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Condition;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -85,14 +85,14 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isHardware()
 	 */
 	public boolean isHardware() {
-		return (type == ICBreakpointTyped.HARDWARE);
+		return (type == ICBreakpointType.HARDWARE);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isTemporary()
 	 */
 	public boolean isTemporary() {
-		return (type == ICBreakpointTyped.TEMPORARY);
+		return (type == ICBreakpointType.TEMPORARY);
 	}
 
 	/**

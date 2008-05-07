@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.core.runtime.CoreException;
 
-public interface ICBreakpointTyped {
+public interface ICBreakpointType {
 	/**
 	 * Breakpoint attribute storing the type of the breakpoint
  	 * This attribute is a <code>int</code>. Strictly speaking, 

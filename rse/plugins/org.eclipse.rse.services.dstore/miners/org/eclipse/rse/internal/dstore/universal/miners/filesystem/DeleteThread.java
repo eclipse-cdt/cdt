@@ -8,10 +8,11 @@
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -20,6 +21,7 @@ import java.io.File;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
@@ -29,7 +31,7 @@ import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
-import org.eclipse.dstore.core.server.SecuredThread;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public class DeleteThread extends SecuredThread implements ICancellableHandler {
 
@@ -37,14 +39,14 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 	protected DataElement _status;
 	protected UniversalFileSystemMiner _miner;
 	protected boolean _batch;
-	
+
 	protected boolean _isCancelled = false;
 	protected boolean _isDone = false;
 	protected SystemOperationMonitor systemOperationMonitor = new SystemOperationMonitor();
-	
+
 	public static final String CLASSNAME = "DeleteThread"; //$NON-NLS-1$
-	
-	
+
+
 	public DeleteThread(DataElement theElement, UniversalFileSystemMiner miner, DataStore dataStore, boolean batch, DataElement status)
 	{
 		super(dataStore);
@@ -53,9 +55,9 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 		this._status = status;
 		this._batch = batch;
 	}
-	
-	
-	
+
+
+
 
 	public void cancel() {
 		_isCancelled = true;
@@ -72,22 +74,24 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 	public boolean isDone() {
 		return _isDone;
 	}
-	
+
 	public void run()
 	{
 		super.run();
-		if (_batch)
-		{
-			handleDeleteBatch();
-		}
-		else
-		{
-			handleDelete(_theElement, _status);
+		try {
+			if (_batch) {
+				handleDeleteBatch();
+			} else {
+				handleDelete(_theElement, _status);
+			}
+		} catch (SystemMessageException e) {
+			_status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+			_miner.statusDone(_status);
 		}
 		_isDone = true;
 	}
-	
-	private DataElement handleDeleteBatch()
+
+	private DataElement handleDeleteBatch() throws SystemMessageException
 	{
 		DataElement substatus = _dataStore.createObject(null, "status", "substatus"); //$NON-NLS-1$ //$NON-NLS-2$
 		int numOfSources = _theElement.getNestedSize() - 2;
@@ -100,7 +104,7 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 			DataElement subject = _miner.getCommandArgument(_theElement, i+1);
 			handleDelete(subject, substatus);
 			/*
-			if (!substatus.getSource().startsWith(IServiceConstants.SUCCESS)) 
+			if (!substatus.getSource().startsWith(IServiceConstants.SUCCESS))
 			{
 				status.setAttribute(DE.A_SOURCE, substatus.getSource());
 				return statusDone(status);
@@ -110,7 +114,7 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 		_status.setAttribute(DE.A_SOURCE, substatus.getSource());
 		return _miner.statusDone(_status);
 	}
-	private DataElement handleDelete(DataElement subject, DataElement thisStatus)
+	private DataElement handleDelete(DataElement subject, DataElement thisStatus) throws SystemMessageException
 	{
 
 		String type = subject.getType();
@@ -172,11 +176,11 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 		}
 		_dataStore.refresh(subject);
 		return _miner.statusDone(_status);
-	
+
 	}
-	
+
 	public DataElement handleDeleteFromArchive(DataElement subject,
-			DataElement status) {
+			DataElement status) throws SystemMessageException {
 		String type = subject.getType();
 		DataElement deObj = null;
 
@@ -207,10 +211,10 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 		_dataStore.refresh(subject);
 		return _miner.statusDone(status);
 	}
-	
+
 	/**
 	 * Delete directory and its children.
-	 *  
+	 *
 	 */
 	public void deleteDir(File fileObj, DataElement status) {
 		try {
@@ -238,5 +242,5 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 					"Deletion of dir failed", e, _dataStore); //$NON-NLS-1$
 		}
 	}
-	
+
 }

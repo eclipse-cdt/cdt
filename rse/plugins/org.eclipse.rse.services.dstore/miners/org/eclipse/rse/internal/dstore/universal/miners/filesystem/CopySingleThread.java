@@ -8,10 +8,11 @@
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -27,32 +28,38 @@ import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
-public class CopySingleThread extends CopyThread {	
-	
+public class CopySingleThread extends CopyThread {
+
 	private DataElement nameObj;
-	
-	
+
+
 	public CopySingleThread(DataElement targetFolder, DataElement theElement, DataElement nameObj, UniversalFileSystemMiner miner, boolean isWindows, DataElement status)
 	{
 		super(targetFolder, theElement, miner, isWindows, status);
 		this.nameObj = nameObj;
 	}
-	
+
 	public void run()
 	{
 		super.run();
-		handleCopy();
+		try {
+			handleCopy();
+		} catch (SystemMessageException e) {
+			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+			miner.statusDone(status);
+		}
 		_isDone = true;
 	}
-	
-	private DataElement handleCopy()
+
+	private DataElement handleCopy() throws SystemMessageException
 	{
 		DataElement sourceFile = theElement;
 		String newName = nameObj.getName();
 		String targetType = targetFolder.getType();
 		String srcType = sourceFile.getType();
-		//In the case of super transfer, the source file is a virtual file/folder inside the temporary zip file, and its type information is set to 
+		//In the case of super transfer, the source file is a virtual file/folder inside the temporary zip file, and its type information is set to
 		//default UNIVERSAL_FILTER_DESCRIPTOR since its information never been cached before.
 		//We need to find out its real type first before going to different if statement.
 		File srcFile = null;
@@ -64,25 +71,25 @@ public class CopySingleThread extends CopyThread {
 			{
 				String goodFullName = ArchiveHandlerManager.cleanUpVirtualPath(sourceFile.getValue());
 				child = ArchiveHandlerManager.getInstance().getVirtualObject(goodFullName);
-				if (child.exists()) 
+				if (child.exists())
 				{
-					if (child.isDirectory) 
+					if (child.isDirectory)
 					{
 						srcType = IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR;
-					} else 
+					} else
 					{
 						srcType = IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR;
 					}
 				}
 			}
 		}
-		
+
 		if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) || targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-			
+
 		    // insert into an archive
 			AbsoluteVirtualPath vpath = miner.getAbsoluteVirtualPath(targetFolder);
 			ISystemArchiveHandler handler = miner.getArchiveHandlerFor(vpath.getContainingArchiveString());
-			
+
 			if (handler == null) {
 				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 				return miner.statusDone(status);
@@ -90,7 +97,7 @@ public class CopySingleThread extends CopyThread {
 
 			if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
 					|| srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) {
-				
+
 			    srcFile = getFileFor(sourceFile);
 			}
 			else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
@@ -99,7 +106,7 @@ public class CopySingleThread extends CopyThread {
 				{
 					AbsoluteVirtualPath svpath = miner.getAbsoluteVirtualPath(sourceFile);
 					shandler = miner.getArchiveHandlerFor(svpath.getContainingArchiveString());
-				
+
 					if (shandler == null) {
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 						return miner.statusDone(status);
@@ -115,19 +122,12 @@ public class CopySingleThread extends CopyThread {
 			}
 
 			String virtualContainer = ""; //$NON-NLS-1$
-			
+
 			if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
 				virtualContainer = vpath.getVirtualPart();
 			}
 
-			boolean result = handler.add(srcFile, virtualContainer, newName, systemOperationMonitor);
-			
-			if (result) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-			}
-			else {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			}
+			handler.add(srcFile, virtualContainer, newName, systemOperationMonitor);
 		}
 		else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
 			ISystemArchiveHandler shandler = null;
@@ -136,7 +136,7 @@ public class CopySingleThread extends CopyThread {
 			{
 				svpath = miner.getAbsoluteVirtualPath(sourceFile);
 				shandler = miner.getArchiveHandlerFor(svpath.getContainingArchiveString());
-			
+
 				if (shandler == null) {
 					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 					return miner.statusDone(status);
@@ -152,7 +152,7 @@ public class CopySingleThread extends CopyThread {
 
 			File parentDir = getFileFor(targetFolder);
 			File destination = new File(parentDir, newName);
-			
+
 			if (child.isDirectory) {
 				shandler.extractVirtualDirectory(svpath.getVirtualPart(), parentDir, destination, systemOperationMonitor);
 			}
@@ -169,7 +169,7 @@ public class CopySingleThread extends CopyThread {
 			String src = srcFile.getAbsolutePath();
 			String tgt = tgtFolder.getAbsolutePath() + File.separatorChar + newName;
 			File tgtFile = new File(tgt);
-			
+
 			if (tgtFile.exists() && tgtFile.isDirectory())
 			{
 				//For Windows, we need to use xcopy command, which require the new directory
@@ -179,13 +179,13 @@ public class CopySingleThread extends CopyThread {
 					tgt =  tgtFolder.getAbsolutePath();
 				}
 			}
-			
+
 			doCopyCommand(enQuote(src), enQuote(tgt), folderCopy, status);
 		}
-		
+
 		return miner.statusDone(status);
 	}
-	
 
-	
+
+
 }

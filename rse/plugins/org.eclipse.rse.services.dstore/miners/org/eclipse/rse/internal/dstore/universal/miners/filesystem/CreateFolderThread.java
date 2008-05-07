@@ -8,10 +8,11 @@
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -20,6 +21,7 @@ import java.io.File;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
@@ -29,7 +31,7 @@ import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
-import org.eclipse.dstore.core.server.SecuredThread;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public class CreateFolderThread extends SecuredThread implements ICancellableHandler {
 
@@ -37,14 +39,14 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 	protected DataElement _status;
 	protected UniversalFileSystemMiner _miner;
 	protected String _queryType;
-	
+
 	protected boolean _isCancelled = false;
 	protected boolean _isDone = false;
 	protected SystemOperationMonitor systemOperationMonitor = new SystemOperationMonitor();
-	
+
 	public static final String CLASSNAME = "CreateFileThread"; //$NON-NLS-1$
-	
-	
+
+
 	public CreateFolderThread(DataElement theElement, String queryType, UniversalFileSystemMiner miner, DataStore dataStore, DataElement status)
 	{
 		super(dataStore);
@@ -53,9 +55,9 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 		this._status = status;
 		this._queryType = queryType;
 	}
-	
-	
-	
+
+
+
 
 	public void cancel() {
 		_isCancelled = true;
@@ -72,37 +74,42 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 	public boolean isDone() {
 		return _isDone;
 	}
-	
+
 	public void run()
 	{
 		super.run();
-		handleCreateFile();
+		try {
+			handleCreateFile();
+		} catch (SystemMessageException e) {
+			_status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+			_miner.statusDone(_status);
+		}
 		_isDone = true;
 	}
-	
-	private DataElement handleCreateFile()
+
+	private DataElement handleCreateFile() throws SystemMessageException
 	{
 		if (_queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
 			return handleCreateVirtualFolder(_subject, _status, _queryType);
 		}
 
 		File filename = null;
-		if (_queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
+		if (_queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
 			if (_subject.getName().indexOf(
-					ArchiveHandlerManager.VIRTUAL_SEPARATOR) > 0) 
+					ArchiveHandlerManager.VIRTUAL_SEPARATOR) > 0)
 			{
 				_subject.setAttribute(DE.A_TYPE,
 						IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
 				return handleCreateVirtualFolder(_subject, _status, _queryType);
-			} 
-			else 
+			}
+			else
 			{
 				filename = new File(_subject.getValue());
 				_subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
 				_subject.setAttribute(DE.A_SOURCE, _miner.setProperties(filename));
 			}
-		} 
+		}
 		else if (_queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
 		{
 			filename = new File(_subject.getValue());
@@ -115,23 +122,23 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 		{
 			if (filename.exists())
 				_status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXIST);
-			else 
+			else
 			{
 				try {
 					boolean done = filename.mkdirs();
-					if (done) 
+					if (done)
 					{
 						_status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 						_subject.setAttribute(DE.A_SOURCE, _miner.setProperties(filename));
 						_subject.setAttribute(DE.A_TYPE,IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
 						_subject.setAttribute(DE.A_NAME, filename.getName());
 						_subject.setAttribute(DE.A_VALUE, filename.getParentFile().getAbsolutePath());
-					} 
+					}
 					else
 					{
 						_status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 					}
-					
+
 				} catch (Exception e) {
 					UniversalServerUtilities.logError(CLASSNAME,
 							"handleCreateFolder failed", e, _dataStore); //$NON-NLS-1$
@@ -142,9 +149,9 @@ public class CreateFolderThread extends SecuredThread implements ICancellableHan
 		_dataStore.refresh(_subject);
 		return _miner.statusDone(_status);
 	}
-	
+
 	public DataElement handleCreateVirtualFolder(DataElement subject,
-			DataElement status, String type) {
+			DataElement status, String type) throws SystemMessageException {
 
 		AbsoluteVirtualPath vpath = null;
 		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {

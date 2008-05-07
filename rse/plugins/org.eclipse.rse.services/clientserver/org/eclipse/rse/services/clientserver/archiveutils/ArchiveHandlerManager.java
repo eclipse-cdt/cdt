@@ -10,13 +10,14 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Xuan Chen (IBM) - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen (IBM) - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators (with updated fix)
  * Johnson Ma (Wind River) - [195402] [api] add tar.gz archive support
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -26,6 +27,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationFailedException;
+import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 
 /**
  * This class manages all the Archive Handlers that correspond to the archive file that the system
@@ -46,14 +52,14 @@ public class ArchiveHandlerManager
 	/**
 	 * Folder separator used in virtual paths inside the archive, i.e. after the
 	 * VIRTUAL_SEPARATOR.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final String VIRTUAL_FOLDER_SEPARATOR = "/"; //$NON-NLS-1$
 	/**
 	 * Character used to separate file extension from file name. This is used in
 	 * order to recognize file patterns that should be treated as archives.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final String EXTENSION_SEPARATOR = "."; //$NON-NLS-1$
@@ -82,36 +88,51 @@ public class ArchiveHandlerManager
 	}
 
 	/**
-	 * Returns the children of an object in the virtual file system.
+	 * Returns the children of an object in the virtual file system. Throws
+	 * SystemMessageException instead of IOException since RSE 3.0.
+	 *
 	 * @param file The archive in whose virtual file system the children reside.
-	 * @param virtualpath The parent virtual object whose children this method is to return. To
-	 * get the top level virtualchildren in the archive, set virtualpath to "" or null.
-	 * @return An array of VirtualChild objects representing the children of the virtual object
-	 * in <code>file</code> referred to by <code>virtualpath</code>. If no class implementing
-	 * ISystemArchiveHandler can be found that corresponds to file, then this method returns null.
-	 * If the virtual object has no children, this method also returns null.
-	 * @throws IOException if there was a problem getting the registered handler for the
-	 * file. This usually means the archive is corrupted.
+	 * @param virtualpath The parent virtual object whose children this method
+	 * 		is to return. To get the top level virtual children in the archive,
+	 * 		set virtual path to "" or null.
+	 * @return An array of VirtualChild objects representing the children of the
+	 * 	virtual object in <code>file</code> referred to by
+	 * 	<code>virtual path</code>. If no class implementing ISystemArchiveHandler
+	 * 	can be found that corresponds to file, then this method returns null. If
+	 * 	the virtual object has no children, this method also returns null.
+	 * @throws SystemMessageException in case of an error, e.g. there was a
+	 * 		problem getting the registered handler for the file. This usually
+	 * 		means the archive is corrupted.
+	 * @since 3.0
 	 */
-	public VirtualChild[] getContents(File file, String virtualpath) throws IOException
+	public VirtualChild[] getContents(File file, String virtualpath) throws SystemMessageException
 	{
 		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
-		if (handler == null || !handler.exists()) throw new IOException();
+		if (handler == null || !handler.exists()) {
+			throw new SystemUnsupportedOperationException(Activator.PLUGIN_ID, "No handler for " + file); //$NON-NLS-1$
+		}
 		return handler.getVirtualChildren(virtualpath, null);
 	}
 
 	/**
-	 * Returns the children of an object in the virtual file system that are folders.
+	 * Returns the children of an object in the virtual file system that are
+	 * folders.
+	 *
 	 * @param file The archive in whose virtual file system the children reside.
-	 * @param virtualpath The parent virtual object whose children this method is to return. To
-	 * get the top level virtualchildren in the archive, set virtualpath to "" or null.
-	 * @return An array of VirtualChild objects representing the children of the virtual object
-	 * in <code>file</code> referred to by <code>virtualpath</code> that are themselves folders.
-	 * If no class implementing ISystemArchiveHandler can be found that corresponds to file, then
-	 * this method returns null. If the virtual object has no children, this method also returns null.
+	 * @param virtualpath The parent virtual object whose children this method
+	 * 		is to return. To get the top level virtual children in the archive,
+	 * 		set virtual path to "" or null.
+	 * @return An array of VirtualChild objects representing the children of the
+	 * 	virtual object in <code>file</code> referred to by
+	 * 	<code>virtualpath</code> that are themselves folders. If no class
+	 * 	implementing ISystemArchiveHandler can be found that corresponds to
+	 * 	file, then this method returns null. If the virtual object has no
+	 * 	children, this method also returns null.
+	 * @throws SystemMessageException in case of an error
+	 * @since 3.0
 	 */
-	public VirtualChild[] getFolderContents(File file, String virtualpath)
+	public VirtualChild[] getFolderContents(File file, String virtualpath) throws SystemMessageException
 	{
 		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
@@ -222,14 +243,18 @@ public class ArchiveHandlerManager
 	}
 
 	/**
-	 * Given the absolute path to a virtual object, returns that object
-	 * as a VirtualChild.
-	 * @param fullyQualifiedName The absolute path to the object. Usually consists
-	 * of the fullyQualifiedName of the archive, followed by the virtual path separator
-	 * (defined in ArchiveHandlerManager.VIRTUAL_SEPARATOR) followed by the virtual path to
-	 * the object within the archive's virtual file system.
+	 * Given the absolute path to a virtual object, returns that object as a
+	 * VirtualChild.
+	 *
+	 * @param fullyQualifiedName The absolute path to the object. Usually
+	 * 		consists of the fullyQualifiedName of the archive, followed by the
+	 * 		virtual path separator (defined in
+	 * 		ArchiveHandlerManager.VIRTUAL_SEPARATOR) followed by the virtual
+	 * 		path to the object within the archive's virtual file system.
+	 * @throws SystemMessageException in case of an error
+	 * @since 3.0
 	 */
-	public VirtualChild getVirtualObject(String fullyQualifiedName)
+	public VirtualChild getVirtualObject(String fullyQualifiedName) throws SystemMessageException
 	{
 		String cleanName = cleanUpVirtualPath(fullyQualifiedName);
 		AbsoluteVirtualPath avp = new AbsoluteVirtualPath(cleanName);
@@ -243,11 +268,15 @@ public class ArchiveHandlerManager
 	}
 
 	/**
-	 * Returns the registered handler for the File <code>file</code>. If
-	 * no handler exists for that file yet, create it. If the extension of
+	 * Returns the registered handler for the File <code>file</code>. If no
+	 * handler exists for that file yet, create it. If the extension of
 	 * <code>file</code> is not registered, then returns null.
+	 *
+	 * @throws SystemMessageException in case of an error instantiating the
+	 * 		handler
+	 * @since 3.0
 	 */
-	public ISystemArchiveHandler getRegisteredHandler(File file)
+	public ISystemArchiveHandler getRegisteredHandler(File file) throws SystemMessageException
 	{
 		ISystemArchiveHandler handler = null;
 		if (_handlers.containsKey(file))
@@ -279,17 +308,11 @@ public class ArchiveHandlerManager
 				catch (InvocationTargetException e)
 				{
 					//Throwable target = e.getCause();
-					System.out.println(e.getMessage());
-					e.printStackTrace();
-					System.out.println("Could not instantiate handler for " + file.getName()); //$NON-NLS-1$
-					return null;
-
+					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
 				}
 				catch (Exception e)
 				{
-					System.out.println(e.getMessage());
-					System.out.println("Could not instantiate handler for " + file.getName()); //$NON-NLS-1$
-					return null;
+					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
 				}
 				_handlers.put(file, handler);
 				return handler;
@@ -475,28 +498,30 @@ public class ArchiveHandlerManager
 		_handlers.clear();
 	}
 
-	public boolean createEmptyArchive(File newFile)
+	/**
+	 * Create an empty archive
+	 *
+	 * @throws SystemMessageException in case of an error
+	 */
+	public void createEmptyArchive(File newFile) throws SystemMessageException
 	{
 		if (!isRegisteredArchive(newFile.getName()))
 		{
-			System.out.println("Could not create new archive."); //$NON-NLS-1$
-			System.out.println(newFile + " is not a registered type of archive."); //$NON-NLS-1$
-			return false;
+			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive, because " //$NON-NLS-1$
+					+ newFile + " is not a registered type of archive."); //$NON-NLS-1$
 		}
 
 		if (newFile.exists())
 		{
 			if (!newFile.isFile())
 			{
-				System.out.println("Could not create new archive."); //$NON-NLS-1$
-				System.out.println(newFile + " is not a file."); //$NON-NLS-1$
-				return false;
+				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
+						+ newFile + " is not a file."); //$NON-NLS-1$
 			}
 			if (!newFile.delete())
 			{
-				System.out.println("Could not create new archive."); //$NON-NLS-1$
-				System.out.println(newFile + " could not be deleted."); //$NON-NLS-1$
-				return false;
+				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
+						+ newFile + " could not be deleted."); //$NON-NLS-1$
 			}
 		}
 
@@ -504,20 +529,17 @@ public class ArchiveHandlerManager
 		{
 			if (!newFile.createNewFile())
 			{
-				System.out.println("Could not create new archive."); //$NON-NLS-1$
-				System.out.println(newFile + " could not be created."); //$NON-NLS-1$
-				return false;
+				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive." //$NON-NLS-1$
+						+ newFile + " could not be created."); //$NON-NLS-1$
 			}
 		}
 		catch (IOException e)
 		{
-			System.out.println("Could not create new archive."); //$NON-NLS-1$
-			System.out.println(e.getMessage());
-			return false;
+			throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Could not create new archive: " + newFile, e); //$NON-NLS-1$
 		}
 
 		ISystemArchiveHandler handler = getRegisteredHandler(newFile);
-		return handler.create();
+		handler.create();
 	}
 
 	/**
@@ -535,14 +557,26 @@ public class ArchiveHandlerManager
 		return extensions;
 	}
 
-	public String getComment(File archive)
+	/**
+	 * Get archive comment.
+	 *
+	 * @throws SystemMessageException in case of an error
+	 * @since 3.0
+	 */
+	public String getComment(File archive) throws SystemMessageException
 	{
 		ISystemArchiveHandler handler = getRegisteredHandler(archive);
 		if (handler == null || !handler.exists()) return "";	 //$NON-NLS-1$
 		return handler.getArchiveComment();
 	}
 
-	public long getExpandedSize(File archive)
+	/**
+	 * Get total expanded size of an archive.
+	 *
+	 * @throws SystemMessageException in case of an error
+	 * @since 3.0
+	 */
+	public long getExpandedSize(File archive) throws SystemMessageException
 	{
 		ISystemArchiveHandler handler = getRegisteredHandler(archive);
 		if (handler == null || !handler.exists()) return 0;
@@ -556,12 +590,15 @@ public class ArchiveHandlerManager
 	}
 
 	/**
-	 * Returns the classification for the entry in a archive with the given virtual path.
+	 * Returns the classification for the entry in a archive with the given
+	 * virtual path.
+	 *
 	 * @param file the archive file.
 	 * @param virtualPath the virtual path.
 	 * @return the classification for the virtual file.
+	 * @throws SystemMessageException in case of an error
 	 */
-	public String getClassification(File file, String virtualPath) {
+	public String getClassification(File file, String virtualPath) throws SystemMessageException {
 
 		// if archive file is null, or if it does not exist, or if the virtual path
 		// is null, then return null for the classification

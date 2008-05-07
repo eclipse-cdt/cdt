@@ -7,13 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
- * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work; 
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name
+ * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work;
  * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
  * Xuan Chen (IBM) - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
  * Xuan Chen (IBM) - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
@@ -33,6 +33,7 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * David McKnight     (IBM)   [225507] [api][breaking] RSE dstore API leaks non-API types
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -76,6 +77,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.SystemTgzHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.SystemZipHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.java.ClassFileUtil;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public class UniversalFileSystemMiner extends Miner {
 
@@ -110,20 +112,20 @@ public class UniversalFileSystemMiner extends Miner {
 	/**
 	 * @see Miner#handleCommand(DataElement)
 	 */
-	public DataElement handleCommand(DataElement theElement) {
+	public DataElement handleCommand(DataElement theElement) throws SystemMessageException {
 		String name = getCommandName(theElement);
 
-		
+
 		DataElement status = getCommandStatus(theElement);
 		DataElement subject = getCommandArgument(theElement, 0);
-		
+
 		UniversalServerUtilities.logInfo(getName(), name + ":" + subject, _dataStore); //$NON-NLS-1$
-		
+
 		String queryType = (String) subject.getElementProperty(DE.P_TYPE);
 		boolean caseSensitive = !_isWindows;
 		// TODO: test on WINDOWS!
 
-		if (IUniversalDataStoreConstants.C_QUERY_VIEW_ALL.equals(name)) { 
+		if (IUniversalDataStoreConstants.C_QUERY_VIEW_ALL.equals(name)) {
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -135,19 +137,19 @@ public class UniversalFileSystemMiner extends Miner {
 			        return handleQueryAll(subject, null, status, queryType,
 						caseSensitive);
 			    }
-		} else if (IUniversalDataStoreConstants.C_QUERY_VIEW_FILES.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_QUERY_VIEW_FILES.equals(name)) {
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
 			        return handleQueryFiles(subject, attributes, status, queryType,
-							caseSensitive);			        
+							caseSensitive);
 			    }
 			    else
 			    {
 			        return handleQueryFiles(subject, null, status, queryType,
 						caseSensitive);
 			    }
-		} else if (IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS.equals(name)) {
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -159,44 +161,44 @@ public class UniversalFileSystemMiner extends Miner {
 			        return handleQueryFolders(subject, null, status, queryType,
 						caseSensitive);
 			    }
-		} else if (IUniversalDataStoreConstants.C_QUERY_ROOTS.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_QUERY_ROOTS.equals(name)) {
 				return handleQueryRoots(subject, status);
-		} else if (IUniversalDataStoreConstants.C_SEARCH.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_SEARCH.equals(name)) {
 				return handleSearch(theElement, status, queryType,
 						caseSensitive);
-		} else if (IUniversalDataStoreConstants.C_CANCEL.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_CANCEL.equals(name)) {
 				subject.getName();
 				return handleCancel(subject, status);
-		} else if (IUniversalDataStoreConstants.C_RENAME.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_RENAME.equals(name)) {
 				return handleRename(subject, status);
-		} else if (IUniversalDataStoreConstants.C_DELETE.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_DELETE.equals(name)) {
 				return handleDelete(subject, status, true);
-		} else if (IUniversalDataStoreConstants.C_DELETE_BATCH.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_DELETE_BATCH.equals(name)) {
 				return handleDeleteBatch(theElement, status);
-		} else if (IUniversalDataStoreConstants.C_COPY.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_COPY.equals(name)) {
 				return handleCopy(subject, getCommandArgument(theElement, 1),
 						getCommandArgument(theElement, 2), status);
-		} else if (IUniversalDataStoreConstants.C_COPY_BATCH.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_COPY_BATCH.equals(name)) {
 				return handleCopyBatch(subject, theElement, status);
-		} else if (IUniversalDataStoreConstants.C_CREATE_FILE.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_CREATE_FILE.equals(name)) {
 				return handleCreateFile(subject, status, queryType);
-		} else if (IUniversalDataStoreConstants.C_CREATE_FOLDER.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_CREATE_FOLDER.equals(name)) {
 				return handleCreateFolder(subject, status, queryType);
-		} else if (IUniversalDataStoreConstants.C_SET_READONLY.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_SET_READONLY.equals(name)) {
 				return handleSetReadOnly(subject, status);
-		} else if (IUniversalDataStoreConstants.C_SET_LASTMODIFIED.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_SET_LASTMODIFIED.equals(name)) {
 				return handleSetLastModified(subject, status);
-		} else if (IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY.equals(name)) {
 				return handleQueryBasicProperty(subject, status);
 		} else if (IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY.equals(name)) {
 				return handleQuerycanWriteProperty(subject, status);
 		} else if (IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY.equals(name)) {
 				return handleQueryAdvanceProperty(subject, status);
-		} else if (IUniversalDataStoreConstants.C_QUERY_EXISTS.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_QUERY_EXISTS.equals(name)) {
 				return handleQueryExists(subject, status, queryType);
-		} else if (IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT.equals(name)) {
 				return handleQueryGetRemoteObject(subject, status, queryType);
-		} else if (IUniversalDataStoreConstants.C_GET_OSTYPE.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_GET_OSTYPE.equals(name)) {
 				return handleGetOSType(subject, status);
 		} else if (IUniversalDataStoreConstants.C_DOWNLOAD_FILE.equals(name)) {
 				return handleDownload(theElement, status);
@@ -204,7 +206,7 @@ public class UniversalFileSystemMiner extends Miner {
 				return handleQueryEncoding(subject, status);
 		} else if (IUniversalDataStoreConstants.C_QUERY_UNUSED_PORT.equals(name)) {
 				return handleQueryUnusedPort(subject, status);
-		} else if (IUniversalDataStoreConstants.C_QUERY_CLASSNAME.equals(name)) { 
+		} else if (IUniversalDataStoreConstants.C_QUERY_CLASSNAME.equals(name)) {
 				return handleQueryClassName(subject, status);
 		} else if (IUniversalDataStoreConstants.C_QUERY_QUALIFIED_CLASSNAME.equals(name)) {
 				return handleQueryQualifiedClassName(subject, status);
@@ -212,7 +214,7 @@ public class UniversalFileSystemMiner extends Miner {
 				return handleQueryFilePermissions(subject, status);
 		} else if (IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS.equals(name)) {
 				DataElement newPermissions = getCommandArgument(theElement, 1);
-                return handleSetFilePermissions(subject, newPermissions, status);			
+                return handleSetFilePermissions(subject, newPermissions, status);
 		} else {
 			UniversalServerUtilities.logError(CLASSNAME,
 					"Invalid query to handlecommand", null, _dataStore); //$NON-NLS-1$
@@ -220,20 +222,20 @@ public class UniversalFileSystemMiner extends Miner {
 		return statusDone(status);
 	}
 
-	private DataElement handleCopyBatch(DataElement targetFolder, DataElement theElement, DataElement status) 
+	private DataElement handleCopyBatch(DataElement targetFolder, DataElement theElement, DataElement status)
 	{
-		
+
 		CopyBatchThread copyBatchThread = new CopyBatchThread(targetFolder, theElement, this, _isWindows, status);
 		copyBatchThread.start();
 
 		updateCancellableThreads(status.getParent(), copyBatchThread);
-		
+
 		return status;
 	}
 
 
-	
-	
+
+
 
 	/**
 	 * Method to do a search.
@@ -273,25 +275,25 @@ public class UniversalFileSystemMiner extends Miner {
 			String textString = arg1.getType();
 			boolean isCaseSensitive = Boolean.valueOf(arg1.getName()).booleanValue();
 			boolean isTextRegex = Boolean.valueOf(arg1.getSource()).booleanValue();
-			
+
 			String fileNamesString = arg2.getType();
-			
+
 			boolean isFileNamesRegex = Boolean.valueOf(arg2.getName()).booleanValue();
 			String classification = arg2.getSource();
-			
+
 			boolean isIncludeArchives = Boolean.valueOf(arg3.getType()).booleanValue();
 			boolean isIncludeSubfolders = Boolean.valueOf(arg3.getName()).booleanValue();
 //			boolean showHidden = Boolean.valueOf(arg3.getSource()).booleanValue();
 			Boolean.valueOf(arg3.getSource()).booleanValue();
-			
+
 			SystemSearchString searchString = new SystemSearchString(
 					textString, isCaseSensitive, isTextRegex, fileNamesString,
 					isFileNamesRegex, isIncludeArchives, isIncludeSubfolders, classification);
-			
+
 			UniversalSearchHandler searchThread = new UniversalSearchHandler(
 					_dataStore, this, searchString, !_isWindows, fileobj,
 					status);
-			
+
 			searchThread.start();
 
 			updateCancellableThreads(status.getParent(), searchThread);
@@ -305,7 +307,7 @@ public class UniversalFileSystemMiner extends Miner {
 		ICancellableHandler thread = (ICancellableHandler) _cancellableThreads
 				.get(subject);
 
-		
+
 		if (thread != null) {
 			if (!thread.isDone()) {
 				thread.cancel();
@@ -318,18 +320,19 @@ public class UniversalFileSystemMiner extends Miner {
 		// indicate status done
 		return statusDone(status);
 	}
-	
+
 
 	/**
 	 * Method to list the files and folders for a given filter.
 	 */
 	public DataElement handleQueryAll(DataElement subject, DataElement attributes, DataElement status,
-			String queryType, boolean caseSensitive) 
+			String queryType, boolean caseSensitive)
+			throws SystemMessageException
 	{
 		boolean isArchive = false;
 		String fullName = subject.getValue();
-		
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
+
+		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
 			//check if it is a archive file
 			if (ArchiveHandlerManager.getInstance().isArchive(new File(fullName)))
@@ -340,7 +343,7 @@ public class UniversalFileSystemMiner extends Miner {
 			{
 				isArchive = ArchiveHandlerManager.isVirtual(fullName);
 			}
-		} 
+		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)
 				|| queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
 				|| queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
@@ -365,7 +368,7 @@ public class UniversalFileSystemMiner extends Miner {
 		    filter = getFilterString(subject.getAttribute(DE.A_SOURCE));
 			showHidden = getShowHiddenFlag(subject.getAttribute(DE.A_SOURCE));
 		}
-		
+
 		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 			fileobj = new File(subject.getName());
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
@@ -383,15 +386,15 @@ public class UniversalFileSystemMiner extends Miner {
 			{
 				subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
 				subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);	
-				
+				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);
+
 				if (subject.getNestedSize() > 0)
 				{
 					List children = subject.getNestedData();
 					for (int i = children.size() - 1; i >= 0; i--)
 					{
 						_dataStore.deleteObject(subject, (DataElement)children.get(i));
-					}					
+					}
 				}
 				_dataStore.refresh(subject);
 			}
@@ -403,18 +406,18 @@ public class UniversalFileSystemMiner extends Miner {
 				return status; // query done in a thread so don't mark done
 			}
 		}
-		
+
 		return statusDone(status);
 	}
 
 	protected void internalQueryAll(DataElement subject, File fileobj,
 			String queryType, String filter, boolean caseSensitive,
 			int inclusion, DataElement status) {
-		
+
 		// do query on a thread
 		FileQueryThread queryThread = new FileQueryThread(subject, fileobj, queryType, filter, caseSensitive, inclusion, showHidden, _isWindows, status);
-		queryThread.start();		
-		
+		queryThread.start();
+
 		updateCancellableThreads(status.getParent(), queryThread);
 	}
 
@@ -428,7 +431,7 @@ public class UniversalFileSystemMiner extends Miner {
 			{
 				String threadName = (String) iter.next();
 				ICancellableHandler theThread = (ICancellableHandler) _cancellableThreads.get(threadName);
-				if ((theThread == null) || 
+				if ((theThread == null) ||
 						theThread.isDone() || theThread.isCancelled())
 				{
 					_cancellableThreads.remove(threadName);
@@ -442,13 +445,14 @@ public class UniversalFileSystemMiner extends Miner {
 		// save find thread in hashmap for retrieval during cancel
 		_cancellableThreads.put(command, thread);
 	}
-	
-	
+
+
 	  /**
 		    * Method to list the files for a given filter.
 		    */
-	public DataElement handleQueryFiles(DataElement subject, DataElement attributes, 
-			DataElement status, String queryType, boolean caseSensitive) {
+	public DataElement handleQueryFiles(DataElement subject, DataElement attributes,
+			DataElement status, String queryType, boolean caseSensitive)
+			throws SystemMessageException {
 
 		File fileobj = null;
 
@@ -463,7 +467,7 @@ public class UniversalFileSystemMiner extends Miner {
 		    filter = getFilterString(subject.getAttribute(DE.A_SOURCE));
 			showHidden = getShowHiddenFlag(subject.getAttribute(DE.A_SOURCE));
 		}
-		
+
 		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 			fileobj = new File(subject.getName());
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
@@ -478,7 +482,7 @@ public class UniversalFileSystemMiner extends Miner {
 		{
 			subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);	
+			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);
 			if (subject.getNestedSize() > 0)
 			{
 				List children = subject.getNestedData();
@@ -500,7 +504,8 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to list the folders for a given filter.
 	 */
 	public DataElement handleQueryFolders(DataElement subject, DataElement attributes,
-			DataElement status, String queryType, boolean caseSensitive) {
+			DataElement status, String queryType, boolean caseSensitive)
+			throws SystemMessageException {
 		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)
 				|| queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
 				|| queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
@@ -509,7 +514,7 @@ public class UniversalFileSystemMiner extends Miner {
 
 		File fileobj = null;
 		String filter = null;
-		
+
 		if (attributes != null)
 		{
 			filter = getFilterString(attributes.getAttribute(DE.A_SOURCE));
@@ -534,7 +539,7 @@ public class UniversalFileSystemMiner extends Miner {
 		{
 			subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);	
+			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);
 			if (subject.getNestedSize() > 0)
 			{
 				List children = subject.getNestedData();
@@ -549,14 +554,14 @@ public class UniversalFileSystemMiner extends Miner {
 			internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FOLDERS_ONLY, status);
 			return status; // query done in a thread so not marking done here
 		}
-		
+
 		return statusDone(status);
 	}
 
 	/**
 	 * Method to list the roots.
 	 */
-	public DataElement handleQueryRoots(DataElement subject, DataElement status) {
+	public DataElement handleQueryRoots(DataElement subject, DataElement status) throws SystemMessageException {
 //		File fileobj = new File(subject.getName());
 		new File(subject.getName());
 		DataElement deObj = null;
@@ -604,17 +609,17 @@ public class UniversalFileSystemMiner extends Miner {
 		deleteThread.start();
 
 		updateCancellableThreads(status.getParent(), deleteThread);
-		
+
 		return status;
 	}
-	
+
 	private DataElement handleDeleteBatch(DataElement theElement, DataElement status)
 	{
 		DeleteThread deleteThread = new DeleteThread(theElement,  this, _dataStore, true, status);
 		deleteThread.start();
 
 		updateCancellableThreads(status.getParent(), deleteThread);
-		
+
 		return status;
 	}
 
@@ -622,12 +627,12 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to Rename a file or folder.
 	 */
 	public DataElement handleRename(DataElement subject, DataElement status) {
-		
+
 		RenameThread renameThread = new RenameThread(subject,  this, _dataStore, status);
 		renameThread.start();
 
 		updateCancellableThreads(status.getParent(), renameThread);
-		
+
 		return status;
 	}
 
@@ -636,12 +641,12 @@ public class UniversalFileSystemMiner extends Miner {
 	 */
 	public DataElement handleCreateFile(DataElement subject,
 			DataElement status, String queryType) {
-		
+
 		CreateFileThread createFileThread = new CreateFileThread(subject,  queryType, this, _dataStore, status);
 		createFileThread.start();
 
 		updateCancellableThreads(status.getParent(), createFileThread);
-		
+
 		return status;
 	}
 
@@ -654,7 +659,7 @@ public class UniversalFileSystemMiner extends Miner {
 		createFolderThread.start();
 
 		updateCancellableThreads(status.getParent(), createFolderThread);
-		
+
 		return status;
 	}
 
@@ -664,7 +669,7 @@ public class UniversalFileSystemMiner extends Miner {
 	public DataElement handleSetReadOnly(DataElement subject, DataElement status) {
 
 		File filename = new File(subject.getAttribute(DE.A_VALUE), subject.getAttribute(DE.A_NAME));
-		
+
 		if (!filename.exists())
 		{
 			filename = new File(subject.getAttribute(DE.A_VALUE));
@@ -710,7 +715,7 @@ public class UniversalFileSystemMiner extends Miner {
 						done = (exitValue == 0);
 					}
 				}
-				if (done) 
+				if (done)
 				{
 					status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 				}
@@ -718,12 +723,12 @@ public class UniversalFileSystemMiner extends Miner {
 				{
 					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 				}
-				
-				// update filename?				
+
+				// update filename?
 				filename = new File(filename.getAbsolutePath());
 				subject.setAttribute(DE.A_SOURCE, setProperties(filename));
 				_dataStore.refresh(subject);
-				
+
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
 						"handleSetreadOnly", e, _dataStore); //$NON-NLS-1$
@@ -737,10 +742,10 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to set LastModified to a file or folder.
 	 */
 	public DataElement handleSetLastModified(DataElement subject,
-			DataElement status) 
-	{	
+			DataElement status)
+	{
 		File filename = new File(subject.getAttribute(DE.A_VALUE), subject.getAttribute(DE.A_NAME));
-		
+
 		if (!filename.exists())
 		{
 			filename = new File(subject.getAttribute(DE.A_VALUE));
@@ -750,22 +755,22 @@ public class UniversalFileSystemMiner extends Miner {
 		else {
 			try {
 				String str = subject.getAttribute(DE.A_SOURCE);
-			
+
 				long date = Long.parseLong(str);
 				boolean done = filename.setLastModified(date);
 
 				if (done) {
 					status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-				} 
+				}
 				else
 				{
 					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 				}
-				
+
 				filename = new File(filename.getAbsolutePath());
 				subject.setAttribute(DE.A_SOURCE, setProperties(filename));
 				_dataStore.refresh(subject);
-				
+
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
 						"handleSetLastModified", e, _dataStore); //$NON-NLS-1$
@@ -779,7 +784,7 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to Retrieve properties of the file or folder.
 	 */
 	protected DataElement handleQueryBasicProperty(DataElement subject,
-			DataElement status) {
+			DataElement status) throws SystemMessageException {
 		File fileobj = new File(subject.getAttribute(DE.A_VALUE)
 				+ File.separatorChar + subject.getName());
 		subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
@@ -820,7 +825,7 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to query existence of the file or folder.
 	 */
 	protected DataElement handleQueryExists(DataElement subject,
-			DataElement status, String queryType) {
+			DataElement status, String queryType) throws SystemMessageException {
 
 		File fileobj = null;
 		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
@@ -873,12 +878,12 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to get remote object
 	 */
 	public DataElement handleQueryGetRemoteObject(DataElement subject,
-			DataElement status, String queryType) {
+			DataElement status, String queryType) throws SystemMessageException {
 		File fileobj = null;
 		boolean isVirtual = false;
 		boolean isFilter = false;
 		String fullName = subject.getValue();
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
+		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
 			isFilter = true;
 			isVirtual = ArchiveHandlerManager.isVirtual(fullName);
@@ -887,7 +892,7 @@ public class UniversalFileSystemMiner extends Miner {
 			if (filterValue.equals("."))  //$NON-NLS-1$
 			{
 				if (_dataStore.getClient() != null){
-					filterValue = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$					
+					filterValue = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$
 				}
 				else {
 					filterValue = System.getProperty("user.home"); //$NON-NLS-1$
@@ -896,16 +901,16 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 			if (!isVirtual)
 				fileobj = new File(filterValue);
-		} 
+		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
 		{
 			String name = subject.getName();
 			String path = subject.getValue();
-			fileobj = new File(path, name);	
+			fileobj = new File(path, name);
 		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
 		{
-			String name = subject.getName();			
+			String name = subject.getName();
 			String path = subject.getValue();
 			if (name.length() == 0)
 			{
@@ -913,7 +918,7 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 			else
 			{
-				fileobj = new File(path, name);		
+				fileobj = new File(path, name);
 			}
 		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR))
@@ -940,18 +945,18 @@ public class UniversalFileSystemMiner extends Miner {
 				return statusDone(status);
 			}
 
-			if (fileobj.isFile()) 
+			if (fileobj.isFile())
 			{
 				if (_archiveHandlerManager.isArchive(fileobj)) {
 					subject.setAttribute(DE.A_TYPE,IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR);
 				} else {
 					subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR);
 				}
-			} 
+			}
 			else { // directory
 				subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
 			}
-			
+
 			String name = fullName
 			.substring(
 					fullName.lastIndexOf(File.separatorChar) + 1,
@@ -972,15 +977,15 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 			subject.setAttribute(DE.A_NAME, name);
 			subject.setAttribute(DE.A_VALUE, path);
-			
-				
+
+
 
 			// DKM - do basic property stuff here
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
 
 
 			/*
-			// classify the file too 
+			// classify the file too
 			if (fileobj.isFile()) {
 				subject.setAttribute(DE.A_SOURCE, subject
 						.getAttribute(DE.A_SOURCE)
@@ -1011,23 +1016,23 @@ public class UniversalFileSystemMiner extends Miner {
 						subject.setAttribute(DE.A_TYPE,
 								IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
 						subject.setAttribute(DE.A_NAME, child.name);
-						
+
 						subject.setAttribute(DE.A_VALUE, avp
 									.getContainingArchiveString()
 									+ ArchiveHandlerManager.VIRTUAL_SEPARATOR
 									+ child.path);
-						
+
 
 					} else {
 						subject.setAttribute(DE.A_TYPE,
 								IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
 						String name = child.name;
 						String path = avp.getContainingArchiveString();
-						
+
 							path = path
 									+ ArchiveHandlerManager.VIRTUAL_SEPARATOR
 									+ child.path;
-						
+
 
 						subject.setAttribute(DE.A_NAME, name);
 						subject.setAttribute(DE.A_VALUE, path);
@@ -1079,7 +1084,7 @@ public class UniversalFileSystemMiner extends Miner {
 	}
 
 
-	
+
 	/**
 	 * Method to obtain the classificatoin string of file or folder.
 	 */
@@ -1091,7 +1096,7 @@ public class UniversalFileSystemMiner extends Miner {
 		if (tokens < 10)
 		    return null;
 
-		
+
 		return (str[10]);
 	}
 	/**
@@ -1111,7 +1116,7 @@ public class UniversalFileSystemMiner extends Miner {
 			str[i] = tokenizer.nextToken();
 		}
 		*/
-		if (tokens > 1)	
+		if (tokens > 1)
 		{
 		    return (str[1]);
 		}
@@ -1152,7 +1157,7 @@ public class UniversalFileSystemMiner extends Miner {
 	/**
 	 * Method to obtain the depth for a search
 	 */
-	protected int getDepth(String s) 
+	protected int getDepth(String s)
 	{
 		String[] str = s.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		int tokens = str.length;
@@ -1171,13 +1176,13 @@ public class UniversalFileSystemMiner extends Miner {
 			str[i] = tokenizer.nextToken();
 		}
 */
-		return ((new Integer(str[3])).intValue()); 
+		return ((new Integer(str[3])).intValue());
 	}
 
 	/**
 	 * Method to download a file.
 	 */
-	protected DataElement handleDownload(DataElement theElement,  DataElement status) 
+	protected DataElement handleDownload(DataElement theElement,  DataElement status)
 	{
 
 		UniversalDownloadHandler downloadThread = new UniversalDownloadHandler(
@@ -1200,12 +1205,12 @@ public class UniversalFileSystemMiner extends Miner {
 
 		return statusDone(status);
 	}
-	
+
 	/**
 	 * Get an unused port number.
 	 */
 	protected DataElement handleQueryUnusedPort(DataElement subject, DataElement status) {
-		
+
 		int port = -1;
 
 		// create a server socket with port 0 (i.e. use any free port)
@@ -1218,7 +1223,7 @@ public class UniversalFileSystemMiner extends Miner {
 			UniversalServerUtilities.logError(CLASSNAME, "Can not get unused port", e, _dataStore); //$NON-NLS-1$
 			port = -1;
 		}
-		
+
 		String portNum = String.valueOf(port);
 		subject.setAttribute(DE.A_VALUE, portNum);
 		_dataStore.refresh(subject);
@@ -1256,11 +1261,11 @@ public class UniversalFileSystemMiner extends Miner {
 		_dataStore.createObject(deUFSnode, IUniversalDataStoreConstants.UNIVERSAL_NODE_DESCRIPTOR, "universal.filters"); //$NON-NLS-1$
 		deUFSuploadlog = _dataStore.createObject(deUFSnode, IUniversalDataStoreConstants.UNIVERSAL_NODE_DESCRIPTOR, "universal.uploadlog"); //$NON-NLS-1$
 
-		UniversalByteStreamHandler universalHandler = new UniversalByteStreamHandler(_dataStore, deUFSuploadlog);		
-		
+		UniversalByteStreamHandler universalHandler = new UniversalByteStreamHandler(_dataStore, deUFSuploadlog);
+
 		//_dataStore.setByteStreamHandler(new UniversalByteStreamHandler(_dataStore, deUFSuploadlog));
 		_dataStore.registerByteStreamHandler(universalHandler);
-				
+
 		_dataStore.refresh(_minerData);
 		_dataStore.refresh(deUFSuploadlog);
 	}
@@ -1304,25 +1309,25 @@ public class UniversalFileSystemMiner extends Miner {
 
 		// first get parent path
 		String parentPath = subject.getAttribute(DE.A_VALUE);
-		
+
 		// get system separator
 		String sep = File.separator;
-		
+
 		boolean isParentArchive = ArchiveHandlerManager.getInstance().isRegisteredArchive(parentPath);
-		
+
 		boolean isParentVirtual = ArchiveHandlerManager.isVirtual(parentPath);
-		
+
 		// parent is virtual folder, so make separator "/"
 		if (isParentVirtual) {
 			sep = "/"; //$NON-NLS-1$
 		}
-		
+
 		// file path
 		String filePath = null;
-		
+
 		// parent is not a virtual archive
 		if (!isParentArchive) {
-		
+
 			// if parent path does not end with separator, then add it
 			if (!parentPath.endsWith(sep)) {
 				parentPath = parentPath + sep;
@@ -1337,9 +1342,9 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 
 		try {
-			
+
 			String className = null;
-			
+
 			// if parent is not an archive or a virtual folder, then file must be
 			// a file
 			if (!(isParentArchive || isParentVirtual)) {
@@ -1349,15 +1354,15 @@ public class UniversalFileSystemMiner extends Miner {
 			else {
 				String classification = SystemFileClassifier.getInstance().classifyFile(filePath);
 				String execJava = "executable(java:"; //$NON-NLS-1$
-				
+
 				int idx = classification.indexOf(execJava);
-				
+
 				if (idx != -1) {
-					idx = idx + execJava.length(); 
+					idx = idx + execJava.length();
 					int jdx = classification.indexOf(")", idx); //$NON-NLS-1$
-					
+
 					if (jdx != -1) {
-						
+
 						if (jdx > idx) {
 							className = classification.substring(idx, jdx);
 						}
@@ -1377,7 +1382,7 @@ public class UniversalFileSystemMiner extends Miner {
 			UniversalServerUtilities.logError(CLASSNAME,
 					"I/O error occured trying to read class file " + filePath, //$NON-NLS-1$
 					null, _dataStore);
-			
+
 			_dataStore.createObject(status, IUniversalDataStoreConstants.TYPE_QUALIFIED_CLASSNAME, "null"); //$NON-NLS-1$
 		}
 
@@ -1430,41 +1435,41 @@ public class UniversalFileSystemMiner extends Miner {
 
 		// the cancellable object descriptor
 		DataElement cancellable = _dataStore.find(schemaRoot, DE.A_NAME, DataStoreResources.model_Cancellable, 1);
-		
+
 		// Define command descriptors
 		DataElement queryAllFilterDescriptor = createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryAllFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
-		
+		_dataStore.createReference(cancellable, queryAllFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+
 		DataElement queryFilesFilterDescriptor = createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, queryFilesFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
-		
-		DataElement queryFolderFilterDescriptor = createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryFolderFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);		
-		
-		createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_ROOTS); //$NON-NLS-1$ 
 
-		
+		DataElement queryFolderFilterDescriptor = createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryFolderFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+
+		createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_ROOTS); //$NON-NLS-1$
+
+
 		DataElement queryAllDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryAllDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
-		
+		_dataStore.createReference(cancellable, queryAllDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+
 		DataElement queryFilesDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryFilesDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+		_dataStore.createReference(cancellable, queryFilesDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 		DataElement queryFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+		_dataStore.createReference(cancellable, queryFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
-		
+
 		DataElement queryAllArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryAllArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+		_dataStore.createReference(cancellable, queryAllArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 		DataElement queryFilesArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryFilesArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+		_dataStore.createReference(cancellable, queryFilesArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 		DataElement queryFolderArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
-		_dataStore.createReference(cancellable, queryFolderArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
-		
-		createCommandDescriptor(UniversalFilter, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$ 
-		createCommandDescriptor(UniversalFilter, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$ 
+		_dataStore.createReference(cancellable, queryFolderArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+
+		createCommandDescriptor(UniversalFilter, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
 		createCommandDescriptor(UniversalFilter, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
 		DataElement createNewFileFromFilterDescriptor = createCommandDescriptor(UniversalFilter, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, createNewFileFromFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
@@ -1474,21 +1479,21 @@ public class UniversalFileSystemMiner extends Miner {
 
 
 		_dataStore.createReference(FileDescriptors._deUniversalFileObject,
-				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		_dataStore.createReference(FileDescriptors._deUniversalFolderObject,
-				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		_dataStore.createReference(FileDescriptors._deUniversalFileObject,
-				FileDescriptors._deUniversalVirtualFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+				FileDescriptors._deUniversalVirtualFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		_dataStore.createReference(FileDescriptors._deUniversalFolderObject,
-				FileDescriptors._deUniversalVirtualFolderObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+				FileDescriptors._deUniversalVirtualFolderObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 		// create the search descriptor and make it cancelable
-		DataElement searchDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Search", IUniversalDataStoreConstants.C_SEARCH); //$NON-NLS-1$ 
-		_dataStore.createReference(cancellable, searchDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
-		
+		DataElement searchDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Search", IUniversalDataStoreConstants.C_SEARCH); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, searchDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+
 
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(tempnode, "Filter", IUniversalDataStoreConstants.C_CREATE_TEMP); //$NON-NLS-1$ 
+		createCommandDescriptor(tempnode, "Filter", IUniversalDataStoreConstants.C_CREATE_TEMP); //$NON-NLS-1$
 		//create deleteDescriptor and make it cancelable
 		DataElement deleteFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, deleteFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
@@ -1507,11 +1512,11 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
 
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
-		
+
 		//create deleteDescriptor and make it cancelable
 		DataElement deleteFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, deleteFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
@@ -1547,22 +1552,22 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
-		
+
 		// create a download command descriptor and make it cancelable
 		DataElement downloadDescriptor = createCommandDescriptor(
 				FileDescriptors._deUniversalFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, downloadDescriptor,
-				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 
 		DataElement adownloadDescriptor = createCommandDescriptor(
 				FileDescriptors._deUniversalArchiveFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, adownloadDescriptor,
-				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
-		
+
 		createCommandDescriptor(tempnode, "SystemEncoding", IUniversalDataStoreConstants.C_SYSTEM_ENCODING); //$NON-NLS-1$
-		
+
 		createCommandDescriptor(tempnode, "UnusedPort", IUniversalDataStoreConstants.C_QUERY_UNUSED_PORT); //$NON-NLS-1$
 
 		// command descriptor to retrieve package name for a class file
@@ -1571,8 +1576,8 @@ public class UniversalFileSystemMiner extends Miner {
 		// command descriptor to retrieve qualified class name for class file
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetFullClassName", //$NON-NLS-1$
 				IUniversalDataStoreConstants.C_QUERY_QUALIFIED_CLASSNAME);
-		
-		
+
+
 		// permissions and ownership not supported on windows
 		if (!_isWindows) {
 			// descriptors for permissions
@@ -1580,14 +1585,14 @@ public class UniversalFileSystemMiner extends Miner {
 			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetPermissions",IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
-	
+
 			createCommandDescriptor(UniversalFilter, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "SetPermissions",IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 		}
 	}
-	
+
 
 	public AbsoluteVirtualPath getAbsoluteVirtualPath(DataElement subject) {
 		StringBuffer path = new StringBuffer(subject.getAttribute(DE.A_VALUE));
@@ -1608,39 +1613,39 @@ public class UniversalFileSystemMiner extends Miner {
 
 
 
-	public DataElement handleQueryAllArchive(DataElement subject, DataElement attributes, 
-			DataElement status, boolean caseSensitive, boolean foldersOnly) 
+	public DataElement handleQueryAllArchive(DataElement subject, DataElement attributes,
+			DataElement status, boolean caseSensitive, boolean foldersOnly)
 	{
 		// do query on a thread
 		ArchiveQueryThread queryThread = new ArchiveQueryThread(subject, attributes, caseSensitive, foldersOnly, showHidden, _isWindows, status);
-		queryThread.start();		
-		
+		queryThread.start();
+
 		updateCancellableThreads(status.getParent(), queryThread);
 		return status; // query is in thread so not updating status here
 	}
 
 
 
-	public ISystemArchiveHandler getArchiveHandlerFor(String archivePath) {
+	public ISystemArchiveHandler getArchiveHandlerFor(String archivePath) throws SystemMessageException {
 		File file = new File(archivePath);
 		return _archiveHandlerManager.getRegisteredHandler(file);
 	}
 
 
 	public DataElement handleCopy(DataElement targetFolder, DataElement sourceFile, DataElement nameObj, DataElement status) {
-		
+
 		CopySingleThread copySingleThread = new CopySingleThread(targetFolder, sourceFile, nameObj, this, _isWindows, status);
 		copySingleThread.start();
 
 		updateCancellableThreads(status.getParent(), copySingleThread);
-		
+
 		return status;
 	}
-	
+
 	/**
 	 * Method to obtain the properties of file or folder.
 	 */
-	public String setProperties(File fileObj, boolean doArchiveProperties) {
+	public String setProperties(File fileObj, boolean doArchiveProperties) throws SystemMessageException {
 		String version = IServiceConstants.VERSION_1;
 		StringBuffer buffer = new StringBuffer(500);
 		long date = fileObj.lastModified();
@@ -1687,7 +1692,7 @@ public class UniversalFileSystemMiner extends Miner {
 						IServiceConstants.TOKEN_SEPARATOR);
 		buffer.append(compressionRatio).append(IServiceConstants.TOKEN_SEPARATOR).append(
 				expandedSize);
-		
+
 
 		String buf = buffer.toString();
 		return buf;
@@ -1729,8 +1734,8 @@ public class UniversalFileSystemMiner extends Miner {
 
 		return buffer.toString();
 	}
-	
-	public String setProperties(File fileObj) {
+
+	public String setProperties(File fileObj) throws SystemMessageException {
 		return setProperties(fileObj, false);
 	}
 
@@ -1739,14 +1744,14 @@ public class UniversalFileSystemMiner extends Miner {
 	{
 		return "7.0.0"; //$NON-NLS-1$
 	}
-	
+
 	private File getFileFor(DataElement subject)
 	{
 		File fileobj = null;
 		boolean isVirtual = false;
 		String fullName = subject.getValue();
 		String queryType = subject.getType();
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
+		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
 			isVirtual = ArchiveHandlerManager.isVirtual(fullName);
 			String filterValue = subject.getValue();
@@ -1763,16 +1768,16 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 			if (!isVirtual)
 				fileobj = new File(filterValue);
-		} 
+		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
 		{
 			String name = subject.getName();
 			String path = subject.getValue();
-			fileobj = new File(path, name);	
+			fileobj = new File(path, name);
 		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
 		{
-			String name = subject.getName();			
+			String name = subject.getName();
 			String path = subject.getValue();
 			if (name.length() == 0)
 			{
@@ -1780,12 +1785,12 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 			else
 			{
-				fileobj = new File(path, name);		
+				fileobj = new File(path, name);
 			}
 		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR))
 		{
-			String name = subject.getName();			
+			String name = subject.getName();
 			String path = subject.getValue();
 			if (name.length() == 0)
 			{
@@ -1793,8 +1798,8 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 			else
 			{
-				fileobj = new File(path, name);		
-			}			
+				fileobj = new File(path, name);
+			}
 		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR))
 		{
@@ -1802,8 +1807,8 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 		return fileobj;
 	}
-	
-		
+
+
 	/**
 	 * Convert permissions in rwxrwxrwx form to octal
 	 * @param userPermissions
@@ -1814,11 +1819,11 @@ public class UniversalFileSystemMiner extends Miner {
 		StringBuffer buf = new StringBuffer();
 		// permissions
 		char[] chars = alphaPermissions.toCharArray();
-		
+
 		int offset = -1;
 		for (int i = 0; i < 3; i++){
 			int value = 0;
-			
+
 			if (chars[++offset] == 'r'){
 				value = 4;
 			}
@@ -1827,14 +1832,14 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 			if (chars[++offset] == 'x'){
 				value += 1;
-			}		
+			}
 			buf.append(value);
 		}
-	
-		return buf.toString();		
+
+		return buf.toString();
 	}
-	
-	
+
+
 	/**
 	 * Gets file permissions in the form <octal permissions>|<user>|<group>
 	 * @param subject
@@ -1844,26 +1849,26 @@ public class UniversalFileSystemMiner extends Miner {
 	private DataElement handleQueryFilePermissions(DataElement subject, DataElement status)
 	{
 		File file = getFileFor(subject);
-		
-		
+
+
 		// permissions in form  "drwxrwxrwx ..."
 		String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
-				
+
 		StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
-										
+
 		// permissions in form "rwxrwxrwx"
-		String permString = tokenizer.nextToken().substring(1); 
+		String permString = tokenizer.nextToken().substring(1);
 		String octalPermissions = alphaPermissionsToOctal(permString);
 
-		// user and group	
+		// user and group
 		tokenizer.nextToken(); // nothing important
 		String user = tokenizer.nextToken(); // 3rd
 		String group = tokenizer.nextToken(); // 4th
 
-		String result = octalPermissions + '|' + user + '|' + group;		
+		String result = octalPermissions + '|' + user + '|' + group;
         status.setAttribute(DE.A_SOURCE, result);
     	statusDone(status);
-	
+
 		return status;
 	}
 
@@ -1877,22 +1882,22 @@ public class UniversalFileSystemMiner extends Miner {
 	private DataElement handleSetFilePermissions(DataElement subject, DataElement newPermissions, DataElement status)
 	{
 		File file = getFileFor(subject);
-		
+
 		String permissionsStr = newPermissions.getName();
 		String[] permAttributes = permissionsStr.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 
 		// set the permissions
 		String result = simpleShellCommand("chmod " + permAttributes[0], file); //$NON-NLS-1$
-		
+
 		// set the user
 		simpleShellCommand("chown " + permAttributes[1], file); //$NON-NLS-1$
-		
+
 		// set the group
 		simpleShellCommand("chown :" + permAttributes[2], file); //$NON-NLS-1$
-		
+
         status.setAttribute(DE.A_SOURCE, result);
     	statusDone(status);
-	
+
 		return status;
 	}
 
@@ -1903,12 +1908,12 @@ public class UniversalFileSystemMiner extends Miner {
 	    String args[] = new String[3];
         args[0] = "sh"; //$NON-NLS-1$
         args[1] = "-c"; //$NON-NLS-1$
-        args[2] = cmd; 
-     
+        args[2] = cmd;
+
         BufferedReader childReader = null;
 		try {
         	Process childProcess = Runtime.getRuntime().exec(args);
-        	
+
         	childReader = new BufferedReader(new InputStreamReader(childProcess.getInputStream()));
 
         	result = childReader.readLine().trim();
@@ -1921,11 +1926,11 @@ public class UniversalFileSystemMiner extends Miner {
 			catch (IOException ex){}
 		}
 		return result;
-	        	
+
 	}
-	
+
 	*/
-	
+
 	private String simpleShellCommand(String cmd, File file)
 	{
 		String result = null;
@@ -1933,11 +1938,11 @@ public class UniversalFileSystemMiner extends Miner {
         args[0] = "sh"; //$NON-NLS-1$
         args[1] = "-c"; //$NON-NLS-1$
         args[2] = cmd + " " + PathUtility.enQuoteUnix(file.getAbsolutePath()); //$NON-NLS-1$
-     
+
         BufferedReader childReader = null;
 		try {
         	Process childProcess = Runtime.getRuntime().exec(args);
-        	
+
         	childReader = new BufferedReader(new InputStreamReader(childProcess.getInputStream()));
 
         	result = childReader.readLine().trim();
@@ -1950,6 +1955,6 @@ public class UniversalFileSystemMiner extends Miner {
 			catch (IOException ex){}
 		}
 		return result;
-	        	
+
 	}
 }

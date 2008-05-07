@@ -8,9 +8,10 @@
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -24,22 +25,23 @@ import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public class QueryThread extends SecuredThread implements ICancellableHandler {
 
 	protected DataElement _subject;
 	protected DataElement _status;
-	
+
 	protected boolean _isCancelled = false;
 	protected boolean _isDone = false;
-	
+
 	public QueryThread(DataElement subject, DataElement status)
 	{
 		super(subject.getDataStore());
 		_subject = subject;
 		_status = status;
 	}
-	
+
 	/**
 	 * Complete status.
 	 */
@@ -48,7 +50,7 @@ public class QueryThread extends SecuredThread implements ICancellableHandler {
 		_dataStore.refresh(status);
 		return status;
 	}
-	
+
 
 	public void cancel() {
 		_isCancelled = true;
@@ -61,7 +63,7 @@ public class QueryThread extends SecuredThread implements ICancellableHandler {
 	public boolean isDone() {
 		return _isDone;
 	}
-	
+
 
 	public String setProperties(File fileObj) {
 		return setProperties(fileObj, false);
@@ -82,14 +84,18 @@ public class QueryThread extends SecuredThread implements ICancellableHandler {
 		// These extra properties here might cause problems for older clients,
 		// ie: a IndexOutOfBounds in UniversalFileImpl.
 
-		// DKM: defer this until later as it is bad for performacnes..
+		// DKM: defer this until later as it is bad for performance...
 		// I think we're doing the full query on an archive by instantiating a
 		// handler
 		boolean isArchive = false;//ArchiveHandlerManager.getInstance().isArchive(fileObj);
 
 		String comment;
 		if (isArchive)
-			comment = ArchiveHandlerManager.getInstance().getComment(fileObj);
+			try {
+				comment = ArchiveHandlerManager.getInstance().getComment(fileObj);
+			} catch (SystemMessageException e) {
+				comment = " "; //$NON-NLS-1$
+			}
 		else
 			comment = " "; //$NON-NLS-1$
 
@@ -99,8 +105,11 @@ public class QueryThread extends SecuredThread implements ICancellableHandler {
 
 		long expandedSize;
 		if (isArchive)
-			expandedSize = ArchiveHandlerManager.getInstance().getExpandedSize(
-					fileObj);
+			try {
+				expandedSize = ArchiveHandlerManager.getInstance().getExpandedSize(fileObj);
+			} catch (SystemMessageException e) {
+				expandedSize = 0;
+			}
 		else
 			expandedSize = size;
 
@@ -117,7 +126,7 @@ public class QueryThread extends SecuredThread implements ICancellableHandler {
 						IServiceConstants.TOKEN_SEPARATOR);
 		buffer.append(compressionRatio).append(IServiceConstants.TOKEN_SEPARATOR).append(
 				expandedSize);
-		
+
 
 		String buf = buffer.toString();
 		return buf;

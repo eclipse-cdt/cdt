@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -43,7 +44,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
  */
 public class UniversalByteStreamHandler extends ByteStreamHandler
 {
-	
+
 	public UniversalByteStreamHandler(DataStore dataStore, DataElement log)
 	{
 		super(dataStore, log);
@@ -53,7 +54,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 
 	/**
 		 * Save a file in the specified location.  This method is called by the
-		 * DataStore when the communication layer receives a file transfer    
+		 * DataStore when the communication layer receives a file transfer
 		 *
 		 * @param remotePath the path where to save the file
 		 * @param buffer the bytes to insert in the file
@@ -63,7 +64,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 	public void receiveBytes(String remotePath, byte[] buffer, int size, boolean binary)
 	{
 		boolean isVirtual = ArchiveHandlerManager.isVirtual(remotePath);
-		
+
 		if (!isVirtual)
 		{
 			super.receiveBytes(remotePath, buffer, size, binary);
@@ -79,11 +80,11 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 			String virtualFileName = fileName;
 
 			ArchiveHandlerManager mgr = ArchiveHandlerManager.getInstance();
-			VirtualChild child = mgr.getVirtualObject(virtualFileName);
-			ISystemArchiveHandler handler = child.getHandler();
 
 			try
 			{
+				VirtualChild child = mgr.getVirtualObject(virtualFileName);
+				ISystemArchiveHandler handler = child.getHandler();
 				File file = child.getExtractedFile();
 				fileName = file.getAbsolutePath();
 
@@ -128,20 +129,12 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 					String filePath = virtualFileName.substring(0, virtualIndex);
 					handler = mgr.getRegisteredHandler(new File(filePath));
 				}
-					boolean success = handler != null && handler.add(newFile, child.path, child.name, null);
-				if (!success)
-				{
-					if (status == null) return;
-					status.setAttribute(DE.A_VALUE, IClientServerConstants.FILEMSG_REMOTE_SAVE_FAILED);
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-					_dataStore.refresh(status.getParent());
-				}
-				else
-				{
-					if (status == null) return;
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-					_dataStore.refresh(status.getParent());
-				}
+				if (handler != null)
+					handler.add(newFile, child.path, child.name, null);
+				if (status == null)
+					return;
+				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
+				_dataStore.refresh(status.getParent());
 			}
 			catch (IOException e)
 			{
@@ -164,7 +157,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 
 	/**
 	 * Append a bytes to a file at a specified location. This method is called by the
-	 * DataStore when the communication layer receives a file transfer append.      
+	 * DataStore when the communication layer receives a file transfer append.
 	 *
 	 * @param remotePath the path where to save the file
 	 * @param buffer the bytes to append in the file
@@ -173,7 +166,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 	 */
 	public void receiveAppendedBytes(String remotePath, byte[] buffer, int size, boolean binary)
 	{
-		
+
 		boolean isVirtual = ArchiveHandlerManager.isVirtual(remotePath);
 		if (!isVirtual)
 		{
@@ -188,20 +181,15 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 		if (fileName != null)
 		{
 			String virtualFileName = fileName;
-
-			ArchiveHandlerManager mgr = ArchiveHandlerManager.getInstance();
-			VirtualChild child = mgr.getVirtualObject(virtualFileName);
-			if (!child.exists())
-			{
-				//System.out.println(virtualFileName + " does not exist.");
-				return;
-			}
-			ISystemArchiveHandler handler = child.getHandler();
-
 			try
 			{
-				boolean success;
-
+				ArchiveHandlerManager mgr = ArchiveHandlerManager.getInstance();
+				VirtualChild child = mgr.getVirtualObject(virtualFileName);
+				if (!child.exists()) {
+					// System.out.println(virtualFileName + " does not exist.");
+					return;
+				}
+				ISystemArchiveHandler handler = child.getHandler();
 				File file = child.getExtractedFile();
 				fileName = file.getAbsolutePath();
 
@@ -242,7 +230,9 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 						String filePath = virtualFileName.substring(0, virtualIndex);
 						handler = mgr.getRegisteredHandler(new File(filePath));
 					}
-					success = handler != null && handler.add(newFile, child.path, child.name, null);
+					if (handler != null) {
+						handler.add(newFile, child.path, child.name, null);
+					}
 
 				}
 				else
@@ -308,7 +298,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 					// remote old file
 					oldFile.delete();
 
-					// rename new file 
+					// rename new file
 					newFile.renameTo(oldFile);
 
 					//	write the temp file to the archive
@@ -318,25 +308,17 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 						String filePath = virtualFileName.substring(0, virtualIndex);
 						handler = mgr.getRegisteredHandler(new File(filePath));
 					}
-					success = handler != null && handler.add(newFile, child.path, child.name, null);
+					if (handler != null) {
+						handler.add(newFile, child.path, child.name, null);
+					}
+				}
 
-				}
-				
-				if (!success)
-				{
-					if (status == null) return;
-					status.setAttribute(DE.A_VALUE, IClientServerConstants.FILEMSG_REMOTE_SAVE_FAILED);
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-					_dataStore.refresh(status.getParent());
-				}
-				else
-				{
-					if (status == null) return;
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-					_dataStore.refresh(status.getParent());
-				}
+				if (status == null)
+					return;
+				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
+				_dataStore.refresh(status.getParent());
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				_dataStore.trace(e);
 				if (status == null) return;

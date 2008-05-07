@@ -7,15 +7,16 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name
  * Martin Oberhuber (Wind River) - [186640] Fix case sensitive issue comparing z/OS
- * Xuan Chen        (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children 
+ * Xuan Chen        (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
  * Xuan Chen        (IBM)        - [215863]] NPE when Expanding Empty Zip File
+ * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -82,10 +83,10 @@ public class FileClassifier extends Thread
     }
 
     public static final String symbolicLinkStr = "symbolic link to"; //$NON-NLS-1$
-    
+
     public static final String fileSep = System.getProperty("file.separator"); //$NON-NLS-1$
     public static final String defaultType = "file"; //$NON-NLS-1$
-    
+
     public static final String STR_SYMBOLIC_LINK = "symbolic link"; //$NON-NLS-1$
     public static final String STR_SHARED_OBJECT="shared object"; //$NON-NLS-1$
     public static final String STR_OBJECT_MODULE="object module"; //$NON-NLS-1$
@@ -100,7 +101,7 @@ public class FileClassifier extends Thread
     public static final String STR_DOT_SO_DOT=".so."; //$NON-NLS-1$
     public static final String STR_DIRECTORY="diectory"; //$NON-NLS-1$
 
-    
+
     private DataElement _subject;
 
     private DataStore _dataStore;
@@ -112,7 +113,7 @@ public class FileClassifier extends Thread
     private List _fileMap;
 
     private boolean _classifyChildren = true;
-    
+
     private boolean _classifyFilter = false;
 
     private boolean _canResolveLinks = false;
@@ -120,9 +121,9 @@ public class FileClassifier extends Thread
     private boolean _classifyVirtual = false;
 
     private boolean _systemSupportsClassify = true;
-    
+
     private boolean _systemSupportsClassFilesOnly = false;
-    
+
     private List _lines;
 
     public FileClassifier(DataElement subject)
@@ -144,7 +145,7 @@ public class FileClassifier extends Thread
         else if (osName.equals("z/os")) { //$NON-NLS-1$
         	_systemSupportsClassFilesOnly = true;
         }
-        
+
         _systemShell = "sh"; //$NON-NLS-1$
         _canResolveLinks = osName.startsWith("linux"); //$NON-NLS-1$
 
@@ -165,7 +166,7 @@ public class FileClassifier extends Thread
         {
             _classifyVirtual = false;
         }
-        
+
         _classifyFilter = objType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
 
         // if the subject is a file or a virtual file (i.e. not a directory or
@@ -221,7 +222,7 @@ public class FileClassifier extends Thread
     /**
      * Gets the data element for the given name from the name to data element
      * mapping.
-     * 
+     *
      * @param name
      *            the name.
      * @return the data element corresponding to that name.
@@ -274,12 +275,12 @@ public class FileClassifier extends Thread
     	{
     		filePath = _subject.getValue();
     	}
-        
-        
+
+
         // if we have to classify children
         if (_classifyChildren)
         {
-      
+
 
             // if it's not a classification of virtual files
             if (!_classifyVirtual)
@@ -315,7 +316,7 @@ public class FileClassifier extends Thread
                     classifiedProperties.append(type);
                     classifiedProperties.append(')');
                     _subject.setAttribute(DE.A_SOURCE, classifiedProperties.toString());
-                   
+
                 }
                 catch (Exception e)
                 {
@@ -328,7 +329,7 @@ public class FileClassifier extends Thread
 
     /**
      * Classifies from the given line of classification output.
-     * 
+     *
      * @param parentFile the parent file.
      * @param line the line of output to parse.
      * @param specialEncoding a special encoding, if there is one.
@@ -339,7 +340,7 @@ public class FileClassifier extends Thread
     {
         // this string should be contained in an output line that indicates a
         // symbolic link
-     
+
 
         // default type
         String type = defaultType;
@@ -361,7 +362,7 @@ public class FileClassifier extends Thread
             String parentPath = parentFile.getAbsolutePath();
 
             // get file separator
-           
+
 
             // if parent path does not end with separator, then add it
             if (!parentPath.endsWith(fileSep))
@@ -416,18 +417,18 @@ public class FileClassifier extends Thread
             }
             return type;
         }
-        
+
         // if the system supports only classifying *.class files, then return generic type "file".
         if (_systemSupportsClassFilesOnly) {
         	return type;
         }
 /* DKM - let the client have the raw type instead of doing this for it
- *  
+ *
         boolean matchesLib = (fulltype.indexOf(STR_SHARED_OBJECT) > -1) || (fulltype.indexOf(STR_OBJECT_MODULE) > -1) || (fulltype.indexOf(STR_ARCHIVE) > -1);
 
         boolean matchesExe = (fulltype.indexOf(STR_EXECUTABLE) > -1);
         boolean matchesScript = (fulltype.indexOf(STR_SCRIPT) > -1);
-        
+
         // shared
         if (matchesLib && (name.endsWith(STR_DOT_A) || name.endsWith(STR_DOT_SO) || name.indexOf(STR_DOT_SO_DOT) > 0))
         {
@@ -529,7 +530,7 @@ public class FileClassifier extends Thread
     /**
      * Classify a file. It classifies the file by running "sh -c file
      * <filename>".
-     * 
+     *
      * @param aFile the file to classify.
      * @return the classification.
      */
@@ -597,8 +598,8 @@ public class FileClassifier extends Thread
         {
             encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
         }
-        
-        
+
+
         try
         {
         	byte[] readBytes = new byte[1024];
@@ -615,14 +616,14 @@ public class FileClassifier extends Thread
 	            {
 	            	return _lines;
 	            }
-	
-	
+
+
 	            // get the output using the encoding
 	            try
 	            {
-	           
+
 	                String fullOutput = new String(readBytes, 0, numRead, encoding);
-	
+
 	                // if output is not null, we assume the encoding was correct and
 	                // process the output
 	                    // tokenize the output so that we can get each line of
@@ -636,7 +637,7 @@ public class FileClassifier extends Thread
 	                            String lastLine = (String)_lines.remove(_lines.size() -1);
 	                            tokens[0] = lastLine + tokens[0];
 	                        }
-	                        
+
 	                        for (int i = 0; i< tokens.length; i++)
 	                        {
 	                        	_lines.add(tokens[i]);
@@ -647,23 +648,23 @@ public class FileClassifier extends Thread
 	         {
 	           e.printStackTrace();
 	          }
-	            available = stream.available();                   
+	            available = stream.available();
             }
         }
         catch (Exception e)
         {
         	e.printStackTrace();
         }
-       
+
         return _lines;
 
     }
-  
+
     protected String readLine(DataInputStream stream, String encoding) throws Exception
     {
         if (_lines.size() == 0)
         {
-           _lines = readLines(stream, encoding); 
+           _lines = readLines(stream, encoding);
         }
         if (_lines == null)
         {
@@ -678,7 +679,7 @@ public class FileClassifier extends Thread
 
     /**
      * Classifies the children of a given file.
-     * 
+     *
      * @param parentFile the parent file.
      * @param files the files to classify. Specify "*" to classify all files.
      * @param resolveLinks resolve links if possible.
@@ -864,7 +865,7 @@ public class FileClassifier extends Thread
                                     if (linkIndex != -1)
                                     {
                                         int cutOffIndex = linkIndex + textToCheck.length();
-                                        
+
                                         StringBuffer typeBuf = new StringBuffer();
                                         typeBuf.append('(');
                                         typeBuf.append(type);
@@ -941,8 +942,8 @@ public class FileClassifier extends Thread
 
     /**
      * Classify virtual children.
-     * 
-     * @param parentPath the full path of the parent file. 
+     *
+     * @param parentPath the full path of the parent file.
      *      The path could represent an archive or a virtual folder.
      */
     protected void classifyVirtualChildren(String parentPath)
@@ -1035,14 +1036,14 @@ public class FileClassifier extends Thread
                             StringBuffer currentProperties = new StringBuffer(element.getAttribute(DE.A_SOURCE));
                             currentProperties.append('|');
                             currentProperties.append(type);
-                            
+
                             element.setAttribute(DE.A_SOURCE, currentProperties.toString());
                         }
                     }
                 }
             }
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             // TODO: log error
         }

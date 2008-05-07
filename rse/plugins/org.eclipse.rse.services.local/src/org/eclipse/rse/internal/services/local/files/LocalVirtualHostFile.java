@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Kevin Doyle (IBM) - [189828] renameTo() now passes proper name to _child.renameTo()
  * Xuan Chen   (IBM) - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
@@ -22,25 +22,26 @@ import java.io.File;
 
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
-public class LocalVirtualHostFile extends LocalHostFile 
+public class LocalVirtualHostFile extends LocalHostFile
 {
 	protected File _parentArchive;
 	protected VirtualChild _child;
-	
+
 	public LocalVirtualHostFile(VirtualChild child)
 	{
 		super(child.getContainingArchive());
 		_child = child;
 		_parentArchive = _child.getContainingArchive();
 	}
-	
-	public String getName() 
+
+	public String getName()
 	{
 		return _child.name;
 	}
 
-	public String getParentPath() 
+	public String getParentPath()
 	{
 		return _parentArchive.getAbsolutePath() + ArchiveHandlerManager.VIRTUAL_SEPARATOR + _child.path;
 	}
@@ -50,16 +51,16 @@ public class LocalVirtualHostFile extends LocalHostFile
 		return _child.isDirectory;
 	}
 
-	public boolean isRoot() 
+	public boolean isRoot()
 	{
 		return false;
 	}
 
-	public boolean isFile() 
+	public boolean isFile()
 	{
 		return !_child.isDirectory;
 	}
-	
+
 	public File getFile()
 	{
 		return _parentArchive;
@@ -67,24 +68,28 @@ public class LocalVirtualHostFile extends LocalHostFile
 
 	public boolean exists()
 	{
-		return _child.exists();
+		try {
+			return _child.exists();
+		} catch (SystemMessageException e) {
+			return false;
+		}
 	}
-	
+
 	public String getAbsolutePath()
 	{
 		return _child.getContainingArchive().getAbsolutePath() + ArchiveHandlerManager.VIRTUAL_SEPARATOR + _child.fullName;
 	}
-	
+
 	public VirtualChild getChild()
 	{
 		return _child;
 	}
-	
+
 	public boolean isHidden()
 	{
 		return false;
 	}
-	
+
 	public boolean isArchive()
 	{
 		return false;
@@ -101,7 +106,7 @@ public class LocalVirtualHostFile extends LocalHostFile
 			newName = newAbsolutePath.substring(i + ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
 		_child.renameTo(newName);
 	}
-	
+
 	public long getModifiedDate()
 	{
 		if (null != _child)

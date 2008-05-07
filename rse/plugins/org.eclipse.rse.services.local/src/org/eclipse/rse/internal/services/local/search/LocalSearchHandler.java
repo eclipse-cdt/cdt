@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Michael Berger (IBM) - Bug 147791 - symbolic links can cause circular search.
  * Xuan Chen      (IBM) - [160775] [api] rename (at least within a zip) blocks UI threadj
@@ -37,6 +37,7 @@ import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.search.SystemSearchFileNameMatcher;
 import org.eclipse.rse.services.clientserver.search.SystemSearchLineMatch;
 import org.eclipse.rse.services.clientserver.search.SystemSearchMatch;
@@ -83,7 +84,7 @@ public class LocalSearchHandler implements ISearchHandler
 
 	/**
 	 * Constructor for local search handler.
-	 * 
+	 *
 	 * @param searchConfig a search configuration.
 	 * @param fileService the file service to search.
 	 */
@@ -111,7 +112,7 @@ public class LocalSearchHandler implements ISearchHandler
 		_fs = fileService;
 
 		_searchString = searchConfig.getSearchString();
-		
+
 
 		boolean includeSubfolders = _searchString.isIncludeSubfolders();
 
@@ -149,16 +150,16 @@ public class LocalSearchHandler implements ISearchHandler
 
 		// start search
 		// pass in the context of the target file
-		internalSearch(_theFile, _depth, _theRmtFile);
-
-		_isDone = true;
-
-		if (!_isCancelled)
-		{
-			_searchConfig.setStatus(IHostSearchConstants.FINISHED);
-		}
-		else
-		{
+		try {
+			internalSearch(_theFile, _depth, _theRmtFile);
+			_isDone = true;
+			if (!_isCancelled) {
+				_searchConfig.setStatus(IHostSearchConstants.FINISHED);
+			} else {
+				_searchConfig.setStatus(IHostSearchConstants.CANCELLED);
+			}
+		} catch (SystemMessageException e) {
+			_isDone = false;
 			_searchConfig.setStatus(IHostSearchConstants.CANCELLED);
 		}
 	}
@@ -185,7 +186,7 @@ public class LocalSearchHandler implements ISearchHandler
 		}
 	}
 
-	private boolean internalSearch(File theFile, int depth, IHostFile context)
+	private boolean internalSearch(File theFile, int depth, IHostFile context) throws SystemMessageException
 	{
 
 		boolean foundFile = false;
@@ -254,8 +255,8 @@ public class LocalSearchHandler implements ISearchHandler
 						_searchConfig.addResult(file);
 						_searchConfig.addResults(file, results);
 					}
-					
-					
+
+
 					//_searchConfig.addResult(file);
 				}
 				// otherwise add the file to the search results
@@ -337,15 +338,7 @@ public class LocalSearchHandler implements ISearchHandler
 
 						VirtualChild[] virtualchildren = null;
 
-						try
-						{
-							virtualchildren = ArchiveHandlerManager.getInstance().getContents(archive, virtualPath);
-						}
-						catch (IOException e)
-						{
-							//SystemPlugin.logError("An erorr occured trying to retrieve virtual file " + virtualPath
-							//		+ " for " + archive.getAbsolutePath(), e);
-						}
+						virtualchildren = ArchiveHandlerManager.getInstance().getContents(archive, virtualPath);
 
 						if (virtualchildren != null)
 						{
@@ -463,11 +456,10 @@ public class LocalSearchHandler implements ISearchHandler
 	/**
 	 * Returns whether classification matches.
 	 * 
-	 * @param absolutePath
-	 *            the absolute path of the file for which we want to check
-	 *            classification.
+	 * @param absolutePath the absolute path of the file for which we want to
+	 * 		check classification.
 	 * @return <code>true</code> if the classification matches,
-	 *         <code>false</code> otherwise.
+	 * 	<code>false</code> otherwise.
 	 */
 	protected boolean doesClassificationMatch(String absolutePath)
 	{
@@ -486,7 +478,7 @@ public class LocalSearchHandler implements ISearchHandler
 	/**
 	 * Converts from system line matches to remote search results that will show
 	 * up in the remote search view.
-	 * 
+	 *
 	 * @param remoteFile
 	 *            the remote file for which line matches have been found.
 	 * @param lineMatches

@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
@@ -48,21 +48,33 @@ public class RemoteFileIOException extends RemoteFileException {
 	 * @param remoteException the initial cause of this exception
 	 */
 	public RemoteFileIOException(Exception remoteException) {
-		super(getMyMessage(remoteException), remoteException);
+		super(getMyMessage(Activator.PLUGIN_ID, remoteException), remoteException);
 
 	}
 
-	private static SystemMessage getMyMessage(Exception remoteException) {
-        
+	/**
+	 * Constructor for RemoteFileIOException that also takes a pluginId
+	 *
+	 * @param pluginId a plugin ID
+	 * @param remoteException the initial cause of this exception
+	 * @since 3.0
+	 */
+	public RemoteFileIOException(String pluginId, Exception remoteException) {
+		super(getMyMessage(pluginId, remoteException), remoteException);
+
+	}
+
+	private static SystemMessage getMyMessage(String pluginId, Exception remoteException) {
+
 		String secondLevel = remoteException.getMessage();
 		if (secondLevel == null) {
 			secondLevel = remoteException.getClass().getName();
 		}
-        
+
         String msgTxt = RSEServicesMessages.FILEMSG_OPERATION_FAILED;
         String msgDetails = NLS.bind(RSEServicesMessages.FILEMSG_OPERATION_FAILED_DETAILS, secondLevel);
-        
-        myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+        myMessage = new SimpleSystemMessage(pluginId,
         		"RSEF1002", //$NON-NLS-1$
         		IStatus.ERROR, msgTxt, msgDetails);
 

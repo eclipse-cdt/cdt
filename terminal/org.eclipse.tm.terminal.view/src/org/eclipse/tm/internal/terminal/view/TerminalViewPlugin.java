@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
+ * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -30,6 +31,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class TerminalViewPlugin extends AbstractUIPlugin {
 	protected static TerminalViewPlugin fDefault;
+
+	public static final String HELPPREFIX = "org.eclipse.tm.terminal.view."; //$NON-NLS-1$
 
 	/**
 	 * The constructor.

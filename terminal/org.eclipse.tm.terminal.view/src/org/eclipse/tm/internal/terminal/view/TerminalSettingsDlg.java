@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
+ * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.ui.PlatformUI;
 
 class TerminalSettingsDlg extends Dialog {
 	private Combo fCtlConnTypeCombo;
@@ -163,6 +165,8 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	protected Control createDialogArea(Composite parent) {
 		Composite ctlComposite = (Composite) super.createDialogArea(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(ctlComposite, TerminalViewPlugin.HELPPREFIX + "terminal_settings"); //$NON-NLS-1$
+
 		setupPanel(ctlComposite);
 		setupListeners();
 		initFields();

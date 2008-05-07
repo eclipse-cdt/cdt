@@ -2474,7 +2474,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	C c1;   
 	//	C<> c2; // ok - default args
-	public void _testMissingTemplateArgumentLists() throws Exception {
+	public void testMissingTemplateArgumentLists() throws Exception {
 		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("B b1", 1);
 		ba.assertNonProblem("B<> b2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);

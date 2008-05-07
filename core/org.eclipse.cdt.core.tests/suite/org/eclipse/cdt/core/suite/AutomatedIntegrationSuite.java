@@ -10,12 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Norbert Ploett (Siemens AG)
  *******************************************************************************/
-/*
- * Created on May 16, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 package org.eclipse.cdt.core.suite;
 
 import junit.framework.Test;
@@ -38,9 +32,6 @@ import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 
 /**
  * @author vhirsl
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class AutomatedIntegrationSuite extends TestSuite {
 

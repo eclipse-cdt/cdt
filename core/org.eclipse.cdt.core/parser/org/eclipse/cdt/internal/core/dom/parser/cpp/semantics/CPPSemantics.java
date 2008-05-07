@@ -234,6 +234,9 @@ public class CPPSemantics {
         		}
         	}
         }
+
+        /* 14.6.1-1: Class template name without argument list is equivalent to the injected-class-name followed by
+		 * the template-parameters of the class template enclosed in <> */
 		if (binding instanceof ICPPClassTemplate) {
 			ASTNodeProperty prop = data.astName.getPropertyInParent();
 			if (prop != ICPPASTQualifiedName.SEGMENT_NAME && prop != ICPPASTTemplateId.TEMPLATE_NAME &&
@@ -256,7 +259,20 @@ public class CPPSemantics {
 				} catch (DOMException e) {
 				}
 			}
+			
+			/* If the class template name is used as a type name in a simple declaration,
+             * outside of the class template scope, mark it as a problem.
+			 */
+			if (binding instanceof ICPPClassTemplate) {
+				IASTNode parent= data.astName.getParent();
+				if(parent instanceof IASTNamedTypeSpecifier) {
+					if(parent.getParent() instanceof IASTSimpleDeclaration) {
+						binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name());
+					}
+				}
+			}
 		}
+		
         if (binding instanceof ICPPClassType && data.considerConstructors) {
         	ICPPClassType cls = (ICPPClassType) binding;
         	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPTemplateDefinition) {

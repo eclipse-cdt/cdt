@@ -37,17 +37,16 @@ public interface ICDIBreakpoint extends ICDIObject {
 	final static public int TEMPORARY = ICBreakpointType.TEMPORARY;
 	/** @deprecated use ICBreakpointTyped.HARDWARE */
 	final static public int HARDWARE = ICBreakpointType.HARDWARE;
+	
 	/**
-	 * Returns whether this breakpoint is temporary.
-	 * 
 	 * @return whether this breakpoint is temporary
+	 * @deprecated by {@link ICDIBreakpoint2#getType()} 
 	 */
 	boolean isTemporary();
 	
 	/**
-	 * Returns whether this breakpoint is hardware-assisted.
-	 * 
 	 * @return whether this breakpoint is hardware-assisted
+	 * @deprecated by {@link ICDIBreakpoint2#getType()} 
 	 */
 	boolean isHardware();
 

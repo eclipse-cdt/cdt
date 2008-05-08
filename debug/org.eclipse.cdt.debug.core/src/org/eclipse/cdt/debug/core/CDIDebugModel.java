@@ -179,6 +179,8 @@ public class CDIDebugModel {
 	 *            the handle to the breakpoint source
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint marker
+	 * @param type
+	 *            a type constant from ICBreakpointType  			        
 	 * @param lineNumber
 	 *            the line number on which the breakpoint is set - line numbers are 1 based, associated with the source file in which the breakpoint is set
 	 * @param enabled
@@ -196,7 +198,7 @@ public class CDIDebugModel {
 	 *             <li>Failure creating underlying marker. The exception's status contains the underlying exception responsible for the failure.</li>
 	 *             </ul>
 	 */
-	public static ICLineBreakpoint createLineBreakpoint( String sourceHandle, IResource resource, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+	public static ICLineBreakpoint createLineBreakpoint( String sourceHandle, IResource resource, int type, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
@@ -204,7 +206,7 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
-		attributes.put( ICBreakpointType.TYPE, ICBreakpointType.REGULAR );
+		attributes.put( ICBreakpointType.TYPE, type );
 		return new CLineBreakpoint( resource, attributes, register );
 	}
 
@@ -216,6 +218,7 @@ public class CDIDebugModel {
 	 * @param module the module name the breakpoint is set in
 	 * @param sourceHandle the handle to the breakpoint source
 	 * @param resource the resource on which to create the associated breakpoint marker
+	 * @param type a type constant from ICBreakpointType  			        
 	 * @param address the address on which the breakpoint is set
 	 * @param enabled whether to enable or disable this breakpoint
 	 * @param ignoreCount the number of times this breakpoint will be ignored
@@ -229,8 +232,8 @@ public class CDIDebugModel {
 	 *             failure.</li>
 	 *             </ul>
 	 */
-	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
-		return createAddressBreakpoint( module, sourceHandle, resource, -1, address, enabled, ignoreCount, condition, register );
+	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, int type, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		return createAddressBreakpoint( module, sourceHandle, resource, type, -1, address, enabled, ignoreCount, condition, register );
 	}
 
 	/**
@@ -241,6 +244,7 @@ public class CDIDebugModel {
 	 * @param module the module name the breakpoint is set in
 	 * @param sourceHandle the handle to the breakpoint source
 	 * @param resource the resource on which to create the associated breakpoint marker
+	 * @param type a type constant from ICBreakpointType  			        
 	 * @param lineNumber the line number in the source file
 	 * @param address the address on which the breakpoint is set
 	 * @param enabled whether to enable or disable this breakpoint
@@ -255,7 +259,7 @@ public class CDIDebugModel {
 	 *             failure.</li>
 	 *             </ul>
 	 */
-	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IMarker.CHAR_START, new Integer( -1 ) );
@@ -267,6 +271,7 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
 		attributes.put( ICBreakpoint.MODULE, module );
+		attributes.put( ICBreakpointType.TYPE, type );		
 		return new CAddressBreakpoint( resource, attributes, register );
 	}
 
@@ -394,6 +399,7 @@ public class CDIDebugModel {
 	 * 
 	 * @param sourceHandle the handle to the breakpoint source
 	 * @param resource the resource on which to create the associated breakpoint marker
+	 * @param type a type constant from ICBreakpointType  			        
 	 * @param function the name of the function this breakpoint suspends execution in
 	 * @param charStart the first character index associated with the breakpoint, or
 	 *            -1 if unspecified, in the source file in which the breakpoint
@@ -416,7 +422,7 @@ public class CDIDebugModel {
 	 *             failure.</li>
 	 *             </ul>
 	 */
-	public static ICFunctionBreakpoint createFunctionBreakpoint( String sourceHandle, IResource resource, String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+	public static ICFunctionBreakpoint createFunctionBreakpoint( String sourceHandle, IResource resource, int type, String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
@@ -427,6 +433,7 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
+		attributes.put( ICBreakpointType.TYPE, type );		
 		return new CFunctionBreakpoint( resource, attributes, register );
 	}
 

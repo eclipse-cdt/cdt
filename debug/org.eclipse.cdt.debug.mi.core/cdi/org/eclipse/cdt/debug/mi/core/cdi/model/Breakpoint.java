@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint2;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Condition;
@@ -24,18 +24,30 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
  */
-public abstract class Breakpoint extends CObject implements ICDIBreakpoint {
+public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 
 	ICDICondition condition;
 	MIBreakpoint[] miBreakpoints;
+	
+	/**
+	 * One of the type constants in ICBreakpointType 
+	 */
 	int type;
-	boolean enable;
+	
+	boolean enabled;
 
-	public Breakpoint(Target target, int kind, ICDICondition cond, boolean enabled) {
+	public Breakpoint(Target target, int type, ICDICondition condition, boolean enabled) {
 		super(target);
-		type = kind;
-		condition = cond;
-		enable = enabled;
+		this.type = type;
+		this.condition = condition;
+		this.enabled = enabled;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint2#getType()
+	 */
+	public int getType() {
+		return type;
 	}
 
 	public MIBreakpoint[] getMIBreakpoints() {
@@ -78,21 +90,28 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isEnabled()
 	 */
 	public boolean isEnabled() throws CDIException {
-		return enable;
+		return enabled;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isHardware()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint#isHardware()
+	 * 
+	 * CDT 5.0 won't call this deprecated method (since we implement
+	 * ICDIBreakpoint2), but we use it ourselves.
 	 */
 	public boolean isHardware() {
-		return (type == ICBreakpointType.HARDWARE);
+		// ignore the TEMPORARY bit qualifier
+		return ((type & ~ICBreakpointType.TEMPORARY) == ICBreakpointType.HARDWARE);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isTemporary()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint#isTemporary()
+	 * 
+	 * CDT 5.0 won't call this deprecated method (since we implement
+	 * ICDIBreakpoint2), but we use it ourselves.
 	 */
 	public boolean isTemporary() {
-		return (type == ICBreakpointType.TEMPORARY);
+		return (type & ICBreakpointType.TEMPORARY) != 0;
 	}
 
 	/**
@@ -123,7 +142,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint {
 	}
 
 	public void setEnabled0(boolean on) {
-		enable = on;
+		enabled = on;
 	}
 
 }

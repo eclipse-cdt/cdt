@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
@@ -131,7 +132,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 							}
 							else {
 								CDIDebugModel.createLineBreakpoint( sourceHandle, 
-																	resource, 
+																	resource,
+																	ICBreakpointType.REGULAR,
 																	lineNumber, 
 																	true, 
 																	0, 
@@ -509,7 +511,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				DebugPlugin.log( e );
 			}
 			CDIDebugModel.createFunctionBreakpoint( sourceHandle, 
-													resource, 
+													resource,
+													ICBreakpointType.REGULAR,
 													functionName,
 													charStart,
 													charEnd,

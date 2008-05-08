@@ -49,6 +49,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIExecutableReloadedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement3;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
@@ -458,6 +459,18 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 		return ( b instanceof IBreakpoint ) ? (IBreakpoint)b : null; 
 	}
+	
+	/**
+	 * @return true if the breakpoint is of a temporary type, otherwise false
+	 */
+	private boolean isTemporary(ICDIBreakpoint cdiBreakpoint) {
+		if (cdiBreakpoint instanceof ICDIBreakpoint2) {
+			return (((ICDIBreakpoint2)cdiBreakpoint).getType() & ICBreakpointType.TEMPORARY) != 0;
+		}
+		else {
+			return cdiBreakpoint.isTemporary();
+		}
+	}
 
 	private void handleBreakpointCreatedEvent( ICDIBreakpoint cdiBreakpoint ) {
 		if ( cdiBreakpoint instanceof ICDIWatchpoint )
@@ -466,7 +479,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			doHandleCatachpointCreatedEvent( (ICDIEventBreakpoint)cdiBreakpoint );
 		else if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
 			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
-		if ( !cdiBreakpoint.isTemporary() && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
+		if ( !isTemporary(cdiBreakpoint) && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
 			changeBreakpointPropertiesOnTarget(cdiBreakpoint, new Boolean(false), null);
 		}
 	}
@@ -503,7 +516,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 
 	private void doHandleLocationBreakpointCreatedEvent( ICDILocationBreakpoint cdiBreakpoint ) {
-		if ( cdiBreakpoint.isTemporary() )
+		if ( isTemporary(cdiBreakpoint) )
 			return;
 		ICBreakpoint breakpoint = null;
 		synchronized( getBreakpointMap() ) {
@@ -934,7 +947,8 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 	private ICLineBreakpoint createLineBreakpoint( String sourceHandle, IResource resource, ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
 		ICLineBreakpoint breakpoint = CDIDebugModel.createLineBreakpoint( sourceHandle, 
-																		  resource, 
+																		  resource,
+																		  getCdiBreakpointType(cdiBreakpoint),
 																		  cdiBreakpoint.getLocator().getLineNumber(), 
 																		  cdiBreakpoint.isEnabled(), 
 																		  cdiBreakpoint.getCondition().getIgnoreCount(), 
@@ -950,12 +964,36 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		return breakpoint;
 	}
 
+	/**
+	 * Utility method that queries the CDI client for the breakpoint type.
+	 * 
+	 * @param cdiBreakpoint
+	 *            the CDI breakpoint
+	 * @return an ICDIBreakpointType constant
+	 */
+	@SuppressWarnings("deprecation")
+	private int getCdiBreakpointType(ICDIBreakpoint cdiBreakpoint) {
+		if (cdiBreakpoint instanceof ICDIBreakpoint2) {
+			// the new way
+			return ((ICDIBreakpoint2)cdiBreakpoint).getType();
+		}
+		else {
+			// the old way
+			int type = cdiBreakpoint.isHardware() ? ICBreakpointType.HARDWARE : ICBreakpointType.REGULAR;
+			if (cdiBreakpoint.isTemporary()) {
+				type |= ICBreakpointType.TEMPORARY;
+			}
+			return type;
+		}
+	}
+	
 	private ICFunctionBreakpoint createFunctionBreakpoint( String sourceHandle, IResource resource, ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
 		ICDILocator location = cdiBreakpoint.getLocator();
 		int line = location.getLineNumber();
 		ICFunctionBreakpoint breakpoint = CDIDebugModel.createFunctionBreakpoint( 
 				sourceHandle, 
-				resource, 
+				resource,
+				getCdiBreakpointType(cdiBreakpoint),
 				location.getFunction(), 
 				-1, 
 				-1, 

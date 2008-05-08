@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [219952] Use MessageFormat for download progress message
  * David McKnight   (IBM)        - [222448] [dstore] update DownloadListener to handle timeouts and nudge
  * David McKnight   (IBM)        - [225902] [dstore] use C_NOTIFICATION command to wake up the server
+ * David McKnight   (IBM)        - [231126] [dstore] status monitor needs to reset WaitThreshold on nudge
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -234,7 +235,8 @@ public class DownloadListener implements IDomainListener
 	public DataElement waitForUpdate(int wait) throws InterruptedException
 	{
 		// Prevent infinite looping by introducing a threshold for wait 
-		int WaitThreshold = 50; //default. sleep(100ms) for 150 times  		
+		final int initialWaitTheshold = 50;
+		int WaitThreshold = initialWaitTheshold; 		
 		
 		if (wait > 0)
 			WaitThreshold = wait * 10; // 1 second means 10 sleep(100ms)
@@ -275,6 +277,7 @@ public class DownloadListener implements IDomainListener
 					 {
 						 // try to wake up the server
 						 wakeupServer(_status);
+						 WaitThreshold = initialWaitTheshold;
 					 }
 				}
 			}

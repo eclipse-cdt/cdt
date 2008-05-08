@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [197480] eliminating UI dependencies
  * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
  * David McKnight   (IBM)        - [225902] [dstore] use C_NOTIFICATION command to wake up the server
+ * David McKnight   (IBM)        - [231126] [dstore] status monitor needs to reset WaitThreshold on nudge
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -254,7 +255,8 @@ public class DStoreStatusMonitor implements IDomainListener
 
 				
 	  // Prevent infinite looping by introducing a threshold for wait 
-      int WaitThreshold = 50; //default. sleep(100ms) for 60 times  		
+      final int initialWaitThreshold = 50;
+      int WaitThreshold = initialWaitThreshold;	
       if ( wait > 0 )
         WaitThreshold = wait*10; // 1 second means 10 sleep(100ms)
       else if ( wait == -1 ) // force a diagnostic
@@ -296,6 +298,7 @@ public class DStoreStatusMonitor implements IDomainListener
                     		return status;  // returning the undone status object
                     	
                     	nudges++;
+                    	WaitThreshold = initialWaitThreshold;
 				    }
                     else if (_networkDown)
                     {

@@ -266,7 +266,7 @@ public class CContainer extends Openable implements ICContainer {
 				break;
 			}
 			case IResource.FOLDER:
-				if (sroot != null && sroot.isOnSourceEntry(res) || cproject.isOnOutputEntry(res)) {
+				if (sroot != null && sroot.isOnSourceEntry(res) || (sroot == null && cproject.isOnOutputEntry(res))) {
 					celement = new CContainer(this, res);
 				}
 				break;

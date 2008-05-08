@@ -36,6 +36,7 @@
  * David McKnight   (IBM)        - [220241] JJ: IRemoteFileSubSystem.list() on the Local file subsystem does not return correct results
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * David McKnight   (IBM)        - [231211] Local xml file not opened when workspace encoding is different from local system encoding
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -469,9 +470,11 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 //					return false;
 				} else if (file.exists()) {
 					destinationFile.setLastModified(file.lastModified());
-					//TODO check if we want to preserve permissions
-					//if(!file.canWrite()) destinationFile.setReadOnly();
-					if (destinationFile.length() != file.length()) {
+
+					String systemEncoding = SystemEncodingUtil.getInstance().getEnvironmentEncoding();
+					boolean sizeCheck = !isBinary && systemEncoding.equals(hostEncoding);
+					
+					if (sizeCheck && (destinationFile.length() != file.length())) {
 						throw new SystemOperationCancelledException();
 //						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath()); //$NON-NLS-1$
 //						return false;

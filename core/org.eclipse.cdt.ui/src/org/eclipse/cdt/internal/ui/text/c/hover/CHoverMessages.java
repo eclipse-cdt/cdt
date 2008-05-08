@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -20,6 +21,10 @@ public final class CHoverMessages extends NLS {
 	private CHoverMessages() {
 		// Do not instantiate
 	}
+
+	public static String AbstractAnnotationHover_action_configureAnnotationPreferences;
+	public static String AbstractAnnotationHover_message_singleQuickFix;
+	public static String AbstractAnnotationHover_message_multipleQuickFix;
 
 	public static String CMacroExpansionControl_statusText;
 

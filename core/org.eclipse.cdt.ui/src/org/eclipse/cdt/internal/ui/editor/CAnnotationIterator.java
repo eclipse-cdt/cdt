@@ -7,71 +7,61 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.util.Collections;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationModel;
-
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
  * Filters problems based on their types.
  */
 public class CAnnotationIterator implements Iterator<Annotation> {
-			
 	private Iterator<Annotation> fIterator;
 	private Annotation fNext;
-	private boolean fSkipIrrelevants;
 	private boolean fReturnAllAnnotations;
 	
 	/**
-	 * Equivalent to <code>CAnnotationIterator(model, skipIrrelevants, false)</code>.
+	 * Returns a new CAnnotationIterator.
+	 * @param parent the parent iterator to iterate over annotations
+	 * @param returnAllAnnotations whether to return all annotations or just problem annotations
 	 */
-	public CAnnotationIterator(IAnnotationModel model, boolean skipIrrelevants) {
-		this(model, skipIrrelevants, false);
-	}
-	
-	/**
-	 * Returns a new CAnnotationIterator. 
-	 * @param model the annotation model
-	 * @param skipIrrelevants whether to skip irrelevant annotations
-	 * @param returnAllAnnotations Whether to return non IJavaAnnotations as well
-	 */
-	@SuppressWarnings("unchecked") // using api without generics
-	public CAnnotationIterator(IAnnotationModel model, boolean skipIrrelevants, boolean returnAllAnnotations) {
+	public CAnnotationIterator(Iterator<Annotation> parent, boolean returnAllAnnotations) {
 		fReturnAllAnnotations= returnAllAnnotations;
-		if (model != null)
-			fIterator= model.getAnnotationIterator();
-		else
-			fIterator= Collections.EMPTY_LIST.iterator();
-		fSkipIrrelevants= skipIrrelevants;
+		fIterator= parent;
 		skip();
 	}
-	
+
 	private void skip() {
 		while (fIterator.hasNext()) {
 			Annotation next= fIterator.next();
-			if (next instanceof ICAnnotation) {
-				if (fSkipIrrelevants) {
-					if (!next.isMarkedDeleted()) {
-						fNext= next;
-						return;
-					}
-				} else {
-					fNext= next;
-					return;
-				}
-			} else if (fReturnAllAnnotations) {
+			
+			if (next.isMarkedDeleted())
+				continue;
+
+			if (fReturnAllAnnotations || next instanceof ICAnnotation || isProblemMarkerAnnotation(next)) {
 				fNext= next;
 				return;
 			}
 		}
 		fNext= null;
 	}
-	
+
+	private static boolean isProblemMarkerAnnotation(Annotation annotation) {
+		if (!(annotation instanceof MarkerAnnotation))
+			return false;
+		try {
+			return(((MarkerAnnotation)annotation).getMarker().isSubtypeOf(IMarker.PROBLEM));
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
 	/*
 	 * @see Iterator#hasNext()
 	 */

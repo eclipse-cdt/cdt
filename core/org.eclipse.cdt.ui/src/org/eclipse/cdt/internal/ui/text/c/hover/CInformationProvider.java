@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -25,13 +26,11 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
-
-
 /**
- * Provides information for the current word under the cursor based on the documentation hover.
+ * Provides information for the current word under the cursor based on the documentation hover
+ * and spelling correction hover.
  * 
- * @see CDocHover
+ * @see CTypeHover
  * @since 5.0
  */
 public class CInformationProvider implements IInformationProvider, IInformationProviderExtension2 {
@@ -70,23 +69,21 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	protected IEditorPart fEditor;
 	protected IPartListener fPartListener;
 
-	protected ICEditorTextHover fImplementation;
+	protected CTypeHover fImplementation;
 
 	/**
 	 * The default presentation control creator.
 	 */
 	private IInformationControlCreator fPresenterControlCreator;
 	
-
 	public CInformationProvider(IEditorPart editor) {
-
 		fEditor= editor;
 
 		if (fEditor != null) {
 			fPartListener= new EditorWatcher();
 			IWorkbenchWindow window= fEditor.getSite().getWorkbenchWindow();
 			window.getPartService().addPartListener(fPartListener);
-			fImplementation= new CDocHover();
+			fImplementation= new CTypeHover();
 			fImplementation.setEditor(fEditor);
 		}
 	}
@@ -104,7 +101,6 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	/*
 	 * @see IInformationProvider#getInformation(ITextViewer, IRegion)
 	 */
-	@SuppressWarnings("deprecation")
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		if (fImplementation != null) {
 			String s= fImplementation.getHoverInfo(textViewer, subject);
@@ -113,6 +109,15 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 			}
 		}
 		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
+		if (fImplementation == null)
+			return null;
+		return fImplementation.getHoverInfo2(textViewer, subject);
 	}
 
 	/*

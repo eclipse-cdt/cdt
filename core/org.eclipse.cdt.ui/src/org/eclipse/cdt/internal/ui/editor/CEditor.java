@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-
 import java.text.CharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,6 +89,7 @@ import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.IAnnotationModelExtension2;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -221,7 +221,6 @@ import org.eclipse.cdt.internal.ui.util.CUIHelp;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
 import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
-
 
 /**
  * C/C++ source editor.
@@ -402,7 +401,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	}
 
 	private class ExitPolicy implements IExitPolicy {
-
 		final char fExitCharacter;
 		final char fEscapeCharacter;
 		final Stack<BracketLevel> fStack;
@@ -484,7 +482,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void update(DocumentEvent event) {
-
 			int eventOffset = event.getOffset();
 			int eventOldLength = event.getLength();
 			int eventNewLength = event.getText() == null ? 0 : event.getText().length();
@@ -504,11 +501,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					int length = position.getLength();
 					int end = offset + length;
 
-					if (offset >= eventOffset + eventOldLength)
+					if (offset >= eventOffset + eventOldLength) {
 						// position comes
 						// after change - shift
 						position.setOffset(offset + deltaLength);
-					else if (end <= eventOffset) {
+				    } else if (end <= eventOffset) {
 						// position comes way before change -
 						// leave alone
 					} else if (offset <= eventOffset && end >= eventOffset + eventOldLength) {
@@ -2455,8 +2452,20 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 3.0
 	 */
 	private Annotation getAnnotation(int offset, int length) {
-		IAnnotationModel model = getDocumentProvider().getAnnotationModel(getEditorInput());
-		Iterator<Annotation> e = new CAnnotationIterator(model, true, true);
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+		if (model == null)
+			return null;
+		
+		@SuppressWarnings("unchecked")
+		Iterator parent;
+		if (model instanceof IAnnotationModelExtension2) {
+			parent= ((IAnnotationModelExtension2)model).getAnnotationIterator(offset, length, true, true);
+		} else {
+			parent= model.getAnnotationIterator();
+		}
+
+		@SuppressWarnings("unchecked")
+		Iterator<Annotation> e= new CAnnotationIterator(parent, false);
 		while (e.hasNext()) {
 			Annotation a = e.next();
 			if (!isNavigationTarget(a))

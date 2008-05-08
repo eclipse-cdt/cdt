@@ -26,6 +26,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension2;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -268,8 +269,20 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 * @return the found annotation or <code>null</code>
 	 */
 	private Annotation getAnnotation(int offset, int length) {
-		IAnnotationModel model = getDocumentProvider().getAnnotationModel(getEditorInput());
-		Iterator<Annotation> e = new CAnnotationIterator(model, true, true);
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+		if (model == null)
+			return null;
+		
+		@SuppressWarnings("unchecked")
+		Iterator parent;
+		if (model instanceof IAnnotationModelExtension2) {
+			parent= ((IAnnotationModelExtension2)model).getAnnotationIterator(offset, length, true, true);
+		} else {
+			parent= model.getAnnotationIterator();
+		}
+
+		@SuppressWarnings("unchecked")
+		Iterator<Annotation> e= new CAnnotationIterator(parent, false);
 		while (e.hasNext()) {
 			Annotation a = e.next();
 			if (!isNavigationTarget(a))

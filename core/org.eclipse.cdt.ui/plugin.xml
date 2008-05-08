@@ -162,16 +162,22 @@
       <extension
          point="org.eclipse.cdt.ui.textHovers">
       <hover
-            label="%cdocHover"
-            description="%cdocHoverDescription"
-            class="org.eclipse.cdt.internal.ui.text.c.hover.CDocHover"
-            id="org.eclipse.cdt.ui.CDocHover">
-      </hover>
-      <hover
             label="%sequentialHover"
             description="%sequentialHoverDescription"
             class="org.eclipse.cdt.internal.ui.text.c.hover.BestMatchHover"
             id="org.eclipse.cdt.ui.BestMatchHover">
+      </hover>
+      <hover
+            label="%problemHover"
+            description="%problemHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.ProblemHover"
+            id="org.eclipse.cdt.ui.ProblemHover">
+      </hover>
+      <hover
+            label="%cdocHover"
+            description="%cdocHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.CDocHover"
+            id="org.eclipse.cdt.ui.CDocHover">
       </hover>
       <hover
             label="%sourceHover"
@@ -185,12 +191,6 @@
             class="org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionHover"
             id="org.eclipse.cdt.ui.CMacroExpansionHover">
       </hover>
-      <!--hover
-            label="%problemHover"
-            description="%problemHoverDescription"
-            class="org.eclipse.cdt.internal.ui.text.c.hover.ProblemHover"
-            id="org.eclipse.cdt.ui.ProblemHover">
-      </hover-->
       <hover
             label="%annotationHover"
             description="%annotationHoverDescription"

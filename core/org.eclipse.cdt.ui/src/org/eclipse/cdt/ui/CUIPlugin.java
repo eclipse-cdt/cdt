@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
  *     Jeff Johnston (Red Hat Inc.)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -760,7 +761,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				fCEditorTextHoverDescriptors[first]= hoverDescriptor;
 
 				// update annotation hover index if needed
-				if (annotationHoverIndex > first && annotationHoverIndex < problemHoverIndex)
+				if (annotationHoverIndex >= first && annotationHoverIndex < problemHoverIndex)
 					annotationHoverIndex++;
 			}
 			

@@ -10,16 +10,21 @@
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -27,7 +32,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * Bundle of all images used by the C plugin.
  */
 public class CPluginImages {
-	
+	public static final IPath ICONS_PATH= new Path("$nl$/icons"); //$NON-NLS-1$
+
 	// The plugin registry
 	private static ImageRegistry imageRegistry = new ImageRegistry(CUIPlugin.getStandardDisplay());
 
@@ -47,6 +53,8 @@ public class CPluginImages {
 	public static final String T_OBJ= "obj16/"; //$NON-NLS-1$
 	public static final String T_WIZBAN= "wizban/"; //$NON-NLS-1$
 	public static final String T_LCL=  "lcl16/"; //$NON-NLS-1$
+	public static final String T_DLCL=  "dlcl16/"; //$NON-NLS-1$
+	public static final String T_ELCL=  "elcl16/"; //$NON-NLS-1$
 	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
 	public static final String T_VIEW= "view16/"; //$NON-NLS-1$
 	public static final String T_OVR= "ovr16/"; //$NON-NLS-1$
@@ -128,7 +136,7 @@ public class CPluginImages {
 	public static final String IMG_VIEW_BUILD = NAME_PREFIX + "buildconsole.gif"; //$NON-NLS-1$
     public static final String IMG_VIEW_MENU = NAME_PREFIX + "view_menu.gif";   //$NON-NLS-1$
 
-	// unknow type
+	// unknown type
 	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.gif"; //$NON-NLS-1$
 	
     public static final ImageDescriptor DESC_BUILD_CONSOLE = createManaged(T_VIEW, IMG_VIEW_BUILD);
@@ -333,6 +341,9 @@ public class CPluginImages {
 	public static final String IMG_EMPTY = NAME_PREFIX + "tc_empty.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EMPTY = createManaged(T_OBJ, IMG_EMPTY);
 
+	public static final ImageDescriptor DESC_DLCL_CONFIGURE_ANNOTATIONS= createUnManaged(T_DLCL, "configure_annotations.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_CONFIGURE_ANNOTATIONS= createUnManaged(T_ELCL, "configure_annotations.gif"); //$NON-NLS-1$
+	
 	public static final String IMG_OBJS_QUICK_ASSIST= NAME_PREFIX + "quickassist_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_QUICK_ASSIST = createManaged(T_OBJ, IMG_OBJS_QUICK_ASSIST);
 	public static final String IMG_CORRECTION_ADD= NAME_PREFIX + "correction_add.gif"; //$NON-NLS-1$
@@ -363,6 +374,27 @@ public class CPluginImages {
 		return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
 	}
 	
+	/*
+	 * Creates an image descriptor for the given prefix and name in the JDT UI bundle. The path can
+	 * contain variables like $NL$.
+	 * If no image could be found, <code>useMissingImageDescriptor</code> decides if either
+	 * the 'missing image descriptor' is returned or <code>null</code>.
+	 * or <code>null</code>.
+	 */
+	private static ImageDescriptor create(String prefix, String name, boolean useMissingImageDescriptor) {
+		IPath path= ICONS_PATH.append(prefix).append(name);
+		return createImageDescriptor(CUIPlugin.getDefault().getBundle(), path, useMissingImageDescriptor);
+	}
+	
+	/*
+	 * Creates an image descriptor for the given prefix and name in the JDT UI bundle. The path can
+	 * contain variables like $NL$.
+	 * If no image could be found, the 'missing image descriptor' is returned.
+	 */
+	private static ImageDescriptor createUnManaged(String prefix, String name) {
+		return create(prefix, name, true);
+	}
+	
 	private static URL makeIconFileURL(String prefix, String name) {
 		StringBuffer buffer= new StringBuffer(prefix);
 		buffer.append(name);
@@ -374,6 +406,24 @@ public class CPluginImages {
 		}
 	}
 	
+	/*
+	 * Creates an image descriptor for the given path in a bundle. The path can contain variables
+	 * like $NL$.
+	 * If no image could be found, <code>useMissingImageDescriptor</code> decides if either
+	 * the 'missing image descriptor' is returned or <code>null</code>.
+	 * Added for 3.1.1.
+	 */
+	public static ImageDescriptor createImageDescriptor(Bundle bundle, IPath path, boolean useMissingImageDescriptor) {
+		URL url= FileLocator.find(bundle, path, null);
+		if (url != null) {
+			return ImageDescriptor.createFromURL(url);
+		}
+		if (useMissingImageDescriptor) {
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
+		return null;
+	}
+
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *tool16 folders.

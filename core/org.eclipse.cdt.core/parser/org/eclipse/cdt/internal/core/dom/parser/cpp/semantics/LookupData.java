@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -95,6 +96,7 @@ class LookupData {
 	public boolean typesOnly = false;
 	public boolean considerConstructors = false;
 	
+	public IBinding unknownBinding= null;
 	public Object foundItems = null;
 	public Object [] functionParameters;
 	public IASTNode [] templateArguments;

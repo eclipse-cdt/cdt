@@ -8,21 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -33,88 +29,36 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  *
  * @author aniefer
  */
-public class CPPDeferredClassInstance extends CPPInstance
-		implements ICPPClassType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
+public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDeferredClassInstance {
 	
+	private IType[] fArguments;
+	private ObjectMap fArgmap;
+	private ICPPScope fUnknownScope;
+
 	public CPPDeferredClassInstance(ICPPClassTemplate orig,	ObjectMap argMap, IType[] arguments) {
-		super(null, orig, argMap, arguments);
+		super(orig);
+		fArgmap= argMap;
+		fArguments= arguments;
 	}
 	
-	public ICPPBase[] getBases() throws DOMException {
-		return ((ICPPClassType) getClassTemplate()).getBases();
-	}
-
-	public IField[] getFields() {
-		return null;
-	}
-
-	public IField findField(String name) {
-		return null;
-	}
-
-	public ICPPField[] getDeclaredFields() {
-		return null;
-	}
-
-	public ICPPMethod[] getMethods() {
-		return null;
-	}
-
-	public ICPPMethod[] getAllDeclaredMethods() {
-		return null;
-	}
-
-	public ICPPMethod[] getDeclaredMethods() {
-		return null;
-	}
-
-	public ICPPConstructor[] getConstructors() {
-		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-	}
-
-	public IBinding[] getFriends() {
-		return null;
-	}
-
-	public int getKey() throws DOMException {
-		return ((ICPPClassType) getClassTemplate()).getKey();
-	}
-
-	public IScope getCompositeScope() throws DOMException {
-		if (getArgumentMap() != null) {
-			return new CPPClassSpecializationScope(this);
-		}
-		return ((ICPPClassType) getClassTemplate()).getCompositeScope();
+	private ICPPClassTemplate getClassTemplate() {
+		return (ICPPClassTemplate) getSpecializedBinding();
 	}
 
 	 @Override
-	public Object clone() {
-        return this;
+	public CPPDeferredClassInstance clone() {
+		 CPPDeferredClassInstance cloned= (CPPDeferredClassInstance) super.clone();
+		 return cloned;
     }
 
-	public IType instantiate(ObjectMap argMap) {
-		IType[] arguments = getArguments();
-		IType[] newArgs = new IType[arguments.length];
-		int size = arguments.length;
-		for (int i = 0; i < size; i++) {
-			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap);
-		}
-		
-		ICPPClassTemplate classTemplate = getClassTemplate();
-		if (argMap.containsKey(classTemplate)) {
-			classTemplate = (ICPPClassTemplate) argMap.get(classTemplate);
-		}
-		
-		return (IType) ((ICPPInternalTemplateInstantiator) classTemplate).instantiate(newArgs);
-	}
-
+	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
 
 		// allow some fuzziness here.
 		ICPPClassTemplate classTemplate = getClassTemplate();
-		if (type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType) {
+		if (type instanceof ICPPDeferredClassInstance) {
 			ICPPClassTemplate typeClass =
 				(ICPPClassTemplate) ((ICPPDeferredTemplateInstance) type).getSpecializedBinding();
 			return typeClass == classTemplate;
@@ -127,11 +71,56 @@ public class CPPDeferredClassInstance extends CPPInstance
 		return false;
 	}
 
-	public ICPPClassType[] getNestedClasses() throws DOMException {
-		return null;
+    @Override
+	public int getKey() throws DOMException {
+    	return getClassTemplate().getKey();
+    }
+
+	public IType[] getArguments() {
+		return fArguments;
 	}
 
-	private ICPPClassTemplate getClassTemplate() {
-		return (ICPPClassTemplate) getSpecializedBinding();
+	public ICPPTemplateDefinition getTemplateDefinition() {
+		return (ICPPTemplateDefinition) scopeBinding;
+	}
+
+	public ObjectMap getArgumentMap() {
+		return fArgmap;
+	}
+
+	@Override
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+		IType[] arguments = getArguments();
+		IType[] newArgs = new IType[arguments.length];
+		int size = arguments.length;
+		for (int i = 0; i < size; i++) {
+			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap);
+		}
+
+		ICPPClassTemplate classTemplate = getClassTemplate();
+		if (argMap.containsKey(classTemplate)) {
+			classTemplate = (ICPPClassTemplate) argMap.get(classTemplate);
+		}
+
+		return ((ICPPInternalTemplateInstantiator) classTemplate).instantiate(newArgs);
+	}
+
+	public IBinding getSpecializedBinding() {
+		return getTemplateDefinition();
+	}
+
+	@Override
+	public ICPPScope getUnknownScope() throws DOMException {
+		if (fUnknownScope != null)
+			return fUnknownScope;
+		
+		final ICPPClassTemplate classTemplate = getClassTemplate();
+		if (classTemplate.getPartialSpecializations().length == 0) {
+			if (fArgmap == null) {
+				return fUnknownScope= (ICPPScope) classTemplate.getCompositeScope();
+			}
+			return fUnknownScope= new CPPClassSpecializationScope(this);
+		}
+		return super.getUnknownScope();
 	}
 }

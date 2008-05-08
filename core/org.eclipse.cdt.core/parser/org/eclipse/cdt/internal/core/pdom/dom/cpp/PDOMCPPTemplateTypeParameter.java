@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMemberOwner,
-		ICPPTemplateTypeParameter, ICPPInternalUnknown, IIndexType {
+		ICPPTemplateTypeParameter, ICPPUnknownBinding, IIndexType {
 
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;	
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
@@ -144,22 +144,11 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		return null;
 	}
 
-	public IBinding resolveUnknown(ObjectMap argMap) { fail(); return null; }
-
-	public void addDeclaration(IASTNode node) {
-	}
-	
-	public void addDefinition(IASTNode node) {
-	}
-	
-	public IASTNode[] getDeclarations() {
-		return IASTNode.EMPTY_NODE_ARRAY;
-	}
-
-	public IASTNode getDefinition() {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) { fail(); return null;}
+	public IASTName getUnknownName() {
 		return null;
 	}
-
-	public void removeDeclaration(IASTNode node) {
+	public ICPPBinding getContainerBinding() {
+		return null;
 	}
 }

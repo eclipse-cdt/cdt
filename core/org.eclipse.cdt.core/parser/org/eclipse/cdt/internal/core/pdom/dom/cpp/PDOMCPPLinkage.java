@@ -70,10 +70,10 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -360,10 +360,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPClassTemplate) {
 			pdomBinding= new PDOMCPPClassTemplate(pdom, parent, (ICPPClassTemplate) binding);
 		} else if (binding instanceof ICPPClassType) {
-			if (binding instanceof ICPPInternalUnknownClassInstance) {
-				pdomBinding= new PDOMCPPUnknownClassInstance(pdom, parent, (ICPPInternalUnknownClassInstance) binding);
-			} else if (binding instanceof ICPPInternalUnknown) {
-				pdomBinding= new PDOMCPPUnknownClassType(pdom, parent, (ICPPInternalUnknownClassType) binding);
+			if (binding instanceof ICPPUnknownClassInstance) {
+				pdomBinding= new PDOMCPPUnknownClassInstance(pdom, parent, (ICPPUnknownClassInstance) binding);
+			} else if (binding instanceof ICPPUnknownClassType) {
+				pdomBinding= new PDOMCPPUnknownClassType(pdom, parent, (ICPPUnknownClassType) binding);
 			} else {
 				pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
 			}
@@ -527,10 +527,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				} else if (binding instanceof ICPPClassType) {
 					return CPP_DEFERRED_CLASS_INSTANCE;
 				}
-			} else if (binding instanceof ICPPInternalUnknown) {
-				if (binding instanceof ICPPInternalUnknownClassInstance) {
+			} else if (binding instanceof ICPPUnknownBinding) {
+				if (binding instanceof ICPPUnknownClassInstance) {
 					return CPP_UNKNOWN_CLASS_INSTANCE;
-				} else if (binding instanceof ICPPInternalUnknownClassType) {
+				} else if (binding instanceof ICPPUnknownClassType) {
 					return CPP_UNKNOWN_CLASS_TYPE;
 				}
 			} else if (binding instanceof ICPPTemplateInstance) {

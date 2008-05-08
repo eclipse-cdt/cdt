@@ -177,7 +177,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -924,8 +924,8 @@ public class CPPVisitor {
 						scope= ((ICPPClassType)binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {
 						scope= ((ICPPNamespace)binding).getNamespaceScope();
-					} else if (binding instanceof ICPPInternalUnknown) {
-					    scope= ((ICPPInternalUnknown)binding).getUnknownScope();
+					} else if (binding instanceof ICPPUnknownBinding) {
+					    scope= ((ICPPUnknownBinding)binding).getUnknownScope();
 					} else if (binding instanceof IProblemBinding) {
 						if (binding instanceof ICPPScope)
 							scope= (IScope) binding;

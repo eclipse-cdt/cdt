@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -32,11 +33,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * @author aniefer
  */
 public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
-    private final ICPPInternalUnknown binding;
+    private final ICPPUnknownBinding binding;
     private final IASTName scopeName;
     private CharArrayObjectMap map;
 
-    public CPPUnknownScope(ICPPInternalUnknown binding, IASTName name) {
+    public CPPUnknownScope(ICPPUnknownBinding binding, IASTName name) {
         super();
         this.scopeName = name;
         this.binding = binding;
@@ -127,8 +128,8 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
 	    IBinding[] result = null;
 	    if (prefixLookup) {
 	    	Object[] keys = map.keyArray();
-	    	for (int i = 0; i < keys.length; i++) {
-	    		char[] key = (char[]) keys[i];
+	    	for (Object key2 : keys) {
+	    		char[] key = (char[]) key2;
 	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
 	    			result = (IBinding[]) ArrayUtil.append(IBinding.class, result, map.get(key));
 	    		}
@@ -167,7 +168,7 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope#getUnknownBinding()
 	 */
-	public ICPPInternalUnknown getScopeBinding() {
+	public ICPPBinding getScopeBinding() {
 		return binding;
 	}
 

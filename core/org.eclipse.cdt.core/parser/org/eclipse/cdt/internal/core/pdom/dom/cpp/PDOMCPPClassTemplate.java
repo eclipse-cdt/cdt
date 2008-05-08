@@ -68,7 +68,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	protected static final int RECORD_SIZE = PDOMCPPClassType.RECORD_SIZE + 16;
 	
 	public PDOMCPPClassTemplate(PDOM pdom, PDOMNode parent, ICPPClassTemplate template)	throws CoreException {
-		super(pdom, parent, (ICPPClassType) template);
+		super(pdom, parent, template);
 	}
 
 	public PDOMCPPClassTemplate(PDOM pdom, int bindingRecord) {
@@ -208,6 +208,10 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	@Override
 	public IIndexScope getScope() {
+		return getTemplateScope();
+	}
+	
+	public PDOMCPPTemplateScope getTemplateScope() {
 		if (scope == null) {
 			scope = new PDOMCPPTemplateScope();
 		}

@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -49,9 +48,9 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType {
 		if (cls != null) {
 			ICPPBase[] result = null;
 			ICPPBase[] bindings = cls.getBases();
-			for (int i = 0; i < bindings.length; i++) {
-				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase) bindings[i]).clone();
-				IBinding base = bindings[i].getBaseClass();
+			for (ICPPBase binding : bindings) {
+				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase) binding).clone();
+				IBinding base = binding.getBaseClass();
 				if (base instanceof IType) {
 					IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
 					specBase = getUltimateType(specBase, false);
@@ -125,7 +124,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType {
 			return true;
 		if (type instanceof ITypedef || type instanceof IIndexType)
 			return type.isSameType(this);
-		if (type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType)
+		if (type instanceof ICPPDeferredClassInstance)
 			return type.isSameType(this);  // the CPPDeferredClassInstance has some fuzziness
 
 		if (type instanceof ICPPTemplateInstance) {

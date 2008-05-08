@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -27,7 +29,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  * @author aniefer
  */
 public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
-		ICPPTemplateTypeParameter, IType, ICPPInternalUnknown {
+		ICPPTemplateTypeParameter, IType, ICPPUnknownBinding {
 	private ICPPScope unknownScope;
 
 	public CPPTemplateTypeParameter(IASTName name) {
@@ -65,8 +67,16 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
         return false;
     }
 
-    public IBinding resolveUnknown(ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
     	// Cannot do resolution here since the result is not necessarily a binding.
 		return null;
-    }
+	}
+
+	public IASTName getUnknownName() {
+		return null;
+	}
+
+	public ICPPBinding getContainerBinding() {
+		return null;
+	}
 }

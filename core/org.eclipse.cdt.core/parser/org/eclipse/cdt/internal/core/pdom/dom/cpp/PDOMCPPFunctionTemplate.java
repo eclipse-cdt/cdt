@@ -238,4 +238,8 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
+
+	public ICPPTemplateScope getTemplateScope() throws DOMException {
+		return this;
+	}
 }

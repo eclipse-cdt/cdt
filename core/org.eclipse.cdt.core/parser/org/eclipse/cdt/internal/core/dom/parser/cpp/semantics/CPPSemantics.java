@@ -137,6 +137,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
@@ -311,6 +312,11 @@ public class CPPSemantics {
 			IASTName[] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
 			if (name == ns[ns.length - 1])
 				name = (IASTName) name.getParent();
+		}
+		
+		// if the lookup in base-classes ran into a deferred instance, use the computed unknown binding.
+		if (binding == null && data.unknownBinding != null) {
+			binding= data.unknownBinding;
 		}
 		
         if (binding != null) {
@@ -746,18 +752,20 @@ public class CPPSemantics {
 	}
 
 	private static Object lookupInParents(LookupData data, ICPPScope lookIn) throws DOMException{
-		ICPPBase[] bases = null;
-		if (lookIn instanceof ICPPClassScope) {
-			ICPPClassType c  = ((ICPPClassScope)lookIn).getClassType();
-			if (c != null)
-				bases = c.getBases();
-		}
+		if (lookIn instanceof ICPPClassScope == false)
+			return null;
+		
+		final ICPPClassType classType= ((ICPPClassScope)lookIn).getClassType();
+		if (classType == null) 
+			return null;
+		
+		final ICPPBase[] bases= classType.getBases();
+		if (bases == null || bases.length == 0)
+			return null;
 	
 		Object inherited = null;
 		Object result = null;
 		
-		if (bases == null || bases.length == 0)
-			return null;
 				
 		//use data to detect circular inheritance
 		if (data.inheritanceChain == null)
@@ -771,19 +779,27 @@ public class CPPSemantics {
 		}
 
 		int size = bases.length;
-		for (int i = 0; i < size; i++)
-		{
+		for (int i = 0; i < size; i++) {
 			inherited = null;
-			ICPPClassType cls = null;
 			IBinding b = bases[i].getBaseClass();
-			if (b instanceof ICPPClassType)
-				cls = (ICPPClassType) b;
-			else 
+			if (b instanceof ICPPClassType == false)
 				continue;
-			ICPPScope parent = (ICPPScope) cls.getCompositeScope();
+
+			final ICPPClassType cls= (ICPPClassType) b;
+			final ICPPScope parent = (ICPPScope) cls.getCompositeScope();
 			
-			if (parent == null || parent instanceof CPPUnknownScope)
+			if (parent == null)
 				continue;
+			if (parent instanceof CPPUnknownScope) {
+				if (data.unknownBinding == null && classType instanceof ICPPClassTemplate && data.astName != null) {
+					ICPPClassTemplate template= ((ICPPClassTemplate) classType);
+					IBinding thisType= CPPTemplates.instantiateWithinClassTemplate(template);
+					if (thisType instanceof ICPPUnknownBinding) {
+						data.unknownBinding= ((ICPPUnknownBinding) thisType).getUnknownScope().getBinding(data.astName, true);
+					}
+				}
+				continue;
+			}
 	
 			if (!bases[i].isVirtual() || !data.visited.containsKey(parent)) {
 				if (bases[i].isVirtual()) {

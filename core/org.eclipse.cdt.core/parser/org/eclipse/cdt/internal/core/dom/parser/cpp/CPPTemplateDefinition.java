@@ -1,17 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Mar 14, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -41,7 +38,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -71,6 +70,9 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			throw new DOMException(this);
 		}
 		public boolean isGloballyQualified() throws DOMException {
+			throw new DOMException(this);
+		}
+		public ICPPTemplateScope getTemplateScope() throws DOMException {
 			throw new DOMException(this);
 		}
 	}
@@ -161,8 +163,8 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	public void addSpecialization(IType[] types, ICPPSpecialization spec) {
 		if (types == null)
 			return;
-		for (int i = 0; i < types.length; i++) {
-			if (types[i] == null)
+		for (IType type : types) {
+			if (type == null)
 				return;
 		}
 		if (instances == null)
@@ -237,6 +239,15 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		return definition != null ? definition : declarations[0];
 	}
 	
+	public ICPPTemplateScope getTemplateScope() throws DOMException {
+		final IASTName name = getTemplateName();
+		ICPPASTTemplateDeclaration template = CPPTemplates.getTemplateDeclaration(name);
+		if (template != null) {
+			return template.getScope();
+		}
+		throw new DOMException(new CPPTemplateProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE, CharArrayUtils.EMPTY));
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
@@ -290,13 +301,13 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			ICPPASTTemplateParameter[] params = template.getTemplateParameters();
 			ICPPTemplateParameter p = null;
 			ICPPTemplateParameter[] result = null;
-			for (int i = 0; i < params.length; i++) {
-				if (params[i] instanceof ICPPASTSimpleTypeTemplateParameter) {
-					p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter) params[i]).getName().resolveBinding();
-				} else if (params[i] instanceof ICPPASTParameterDeclaration) {
-					p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration) params[i]).getDeclarator().getName().resolveBinding();
-				} else if (params[i] instanceof ICPPASTTemplatedTypeTemplateParameter) {
-					p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter) params[i]).getName().resolveBinding();
+			for (ICPPASTTemplateParameter param : params) {
+				if (param instanceof ICPPASTSimpleTypeTemplateParameter) {
+					p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter) param).getName().resolveBinding();
+				} else if (param instanceof ICPPASTParameterDeclaration) {
+					p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration) param).getDeclarator().getName().resolveBinding();
+				} else if (param instanceof ICPPASTTemplatedTypeTemplateParameter) {
+					p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter) param).getName().resolveBinding();
 				}
 				
 				if (p != null) {

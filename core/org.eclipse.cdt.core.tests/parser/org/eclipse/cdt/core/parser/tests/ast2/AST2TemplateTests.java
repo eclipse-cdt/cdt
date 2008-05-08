@@ -2314,7 +2314,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// };
     //
     // void main(Iter<int*>::iter_reference r);
-    public void _testSpecializationSelection_229218() throws Exception {
+    public void testSpecializationSelection_229218() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);

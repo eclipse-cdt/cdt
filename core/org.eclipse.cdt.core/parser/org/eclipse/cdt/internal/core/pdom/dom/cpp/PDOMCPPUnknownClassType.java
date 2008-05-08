@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   Sergey Prigogin (Google) - initial API and implementation
+ *    Sergey Prigogin (Google) - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -14,31 +15,27 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -46,23 +43,23 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Sergey Prigogin
  */
-class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, ICPPInternalUnknownClassType,
+class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, ICPPUnknownClassType,
 		IPDOMMemberOwner, IIndexType, IIndexScope {
 
-	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
-	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
-	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 8;
+	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 0; // byte
+	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
+	
+	private ICPPScope unknownScope;
 
-	public PDOMCPPUnknownClassType(PDOM pdom, PDOMNode parent, ICPPInternalUnknownClassType classType)
+	public PDOMCPPUnknownClassType(PDOM pdom, PDOMNode parent, ICPPUnknownClassType classType)
 			throws CoreException {
 		super(pdom, parent, classType.getNameCharArray());
 
@@ -105,23 +102,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_UNKNOWN_CLASS_TYPE;
 	}
-
-	public PDOMCPPBase getFirstBase() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRSTBASE);
-		return rec != 0 ? new PDOMCPPBase(pdom, rec) : null;
-	}
-
-	private void setFirstBase(PDOMCPPBase base) throws CoreException {
-		int rec = base != null ? base.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRSTBASE, rec);
-	}
-
-	public void addBase(PDOMCPPBase base) throws CoreException {
-		PDOMCPPBase firstBase = getFirstBase();
-		base.setNextBase(firstBase);
-		setFirstBase(base);
-	}
-
+	
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
@@ -137,21 +118,17 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return this;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#getUnknownScope()
-     */
-    public ICPPScope getUnknownScope() { fail(); return null; }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.index.IIndexScope#getScopeBinding()
-     */
+    public ICPPScope getUnknownScope() {
+    	if (unknownScope == null) {
+    		unknownScope= new PDOMCPPUnknownScope(this, getUnknownName());
+    	}
+    	return unknownScope;
+    }
+    
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-	 */
 	@Override
 	public boolean isGloballyQualified() throws DOMException {
 		try {
@@ -168,10 +145,6 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		addMember(member);
-	}
-
-	public boolean isFullyCached()  {
-		return true;
 	}
 
 	@Override
@@ -198,26 +171,6 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	@Override
 	public boolean mayHaveChildren() {
 		return true;
-	}
-
-	public void removeBase(PDOMName pdomName) throws CoreException {
-	}
-	
-	public void addDeclaration(IASTNode node) {
-	}
-
-	public void addDefinition(IASTNode node) {
-	}
-
-	public IASTNode[] getDeclarations() {
-		return null;
-	}
-
-	public IASTNode getDefinition() {
-		return null;
-	}
-
-	public void removeDeclaration(IASTNode node) {
 	}
 
 	/* (non-Javadoc)
@@ -294,57 +247,30 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
-     */
-    public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
-        IBinding result = this;
-		try {
-			IIndexBinding parentBinding = getParentBinding();
-			IType t = null;
-			if (parentBinding instanceof ICPPTemplateTypeParameter) {
-				t = CPPTemplates.instantiateType((ICPPTemplateTypeParameter) parentBinding, argMap);
-			} else if (parentBinding instanceof ICPPInternalUnknownClassType) {
-	        	IBinding binding = ((ICPPInternalUnknownClassType) parentBinding).resolveUnknown(argMap);
-	        	if (binding instanceof IType) {
-	                t = (IType) binding;
-	            }
-	        }
-	        if (t != null) {
-	            t = SemanticUtil.getUltimateType(t, false);
-		        if (t instanceof ICPPClassType) {
-		            IScope s = ((ICPPClassType) t).getCompositeScope();
-		            if (s != null && ASTInternal.isFullyCached(s)) {
-		            	IBinding[] bindings = s.find(getName());
-		            	if (bindings != null && bindings.length > 0) {
-		            		result = bindings[0];
-		            	}
-		            }
-		        } else if (t instanceof ICPPInternalUnknown) {
-		            result = resolvePartially((ICPPInternalUnknown) t, argMap);
-		        }
-	        }
-		} catch (CoreException e) {
-		}
-        return result;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
-	public IBinding resolvePartially(ICPPInternalUnknown parentBinding,	ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding,	ObjectMap argMap) {
 		try {
 			if (parentBinding == getParentBinding()) {
 				return this;
 			}
 		} catch (CoreException e) {
 		}
-		IASTName name = new CPPASTName(getNameCharArray());
-		return new CPPUnknownClass(parentBinding, name);
+		return new CPPUnknownClass(parentBinding, getUnknownName());
 	}
 
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
+	}
+
+	public IASTName getUnknownName() {
+		return new CPPASTName(getNameCharArray());
+	}
+	
+	public ICPPBinding getContainerBinding() {
+		try {
+			return (ICPPBinding) getParentBinding();
+		} catch (CoreException e) {
+			return null;
+		}
 	}
 }

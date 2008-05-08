@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *	   Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -51,8 +52,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -254,10 +255,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = new CompositeCPPField(this, (ICPPField) binding);
 			} else if (binding instanceof ICPPVariable) {
 				result = new CompositeCPPVariable(this, (ICPPVariable) binding);
-			} else if (binding instanceof ICPPInternalUnknownClassInstance) {
-				result = new CompositeCPPUnknownClassInstance(this, (ICPPInternalUnknownClassInstance) binding);
-			} else if (binding instanceof ICPPInternalUnknownClassType) {
-				result = new CompositeCPPUnknownClassType(this, (ICPPInternalUnknownClassType) binding);
+			} else if (binding instanceof ICPPUnknownClassInstance) {
+				result = new CompositeCPPUnknownClassInstance(this, (ICPPUnknownClassInstance) binding);
+			} else if (binding instanceof ICPPUnknownClassType) {
+				result = new CompositeCPPUnknownClassType(this, (ICPPUnknownClassType) binding);
 			} else if (binding instanceof ICPPClassType) {
 				ICPPClassType def = (ICPPClassType) findOneBinding(binding);
 				result = def == null ? null : new CompositeCPPClassType(this, def);

@@ -1,32 +1,38 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -40,8 +46,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
-		ICPPClassType, IPDOMMemberOwner, IIndexType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
+class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferredClassInstance, IPDOMMemberOwner, IIndexType {
 
 	private static final int MEMBERLIST = PDOMCPPInstance.RECORD_SIZE + 0;
 	
@@ -50,6 +55,8 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 4;
+
+	private ICPPScope unknownScope;
 	
 	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding instantiated)
 			throws CoreException {
@@ -93,7 +100,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 		ICPPClassTemplate classTemplate = (ICPPClassTemplate) getTemplateDefinition();
 		
 		//allow some fuzziness here.
-		if (type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType) {
+		if (type instanceof ICPPDeferredClassInstance) {
 			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((ICPPDeferredTemplateInstance)type).getSpecializedBinding();
 			return typeClass == classTemplate;
 		} else if (type instanceof ICPPClassTemplate && classTemplate == type) {
@@ -108,17 +115,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	public ICPPConstructor[] getConstructors() throws DOMException {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
-	
-	/**
-	 * @param argMap
-	 * @return This class instance re-instantiated with resolved template arguments.
-	 */
-	public IType instantiate(ObjectMap argMap) {
-		IType[] arguments = getArguments();
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
-		return (IType) ((ICPPInternalTemplateInstantiator) getTemplateDefinition()).instantiate(newArgs);
-	}
-	
+		
 	public void addMember(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
@@ -156,4 +153,34 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
 	@Override
 	public Object clone() {fail();return null;}
+	
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+		IType[] arguments = getArguments();
+		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
+		return ((ICPPInternalTemplateInstantiator) getTemplateDefinition()).instantiate(newArgs);
+	}
+
+	public ICPPScope getUnknownScope() throws DOMException {
+		if (unknownScope == null) {
+			final ICPPClassTemplate classTemplate= (ICPPClassTemplate) getTemplateDefinition();
+			if (classTemplate.getPartialSpecializations().length == 0) {
+				unknownScope= new PDOMCPPClassSpecializationScope(this);
+			} else {
+				unknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
+			}
+		}
+		return unknownScope;
+	}
+
+	public IASTName getUnknownName() {
+		return new CPPASTName(getNameCharArray());
+	}
+
+	public ICPPBinding getContainerBinding() {
+		try {
+			return (ICPPBinding) getParentBinding();
+		} catch (CoreException e) {
+			return null;
+		}
+	}
 }

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   Sergey Prigogin (Google) - initial API and implementation
+ *    Sergey Prigogin (Google) - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -18,17 +19,14 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -39,8 +37,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Sergey Prigogin
  */
-class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType
-		implements ICPPInternalUnknownClassInstance {
+class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICPPUnknownClassInstance {
 
 	private static final int ARGUMENTS = PDOMCPPUnknownClassType.RECORD_SIZE + 0;
 
@@ -50,8 +47,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType
 	// Cached values.
 	IType[] arguments;
 
-	public PDOMCPPUnknownClassInstance(PDOM pdom, PDOMNode parent,
-			ICPPInternalUnknownClassInstance classInstance)	throws CoreException {
+	public PDOMCPPUnknownClassInstance(PDOM pdom, PDOMNode parent, ICPPUnknownClassInstance classInstance)	throws CoreException {
 		super(pdom, parent, classInstance);
 		
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
@@ -106,27 +102,8 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType
 		return arguments;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
-     */
 	@Override
-	public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
-		IBinding result = super.resolveUnknown(argMap);
-		if (result instanceof ICPPSpecialization && result instanceof ICPPTemplateDefinition) {
-			IType[] newArgs = CPPTemplates.instantiateTypes(getArguments(), argMap);
-			IBinding instance = CPPTemplates.instantiateTemplate((ICPPTemplateDefinition) result, newArgs, null);
-			if (instance != null) {
-				result = instance;
-			}
-		}
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
-	@Override
-	public IBinding resolvePartially(ICPPInternalUnknown parentBinding,	ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding,	ObjectMap argMap) {
 		IType[] arguments = getArguments();
 		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
 		if (parentBinding instanceof PDOMNode && isChildOf((PDOMNode) parentBinding) &&

@@ -6,43 +6,38 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   Sergey Prigogin (Google) - initial API and implementation
+ * 	  Sergey Prigogin (Google) - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Sergey Prigogin
  */
-class CompositeCPPUnknownClassType extends CompositeCPPBinding
-implements ICPPInternalUnknownClassType, IIndexType {
-	public CompositeCPPUnknownClassType(ICompositesFactory cf, ICPPInternalUnknownClassType rbinding) {
+class CompositeCPPUnknownClassType extends CompositeCPPBinding implements ICPPUnknownClassType, IIndexType {
+	private ICPPScope unknownScope;
+
+	public CompositeCPPUnknownClassType(ICompositesFactory cf, ICPPUnknownClassType rbinding) {
 		super(cf, rbinding);
 	}
 
@@ -134,74 +129,21 @@ implements ICPPInternalUnknownClassType, IIndexType {
 	}
 
 	public ICPPScope getUnknownScope() {
-		// TODO Auto-generated method stub
-		return null;
+    	if (unknownScope == null) {
+    		unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
+    	}
+    	return unknownScope;
+    }
+
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+		return ((ICPPUnknownClassType) rbinding).resolvePartially(parentBinding, argMap);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
-	public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
-		IBinding result = this;
-		IType t = null;
-		try {
-			if(rbinding instanceof PDOMBinding) {
-				IIndexFragmentBinding tparentBinding = (IIndexFragmentBinding) ((PDOMBinding) rbinding).getParentBinding();
-				IIndexBinding parentBinding= cf.getCompositeBinding(tparentBinding);
-
-
-				if (parentBinding instanceof ICPPTemplateTypeParameter) {
-					t = CPPTemplates.instantiateType((ICPPTemplateTypeParameter) parentBinding, argMap);
-				} else if (parentBinding instanceof ICPPInternalUnknownClassType) {
-					IBinding binding = ((ICPPInternalUnknownClassType) parentBinding).resolveUnknown(argMap);
-					if (binding instanceof IType) {
-						t = (IType) binding;
-					}
-				}
-			}
-
-			if (t != null) {
-				t = SemanticUtil.getUltimateType(t, false);
-				if (t instanceof ICPPClassType) {
-					IScope s = ((ICPPClassType) t).getCompositeScope();
-					if (s != null && ASTInternal.isFullyCached(s)) {
-		            	IBinding[] bindings = s.find(getName());
-		            	if (bindings != null && bindings.length > 0) {
-		            		result = bindings[0];
-		            	}
-					}
-				} else if (t instanceof ICPPInternalUnknown) {
-					result = resolvePartially((ICPPInternalUnknown) t, argMap);
-				}
-			}
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-		}
-
-		return result;
+	public IASTName getUnknownName() {
+		return ((ICPPUnknownClassType) rbinding).getUnknownName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
-	public IBinding resolvePartially(ICPPInternalUnknown parentBinding,	ObjectMap argMap) {
-		return ((ICPPInternalUnknownClassType) rbinding).resolvePartially(parentBinding, argMap);
-	}
-
-	public void addDeclaration(IASTNode node) {
-	}
-
-	public void addDefinition(IASTNode node) {
-	}
-
-	public IASTNode[] getDeclarations() {
-		return null;
-	}
-
-	public IASTNode getDefinition() {
-		return null;
-	}
-
-	public void removeDeclaration(IASTNode node) {
+	public ICPPBinding getContainerBinding() {
+		return ((ICPPUnknownClassType) rbinding).getContainerBinding();
 	}
 }

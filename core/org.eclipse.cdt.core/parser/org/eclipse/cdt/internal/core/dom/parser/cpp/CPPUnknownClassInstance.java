@@ -11,12 +11,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
@@ -25,10 +22,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  *
  * @author Sergey Prigogin
  */
-public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPInternalUnknownClassInstance {
+public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnknownClassInstance {
 	private final IType[] arguments;
 
-	public CPPUnknownClassInstance(ICPPInternalUnknown scopeBinding, IASTName name, IType[] arguments) {
+	public CPPUnknownClassInstance(ICPPUnknownBinding scopeBinding, IASTName name, IType[] arguments) {
 		super(scopeBinding, name);
 		this.arguments = arguments;
 	}
@@ -38,23 +35,10 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPInte
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
-	@Override
-	public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
-		IBinding result = super.resolveUnknown(argMap);
-		if (result instanceof ICPPSpecialization && result instanceof ICPPTemplateDefinition) {
-			IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
-			result = CPPTemplates.instantiateTemplate((ICPPTemplateDefinition) result, newArgs, null);
-		}
-		return result;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
 	 */
 	@Override
-	public IBinding resolvePartially(ICPPInternalUnknown parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
 		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
 		return new CPPUnknownClassInstance(parentBinding, name, newArgs);
 	}

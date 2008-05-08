@@ -12,12 +12,14 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -29,10 +31,14 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  *
  * @author aniefer
  */
-public class CPPUnknownClass extends CPPUnknownBinding implements ICPPInternalUnknownClassType {
+public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownClassType {
 
-    public CPPUnknownClass(ICPPInternalUnknown scopeBinding, IASTName name) {
+    public CPPUnknownClass(ICPPUnknownBinding scopeBinding, IASTName name) {
         super(scopeBinding, name);
+    }
+
+    protected CPPUnknownClass(ICPPClassTemplate template) {
+        super(template);
     }
 
     public ICPPBase[] getBases() {
@@ -71,11 +77,11 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPInternalUn
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
-    public int getKey() {
+    public int getKey() throws DOMException{
         return 0;
     }
 
-    public IScope getCompositeScope() {
+    public final IScope getCompositeScope() throws DOMException {
         return getUnknownScope();
     }
 
@@ -87,8 +93,7 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPInternalUn
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
-	@Override
-	public IBinding resolvePartially(ICPPInternalUnknown parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
 		if (parentBinding == this.scopeBinding) {
 			return this;
 		}

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -17,12 +18,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPFunctionTemplate extends CompositeCPPFunction implements ICPPFunctionTemplate, ICPPInternalTemplateInstantiator {
+public class CompositeCPPFunctionTemplate extends CompositeCPPFunction 
+		implements ICPPFunctionTemplate, ICPPInternalTemplateInstantiator {
 
 	public CompositeCPPFunctionTemplate(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
@@ -46,5 +49,9 @@ public class CompositeCPPFunctionTemplate extends CompositeCPPFunction implement
 
 	public IBinding instantiate(IType[] arguments) {
 		return InternalTemplateInstantiatorUtil.instantiate(arguments, cf, rbinding);
+	}
+
+	public ICPPTemplateScope getTemplateScope() throws DOMException {
+		return (ICPPTemplateScope) getFunctionScope().getParent();
 	}
 }

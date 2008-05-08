@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -40,7 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * @author aniefer
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
-		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPInternalUnknown {
+		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPUnknownBinding {
 
 	private ICPPTemplateParameter[] templateParameters = null;
 	private ObjectMap instances = null;
@@ -71,13 +74,13 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 			ICPPASTTemplateParameter[] params = template.getTemplateParameters();
 			ICPPTemplateParameter p = null;
 			ICPPTemplateParameter[] result = null;
-			for (int i = 0; i < params.length; i++) {
-				if (params[i] instanceof ICPPASTSimpleTypeTemplateParameter) {
-					p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter)params[i]).getName().resolveBinding();
-				} else if (params[i] instanceof ICPPASTParameterDeclaration) {
-					p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration)params[i]).getDeclarator().getName().resolveBinding();
-				} else if (params[i] instanceof ICPPASTTemplatedTypeTemplateParameter) {
-					p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter)params[i]).getName().resolveBinding();
+			for (ICPPASTTemplateParameter param : params) {
+				if (param instanceof ICPPASTSimpleTypeTemplateParameter) {
+					p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter)param).getName().resolveBinding();
+				} else if (param instanceof ICPPASTParameterDeclaration) {
+					p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration)param).getDeclarator().getName().resolveBinding();
+				} else if (param instanceof ICPPASTTemplatedTypeTemplateParameter) {
+					p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter)param).getName().resolveBinding();
 				}
 				
 				if (p != null) {
@@ -224,12 +227,23 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		instances.put(types, spec);
 	}
 
-
-    public IBinding resolveUnknown(ObjectMap argMap) {
-        return null;
-    }
-
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
+	}
+	
+	public ICPPTemplateScope getTemplateScope() throws DOMException {
+		return null;
+	}
+
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+		return null;
+	}
+
+	public IASTName getUnknownName() {
+		return null;
+	}
+
+	public ICPPBinding getContainerBinding() {
+		return null;
 	}
 }

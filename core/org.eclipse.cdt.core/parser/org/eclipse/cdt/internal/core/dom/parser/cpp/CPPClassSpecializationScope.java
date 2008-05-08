@@ -47,7 +47,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		this.specialization = specialization;
 	}
 
-	private ICPPClassType getOriginalClass() {
+	protected ICPPClassType getOriginalClass() {
 		return (ICPPClassType) specialization.getSpecializedBinding();
 	}
 	
@@ -88,8 +88,8 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 			return null;
     	
 		IBinding[] specs = new IBinding[0];
-		for (int i = 0; i < bindings.length; i++) {
-			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(bindings[i]));
+		for (IBinding binding : bindings) {
+			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(binding));
 		}
 		specs = (IBinding[]) ArrayUtil.trim(IBinding.class, specs);
     	return CPPSemantics.resolveAmbiguities(name, specs);
@@ -111,8 +111,8 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 				classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
 		
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, getInstance(bindings[i]));
+			for (IBinding binding : bindings) {
+				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, getInstance(binding));
 			}
 		}
 
@@ -142,8 +142,8 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		if (bindings == null) return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		
     	ICPPConstructor[] specs = new ICPPConstructor[0];
-		for (int i = 0; i < bindings.length; i++) {
-			specs = (ICPPConstructor[]) ArrayUtil.append(ICPPConstructor.class, specs, getInstance(bindings[i]));
+		for (ICPPConstructor binding : bindings) {
+			specs = (ICPPConstructor[]) ArrayUtil.append(ICPPConstructor.class, specs, getInstance(binding));
 		}
 		return (ICPPConstructor[]) ArrayUtil.trim(ICPPConstructor.class, specs);
 	}
@@ -155,8 +155,8 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		if (bindings == null) return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		
 		ICPPMethod[] specs = new ICPPMethod[0];
-		for (int i = 0; i < bindings.length; i++) {
-			specs = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, specs, getInstance(bindings[i]));
+		for (ICPPMethod binding : bindings) {
+			specs = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, specs, getInstance(binding));
 		}
 		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, specs);
 	}

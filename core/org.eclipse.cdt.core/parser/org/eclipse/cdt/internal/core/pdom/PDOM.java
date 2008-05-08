@@ -172,6 +172,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  56 - using directives (bug 216527)
 	 *  57.0 - macro references (bug 156561)
 	 *  58.0 - non-type parameters (bug 207840)
+	 *  59.0 - changed modeling of deferred class instances (bug 229218)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

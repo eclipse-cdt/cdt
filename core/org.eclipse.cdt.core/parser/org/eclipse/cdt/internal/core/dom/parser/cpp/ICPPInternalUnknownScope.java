@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
  * Scope corresponding to an unknown binding.
- * @see ICPPInternalUnknown
  * 
  * @author Sergey Prigogin
  */
@@ -23,5 +23,5 @@ public interface ICPPInternalUnknownScope extends IASTInternalScope {
 	/**
 	 * @return Returns the binding corresponding to the scope.
 	 */
-	public abstract ICPPInternalUnknown getScopeBinding();
+	public abstract ICPPBinding getScopeBinding();
 }

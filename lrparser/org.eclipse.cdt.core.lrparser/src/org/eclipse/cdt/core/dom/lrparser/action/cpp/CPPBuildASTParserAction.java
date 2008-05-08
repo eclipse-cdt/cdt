@@ -96,6 +96,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoFunctionDeclaratorParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPTemplateTypeParameterParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -148,14 +149,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		return new CPPNoCastExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
-	
 	@Override
 	protected IParser getSizeofExpressionParser() {
 		return new CPPSizeofExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
+	protected IParser getTemplateTypeParameterParser() {
+		return new CPPTemplateTypeParameterParser(parser.getOrderedTerminalSymbols());
+	}
 	
+	protected IParser getNoFunctionDeclaratorParser() {
+		return new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
+	}
 
+	
+	
+	
 	/**
 	 * new_expression
      *     ::= dcolon_opt 'new' new_placement_opt new_type_id <openscope-ast> new_array_expressions_op new_initializer_opt
@@ -1264,13 +1273,14 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(!(declarator instanceof IASTFunctionDeclarator))
 			return;
 		
-		IParser secondaryParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
+		IParser secondaryParser = getNoFunctionDeclaratorParser(); 
 		IASTNode alternateDeclarator = runSecondaryParser(secondaryParser);
 	
 		if(alternateDeclarator == null || alternateDeclarator instanceof IASTProblemDeclaration)
 			return;
 		
 		astStack.pop();
+		// TODO create node factory method for this
 		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
 
 		setOffsetAndLength(ambiguityNode);
@@ -1751,55 +1761,23 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      * This method detects the incorrect parse, throws away the incorrect AST fragment,
      * and replaces it with the correct AST fragment.
      * 
-     * Yes its a hack, but it took way less time to just do this than to refactor the grammar.
-     * 
-     * TODO: there are more ambiguities with templates, maybe some double parsing is in order.
+     * Yes its a hack.
      */
     public void consumeTemplateParamterDeclaration() {
     	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 
-    	List<IToken> ruleTokens = parser.getRuleTokens();
+    	IParser typeParameterParser = getTemplateTypeParameterParser();
+    	IASTNode alternate = runSecondaryParser(typeParameterParser);
     	
-    	if(matchTokens(ruleTokens, tokenMap, TK_class)) {
-    		astStack.pop();
-    		astStack.push(null);
-    		consumeSimpleTypeTemplateParameter(false);
-    	}
-    	else if(matchTokens(ruleTokens, tokenMap, TK_class, TK_identifier)) {
-    		astStack.pop();
-    		astStack.push(createName(ruleTokens.get(1)));
-    		consumeSimpleTypeTemplateParameter(false);
-    	}
-    	else if(matchTokens(ruleTokens, tokenMap, TK_class, TK_Assign, TK_identifier)) {
-    		astStack.pop();
-    		IASTName typeName = createName(ruleTokens.get(3));
-    		fixTemplateParameterDeclarationWithInitializer(null, typeName);
-    	}
-    	else if(matchTokens(ruleTokens, tokenMap, TK_class, TK_identifier, TK_Assign, TK_identifier)) {
-    		astStack.pop();
-    		IASTName name = createName(ruleTokens.get(1));
-    		IASTName typeName = createName(ruleTokens.get(3));
-    		fixTemplateParameterDeclarationWithInitializer(name, typeName);
-    	}
+		if(alternate == null || alternate instanceof IASTProblemDeclaration)
+			return;
+		
+		astStack.pop(); // throw away the incorrect AST
+		astStack.push(alternate);  // replace it with the correct AST
     	
     	if(TRACE_AST_STACK) System.out.println(astStack);
     }
-    
-    
-    /**
-     * Manually create the AST for a template parameter with initializer.
-     */
-    private void fixTemplateParameterDeclarationWithInitializer(IASTName name, IASTName typeName) {
-    	astStack.push(name);
-		ICPPASTNamedTypeSpecifier namedTypeSpecifier = nodeFactory.newCPPNamedTypeSpecifier(typeName, false);
-		setOffsetAndLength(namedTypeSpecifier, offset(typeName), length(typeName));
-		IASTDeclarator declarator = nodeFactory.newDeclarator(nodeFactory.newName());
-		IASTTypeId typeId = nodeFactory.newTypeId(namedTypeSpecifier, declarator);
-		setOffsetAndLength(typeId, offset(typeName), length(typeName));
-		astStack.push(typeId);
-		consumeSimpleTypeTemplateParameter(true);
-    }
-    
+
     
     
     /**

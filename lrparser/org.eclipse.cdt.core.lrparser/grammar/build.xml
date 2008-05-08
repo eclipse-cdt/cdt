@@ -88,6 +88,10 @@
 		<antcall target="generate_cpp">
             <param name="grammar_name" value="CPPNoFunctionDeclaratorParser"/>
 		</antcall>
+		<!-- Generate parser for disambiguating template parameters -->
+		<antcall target="generate_cpp">
+            <param name="grammar_name" value="CPPTemplateTypeParameterParser"/>
+		</antcall>
 	</target>
 	
 	

@@ -461,17 +461,31 @@ public class CDebugUtils {
 	
 	protected static StringBuffer appendBreakpointType( ICBreakpoint breakpoint, StringBuffer label ) throws CoreException {
 		if (breakpoint instanceof ICBreakpointType) {
-			String typeString = null;
+			String typeString = "";
 			int type = ((ICBreakpointType) breakpoint).getType();
-			switch (type) {
+
+			// Need to filter out the TEMPORARY bit-flag to get the real type
+			// The REGULAR type is implicit so we don't report that.
+			switch (type & ~ICBreakpointType.TEMPORARY) {
 			case ICBreakpointType.HARDWARE:
-				typeString = DebugCoreMessages.getString("CDebugUtils.10");
+				typeString = DebugCoreMessages.getString("CDebugUtils.Hardware");
 				break;
-			case ICBreakpointType.TEMPORARY:
-				typeString = DebugCoreMessages.getString("CDebugUtils.11");
+			case ICBreakpointType.SOFTWARE:
+				typeString = DebugCoreMessages.getString("CDebugUtils.Software");
 				break;
 			}
-			if (typeString != null) {
+			
+			// Now factor in the TEMPORARY qualifier to form, .e.,g "Hardware/Temporary"
+			// Thing is, a temporary breakpoint should never show in the GUI, so this is
+			// here as a just-in-case.
+			if ((type & ICBreakpointType.TEMPORARY) != 0) {
+				if (typeString.length() > 0) {
+					typeString += "/";	
+				}
+				typeString += DebugCoreMessages.getString("CDebugUtils.Temporary");
+			}
+			
+			if (typeString.length() > 0) {
 				label.append(' ');
 				label.append(MessageFormat.format(
 						DebugCoreMessages.getString("CDebugUtils.8"), new String[] { typeString })); //$NON-NLS-1$

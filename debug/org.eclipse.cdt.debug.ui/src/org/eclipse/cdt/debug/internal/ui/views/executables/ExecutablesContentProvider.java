@@ -56,16 +56,17 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 					protected IStatus run(IProgressMonitor monitor) {
 						IStatus status = em.refreshExecutables(monitor);
 
-						// Are we in the UIThread? If so spin it until we are
-						// done
-						if (viewer.getControl().getDisplay().getThread() == Thread.currentThread()) {
-							viewer.refresh(inputElement);
-						} else {
-							viewer.getControl().getDisplay().asyncExec(new Runnable() {
-								public void run() {
-									viewer.refresh(inputElement);
-								}
-							});
+						// Are we in the UIThread? If so spin it until we are done
+						if (!viewer.getControl().isDisposed()) {
+							if (viewer.getControl().getDisplay().getThread() == Thread.currentThread()) {
+								viewer.refresh(inputElement);
+							} else {
+								viewer.getControl().getDisplay().asyncExec(new Runnable() {
+									public void run() {
+										viewer.refresh(inputElement);
+									}
+								});
+							}
 						}
 
 						monitor.done();

@@ -738,4 +738,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
     public void resetCurrentThreadLevel(){
     	fCurrentThreadId = -1; 
     }
+    
+    public void resetCurrentStackLevel(){
+    	fCurrentStackLevel = -1; 
+    }
+
 }

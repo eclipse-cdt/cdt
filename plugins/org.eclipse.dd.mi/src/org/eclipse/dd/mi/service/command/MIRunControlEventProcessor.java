@@ -108,9 +108,10 @@ public class MIRunControlEventProcessor
                 // Change of state.
                 String state = exec.getAsyncClass();
                 if ("stopped".equals(state)) { //$NON-NLS-1$
-                	// Re-set the thread level to -1 when stopped event is recvd. 
+                	// Re-set the thread and stack level to -1 when stopped event is recvd. 
                 	// This is to synchronize the state between GDB back-end and AbstractMIControl. 
                 	fCommandControl.resetCurrentThreadLevel();
+                	fCommandControl.resetCurrentStackLevel();
                 	
                     List<MIEvent<?>> events = new LinkedList<MIEvent<?>>();
                     MIResult[] results = exec.getMIResults();

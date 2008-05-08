@@ -31,6 +31,7 @@ public class MIBreakCondition extends MICommand<MIInfo>
 
 	public MIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
         super(ctx, "-break-condition " + Integer.toString(breakpoint) + " " + condition); //$NON-NLS-1$ //$NON-NLS-2$
-//		setParameters(new String[] { Integer.toString(breakpoint), condition });
+//        super(ctx, "-break-condition"); //$NON-NLS-1$
+//        setParameters(new String[] { Integer.toString(breakpoint), condition });
     }
 }

@@ -822,7 +822,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * @param condition
 	 * @param rm
 	 */
-	private void changeCondition(IBreakpointsTargetDMContext context,
+	private void changeCondition(final IBreakpointsTargetDMContext context,
 			final int reference, final String condition, final RequestMonitor rm)
 	{
 		// Pick the context breakpoints map
@@ -838,21 +838,42 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			new MIBreakCondition(context, reference, condition),
 		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 		        @Override
-		        protected void handleCompleted() {
+		        protected void handleSuccess() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
 		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
                    		rm.done();
                    		return;
 		        	}
-		        	if (isSuccess()) {
-				        breakpoint.setCondition(condition);
-		        	}
-		        	else {
-		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_CONDITION, null));
-				        breakpoint.setCondition(NULL_STRING);
-		        	}
+			        breakpoint.setCondition(condition);
 		            rm.done();
+		        }
+
+		        // In case of error (new condition could not be installed for whatever reason),
+		        // GDB "offers" different behaviors depending on its version: it can either keep
+		        // the original condition (the right thing to do) or keep the invalid condition.
+		        // Our sole option is to remove the condition in case of error and rely on the
+		        // upper layer to re-install the right condition.
+		        @Override
+		        protected void handleError() {
+		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+		        	if (breakpoint == null) {
+		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+                   		rm.done();
+                   		return;
+		        	}
+		        	// Remove invalid condition from the back-end breakpoint
+			        breakpoint.setCondition(NULL_STRING);
+		    		fConnection.queueCommand(
+		    				new MIBreakCondition(context, reference, NULL_STRING),
+		    			    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+		    			        @Override
+		    			        // The report the initial problem
+		    			        protected void handleCompleted() {
+		    			    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_CONDITION, null));
+		    			            rm.done();
+		    			        }
+		    				});
 		        }
 			});
 	}

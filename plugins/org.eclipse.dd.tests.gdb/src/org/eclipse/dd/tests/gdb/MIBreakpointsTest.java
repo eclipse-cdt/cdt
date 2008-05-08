@@ -55,6 +55,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -2692,6 +2693,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a write watchpoint, add a condition and go.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
+	@Ignore
 	@Test
 	public void breakpointHit_watchpointUpdateCondition() throws Throwable {
 
@@ -2757,7 +2759,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set an access watchpoint and watch it go out of scope.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
-	// @ T e s t removed due to lack of cooperation from GDB :-)
+	@Ignore
+	@Test
 	public void breakpointHit_WatchpointOutOfScope() throws Throwable {
 
 		// Run to the point where the variable is initialized

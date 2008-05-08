@@ -14,14 +14,13 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCPPEnumeration extends CompositeCPPBinding implements IEnumeration, IIndexType {
 	public CompositeCPPEnumeration(ICompositesFactory cf, IEnumeration rbinding) {
-		super(cf, (ICPPBinding) rbinding);
+		super(cf, rbinding);
 	}
 
 	public IEnumerator[] getEnumerators() throws DOMException {

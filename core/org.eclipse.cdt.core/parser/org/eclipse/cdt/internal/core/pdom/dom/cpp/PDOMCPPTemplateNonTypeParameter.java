@@ -65,7 +65,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 
 	@Override
 	public int getNodeType() {
-		return IIndexCPPBindingConstants.CPP_TEMPLATE_TYPE_PARAMETER;
+		return IIndexCPPBindingConstants.CPP_TEMPLATE_NON_TYPE_PARAMETER;
 	}
 	
 	@Override

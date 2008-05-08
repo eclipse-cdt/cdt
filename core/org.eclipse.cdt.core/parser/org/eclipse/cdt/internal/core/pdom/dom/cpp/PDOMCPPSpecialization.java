@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -54,10 +55,10 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 16;
 	
 	public PDOMCPPSpecialization(PDOM pdom, PDOMNode parent, ICPPSpecialization spec, PDOMNamedNode specialized)
-			throws CoreException {
+	throws CoreException {
 		super(pdom, parent, spec.getNameCharArray());
 		pdom.getDB().putInt(record + SPECIALIZED, specialized.getRecord());
-		
+
 		PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
 		PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
 		ObjectMap argMap = spec.getArgumentMap();
@@ -65,9 +66,22 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 			for (int i = 0; i < argMap.size(); i++) {
 				Object param = argMap.keyAt(i);
 				Object arg = argMap.getAt(i);
-				/* TODO: allow template non-type parameters once they have been
-				 * implemented in the PDOM
-				 */
+				
+				// TODO - non-type template arguments still needs attention
+				if (param instanceof ICPPTemplateNonTypeParameter && arg instanceof IType) {
+					try {
+						ICPPTemplateNonTypeParameter nontype= (ICPPTemplateNonTypeParameter) param;
+						PDOMNode paramNode= ((PDOMCPPLinkage)getLinkageImpl()).createBinding(this, nontype);
+						PDOMNode argNode= getLinkageImpl().addType(this, (IType) arg);
+						if (paramNode != null && argNode != null) {
+							paramList.addMember(paramNode);
+							argList.addMember(argNode);
+						}
+					} catch(DOMException de) {
+						CCorePlugin.log(de);
+					}
+				}
+				
 				if (param instanceof IType && arg instanceof IType) {
 					PDOMNode paramNode = getLinkageImpl().addType(this, (IType) param);
 					PDOMNode argNode = getLinkageImpl().addType(this, (IType) arg);
@@ -175,7 +189,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		return false;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * For debug purposes only
 	 */
 	@Override

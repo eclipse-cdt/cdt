@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -239,6 +240,14 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				} else {
 					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+			} else if(binding instanceof ICPPTemplateParameter) {
+				if (binding instanceof ICPPTemplateTypeParameter) {
+					result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);
+				} else if (binding instanceof ICPPTemplateNonTypeParameter) {
+					result = new CompositeCPPTemplateNonTypeParameter(this, (ICPPTemplateNonTypeParameter) binding);
+				} else {
+					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			} else if (binding instanceof ICPPParameter) {
 				result = new CompositeCPPParameter(this, (ICPPParameter) binding);
 			} else if (binding instanceof ICPPField) {
@@ -272,10 +281,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = new CompositeCPPEnumerator(this, (IEnumerator) binding);
 			} else if (binding instanceof ITypedef) {
 				result = new CompositeCPPTypedef(this, (ICPPBinding) binding);
-			} else if (binding instanceof ICPPTemplateTypeParameter) {
-				result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);
-			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
-				result = new CompositeCPPTemplateNonTypeParameter(this, (ICPPTemplateNonTypeParameter) binding);
 			} else if (binding instanceof IIndexMacroContainer) {
 				result= new CompositeMacroContainer(this, binding);
 			} else {

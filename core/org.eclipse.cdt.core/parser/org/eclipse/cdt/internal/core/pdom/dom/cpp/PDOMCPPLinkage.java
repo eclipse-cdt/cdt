@@ -311,7 +311,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return false;
 	}
 
-	private PDOMBinding createBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
+	PDOMBinding createBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
 
 		if (binding instanceof ICPPSpecialization) {

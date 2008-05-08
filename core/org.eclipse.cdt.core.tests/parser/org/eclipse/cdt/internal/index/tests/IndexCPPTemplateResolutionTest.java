@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
@@ -1187,6 +1188,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassType b1= getBindingFromASTName("A<y>", 1, ICPPClassType.class, ICPPTemplateDefinition.class);
     	ICPPTemplateInstance b2= getBindingFromASTName("A<y>", 4, ICPPTemplateInstance.class, ICPPClassType.class);
     	ObjectMap args= b2.getArgumentMap();
+    	assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
     	assertEquals(1, args.size());
     }
 }

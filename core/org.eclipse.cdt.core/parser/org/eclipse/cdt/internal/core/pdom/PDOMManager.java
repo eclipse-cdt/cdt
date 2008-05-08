@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Tim Kelly (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -29,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -37,9 +39,13 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.index.IndexerSetupParticipant;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -69,7 +75,9 @@ import org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
+import org.eclipse.cdt.internal.core.pdom.indexer.TranslationUnitCollector;
 import org.eclipse.cdt.internal.core.pdom.indexer.TriggerNotificationTask;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -82,7 +90,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
@@ -1378,5 +1388,75 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 */
 	public boolean isProjectRegistered(ICProject project) {
 		return getIndexer(project) != null;
+	}
+	
+	/**
+	 * @param cproject the project to check
+	 * @return whether the content in the project fragment of the specified project's index
+	 * is complete (contains all sources) and up to date.
+	 * @throws CoreException
+	 */
+	public boolean isProjectContentSynced(ICProject cproject) throws CoreException {
+		Set<ITranslationUnit> sources= new HashSet<ITranslationUnit>();
+		cproject.accept(new TranslationUnitCollector(sources, null, new NullProgressMonitor()));
+
+		try {
+			IIndex index= getIndex(cproject);
+			index.acquireReadLock();
+			try {
+				for(ITranslationUnit tu : sources) {
+					IResource resource= tu.getResource();
+					if(resource instanceof IFile) {
+						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile)resource);
+						if(!areSynchronized(index, resource, location)) {
+							return false;
+						}
+					}
+				}
+			} finally {
+				index.releaseReadLock();
+			}
+		} catch(InterruptedException ie) {
+			CCorePlugin.log(ie);
+		}
+
+		return true;
+	}
+	
+	/**
+	 * Recursively checks that the specified file, and its include are up-to-date.
+	 * @param index the index to check against
+	 * @param resource the resource to check from the workspace
+	 * @param location the location to check from the index
+	 * @return whether the specified file, and its includes are up-to-date.
+	 * @throws CoreException
+	 */
+	private static boolean areSynchronized(IIndex index, IResource resource, IIndexFileLocation location) throws CoreException {
+		IIndexFile[] file= index.getFiles(location);
+
+		// pre-includes may be listed twice (191989)
+		if(file.length < 1 || file.length > 2)
+			return false;
+
+		if(resource.getLocalTimeStamp() != file[0].getTimestamp())
+			return false;
+		
+		// if it is up-to-date, the includes have not changed and may
+		// be read from the index.
+		IIndexInclude[] includes= index.findIncludes(file[0]);
+		for(IIndexInclude inc : includes) {
+			IIndexFileLocation newLocation= inc.getIncludesLocation();
+			if(newLocation != null) {
+				String path= newLocation.getFullPath();
+				if(path != null) {
+					IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+					if(!areSynchronized(index, newResource, newLocation)) {
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 }

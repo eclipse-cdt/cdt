@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,11 @@ public class GeneratePDOMApplication implements IApplication {
 
 		GeneratePDOM generate = new GeneratePDOM(pprovider,	appArgs, targetLocation, indexerID);
 		output(Messages.GeneratePDOMApplication_GenerationStarts);
-		generate.run();
+		try {
+			generate.run();
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		}
 		output(Messages.GeneratePDOMApplication_GenerationEnds);
 		return null;
 	}

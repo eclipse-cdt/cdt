@@ -25,8 +25,9 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 
 /**
  * An ISafeRunnable which
@@ -36,7 +37,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * <li>Writes new properties to the PDOM
  * <ul>
  */
-public class GeneratePDOM implements ISafeRunnable {
+public class GeneratePDOM {
 	protected IExportProjectProvider pm;
 	protected String[] applicationArguments;
 	protected File targetLocation;
@@ -59,13 +60,21 @@ public class GeneratePDOM implements ISafeRunnable {
 		this.deleteOnExit= deleteOnExit;
 	}
 
-	public final void run() throws CoreException {
+	/**
+	 * Executes the PDOM generation 
+	 * @return {@link IStatus#OK} if the generated content is complete, {@link IStatus#ERROR} otherwise.
+	 * @throws CoreException if an internal or invalid configuration error occurs
+	 */
+	public final IStatus run() throws CoreException {
+		boolean isContentSynced= false;
+		
+		// create the project
 		pm.setApplicationArguments(applicationArguments);
 		final ICProject cproject = pm.createProject();
 		if(cproject==null) {
 			fail(MessageFormat.format(Messages.GeneratePDOM_ProjectProviderReturnedNullCProject,
 					new Object [] {pm.getClass().getName()}));
-			return; // cannot be reached, inform the compiler
+			return null; // cannot be reached, inform the compiler
 		}
 		
 		IIndexLocationConverter converter= pm.getLocationConverter(cproject);
@@ -89,21 +98,30 @@ public class GeneratePDOM implements ISafeRunnable {
 				Thread.sleep(200);
 			}
 		
-			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
-			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-			exportedPDOM.acquireWriteLock(0);
-			try {
-				Map<String,String> exportProperties= pm.getExportProperties();
-				if(exportProperties!=null) {
-					for(Map.Entry<String,String> entry : exportProperties.entrySet()) {
-						exportedPDOM.setProperty(entry.getKey(), entry.getValue());
+			// check status
+			isContentSynced= CCoreInternals.getPDOMManager().isProjectContentSynced(cproject);
+			
+			if(isContentSynced) {
+				// export a .pdom file
+				CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
+
+				// write properties to exported PDOM
+				WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+				exportedPDOM.acquireWriteLock(0);
+				try {
+					Map<String,String> exportProperties= pm.getExportProperties();
+					if(exportProperties!=null) {
+						for(Map.Entry<String,String> entry : exportProperties.entrySet()) {
+							exportedPDOM.setProperty(entry.getKey(), entry.getValue());
+						}
 					}
+					exportedPDOM.close();
 				}
-				exportedPDOM.close();
+				finally {
+					exportedPDOM.releaseWriteLock();
+				}
 			}
-			finally {
-				exportedPDOM.releaseWriteLock();
-			}
+			
 		} catch(InterruptedException ie) {
 			String msg= MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed, new Object[] {ie.getMessage()});
 			throw new CoreException(CCorePlugin.createStatus(msg, ie));
@@ -112,10 +130,10 @@ public class GeneratePDOM implements ISafeRunnable {
 				cproject.getProject().delete(true, new NullProgressMonitor());
 			}
 		}
-	}
-
-	public void handleException(Throwable exception) {
-		CCorePlugin.log(exception);
+		
+		return isContentSynced ?
+			  new Status(IStatus.OK, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Success)
+			: new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Incomplete);
 	}
 	
 	private void fail(String message) throws CoreException {

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-final class TranslationUnitCollector implements ICElementVisitor {
+final public class TranslationUnitCollector implements ICElementVisitor {
 	private final Collection<ITranslationUnit> fSources;
 	private final Collection<ITranslationUnit> fHeaders;
 	private final IProgressMonitor fProgressMonitor;

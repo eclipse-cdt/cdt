@@ -194,8 +194,8 @@ public class NewClassWizardUtil {
                     IResource resource = (IResource) adaptable.getAdapter(IResource.class);
                     if (resource != null && resource.getType() != IResource.ROOT) {
                         while (celem == null && resource.getType() != IResource.PROJECT) {
-                            resource = resource.getParent();
                             celem = (ICElement) resource.getAdapter(ICElement.class);
+                            resource = resource.getParent();
                         }
                         if (celem == null) {
                             celem = CoreModel.getDefault().create(resource); // c project

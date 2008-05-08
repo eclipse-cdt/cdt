@@ -142,7 +142,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 	protected boolean isPathEntryChange(ICElementDelta delta) {
 		int flags= delta.getFlags();
-		return (delta.getKind() == ICElementDelta.CHANGED && 
+		return (delta.getKind() == ICElementDelta.CHANGED &&
 				((flags & ICElementDelta.F_BINARY_PARSER_CHANGED) != 0 ||
 				(flags & ICElementDelta.F_ADDED_PATHENTRY_LIBRARY) != 0 ||
 				(flags & ICElementDelta.F_ADDED_PATHENTRY_SOURCE) != 0 ||
@@ -214,7 +214,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 
 		if (isPathEntryChange(delta)) {
-			 // throw the towel and do a full refresh of the affected C project. 
+			 // throw the towel and do a full refresh of the affected C project.
 			postRefresh(element.getCProject());
 			return;// bailout
 		}
@@ -277,7 +277,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		int flags= delta.getFlags();
 		// open/close state change of a project
 		if ((flags & IResourceDelta.OPEN) != 0) {
-			postRefresh(parent);
+			postProjectStateChanged(parent);
 			return true;
 		}
 
@@ -351,14 +351,14 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		public void refresh() {
 			if (element instanceof IWorkingCopy){
 				if (fViewer.testFindItem(element) != null){
-					fViewer.refresh(element);													
+					fViewer.refresh(element);
 				} else {
 					fViewer.refresh(((IWorkingCopy)element).getOriginalElement());
 				}
 			} else if (element instanceof IBinary) {
 				fViewer.refresh(element, true);
 			} else {
-				fViewer.refresh(element);						
+				fViewer.refresh(element);
 			}
 		}
 	    @Override

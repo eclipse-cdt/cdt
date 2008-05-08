@@ -531,7 +531,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fAnnotationPreferences = new MarkerAnnotationPreferences();
 		setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[] {
 			DsfDebugUIPlugin.getDefault().getPreferenceStore(), EditorsUI.getPreferenceStore() }));
-		fPCAddress = fFrameAddress = PC_RUNNING;
+		fPCAddress = fFrameAddress = PC_UNKNOWN;
 		fTargetFrame = -1;
 		fBufferZone = 32;
 		fPCAnnotation = new DisassemblyIPAnnotation(true, 0);

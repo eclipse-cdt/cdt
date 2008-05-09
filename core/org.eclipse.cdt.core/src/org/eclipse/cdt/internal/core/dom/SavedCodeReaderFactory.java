@@ -35,34 +35,30 @@ public class SavedCodeReaderFactory implements ICodeReaderFactory {
     
     private SavedCodeReaderFactory()
     {
-		int size=0;
-		Preferences pluginPreferences = CCorePlugin.getDefault().getPluginPreferences();
-		if (CCorePlugin.getDefault() == null || pluginPreferences == null)
-			size = CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
-		else
-			size = pluginPreferences.getInt(CodeReaderCache.CODE_READER_BUFFER);
-		
-		if (size > 0)
-			cache = new CodeReaderCache(size);
-		else if( size == 0 )
-		{
-			//necessary for cache to work headless
-			String [] properties = pluginPreferences.propertyNames();
-			boolean found = false;
-			for( int j = 0; j < properties.length; ++j )
-				if( properties[j].equals( CodeReaderCache.CODE_READER_BUFFER ) )
-				{
-					found = true;
-					break;
+		int size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
+		final CCorePlugin corePlugin = CCorePlugin.getDefault();
+		if (corePlugin != null) {
+			Preferences pluginPreferences = corePlugin.getPluginPreferences();
+			if (pluginPreferences != null) {
+				size = pluginPreferences.getInt(CodeReaderCache.CODE_READER_BUFFER);
+				if (size == 0) {
+					String [] properties = pluginPreferences.propertyNames();
+					boolean found = false;
+					for (int j = 0; j < properties.length; ++j) {
+						if (properties[j].equals( CodeReaderCache.CODE_READER_BUFFER)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
+					}
+				} else if (size < 0) {
+					size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
 				}
-					
-			if( !found && size == 0 )
-				cache = new CodeReaderCache(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);
-            else
-                cache = new CodeReaderCache(0);
+			}
 		}
-		else
-			cache = new CodeReaderCache(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);
+		cache = new CodeReaderCache(size);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()

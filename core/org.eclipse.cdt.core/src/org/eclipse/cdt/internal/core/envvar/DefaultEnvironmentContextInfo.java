@@ -53,13 +53,11 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 	 */
 	public IEnvironmentContextInfo getNext(){
 		DefaultEnvironmentContextInfo next = null;
-		if(fContextObject == null)
-			next = null;
-		else if(fContextObject instanceof ICConfigurationDescription)
+		if(fContextObject instanceof ICConfigurationDescription) {
 			next = new DefaultEnvironmentContextInfo(null);
-
-		if(next != null && next.getSuppliers() == null)
-			next = null;
+			if (next.getSuppliers() == null)
+				next = null;
+		}
 		return next;
 	}
 	

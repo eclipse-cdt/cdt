@@ -26,11 +26,11 @@ public class CharArraySet extends CharTable {
         @Override
 		public Object clone()               { return this; }
         @Override
-		public List toList()                { return Collections.EMPTY_LIST; }
+		public List<char[]> toList()                { return Collections.emptyList(); }
         @Override
 		public void put( char[] key )       { throw new UnsupportedOperationException(); }
         @Override
-		public void addAll( List list )     { throw new UnsupportedOperationException(); }
+		public void addAll( List<char[]> list )     { throw new UnsupportedOperationException(); }
         @Override
 		public void addAll( CharArraySet set ) { throw new UnsupportedOperationException(); }
     };
@@ -43,13 +43,13 @@ public class CharArraySet extends CharTable {
 		addIndex(key);
 	}
 	
-	public void addAll( List list ){
+	public void addAll( List<char[]> list ){
 	    if( list == null )
 	        return;
 	    
 	    int size = list.size();
 	    for( int i = 0; i < size; i++ ){
-	        addIndex( (char[]) list.get( i ) );
+	        addIndex( list.get( i ) );
 	    }
 	}
 	

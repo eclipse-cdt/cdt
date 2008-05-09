@@ -170,9 +170,12 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    }
 		}
 		// Parse
-		IASTTranslationUnit ast= parser.parse();
-		ast.setIsHeaderUnit(!isSource[0]);
-		return ast;
+		if (parser != null) {
+			IASTTranslationUnit ast= parser.parse();
+			ast.setIsHeaderUnit(!isSource[0]);
+			return ast;
+		}
+		return null;
     }
 
 	public IASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,

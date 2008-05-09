@@ -618,10 +618,13 @@ public final class CharOperation {
 		if (nameLength == 0)
 			return concatWith(array, separator);
 
-		int length = array == null ? 0 : array.length;
+		if (array == null)
+			return name;
+		
+		final int length= array.length;
 		if (length == 0)
 			return name;
-
+		
 		int size = nameLength;
 		int index = length;
 		while (--index >= 0)
@@ -682,7 +685,10 @@ public final class CharOperation {
 		if (nameLength == 0)
 			return concatWith(array, separator);
 
-		int length = array == null ? 0 : array.length;
+		if (array == null)
+			return name;
+		
+		final int length= array.length;
 		if (length == 0)
 			return name;
 
@@ -728,7 +734,10 @@ public final class CharOperation {
 	 * @return the concatenation of the given array parts using the given separator between each part
 	 */
 	public static final char[] concatWith(char[][] array, char separator) {
-		int length = array == null ? 0 : array.length;
+		if (array == null)
+			return CharOperation.NO_CHAR;
+			
+		int length= array.length;
 		if (length == 0)
 			return CharOperation.NO_CHAR;
 
@@ -2217,7 +2226,10 @@ public final class CharOperation {
 	 * whitespaces equals to ' '
 	 */
 	public static final char[][] splitAndTrimOn(char divider, char[] array) {
-		int length = array == null ? 0 : array.length;
+		if (array == null)
+			return NO_CHAR_CHAR;
+		
+		final int length= array.length;
 		if (length == 0)
 			return NO_CHAR_CHAR;
 
@@ -2289,7 +2301,10 @@ public final class CharOperation {
 	 * @return a new array which is the split of the given array using the given divider
 	 */
 	public static final char[][] splitOn(char divider, char[] array) {
-		int length = array == null ? 0 : array.length;
+		if (array == null)
+			return NO_CHAR_CHAR;
+		
+		final int length= array.length;
 		if (length == 0)
 			return NO_CHAR_CHAR;
 
@@ -2344,7 +2359,10 @@ public final class CharOperation {
 		char[] array,
 		int start,
 		int end) {
-		int length = array == null ? 0 : array.length;
+		if (array == null)
+			return NO_CHAR_CHAR;
+		
+		final int length= array.length;
 		if (length == 0 || start > end)
 			return NO_CHAR_CHAR;
 

@@ -49,8 +49,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	private ICConfigurationDescription fCfgDes;
 	private IProject fProject;
 	private COwner fOwner;
-	private final HashMap fDesMap = new HashMap();
-	private final HashMap fStorageDataElMap = new HashMap();
+	private final HashMap<String, ArrayList<ICExtensionReference>> fDesMap = new HashMap<String, ArrayList<ICExtensionReference>>();
+	private final HashMap<String, Element> fStorageDataElMap = new HashMap<String, Element>();
 	private boolean fApplyOnChange = true;
 	private boolean fIsDirty;
 	private CDescriptorEvent fOpEvent;
@@ -152,8 +152,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		//write is done for all configurations to avoid "data loss" on configuration change
 		ICProjectDescription des = fCfgDes.getProjectDescription();
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			ICConfigurationDescription cfg = cfgs[i];
+		for (ICConfigurationDescription cfg : cfgs) {
 			if(cfg != fCfgDes){
 				try {
 					cfg.create(extensionPoint, id);
@@ -193,9 +192,9 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	private CConfigBaseDescriptorExtensionReference create(ICConfigExtensionReference ref){
 		CConfigBaseDescriptorExtensionReference dr = new CConfigBaseDescriptorExtensionReference(ref);
 		synchronized (fDesMap) {
-			ArrayList list = (ArrayList)fDesMap.get(ref.getExtensionPoint());
+			ArrayList<ICExtensionReference> list = fDesMap.get(ref.getExtensionPoint());
 			if(list == null){
-				list = new ArrayList(1);
+				list = new ArrayList<ICExtensionReference>(1);
 				fDesMap.put(ref.getExtensionPoint(), list);
 			} else {
 				list.ensureCapacity(list.size() + 1);
@@ -207,7 +206,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 
 	public ICExtensionReference[] get(String extensionPoint) {
 		ICConfigExtensionReference[] rs = fCfgDes.get(extensionPoint);
-		ArrayList refs = new ArrayList();
+		ArrayList<ICConfigExtensionReference> refs = new ArrayList<ICConfigExtensionReference>();
 		refs.addAll(Arrays.asList(rs));
 		
 		ICConfigurationDescription[] cfgs = 
@@ -223,8 +222,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 			}
 		}
 		ICConfigExtensionReference cfgRefs[] = 
-			(ICConfigExtensionReference[])refs.toArray(
-					new ICConfigExtensionReference[refs.size()]);
+			refs.toArray(
+							new ICConfigExtensionReference[refs.size()]);
 
 		if(cfgRefs.length == 0){
 			return new ICExtensionReference[0];
@@ -232,7 +231,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		
 		ICExtensionReference[] extRefs = new ICExtensionReference[cfgRefs.length];
 		synchronized (fDesMap) {
-			ArrayList list = (ArrayList)fDesMap.get(extensionPoint);
+			ArrayList<ICExtensionReference> list = fDesMap.get(extensionPoint);
 			//		if(list == null){
 			//			list = new ArrayList(cfgRefs.length);
 			//			fDesMap.put(extensionPoint, list);
@@ -246,14 +245,15 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 
 			for(int i = cfgRefs.length - 1; i >= 0; i--){
 				ICConfigExtensionReference ref = cfgRefs[i];
-				int k = list != null ? list.size() - 1 : -1;
-
-				for(; k >= 0; k--){
-					CConfigBaseDescriptorExtensionReference r = (CConfigBaseDescriptorExtensionReference)list.get(k);
-					if(r.fCfgExtRef == ref){
-						extRefs[num--] = r;
-						list.remove(k);
-						break;
+				int k= -1;
+				if (list != null) {
+					for(k= list.size()-1; k >= 0; k--){
+						CConfigBaseDescriptorExtensionReference r = (CConfigBaseDescriptorExtensionReference)list.get(k);
+						if(r.fCfgExtRef == ref){
+							extRefs[num--] = r;
+							list.remove(k);
+							break;
+						}
 					}
 				}
 				if(k < 0){
@@ -262,7 +262,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 			}
 
 			if(list == null){
-				list = new ArrayList(cfgRefs.length);
+				list = new ArrayList<ICExtensionReference>(cfgRefs.length);
 				fDesMap.put(extensionPoint, list);
 			} else {
 				list.clear();
@@ -300,7 +300,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	public Element getProjectData(String id) throws CoreException {
 	    // avoid deadlock by using different lock here.                                  
 		synchronized(fStorageDataElMap /*CProjectDescriptionManager.getInstance()*/){
-			Element el = (Element)fStorageDataElMap.get(id);
+			Element el = fStorageDataElMap.get(id);
 			if(el == null || el.getParentNode() == null){
 				InternalXmlStorageElement storageEl = (InternalXmlStorageElement)fCfgDes.getStorage(id, false);
 				if(storageEl == null){
@@ -332,14 +332,13 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		//write is done for all configurations to avoid "data loss" on configuration change
 		ICProjectDescription des = fCfgDes.getProjectDescription();
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			ICConfigurationDescription cfg = cfgs[i];
+		for (ICConfigurationDescription cfg : cfgs) {
 			if(cfg != fCfgDes){
 				try {
 					ICConfigExtensionReference rs[] = cfg.get(ref.getExtensionPoint());
-					for(int k = 0; k < rs.length; k++){
-						if(ref.getID().equals(rs[i].getID())){
-							cfg.remove(rs[i]);
+					for (ICConfigExtensionReference element : rs) {
+						if(ref.getID().equals(element.getID())){
+							cfg.remove(element);
 							break;
 						}
 					}
@@ -359,8 +358,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		//write is done for all configurations to avoid "data loss" on configuration change
 		ICProjectDescription des = fCfgDes.getProjectDescription();
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			ICConfigurationDescription cfg = cfgs[i];
+		for (ICConfigurationDescription cfg : cfgs) {
 			if(cfg != fCfgDes){
 				try {
 					cfg.remove(extensionPoint);
@@ -383,8 +381,10 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
 	}
 	
-	public Map getStorageDataElMap(){
-		return (HashMap)fStorageDataElMap.clone(); 
+	public Map<String, Element> getStorageDataElMap(){
+		@SuppressWarnings("unchecked")
+		final HashMap<String, Element> clone = (HashMap<String, Element>)fStorageDataElMap.clone();
+		return clone; 
 	}
 	
 	public ICConfigurationDescription getConfigurationDescription() {

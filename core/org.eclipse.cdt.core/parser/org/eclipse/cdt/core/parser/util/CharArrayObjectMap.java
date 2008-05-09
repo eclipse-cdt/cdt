@@ -24,7 +24,7 @@ public class CharArrayObjectMap extends CharTable {
         @Override
 		public Object clone()                         { return this; }
         @Override
-		public List toList()                		  { return Collections.EMPTY_LIST; }
+		public List<char[]> toList()                		  { return Collections.emptyList(); }
         @Override
 		public Object put( char[] key, int start, int length, Object value ) 
         { throw new UnsupportedOperationException(); }
@@ -107,7 +107,7 @@ public class CharArrayObjectMap extends CharTable {
 	}
 
     @Override
-	protected int partition( Comparator c, int p, int r ){
+	protected int partition( Comparator<Object> c, int p, int r ){
         char[] x = keyTable[ p ];
         Object temp = null;
         int i = p;
@@ -138,7 +138,7 @@ public class CharArrayObjectMap extends CharTable {
 	    return values;
 	}
 
-    public Object [] valueArray(Class clazz){
+    public Object [] valueArray(Class<?> clazz){
 	    Object[] values= (Object[]) Array.newInstance(clazz, size());
 	    System.arraycopy( valueTable, 0, values, 0, values.length );
 	    return values;

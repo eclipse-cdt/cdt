@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Radoslav Gerganov (ProSyst) - [221211] [api][breaking][files] need batch operations to indicate which operations were successful
  * Martin Oberhuber (Wind River) - [221211] Throw SystemUnsupportedOperationException for WinCE setLastModified() and setReadOnly()
+ * Radoslav Gerganov (ProSyst) - [230850] [WinCE] Implement setLastModified and setReadOnly in WinCEFileService
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -32,7 +33,6 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
@@ -95,10 +95,11 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
 
   private WinCEHostFile makeHostFile(String parentPath, String fileName, RapiFindData findData) {
     boolean isDirectory = (findData.fileAttributes & Rapi.FILE_ATTRIBUTE_DIRECTORY) != 0;
+    boolean isWritable = (findData.fileAttributes & Rapi.FILE_ATTRIBUTE_READONLY) == 0;
     boolean isRoot = "\\".equals(parentPath) && "\\".equals(fileName); //$NON-NLS-1$ //$NON-NLS-2$
     long lastModified = (findData.lastWriteTime / 10000) - Rapi.TIME_DIFF;
     long size = findData.fileSize;
-    return new WinCEHostFile(parentPath, fileName, isDirectory, isRoot, lastModified, size);
+    return new WinCEHostFile(parentPath, fileName, isDirectory, isRoot, isWritable, lastModified, size);
   }
 
   private boolean isDirectory(IRapiSession session, String fullPath) {
@@ -273,17 +274,17 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       // ignore the exception and return dummy
     }
     // return dummy if the file doesn't exist
-    WinCEHostFile dummy = new WinCEHostFile(remoteParent, name, false, false, 0, 0);
+    WinCEHostFile dummy = new WinCEHostFile(remoteParent, name, false, false, false, 0, 0);
     dummy.setExists(false);
     return dummy;
   }
 
   public IHostFile[] getRoots(IProgressMonitor monitor) throws SystemMessageException {
-    return new WinCEHostFile[] { new WinCEHostFile("\\", "\\", true, true, 0, 0) }; //$NON-NLS-1$ //$NON-NLS-2$
+    return new WinCEHostFile[] { new WinCEHostFile("\\", "\\", true, true, true, 0, 0) }; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public IHostFile getUserHome() {
-    return new WinCEHostFile("\\", "My Documents", true, false, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
+    return new WinCEHostFile("\\", "My Documents", true, false, true, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public boolean isCaseSensitive() {
@@ -317,11 +318,42 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
   }
 
   public void setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException {
-	  throw new SystemUnsupportedOperationException(org.eclipse.rse.internal.subsystems.files.wince.Activator.PLUGIN_ID, "setLastModified"); //$NON-NLS-1$
+    IRapiSession session = sessionProvider.getSession();
+    String fullPath = concat(parent, name);
+    int handle = Rapi.INVALID_HANDLE_VALUE;
+    try {
+      handle = session.createFile(fullPath, Rapi.GENERIC_WRITE, 
+    		  Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
+      session.setFileLastWriteTime(handle, timestamp);
+    } catch (RapiException e) {
+      //FIXME error handling
+      throw new RemoteFileException(e.getMessage());
+    } finally {
+      if (handle != Rapi.INVALID_HANDLE_VALUE) {
+        try {
+          session.closeHandle(handle);
+        } catch (RapiException e) {
+          // ignore
+        }
+      }
+    }
   }
 
   public void setReadOnly(String parent, String name, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException {
-	  throw new SystemUnsupportedOperationException(org.eclipse.rse.internal.subsystems.files.wince.Activator.PLUGIN_ID, "setReadOnly"); //$NON-NLS-1$
+    IRapiSession session = sessionProvider.getSession();
+    String fullPath = concat(parent, name);
+    int attr = session.getFileAttributes(fullPath);
+    if (readOnly) {
+      attr = attr | Rapi.FILE_ATTRIBUTE_READONLY;
+    } else {
+      attr = attr & (~Rapi.FILE_ATTRIBUTE_READONLY);
+    }
+    try {
+      session.setFileAttributes(fullPath, attr);
+    } catch (RapiException e) {
+      //FIXME error handling
+      throw new RemoteFileException(e.getMessage());
+    }
   }
 
   public void upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary,

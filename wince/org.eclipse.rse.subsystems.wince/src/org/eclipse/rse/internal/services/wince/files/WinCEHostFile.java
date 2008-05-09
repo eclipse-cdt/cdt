@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Radoslav Gerganov - derived from SftpHostFile
+ * Radoslav Gerganov (ProSyst) - [230850] [WinCE] Implement setLastModified and setReadOnly in WinCEFileService
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -25,11 +26,13 @@ public class WinCEHostFile implements IHostFile {
   long lastModified = 0;
   long size = 0;
   
-  public WinCEHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size) {
+  public WinCEHostFile(String parentPath, String name, boolean isDirectory, 
+      boolean isRoot, boolean isWritable, long lastModified, long size) {
     this.parentPath = parentPath;
     this.name = name;
     this.isDirectory = isDirectory;
     this.isRoot = isRoot;
+    this.isWritable = isWritable;
     this.lastModified = lastModified;
     this.size = size;
   }

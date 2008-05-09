@@ -770,6 +770,7 @@ public class MIVariableManager implements ICommandControl {
 		
 		/**
 		 * This method builds a child expression based on its parent's expression.
+		 * It is a fallback solution for when GDB doesn't support the var-info-path-expression.
 		 * 
 		 * Currently, this does not support inherited class such as
 		 * class foo : bar {
@@ -778,6 +779,13 @@ public class MIVariableManager implements ICommandControl {
 		 * because we'll create foo.bar instead of (bar)foo.
 		 */
 		private String buildChildExpression(String parentExp, String childExp) {
+			// For pointers, the child expression is already contained in the parent,
+			// so we must simply prefix with *
+		    //  See Bug219179 for more information.
+			if (isPointer()) {
+				return "*("+parentExp+")"; //$NON-NLS-1$//$NON-NLS-2$
+			}
+
 		    return parentExp + "." + childExp; //$NON-NLS-1$
 		    // No need for a special case for arrays since we deal with arrays differently
 		    // and don't call this method for them

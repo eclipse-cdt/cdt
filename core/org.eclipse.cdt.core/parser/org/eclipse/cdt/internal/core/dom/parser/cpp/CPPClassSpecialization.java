@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
+ *    IBM - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -79,11 +80,11 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 		if( getDefinition() == null ){
 			ICPPBase[] result = null;
 			ICPPBase[] bindings = ((ICPPClassType)getSpecializedBinding()).getBases();
-			for (int i = 0; i < bindings.length; i++) {
-				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase)bindings[i]).clone();
-    		    IBinding base = bindings[i].getBaseClass();
+			for (ICPPBase binding : bindings) {
+				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase)binding).clone();
+    		    IBinding base = binding.getBaseClass();
     		    if (base instanceof IType) {
-    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
+    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, getScope());
     		    	specBase = SemanticUtil.getUltimateType(specBase, false);
     		    	if (specBase instanceof IBinding) {
     		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
@@ -103,7 +104,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 			bindings[i] = new CPPBaseClause(bases[i]);
 			IBinding base = bindings[i].getBaseClass();
 			if (base instanceof IType) {
-				IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
+				IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, null);
 				if (specBase instanceof ICPPClassType) {
 					((CPPBaseClause) bindings[i]).setBaseClass((ICPPClassType) specBase);
 				}
@@ -168,14 +169,13 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 		ICPPMethod [] result = null;
 
 		IASTDeclaration [] decls = getCompositeTypeSpecifier().getMembers();
-		for ( int i = 0; i < decls.length; i++ ) {
-			IASTDeclaration decl = decls[i];
+		for (IASTDeclaration decl : decls) {
 			while( decl instanceof ICPPASTTemplateDeclaration )
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 			if( decl instanceof IASTSimpleDeclaration ){
 				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-				for ( int j = 0; j < dtors.length; j++ ) {
-					binding = dtors[j].getName().resolveBinding();
+				for (IASTDeclarator dtor : dtors) {
+					binding = dtor.getName().resolveBinding();
 					if( binding instanceof ICPPMethod)
 						result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
 				}
@@ -191,9 +191,9 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 				binding = n.resolveBinding();
 				if( binding instanceof ICPPUsingDeclaration ){
 					IBinding [] bs = ((ICPPUsingDeclaration)binding).getDelegates();
-					for ( int j = 0; j < bs.length; j++ ) {
-						if( bs[j] instanceof ICPPMethod )
-							result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, bs[j] );
+					for (IBinding element : bs) {
+						if( element instanceof ICPPMethod )
+							result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, element );
 					}
 				} else if( binding instanceof ICPPMethod ) {
 					result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
@@ -217,15 +217,14 @@ public class CPPClassSpecialization extends CPPSpecialization implements
         	return ((CPPClassScope)scope).getConstructors( true );
         	
         IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();
-        for( int i = 0; i < members.length; i++ ){
-        	IASTDeclaration decl = members[i];
+        for (IASTDeclaration decl : members) {
         	if( decl instanceof ICPPASTTemplateDeclaration )
         		decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 			if( decl instanceof IASTSimpleDeclaration ){
 			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-			    for( int j = 0; j < dtors.length; j++ ){
-			        if( dtors[j] == null ) break;
-		            ASTInternal.addName(scope,  dtors[j].getName() );
+			    for (IASTDeclarator dtor : dtors) {
+			        if( dtor == null ) break;
+		            ASTInternal.addName(scope,  dtor.getName() );
 			    }
 			} else if( decl instanceof IASTFunctionDefinition ){
 			    IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();

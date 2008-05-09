@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -64,27 +63,18 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 
 	public ICPPScope getUnknownScope() throws DOMException {
 		if (unknownScope == null) {
-			final ICPPClassTemplate classTemplate= (ICPPClassTemplate) getTemplateDefinition();
-			if (classTemplate.getPartialSpecializations().length == 0) {
-				unknownScope= new CompositeCPPClassSpecializationScope(cf, rbinding);
-			}
-			else {
-				unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
-			}
+			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
 		}
 		return unknownScope;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUnknownBinding#resolvePartially(org.eclipse.cdt.core.dom.ast.cpp.ICPPUnknownClassBinding, org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
 		
 		IType [] newArgs = new IType[ arguments.length ];
 		int size = arguments.length;
 		for( int i = 0; i < size; i++ ){
-			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap );
+			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap, instantiationScope);
 		}
 		
 		return ((ICPPInternalTemplateInstantiator)getTemplateDefinition()).instantiate( newArgs );

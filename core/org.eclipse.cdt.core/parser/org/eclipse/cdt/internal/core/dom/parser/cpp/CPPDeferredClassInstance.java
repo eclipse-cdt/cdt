@@ -33,7 +33,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	
 	private IType[] fArguments;
 	private ObjectMap fArgmap;
-	private ICPPScope fUnknownScope;
+//	private ICPPScope fUnknownScope;
 
 	public CPPDeferredClassInstance(ICPPClassTemplate orig,	ObjectMap argMap, IType[] arguments) {
 		super(orig);
@@ -89,12 +89,12 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 
 	@Override
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
 		IType[] newArgs = new IType[arguments.length];
 		int size = arguments.length;
 		for (int i = 0; i < size; i++) {
-			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap);
+			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap, instantiationScope);
 		}
 
 		ICPPClassTemplate classTemplate = getClassTemplate();
@@ -107,20 +107,5 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 
 	public IBinding getSpecializedBinding() {
 		return getTemplateDefinition();
-	}
-
-	@Override
-	public ICPPScope getUnknownScope() throws DOMException {
-		if (fUnknownScope != null)
-			return fUnknownScope;
-		
-		final ICPPClassTemplate classTemplate = getClassTemplate();
-		if (classTemplate.getPartialSpecializations().length == 0) {
-			if (fArgmap == null) {
-				return fUnknownScope= (ICPPScope) classTemplate.getCompositeScope();
-			}
-			return fUnknownScope= new CPPClassSpecializationScope(this);
-		}
-		return super.getUnknownScope();
 	}
 }

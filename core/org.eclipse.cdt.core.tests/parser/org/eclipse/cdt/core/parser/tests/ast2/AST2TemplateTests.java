@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -60,6 +61,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -275,6 +279,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		tu.accept(col);
 		
 		ICPPTemplateParameter T0 = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ICPPClassTemplate A = (ICPPClassTemplate) col.getName(1).resolveBinding();
 		ICPPTemplateParameter T1 = (ICPPTemplateParameter) col.getName(3).resolveBinding();
 		ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(12).resolveBinding();
 		
@@ -287,11 +292,15 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		ITypedef TYPE = (ITypedef) col.getName(2).resolveBinding();
 		IBinding b0 = col.getName(8).resolveBinding();
-		assertInstance(b0, ICPPSpecialization.class);
-		assertSame(TYPE, ((ICPPSpecialization) b0).getSpecializedBinding());
 		IBinding b1 = col.getName(17).resolveBinding();
-		assertSame(TYPE, ((ICPPSpecialization) b1).getSpecializedBinding());
+		assertSame(b1, b0);
 		
+		// the instantiation of A<T> has to be deferred.
+		assertInstance(b0, ICPPUnknownBinding.class);
+		final ICPPBinding parent = ((ICPPInternalUnknownScope)b0.getScope()).getScopeBinding();
+		assertInstance(parent, ICPPDeferredClassInstance.class);
+		assertSame(((ICPPDeferredClassInstance) parent).getSpecializedBinding(), A);
+
 		assertInstances(col, T1, 6);
 	}
 	
@@ -1260,9 +1269,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPTemplateParameter U = (ICPPTemplateParameter) col.getName(7).resolveBinding();
 		assertSame(U, T);
 		ICPPClassType A3 = (ICPPClassType) col.getName(9).resolveBinding();
-		assertTrue(A3 instanceof ICPPTemplateInstance);
-		assertSame(((ICPPTemplateInstance) A3).getTemplateDefinition(), A);
-		assertSame(A2, A3);
+		assertSame(A, A3);
 		
 		
 		ICPPTemplateParameter U2 = (ICPPTemplateParameter) col.getName(13).resolveBinding();
@@ -1466,9 +1473,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPTemplateParameter XR = (ICPPTemplateParameter) col.getName(20).resolveBinding();
 		assertSame(X, XR);
 		ICPPClassType A3 = (ICPPClassType) col.getName(22).resolveBinding();
-		assertTrue(A3 instanceof ICPPTemplateInstance);
-		assertSame(((ICPPTemplateInstance)A3).getTemplateDefinition(), A);
-		assertNotSame(A2, A3);
+		assertSame(A3, A);
 		
 		ICPPMethod g2 = (ICPPMethod) col.getName(25).resolveBinding();
 		assertSame(g2, g);
@@ -1511,8 +1516,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame(C, T);
 		
 		ICPPClassType B2 = (ICPPClassType) col.getName(10).resolveBinding();
-		assertTrue(B2 instanceof ICPPTemplateInstance);
-		assertSame(((ICPPTemplateInstance)B2).getTemplateDefinition(), B);
+		assertSame(B2, B);
 		
 		ICPPTemplateParameter CR = (ICPPTemplateParameter) col.getName(12).resolveBinding();
 		assertSame(CR, T);
@@ -1624,8 +1628,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 		tu.accept(col);
 		
 		ICPPMethod init = (ICPPMethod) col.getName(4).resolveBinding();
-		ICPPSpecialization b0 = (ICPPSpecialization) col.getName(19).resolveBinding();
-		assertSame(init, b0.getSpecializedBinding());
+		// the instantiation of B<T> has to be deferred, therefore 'init' is an unknown binding.
+		assertInstance(col.getName(19).resolveBinding(), ICPPUnknownBinding.class);
 	}
 	
 	// template <class Tp, class Tr > class iter {                         

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin (Google)
+ *    IBM Corporation - initial API and implementation
+ *    Sergey Prigogin (Google)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -93,7 +95,7 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		if (parentBinding == this.scopeBinding) {
 			return this;
 		}

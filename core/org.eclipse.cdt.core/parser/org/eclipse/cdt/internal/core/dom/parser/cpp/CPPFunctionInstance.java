@@ -72,7 +72,7 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
 	 */
 	public IFunctionType getType() throws DOMException {
 		if( type == null ){
-			type = (IFunctionType) CPPTemplates.instantiateType( ((ICPPFunction)getTemplateDefinition()).getType(), getArgumentMap() );
+			type = (IFunctionType) CPPTemplates.instantiateType( ((ICPPFunction)getTemplateDefinition()).getType(), getArgumentMap(), getScope() );
 		}
 		return type;
 	}

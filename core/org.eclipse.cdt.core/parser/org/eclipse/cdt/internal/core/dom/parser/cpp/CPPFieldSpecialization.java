@@ -45,7 +45,7 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 	
 	public IType getType() throws DOMException {
 		if( type == null ){
-			type = CPPTemplates.instantiateType( getField().getType(), argumentMap );
+			type = CPPTemplates.instantiateType( getField().getType(), argumentMap, getScope());
 		}
 		return type;
 	}

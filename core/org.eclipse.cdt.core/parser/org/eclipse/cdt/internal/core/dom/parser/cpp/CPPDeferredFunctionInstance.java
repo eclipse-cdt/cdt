@@ -93,7 +93,7 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
 		if( functionType == null ){
             IFunctionType ft = ((ICPPFunction)getTemplateDefinition()).getType(); 
             IType returnType = ft.getReturnType();
-			returnType = CPPTemplates.instantiateType( returnType, getArgumentMap() );
+			returnType = CPPTemplates.instantiateType( returnType, getArgumentMap(), null);
 			functionType = CPPVisitor.createImplicitFunctionType( returnType, getParameters() );
         }
         

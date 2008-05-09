@@ -247,7 +247,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding,	ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding,	ObjectMap argMap, ICPPScope instantiationScope) {
 		try {
 			if (parentBinding == getParentBinding()) {
 				return this;

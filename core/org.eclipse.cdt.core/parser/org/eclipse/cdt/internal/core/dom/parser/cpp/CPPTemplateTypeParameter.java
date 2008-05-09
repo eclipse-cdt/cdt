@@ -67,7 +67,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
         return false;
     }
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
     	// Cannot do resolution here since the result is not necessarily a binding.
 		return null;
 	}

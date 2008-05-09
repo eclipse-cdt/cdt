@@ -144,7 +144,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		return null;
 	}
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) { fail(); return null;}
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) { fail(); return null;}
 	public IASTName getUnknownName() {
 		return null;
 	}

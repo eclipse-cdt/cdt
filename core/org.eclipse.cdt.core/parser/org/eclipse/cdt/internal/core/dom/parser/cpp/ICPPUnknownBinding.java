@@ -51,7 +51,8 @@ public interface ICPPUnknownBinding extends ICPPBinding {
 	 *        of the original parent binding, or <code>null</code> for deferred template 
 	 *        instantiations.
 	 * @param argMap template argument map.
+	 * @param instantiationScope the scope in which the current instantiation takes place, may be <code>null</code>.
 	 * @return a partially resolved, but still unknown, binding.
 	 */
-    public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap);
+    public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope);
 }

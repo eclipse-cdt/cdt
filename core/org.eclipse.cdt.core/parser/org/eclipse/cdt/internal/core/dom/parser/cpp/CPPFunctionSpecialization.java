@@ -75,7 +75,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if (type == null) {
 			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
 			type = function.getType();
-			type = (IFunctionType) CPPTemplates.instantiateType(type, argumentMap);
+			type = (IFunctionType) CPPTemplates.instantiateType(type, argumentMap, getScope());
 		}
 		
 		return type;

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -43,7 +44,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
      */
     public IType getType() throws DOMException {
         if (type == null) {
-            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap);
+            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
 	    }
 		return type;
     }

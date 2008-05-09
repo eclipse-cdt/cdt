@@ -135,8 +135,8 @@ class CompositeCPPUnknownClassType extends CompositeCPPBinding implements ICPPUn
     	return unknownScope;
     }
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
-		return ((ICPPUnknownClassType) rbinding).resolvePartially(parentBinding, argMap);
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
+		return ((ICPPUnknownClassType) rbinding).resolvePartially(parentBinding, argMap, instantiationScope);
 	}
 
 	public IASTName getUnknownName() {

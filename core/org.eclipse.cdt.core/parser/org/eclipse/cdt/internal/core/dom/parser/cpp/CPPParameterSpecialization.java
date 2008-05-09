@@ -42,7 +42,7 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	 */
 	public IType getType() throws DOMException {
 		if( type == null ){
-			type = CPPTemplates.instantiateType( getParameter().getType(), argumentMap );
+			type = CPPTemplates.instantiateType( getParameter().getType(), argumentMap, getScope());
 		}
 		return type;
 	}

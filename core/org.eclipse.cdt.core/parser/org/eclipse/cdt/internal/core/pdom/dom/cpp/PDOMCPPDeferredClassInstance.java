@@ -154,20 +154,15 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 	@Override
 	public Object clone() {fail();return null;}
 	
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
+		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
 		return ((ICPPInternalTemplateInstantiator) getTemplateDefinition()).instantiate(newArgs);
 	}
 
 	public ICPPScope getUnknownScope() throws DOMException {
 		if (unknownScope == null) {
-			final ICPPClassTemplate classTemplate= (ICPPClassTemplate) getTemplateDefinition();
-			if (classTemplate.getPartialSpecializations().length == 0) {
-				unknownScope= new PDOMCPPClassSpecializationScope(this);
-			} else {
-				unknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
-			}
+			unknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
 		}
 		return unknownScope;
 	}

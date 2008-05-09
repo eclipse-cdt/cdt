@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
@@ -34,12 +35,9 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 		return arguments;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
 	@Override
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
+		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
 		return new CPPUnknownClassInstance(parentBinding, name, newArgs);
 	}
 

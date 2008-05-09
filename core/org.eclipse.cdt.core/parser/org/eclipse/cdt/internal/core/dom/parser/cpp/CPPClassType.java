@@ -425,4 +425,12 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 		return null;
 	}
+	
+	/**
+	 * For debugging purposes, only.
+	 */
+	@Override
+	public String toString() {
+		return getName(); 
+	}
 }

@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -196,9 +195,9 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append(getName());
-		result.append(" <"); //$NON-NLS-1$
-		result.append(ASTTypeUtil.getTypeListString(getArguments()));
-		result.append("> "); //$NON-NLS-1$
+		result.append(' '); 
+		result.append(getArgumentMap().toString());
+		result.append(' '); 
 		try {
 			result.append(getConstantNameForValue(getLinkageImpl(), getNodeType()));
 		} catch (CoreException ce) {

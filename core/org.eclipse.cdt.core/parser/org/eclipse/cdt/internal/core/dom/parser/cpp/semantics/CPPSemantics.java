@@ -91,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -117,6 +118,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -296,7 +298,27 @@ public class CPPSemantics {
 		    }
 		    
 		}
+        
+        // in template declarations the template-ids get instantiated to deferred instances, revert that.
 		IASTName name = data.astName;
+		if (name instanceof ICPPASTTemplateId) {
+			if (CPPTemplates.getTemplateDeclaration(name) != null && binding instanceof ICPPDeferredTemplateInstance) {
+				ICPPDeferredTemplateInstance deferred= (ICPPDeferredTemplateInstance) binding;
+				boolean useOriginal= true;
+				final ObjectMap argMap = deferred.getArgumentMap();
+				if (argMap != null) {
+					for (int i = 0; useOriginal && i < argMap.size(); i++) {
+						if (!argMap.keyAt(i).equals(argMap.getAt(i))) {
+							useOriginal= false;
+							break;
+						}
+					}
+				}
+				if (useOriginal) {
+					binding= deferred.getSpecializedBinding();
+				}
+			}
+		}
 		if (name.getParent() instanceof ICPPASTTemplateId) {
 			if (binding instanceof ICPPTemplateInstance) {
 				IBinding b = binding;

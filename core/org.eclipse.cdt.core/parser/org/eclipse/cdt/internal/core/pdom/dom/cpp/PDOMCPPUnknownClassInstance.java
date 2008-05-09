@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
@@ -103,9 +104,9 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	}
 
 	@Override
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding,	ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap);
+		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
 		if (parentBinding instanceof PDOMNode && isChildOf((PDOMNode) parentBinding) &&
 				Arrays.equals(newArgs, arguments)) {
 			return this;

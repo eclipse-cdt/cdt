@@ -132,7 +132,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 		return null;
 	}
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap) {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		return null;
 	}
 }

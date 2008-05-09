@@ -255,13 +255,13 @@ public class DStoreStatusMonitor implements IDomainListener
 
 				
 	  // Prevent infinite looping by introducing a threshold for wait 
-      final int initialWaitThreshold = 50;
-      int WaitThreshold = initialWaitThreshold;	
+      int WaitThreshold = 50;	
       if ( wait > 0 )
         WaitThreshold = wait*10; // 1 second means 10 sleep(100ms)
       else if ( wait == -1 ) // force a diagnostic
 	  		 WaitThreshold = -1;
          
+      int initialWaitThreshold = WaitThreshold;
 	  int nudges = 0; // nudges used for waking up server with slow connections
 	      // nudge up to 12 times before giving up
 	 

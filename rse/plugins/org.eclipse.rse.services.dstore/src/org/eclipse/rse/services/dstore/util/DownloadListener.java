@@ -235,14 +235,15 @@ public class DownloadListener implements IDomainListener
 	public DataElement waitForUpdate(int wait) throws InterruptedException
 	{
 		// Prevent infinite looping by introducing a threshold for wait 
-		final int initialWaitTheshold = 50;
-		int WaitThreshold = initialWaitTheshold; 		
+		
+		int WaitThreshold = 50; 		
 		
 		if (wait > 0)
 			WaitThreshold = wait * 10; // 1 second means 10 sleep(100ms)
 		else if (wait == -1) // force a diagnostic
 			WaitThreshold = -1;
-						
+		
+		int initialWaitTheshold = WaitThreshold;
 		{
 			// Current thread is not UI thread
 			while (!_isDone && !_isCancelled && !_networkDown)

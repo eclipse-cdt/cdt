@@ -65,7 +65,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     implements ICommandControl
 {
     final static String PROP_INSTANCE_ID = MIPlugin.PLUGIN_ID + ".miControlInstanceId";    //$NON-NLS-1$
-    
+ 
     /*
 	 *  Thread control variables for the transmit and receive threads.
 	 */
@@ -79,7 +79,14 @@ public abstract class AbstractMIControl extends AbstractDsfService
     
     private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
     private final Map<Integer, CommandHandle>  fRxCommands = Collections.synchronizedMap(new HashMap<Integer, CommandHandle>());
-     
+
+    /**
+     * Handle that's inserted into the TX commands queue to signal 
+     * that the TX thread should shut down.
+     */
+    private final CommandHandle fTerminatorHandle = new CommandHandle(null, null);
+    
+
     /*
      *   Various listener control variables used to keep track of listeners who want to monitor
      *   what the control object is doing.
@@ -170,6 +177,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
             commandHandle.getRequestMonitor().setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
             commandHandle.getRequestMonitor().done();
         }
+        
+        // Queue a null value to tell the send thread to shut down.
+        fTxCommands.add(fTerminatorHandle);
     }
     
     /**
@@ -467,7 +477,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         break;  // Shutting down.
                     }
         
-                    if (commandHandle == null) {
+                    if (commandHandle == fTerminatorHandle) {
                         
                         break; // Null command is an indicator that we're shutting down. 
                     }

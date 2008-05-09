@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -56,5 +57,13 @@ public class LRCSpecFailingTest extends AST2CSpecFailingTest {
 	
 	protected BaseExtensibleLanguage getCPPLanguage() {
 		return ISOCPPLanguage.getDefault();
+	}
+	
+	@Override
+	public void test6_7_7s6() throws Exception { // this test actually passes, yay!
+		try {
+			super.test6_7_7s6();
+		} catch (AssertionFailedError e) {
+		}
 	}
 }

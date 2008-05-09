@@ -97,6 +97,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoFunctionDeclaratorPar
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPTemplateTypeParameterParser;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -1002,6 +1003,19 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTDeclaration declaration = (IASTDeclaration) astStack.pop();
+		
+		// Ugly hack alert!
+		// For some reason ambiguous declarators cause bugs when they are a part of a template declaration.
+		// But it shouldn't be ambiguous anyway, so just throw away the ambiguity node.
+		if(declaration instanceof IASTSimpleDeclaration) {
+			for(IASTDeclarator declarator : ((IASTSimpleDeclaration)declaration).getDeclarators()) {
+				if(declarator instanceof CPPASTAmbiguousDeclarator) {
+					IASTAmbiguityParent owner = (IASTAmbiguityParent) declaration;
+					CPPASTAmbiguousDeclarator ambiguity = (CPPASTAmbiguousDeclarator)declarator;
+					owner.replace(ambiguity, ambiguity.getNodes()[0]);
+				}
+			}
+		}
 		
 		ICPPASTTemplateDeclaration templateDeclaration = nodeFactory.newTemplateDeclaration(declaration);
 		

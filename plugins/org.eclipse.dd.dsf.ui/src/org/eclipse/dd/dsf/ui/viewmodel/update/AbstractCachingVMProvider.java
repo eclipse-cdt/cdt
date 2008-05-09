@@ -26,6 +26,7 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerCountingRequestMonitor;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMModelProxy;
@@ -294,18 +295,20 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 update.done();
             } else {
                 missUpdates.add( 
-                    new VMHasChildrenUpdate(update, new DataRequestMonitor<Boolean>(getExecutor(), null) {
-                        @Override
-                        protected void handleCompleted() {
-                            if(isSuccess()) {
-                                entry.fHasChildren = this.getData();
-                                update.setHasChilren(getData());
-                            } else {
-                                update.setStatus(getStatus());
+                    new VMHasChildrenUpdate(
+                        update, 
+                        new ViewerDataRequestMonitor<Boolean>(getExecutor(), update) {
+                            @Override
+                            protected void handleCompleted() {
+                                if(isSuccess()) {
+                                    entry.fHasChildren = this.getData();
+                                    update.setHasChilren(getData());
+                                } else {
+                                    update.setStatus(getStatus());
+                                }
+                                update.done();
                             }
-                            update.done();
-                        }
-                    }));
+                        }));
             }
         }
         
@@ -322,18 +325,20 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             update.setChildCount(entry.fChildrenCount.intValue());
             update.done();
         } else {
-            IChildrenCountUpdate updateProxy = new VMChildrenCountUpdate(update, new DataRequestMonitor<Integer>(getExecutor(), null) {
-                @Override
-                protected void handleCompleted() {
-                    if(isSuccess()) {
-                        entry.fChildrenCount = this.getData();
-                        update.setChildCount(getData());
-                    } else {
-                        update.setStatus(getStatus());
+            IChildrenCountUpdate updateProxy = new VMChildrenCountUpdate(
+                update, 
+                new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
+                    @Override
+                    protected void handleCompleted() {
+                        if(isSuccess()) {
+                            entry.fChildrenCount = this.getData();
+                            update.setChildCount(getData());
+                        } else {
+                            update.setStatus(getStatus());
+                        }
+                        update.done();
                     }
-                    update.done();
-                }
-            });
+                });
             super.updateNode(node, updateProxy);
         }
     }
@@ -350,8 +355,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             // retrieved that before.
             IChildrenUpdate updateProxy = new VMChildrenUpdate(
                 update, update.getOffset(), update.getLength(),
-                new DataRequestMonitor<List<Object>>(getExecutor(), null)
-                {
+                new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update){
                     @Override
                     protected void handleCompleted()
                     {
@@ -573,8 +577,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
      */
     @Override
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
-        assert getExecutor().isInExecutorThread();
-        
         // Iterate through the current active proxies to try to find a proxy with the same
         // element and re-use it if found.  At the same time purge proxies that are no longer
         IVMModelProxy proxy = null;
@@ -704,7 +706,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             rm.done();
         } else {
             service.getModelData(dmc, 
-                new DataRequestMonitor<IDMData>(executor, rm) {
+                new ViewerDataRequestMonitor<IDMData>(executor, update) {
                     @Override
                     protected void handleCompleted() {
                         if (isSuccess()) {

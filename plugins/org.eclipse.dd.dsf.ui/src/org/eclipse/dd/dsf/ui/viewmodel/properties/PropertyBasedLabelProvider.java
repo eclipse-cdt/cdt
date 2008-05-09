@@ -25,6 +25,7 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -191,7 +192,7 @@ public class PropertyBasedLabelProvider
             final ILabelUpdate labelUpdate = labelUpdates[i];
             propertiesUpdates[i] = new PropertiesUpdate(
                 propertyNames, labelUpdates[i],  
-                new DataRequestMonitor<Map<String, Object>>(ImmediateExecutor.getInstance(), null) {
+                new ViewerDataRequestMonitor<Map<String, Object>>(ImmediateExecutor.getInstance(), labelUpdates[i]) {
                     @Override
                     protected void handleCompleted() {
                         if (isSuccess()) {

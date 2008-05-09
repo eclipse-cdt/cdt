@@ -33,6 +33,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.ModelProxyInstalledEvent;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
@@ -74,7 +75,7 @@ public class ThreadVMNode extends AbstractDMVMNode
     	} 
 
     	runControl.getExecutionContexts(contDmc, 
-    			new DataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), null){
+    			new ViewerDataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), update){
     				@Override
     				public void handleCompleted() {
     					if (!isSuccess()) {
@@ -217,7 +218,7 @@ public class ThreadVMNode extends AbstractDMVMNode
 
             // Find the Reason for the State
             runControl.getExecutionData(dmc, 
-            		new DataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), null) { 
+            		new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) { 
             	@Override
 				public void handleCompleted(){
                     if (!isSuccess()) {
@@ -238,7 +239,7 @@ public class ThreadVMNode extends AbstractDMVMNode
                     // Retrieve the rest of the thread information
                     runControl.getThreadData(
                         dmc, 
-                        new DataRequestMonitor<GDBThreadData>(getSession().getExecutor(), null) { 
+                        new ViewerDataRequestMonitor<GDBThreadData>(getSession().getExecutor(), update) { 
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {

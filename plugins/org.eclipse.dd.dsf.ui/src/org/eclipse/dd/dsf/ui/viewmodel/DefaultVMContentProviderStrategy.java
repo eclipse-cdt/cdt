@@ -20,6 +20,8 @@ import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerCountingRequestMonitor;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
@@ -145,7 +147,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                 elementsUpdates[j][i] = new VMHasChildrenUpdate(
                     update,
                     hasChildrenMultiRequestMon.add(
-                        new DataRequestMonitor<Boolean>(getVMProvider().getExecutor(), null) {
+                        new ViewerDataRequestMonitor<Boolean>(getVMProvider().getExecutor(), update) {
                             @Override
                             protected void handleCompleted() {
                                 hasChildrenMultiRequestMon.requestMonitorDone(this);
@@ -176,7 +178,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     getChildrenCountsForNode(
                         update, 
                         node,
-                        new DataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), null) {
+                        new ViewerDataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), update) {
                             @Override
                             protected void handleCompleted() {
                                 if (isSuccess()) {
@@ -214,7 +216,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     getChildrenCountsForNode(
                         update,  
                         node,
-                        new DataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), null) {
+                        new ViewerDataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), update) {
                             @Override
                             protected void handleCompleted() {
                                 if (!isSuccess()) {
@@ -265,7 +267,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                 new VMChildrenCountUpdate(
                     update,  
                     childrenCountMultiReqMon.add(
-                        new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), null) {
+                        new ViewerDataRequestMonitor<Integer>(getVMProvider().getExecutor(), update) {
                             @Override
                             protected void handleSuccess() {
                                 counts[nodeIndex] = getData();
@@ -288,7 +290,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
     private void updateChildrenWithCounts(final IChildrenUpdate update, IVMNode node, Integer[] nodeElementCounts) {
         // Create the multi request monitor to mark update when querying all 
         // children nodes is finished.
-        CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), null) {
+        CountingRequestMonitor multiRm = new ViewerCountingRequestMonitor(getVMProvider().getExecutor(), update) {
             @Override
             protected void handleCompleted() {
                 update.done();

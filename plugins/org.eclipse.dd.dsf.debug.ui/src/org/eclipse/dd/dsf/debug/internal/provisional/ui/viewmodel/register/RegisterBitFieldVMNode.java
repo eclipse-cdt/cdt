@@ -43,6 +43,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -175,7 +176,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         
         regService.getAvailableFormats(
             dmc,
-            new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
+            new ViewerDataRequestMonitor<String[]>(getSession().getExecutor(), update) {
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
@@ -225,7 +226,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                     
                     getDMVMProvider().getModelData(
                         RegisterBitFieldVMNode.this, update, regService, valueDmc, 
-                        new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
+                        new ViewerDataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), update) {
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {
@@ -308,7 +309,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                 update, 
 				regService,
                 dmc, 
-                new DataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), null) { 
+                new ViewerDataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), update) { 
                     @Override
                     protected void handleCompleted() {
                         /*
@@ -456,7 +457,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         
         regService.getBitFields(
             regDmc,
-            new DataRequestMonitor<IBitFieldDMContext[]>(getSession().getExecutor(), null) {
+            new ViewerDataRequestMonitor<IBitFieldDMContext[]>(getSession().getExecutor(), update) {
                 @Override
                 protected void handleFailure() {
                     handleFailedUpdate(update);

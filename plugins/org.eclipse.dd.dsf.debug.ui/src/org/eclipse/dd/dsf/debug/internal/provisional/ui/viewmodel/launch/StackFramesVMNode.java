@@ -29,6 +29,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.ModelProxyInstalledEvent;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
@@ -85,7 +86,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         
         getServicesTracker().getService(IStack.class).getFrames(
             execDmc, 
-            new DataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), null) { 
+            new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
@@ -135,7 +136,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 
                     getServicesTracker().getService(IStack.class).getTopFrame(
                         execDmc, 
-                        new DataRequestMonitor<IFrameDMContext>(getExecutor(), null) { 
+                        new ViewerDataRequestMonitor<IFrameDMContext>(getExecutor(), update) { 
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {
@@ -198,7 +199,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 this, update, 
                 getServicesTracker().getService(IStack.class, null),
                 dmc, 
-                new DataRequestMonitor<IFrameDMData>(getSession().getExecutor(), null) { 
+                new ViewerDataRequestMonitor<IFrameDMData>(getSession().getExecutor(), update) { 
                     @Override
                     protected void handleCompleted() {
                         /*
@@ -309,7 +310,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             getElementsTopStackFrameOnly(
                 new VMChildrenUpdate(
                     parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                    new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
+                    new DataRequestMonitor<List<Object>>(getExecutor(), rm) { 
                         @Override
                         public void handleCompleted() {
                             if (isSuccess() && getData().size() != 0) {
@@ -401,7 +402,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             getElementsTopStackFrameOnly(
                 new VMChildrenUpdate(
                     parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                    new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
+                    new DataRequestMonitor<List<Object>>(getExecutor(), rm) { 
                         @Override
                         public void handleCompleted() {
                             if (isSuccess() && getData().size() != 0) {
@@ -451,7 +452,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         getElementsTopStackFrameOnly(
             new VMChildrenUpdate(
                 parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
+                new DataRequestMonitor<List<Object>>(getExecutor(), rm) { 
                     @Override
                     public void handleCompleted() {
                         if (isSuccess() && getData().size() != 0) {

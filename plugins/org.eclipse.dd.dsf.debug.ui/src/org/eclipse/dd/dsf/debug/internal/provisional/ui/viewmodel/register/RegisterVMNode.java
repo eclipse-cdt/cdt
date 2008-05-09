@@ -38,6 +38,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -178,7 +179,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             
         regService.getAvailableFormats(
             dmc,
-            new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
+            new ViewerDataRequestMonitor<String[]>(getSession().getExecutor(), update) {
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
@@ -228,7 +229,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     
                     getDMVMProvider().getModelData(
                         RegisterVMNode.this, update, regService, valueDmc,
-	                    new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
+	                    new ViewerDataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), update) {
 	                        @Override
 	                        public void handleCompleted() {
 	                            if (!isSuccess()) {
@@ -307,7 +308,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                 update, 
                 regService,
         		dmc,             
-        		new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), null) { 
+        		new ViewerDataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), update) { 
                 @Override
                 protected void handleCompleted() {
                     /*
@@ -448,7 +449,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         
         regService.getRegisters(
             createCompositeDMVMContext(update),
-            new DataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), null) { 
+            new ViewerDataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), update) { 
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {

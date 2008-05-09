@@ -433,7 +433,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 node, 
                 new VMChildrenUpdate(
                     parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), null) {
+                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), requestMonitor) {
                         @Override
                         protected void handleCompleted() {
                             if (fDisposed) return;
@@ -497,7 +497,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
         getChildNodesElementOffsets(
             node, delta, calculateOffsets, 
-            new DataRequestMonitor<Map<IVMNode, Integer>>(getVMProvider().getExecutor(), null) {
+            new DataRequestMonitor<Map<IVMNode, Integer>>(getVMProvider().getExecutor(), requestMonitor) {
                 @Override
                 protected void handleCompleted() {
                     final CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), requestMonitor);
@@ -574,7 +574,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                     new VMChildrenCountUpdate(
                         delta, getVMProvider().getPresentationContext(),
                         childrenCountMultiRequestMon.add(
-                            new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), null) {
+                            new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), rm) {
                                 @Override
                                 protected void handleCompleted() {
                                     counts[nodeIndex] = getData();

@@ -13,7 +13,6 @@ package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules;
 
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -26,6 +25,7 @@ import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMData;
 import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -66,7 +66,7 @@ public class ModulesVMNode extends AbstractDMVMNode
         if (symDmc != null) {
             getServicesTracker().getService(IModules.class).getModules(
                 symDmc,
-                new DataRequestMonitor<IModuleDMContext[]>(getSession().getExecutor(), null) { 
+                new ViewerDataRequestMonitor<IModuleDMContext[]>(getSession().getExecutor(), update) { 
                     @Override
                     public void handleCompleted() {
                         if (!isSuccess()) {
@@ -119,7 +119,7 @@ public class ModulesVMNode extends AbstractDMVMNode
       
             getServicesTracker().getService(IModules.class, null).getModuleData(
                 dmc, 
-                new DataRequestMonitor<IModuleDMData>(getSession().getExecutor(), null) { 
+                new ViewerDataRequestMonitor<IModuleDMData>(getSession().getExecutor(), update) { 
                     @Override
                     protected void handleCompleted() {
                         /*

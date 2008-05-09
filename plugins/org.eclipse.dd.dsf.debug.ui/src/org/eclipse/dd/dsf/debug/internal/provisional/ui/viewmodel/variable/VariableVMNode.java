@@ -43,6 +43,7 @@ import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IVariableDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -220,7 +221,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 this, update, 
                 getServicesTracker().getService(IExpressions.class, null),
 				dmc, 
-                new DataRequestMonitor<IExpressionDMData>(getSession().getExecutor(), null) { 
+                new ViewerDataRequestMonitor<IExpressionDMData>(getSession().getExecutor(), update) { 
                     @Override
                     protected void handleCompleted() {
                         // Check that the request was evaluated and data is still valid.  The request could
@@ -332,7 +333,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         
         expressionService.getAvailableFormats(
             dmc,
-            new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
+            new ViewerDataRequestMonitor<String[]>(getSession().getExecutor(), update) {
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
@@ -384,7 +385,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         VariableVMNode.this, update,
                         expressionService,
                         valueDmc, 
-                        new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
+                        new ViewerDataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), update) {
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {
@@ -580,7 +581,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
             // the sub-expressions of the expression represented by the current expression node.
             
             final DataRequestMonitor<IExpressionDMContext[]> rm =
-                new DataRequestMonitor<IExpressionDMContext[]>(dsfExecutor, null) {
+                new ViewerDataRequestMonitor<IExpressionDMContext[]>(dsfExecutor, update) {
                     @Override
                     public void handleCompleted() {
                         if (!isSuccess()) {
@@ -619,7 +620,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         // variables in the stack frame represented by frameDmc.
          
         final DataRequestMonitor<IVariableDMContext[]> rm =
-            new DataRequestMonitor<IVariableDMContext[]>(dsfExecutor, null) {
+            new ViewerDataRequestMonitor<IVariableDMContext[]>(dsfExecutor, update) {
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
@@ -690,7 +691,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     
                     for (IVariableDMContext localDMC : localsDMCs) {
                         DataRequestMonitor<IVariableDMData> rm =
-                            new DataRequestMonitor<IVariableDMData>(dsfExecutor, null) {
+                            new ViewerDataRequestMonitor<IVariableDMData>(dsfExecutor, update) {
                                 @Override
                                 public void handleCompleted() {
                                     localsDMData.add(getData());

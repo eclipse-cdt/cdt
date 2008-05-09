@@ -15,7 +15,6 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -26,8 +25,8 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
@@ -199,7 +198,7 @@ public class PDAProgramVMNode extends AbstractDMVMNode
         // Retrieve the last state change reason 
         runControl.getExecutionData(
             programCtx, 
-            new DataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), null) 
+            new ViewerDataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), update) 
             { 
                 @Override
                 public void handleCompleted(){

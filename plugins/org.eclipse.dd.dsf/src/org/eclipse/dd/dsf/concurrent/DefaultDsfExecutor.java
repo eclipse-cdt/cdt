@@ -167,6 +167,8 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
          */
         TracingWrapper(int offset) {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            // guard against the offset being greater than the stack trace
+            offset = Math.min(offset, stackTrace.length);
             fSubmittedAt = new StackTraceWrapper(new StackTraceElement[stackTrace.length - offset]); 
             System.arraycopy(stackTrace, offset - 1, fSubmittedAt.fStackTraceElements, 0, fSubmittedAt.fStackTraceElements.length);
             if (isInExecutorThread() &&  fCurrentlyExecuting != null) {

@@ -35,7 +35,7 @@
       <import plugin="org.eclipse.ui.cheatsheets" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.intro" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui.intro.universal"/>
-      <import feature="org.eclipse.cdt.platform" version="5.0.0.qualifier"/>
+      <import feature="org.eclipse.cdt.platform" version="5.0.0"/>
    </requires>
 
 </feature>

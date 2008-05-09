@@ -57,6 +57,12 @@
       <import plugin="org.eclipse.ltk.ui.refactoring" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.navigator.resources" version="3.3.100" match="greaterOrEqual"/>
       <import plugin="com.ibm.icu"/>
+      <import plugin="org.eclipse.ui.intro.universal"/>
+      <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.debug.core" version="5.0.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.ui" version="5.0.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.make.core" version="5.0.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core" version="5.0.0" match="compatible"/>
    </requires>
 
    <plugin

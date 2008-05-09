@@ -39,6 +39,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static final String PREF_BUILDCONSOLE_INFO_COLOR = "buildConsoleInfoStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_OUTPUT_COLOR = "buildConsoleOutputStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_ERROR_COLOR = "buildConsoleErrorStreamColor"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_BACKGROUND_COLOR = "buildConsoleBackgroundColor"; //$NON-NLS-1$
 
 	public BuildConsolePreferencePage() {
 		super(GRID);
@@ -79,6 +80,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 				CUIPlugin.getResourceString("ConsolePreferencePage.infoColor.label"), parent)); //$NON-NLS-1$
 		addField(createColorFieldEditor(PREF_BUILDCONSOLE_ERROR_COLOR,
 				CUIPlugin.getResourceString("ConsolePreferencePage.errorColor.label"), parent)); //$NON-NLS-1$
+		addField(createColorFieldEditor(PREF_BUILDCONSOLE_BACKGROUND_COLOR,
+				CUIPlugin.getResourceString("ConsolePreferencePage.backgroundColor.label"), parent)); //$NON-NLS-1$
 	}
 
 	private Label createLabel(Composite parent, String text) {
@@ -131,6 +134,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_OUTPUT_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_INFO_COLOR, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
+		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_BACKGROUND_COLOR, new RGB(255, 255, 255));
 	}
 
 }

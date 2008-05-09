@@ -53,7 +53,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	ListenerList listeners = new ListenerList();
 	BuildConsole fConsole;
 	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<IProject, BuildConsolePartitioner>();
-	Color infoColor, outputColor, errorColor;
+	Color infoColor, outputColor, errorColor, backgroundColor;
 	BuildConsoleStream infoStream, outputStream, errorStream;
 	String fName, fContextMenuId;
 
@@ -158,6 +158,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			infoColor.dispose();
 			outputColor.dispose();
 			errorColor.dispose();
+			backgroundColor.dispose();
 		}
 		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
 		CUIPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -202,6 +203,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				errorStream.setConsole(fConsole);
 				errorColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
 				errorStream.setColor(errorColor);
+				backgroundColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
+				fConsole.setBackground(backgroundColor);
 			}
 		});
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
@@ -231,6 +234,11 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			errorStream.setColor(newColor);
 			errorColor.dispose();
 			errorColor = newColor;
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR)) {
+			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
+			fConsole.setBackground(newColor);
+			backgroundColor.dispose();
+			backgroundColor = newColor;
 		}
 	}
 

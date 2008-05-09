@@ -208,6 +208,8 @@ public class BuildConsolePage extends Page
 		getConsole().addPropertyChangeListener(this);
 
 		fViewer.addTextListener(this);
+		fViewer.getTextWidget().setBackground(getConsole().getBackground());
+
 		setInitialSelection();
 	}
 
@@ -251,6 +253,8 @@ public class BuildConsolePage extends Page
 			setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
 			setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
+		} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
+			fViewer.getTextWidget().setBackground(fConsole.getBackground());
 		}
 	}
 

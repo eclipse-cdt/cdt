@@ -15,7 +15,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.AbstractConsole;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -29,6 +31,7 @@ public class BuildConsole extends AbstractConsole {
 	private IBuildConsoleManager fConsoleManager;
 	private String fConsoleName;
 	private String fConsoleId;
+    private Color fBackground;
 
 	public BuildConsole(IBuildConsoleManager manager, String name, String id) {
 		super(name, CPluginImages.DESC_BUILD_CONSOLE);
@@ -51,5 +54,22 @@ public class BuildConsole extends AbstractConsole {
 
 	public IBuildConsoleManager getConsoleManager() {
 	    return fConsoleManager;
+	}
+
+	public void setBackground(Color background) {
+		if (fBackground == null) {
+			if (background == null) {
+				return;
+			}
+		} else if (fBackground.equals(background)){
+			return;
+		}
+		Color old = fBackground;
+		fBackground = background;
+		firePropertyChange(this, IConsoleConstants.P_BACKGROUND_COLOR, old, fBackground);
+	}
+
+	public Color getBackground() {
+		return fBackground;
 	}
 }

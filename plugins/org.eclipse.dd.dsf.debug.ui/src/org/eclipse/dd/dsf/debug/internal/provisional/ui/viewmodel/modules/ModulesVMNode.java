@@ -17,6 +17,7 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IModules;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -28,6 +29,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -37,6 +39,16 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 public class ModulesVMNode extends AbstractDMVMNode
     implements IElementLabelProvider
 {
+    /**
+     * Marker type for the modules VM context.  It allows action enablement 
+     * expressions to check for module context type.
+     */
+    public class ModuleVMContext extends DMVMContext {
+        protected ModuleVMContext(IDMContext dmc) {
+            super(dmc);
+        }
+    }
+    
     public ModulesVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IModuleDMContext.class);
     }
@@ -70,6 +82,10 @@ public class ModulesVMNode extends AbstractDMVMNode
         
     }
     
+    @Override
+    protected IDMVMContext createVMContext(IDMContext dmc) {
+        return new ModuleVMContext(dmc);
+    }
     
     public void update(final ILabelUpdate[] updates) {
         try {

@@ -337,6 +337,13 @@
         <detailFactories
               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.detail.ModuleDetailPaneFactory"
               id="org.eclipse.dd.dsf.debug.ui.viewmodel.moduleDetailPaneFactory">
+			<enablement>
+		        <with variable="selection">
+	        		<iterate>
+					    <instanceof value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMNode$ModuleVMContext"/>
+	        		</iterate>
+	      		</with>
+	      	</enablement>      
         </detailFactories>
     </extension>
 

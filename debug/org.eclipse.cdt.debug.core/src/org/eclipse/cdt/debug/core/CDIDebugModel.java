@@ -129,6 +129,7 @@ public class CDIDebugModel {
 	 * @throws DebugException
 	 * @deprecated
 	 */
+	@Deprecated
 	public static IDebugTarget newDebugTarget( final ILaunch launch, final IProject project, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IBinaryObject file, final boolean allowTerminate, final boolean allowDisconnect, final boolean stopInMain, final boolean resumeTarget ) throws DebugException {
 		final IDebugTarget[] target = new IDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
@@ -179,8 +180,39 @@ public class CDIDebugModel {
 	 *            the handle to the breakpoint source
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint marker
+	 * @param lineNumber
+	 *            the line number on which the breakpoint is set - line numbers are 1 based, associated with the source file in which the breakpoint is set
+	 * @param enabled
+	 *            whether to enable or disable this breakpoint
+	 * @param ignoreCount
+	 *            the number of times this breakpoint will be ignored
+	 * @param condition
+	 *            the breakpoint condition
+	 * @param register
+	 *            whether to add this breakpoint to the breakpoint manager
+	 * @return a line breakpoint
+	 * @throws CoreException
+	 *             if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure creating underlying marker. The exception's status contains the underlying exception responsible for the failure.</li>
+	 *             </ul>
+	 * @deprecated as of CDT 5.0 use {@link #createLineBreakpoint(String, IResource, int, int, boolean, int, String, boolean)}
+	 */
+	@Deprecated
+	public static ICLineBreakpoint createLineBreakpoint( String sourceHandle, IResource resource, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		return createLineBreakpoint(sourceHandle, resource, ICBreakpointType.REGULAR, lineNumber, enabled, ignoreCount, condition, register);
+	}
+
+	/**
+	 * Creates and returns a line breakpoint for the source defined by the given source handle, at the given line number. The marker associated with the
+	 * breakpoint will be created on the specified resource.
+	 * 
+	 * @param sourceHandle
+	 *            the handle to the breakpoint source
+	 * @param resource
+	 *            the resource on which to create the associated breakpoint marker
 	 * @param type
-	 *            a type constant from ICBreakpointType  			        
+	 *            a type constant from ICBreakpointType
 	 * @param lineNumber
 	 *            the line number on which the breakpoint is set - line numbers are 1 based, associated with the source file in which the breakpoint is set
 	 * @param enabled
@@ -218,7 +250,34 @@ public class CDIDebugModel {
 	 * @param module the module name the breakpoint is set in
 	 * @param sourceHandle the handle to the breakpoint source
 	 * @param resource the resource on which to create the associated breakpoint marker
-	 * @param type a type constant from ICBreakpointType  			        
+	 * @param address the address on which the breakpoint is set
+	 * @param enabled whether to enable or disable this breakpoint
+	 * @param ignoreCount the number of times this breakpoint will be ignored
+	 * @param condition the breakpoint condition
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @return an address breakpoint
+	 * @throws CoreException if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure creating underlying marker. The exception's
+	 *             status contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
+	 * @deprecated as of CDT 5.0 use {@link #createAddressBreakpoint(String, String, IResource, int, int, IAddress, boolean, int, String, boolean)}
+	 */
+	@Deprecated
+	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		return createAddressBreakpoint( module, sourceHandle, resource, ICBreakpointType.REGULAR, -1, address, enabled, ignoreCount, condition, register );
+	}
+
+	/**
+	 * Creates and returns an address breakpoint for the source defined by the
+	 * given source handle, at the given address. The marker associated with the
+	 * breakpoint will be created on the specified resource.
+	 * 
+	 * @param module the module name the breakpoint is set in
+	 * @param sourceHandle the handle to the breakpoint source
+	 * @param resource the resource on which to create the associated breakpoint marker
+	 * @param type a type constant from ICBreakpointType
 	 * @param address the address on which the breakpoint is set
 	 * @param enabled whether to enable or disable this breakpoint
 	 * @param ignoreCount the number of times this breakpoint will be ignored
@@ -244,7 +303,7 @@ public class CDIDebugModel {
 	 * @param module the module name the breakpoint is set in
 	 * @param sourceHandle the handle to the breakpoint source
 	 * @param resource the resource on which to create the associated breakpoint marker
-	 * @param type a type constant from ICBreakpointType  			        
+	 * @param type a type constant from ICBreakpointType
 	 * @param lineNumber the line number in the source file
 	 * @param address the address on which the breakpoint is set
 	 * @param enabled whether to enable or disable this breakpoint
@@ -271,7 +330,7 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
 		attributes.put( ICBreakpoint.MODULE, module );
-		attributes.put( ICBreakpointType.TYPE, type );		
+		attributes.put( ICBreakpointType.TYPE, type );
 		return new CAddressBreakpoint( resource, attributes, register );
 	}
 
@@ -347,8 +406,8 @@ public class CDIDebugModel {
 
 	/**
 	 * Creates and returns a watchpoint for the source defined by the given
-	 * source handle, at the given expression and over the given range. 
-	 * The marker associated with the watchpoint will be created on the 
+	 * source handle, at the given expression and over the given range.
+	 * The marker associated with the watchpoint will be created on the
 	 * specified resource.
 	 * 
 	 * @param sourceHandle the handle to the watchpoint source
@@ -399,7 +458,42 @@ public class CDIDebugModel {
 	 * 
 	 * @param sourceHandle the handle to the breakpoint source
 	 * @param resource the resource on which to create the associated breakpoint marker
-	 * @param type a type constant from ICBreakpointType  			        
+	 * @param function the name of the function this breakpoint suspends execution in
+	 * @param charStart the first character index associated with the breakpoint, or
+	 *            -1 if unspecified, in the source file in which the breakpoint
+	 *            is set
+	 * @param charEnd the last character index associated with the breakpoint, or -1
+	 *            if unspecified, in the source file in which the breakpoint is
+	 *            set
+	 * @param lineNumber the lineNumber on which the breakpoint is set, or -1 if
+	 *            unspecified - line numbers are 1 based, associated with the
+	 *            source file in which the breakpoint is set
+	 * @param enabled whether to enable or disable this breakpoint
+	 * @param ignoreCount the number of times this breakpoint will be ignored
+	 * @param condition the breakpoint condition
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @return an address breakpoint
+	 * @throws CoreException if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure creating underlying marker. The exception's
+	 *             status contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
+	 * @deprecated as of CDT 5.0 use {@link #createFunctionBreakpoint(String, IResource, int, String, int, int, int, boolean, int, String, boolean)}
+	 */
+	@Deprecated
+	public static ICFunctionBreakpoint createFunctionBreakpoint( String sourceHandle, IResource resource, String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		return createFunctionBreakpoint(sourceHandle, resource, ICBreakpointType.REGULAR, function, charStart, charEnd, lineNumber, enabled, ignoreCount, condition, register);
+	}
+
+	/**
+	 * Creates and returns a breakpoint for the function defined by the given
+	 * name. The marker associated with the breakpoint will be created on the
+	 * specified resource.
+	 * 
+	 * @param sourceHandle the handle to the breakpoint source
+	 * @param resource the resource on which to create the associated breakpoint marker
+	 * @param type a type constant from ICBreakpointType
 	 * @param function the name of the function this breakpoint suspends execution in
 	 * @param charStart the first character index associated with the breakpoint, or
 	 *            -1 if unspecified, in the source file in which the breakpoint
@@ -433,7 +527,7 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
-		attributes.put( ICBreakpointType.TYPE, type );		
+		attributes.put( ICBreakpointType.TYPE, type );
 		return new CFunctionBreakpoint( resource, attributes, register );
 	}
 
@@ -545,6 +639,7 @@ public class CDIDebugModel {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static IDebugTarget newDebugTarget( ILaunch launch, ICDITarget target, String name, IProcess iprocess, IProcess debuggerProcess, IFile file, boolean allowTerminate, boolean allowDisconnect, boolean stopInMain ) throws CoreException {
 		IBinaryExecutable exeFile = getBinary( file );
 		String stopSymbol = null;
@@ -556,6 +651,7 @@ public class CDIDebugModel {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static IDebugTarget newAttachDebugTarget( ILaunch launch, ICDITarget target, String name, IProcess debuggerProcess, IFile file ) throws CoreException {
 		IBinaryExecutable exeFile = getBinary( file );
 		return newDebugTarget( launch, file.getProject(), target, name, null, exeFile, true, true, false );
@@ -564,6 +660,7 @@ public class CDIDebugModel {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch, final ICDITarget target, final String name, final IProcess debuggerProcess, final IFile file ) throws CoreException {
 		IBinaryExecutable exeFile = getBinary( file );
 		return newDebugTarget( launch, file.getProject(), target, name, null, exeFile, true, false, false );

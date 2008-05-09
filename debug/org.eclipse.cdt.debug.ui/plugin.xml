@@ -206,7 +206,17 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
                menubarPath="threadGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate">
-            <selection class="org.eclipse.cdt.debug.core.model.IResumeWithoutSignal"/>
+            <enablement>
+               <and>
+                  <pluginState
+                        id="org.eclipse.cdt.debug.ui"
+                        value="activated">
+                  </pluginState>
+                  <objectClass
+                        name="org.eclipse.cdt.debug.core.model.IResumeWithoutSignal">
+                  </objectClass>
+               </and>
+            </enablement>
          </action>
       </viewerContribution>
       <viewerContribution

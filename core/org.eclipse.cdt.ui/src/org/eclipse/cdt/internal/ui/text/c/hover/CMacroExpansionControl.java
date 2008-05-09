@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -26,6 +25,8 @@ import org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl;
  */
 public class CMacroExpansionControl extends AbstractSourceViewerInformationControl {
 
+	private CMacroExpansionInput fInput;
+
 	/**
 	 * Creates a new control for use as a hover which does not take the focus.
 	 * 
@@ -33,10 +34,18 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	 * @param statusFieldText  text to be displayed in the status field, may be <code>null</code>
 	 */
 	public CMacroExpansionControl(Shell parent, String statusFieldText) {
-		super(parent, PopupDialog.HOVER_SHELLSTYLE, SWT.NONE, false, false, false);
-		if (statusFieldText != null) {
-			setInfoText(statusFieldText);
-		}
+		super(parent, PopupDialog.HOVER_SHELLSTYLE, SWT.NONE, false, false, false, statusFieldText);
+		setTitleText(CHoverMessages.CMacroExpansionControl_title_macroExpansion);
+	}
+
+	/**
+	 * Creates a new control for use as a hover which optionally takes the focus.
+	 * 
+	 * @param parent  parent shell
+	 * @param takeFocus  whether this control should take the focus
+	 */
+	public CMacroExpansionControl(Shell parent, boolean takeFocus) {
+		super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, SWT.NONE, takeFocus, false, false, null);
 		setTitleText(CHoverMessages.CMacroExpansionControl_title_macroExpansion);
 	}
 
@@ -64,6 +73,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 		if (input instanceof CMacroExpansionInput) {
 			CMacroExpansionInput macroExpansionInput= (CMacroExpansionInput) input;
 			setInformation(macroExpansionInput.fExplorer.getFullExpansion().getCodeAfterStep());
+			fInput= macroExpansionInput;
 		} else {
 			super.setInput(input);
 		}
@@ -76,16 +86,12 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new CMacroExpansionExplorationControl(parent);
+				if (fInput != null && fInput.fExplorer.getExpansionStepCount() > 1) {
+					return new CMacroExpansionExplorationControl(parent);
+				} else {
+					return new CMacroExpansionControl(parent, true);
+				}
 			}
 		};
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#allowMoveIntoControl()
-	 */
-	@Override
-	public boolean allowMoveIntoControl() {
-		return true;
 	}
 }

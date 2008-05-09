@@ -102,7 +102,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	public AbstractCompareViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds) {
 		super(parent, shellStyle | SWT.ON_TOP, takeFocus, persistBounds, persistBounds, showViewMenu, false, null, null);
 		fStyle= textStyle & ~(SWT.V_SCROLL | SWT.H_SCROLL);
-		// Title and status text must be set to get the title label created, so force empty values here. 
+		// Title and status text must be set to get the title label created, so force empty values here.
 		if (hasHeader())
 			setTitleText(""); //$NON-NLS-1$
 		setInfoText(""); //  //$NON-NLS-1$
@@ -452,8 +452,23 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 */
 	public Rectangle computeTrim() {
-		Rectangle trim= getShell().computeTrim(0, 0, 0, 50);
+		Rectangle trim= getShell().computeTrim(0, 0, 0, 0);
+		addInternalTrim(trim);
 		return trim;
+	}
+
+	/**
+	 * Adds the internal trimmings to the given trim of the shell.
+	 * 
+	 * @param trim the shell's trim, will be updated
+	 * @since 5.0
+	 */
+	private void addInternalTrim(Rectangle trim) {
+		Rectangle textTrim= fCompareViewerControl.computeTrim(0, 0, 0, 0);
+		trim.x+= textTrim.x;
+		trim.y+= textTrim.y;
+		trim.width+= textTrim.width;
+		trim.height+= textTrim.height;
 	}
 
 	/*
@@ -525,13 +540,6 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return null;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
-	 */
-	public boolean allowMoveIntoControl() {
-		return false;
 	}
 
 }

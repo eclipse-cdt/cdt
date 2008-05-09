@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.lang.ref.Reference;

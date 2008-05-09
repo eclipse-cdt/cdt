@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,6 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 
 /**
- * SourceViewerInformationControl
  * Source viewer based implementation of <code>IInformationControl</code>.
  * Displays information in a source viewer.
  *
@@ -109,15 +108,15 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	private boolean fIsSystemBackgroundColor= true;
 
 	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
+	 * Creates a source viewer information control with the given shell as parent. The given
+	 * styles are applied to the created styled text widget. The status field will
+	 * contain the given text or be hidden.
 	 *
 	 * @param parent the parent shell
 	 * @param isResizable <code>true</code> if resizable
 	 * @param orientation the orientation
 	 * @param statusFieldText the text to be used in the optional status field
-	 *                         or <code>null</code> if the status field should be hidden
+	 *            or <code>null</code> if the status field should be hidden
 	 */
 	public SourceViewerInformationControl(Shell parent, boolean isResizable, int orientation, String statusFieldText) {
 		Assert.isLegal(orientation == SWT.RIGHT_TO_LEFT || orientation == SWT.LEFT_TO_RIGHT || orientation == SWT.NONE);
@@ -367,7 +366,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return fText.isFocusControl();
+		return fShell.getDisplay().getActiveShell() == fShell;
 	}
 
 	/*
@@ -504,13 +503,4 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 
 		return new Point(widthInChars * width, heightInChars * height);
 	}
-
-	/*
-	 * This method has been removed from IInformationControlExtension5 in 3.4 M6.
-	 * TODO Remove this method. Just kept to stay compilable against 3.4 M5.
-	 */
-	public boolean allowMoveIntoControl() {
-		return true;
-	}
-
 }

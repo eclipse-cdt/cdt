@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.util.ArrayList;
@@ -302,7 +301,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	/**
-	 * Returns the text to be shown in the popups's information area. 
+	 * Returns the text to be shown in the popups's information area.
 	 * May return <code>null</code>.
 	 *
 	 * @return The text to be shown in the popup's information area or <code>null</code>
@@ -315,7 +314,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 
 		String infoText= null;
 		if (formattedBindingBack != null && formattedBindingForward != null) {
-			infoText= NLS.bind(CHoverMessages.CMacroExpansionControl_statusText, formattedBindingBack, formattedBindingForward); 
+			infoText= NLS.bind(CHoverMessages.CMacroExpansionControl_statusText, formattedBindingBack, formattedBindingForward);
 		}
 		return infoText;
 	}
@@ -358,8 +357,22 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	@Override
 	public Rectangle computeTrim() {
 		Rectangle trim= super.computeTrim();
-		trim.height += fMacroText.getLineHeight();
+		addInternalTrim(trim);
 		return trim;
+	}
+
+	/**
+	 * Adds the internal trimmings to the given trim of the shell.
+	 * 
+	 * @param trim the shell's trim, will be updated
+	 * @since 5.0
+	 */
+	private void addInternalTrim(Rectangle trim) {
+		Rectangle textTrim= fMacroText.computeTrim(0, 0, 0, 0);
+		trim.x+= textTrim.x;
+		trim.y+= textTrim.y;
+		trim.width+= textTrim.width;
+		trim.height+= textTrim.height;
 	}
 
 	/**
@@ -396,7 +409,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		final ITypedElement left= getContentForIndex(fIndex, true);
 		final ITypedElement right= getContentForIndex(fIndex, false);
 		
-		setTitleText(CHoverMessages.CMacroExpansionControl_title_macroExpansion);
+		setTitleText(CHoverMessages.bind(CHoverMessages.CMacroExpansionControl_title_macroExpansionExploration, getStepCount()));
 		fMacroViewer.getDocument().set(getMacroText(fIndex));
 		setInput(createCompareInput(null, left, right));
 	}
@@ -405,7 +418,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		if (index == 0) {
 			return CHoverMessages.CMacroExpansionControl_title_original;
 		} else if (index < getStepCount()) {
-			return NLS.bind(CHoverMessages.CMacroExpansionControl_title_expansion, 
+			return NLS.bind(CHoverMessages.CMacroExpansionControl_title_expansion,
 					String.valueOf(index), String.valueOf(getStepCount()));
 		} else {
 			return CHoverMessages.CMacroExpansionControl_title_fullyExpanded;

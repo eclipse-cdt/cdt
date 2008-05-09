@@ -90,14 +90,16 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * @param takeFocus  flag indicating whether to take the focus
 	 * @param showViewMenu  flag indicating whether to show the "view" menu
 	 * @param persistBounds  flag indicating whether control size and location should be persisted
+	 * @param statusFieldText
 	 */
-	public AbstractSourceViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds) {
+	public AbstractSourceViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds, String statusFieldText) {
 		super(parent, shellStyle, takeFocus, persistBounds, persistBounds, showViewMenu, false, null, null);
 		fTextStyle= textStyle;
-		// Title and status text must be set to get the title label created, so force empty values here. 
+		// Title and status text must be set to get the title label created, so force empty values here.
 		if (hasHeader())
 			setTitleText(""); //$NON-NLS-1$
-		setInfoText(""); //  //$NON-NLS-1$
+		if (statusFieldText != null)
+			setInfoText(statusFieldText);
 
 		// Create all controls
 		create();
@@ -552,13 +554,6 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return null;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
-	 */
-	public boolean allowMoveIntoControl() {
-		return false;
 	}
 
 }

@@ -11,6 +11,7 @@
  * Radoslav Gerganov (ProSyst) - [221211] [api][breaking][files] need batch operations to indicate which operations were successful
  * Martin Oberhuber (Wind River) - [221211] Throw SystemUnsupportedOperationException for WinCE setLastModified() and setReadOnly()
  * Radoslav Gerganov (ProSyst) - [230850] [WinCE] Implement setLastModified and setReadOnly in WinCEFileService
+ * Radoslav Gerganov (ProSyst) - [231425] [WinCE] Use the progress monitors in WinCEFileService
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -27,12 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.internal.services.wince.IRapiSessionProvider;
 import org.eclipse.rse.internal.services.wince.IWinCEService;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
@@ -123,6 +126,9 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       //FIXME error handling
       throw new RemoteFileException("Cannot copy file/folder to itself"); //$NON-NLS-1$
     }
+    if (monitor == null) {
+      monitor = new NullProgressMonitor();
+    }
     IRapiSession session = sessionProvider.getSession();
     try {
       if (isDirectory(session, srcFullPath)) {
@@ -138,10 +144,14 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         RapiFindData[] allFiles = session.findAllFiles(concat(srcFullPath,"*"), Rapi.FAF_NAME); //$NON-NLS-1$
         for (int i = 0 ; i < allFiles.length ; i++) {
           String fileName = allFiles[i].fileName;
+          if (monitor.isCanceled()) {
+            throw new SystemOperationCancelledException();
+          }
           copy(srcFullPath, fileName, tgtFullPath, fileName, monitor);
         }
       } else {
         session.copyFile(srcFullPath, tgtFullPath);
+        monitor.worked(1);
       }
     } catch (RapiException e) {
       //FIXME error handling
@@ -191,17 +201,24 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
   public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
     String fullPath = concat(remoteParent, fileName);
     IRapiSession session = sessionProvider.getSession();
+    if (monitor == null) {
+      monitor = new NullProgressMonitor();
+    }
     try {
       if (isDirectory(session, fullPath)) {
         // recursive delete if it is a directory
         RapiFindData[] allFiles = session.findAllFiles(concat(fullPath, "*"), Rapi.FAF_NAME); //$NON-NLS-1$
         for (int i = 0; i < allFiles.length; i++) {
+          if (monitor.isCanceled()) {
+            throw new SystemOperationCancelledException();
+          }          
           delete(fullPath, allFiles[i].fileName, monitor);
         }
         session.removeDirectory(fullPath);
       } else {
         // it is a file
         session.deleteFile(fullPath);
+        monitor.worked(1);
       }
     } catch (RapiException e) {
       //FIXME error handling
@@ -219,13 +236,18 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         localParentFile.mkdirs();
       }
     }
+    if (monitor == null) {
+      monitor = new NullProgressMonitor();
+    }
     String fullPath = concat(remoteParent, remoteFile);
     IRapiSession session = sessionProvider.getSession();
     int handle = Rapi.INVALID_HANDLE_VALUE;
     BufferedOutputStream bos = null;
     try {
       handle = session.createFile(fullPath, Rapi.GENERIC_READ,
-          Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
+          Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);      
+      long fileSize = session.getFileSize(handle);
+      monitor.beginTask(fullPath, (int) fileSize);
       bos = new BufferedOutputStream(new FileOutputStream(localFile));
       // don't increase the buffer size! the native functions sometimes fail with large buffers, 4K always work
       byte[] buffer = new byte[4 * 1024];
@@ -235,8 +257,13 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
           break;
         }
         bos.write(buffer, 0, bytesRead);
+        if (monitor.isCanceled()) {
+          throw new SystemOperationCancelledException();
+        }
+        monitor.worked(bytesRead);
       }
       bos.flush();
+      monitor.done();
     } catch (RapiException e) {
       //FIXME error handling
       throw new RemoteFileException(e.getMessage(), e);
@@ -353,12 +380,18 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       throw new RemoteFileException(e.getMessage());
     }
   }
-
-  public void upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary,
-      String hostEncoding, IProgressMonitor monitor) throws SystemMessageException {
+  
+  private void internalUpload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary,
+      String hostEncoding, long fileSize, IProgressMonitor monitor) throws SystemMessageException {
     BufferedInputStream bis = new BufferedInputStream(stream);
     IRapiSession session = sessionProvider.getSession();
     String fullPath = concat(remoteParent, remoteFile);
+    if (monitor == null) {
+      monitor = new NullProgressMonitor();
+    }
+    if (fileSize != -1) {
+      monitor.beginTask(fullPath, (int) fileSize);
+    }
     int handle = Rapi.INVALID_HANDLE_VALUE;
     try {
       handle = session.createFile(fullPath, Rapi.GENERIC_WRITE,
@@ -371,7 +404,12 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
           break;
         }
         session.writeFile(handle, buffer, 0, bytesRead);
+        if (monitor.isCanceled()) {
+          throw new SystemOperationCancelledException();
+        }
+        monitor.worked(bytesRead);
       }
+      monitor.done();
     } catch (RapiException e) {
       //FIXME error handling
       throw new RemoteFileException(e.getMessage(), e);
@@ -391,11 +429,17 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       } catch (IOException e) {
         // ignore
       }
-    }
+    }    
+  }
+
+  public void upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary,
+      String hostEncoding, IProgressMonitor monitor) throws SystemMessageException {
+    internalUpload(stream, remoteParent, remoteFile, isBinary, hostEncoding, -1, monitor);
   }
 
   public void upload(File localFile, String remoteParent, String remoteFile, boolean isBinary,
       String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException {
+    long fileSize = localFile.length();
     FileInputStream fis = null;
     try {
       fis = new FileInputStream(localFile);
@@ -404,7 +448,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       throw new RemoteFileException(e.getMessage(), e);
     }
     //FIXME what to do with srcEncoding ?
-    upload(fis, remoteParent, remoteFile, isBinary, hostEncoding, monitor);
+    internalUpload(fis, remoteParent, remoteFile, isBinary, hostEncoding, fileSize, monitor);
   }
 
   public InputStream getInputStream(String remoteParent, String remoteFile,

@@ -131,12 +131,10 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
           //FIXME error handling
           throw new RemoteFileException("Cannot copy folder to its subfolder"); //$NON-NLS-1$
         }
-        if (exist(session, tgtFullPath)) {
-          // we are doing overwrite,
-          // if the target file or folder already exist - delete it
-          delete(tgtParent, tgtName, monitor);
+        if (!exist(session, tgtFullPath)) {
+          // the target path is a directory and it doesn't exist -> create it
+          session.createDirectory(tgtFullPath);
         }
-        session.createDirectory(tgtFullPath);
         RapiFindData[] allFiles = session.findAllFiles(concat(srcFullPath,"*"), Rapi.FAF_NAME); //$NON-NLS-1$
         for (int i = 0 ; i < allFiles.length ; i++) {
           String fileName = allFiles[i].fileName;

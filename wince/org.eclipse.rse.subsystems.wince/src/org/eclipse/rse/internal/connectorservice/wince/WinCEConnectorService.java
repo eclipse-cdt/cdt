@@ -40,11 +40,16 @@ public class WinCEConnectorService extends BasicConnectorService implements IRap
   protected void internalConnect(IProgressMonitor monitor) throws Exception {
     fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
     Rapi.initialize(Rapi.COINIT_MULTITHREADED);
-    desktop = IRapiDesktop.getInstance();
-    enumDevices = desktop.enumDevices();
-    device = enumDevices.next();
-    session = device.createSession();
-    session.init();
+    try {
+      desktop = IRapiDesktop.getInstance();
+      enumDevices = desktop.enumDevices();
+      device = enumDevices.next();
+      session = device.createSession();
+      session.init();
+    } catch (RapiException re) {
+      //TODO externalize the error message
+      throw new Exception("Cannot connect to the remote device (" + re.getMessage() + ")", re); //$NON-NLS-1$ //$NON-NLS-2$
+    }
   }
 
   protected void internalDisconnect(IProgressMonitor monitor) throws Exception {

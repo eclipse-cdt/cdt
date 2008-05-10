@@ -62,10 +62,9 @@ public class WinCEFileSubSystemConfiguration extends FileServiceSubSystemConfigu
     ISystemFilterPool pool = null;
     try {
       pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true);
-      Vector filterStrings = new Vector();
       
       // "My Home" filter
-      filterStrings = new Vector();
+      Vector filterStrings = new Vector();
       RemoteFileFilterString myHomeFilterString = new RemoteFileFilterString(this);
       myHomeFilterString.setPath("\\My Documents\\"); //$NON-NLS-1$
       filterStrings.add(myHomeFilterString.toString());

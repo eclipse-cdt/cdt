@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - [221211] Throw SystemUnsupportedOperationException for WinCE setLastModified() and setReadOnly()
  * Radoslav Gerganov (ProSyst) - [230850] [WinCE] Implement setLastModified and setReadOnly in WinCEFileService
  * Radoslav Gerganov (ProSyst) - [231425] [WinCE] Use the progress monitors in WinCEFileService
+ * Radoslav Gerganov (ProSyst) - [230856] [WinCE] Improve the error handling in WinCEFileService
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -31,15 +32,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.internal.services.wince.IRapiSessionProvider;
 import org.eclipse.rse.internal.services.wince.IWinCEService;
+import org.eclipse.rse.internal.subsystems.files.wince.Activator;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
+import org.eclipse.rse.services.clientserver.messages.SystemUnexpectedErrorException;
+import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
-import org.eclipse.rse.services.files.RemoteFileException;
+import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.tm.rapi.IRapiSession;
 import org.eclipse.tm.rapi.Rapi;
 import org.eclipse.tm.rapi.RapiException;
@@ -90,8 +94,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         }
       }
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
     return (IHostFile[]) results.toArray(new IHostFile[results.size()]);
   }
@@ -123,8 +126,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     String tgtFullPath = concat(tgtParent, tgtName);
     if (srcFullPath.equals(tgtFullPath)) {
       // prevent copying file/folder to itself
-      //FIXME error handling
-      throw new RemoteFileException("Cannot copy file/folder to itself"); //$NON-NLS-1$
+      throw new SystemUnsupportedOperationException(Activator.PLUGIN_ID, "Cannot copy file or folder to itself"); //$NON-NLS-1$
     }
     if (monitor == null) {
       monitor = new NullProgressMonitor();
@@ -134,8 +136,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       if (isDirectory(session, srcFullPath)) {
         if (tgtFullPath.startsWith(srcFullPath + "\\")) { //$NON-NLS-1$
           // prevent copying \a to \a\b\c
-          //FIXME error handling
-          throw new RemoteFileException("Cannot copy folder to its subfolder"); //$NON-NLS-1$
+          throw new SystemUnsupportedOperationException(Activator.PLUGIN_ID, "Cannot copy folder to its subfolder"); //$NON-NLS-1$
         }
         if (!exist(session, tgtFullPath)) {
           // the target path is a directory and it doesn't exist -> create it
@@ -154,8 +155,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         monitor.worked(1);
       }
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
   }
 
@@ -178,8 +178,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       session.findClose(handle);
       return makeHostFile(remoteParent, fileName, findData);
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
   }
 
@@ -193,8 +192,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       session.findClose(handle);
       return makeHostFile(remoteParent, folderName, findData);
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
   }
 
@@ -221,8 +219,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         monitor.worked(1);
       }
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
     return true;
   }
@@ -233,7 +230,9 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     if (!localFile.exists()) {
       File localParentFile = localFile.getParentFile();
       if (!localParentFile.exists()) {
-        localParentFile.mkdirs();
+        if (!localParentFile.mkdirs()) {
+          throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
+        }
       }
     }
     if (monitor == null) {
@@ -265,11 +264,9 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       bos.flush();
       monitor.done();
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     } catch (IOException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     } finally {
       if (handle != Rapi.INVALID_HANDLE_VALUE) {
         try {
@@ -330,8 +327,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     try {
       session.moveFile(oldFullPath, newFullPath);
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
   }
 
@@ -351,8 +347,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     		  Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
       session.setFileLastWriteTime(handle, timestamp);
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage());
+      throw new RemoteFileIOException(e);
     } finally {
       if (handle != Rapi.INVALID_HANDLE_VALUE) {
         try {
@@ -376,8 +371,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     try {
       session.setFileAttributes(fullPath, attr);
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage());
+      throw new RemoteFileIOException(e);
     }
   }
   
@@ -411,11 +405,9 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       }
       monitor.done();
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     } catch (IOException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     } finally {
       if (handle != Rapi.INVALID_HANDLE_VALUE) {
         try {
@@ -444,8 +436,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     try {
       fis = new FileInputStream(localFile);
     } catch (FileNotFoundException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new SystemUnexpectedErrorException(Activator.PLUGIN_ID);
     }
     //FIXME what to do with srcEncoding ?
     internalUpload(fis, remoteParent, remoteFile, isBinary, hostEncoding, fileSize, monitor);
@@ -460,8 +451,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
           Rapi.FILE_SHARE_READ, Rapi.OPEN_EXISTING, Rapi.FILE_ATTRIBUTE_NORMAL);
       return new BufferedInputStream(new WinCEInputStream(session, handle));
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
   }
 
@@ -480,8 +470,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
           Rapi.FILE_SHARE_READ, cd, Rapi.FILE_ATTRIBUTE_NORMAL);
       return new BufferedOutputStream(new WinCEOutputStream(session, handle));
     } catch (RapiException e) {
-      //FIXME error handling
-      throw new RemoteFileException(e.getMessage(), e);
+      throw new RemoteFileIOException(e);
     }
   }
 
@@ -509,7 +498,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         int br = session.readFile(handle, b);
         return (br == -1) ? -1 : b[0];
       } catch (RapiException e) {
-        throw new IOException(e.getMessage());
+        throw new IOException(e);
       }
     }
 
@@ -517,7 +506,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         return session.readFile(handle, b, off, len);
       } catch (RapiException e) {
-        throw new IOException(e.getMessage());
+        throw new IOException(e);
       }
     }
 
@@ -525,7 +514,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.closeHandle(handle);
       } catch (RapiException e) {
-        throw new IOException(e.getMessage());
+        throw new IOException(e);
       }
     }
 
@@ -545,7 +534,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.writeFile(handle, new byte[] {(byte)b});
       } catch (RapiException e) {
-        throw new IOException(e.getMessage());
+        throw new IOException(e);
       }
     }
 
@@ -553,7 +542,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.writeFile(handle, b, off, len);
       } catch (RapiException e) {
-        throw new IOException(e.getMessage());
+        throw new IOException(e);
       }
     }
 
@@ -561,7 +550,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.closeHandle(handle);
       } catch (RapiException e) {
-        throw new IOException(e.getMessage());
+        throw new IOException(e);
       }
     }
   }

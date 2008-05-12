@@ -55,31 +55,25 @@ public class ModulesVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-    	
-        if ( getServicesTracker().getService(IModules.class) == null ) {
-            handleFailedUpdate(update);
-            return;
-    	}
-        
+        IModules modulesService = getServicesTracker().getService(IModules.class);
         final ISymbolDMContext symDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), ISymbolDMContext.class) ;
         
-        if (symDmc != null) {
-            getServicesTracker().getService(IModules.class).getModules(
-                symDmc,
-                new ViewerDataRequestMonitor<IModuleDMContext[]>(getSession().getExecutor(), update) { 
-                    @Override
-                    public void handleCompleted() {
-                        if (!isSuccess()) {
-                            update.done();
-                            return;
-                        }
-                        fillUpdateWithVMCs(update, getData());
-                        update.done();
-                    }}); 
-        } else {
+        if (modulesService == null || symDmc == null) {
             handleFailedUpdate(update);
-        }          
+        }
         
+        modulesService.getModules(
+            symDmc,
+            new ViewerDataRequestMonitor<IModuleDMContext[]>(getSession().getExecutor(), update) { 
+                @Override
+                public void handleCompleted() {
+                    if (!isSuccess()) {
+                        update.done();
+                        return;
+                    }
+                    fillUpdateWithVMCs(update, getData());
+                    update.done();
+                }}); 
     }
     
     @Override
@@ -103,21 +97,18 @@ public class ModulesVMNode extends AbstractDMVMNode
     
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
+            IModules modulesService = getServicesTracker().getService(IModules.class);
             final IModuleDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IModuleDMContext.class);
             // If either update or service are not valid, fail the update and exit.
-            if ( dmc == null ) {
+            if ( modulesService == null || dmc == null ) {
             	handleFailedUpdate(update);
                 continue;
             }
-            if ( getServicesTracker().getService(IModules.class) == null ) {
-                handleFailedUpdate(update);
-                continue;
-        	}
             
             // Use  different image for loaded and unloaded symbols when event to report loading of symbols is implemented.
             update.setImageDescriptor(DsfDebugUIPlugin.getImageDescriptor(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_LOADED), 0);
       
-            getServicesTracker().getService(IModules.class, null).getModuleData(
+            modulesService.getModuleData(
                 dmc, 
                 new ViewerDataRequestMonitor<IModuleDMData>(getSession().getExecutor(), update) { 
                     @Override

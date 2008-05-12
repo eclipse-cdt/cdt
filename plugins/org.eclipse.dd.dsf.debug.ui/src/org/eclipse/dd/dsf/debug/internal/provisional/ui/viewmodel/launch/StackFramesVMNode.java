@@ -85,19 +85,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
      */
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-    	
-        if ( getServicesTracker().getService(IStack.class) == null ) {
-                handleFailedUpdate(update);
-                return;
-        }
-        
+        IStack stackService = getServicesTracker().getService(IStack.class);
         final IExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
-        if (execDmc == null) {
+        if (stackService == null || execDmc == null) {
             handleFailedUpdate(update);
             return;
         }          
         
-        getServicesTracker().getService(IStack.class).getFrames(
+        stackService.getFrames(
             execDmc, 
             new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
                 @Override
@@ -142,12 +137,13 @@ public class StackFramesVMNode extends AbstractDMVMNode
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                	if ( getServicesTracker().getService(IStack.class) == null ) {
+                    IStack stackService = getServicesTracker().getService(IStack.class);
+                	if ( stackService == null ) {
                 		handleFailedUpdate(update);
                 		return;
                 	}
                 
-                    getServicesTracker().getService(IStack.class).getTopFrame(
+                    stackService.getTopFrame(
                         execDmc, 
                         new ViewerDataRequestMonitor<IFrameDMContext>(getExecutor(), update) { 
                             @Override
@@ -198,17 +194,13 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
+            IStack stackService = getServicesTracker().getService(IStack.class);
             final IFrameDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IFrameDMContext.class);
             
-            if ( dmc == null ) {
+            if (stackService == null || dmc == null) {
             	handleFailedUpdate(update);
             	continue;
             }
-            if ( getServicesTracker().getService(IStack.class) == null ) {
-            	handleFailedUpdate(update);
-            	continue;
-            }
-        
             
             getDMVMProvider().getModelData(
                 this, update, 

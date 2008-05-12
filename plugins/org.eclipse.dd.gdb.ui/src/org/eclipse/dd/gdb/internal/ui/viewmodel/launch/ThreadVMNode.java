@@ -68,13 +68,8 @@ public class ThreadVMNode extends AbstractDMVMNode
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
     	IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-    	if ( runControl == null ) {
-    		handleFailedUpdate(update);
-    		return;
-    	}
-
     	final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
-    	if (contDmc == null) {
+    	if (runControl == null || contDmc == null) {
     		handleFailedUpdate(update);
     		return;
     	} 

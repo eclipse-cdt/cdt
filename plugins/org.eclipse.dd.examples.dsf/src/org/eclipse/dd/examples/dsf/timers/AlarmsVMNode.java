@@ -43,32 +43,22 @@ class AlarmsVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        // Check that the services are available
-        if ( getServicesTracker().getService(AlarmService.class) == null ) {
-            handleFailedUpdate(update);
-            return;
-        }
-        if ( getServicesTracker().getService(TimerService.class) == null ) {
-            handleFailedUpdate(update);
-            return;
-        }
-
-        // Find the trigger and timer contexts.  If not found, fail.
+        // Check that the service is available and find the trigger and timer contexts.  
+        // If not found, fail.
+        AlarmService alarmService = getServicesTracker().getService(AlarmService.class, null); 
         TriggerDMContext alarmDmc = findDmcInPath(
             update.getViewerInput(), update.getElementPath(), TriggerDMContext.class);
         TimerDMContext timerDmc = findDmcInPath(
             update.getViewerInput(), update.getElementPath(), TimerDMContext.class);
-        if (alarmDmc == null || timerDmc == null) {
+        if (alarmService == null || alarmDmc == null || timerDmc == null) {
             update.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Required elements not found in path"));
             update.done();
             return;
         }
         
         // Get the alarm context then check the triggered value.  
-        final AlarmDMContext alarmStatusDmc = getServicesTracker().getService(AlarmService.class).
-            getAlarm(alarmDmc, timerDmc);
-        boolean triggered = getServicesTracker().getService(AlarmService.class).
-            isAlarmTriggered(alarmStatusDmc); 
+        final AlarmDMContext alarmStatusDmc = alarmService.getAlarm(alarmDmc, timerDmc);
+        boolean triggered = alarmService.isAlarmTriggered(alarmStatusDmc); 
         
         // Only return the alarm in list of elements if it is triggered.
         if (triggered) {

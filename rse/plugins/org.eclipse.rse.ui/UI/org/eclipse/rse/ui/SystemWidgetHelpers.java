@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [181939] avoid subsystem plugin activation just for enablement checking
+ * David Dykstal (IBM) - [231666] special colon processing for french locales
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -1469,12 +1470,12 @@ public class SystemWidgetHelpers {
 		//setHelp(c, ids);		
 	}
 
-	private static char STANDARD_COLON = ':';
-	private static char WIDE_COLON = '\uFF1A';
+	private final static char STANDARD_COLON = ':';
+	private final static char WIDE_COLON = '\uFF1A';
 	/**
 	 * Appends a colon to a label, if the label doesn't already end in a colon of the proper size.
 	 * If the wrong size colon is already there, it strips it first.
-	 * @param label
+	 * @param label the label which to examine for a colon
 	 * @return the label ending with a colon of the appropriate size
 	 */
 	public static String appendColon(String label) {
@@ -1503,6 +1504,10 @@ public class SystemWidgetHelpers {
 			result = result.substring(0, n - 1);
 		}
 		if (append) {
+			// special processing for french, a space is required before a colon
+			if (language.equals("fr") && result.length() > 0) { //$NON-NLS-1$
+				result += " "; //$NON-NLS-1$
+			}
 			result += (cjk ? WIDE_COLON : STANDARD_COLON);
 		}
 		return result;

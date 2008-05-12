@@ -172,7 +172,7 @@ public class RequestMonitor {
             }
         }
 
-        // Call the listeners outsize of a synchronized section to reduce the 
+        // Call the listeners outside of a synchronized section to reduce the 
         // risk of deadlocks.
         if (listeners != null) {
             for (Object listener : listeners) {
@@ -188,7 +188,7 @@ public class RequestMonitor {
      * of the request monitor. 
      */
     public synchronized boolean isCanceled() { 
-        return fCanceled;
+        return fCanceled || (fParentRequestMonitor != null && fParentRequestMonitor.isCanceled());
     }
     
     /**

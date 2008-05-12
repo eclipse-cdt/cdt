@@ -144,6 +144,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
     }
     
     protected void stopCommandProcessing() {
+        // Guard against calling this multiple times (e.g. as a result of a 
+        // user request and an event from the back end).
+        if (fStoppedCommandProcessing) return;
         fStoppedCommandProcessing = true;
         
     	/*
@@ -154,6 +157,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             commandHandle.getRequestMonitor().setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
             commandHandle.getRequestMonitor().done();
         }
+    	fCommandQueue.clear();
     	
     	/*
     	 *  Now go through the commands which are outstanding in that they have been sent to the backend.

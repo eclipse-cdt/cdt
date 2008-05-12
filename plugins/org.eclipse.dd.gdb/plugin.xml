@@ -10,4 +10,12 @@
             markerType="org.eclipse.cdt.debug.core.cBreakpointMarker">
       </breakpointExtension>
    </extension>
+
+   <!-- Binding debug model ids to context. Use the same bindings as CDT -->
+   <extension point="org.eclipse.debug.ui.debugModelContextBindings">
+      <modelContextBinding 
+         contextId="org.eclipse.cdt.debug.ui.debugging"
+         debugModelId="org.eclipse.dd.gdb"/>
+   </extension>
+   
 </plugin>

@@ -15,12 +15,12 @@
  * Kevin Doyle (IBM) - Changed name Validator to ValidatorFileUniqueName
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [216252] cleaning up system message ids and strings
+ * David McKnight   (IBM)        - [231671] TVT34:TCT171: PLK: No help text for new remote file
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
 
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -106,7 +106,7 @@ public class SystemNewFileWizardMainPage
 			}
 		);			
     		
-		SystemWidgetHelpers.setCompositeHelp(composite_prompts, Activator.HELPPREFIX+ISystemFileConstants.NEW_FILE_WIZARD);	
+		SystemWidgetHelpers.setCompositeHelp(composite_prompts, RSEUIPlugin.HELPPREFIX + ISystemFileConstants.NEW_FILE_WIZARD);	
 		
 		return composite_prompts;		
 

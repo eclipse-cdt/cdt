@@ -21,6 +21,7 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -45,16 +46,20 @@ import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBThreadData;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.ui.IMemento;
 
 
 @SuppressWarnings("restriction")
 public class ThreadVMNode extends AbstractDMVMNode 
-    implements IElementLabelProvider
+    implements IElementLabelProvider, IElementMementoProvider
 {
     public ThreadVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IExecutionDMContext.class);
@@ -317,6 +322,69 @@ public class ThreadVMNode extends AbstractDMVMNode
             
             rm.done();
         }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
+     */
+    
+    public void compareElements(IElementCompareRequest[] requests) {
+        
+        for ( IElementCompareRequest request : requests ) {
+        	
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            String mementoName = memento.getString("THREAD_MEMENTO_NAME"); //$NON-NLS-1$
+            
+            if (mementoName != null) {
+                if (element instanceof IDMVMContext) {
+                	
+                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                    
+                    if ( dmc instanceof IMIExecutionDMContext) {
+                    	
+                    	String elementName = "Thread." + ((IMIExecutionDMContext) dmc).getThreadId() + "." + dmc.getSessionId();  //$NON-NLS-1$  //$NON-NLS-2$
+                    	request.setEqual( elementName.equals( mementoName ) );
+                    } 
+                    else if ( dmc instanceof IContainerDMContext) {
+                    	
+                    	String elementName = "Thread." + dmc.getSessionId();  //$NON-NLS-1$
+                    	request.setEqual( elementName.equals( mementoName ) );
+                    } 
+                }
+            }
+            request.done();
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
+     */
+    public void encodeElements(IElementMementoRequest[] requests) {
+    	
+    	for ( IElementMementoRequest request : requests ) {
+    		
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            
+            if (element instanceof IDMVMContext) {
 
+            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+            	if ( dmc instanceof IMIExecutionDMContext) {
+                	
+                	String elementName = "Thread." + ((IMIExecutionDMContext) dmc).getThreadId() + "." + dmc.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
+                	memento.putString("THREAD_MEMENTO_NAME", elementName); //$NON-NLS-1$
+                } 
+                else if ( dmc instanceof IContainerDMContext) {
+                	
+                	String elementName = "Thread." + dmc.getSessionId();  //$NON-NLS-1$
+                	memento.putString("THREAD_MEMENTO_NAME", elementName); //$NON-NLS-1$
+                } 
+            }
+            request.done();
+        }
     }
 }

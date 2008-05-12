@@ -48,8 +48,11 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -62,10 +65,11 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 
 @SuppressWarnings("restriction")
 public class RegisterVMNode extends AbstractExpressionVMNode 
-    implements IElementEditor, IElementLabelProvider
+    implements IElementEditor, IElementLabelProvider, IElementMementoProvider
 {
     protected class RegisterVMC extends DMVMContext
         implements IFormattedValueVMContext
@@ -739,5 +743,129 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return new RegisterCellModifier( 
             getDMVMProvider(), fFormattedPrefStore, fSyncRegisterDataAccess );
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
+     */
+    public void compareElements(IElementCompareRequest[] requests) {
+        
+        for ( final IElementCompareRequest request : requests ) {
+        	
+            Object element = request.getElement();
+            final IMemento memento = request.getMemento();
+            final String mementoName = memento.getString("REGISTER_MEMENTO_NAME"); //$NON-NLS-1$
+            
+            if (mementoName != null) {
+                if (element instanceof IDMVMContext) {
+                	
+                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                    
+                    if ( dmc instanceof IRegisterDMContext )
+                    {
+                    	final IRegisterDMContext regDmc = (IRegisterDMContext) dmc;
+                        final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+                        
+                    	/*
+                         *  Now make sure the register group is the one we want.
+                         */
+                        
+                        final DataRequestMonitor<IRegisterDMData> dataDone = new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
+                            @Override
+                            protected void handleCompleted() {
+                                if ( getStatus().isOK() ) {
+                                	String regName = "Register." + getData().getName() + "." + regDmc.getSessionId(); //$NON-NLS-1$  //$NON-NLS-2$
+                                	request.setEqual( regName.equals( mementoName ) );
+                                }
+                                request.done();
+                            }
+                        };
+                        
+                        /*
+                    	 *  Now go get the model data for the single register group found.
+                    	 */
+                    	try {
+                            getSession().getExecutor().execute(new DsfRunnable() {
+                                public void run() {
+                                	IRegisters regService = getServicesTracker().getService(IRegisters.class);
+                                	if ( regService != null ) {
+                                		regService.getRegisterData( regDmc, dataDone );
+                                	}
+                                	else {
+                                		request.done();
+                                	}
+                                }
+                            });
+                        } catch (RejectedExecutionException e) {
+                            request.done();
+                        }
+
+                    	continue;
+                    }
+                }
+            }
+            request.done();
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
+     */
+    public void encodeElements(IElementMementoRequest[] requests) {
+    	
+    	for ( final IElementMementoRequest request : requests ) {
+    		
+            Object element = request.getElement();
+            final IMemento memento = request.getMemento();
+            
+            if (element instanceof IDMVMContext) {
+
+            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+            	if ( dmc instanceof IRegisterDMContext )
+            	{
+            		final IRegisterDMContext regDmc = (IRegisterDMContext) dmc;
+            		final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+
+            		/*
+            		 *  Now make sure the register group is the one we want.
+            		 */
+            		final DataRequestMonitor<IRegisterDMData> dataDone = new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
+            			@Override
+            			protected void handleCompleted() {
+            				if ( getStatus().isOK() ) {
+            					String regName = "Register." + getData().getName() + "." + regDmc.getSessionId(); //$NON-NLS-1$  //$NON-NLS-2$
+            					memento.putString("REGISTER_MEMENTO_NAME", regName);
+            				}
+            				request.done();
+            			}
+            		};
+
+            		/*
+                	 *  Now go get the model data for the single register group found.
+                	 */
+                	try {
+                        getSession().getExecutor().execute(new DsfRunnable() {
+                            public void run() {
+                            	IRegisters regService = getServicesTracker().getService(IRegisters.class);
+                            	if ( regService != null ) {
+                            		regService.getRegisterData( regDmc, dataDone );
+                            	}
+                            	else {
+                            		request.done();
+                            	}
+                            }
+                        });
+                    } catch (RejectedExecutionException e) {
+                        request.done();
+                    }
+
+                	continue;
+            	}
+            }
+            request.done();
+        }
     }
 }

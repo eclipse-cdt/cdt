@@ -23,7 +23,6 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -102,15 +101,15 @@ public class PDARegisters extends AbstractDsfService implements IRegisters {
      * @see org.eclipse.dd.dsf.debug.service.IRegisters#getRegisterGroups(org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
      */
     public void getRegisterGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm ) {
-    	PDAProgramDMContext frameDmc = DMContexts.getAncestorOfType(ctx, PDAProgramDMContext.class);
-        if (frameDmc == null) {
+    	PDAProgramDMContext execDmc = DMContexts.getAncestorOfType(ctx, PDAProgramDMContext.class);
+        if (execDmc == null) {
             rm.setStatus( new Status( IStatus.ERROR , PDAPlugin.PLUGIN_ID , INVALID_HANDLE , "Container context not found", null ) ) ;   //$NON-NLS-1$
             rm.done();
             return;
         }
         
-        MIRegisterGroupDMC generalGroupDMC  = new MIRegisterGroupDMC( this , frameDmc, 0 , "General"  ) ;  //$NON-NLS-1$
-        MIRegisterGroupDMC analysisGroupDMC = new MIRegisterGroupDMC( this , frameDmc, 0 , "Analysis" ) ;  //$NON-NLS-1$
+        MIRegisterGroupDMC generalGroupDMC  = new MIRegisterGroupDMC( this , execDmc, 0 , "General"  ) ;  //$NON-NLS-1$
+        MIRegisterGroupDMC analysisGroupDMC = new MIRegisterGroupDMC( this , execDmc, 0 , "Analysis" ) ;  //$NON-NLS-1$
         
         rm.setData( new MIRegisterGroupDMC[] { generalGroupDMC, analysisGroupDMC } ) ;
         rm.done() ;
@@ -128,13 +127,6 @@ public class PDARegisters extends AbstractDsfService implements IRegisters {
             return;
         }
 
-        final IFrameDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IFrameDMContext.class);
-        if ( containerDmc == null ) { 
-            rm.setStatus( new Status( IStatus.ERROR , PDAPlugin.PLUGIN_ID , INVALID_HANDLE , "Container context not found" , null ) ) ;   //$NON-NLS-1$
-            rm.done();
-            return;
-        }
-        
         String[] names = null;;
 
         if ( groupDmc.getName().equals( "General") ) {

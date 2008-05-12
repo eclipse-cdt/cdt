@@ -17,9 +17,11 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -27,6 +29,7 @@ import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBProcessData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
@@ -36,16 +39,20 @@ import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.ui.IMemento;
 
 
 @SuppressWarnings("restriction")
 public class ContainerVMNode extends AbstractDMVMNode 
-    implements IElementLabelProvider
+    implements IElementLabelProvider, IElementMementoProvider
 {
 
     
@@ -147,8 +154,7 @@ public class ContainerVMNode extends AbstractDMVMNode
         } else if (e instanceof InferiorStartedDMEvent) {
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);
         } else if (e instanceof IStartedDMEvent || e instanceof IExitedDMEvent) {
-            IContainerDMContext containerCtx = DMContexts.getAncestorOfType(
-                ((IDMEvent<?>)e).getDMContext(), IContainerDMContext.class);
+            IContainerDMContext containerCtx = DMContexts.getAncestorOfType(((IDMEvent<?>)e).getDMContext(), IContainerDMContext.class);
             if (containerCtx != null) {
                 parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
             }
@@ -156,4 +162,62 @@ public class ContainerVMNode extends AbstractDMVMNode
 
     	requestMonitor.done();
   	 }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
+     */
+    
+    private String produceContainerElementName( String viewName , IExecutionDMContext execCtx ) {
+    	return "Container." + execCtx.getSessionId(); //$NON-NLS-1$
+    }
+    
+    public void compareElements(IElementCompareRequest[] requests) {
+        
+        for ( IElementCompareRequest request : requests ) {
+        	
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            String mementoName = memento.getString("CONTAINER_MEMENTO_NAME"); //$NON-NLS-1$
+            
+            if (mementoName != null) {
+                if (element instanceof IDMVMContext) {
+                	
+                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                    
+                    if ( dmc instanceof IExecutionDMContext) {
+                    	
+                    	String elementName = produceContainerElementName( request.getPresentationContext().getId(), (IExecutionDMContext) dmc );
+                    	request.setEqual( elementName.equals( mementoName ) );
+                    } 
+                }
+            }
+            request.done();
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
+     */
+    public void encodeElements(IElementMementoRequest[] requests) {
+    	
+    	for ( IElementMementoRequest request : requests ) {
+    		
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            
+            if (element instanceof IDMVMContext) {
+
+            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+            	if ( dmc instanceof IExecutionDMContext) {
+
+            		String elementName = produceContainerElementName( request.getPresentationContext().getId(), (IExecutionDMContext) dmc );
+            		memento.putString("CONTAINER_MEMENTO_NAME", elementName); //$NON-NLS-1$
+            	} 
+            }
+            request.done();
+        }
+    }
 }

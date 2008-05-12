@@ -18,6 +18,7 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
@@ -38,17 +39,21 @@ import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.ui.IMemento;
 
 @SuppressWarnings("restriction")
 public class StackFramesVMNode extends AbstractDMVMNode 
-    implements IElementLabelProvider
+    implements IElementLabelProvider, IElementMementoProvider
 {
     
     public IVMContext[] fCachedOldFrameVMCs;
@@ -57,6 +62,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
         super(provider, session, IStack.IFrameDMContext.class);
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateHasElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate)
+     */
     @Override
     protected void updateHasElementsInSessionThread(IHasChildrenUpdate update) {
         IRunControl runControl = getServicesTracker().getService(IRunControl.class);
@@ -70,6 +79,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
         update.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
+     */
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
     	
@@ -166,7 +179,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
+     */
     public void update(final ILabelUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
@@ -179,7 +195,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
             }
         }
     }
-
 
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
@@ -291,6 +306,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
         update.setLabel(label.toString(), 0);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.AbstractVMNode#handleFailedUpdate(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
+     */
     @Override
     protected void handleFailedUpdate(IViewerUpdate update) {
         if (update instanceof ILabelUpdate) {
@@ -302,7 +321,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
 
-    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#getContextsForEvent(org.eclipse.dd.dsf.ui.viewmodel.VMDelta, java.lang.Object, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
     @Override
     public void getContextsForEvent(final VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
         if (e instanceof ModelProxyInstalledEvent) {
@@ -328,6 +350,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
         super.getContextsForEvent(parentDelta, e, rm);
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
+     */
     public int getDeltaFlags(Object e) {
         // This node generates delta if the timers have changed, or if the 
         // label has changed.
@@ -348,6 +374,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, int, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
     public void buildDelta(final Object e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IContainerSuspendedDMEvent) {
             IContainerSuspendedDMEvent csEvent = (IContainerSuspendedDMEvent)e;
@@ -464,4 +494,77 @@ public class StackFramesVMNode extends AbstractDMVMNode
             );
     }
 
+    private String produceFrameElementName( String viewName , IFrameDMContext frame ) {
+    	/*
+    	 *  We are addressing Bugzilla 211490 which wants the Register View  to keep the same expanded
+    	 *  state for registers for stack frames within the same thread. Different  threads could have
+    	 *  different register sets ( e.g. one thread may have floating point & another may not ). But
+    	 *  within a thread we are enforcing  the assumption that the register  sets will be the same.  
+    	 *  So we make a more convenient work flow by keeping the same expansion when selecting amount
+    	 *  stack frames within the same thread. We accomplish this by only differentiating by  adding
+    	 *  the level for the Expression/Variables view. Otherwise we do not delineate based on  which
+    	 *  view and this captures the Register View in its filter.
+		 */
+    	if ( viewName.startsWith(IDebugUIConstants.ID_VARIABLE_VIEW)   ||
+    	     viewName.startsWith(IDebugUIConstants.ID_EXPRESSION_VIEW)    )
+    	{
+    		return "Frame." + frame.getLevel() + "." + frame.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
+    	}
+    	else {
+    		return "Frame" + frame.getSessionId(); //$NON-NLS-1$
+    	}
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
+     */
+    public void compareElements(IElementCompareRequest[] requests) {
+        
+        for ( IElementCompareRequest request : requests ) {
+        	
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            String mementoName = memento.getString("STACK_FRAME_MEMENTO_NAME"); //$NON-NLS-1$
+            
+            if (mementoName != null) {
+                if (element instanceof IDMVMContext) {
+                	
+                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                    
+                    if ( dmc instanceof IFrameDMContext) {
+                    	
+                    	String elementName = produceFrameElementName( request.getPresentationContext().getId(), (IFrameDMContext) dmc );
+                    	request.setEqual( elementName.equals( mementoName ) );
+                    } 
+                }
+            }
+            request.done();
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
+     */
+    public void encodeElements(IElementMementoRequest[] requests) {
+    	
+    	for ( IElementMementoRequest request : requests ) {
+    		
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            
+            if (element instanceof IDMVMContext) {
+
+            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+            	if ( dmc instanceof IFrameDMContext) {
+
+            		String elementName = produceFrameElementName( request.getPresentationContext().getId(), (IFrameDMContext) dmc );
+            		memento.putString("STACK_FRAME_MEMENTO_NAME", elementName); //$NON-NLS-1$
+            	} 
+            }
+            request.done();
+        }
+    }
 }

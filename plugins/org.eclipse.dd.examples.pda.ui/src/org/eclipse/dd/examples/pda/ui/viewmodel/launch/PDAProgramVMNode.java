@@ -18,6 +18,7 @@ import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -31,6 +32,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.launch.PDALaunch;
 import org.eclipse.dd.examples.pda.service.PDACommandControl;
@@ -39,7 +41,10 @@ import org.eclipse.dd.examples.pda.service.PDAStartedEvent;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -47,13 +52,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.ui.IMemento;
 
 /**
  * View Model node representing a PDA program. 
  */
 @SuppressWarnings("restriction")
 public class PDAProgramVMNode extends AbstractDMVMNode 
-    implements IElementLabelProvider
+    implements IElementLabelProvider, IElementMementoProvider
 {
     // View model context representing a terminated PDA program.
     // It's purpose is to show a terminated program in the debug view
@@ -286,4 +292,62 @@ public class PDAProgramVMNode extends AbstractDMVMNode
         }
         rm.done();
   	 }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
+     */
+    
+    private String produceProgramElementName( String viewName , PDAProgramDMContext execCtx ) {
+    	return "PDA." + execCtx.getProgram() + "." + execCtx.getSessionId(); //$NON-NLS-1$  //$NON-NLS-2$
+    }
+    
+    public void compareElements(IElementCompareRequest[] requests) {
+        
+        for ( IElementCompareRequest request : requests ) {
+        	
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            String mementoName = memento.getString("PDAPROGRAM_MEMENTO_NAME"); //$NON-NLS-1$
+            
+            if (mementoName != null) {
+                if (element instanceof IDMVMContext) {
+                	
+                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                    
+                    if ( dmc instanceof PDAProgramDMContext) {
+                    	
+                    	String elementName = produceProgramElementName( request.getPresentationContext().getId(), (PDAProgramDMContext) dmc );
+                    	request.setEqual( elementName.equals( mementoName ) );
+                    } 
+                }
+            }
+            request.done();
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
+     */
+    public void encodeElements(IElementMementoRequest[] requests) {
+    	
+    	for ( IElementMementoRequest request : requests ) {
+    		
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            
+            if (element instanceof IDMVMContext) {
+
+            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+            	if ( dmc instanceof PDAProgramDMContext) {
+
+            		String elementName = produceProgramElementName( request.getPresentationContext().getId(), (PDAProgramDMContext) dmc );
+            		memento.putString("PDAPROGRAM_MEMENTO_NAME", elementName); //$NON-NLS-1$
+            	} 
+            }
+            request.done();
+        }
+    }
 }

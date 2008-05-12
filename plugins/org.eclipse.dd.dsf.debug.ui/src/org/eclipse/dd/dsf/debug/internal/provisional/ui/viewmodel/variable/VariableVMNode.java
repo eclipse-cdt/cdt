@@ -52,8 +52,11 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -66,10 +69,11 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 
 @SuppressWarnings({"restriction", "nls"})
 public class VariableVMNode extends AbstractExpressionVMNode 
-    implements IElementEditor, IElementLabelProvider
+    implements IElementEditor, IElementLabelProvider, IElementMementoProvider 
 {
     
     //private final static int MAX_STRING_VALUE_LENGTH = 40;
@@ -710,5 +714,63 @@ public class VariableVMNode extends AbstractExpressionVMNode
         // DataRequestMonitor.handleCompleted() above.
 
         stackFrameService.getLocals(frameDmc, rm);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
+     */
+    private String produceExpressionElementName( String viewName , IExpressionDMContext expression ) {
+    	
+    	return "variable." + expression.getExpression() + "." + expression.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public void compareElements(IElementCompareRequest[] requests) {
+        
+        for ( IElementCompareRequest request : requests ) {
+        	
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            String mementoName = memento.getString("VARIABLE_MEMENTO_NAME"); //$NON-NLS-1$
+            
+            if (mementoName != null) {
+                if (element instanceof IDMVMContext) {
+                	
+                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                    
+                    if ( dmc instanceof IExpressionDMContext) {
+                    	
+                    	String elementName = produceExpressionElementName( request.getPresentationContext().getId(), (IExpressionDMContext) dmc );
+                    	request.setEqual( elementName.equals( mementoName ) );
+                    } 
+                }
+            }
+            request.done();
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
+     */
+    public void encodeElements(IElementMementoRequest[] requests) {
+    	
+    	for ( IElementMementoRequest request : requests ) {
+    		
+            Object element = request.getElement();
+            IMemento memento = request.getMemento();
+            
+            if (element instanceof IDMVMContext) {
+
+            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+            	if ( dmc instanceof IExpressionDMContext) {
+
+            		String elementName = produceExpressionElementName( request.getPresentationContext().getId(), (IExpressionDMContext) dmc );
+            		memento.putString("VARIABLE_MEMENTO_NAME", elementName); //$NON-NLS-1$
+            	} 
+            }
+            request.done();
+        }
     }
 }

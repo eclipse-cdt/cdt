@@ -622,8 +622,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param msg - text to be shown instead of panes
 	 */
 	protected void setAllVisible(boolean visible, String msg) {
-		if (!visible)
-			setBackgroundText(msg);
+		setBackgroundText(visible ? EMPTY_STR : msg);
 		usercomp.setVisible(visible);
 		buttoncomp.setVisible(visible);
 		if (page != null) {

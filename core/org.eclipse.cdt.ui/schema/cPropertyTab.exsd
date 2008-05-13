@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui">
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.cdt.managedbuilder.ui" id="cPropertyTab" name="cPropertyTab"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Implementation of property/preference UI element.
 
@@ -51,9 +51,9 @@ their weights.
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -67,9 +67,9 @@ their weights.
                   Icon to be displayed for corresponding tab in tabfolder.
 Ignored for single-tab pages
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -77,9 +77,9 @@ Ignored for single-tab pages
                <documentation>
                   Class implementing org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -103,7 +103,7 @@ but it is not obligatory.
          <attribute name="tooltip" type="string">
             <annotation>
                <documentation>
-                  
+                  Text of tooltip shown over the tab.
                </documentation>
             </annotation>
          </attribute>
@@ -115,22 +115,29 @@ Ignored for single-tab page.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="helpId" type="string">
+            <annotation>
+               <documentation>
+                  Help context Id for given tab.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          4.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;extension
            point=&quot;org.eclipse.cdt.ui.cPropertyTab&quot;&gt;
@@ -145,19 +152,20 @@ Ignored for single-tab page.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Tabs must implement interface:
 org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Implementors in org.eclipse.cdt.ui.newui:
 BinaryParsTab      
@@ -192,9 +200,9 @@ ToolSettingsTab
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          /*******************************************************************************
  * Copyright (c) 2007 Intel Corporation and others.

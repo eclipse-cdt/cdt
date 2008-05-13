@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -101,6 +102,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String WORKSPACE_DIR_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
 	public static final String BACKGROUND_TEXT_DEFAULT = UIMessages.getString("AbstractCPropertyTab.2"); //$NON-NLS-1$
 	public static final Color BACKGROUND_FOR_USER_VAR = new Color(Display.getDefault(), 255, 255, 200); // light yellow
+
+	private static final String PREFIX = "org.eclipse.cdt.ui."; //$NON-NLS-1$
 	
 	public static final int TRI_UNKNOWN = 2;
 	public static final int TRI_YES = 1;
@@ -115,6 +118,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	private Button[] buttons;     // buttons in buttoncomp
 	public ICPropertyProvider page;
 	protected Image icon = null; 
+	private String helpId = EMPTY_STR; 
 	
 	protected boolean visible;
 
@@ -141,6 +145,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		GridData d = new GridData(GridData.END);
 		d.widthHint = 1;
 		buttoncomp.setLayoutData(d);
+		
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpId);
 	}
 	
 	/**
@@ -668,4 +674,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		return (wmode == CDTPrefUtil.WMODE_MODIFY);
 	}
 
+	public String getHelpContextId() {
+		return helpId;
+	}
+	
+	public void setHelpContextId(String id) {
+		helpId = PREFIX + id;
+	}
 }

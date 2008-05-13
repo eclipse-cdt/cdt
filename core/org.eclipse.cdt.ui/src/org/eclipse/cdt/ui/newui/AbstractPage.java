@@ -32,6 +32,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -61,6 +63,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -114,13 +117,14 @@ implements
 	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
-	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
-	public static final String CLASS_NAME = "class"; //$NON-NLS-1$
-	public static final String PARENT_NAME = "parent"; //$NON-NLS-1$
-	public static final String IMAGE_NAME = "icon"; //$NON-NLS-1$
-	public static final String TIP_NAME = "tooltip"; //$NON-NLS-1$
-	public static final String TEXT_NAME = "name"; //$NON-NLS-1$
-	public static final String WEIGHT_NAME = "weight"; //$NON-NLS-1$
+	private static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
+	private static final String CLASS_NAME = "class"; //$NON-NLS-1$
+	private static final String PARENT_NAME = "parent"; //$NON-NLS-1$
+	private static final String IMAGE_NAME = "icon"; //$NON-NLS-1$
+	private static final String TIP_NAME = "tooltip"; //$NON-NLS-1$
+	private static final String TEXT_NAME = "name"; //$NON-NLS-1$
+	private static final String WEIGHT_NAME = "weight"; //$NON-NLS-1$
+	private static final String HELPID_NAME = "helpId"; //$NON-NLS-1$
 
 	private static final Object NOT_NULL = new Object();
 	public static final String EMPTY_STR = "";  //$NON-NLS-1$
@@ -888,6 +892,13 @@ implements
 		}
 		if (page == null) return false;
 		
+		String helpId = element.getAttribute(HELPID_NAME);
+		if (helpId != null && helpId.length() > 0 
+   		    // TODO: in next version: refer to ICPropertyTab instead of AbstractCPropertyTab
+			&& page instanceof AbstractCPropertyTab) {
+			((AbstractCPropertyTab)page).setHelpContextId(helpId);
+		}
+		
 		Image _img = getIcon(element);
 		if (_img != null) page.handleTabEvent(ICPropertyTab.SET_ICON, _img);
 		
@@ -1092,17 +1103,20 @@ implements
 	public Button getDButton() {
 		return getDefaultsButton();
 	}
-/*
+
 	@Override
 	public void performHelp() {
+	    // TODO: in next version: refer to ICPropertyTab instead of AbstractCPropertyTab
 		if (currentTab != null && currentTab instanceof AbstractCPropertyTab) {
 			String s = ((AbstractCPropertyTab)currentTab).getHelpContextId();
-			if (s != null) {
+			if (s != null && s.length() > 0) {
 				IContext context= HelpSystem.getContext(s);
-				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
-//				PlatformUI.getWorkbench().getHelpSystem().displayHelp(s);
+				if (context != null)
+					PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
+				else
+					PlatformUI.getWorkbench().getHelpSystem().displayDynamicHelp();
 			}
 		}
 	}
-*/	
+	
 }

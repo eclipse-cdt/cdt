@@ -217,44 +217,52 @@
            icon="icons/elcl16/discovery.gif"
            name="(Single) Discovery.options"
            weight="005"
+           helpId="cdt_u_prop_build_discovery"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_Discovery"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ToolSettingsTab"
            icon="icons/elcl16/config-tool.gif"
            name="%Tool.settings"
            weight="001"
+           helpId="cdt_u_prop_build_setting_tool"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuildStepsTab"
            icon="icons/obj16/steps.gif"
            name="%Build.steps"
+           helpId="cdt_u_prop_build_setting_steps"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
            weight="002"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ArtifactTab"
            icon="icons/obj16/artifact.gif"
            name="%Build.artifact"
+           helpId="cdt_u_prop_build_setting_artifact"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
            weight="003"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
            name="%Builder.settings"
+           helpId="cdt_u_prop_build"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build"
            weight="004"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuildBehaviourTab"
            icon="icons/obj16/target_obj.gif"
            name="%WBB.settings"
+           helpId="cdt_u_prop_build"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build"
            weight="005"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
            name="(Single) CDT Vars (macros)"
+           helpId="cdt_u_prop_build_variables"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_Variables"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ToolChainEditTab"
            name="(Single) Tool chain edit"
+           helpId="cdt_u_prop_build_toolchain"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"/>
 
 <!-- exported from CORE -->           
@@ -263,6 +271,7 @@
            icon="icons/obj16/hfolder_obj.gif"
            name="%Includes"
            weight="001"
+           helpId="cdt_u_prop_pns_inc"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            tooltip="&quot;Includes list&quot;"/>
      <tab
@@ -270,6 +279,7 @@
            icon="icons/obj16/define_obj.gif"
            name="%Symbols"
            weight="002"
+           helpId="cdt_u_prop_pns_sym"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            tooltip="&quot;Macros list&quot;"/>
      <tab
@@ -277,6 +287,7 @@
            icon="icons/obj16/lib_obj.gif"
            name="%Libraries"
            weight="003"
+           helpId="cdt_u_prop_pns_lib"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            tooltip="&quot;Libraries list&quot;"/>
      <tab
@@ -284,55 +295,64 @@
            icon="icons/obj16/opentype.gif"
            name="%Library.paths"
            weight="004"
+           helpId="cdt_u_prop_pns_libpath"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.RefsTab"
            icon="icons/obj16/search_ref_obj.gif"
            name="%References"
            weight="010"
+           helpId="cdt_u_prop_pns_ref"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.CLocationSourceTab"
            icon="icons/obj16/fldr_obj.gif"
            name="%Source.location"
            weight="008"           
+           helpId="cdt_u_prop_pns_src"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CBuildLocationOutputTab"
            icon="icons/obj16/output_folder_obj.gif"
            name="%Output.location"
            weight="009"           
+           helpId="cdt_u_prop_pns_out"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.StructureTreeTab"
            icon="icons/obj16/hierarchy.gif"
            name="%Data.hierarchy"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
+           helpId=""
            weight="012"/>
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
            name="(Single) Environment"
            weight="005"
+           helpId="cdt_u_prop_build_environment"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_Environment"/>
      <tab
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
            icon="icons/obj16/bin_obj.gif"
            name="%Binary.parsers"
            weight="006"
+           helpId="cdt_u_prop_build_setting_binparser"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            icon="icons/obj16/error_obj.gif"
            name="%Error.parsers"
            weight="007"
+           helpId="cdt_u_prop_build_setting_errparser"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"/>
 
 	 <!-- Export settings page -->
-	      <tab
+     <tab
            class="org.eclipse.cdt.ui.newui.ExpIncludeTab"
            icon="icons/obj16/hfolder_obj.gif"
            name="%Includes"
+           helpId="cdt_u_prop_exp"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
            tooltip="&quot;Includes list&quot;"/>
      <tab
@@ -340,17 +360,20 @@
            icon="icons/obj16/define_obj.gif"
            name="%Symbols"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
+           helpId="cdt_u_prop_exp"
            tooltip="&quot;Macros list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryTab"
            icon="icons/obj16/lib_obj.gif"
            name="%Libraries"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
+           helpId="cdt_u_prop_exp"
            tooltip="&quot;Libraries list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryPathTab"
            icon="icons/obj16/opentype.gif"
            name="%Library.paths"
+           helpId="cdt_u_prop_exp"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"/>
 
      <!-- tabs for Preference pages -->      
@@ -358,54 +381,65 @@
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
            name="(Single) Environment"
+           helpId="cdt_u_prop_build_environment"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
            name="(Single) CDT Vars (macros)"
+           helpId="cdt_u_prop_build_variables"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Vars"/>
      <tab
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
            name="%Binary.parsers"
            icon="icons/obj16/bin_obj.gif"
+           helpId="cdt_u_prop_build_setting_binparser"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            name="%Error.parsers"
            icon="icons/obj16/error_obj.gif"
+           helpId="cdt_u_prop_build_setting_errparser"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
            name="%Discovery.options"
+           helpId="cdt_u_prop_build_discovery"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
       <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
            name="%Builder.settings"
+           helpId="cdt_u_prop_build"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuildBehaviourTab"
            icon="icons/obj16/target_obj.gif"
            name="%WBB.settings"
+           helpId="cdt_u_prop_build"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PreferredToolchainsTab"
            name="%Preferred.toolchains"
+           helpId=""
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.WizardDefaultsTab"
            name="%Wizard.defaults"
+           helpId=""
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PropertyPageDefsTab"
            name="%PropertyPage.defaults"
+           helpId=""
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PropertyMultiCfgTab"
            name="%multicfg"
+           helpId=""
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig">
      </tab>
   </extension>   

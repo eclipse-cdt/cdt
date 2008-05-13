@@ -431,6 +431,7 @@
            name="%Includes"
            icon="icons/obj16/hfolder_obj.gif"
            weight="001"
+           helpId="cdt_u_prop_pns_inc"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="&quot;Includes list&quot;"/>
      <tab
@@ -438,6 +439,7 @@
            name="%Symbols"
            icon="icons/obj16/define_obj.gif"
            weight="002"
+           helpId="cdt_u_prop_pns_sym"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="&quot;Macros list&quot;"/>
 	</extension>

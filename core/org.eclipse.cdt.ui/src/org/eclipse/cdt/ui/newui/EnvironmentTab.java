@@ -207,7 +207,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    b1.setText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
 	    b1.setToolTipText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
 	    gd = new GridData(GridData.FILL_HORIZONTAL);
-	    gd.horizontalSpan = 2; 
+	    gd.horizontalSpan = 3; 
 	    b1.setLayoutData(gd);
 	    b1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -219,21 +219,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				updateData();
 			}});
 
-	    lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
-	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
-	    lb1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				CDTPrefUtil.spinDMode();
-				updateData();
-			}});
-	    
 	    b2 = new Button(usercomp, SWT.RADIO);
 	    b2.setText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
 	    b2.setToolTipText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
 	    gd = new GridData(GridData.FILL_HORIZONTAL);
-	    gd.horizontalSpan = 2; 
+	    gd.horizontalSpan = 3; 
 	    b2.setLayoutData(gd);
 	    b2.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -245,15 +235,30 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				updateData();
 			}});
 
-	    lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
-	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
-	    lb2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				CDTPrefUtil.spinWMode();
-				updateLbs(null, lb2);
-			}});
+	    if (!page.isForPrefs()) {
+	    	// dummy placeholder
+	    	new Label(usercomp, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    	
+	    	lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
+	    	lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    	lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
+	    	lb1.addMouseListener(new MouseAdapter() {
+	    		@Override
+	    		public void mouseDoubleClick(MouseEvent e) {
+	    			CDTPrefUtil.spinDMode();
+	    			updateData();
+	    		}});
+
+	    	lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
+	    	lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    	lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
+	    	lb2.addMouseListener(new MouseAdapter() {
+	    		@Override
+	    		public void mouseDoubleClick(MouseEvent e) {
+	    			CDTPrefUtil.spinWMode();
+	    			updateLbs(null, lb2);
+	    		}});
+	    }
 	    initButtons(new String[] {UIMessages.getString("EnvironmentTab.5"),UIMessages.getString("EnvironmentTab.6"),UIMessages.getString("EnvironmentTab.7"),UIMessages.getString("EnvironmentTab.8"),UIMessages.getString("EnvironmentTab.9")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 	

@@ -103,26 +103,34 @@ public class CDTPrefUtil {
 		setStr(KEY_PREFTC, b.toString().trim());
 	}
 	
+	@SuppressWarnings("fallthrough")
 	public static String getDMode() {
 		String s = null;
-		switch(CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE)) {
-		case CDTPrefUtil.DMODE_CONJUNCTION:
+		switch(getInt(KEY_DMODE)) {
+		default:
+			setInt(KEY_DMODE, DMODE_CONJUNCTION);
+			// fallthrough
+		case DMODE_CONJUNCTION:
 			s = UIMessages.getString("EnvironmentTab.17");  //$NON-NLS-1$
 			break;
-		case CDTPrefUtil.DMODE_DISJUNCTION:
+		case DMODE_DISJUNCTION:
 			s = UIMessages.getString("EnvironmentTab.18");  //$NON-NLS-1$
 			break;
 		}
 		return UIMessages.getString("EnvironmentTab.19") + s;  //$NON-NLS-1$
 	}
 	
+	@SuppressWarnings("fallthrough")
 	public static String getWMode() {
 		String s = null;
-		switch(CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE)) {
-		case CDTPrefUtil.WMODE_MODIFY:
+		switch(getInt(KEY_WMODE)) {
+		default:
+			setInt(KEY_WMODE, WMODE_MODIFY);
+			// fallthrough
+		case WMODE_MODIFY:
 			s = UIMessages.getString("EnvironmentTab.24");  //$NON-NLS-1$
 			break;
-		case CDTPrefUtil.WMODE_REPLACE:
+		case WMODE_REPLACE:
 			s = UIMessages.getString("EnvironmentTab.21");  //$NON-NLS-1$
 			break;
 		}

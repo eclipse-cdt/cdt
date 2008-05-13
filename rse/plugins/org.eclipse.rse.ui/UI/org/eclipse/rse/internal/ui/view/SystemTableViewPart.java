@@ -33,6 +33,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API type
  * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
  * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
+ * David McKnight   (IBM)        - [231867] TVT34:TCT196: PLK: "Subset" window too narrow
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -593,8 +594,10 @@ public class SystemTableViewPart extends ViewPart
 
 					_controls[i + 1] = SystemWidgetHelpers.createTextField(c, null);
 					GridData textData3 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+					textData3.widthHint = 75;
 					_controls[i + 1].setLayoutData(textData3);
-					_controls[i + 1].setText("*"); //$NON-NLS-1$
+					_controls[i + 1].setText("*"); //$NON-NLS-1$	
+
 					if (histFilters != null)
 					{
 						_controls[i + 1].setText(histFilters[i + 1]);

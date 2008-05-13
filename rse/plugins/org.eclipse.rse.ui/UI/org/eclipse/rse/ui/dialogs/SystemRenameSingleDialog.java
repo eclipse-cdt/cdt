@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Rupen Mardirossian (IBM)		 - [208435] When validating name, check for previously used names for multiple renaming instances
+ * David Dykstal (IBM) - [231828] make rename dialog a bit wider
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -43,6 +44,7 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -89,7 +91,8 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	private Composite renameGroup;
 	
     private Text newName;
-    private String promptLabel, promptTip;
+    private String promptLabel;
+    private String promptTip;
     private String newNameString;
     private String inputName =  ""; //$NON-NLS-1$
     private Label resourceTypePrompt, resourceTypeValue, verbiageLabel, renameLabel;
@@ -273,8 +276,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		renameGroup = SystemWidgetHelpers.createComposite(composite, nbrRenameColumns);
 
         // RESOURCE TYPE
-        resourceTypePrompt = SystemWidgetHelpers.createLabel(
-			renameGroup, SystemResources.RESID_SIMPLE_RENAME_RESOURCEPROMPT_LABEL);
+        resourceTypePrompt = SystemWidgetHelpers.createLabel(renameGroup, SystemResources.RESID_SIMPLE_RENAME_RESOURCEPROMPT_LABEL);
 	    resourceTypeValue = SystemWidgetHelpers.createLabel(renameGroup, ""); //$NON-NLS-1$
 	    resourceTypeValue.setToolTipText(SystemResources.RESID_SIMPLE_RENAME_RESOURCEPROMPT_TOOLTIP);
 	
@@ -285,15 +287,16 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 			String labelText = copyCollisionMode ? SystemResources.RESID_COLLISION_RENAME_LABEL : SystemResources.RESID_SIMPLE_RENAME_PROMPT_LABEL;
 			labelText = SystemWidgetHelpers.appendColon(labelText);
 			renameLabel = SystemWidgetHelpers.createLabel(renameGroup, labelText);
-			newName = SystemWidgetHelpers.createTextField(renameGroup, null);
        }
 		else
 		{ 
 			renameLabel = SystemWidgetHelpers.createLabel(renameGroup, promptLabel);
-			newName = SystemWidgetHelpers.createTextField(renameGroup, null);
-			if (promptTip != null)
-				newName.setToolTipText(promptTip);
 		}        
+		newName = SystemWidgetHelpers.createTextField(renameGroup, null);
+		((GridData)newName.getLayoutData()).widthHint = 300; // make this wider than usual so error messages are not truncated
+		if (promptTip != null) {
+			newName.setToolTipText(promptTip);
+		}
        
        // END RENAME
      

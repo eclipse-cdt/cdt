@@ -14,6 +14,7 @@ package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
 
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -21,7 +22,6 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -167,29 +167,61 @@ public class ContainerVMNode extends AbstractDMVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
-    
-    private String produceContainerElementName( String viewName , IExecutionDMContext execCtx ) {
-    	return "Container." + execCtx.getSessionId(); //$NON-NLS-1$
-    }
+    private final String MEMENTO_NAME = "CONTAINER_MEMENTO_NAME"; //$NON-NLS-1$
     
     public void compareElements(IElementCompareRequest[] requests) {
         
-        for ( IElementCompareRequest request : requests ) {
+        for ( final IElementCompareRequest request : requests ) {
         	
             Object element = request.getElement();
-            IMemento memento = request.getMemento();
-            String mementoName = memento.getString("CONTAINER_MEMENTO_NAME"); //$NON-NLS-1$
+            final IMemento memento = request.getMemento();
+            final String mementoName = memento.getString(MEMENTO_NAME);
             
             if (mementoName != null) {
-                if (element instanceof IDMVMContext) {
+            	if (element instanceof IDMVMContext) {
                 	
                     IDMContext dmc = ((IDMVMContext)element).getDMContext();
                     
-                    if ( dmc instanceof IExecutionDMContext) {
-                    	
-                    	String elementName = produceContainerElementName( request.getPresentationContext().getId(), (IExecutionDMContext) dmc );
-                    	request.setEqual( elementName.equals( mementoName ) );
-                    } 
+                    if ( dmc instanceof GDBControlDMContext )
+                    {
+                    	final GDBControlDMContext procDmc = (GDBControlDMContext) dmc;
+                    	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+
+                    	/*
+                    	 *  Now make sure the register group is the one we want.
+                    	 */
+
+                    	final DataRequestMonitor<GDBProcessData> regGroupDataDone = new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
+                    		@Override
+                    		protected void handleCompleted() {
+                    			if ( getStatus().isOK() ) {
+                    				request.setEqual( mementoName.equals( "Container." + getData().getName() ) ); //$NON-NLS-1$
+                    			}
+                    			request.done();
+                    		}
+                    	};
+
+                    	/*
+                    	 *  Now go get the model data for the single register group found.
+                    	 */
+                    	try {
+                            getSession().getExecutor().execute(new DsfRunnable() {
+                                public void run() {
+                                	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+                                	if ( runControl != null ) {
+                                		runControl.getProcessData( procDmc, regGroupDataDone );
+                                	}
+                                	else {
+                                		request.done();
+                                	}
+                                }
+                            });
+                        } catch (RejectedExecutionException e) {
+                            request.done();
+                        }
+
+                    	continue;
+                    }
                 }
             }
             request.done();
@@ -202,20 +234,55 @@ public class ContainerVMNode extends AbstractDMVMNode
      */
     public void encodeElements(IElementMementoRequest[] requests) {
     	
-    	for ( IElementMementoRequest request : requests ) {
+    	for ( final IElementMementoRequest request : requests ) {
     		
             Object element = request.getElement();
-            IMemento memento = request.getMemento();
+            final IMemento memento = request.getMemento();
             
             if (element instanceof IDMVMContext) {
+            	
+                IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                
+                if ( dmc instanceof GDBControlDMContext )
+                {
+                	final GDBControlDMContext procDmc = (GDBControlDMContext) dmc;
+                	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
 
-            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
+                	/*
+                	 *  Now make sure the register group is the one we want.
+                	 */
 
-            	if ( dmc instanceof IExecutionDMContext) {
+                	final DataRequestMonitor<GDBProcessData> regGroupDataDone = new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
+                		@Override
+                		protected void handleCompleted() {
+                			if ( getStatus().isOK() ) {
+                				memento.putString(MEMENTO_NAME, "Container." + getData().getName()); //$NON-NLS-1$
+                			}
+                			request.done();
+                		}
+                	};
 
-            		String elementName = produceContainerElementName( request.getPresentationContext().getId(), (IExecutionDMContext) dmc );
-            		memento.putString("CONTAINER_MEMENTO_NAME", elementName); //$NON-NLS-1$
-            	} 
+                	/*
+                	 *  Now go get the model data for the single register group found.
+                	 */
+                	try {
+                        getSession().getExecutor().execute(new DsfRunnable() {
+                            public void run() {
+                            	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+                            	if ( runControl != null ) {
+                            		runControl.getProcessData( procDmc, regGroupDataDone );
+                            	}
+                            	else {
+                            		request.done();
+                            	}
+                            }
+                        });
+                    } catch (RejectedExecutionException e) {
+                        request.done();
+                    }
+
+                	continue;
+                }
             }
             request.done();
         }

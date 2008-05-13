@@ -133,7 +133,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void createControls(Composite parent) {
 		parent.setLayout(new FillLayout());
 		background = new CLabel(parent, SWT.CENTER | SWT.SHADOW_NONE);
-		background.setText(BACKGROUND_TEXT_DEFAULT);
+		background.setText(EMPTY_STR);
 		background.setLayout(new GridLayout(2, false));
 		usercomp = new Composite(background, SWT.NONE);
 		usercomp.setLayoutData(new GridData(GridData.FILL_BOTH));

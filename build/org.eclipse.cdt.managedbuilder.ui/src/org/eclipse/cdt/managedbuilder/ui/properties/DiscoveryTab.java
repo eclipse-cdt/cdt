@@ -548,7 +548,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private boolean listEqual(List<String> l1, List<String> l2) {
 		if (l1 == null && l2 == null) return true;
-		if (l2 == null || l2 == null) return false;
+		if (l1 == null || l2 == null) return false;
 		if (l1.size() != l2.size()) return false;
 		// both lists have items in the same order ?
 		// since it's most probable, try it first.
@@ -594,8 +594,4 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		updateData();
 	}
 	protected void updateButtons() {} // Do nothing. No buttons to update.
-	
-	protected String getHelpContextId() {
-		return "proj_prop_discovery";
-	}
 }

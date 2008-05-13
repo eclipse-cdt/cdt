@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -76,7 +75,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		return null;
 	}
 
-	public ICPPBinding getContainerBinding() {
+	public ICPPUnknownBinding getUnknownContainerBinding() {
 		return null;
 	}
 }

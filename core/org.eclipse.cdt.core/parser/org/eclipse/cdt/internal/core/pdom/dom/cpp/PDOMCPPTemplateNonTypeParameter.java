@@ -128,7 +128,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 		return null;
 	}
 
-	public ICPPBinding getContainerBinding() {
+	public ICPPUnknownBinding getUnknownContainerBinding() {
 		return null;
 	}
 

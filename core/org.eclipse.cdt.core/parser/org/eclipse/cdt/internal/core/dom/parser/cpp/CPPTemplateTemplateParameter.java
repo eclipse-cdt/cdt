@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -231,10 +229,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
-	public ICPPTemplateScope getTemplateScope() throws DOMException {
-		return null;
-	}
-
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		return null;
 	}
@@ -243,7 +237,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return null;
 	}
 
-	public ICPPBinding getContainerBinding() {
+	public ICPPUnknownBinding getUnknownContainerBinding() {
 		return null;
 	}
 }

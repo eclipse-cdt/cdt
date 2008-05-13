@@ -96,7 +96,7 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 	}
 
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		if (parentBinding == this.scopeBinding) {
+		if (parentBinding == this.unknownContainerBinding) {
 			return this;
 		}
 		return new CPPUnknownClass(parentBinding, name);

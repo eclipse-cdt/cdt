@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -171,11 +170,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 		return new CPPASTName(getNameCharArray());
 	}
 
-	public ICPPBinding getContainerBinding() {
-		try {
-			return (ICPPBinding) getParentBinding();
-		} catch (CoreException e) {
-			return null;
-		}
+	public ICPPUnknownBinding getUnknownContainerBinding() {
+		return null;
 	}
 }

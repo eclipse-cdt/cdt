@@ -148,7 +148,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	public IASTName getUnknownName() {
 		return null;
 	}
-	public ICPPBinding getContainerBinding() {
+	public ICPPUnknownBinding getUnknownContainerBinding() {
 		return null;
 	}
 }

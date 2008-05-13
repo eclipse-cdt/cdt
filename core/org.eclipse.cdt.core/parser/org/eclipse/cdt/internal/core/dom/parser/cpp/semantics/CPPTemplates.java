@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -1812,13 +1811,13 @@ public class CPPTemplates {
 	 * Attempts to (partially) resolve an unknown binding with the given arguments.
 	 */
 	public static IBinding resolveUnknown(ICPPUnknownBinding unknown, ObjectMap argMap, ICPPScope instantiationScope) throws DOMException {
-		ICPPBinding parentBinding= unknown.getContainerBinding();
+		ICPPUnknownBinding unknownParent= unknown.getUnknownContainerBinding();
         IBinding result = unknown;
         IType t = null;
-		if (parentBinding instanceof ICPPTemplateTypeParameter) {
-			t = CPPTemplates.instantiateType((ICPPTemplateTypeParameter) parentBinding, argMap, null);
-		} else if (parentBinding instanceof ICPPUnknownClassType) {
-        	IBinding binding= CPPTemplates.resolveUnknown((ICPPUnknownClassType) parentBinding, argMap, instantiationScope);
+		if (unknownParent instanceof ICPPTemplateTypeParameter) {
+			t = CPPTemplates.instantiateType((ICPPTemplateTypeParameter) unknownParent, argMap, null);
+		} else if (unknownParent instanceof ICPPUnknownClassType) {
+        	IBinding binding= CPPTemplates.resolveUnknown(unknownParent, argMap, instantiationScope);
         	if (binding instanceof IType) {
                 t = (IType) binding;
             }

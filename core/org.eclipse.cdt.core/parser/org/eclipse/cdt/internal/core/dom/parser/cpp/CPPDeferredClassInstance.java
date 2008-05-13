@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
@@ -33,12 +34,13 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	
 	private IType[] fArguments;
 	private ObjectMap fArgmap;
-//	private ICPPScope fUnknownScope;
+	private ICPPClassTemplate fClassTemplate;
 
 	public CPPDeferredClassInstance(ICPPClassTemplate orig,	ObjectMap argMap, IType[] arguments) {
 		super(orig);
 		fArgmap= argMap;
 		fArguments= arguments;
+		fClassTemplate= orig;
 	}
 	
 	private ICPPClassTemplate getClassTemplate() {
@@ -81,7 +83,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 
 	public ICPPTemplateDefinition getTemplateDefinition() {
-		return (ICPPTemplateDefinition) scopeBinding;
+		return fClassTemplate;
 	}
 
 	public ObjectMap getArgumentMap() {
@@ -107,5 +109,10 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 
 	public IBinding getSpecializedBinding() {
 		return getTemplateDefinition();
+	}
+	
+	@Override
+	public IScope getScope() throws DOMException {
+		return fClassTemplate.getScope();
 	}
 }

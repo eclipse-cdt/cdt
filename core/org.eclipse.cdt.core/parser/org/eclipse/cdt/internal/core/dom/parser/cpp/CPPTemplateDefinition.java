@@ -38,9 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -70,9 +68,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			throw new DOMException(this);
 		}
 		public boolean isGloballyQualified() throws DOMException {
-			throw new DOMException(this);
-		}
-		public ICPPTemplateScope getTemplateScope() throws DOMException {
 			throw new DOMException(this);
 		}
 	}
@@ -239,15 +234,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		return definition != null ? definition : declarations[0];
 	}
 	
-	public ICPPTemplateScope getTemplateScope() throws DOMException {
-		final IASTName name = getTemplateName();
-		ICPPASTTemplateDeclaration template = CPPTemplates.getTemplateDeclaration(name);
-		if (template != null) {
-			return template.getScope();
-		}
-		throw new DOMException(new CPPTemplateProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE, CharArrayUtils.EMPTY));
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */

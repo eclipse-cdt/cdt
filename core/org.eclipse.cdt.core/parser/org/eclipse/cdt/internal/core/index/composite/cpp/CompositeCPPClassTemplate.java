@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
@@ -89,9 +88,5 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 		}
 		
 		return CPPTemplates.instantiateTemplate(this, arguments, null);
-	}
-	
-	public ICPPTemplateScope getTemplateScope() throws DOMException {
-		return (ICPPTemplateScope) getCompositeScope().getParent();
 	}
 }

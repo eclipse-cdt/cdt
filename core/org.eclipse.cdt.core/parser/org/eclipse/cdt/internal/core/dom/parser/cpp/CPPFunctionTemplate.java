@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -92,9 +91,6 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 			throw new DOMException( this );
 		}
 		public boolean takesVarArgs() throws DOMException {
-			throw new DOMException( this );
-		}
-		public ICPPTemplateScope getTemplateScope() throws DOMException {
 			throw new DOMException( this );
 		}
 	}

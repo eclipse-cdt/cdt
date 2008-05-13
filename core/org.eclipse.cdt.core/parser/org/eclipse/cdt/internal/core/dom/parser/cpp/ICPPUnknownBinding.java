@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
@@ -27,10 +28,11 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 public interface ICPPUnknownBinding extends ICPPBinding {
 	
 	/**
-	 * Returns the binding of the scope containing this binding.
+	 * Returns the binding of the unknown scope containing this binding, or <code>null</code> if the container is not unknown
+	 * (applies for {@link ICPPDeferredTemplateInstance}).
 	 * @since 5.0
 	 */
-	public ICPPBinding getContainerBinding();
+	public ICPPUnknownBinding getUnknownContainerBinding();
 
 	/**
 	 * Returns the scope this binding represents.

@@ -25,10 +25,4 @@ public interface ICPPTemplateDefinition extends ICPPBinding {
 	 * @return array of ICPPTemplateParameter
 	 */
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException;
-
-	/**
-	 * Returns the scope defined by this template definition.
-	 * @since 5.0
-	 */
-	public ICPPTemplateScope getTemplateScope() throws DOMException;
 }

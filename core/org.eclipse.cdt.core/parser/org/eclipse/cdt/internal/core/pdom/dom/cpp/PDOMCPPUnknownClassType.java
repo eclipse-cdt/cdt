@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -266,9 +265,9 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return new CPPASTName(getNameCharArray());
 	}
 	
-	public ICPPBinding getContainerBinding() {
+	public ICPPUnknownBinding getUnknownContainerBinding() {
 		try {
-			return (ICPPBinding) getParentBinding();
+			return (ICPPUnknownBinding) getParentBinding();
 		} catch (CoreException e) {
 			return null;
 		}

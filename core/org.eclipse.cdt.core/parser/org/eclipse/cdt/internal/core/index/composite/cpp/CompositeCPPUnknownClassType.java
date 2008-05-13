@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -143,7 +142,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPBinding implements ICPPUn
 		return ((ICPPUnknownClassType) rbinding).getUnknownName();
 	}
 
-	public ICPPBinding getContainerBinding() {
-		return ((ICPPUnknownClassType) rbinding).getContainerBinding();
+	public ICPPUnknownBinding getUnknownContainerBinding() {
+		return ((ICPPUnknownClassType) rbinding).getUnknownContainerBinding();
 	}
 }

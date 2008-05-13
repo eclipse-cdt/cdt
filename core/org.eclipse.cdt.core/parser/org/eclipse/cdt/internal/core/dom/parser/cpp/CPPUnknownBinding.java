@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -30,18 +29,17 @@ import org.eclipse.core.runtime.PlatformObject;
 public abstract class CPPUnknownBinding extends PlatformObject
 		implements ICPPUnknownBinding, ICPPInternalBinding, Cloneable {
     private ICPPScope unknownScope;
-    protected ICPPBinding scopeBinding;
+    protected ICPPUnknownBinding unknownContainerBinding;
     protected IASTName name;
 
     public CPPUnknownBinding(ICPPUnknownBinding scopeBinding, IASTName name) {
         super();
         this.name = name;
-        this.scopeBinding = scopeBinding;
+        this.unknownContainerBinding = scopeBinding;
     }
 
     public CPPUnknownBinding(ICPPTemplateDefinition templateDef) {
     	this.name= new CPPASTName(templateDef.getNameCharArray());
-    	this.scopeBinding= templateDef;
     }
 
     public IASTNode[] getDeclarations() {
@@ -82,12 +80,9 @@ public abstract class CPPUnknownBinding extends PlatformObject
     }
 
     public IScope getScope() throws DOMException {
-    	if (scopeBinding instanceof ICPPUnknownBinding) {
-    		return ((ICPPUnknownBinding) scopeBinding).getUnknownScope();
-    	} else if (scopeBinding instanceof ICPPTemplateDefinition) {
-    		return ((ICPPTemplateDefinition) scopeBinding).getTemplateScope();
-    	}
-    	assert false;
+    	if (unknownContainerBinding != null) {
+    		return unknownContainerBinding.getUnknownScope();
+    	} 
     	return null;
     }
 
@@ -120,7 +115,7 @@ public abstract class CPPUnknownBinding extends PlatformObject
 		return name;
 	}
 
-	public ICPPBinding getContainerBinding() {
-		return scopeBinding;
+	public ICPPUnknownBinding getUnknownContainerBinding() {
+		return unknownContainerBinding;
 	}
 }

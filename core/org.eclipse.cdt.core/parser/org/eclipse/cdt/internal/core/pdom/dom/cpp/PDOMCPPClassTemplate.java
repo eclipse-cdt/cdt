@@ -208,16 +208,12 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	@Override
 	public IIndexScope getScope() {
-		return getTemplateScope();
-	}
-	
-	public PDOMCPPTemplateScope getTemplateScope() {
 		if (scope == null) {
 			scope = new PDOMCPPTemplateScope();
 		}
 		return scope;
 	}
-
+	
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);

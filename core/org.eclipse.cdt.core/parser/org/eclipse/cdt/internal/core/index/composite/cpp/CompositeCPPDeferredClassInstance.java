@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -56,9 +55,8 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return ((ICPPUnknownClassType) rbinding).getUnknownName();
 	}
 
-	public ICPPBinding getContainerBinding() {
-		ICPPBinding scopeBinding= ((ICPPUnknownClassType) rbinding).getContainerBinding();
-		return (ICPPBinding) cf.getCompositeBinding((IIndexFragmentBinding)scopeBinding);
+	public ICPPUnknownBinding getUnknownContainerBinding() {
+		return null;
 	}
 
 	public ICPPScope getUnknownScope() throws DOMException {

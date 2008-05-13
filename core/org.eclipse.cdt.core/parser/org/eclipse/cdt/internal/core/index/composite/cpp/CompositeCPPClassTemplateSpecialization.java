@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -59,9 +58,5 @@ CompositeCPPClassSpecialization implements ICPPClassTemplate, ICPPInternalTempla
 
 	public IBinding instantiate(IType[] arguments) {
 		return InternalTemplateInstantiatorUtil.instantiate(arguments, cf, rbinding);
-	}
-	
-	public ICPPTemplateScope getTemplateScope() throws DOMException {
-		return (ICPPTemplateScope) getCompositeScope().getParent();
 	}
 }

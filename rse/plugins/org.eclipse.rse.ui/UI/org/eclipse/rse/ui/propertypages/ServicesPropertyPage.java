@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * David Dykstal (IBM) - [231630] add help for services property page
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
@@ -21,6 +22,7 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
@@ -43,7 +45,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 		
 		// init services
 		initServices();
-		
+		SystemWidgetHelpers.setCompositeHelp(parent, "org.eclipse.rse.ui.ServicesPropertyPage"); //$NON-NLS-1$
 		return parent;
 	}
 	

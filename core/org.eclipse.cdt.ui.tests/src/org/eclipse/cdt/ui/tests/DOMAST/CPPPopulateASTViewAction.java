@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -61,6 +62,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		shouldVisitEnumerators    = true;
 		shouldVisitBaseSpecifiers = true;
 		shouldVisitNamespaces     = true;
+		shouldVisitTemplateParameters= true;
 	}
 
 	DOMASTNodeParent root = null;
@@ -314,6 +316,20 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	 */
 	public int visit(IASTTypeId typeId) {
 		DOMASTNodeLeaf temp = addRoot(typeId);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
+	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
+     */
+	public int visit(ICPPASTTemplateParameter templateParameter) {
+    	DOMASTNodeLeaf temp = addRoot(templateParameter);
 		if (temp == null)
 			return PROCESS_ABORT;
 		else if (temp instanceof DOMASTNodeLeafContinue)

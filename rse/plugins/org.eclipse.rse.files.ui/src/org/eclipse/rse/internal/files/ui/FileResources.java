@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * Rupen Mardirossian (IBM)		 - [227213] Added RESID_CONFLICT_COPY_PATTERN to be used for copying resources to parent folder.
+ * David Dykstal (IBM) [231841] Correcting messages for folder creation
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -351,6 +352,7 @@ public class FileResources extends NLS
     public static  String FILEMSG_DELETE_FILE_FAILED;
     public static  String FILEMSG_CREATE_FILE_FAILED;
     public static  String FILEMSG_CREATE_FILE_FAILED_EXIST;
+    public static  String FILEMSG_CREATE_FOLDER_FAILED;
     public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST;
     public static  String FILEMSG_CREATE_RESOURCE_NOTVISIBLE;
 	public static  String FILEMSG_ERROR_NOFILETYPES;
@@ -364,6 +366,7 @@ public class FileResources extends NLS
     public static  String FILEMSG_DELETE_FILE_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FILE_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FILE_FAILED_EXIST_DETAILS;
+    public static  String FILEMSG_CREATE_FOLDER_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST_DETAILS;
     public static  String FILEMSG_CREATE_RESOURCE_NOTVISIBLE_DETAILS;
 	public static  String FILEMSG_ERROR_NOFILETYPES_DETAILS;

@@ -498,7 +498,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
         int br = session.readFile(handle, b);
         return (br == -1) ? -1 : b[0];
       } catch (RapiException e) {
-        throw new IOException(e);
+        throw new IOException(e.getMessage());
       }
     }
 
@@ -506,7 +506,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         return session.readFile(handle, b, off, len);
       } catch (RapiException e) {
-        throw new IOException(e);
+        throw new IOException(e.getMessage());
       }
     }
 
@@ -514,7 +514,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.closeHandle(handle);
       } catch (RapiException e) {
-        throw new IOException(e);
+        throw new IOException(e.getMessage());
       }
     }
 
@@ -534,7 +534,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.writeFile(handle, new byte[] {(byte)b});
       } catch (RapiException e) {
-        throw new IOException(e);
+        throw new IOException(e.getMessage());
       }
     }
 
@@ -542,7 +542,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.writeFile(handle, b, off, len);
       } catch (RapiException e) {
-        throw new IOException(e);
+        throw new IOException(e.getMessage());
       }
     }
 
@@ -550,7 +550,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       try {
         session.closeHandle(handle);
       } catch (RapiException e) {
-        throw new IOException(e);
+        throw new IOException(e.getMessage());
       }
     }
   }

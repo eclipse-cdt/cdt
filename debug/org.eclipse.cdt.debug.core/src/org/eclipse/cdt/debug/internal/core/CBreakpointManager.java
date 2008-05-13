@@ -476,7 +476,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		if ( cdiBreakpoint instanceof ICDIWatchpoint )
 			doHandleWatchpointCreatedEvent( (ICDIWatchpoint)cdiBreakpoint );
 		if ( cdiBreakpoint instanceof ICDIEventBreakpoint )
-			doHandleCatachpointCreatedEvent( (ICDIEventBreakpoint)cdiBreakpoint );
+			doHandleEventBreakpointCreatedEvent( (ICDIEventBreakpoint)cdiBreakpoint );
 		else if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
 			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
 		if ( !isTemporary(cdiBreakpoint) && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
@@ -484,7 +484,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 	}
 
-	private void doHandleCatachpointCreatedEvent(ICDIEventBreakpoint cdiEventBkpt) {
+	private void doHandleEventBreakpointCreatedEvent(ICDIEventBreakpoint cdiEventBkpt) {
 		ICBreakpoint breakpoint = null;
 		synchronized( getBreakpointMap() ) {
 			breakpoint = getBreakpointMap().getCBreakpoint( cdiEventBkpt );

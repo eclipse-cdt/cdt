@@ -23,6 +23,7 @@
  * David McKnight   (IBM) - [227881] [dstore][threaded] There is no chance to set client object for getUserPreferencesDirectory()
  * Norikai Takatsu  (IBM) - [228156] [dstore] DataElementRemover thread doesn't terminate after a client disconnects the server
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David McKnight   (IBM) - [231639] [dstore] in single-process multi-client mode tracing shouldn't start until the client is set
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -53,6 +54,7 @@ import org.eclipse.dstore.core.java.ClassByteStreamHandlerRegistry;
 import org.eclipse.dstore.core.java.IClassByteStreamHandler;
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.java.RemoteClassLoader;
+import org.eclipse.dstore.core.server.SystemServiceManager;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.extra.IDomainNotifier;
 import org.eclipse.dstore.internal.core.client.ClientCommandHandler;
@@ -3604,18 +3606,21 @@ public final class DataStore
 		{
 			_tracingOn = false;
 		}
-		if (_tracingOn)
+		if (_tracingOn)		
 		{
-			String logDir = getUserPreferencesDirectory();
-			_traceFileHandle = new File(logDir, ".dstoreTrace"); //$NON-NLS-1$
+			// only start tracing now if we're in one process per server mode
+			if (SystemServiceManager.getInstance().getSystemService() == null){
+				String logDir = getUserPreferencesDirectory();
+				_traceFileHandle = new File(logDir, ".dstoreTrace"); //$NON-NLS-1$
 
-			try
-			{
-				_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
-				startTracing();
-			}
-			catch (IOException e)
-			{
+				try
+				{
+					_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
+					startTracing();
+				}
+				catch (IOException e)
+				{
+				}
 			}
 		}
 		
@@ -4418,7 +4423,23 @@ public final class DataStore
 		if (_client == null){
 			_client = client;
 			_userPreferencesDirectory = null;
-			getUserPreferencesDirectory();
+			String logDir = getUserPreferencesDirectory();
+			
+			// single process server?
+			if (SystemServiceManager.getInstance().getSystemService() != null)
+			{
+				if (_tracingOn) {
+					_traceFileHandle = new File(logDir, ".dstoreTrace"); //$NON-NLS-1$
+					try
+					{
+						_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
+						startTracing();
+					}
+					catch (IOException e)
+					{
+					}
+				}
+			}
 		}
 	}
 	

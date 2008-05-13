@@ -185,31 +185,22 @@ public class ContainerVMNode extends AbstractDMVMNode
                     if ( dmc instanceof GDBControlDMContext )
                     {
                     	final GDBControlDMContext procDmc = (GDBControlDMContext) dmc;
-                    	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
-
-                    	/*
-                    	 *  Now make sure the register group is the one we want.
-                    	 */
-
-                    	final DataRequestMonitor<GDBProcessData> regGroupDataDone = new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
-                    		@Override
-                    		protected void handleCompleted() {
-                    			if ( getStatus().isOK() ) {
-                    				request.setEqual( mementoName.equals( "Container." + getData().getName() ) ); //$NON-NLS-1$
-                    			}
-                    			request.done();
-                    		}
-                    	};
-
-                    	/*
-                    	 *  Now go get the model data for the single register group found.
-                    	 */
                     	try {
                             getSession().getExecutor().execute(new DsfRunnable() {
                                 public void run() {
                                 	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
                                 	if ( runControl != null ) {
-                                		runControl.getProcessData( procDmc, regGroupDataDone );
+                                		runControl.getProcessData(
+                                		    procDmc, 
+                                		    new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
+                                                @Override
+                                                protected void handleCompleted() {
+                                                    if ( getStatus().isOK() ) {
+                                                        request.setEqual( mementoName.equals( "Container." + getData().getName() ) ); //$NON-NLS-1$
+                                                    }
+                                                    request.done();
+                                                }
+                                            });
                                 	}
                                 	else {
                                 		request.done();
@@ -246,31 +237,22 @@ public class ContainerVMNode extends AbstractDMVMNode
                 if ( dmc instanceof GDBControlDMContext )
                 {
                 	final GDBControlDMContext procDmc = (GDBControlDMContext) dmc;
-                	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
-
-                	/*
-                	 *  Now make sure the register group is the one we want.
-                	 */
-
-                	final DataRequestMonitor<GDBProcessData> regGroupDataDone = new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
-                		@Override
-                		protected void handleCompleted() {
-                			if ( getStatus().isOK() ) {
-                				memento.putString(MEMENTO_NAME, "Container." + getData().getName()); //$NON-NLS-1$
-                			}
-                			request.done();
-                		}
-                	};
-
-                	/*
-                	 *  Now go get the model data for the single register group found.
-                	 */
                 	try {
                         getSession().getExecutor().execute(new DsfRunnable() {
                             public void run() {
                             	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
                             	if ( runControl != null ) {
-                            		runControl.getProcessData( procDmc, regGroupDataDone );
+                            		runControl.getProcessData(
+                            		    procDmc, 
+                            		    new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
+                                            @Override
+                                            protected void handleCompleted() {
+                                                if ( getStatus().isOK() ) {
+                                                    memento.putString(MEMENTO_NAME, "Container." + getData().getName()); //$NON-NLS-1$
+                                                }
+                                                request.done();
+                                            }
+                                        });
                             	}
                             	else {
                             		request.done();

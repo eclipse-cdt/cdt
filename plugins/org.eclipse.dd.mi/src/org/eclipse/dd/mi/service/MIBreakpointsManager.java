@@ -580,7 +580,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
                     @Override
                     protected void handleError() {
-                        AddBreakpointProblemMarker(breakpoint, "Breakpoint attribute problem: installation failed", IMarker.SEVERITY_WARNING); //$NON-NLS-1$
+                        addBreakpointProblemMarker(breakpoint, "Breakpoint attribute problem: installation failed", IMarker.SEVERITY_WARNING); //$NON-NLS-1$
                         installRM.done();
                     }
                 };
@@ -592,7 +592,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
     }
 
-    private void AddBreakpointProblemMarker(final ICBreakpoint breakpoint, final String description, final int severity) {
+    private void addBreakpointProblemMarker(final ICBreakpoint breakpoint, final String description, final int severity) {
 
         new Job("Add Breakpoint Problem Marker") { //$NON-NLS-1$
             @Override
@@ -623,7 +623,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }.schedule();
     }
 
-    private void RemoveBreakpointProblemMarker(final ICBreakpoint breakpoint) {
+    private void removeBreakpointProblemMarker(final ICBreakpoint breakpoint) {
 
         new Job("Remove Breakpoint Problem Marker") { //$NON-NLS-1$
             @Override
@@ -672,7 +672,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         assert threadsIDs != null;
 
         // Remove breakpoint problem marker (if any)
-        RemoveBreakpointProblemMarker(breakpoint);
+        removeBreakpointProblemMarker(breakpoint);
 
         // Minimal validation
         if (!platformBPs.containsKey(breakpoint) || !breakpointIDs.containsKey(breakpoint) || !targetBPs.containsValue(breakpoint)) {

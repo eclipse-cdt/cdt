@@ -805,13 +805,15 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
+    private final String MEMENTO_NAME = "BITFIELD_MEMENTO_NAME"; //$NON-NLS-1$
+    
     public void compareElements(IElementCompareRequest[] requests) {
         
         for ( final IElementCompareRequest request : requests ) {
         	
             Object element = request.getElement();
             final IMemento memento = request.getMemento();
-            final String mementoName = memento.getString("BITFIELD_MEMENTO_NAME"); //$NON-NLS-1$
+            final String mementoName = memento.getString(MEMENTO_NAME);
             
             if (mementoName != null) {
                 if (element instanceof IDMVMContext) {
@@ -831,8 +833,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                             @Override
                             protected void handleCompleted() {
                                 if ( getStatus().isOK() ) {
-                   					String bitFieldName = "BitField." + getData().getName() + "." + bitFieldDmc.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
-                                	request.setEqual( bitFieldName.equals( mementoName ) );
+                                	request.setEqual( mementoName.equals( "BitField." + getData().getName() ) ); //$NON-NLS-1$
                                 }
                                 request.done();
                             }
@@ -892,8 +893,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             			@Override
             			protected void handleCompleted() {
             				if ( getStatus().isOK() ) {
-            					String bitFieldName = "BitField." + getData().getName() + "." + bitFieldDmc.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
-            					memento.putString("BITFIELD_MEMENTO_NAME", bitFieldName); //$NON-NLS-1$
+            					memento.putString(MEMENTO_NAME, "BitField." + getData().getName()); //$NON-NLS-1$
             				}
             				request.done();
             			}

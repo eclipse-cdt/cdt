@@ -749,13 +749,15 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
+    private final String MEMENTO_NAME = "REGISTER_MEMENTO_NAME"; //$NON-NLS-1$
+    
     public void compareElements(IElementCompareRequest[] requests) {
         
         for ( final IElementCompareRequest request : requests ) {
         	
             Object element = request.getElement();
             final IMemento memento = request.getMemento();
-            final String mementoName = memento.getString("REGISTER_MEMENTO_NAME"); //$NON-NLS-1$
+            final String mementoName = memento.getString(MEMENTO_NAME);
             
             if (mementoName != null) {
                 if (element instanceof IDMVMContext) {
@@ -775,8 +777,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                             @Override
                             protected void handleCompleted() {
                                 if ( getStatus().isOK() ) {
-                                	String regName = "Register." + getData().getName() + "." + regDmc.getSessionId(); //$NON-NLS-1$  //$NON-NLS-2$
-                                	request.setEqual( regName.equals( mementoName ) );
+                                	request.setEqual( mementoName.equals( "Register." + getData().getName() ) ); //$NON-NLS-1$
                                 }
                                 request.done();
                             }
@@ -836,8 +837,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             			@Override
             			protected void handleCompleted() {
             				if ( getStatus().isOK() ) {
-            					String regName = "Register." + getData().getName() + "." + regDmc.getSessionId(); //$NON-NLS-1$  //$NON-NLS-2$
-            					memento.putString("REGISTER_MEMENTO_NAME", regName);
+            					memento.putString(MEMENTO_NAME, "Register." + getData().getName()); //$NON-NLS-1$
             				}
             				request.done();
             			}

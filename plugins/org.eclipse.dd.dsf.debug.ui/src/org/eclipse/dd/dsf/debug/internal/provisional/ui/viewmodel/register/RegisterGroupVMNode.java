@@ -468,13 +468,15 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
+    private final String MEMENTO_NAME = "GROUP_MEMENTO_NAME"; //$NON-NLS-1$
+    
     public void compareElements(IElementCompareRequest[] requests) {
         
         for ( final IElementCompareRequest request : requests ) {
         	
             Object element = request.getElement();
             final IMemento memento = request.getMemento();
-            final String mementoName = memento.getString("GROUP_MEMENTO_NAME"); //$NON-NLS-1$
+            final String mementoName = memento.getString(MEMENTO_NAME);
             
             if (mementoName != null) {
                 if (element instanceof IDMVMContext) {
@@ -494,8 +496,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                     		@Override
                     		protected void handleCompleted() {
                     			if ( getStatus().isOK() ) {
-                    				String grpName = "Group." + getData().getName() + "." + regDmc.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
-                    				request.setEqual( grpName.equals( mementoName ) );
+                    				request.setEqual( mementoName.equals( "Group." + getData().getName()) ); //$NON-NLS-1$
                     			}
                     			request.done();
                     		}
@@ -556,8 +557,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                 		@Override
                 		protected void handleCompleted() {
                 			if ( getStatus().isOK() ) {
-                				String grpName = "Group." + getData().getName() + "." + regDmc.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
-                				memento.putString("GROUP_MEMENTO_NAME", grpName); //$NON-NLS-1$
+                				memento.putString(MEMENTO_NAME, "Group." + getData().getName()); //$NON-NLS-1$
                 			}
                 			request.done();
                 		}

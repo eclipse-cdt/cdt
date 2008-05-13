@@ -722,16 +722,18 @@ public class VariableVMNode extends AbstractExpressionVMNode
      */
     private String produceExpressionElementName( String viewName , IExpressionDMContext expression ) {
     	
-    	return "variable." + expression.getExpression() + "." + expression.getSessionId(); //$NON-NLS-1$ //$NON-NLS-2$
+    	return "Variable." + expression.getExpression(); //$NON-NLS-1$
     }
 
+    private final String MEMENTO_NAME = "VARIABLE_MEMENTO_NAME"; //$NON-NLS-1$
+    
     public void compareElements(IElementCompareRequest[] requests) {
         
         for ( IElementCompareRequest request : requests ) {
         	
             Object element = request.getElement();
             IMemento memento = request.getMemento();
-            String mementoName = memento.getString("VARIABLE_MEMENTO_NAME"); //$NON-NLS-1$
+            String mementoName = memento.getString(MEMENTO_NAME); //$NON-NLS-1$
             
             if (mementoName != null) {
                 if (element instanceof IDMVMContext) {
@@ -767,7 +769,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
             	if ( dmc instanceof IExpressionDMContext) {
 
             		String elementName = produceExpressionElementName( request.getPresentationContext().getId(), (IExpressionDMContext) dmc );
-            		memento.putString("VARIABLE_MEMENTO_NAME", elementName); //$NON-NLS-1$
+            		memento.putString(MEMENTO_NAME, elementName);
             	} 
             }
             request.done();

@@ -297,10 +297,11 @@ public class PDAProgramVMNode extends AbstractDMVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
-    
     private String produceProgramElementName( String viewName , PDAProgramDMContext execCtx ) {
-    	return "PDA." + execCtx.getProgram() + "." + execCtx.getSessionId(); //$NON-NLS-1$  //$NON-NLS-2$
+    	return "PDA." + execCtx.getProgram(); //$NON-NLS-1$
     }
+    
+    private final String MEMENTO_NAME = "PDAPROGRAM_MEMENTO_NAME"; //$NON-NLS-1$
     
     public void compareElements(IElementCompareRequest[] requests) {
         
@@ -308,7 +309,7 @@ public class PDAProgramVMNode extends AbstractDMVMNode
         	
             Object element = request.getElement();
             IMemento memento = request.getMemento();
-            String mementoName = memento.getString("PDAPROGRAM_MEMENTO_NAME"); //$NON-NLS-1$
+            String mementoName = memento.getString(MEMENTO_NAME);
             
             if (mementoName != null) {
                 if (element instanceof IDMVMContext) {
@@ -344,7 +345,7 @@ public class PDAProgramVMNode extends AbstractDMVMNode
             	if ( dmc instanceof PDAProgramDMContext) {
 
             		String elementName = produceProgramElementName( request.getPresentationContext().getId(), (PDAProgramDMContext) dmc );
-            		memento.putString("PDAPROGRAM_MEMENTO_NAME", elementName); //$NON-NLS-1$
+            		memento.putString(MEMENTO_NAME, elementName);
             	} 
             }
             request.done();

@@ -1190,36 +1190,15 @@ namespace_name
     ::= identifier_name
     
     
---namespace_name
---    ::= original_namespace_name
---     | namespace_alias
-
-
---original_namespace_name
---    ::= identifier_name
-
-
---namespace_alias
---    ::= identifier_token
-    
-    
 namespace_definition
     ::= named_namespace_definition
       | unnamed_namespace_definition
 
 
+-- In the spec grammar this is broken down into original_namespace_definition and extension_namespace_definition.
+-- But since we are not tracking identifiers it becomes the same thing, so its simplified here.
 named_namespace_definition
-    ::= original_namespace_definition
-      | extension_namespace_definition
-
-
-original_namespace_definition
-    ::= 'namespace' identifier_name '{' <openscope-ast> declaration_seq_opt '}'
-          /. $Build  consumeNamespaceDefinition(true);  $EndBuild ./
-
-
-extension_namespace_definition
-    ::= 'namespace' original_namespace_name '{' <openscope-ast> declaration_seq_opt '}'
+    ::= 'namespace' namespace_name '{' <openscope-ast> declaration_seq_opt '}'
           /. $Build  consumeNamespaceDefinition(true);  $EndBuild ./
 
 
@@ -1228,17 +1207,10 @@ unnamed_namespace_definition
            /. $Build  consumeNamespaceDefinition(false);  $EndBuild ./
 
 
-
-
-
 namespace_alias_definition
     ::= 'namespace' identifier_token '=' dcolon_opt nested_name_specifier_opt namespace_name ';'
            /. $Build  consumeNamespaceAliasDefinition(); $EndBuild ./
            
-
---qualified_namespace_specifier
---    ::= dcolon_opt nested_name_specifier_opt namespace_name
-
 
 -- make more lenient!
 -- using_declaration
@@ -1579,7 +1551,8 @@ member_declaration
           /. $Build  consumeMemberDeclarationQualifiedId();  $EndBuild ./ 
       | using_declaration  
       | template_declaration
-      | explicit_specialization  -- is this spec?
+      | explicit_specialization  -- not spec
+      | namespace_definition     -- not spec
       | visibility_label 
       | ERROR_TOKEN
           /. $Build  consumeDeclarationProblem();  $EndBuild ./
@@ -1840,7 +1813,7 @@ handler
 exception_declaration
     ::= type_specifier_seq <openscope-ast> declarator
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
-      | type_specifier_seq <openscope-ast> abstract_declarator  -- TODO might need to be abstract_declarator_without_function, might be too lenient, what exactly can you catch?
+      | type_specifier_seq <openscope-ast> abstract_declarator
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | type_specifier_seq
           /. $Build  consumeDeclarationSimple(false);  $EndBuild ./

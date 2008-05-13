@@ -35,6 +35,7 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
@@ -1154,16 +1155,19 @@ public class MIVariableManager implements ICommandControl {
 	 * 
 	 * The following must be considered to obtain a unique name:
 	 *     - the expression itself
-	 *     - the threadId specified in the execution context 
+	 *     - the execution context 
 	 *     - relative depth of frame based on the frame context and the total depth of the stack
 	 *     
 	 * Note that if no frameContext is specified (only Execution, or even only Container), which can
 	 * characterize a global variable for example, we will only use the available information.
 	 */
 	private class VariableObjectId {
+		// We don't use the expression context because it is not safe to compare them
+		// See bug 187718.  So we store the expression itself, and it's parent execution context.
 		String fExpression = null;
-		String fControlId = null;
-		Integer fThreadId = null;
+		IExecutionDMContext fExecContext = null;
+		// We need the depth of the frame.  The frame level is not sufficient because 
+        // the same frame will have a different level based on the current depth of the stack 
 		Integer fFrameId = null;
 		
 		@Override
@@ -1171,8 +1175,7 @@ public class MIVariableManager implements ICommandControl {
 			if (other instanceof VariableObjectId) {
 				VariableObjectId otherId = (VariableObjectId) other;
 				return (fExpression == null ? otherId.fExpression == null : fExpression.equals(otherId.fExpression)) &&
-    				(fControlId == null ? otherId.fControlId == null : fControlId.equals(otherId.fControlId)) &&
-    				(fThreadId == null ? otherId.fThreadId == null : fThreadId.equals(otherId.fThreadId)) &&
+    				(fExecContext == null ? otherId.fExecContext == null : fExecContext.equals(otherId.fExecContext)) &&
                     (fFrameId == null ? otherId.fFrameId == null : fFrameId.equals(otherId.fFrameId));
 			}
 			return false;
@@ -1181,30 +1184,19 @@ public class MIVariableManager implements ICommandControl {
 		@Override
 		public int hashCode() {
 			return (fExpression == null ? 0 : fExpression.hashCode()) + 
-		           (fControlId == null ? 0 : fControlId.hashCode()) +
-		           (fThreadId == null ? 0 : fThreadId.hashCode()) +
+		           (fExecContext == null ? 0 : fExecContext.hashCode()) +
 			       (fFrameId  == null ? 0 : fFrameId.hashCode());
 		}
 
 		public void generateId(IExpressionDMContext exprCtx, final RequestMonitor rm) {
 			fExpression = exprCtx.getExpression();
 
-			MIControlDMContext controlCtx = DMContexts.getAncestorOfType(exprCtx, MIControlDMContext.class);
-			if (controlCtx == null) {
-				rm.done();
-				return;
-			}
-
-			fControlId = controlCtx.getCommandControlFilter();
-
-			IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(exprCtx, IMIExecutionDMContext.class);
-			if (execCtx == null) {
+			fExecContext = DMContexts.getAncestorOfType(exprCtx, IExecutionDMContext.class);
+			if (fExecContext == null) {
 				rm.done();
 				return;
 			}
 			
-			fThreadId = new Integer(execCtx.getThreadId());
-
 			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
 			if (frameCtx == null) {
 				rm.done();
@@ -1215,7 +1207,7 @@ public class MIVariableManager implements ICommandControl {
 			// for this expression.  This is pretty efficient since the stackDepth will be retrieved
 			// from the StackService command cache after the first time.
 			fStackService.getStackDepth(
-					execCtx, 0,
+					fExecContext, 0,
 					new DataRequestMonitor<Integer>(fSession.getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
@@ -1226,9 +1218,8 @@ public class MIVariableManager implements ICommandControl {
 		}
 		
 		public void generateId(String childFullExp, VariableObjectId parentId) {
-			// The control, thread and frame are the same as the parent
-			fControlId = parentId.fControlId;
-			fThreadId = parentId.fThreadId;
+			// The execution context and the frame depth are the same as the parent
+			fExecContext = parentId.fExecContext;
 			fFrameId = parentId.fFrameId;
 			// The expression here must be the one that is part of IExpressionContext for this child
 			// This will allow us to find a variable object directly

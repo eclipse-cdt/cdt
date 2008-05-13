@@ -14,7 +14,6 @@ package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
 
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -192,7 +191,7 @@ public class ContainerVMNode extends AbstractDMVMNode
                                 	if ( runControl != null ) {
                                 		runControl.getProcessData(
                                 		    procDmc, 
-                                		    new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
+                                		    new ViewerDataRequestMonitor<GDBProcessData>(runControl.getExecutor(), request) {
                                                 @Override
                                                 protected void handleCompleted() {
                                                     if ( getStatus().isOK() ) {
@@ -244,7 +243,7 @@ public class ContainerVMNode extends AbstractDMVMNode
                             	if ( runControl != null ) {
                             		runControl.getProcessData(
                             		    procDmc, 
-                            		    new DataRequestMonitor<GDBProcessData>(runControl.getExecutor(), null) {
+                            		    new ViewerDataRequestMonitor<GDBProcessData>(runControl.getExecutor(), request) {
                                             @Override
                                             protected void handleCompleted() {
                                                 if ( getStatus().isOK() ) {

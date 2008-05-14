@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.TreePath;
  * to use this node to delegate expression parsing to this node, and to 
  * generate deltas for expressions that are owned by this node.
  */
-@SuppressWarnings("restriction")
 public interface IExpressionVMNode extends IVMNode {
     
     /**

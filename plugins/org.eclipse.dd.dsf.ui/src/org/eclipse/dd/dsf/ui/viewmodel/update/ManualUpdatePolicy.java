@@ -76,7 +76,7 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
     }
 
     public String getName() {
-        return "Manual";
+        return ViewModelUpdateMessages.ManualUpdatePolicy_name;
     }
 
     public IElementUpdateTester getElementUpdateTester(Object event) {

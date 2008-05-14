@@ -36,7 +36,7 @@ public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
     }
 
     public String getName() {
-        return "Automatic";
+        return ViewModelUpdateMessages.AutomaticUpdatePolicy_name;
     }
 
     public IElementUpdateTester getElementUpdateTester(Object event) {

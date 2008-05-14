@@ -121,6 +121,7 @@ public class VMDelta extends ModelDelta {
         fFlags = flags;
     }
 
+    @Override
     public void setChildCount(int count) {
         fChildCount = count;
     }

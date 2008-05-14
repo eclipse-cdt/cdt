@@ -352,7 +352,6 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 		// Insert the block in the sorted linked list and merge contiguous
 		// blocks if necessary
 		@Override
-		@SuppressWarnings("unchecked")
 		public boolean add(MemoryBlock block) {
 
 			// If the list is empty, just store the block

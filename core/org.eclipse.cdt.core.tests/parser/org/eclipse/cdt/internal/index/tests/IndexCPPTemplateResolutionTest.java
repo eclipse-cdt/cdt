@@ -1209,4 +1209,59 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertTrue(type instanceof IBasicType);
 		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
 	}
+	
+	
+	//	template<typename _Iterator> struct iterator_traits {
+	//		typedef typename _Iterator::pointer           pointer;
+	//	};
+	//
+	//	template<typename _Tp> struct iterator_traits<_Tp*> {
+	//	    typedef _Tp*                        pointer;
+	//	};
+	//
+	//	template<typename _Iterator, typename _Container> class normal_iterator {
+	//	    protected:
+	//		_Iterator _M_current;
+	//	    
+	//      public:
+	//		typedef typename iterator_traits<_Iterator>::pointer   pointer;
+	//		normal_iterator() : _M_current(_Iterator()) { }
+	//
+	//		pointer operator->() const {
+	//			return _M_current;
+	//		}
+	//	};
+	//
+	//	template<typename _Tp> class allocator {
+	//		public:
+	//			typedef _Tp*       pointer;
+	//	};
+	//
+	//	template<typename _Tp, typename _Alloc = allocator<_Tp> >
+	//	class vector {
+	//		typedef vector<_Tp, _Alloc> vector_type;
+	//
+	//		public:
+	//	    typedef typename _Alloc::pointer pointer;
+	//		typedef normal_iterator<pointer, vector_type> iterator;
+	//	};
+	//
+
+	//	struct MyStruct {
+	//		int member;
+	//	};
+	//	typedef vector<MyStruct> VS1;
+	//	void test() {
+	//		VS1::iterator it;
+	//		it->member; // it->member
+	//	}
+	public void testVectorIterator() throws Exception {
+		ICPPField t2 = getBindingFromASTName("member; // it->member", 6, ICPPField.class);
+		ICPPClassType ct= t2.getClassOwner();
+		assertEquals("MyStruct", ct.getName());
+		
+		final IType type = t2.getType();
+		assertTrue(type instanceof IBasicType);
+		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
+	}
 }

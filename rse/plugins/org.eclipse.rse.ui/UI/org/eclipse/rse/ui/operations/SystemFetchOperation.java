@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
  * David Dykstal (IBM) - [189483] add notification when canceling password prompting
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * David McKnight (IBM)          - [231964] [ssh] SSH login dialog appears twice after cancel, when doing Refresh on a node
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -174,6 +175,9 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 				_ss.promptForPassword();
 			}
 			catch (InterruptedException e) {
+				isCancelled = true;
+			}
+			catch (OperationCanceledException e) {
 				isCancelled = true;
 			}
 			catch (Exception e)

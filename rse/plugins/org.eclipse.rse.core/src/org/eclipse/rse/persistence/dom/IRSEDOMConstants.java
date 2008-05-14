@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - add attribute name for filter type
  *******************************************************************************/
 
 package org.eclipse.rse.persistence.dom;
@@ -75,6 +76,7 @@ public interface IRSEDOMConstants {
 	public static final String ATTRIBUTE_STRINGS_NON_CHANGABLE = "stringsNonChangable"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_RELEASE = "release"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_SINGLE_FILTER_STRING_ONLY = "singleFilterStringOnly"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_FILTER_TYPE = "filterType"; //$NON-NLS-1$
 
 	// server launcher attributes
 	public static final String ATTRIBUTE_REXEC_PORT = "rexecPort"; //$NON-NLS-1$

@@ -20,6 +20,7 @@
  * David Dykstal (IBM) - [197036] respond to removal of SystemProfile.createHost()
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
+ * David Dykstal (IBM) - [232126] retrieve persisted filter type attribute
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -329,6 +330,7 @@ public class RSEDOMImporter {
 		boolean isStringsNonChangable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE);
 		int release = getIntegerValue(node, IRSEDOMConstants.ATTRIBUTE_RELEASE);
 		boolean isSetSingleFilterStringOnly = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY);
+		String filterType = getAttributeValue(node, IRSEDOMConstants.ATTRIBUTE_FILTER_TYPE);
 
 		// create the filter strings
 		RSEDOMNode[] filterStringNodes = node.getChildren(IRSEDOMConstants.TYPE_FILTER_STRING);
@@ -352,6 +354,7 @@ public class RSEDOMImporter {
 		filter.setStringsNonChangable(isStringsNonChangable);
 		filter.setRelease(release);
 		filter.setSingleFilterStringOnly(isSetSingleFilterStringOnly);
+		filter.setType(filterType);
 
 		// restore all property sets
 		RSEDOMNode[] psChildren = node.getChildren(IRSEDOMConstants.TYPE_PROPERTY_SET);

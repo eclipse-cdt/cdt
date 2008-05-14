@@ -18,6 +18,7 @@
  * Kevin Doyle (IBM) - [197199] Renaming a Profile doesn't cause a save
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
+ * David Dykstal (IBM) - [232126] persist filter type attribute
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -274,6 +275,10 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE, getBooleanString(filter.isStringsNonChangable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, Integer.toString(filter.getRelease()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filter.isSetSingleFilterStringOnly()));
+			String filterType = filter.getType();
+			if (filterType != null) {
+				node.addAttribute(IRSEDOMConstants.ATTRIBUTE_FILTER_TYPE, filter.getType());
+			}
 		}
 
 		// add nested filters

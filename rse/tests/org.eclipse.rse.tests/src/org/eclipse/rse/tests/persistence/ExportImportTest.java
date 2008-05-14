@@ -7,6 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
+ * David Dykstal (IBM) - [232126] add test for filter type persistence
  *********************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -67,7 +68,8 @@ public class ExportImportTest extends RSECoreTestCase {
 		// create a connection-private filter (hostFilter1)
 		String[] filterStrings = new String[] { "*.txt" };
 		ISystemFilterPool host1FilterPool = host1FileSubsystem.getUniqueOwningSystemFilterPool(true);
-		host1FilterPool.createSystemFilter("hostFilter1", filterStrings);
+		ISystemFilter hostFilter1 = host1FilterPool.createSystemFilter("hostFilter1", filterStrings);
+		hostFilter1.setType("hostFilter1Type");
 		// create a connection-private filter (hostFilter2)
 		filterStrings = new String[] { "*.c" };
 		host1FilterPool.createSystemFilter("hostFilter2", filterStrings);
@@ -77,7 +79,8 @@ public class ExportImportTest extends RSECoreTestCase {
 		ISystemFilterPool sharedFilterPool = filterPoolManager.createSystemFilterPool("sharedFilterPool", true);
 		// create a shared filter (sharedFilter)
 		filterStrings = new String[] { "*.java", "*.txt", "*.c" };
-		sharedFilterPool.createSystemFilter("sharedFilter", filterStrings);
+		ISystemFilter sharedFilter = sharedFilterPool.createSystemFilter("sharedFilter", filterStrings);
+		sharedFilter.setType("sharedFilterType");
 	}
 	
 	/* (non-Javadoc)
@@ -124,6 +127,7 @@ public class ExportImportTest extends RSECoreTestCase {
 			assertEquals(1, filters.length);
 			ISystemFilter filter = filters[0];
 			assertEquals("sharedFilter", filter.getName());
+			assertEquals("sharedFilterType", filter.getType());
 			String[] strings = filter.getFilterStrings();
 			assertEquals(3, strings.length);
 			assertEquals("*.java", strings[0]);

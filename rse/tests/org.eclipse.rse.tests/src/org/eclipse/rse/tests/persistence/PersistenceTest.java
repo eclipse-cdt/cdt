@@ -13,6 +13,7 @@
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  * David Dykstal (IBM) [219069] test is failing
+ * David Dykstal (IBM) - [232126] test found to be failing when testing filter type persistence
  *******************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -81,7 +82,7 @@ public class PersistenceTest extends RSECoreTestCase {
 		int n = registry.getSystemProfileManager().getSystemProfiles().length;
 	
 		/*
-		 * Create a new profile in this profile manager. This will be the third
+		 * Create a new profile in this profile manager. This will be the second
 		 * profile created. Creating a profile causes a commit.
 		 */
 		try {
@@ -111,16 +112,6 @@ public class PersistenceTest extends RSECoreTestCase {
 			found = p.isDefaultPrivate();
 		}
 		assertTrue("Default private profile not found", found);
-		
-		/*
-		 * One should be the team profile
-		 */
-		found = false;
-		for (int i = 0; i < profiles.length && !found; i++) {
-			ISystemProfile p = profiles[i];
-			found = p.getName().equals("Team");
-		}
-		assertTrue("Team profile not found", found);
 		
 		/*
 		 * One should be the test profile

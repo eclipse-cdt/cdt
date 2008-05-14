@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
-		ICPPClassType, ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
+		ICPPClassType, ICPPClassSpecializationScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	private static final int FIRSTBASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int MEMBERLIST = PDOMCPPSpecialization.RECORD_SIZE + 4;
@@ -92,6 +92,10 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_SPECIALIZATION;
+	}
+
+	public ICPPClassType getOriginalClassType() {
+		return (ICPPClassType) getSpecializedBinding();
 	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
@@ -351,6 +355,17 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 		
 		return null;
+	}
+	
+	public IBinding getInstance(IBinding original) {
+		SpecializationFinder visitor = new SpecializationFinder(new IBinding[] {original});
+		try {
+			accept(visitor);
+			return visitor.getSpecializations()[0];
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return original;
 	}
 	
 	public ICPPMethod[] getImplicitMethods() {

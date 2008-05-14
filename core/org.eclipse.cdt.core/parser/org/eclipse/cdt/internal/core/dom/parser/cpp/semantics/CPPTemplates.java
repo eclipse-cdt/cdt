@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import java.util.LinkedList;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -108,6 +110,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalClassTemplate;
@@ -701,43 +704,6 @@ public class CPPTemplates {
 					((ICPPFunctionType) type).isVolatile());
 		} 
 		
-		if (type instanceof ITypedef) {
-			// Typedef requires special treatment (bug 213861).
-			final ITypedef typedef = (ITypedef) type;
-			try {
-				final IScope scopeOfTypedef= typedef.getScope();
-				if (scopeOfTypedef instanceof ICPPClassScope) {
-					if (instantiationScope instanceof ICPPClassScope) {
-						ICPPClassType owner= ((ICPPClassScope) scopeOfTypedef).getClassType();
-						IBinding instance= ((ICPPClassScope) instantiationScope).getClassType();
-						if (instance instanceof ICPPSpecialization) {
-							instance= ((ICPPSpecialization) instance).getSpecializedBinding();
-							if (instance instanceof IType && owner.isSameType((IType) instance)) {
-								return new CPPTypedefSpecialization(typedef, (ICPPScope) instantiationScope, argMap);
-							}
-						}
-					}
-					// we cannot instantiate a typedef contained in a class without knowing the scope of instantiation.
-					return type;
-				}
-			} catch (DOMException e) {
-			}
-		}		
-
-		if (type instanceof ITypeContainer) {
-			try {
-				IType temp = ((ITypeContainer) type).getType();
-				IType newType = instantiateType(temp, argMap, instantiationScope);
-				if (newType != temp) {
-					temp = (IType) type.clone();
-					((ITypeContainer) temp).setType(newType);
-					return temp;
-				} 
-			} catch (DOMException e) {
-			}
-			return type;
-		} 
-
 		if (type instanceof ICPPTemplateParameter) {
 			IType t = (IType) argMap.get(type);
 			if (t != null) {
@@ -765,7 +731,71 @@ public class CPPTemplates {
             return type;
 		}
 
+		if (type instanceof IBinding && 
+				(type instanceof ITypedef || type instanceof ICPPClassType)) {
+			if (instantiationScope instanceof ICPPClassSpecializationScope) {
+				try {
+					IBinding instance= instantiateBinding((IBinding) type, (ICPPClassSpecializationScope) instantiationScope);
+					if (instance instanceof IType) {
+						return (IType) instance;
+					}
+				} catch (DOMException e) {
+				}
+			}
+			return type;
+		}		
+
+		if (type instanceof ITypeContainer) {
+			try {
+				IType temp = ((ITypeContainer) type).getType();
+				IType newType = instantiateType(temp, argMap, instantiationScope);
+				if (newType != temp) {
+					temp = (IType) type.clone();
+					((ITypeContainer) temp).setType(newType);
+					return temp;
+				} 
+			} catch (DOMException e) {
+			}
+			return type;
+		} 
+
 		return type;
+	}
+
+	/**
+	 * Instantiates a binding representing a scope by means of the given class specialization scope.
+	 * @throws DOMException 
+	 */
+	private static IBinding instantiateBinding(final IBinding originalBinding, ICPPClassSpecializationScope instantiationScope) throws DOMException {
+		ICPPClassType originalClassType= instantiationScope.getOriginalClassType();
+		IScope scope= originalBinding.getScope();
+
+		boolean found= false;
+		LinkedList<ICPPClassType> classTypes= new LinkedList<ICPPClassType>();
+		while (scope instanceof ICPPClassScope) {
+			ICPPClassType ct= ((ICPPClassScope) scope).getClassType();
+			if (ct.isSameType(originalClassType)) {
+				found= true;
+				break;
+			}
+			classTypes.add(ct);
+			scope= scope.getParent();
+		}
+		
+		if (!found) {
+			return originalBinding;
+		}
+		
+		while(!classTypes.isEmpty()) {
+			ICPPClassType ct= classTypes.removeLast();
+			final IBinding binding= instantiationScope.getInstance(ct);
+			scope= binding.getScope();
+			if (scope instanceof ICPPClassSpecializationScope == false) {
+				return originalBinding;
+			}
+			instantiationScope= (ICPPClassSpecializationScope) scope;
+		}
+		return instantiationScope.getInstance(originalBinding);
 	}
 
 	/**

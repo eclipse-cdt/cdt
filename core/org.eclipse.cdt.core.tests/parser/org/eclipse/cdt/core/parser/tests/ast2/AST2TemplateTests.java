@@ -1166,7 +1166,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    A<int> a;                                          
 	//    a.b.t;                                             
 	// }                                                     
-	public void _testNestedClassTypeSpecializations() throws Exception {
+	public void testNestedClassTypeSpecializations() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);

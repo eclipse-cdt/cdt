@@ -23,12 +23,13 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope {
+public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope implements ICPPClassSpecializationScope {
 	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
 	
 	public CompositeCPPClassSpecializationScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
@@ -38,6 +39,11 @@ public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope
 	private ICPPSpecialization specialization() {
 		return (ICPPSpecialization) cf.getCompositeBinding(rbinding);
 	}
+
+	public ICPPClassType getOriginalClassType() {
+		return (ICPPClassType) specialization().getSpecializedBinding();
+	}
+
 	
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
@@ -67,8 +73,8 @@ public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope
 			return null;
     	
 		IBinding[] specs = new IBinding[0];
-		for (int i = 0; i < bindings.length; i++) {
-			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(bindings[i]));
+		for (IBinding binding : bindings) {
+			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(binding));
 		}
 		specs = (IBinding[]) ArrayUtil.trim(IBinding.class, specs);
     	return CPPSemantics.resolveAmbiguities(name, specs);
@@ -91,15 +97,15 @@ public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope
 				classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
 		
 		if (bindings != null) {
-			for (int i = 0; i < bindings.length; i++) {
-				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, getInstance(bindings[i]));
+			for (IBinding binding : bindings) {
+				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, getInstance(binding));
 			}
 		}
 
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	
-	private IBinding getInstance(IBinding binding) {
+	public IBinding getInstance(IBinding binding) {
 		if (instanceMap.containsKey(binding)) {
 			return (IBinding) instanceMap.get(binding);
 		} else if (!(binding instanceof ICPPClassTemplatePartialSpecialization)) {

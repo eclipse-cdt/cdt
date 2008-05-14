@@ -1191,4 +1191,22 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
     	assertEquals(1, args.size());
     }
+    
+	// template <class T> class A {                          
+	//    class B { T t; };                                  
+	//    B b;                                               
+	// };      
+    
+	// void f() {                                            
+	//    A<int> a;                                          
+	//    a.b.t;                                             
+	// }  
+	public void testNestedClassTypeSpecializations() throws Exception {
+		ICPPField t2 = getBindingFromASTName("t;", 1, ICPPField.class);
+
+		assertTrue(t2 instanceof ICPPSpecialization);
+		final IType type = t2.getType();
+		assertTrue(type instanceof IBasicType);
+		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
+	}
 }

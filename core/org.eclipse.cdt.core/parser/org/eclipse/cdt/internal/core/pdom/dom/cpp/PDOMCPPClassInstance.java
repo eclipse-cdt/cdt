@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -42,6 +41,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 class PDOMCPPClassInstance extends PDOMCPPInstance implements
-		ICPPClassType, ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
+		ICPPClassType, ICPPClassSpecializationScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	private static final int MEMBERLIST = PDOMCPPInstance.RECORD_SIZE + 0;
 	
@@ -86,6 +86,10 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_INSTANCE;
+	}
+	
+	public ICPPClassType getOriginalClassType() {
+		return (ICPPClassType) getSpecializedBinding();
 	}
 	
 	public ICPPBase[] getBases() throws DOMException {		
@@ -278,6 +282,18 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		}
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
+	
+	public IBinding getInstance(IBinding original) {
+		SpecializationFinder visitor = new SpecializationFinder(new IBinding[] {original});
+		try {
+			accept(visitor);
+			return visitor.getSpecializations()[0];
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return original;
+	}
+
 	
 	//ICPPClassScope unimplemented
 	public ICPPMethod[] getImplicitMethods() { fail(); return null; }

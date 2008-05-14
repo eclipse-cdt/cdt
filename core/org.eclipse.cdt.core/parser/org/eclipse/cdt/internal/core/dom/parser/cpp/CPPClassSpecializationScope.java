@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * @author aniefer
  */
-public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternalScope {
+public class CPPClassSpecializationScope implements ICPPClassSpecializationScope, IASTInternalScope {
 	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
 	final private ICPPSpecialization specialization;
 
@@ -47,11 +47,11 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		this.specialization = specialization;
 	}
 
-	protected ICPPClassType getOriginalClass() {
+	public ICPPClassType getOriginalClassType() {
 		return (ICPPClassType) specialization.getSpecializedBinding();
 	}
 	
-	private IBinding getInstance(IBinding binding) {
+	public IBinding getInstance(IBinding binding) {
 		if (instanceMap.containsKey(binding)) {
 			return (IBinding) instanceMap.get(binding);
 		} else if (!(binding instanceof ICPPClassTemplatePartialSpecialization)) {
@@ -162,7 +162,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	}
 
 	public IScope getParent() throws DOMException {
-		ICPPClassType cls = getOriginalClass();
+		ICPPClassType cls = getOriginalClassType();
 		ICPPClassScope scope = (ICPPClassScope)cls.getCompositeScope();
 		if (scope != null)
 			return scope.getParent();
@@ -179,7 +179,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	}
 
 	public boolean isFullyCached() throws DOMException {
-		ICPPScope origScope = (ICPPScope) getOriginalClass().getCompositeScope();
+		ICPPScope origScope = (ICPPScope) getOriginalClassType().getCompositeScope();
 		if (!ASTInternal.isFullyCached(origScope)) {
 			try {
 				CPPSemantics.lookupInScope(null, origScope, null);

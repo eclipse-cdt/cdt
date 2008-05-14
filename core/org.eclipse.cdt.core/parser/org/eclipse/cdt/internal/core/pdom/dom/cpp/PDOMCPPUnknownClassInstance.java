@@ -21,7 +21,9 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
@@ -118,4 +120,44 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	public String toString() {
 		return getName() + " <" + ASTTypeUtil.getTypeListString(getArguments()) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	@Override
+	public boolean isSameType(IType type) {
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
+			}
+		}
+		
+		if (type instanceof ICPPUnknownClassInstance) { 
+			ICPPUnknownClassInstance rhs= (ICPPUnknownClassInstance) type;
+			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
+				IType[] lhsArgs= getArguments();
+				IType[] rhsArgs= rhs.getArguments();
+				if (lhsArgs != rhsArgs) {
+					if (lhsArgs == null || rhsArgs == null)
+						return false;
+				
+					if (lhsArgs.length != rhsArgs.length)
+						return false;
+				
+					for (int i= 0; i < lhsArgs.length; i++) {
+						if (!lhsArgs[i].isSameType(rhsArgs[i])) 
+							return false;
+					}
+				}
+				final ICPPUnknownBinding lhsContainer = getUnknownContainerBinding();
+				final ICPPUnknownBinding rhsContainer = rhs.getUnknownContainerBinding();
+				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+					 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
+				}
+			}
+		}
+		return false;
+ 	}
 }

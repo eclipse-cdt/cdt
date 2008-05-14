@@ -317,6 +317,13 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return type.isSameType(this);
 		}
 		
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
+			}
+		}
+
 		try {
 			if (type instanceof ICPPClassTemplate  && !(type instanceof ProblemBinding)) {
 				boolean same= !(type instanceof ICPPClassTemplatePartialSpecialization);

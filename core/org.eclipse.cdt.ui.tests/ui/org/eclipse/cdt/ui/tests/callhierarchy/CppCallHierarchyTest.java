@@ -146,7 +146,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		TreeViewer tv = getCHTreeViewer();
 
 		TreeItem item= checkTreeNode(tv.getTree(), 0, "MyClass::method3()");
-		TreeItem nextItem= checkTreeNode(item, 0, "MyClass::method2()");
+		TreeItem nextItem= checkTreeNode(tv.getTree(), 0, 0, "MyClass::method2()");
 		checkTreeNode(item, 1, null); item= nextItem;
 		tv.setExpandedState(item.getData(), true); 
 		nextItem= checkTreeNode(item, 0, "MyClass::method1()");

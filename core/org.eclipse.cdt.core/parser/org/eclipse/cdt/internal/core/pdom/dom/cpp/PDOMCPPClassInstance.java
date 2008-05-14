@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -129,16 +128,15 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 	
 	public boolean isSameType(IType type) {
-        if (type instanceof PDOMNode) {
-			PDOMNode node = (PDOMNode) type;
-			if (node.getPDOM() == getPDOM() && node.getRecord() == getRecord()) {
-				return true;
-			}
-        }
         if (type instanceof ITypedef)
             return ((ITypedef)type).isSameType(this);
-        if (type instanceof ICPPDeferredClassInstance)
-        	return type.isSameType(this);  //the CPPDeferredClassInstance has some fuzziness
+
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
+			}
+		}
         
         if (type instanceof ICPPTemplateInstance) {
         	ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();

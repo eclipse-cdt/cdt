@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author aniefer
@@ -122,10 +121,8 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType {
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
-		if (type instanceof ITypedef || type instanceof IIndexType)
+		if (type instanceof ITypedef)
 			return type.isSameType(this);
-		if (type instanceof ICPPDeferredClassInstance)
-			return type.isSameType(this);  // the CPPDeferredClassInstance has some fuzziness
 
 		if (type instanceof ICPPTemplateInstance) {
 			ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();

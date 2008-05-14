@@ -16,11 +16,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
@@ -58,18 +57,32 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 		if (type == this)
 			return true;
 
+		if (type instanceof ITypedef) 
+			return type.isSameType(this);
+
 		// allow some fuzziness here.
 		ICPPClassTemplate classTemplate = getClassTemplate();
 		if (type instanceof ICPPDeferredClassInstance) {
-			ICPPClassTemplate typeClass =
-				(ICPPClassTemplate) ((ICPPDeferredTemplateInstance) type).getSpecializedBinding();
-			return typeClass == classTemplate;
-		} else if (type instanceof ICPPClassTemplate && classTemplate == type) {
+			final ICPPDeferredClassInstance rhs = (ICPPDeferredClassInstance) type;
+			if (!classTemplate.isSameType((IType) rhs.getSpecializedBinding())) 
+				return false;
+			
+			IType[] lhsArgs= getArguments();
+			IType[] rhsArgs= rhs.getArguments();
+			if (lhsArgs != rhsArgs) {
+				if (lhsArgs == null || rhsArgs == null)
+					return false;
+
+				if (lhsArgs.length != rhsArgs.length)
+					return false;
+
+				for (int i= 0; i < lhsArgs.length; i++) {
+					if (!lhsArgs[i].isSameType(rhsArgs[i])) 
+						return false;
+				}
+			}
 			return true;
-		} else if (type instanceof ICPPTemplateInstance &&
-				((ICPPTemplateInstance) type).getTemplateDefinition() == classTemplate) {
-			return true;
-		}
+		} 
 		return false;
 	}
 

@@ -18,11 +18,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -89,25 +89,39 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 	}
 	
 	public boolean isSameType(IType type) {
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
         if (type instanceof PDOMNode) {
 			PDOMNode node = (PDOMNode) type;
-			if (node.getPDOM() == getPDOM() && node.getRecord() == getRecord()) {
-				return true;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
 			}
         }
 		
 		ICPPClassTemplate classTemplate = (ICPPClassTemplate) getTemplateDefinition();
 		
-		//allow some fuzziness here.
 		if (type instanceof ICPPDeferredClassInstance) {
-			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((ICPPDeferredTemplateInstance)type).getSpecializedBinding();
-			return typeClass == classTemplate;
-		} else if (type instanceof ICPPClassTemplate && classTemplate == type) {
+			final ICPPDeferredClassInstance rhs = (ICPPDeferredClassInstance) type;
+			if (!classTemplate.isSameType((IType) rhs.getSpecializedBinding())) 
+				return false;
+			
+			IType[] lhsArgs= getArguments();
+			IType[] rhsArgs= rhs.getArguments();
+			if (lhsArgs != rhsArgs) {
+				if (lhsArgs == null || rhsArgs == null)
+					return false;
+
+				if (lhsArgs.length != rhsArgs.length)
+					return false;
+
+				for (int i= 0; i < lhsArgs.length; i++) {
+					if (!lhsArgs[i].isSameType(rhsArgs[i])) 
+						return false;
+				}
+			}
 			return true;
-		} else if (type instanceof ICPPTemplateInstance &&
-				((ICPPTemplateInstance)type).getTemplateDefinition() == classTemplate) {
-			return true;
-		}
+		} 
 		return false;
 	}
 	

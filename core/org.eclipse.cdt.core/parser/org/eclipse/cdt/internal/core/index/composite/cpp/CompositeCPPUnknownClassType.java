@@ -143,6 +143,6 @@ class CompositeCPPUnknownClassType extends CompositeCPPBinding implements ICPPUn
 	}
 
 	public ICPPUnknownBinding getUnknownContainerBinding() {
-		return ((ICPPUnknownClassType) rbinding).getUnknownContainerBinding();
+		return (ICPPUnknownBinding) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPUnknownClassType) rbinding).getUnknownContainerBinding());
 	}
 }

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -88,7 +90,25 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
     }
 
     public boolean isSameType(IType type) {
-        return type == this;
+    	if (this == type) 
+    		return true;
+    	
+		if (type instanceof ITypedef) 
+			return type.isSameType(this);
+		
+		if (type instanceof ICPPUnknownClassType 
+				&& type instanceof ICPPUnknownClassInstance == false
+				&& type instanceof ICPPDeferredClassInstance == false) {
+			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
+			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
+				final ICPPUnknownBinding lhsContainer = getUnknownContainerBinding();
+				final ICPPUnknownBinding rhsContainer = rhs.getUnknownContainerBinding();
+				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+					return ((IType)lhsContainer).isSameType((IType) rhsContainer);
+				}
+			}
+		}
+		return false;
     }
 
 	public ICPPClassType[] getNestedClasses() {

@@ -70,6 +70,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
@@ -692,6 +693,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  			// all instances are stored with their template definition
  			if (binding instanceof ICPPTemplateInstance) {
  				scopeBinding= ((ICPPTemplateInstance) binding).getTemplateDefinition();
+ 			} else if (binding instanceof ICPPUnknownClassType &&
+ 					binding instanceof ICPPDeferredClassInstance == false) {
+ 				// the parent of an unknown class can be a template parameter, which is not a scope
+ 				scopeBinding= ((ICPPUnknownClassType) binding).getUnknownContainerBinding();
  			}
  			else {
  				IScope scope = binding.getScope();

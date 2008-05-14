@@ -234,10 +234,10 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		if( type instanceof ITypedef )
 			return type.isSameType( this );
 
-		if( type instanceof PDOMNode ) {
-			PDOMNode node = (PDOMNode) type;
-			if (node.getPDOM() == getPDOM() && node.getRecord() == getRecord()) {
-				return true;
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
 			}
 		}
 

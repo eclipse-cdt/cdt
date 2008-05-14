@@ -12,13 +12,13 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -28,11 +28,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -239,7 +242,30 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
     public boolean isSameType(IType type) {
-        return type == this;
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
+			}
+		}
+		
+		if (type instanceof ICPPUnknownClassType 
+				&& type instanceof ICPPUnknownClassInstance == false
+				&& type instanceof ICPPDeferredClassInstance == false) {
+			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
+			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
+				final ICPPUnknownBinding lhsContainer = getUnknownContainerBinding();
+				final ICPPUnknownBinding rhsContainer = rhs.getUnknownContainerBinding();
+				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+					return ((IType)lhsContainer).isSameType((IType) rhsContainer);
+				}
+			}
+		}
+		return false;
     }
 
 	public ICPPClassType[] getNestedClasses() {
@@ -251,11 +277,6 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 			return this;
 		}
 		return new CPPUnknownClass(parentBinding, getUnknownName());
-	}
-
-	@Override
-	public String toString() {
-		return ASTTypeUtil.getType(this);
 	}
 
 	public IASTName getUnknownName() {

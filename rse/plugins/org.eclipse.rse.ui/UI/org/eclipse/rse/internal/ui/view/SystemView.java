@@ -53,6 +53,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David Dykstal (IBM) - [225911] Exception received after deleting a profile containing a connection
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
+ * David McKnight  (IBM)         - [231903] TVT34:TCT198: PLK: problems with "Show prompt" checkbox and "New connection prompt"
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2080,7 +2081,7 @@ public class SystemView extends SafeTreeViewer
 				//  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
 				//else
 				//  refresh(); // refresh entire tree
-				if ((src == null) || (src == RSECorePlugin.getTheSystemRegistry()))
+				if ((src == null) || (src == RSEUIPlugin.getTheSystemRegistryUI()))						
 					refreshAll();
 				else {
 					//FIXME Why do we forceRemote here? EVENT_REFRESH_SELECTED also does not do forceRemote.

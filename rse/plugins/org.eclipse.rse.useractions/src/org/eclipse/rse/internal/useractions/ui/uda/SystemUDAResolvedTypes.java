@@ -1,7 +1,7 @@
 package org.eclipse.rse.internal.useractions.ui.uda;
 
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [232106] - NPE when resolving types   
  *******************************************************************************/
 import java.util.Vector;
 
@@ -73,7 +74,10 @@ public class SystemUDAResolvedTypes {
 			SystemUDTypeElement typeElem = (SystemUDTypeElement) objElems[i];
 			if (type.equals(typeElem.toString())) {
 				previousTypes.addElement(type);
-				resolvedTypes = resolveTypes(typeElem.getTypes(), v, objElems);
+				String types = typeElem.getTypes();
+				if (types != null) {
+					resolvedTypes = resolveTypes(types, v, objElems);
+				}
 				previousTypes.remove(type);
 				v.addElement(new SystemUDAFileTypesForName(type, resolvedTypes));
 				return resolvedTypes;

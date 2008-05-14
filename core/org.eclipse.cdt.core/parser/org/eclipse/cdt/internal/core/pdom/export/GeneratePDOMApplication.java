@@ -116,11 +116,7 @@ public class GeneratePDOMApplication implements IApplication {
 
 		GeneratePDOM generate = new GeneratePDOM(pprovider,	appArgs, targetLocation, indexerID);
 		output(Messages.GeneratePDOMApplication_GenerationStarts);
-		try {
-			generate.run();
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-		}
+		generate.run(); // CoreException handled in start method
 		output(Messages.GeneratePDOMApplication_GenerationEnds);
 		return null;
 	}
@@ -134,7 +130,7 @@ public class GeneratePDOMApplication implements IApplication {
 	}
 
 	/**
-	 * Causes the appliation to fail in a way that has been anticipated (e.g. a command-line or interface
+	 * Causes the application to fail in a way that has been anticipated (e.g. a command-line or interface
 	 * contract violation by a extension implementation)
 	 * @param message
 	 * @throws CoreException
@@ -146,7 +142,7 @@ public class GeneratePDOMApplication implements IApplication {
 	}
 	
 	/**
-	 * Returns the IExportProjectProvider registed in the plug-in registry under the
+	 * Returns the IExportProjectProvider registered in the plug-in registry under the
 	 * specified fully qualified class name
 	 * May return null
 	 * @param fqn

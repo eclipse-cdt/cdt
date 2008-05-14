@@ -2064,6 +2064,25 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IBinding b0 = bh.assertNonProblem("value_type GetPair", 10, IBinding.class);
     }
 
+    // template<typename _T1>
+    // class A {};
+    //
+    // template<typename _T2, template<typename> class _Base = A>
+    // struct B {
+    //   const _T2* m() const { return 0; }
+    // };
+    //
+    // template<typename _T3>
+    // class C : public B<_T3> {};
+    //
+    // void f(C<char>& str) {
+    //   str.m();
+    // }
+    public void _testBug232086() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction b0 = bh.assertNonProblem("m();", 1, ICPPFunction.class);
+    }
+
     //    class A {};
 	//
 	//    template <class T> class C {

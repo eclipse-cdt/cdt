@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * David Dykstal (IBM) - [232066] Adjusted width of dialog for translation
  *******************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -28,11 +29,15 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -58,8 +63,8 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 	
 	/**
 	 * Constructor for SystemPasswordPersistencePrompt.
-	 * @param shell
-	 * @param title
+	 * @param shell the parent shell
+	 * @param title the dialog title
 	 */
 	public SystemPasswordPersistencePrompt(Shell shell, String title, List existingEntries, boolean change) {
 		super(shell, title);
@@ -75,6 +80,12 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 	protected Control createInner(Composite parent) {
 		
 		Composite page = SystemWidgetHelpers.createComposite(parent, 2);
+		Layout parentLayout = parent.getLayout();
+		if (parentLayout instanceof GridLayout) {
+			GridData gd = new GridData(SWT.BEGINNING, SWT.TOP, true, true);
+			gd.widthHint = 400;
+			page.setLayoutData(gd);
+		}
 		
 		// Hostname prompt
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_PREF_SIGNON_HOSTNAME_LABEL);

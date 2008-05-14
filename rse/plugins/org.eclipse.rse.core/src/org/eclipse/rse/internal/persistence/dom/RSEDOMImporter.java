@@ -330,7 +330,7 @@ public class RSEDOMImporter {
 		boolean isStringsNonChangable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE);
 		int release = getIntegerValue(node, IRSEDOMConstants.ATTRIBUTE_RELEASE);
 		boolean isSetSingleFilterStringOnly = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY);
-		String filterType = getAttributeValue(node, IRSEDOMConstants.ATTRIBUTE_FILTER_TYPE);
+		String filterType = getAttributeValueMaybeNull(node, IRSEDOMConstants.ATTRIBUTE_FILTER_TYPE);
 
 		// create the filter strings
 		RSEDOMNode[] filterStringNodes = node.getChildren(IRSEDOMConstants.TYPE_FILTER_STRING);

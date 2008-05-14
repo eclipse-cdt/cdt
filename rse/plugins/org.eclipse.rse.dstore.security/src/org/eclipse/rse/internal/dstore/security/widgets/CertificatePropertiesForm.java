@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [231913] increasing width of form to accomodate translation
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.widgets;
@@ -189,7 +189,7 @@ public class CertificatePropertiesForm extends SystemBaseForm
 		Composite content = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		GridData data = GridUtil.createFill();
-		data.widthHint = 450;
+		data.widthHint = 600;
 		//data.heightHint = 300;
 		layout.numColumns = 2;
 		content.setLayout(layout);

@@ -17,6 +17,7 @@
  * Noriaki Takatsu    (IBM)   [229146] [multithread] changes to stop Miner threads when clients disconnect
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * David McKnight    (IBM)  - [232004] [dstore][multithread] some miner finish() is not terminated sometimes
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -223,7 +224,6 @@ implements ISchemaExtender
 				e.printStackTrace();
 			}
 		}
-		waitForInput();
 	}
 
 	public final void requestCommand(DataElement command)

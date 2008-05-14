@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [196963][181939] avoid subsystem plugin activation just for enablement checking
+ * David Dykstal (IBM) - [231943] make "true" and "false" translatable
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
@@ -104,7 +105,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	};
 
 	private static final boolean[] enabledStates = {Boolean.TRUE.booleanValue(), Boolean.FALSE.booleanValue()};
-    private static final String[] enabledStateStrings = {Boolean.TRUE.toString(), Boolean.FALSE.toString()};
+    private static final String[] enabledStateStrings = {SystemResources.SystemTypeFieldEditor_true, SystemResources.SystemTypeFieldEditor_false};
 
 	/**
 	 * Constructor
@@ -435,9 +436,13 @@ public class SystemTypeFieldEditor extends FieldEditor
 
 		if (columnIndex == COLUMN_NAME)
 			return currType.getLabel();
-		else if (columnIndex == COLUMN_ENABLED)
-			return Boolean.toString(currType.isEnabled());
-		else if (columnIndex == COLUMN_USERID) {
+		else if (columnIndex == COLUMN_ENABLED) {
+			int n = 0;
+			if (currType.isEnabled() == enabledStates[1]) {
+				n = 1;
+			}
+			return enabledStateStrings[n];
+		} else if (columnIndex == COLUMN_USERID) {
 			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter) (currType.getAdapter(RSESystemTypeAdapter.class));
 			return (adapter.getDefaultUserId(currType)==null ? "" : adapter.getDefaultUserId(currType)); //$NON-NLS-1$
 		}

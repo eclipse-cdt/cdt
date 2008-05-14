@@ -21,6 +21,7 @@
  * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
+ * David Dykstal (IBM) - [231943] Make "true" and "false" translatable on SystemTypeFieldEditor
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -1032,6 +1033,10 @@ public class SystemResources extends NLS
 	public static String SystemImportConnectionAction_ImportJobName;
 
 	public static String SystemImportConnectionAction_UnexpectedException;
+
+	public static String SystemTypeFieldEditor_false;
+
+	public static String SystemTypeFieldEditor_true;
 
 	static {
 		// load message values from bundle file

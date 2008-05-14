@@ -1,6 +1,6 @@
 <?eclipse version="3.0"?>
 <plugin>
-
+ 
 <extension point="org.eclipse.debug.ui.memoryRenderings">
     <renderingType 
         name="Traditional"
@@ -29,30 +29,6 @@
 </extension>
 
 <extension point="org.eclipse.ui.viewActions">
-	<viewContribution
-    	targetID="org.eclipse.debug.ui.MemoryView"
-        id="org.eclipse.debug.ui.memoryView.toolbar">
-        	<action
-               	class="org.eclipse.dd.debug.memory.renderings.actions.ExportMemoryAction"
-               	helpContextId="ExportMemoryAction_context"
-               	icon="icons/export.png"
-               	id="org.eclipse.dd.debug.memory.renderings.actions.ExportMemoryAction"
-               	label="%ExportMemoryAction.label"
-               	state="false"
-               	style="push"
-               	toolbarPath="additions"
-               	tooltip="%ExportMemoryAction.label"/>
-            <action
-               	class="org.eclipse.dd.debug.memory.renderings.actions.ImportMemoryAction"
-               	helpContextId="ExportMemoryAction_context"
-               	icon="icons/import.png"
-               	id="org.eclipse.dd.debug.memory.renderings.actions.ImportMemoryAction"
-               	label="%ImportMemoryAction.label"
-               	state="false"
-               	style="push"
-               	toolbarPath="additions"
-               	tooltip="%ImportMemoryAction.label"/>
-    </viewContribution>
  <viewContribution
        id="org.eclipse.debug.ui.MemoryView.findReplace"
        targetID="org.eclipse.debug.ui.MemoryView">
@@ -64,5 +40,4 @@
     </action>
  </viewContribution>
 </extension>
-
 </plugin>

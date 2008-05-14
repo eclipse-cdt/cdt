@@ -14,7 +14,6 @@ import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
@@ -36,7 +35,8 @@ public class CDebugUIPreferenceInitializer extends AbstractPreferenceInitializer
     public void initializeDefaultPreferences() {
 		IPreferenceStore pstore = CDebugUIPlugin.getDefault().getPreferenceStore();
 		CDebugPreferencePage.initDefaults( pstore );
-        pstore.setDefault( ICDebugPreferenceConstants.PREF_OPEN_DISASSEMBLY_MODE, MessageDialogWithToggle.PROMPT );
+        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_OPEN_NO_SOURCE_INFO, true );
+        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_OPEN_SOURCE_NOT_FOUND, false );
         pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS, true );
         pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE, true );
 	}

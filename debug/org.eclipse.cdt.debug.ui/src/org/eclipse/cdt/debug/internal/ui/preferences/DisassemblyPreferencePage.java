@@ -36,23 +36,27 @@ public class DisassemblyPreferencePage extends FieldEditorPreferencePage impleme
      */
     @Override
     protected void createFieldEditors() {
-/*        
-        addField( new RadioGroupFieldEditor( 
-                        ICDebugPreferenceConstants.PREF_OPEN_DISASSEMBLY_MODE,
-                        "Open disassembly if source is not available", 
-                        3, 
-                        new String[][] {
-                            { "Always", MessageDialogWithToggle.ALWAYS },
-                            { "Never", MessageDialogWithToggle.NEVER },
-                            { "Prompt", MessageDialogWithToggle.PROMPT }, 
-                        }, 
-                        getFieldEditorParent(), 
-                        true ) );
-*/      
-        Group group = ControlFactory.createGroup( getFieldEditorParent(), "Display settings", 1 );
+        Group group = ControlFactory.createGroup( getFieldEditorParent(), "Open disassembly options", 1 );
         Composite spacer = ControlFactory.createComposite( group, 1 );
-
         FieldEditor edit = new BooleanFieldEditor(
+                ICDebugPreferenceConstants.PREF_DISASM_OPEN_NO_SOURCE_INFO,
+                "Source information is not available",
+                spacer );
+            edit.fillIntoGrid( spacer, 2 );
+            addField( edit );
+
+            edit = new BooleanFieldEditor(
+                ICDebugPreferenceConstants.PREF_DISASM_OPEN_SOURCE_NOT_FOUND,
+                "Source file not found",
+                spacer );
+            edit.fillIntoGrid( spacer, 2 );
+            addField( edit );
+
+
+        group = ControlFactory.createGroup( getFieldEditorParent(), "Display settings", 1 );
+        spacer = ControlFactory.createComposite( group, 1 );
+
+        edit = new BooleanFieldEditor(
             ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS,
             "Show instructions",
             spacer );

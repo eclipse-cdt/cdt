@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.model.IDisassemblyLine;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.CDisassemblyContextProvider;
 import org.eclipse.cdt.debug.internal.core.model.DisassemblyRetrieval;
+import org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceDisplayAdapter;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleMementoProvider;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentElementAnnotationProvider;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
  
 public class CDebugElementAdapterFactory implements IAdapterFactory {
 
@@ -51,6 +53,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
     private static IDocumentElementLabelProvider fgDisassemblyLabelProvider = new DisassemblyElementLabelProvider();
     private static IDocumentElementAnnotationProvider fgDisassemblyAnnotationProvider = new DisassemblyElementAnnotationProvider();
     private static IElementToggleBreakpointAdapter fgDisassemblyToggleBreakpointAdapter = new DisassemblyToggleBreakpointAdapter();
+    private static ISourceDisplay fgSourceDisplayAdapter = new SourceDisplayAdapter();
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -128,6 +131,11 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
                 return fgDisassemblyToggleBreakpointAdapter;
             }
         }
+        if ( adapterType.equals( ISourceDisplay.class ) ) {
+            if ( adaptableObject instanceof ICStackFrame ) {
+                return fgSourceDisplayAdapter;
+            }
+        }
     	return null;
 	}
 
@@ -144,6 +152,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
                 IDocumentElementLabelProvider.class,
                 IDocumentElementAnnotationProvider.class,
                 IElementToggleBreakpointAdapter.class,
+                ISourceDisplay.class,
 			};
 	}
 }

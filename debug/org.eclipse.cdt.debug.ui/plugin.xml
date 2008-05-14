@@ -1294,9 +1294,11 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
+         <!-- Enable after 5.0
          <adapter
                type="org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider">
          </adapter>
+         -->
          <adapter
                type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider">
          </adapter>
@@ -1502,12 +1504,14 @@
             id="org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage"
             category="org.eclipse.cdt.debug.ui.CDebugPreferencePage">
       </page>
+      <!-- Enable after 5.0
       <page
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.cdt.debug.internal.ui.preferences.DisassemblyPreferencePage"
             id="org.eclipse.cdt.debug.ui.disassemblyPreferencePge"
             name="%DisassemblyPreferencePage.name">
       </page>
+      -->
    </extension>
 
    <extension

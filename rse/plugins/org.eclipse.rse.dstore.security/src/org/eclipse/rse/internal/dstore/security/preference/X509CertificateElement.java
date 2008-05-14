@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - use ICU for date formats
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.preference;
@@ -20,6 +20,8 @@ package org.eclipse.rse.internal.dstore.security.preference;
 
 import java.security.cert.X509Certificate;
 import java.util.Date;
+
+import com.ibm.icu.text.DateFormat;
 
 
 public class X509CertificateElement extends Element
@@ -168,24 +170,23 @@ public class X509CertificateElement extends Element
 		return extract(full, CERT_COUNTRY);
 	}
 	
-
-	
-
-	
 	public String getNotBefore()
 	{
-		return _cert.getNotBefore().toString();
+		Date date = _cert.getNotBefore();
+		String result = DateFormat.getDateInstance(DateFormat.LONG).format(date);
+		return result;
 	}
 	
 	public String getNotAfter()
 	{
-		return _cert.getNotAfter().toString();
+		Date date = _cert.getNotAfter();
+		String result = DateFormat.getDateInstance(DateFormat.LONG).format(date);
+		return result;
 	}
 	
 	public String getExpirationDate()
 	{
-		Date date = _cert.getNotAfter();
-		return date.toString();
+		return getNotAfter();
 	}
 	
 	

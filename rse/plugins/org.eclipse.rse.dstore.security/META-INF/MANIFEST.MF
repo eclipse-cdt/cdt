@@ -21,3 +21,4 @@ Export-Package: org.eclipse.rse.internal.dstore.security;x-internal:=true,
  org.eclipse.rse.internal.dstore.security.util;x-internal:=true,
  org.eclipse.rse.internal.dstore.security.widgets;x-internal:=true,
  org.eclipse.rse.internal.dstore.security.wizards;x-internal:=true
+Import-Package: com.ibm.icu.text

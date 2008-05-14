@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [232131] fix minor layout problems along with date formats
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.preference;
@@ -136,7 +136,6 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		table.setLinesVisible(true);
 		GridData data = GridUtil.createFill();
 		data.heightHint = 50;
-		data.widthHint = 100;
 		table.setLayoutData(data);
 
 		TableLayout tableLayout = new TableLayout();
@@ -148,19 +147,19 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		
 		TableColumn toColumn = new TableColumn(table, SWT.LEFT);
 		toColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_TO));
-		tableLayout.addColumnData(new ColumnPixelData(120));
+		tableLayout.addColumnData(new ColumnPixelData(150));
 		
 		TableColumn frmColumn = new TableColumn(table, SWT.LEFT);
 		frmColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_FROM));
-		tableLayout.addColumnData(new ColumnPixelData(120));
+		tableLayout.addColumnData(new ColumnPixelData(150));
 		
-		TableColumn expColumn = new TableColumn(table, SWT.RIGHT);
+		TableColumn expColumn = new TableColumn(table, SWT.LEFT);
 		expColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_EXPIRES));
-		tableLayout.addColumnData(new ColumnPixelData(120));
+		tableLayout.addColumnData(new ColumnPixelData(150));
 		table.setLayout(tableLayout);
 
 		// Adjust the table viewer.
-		String[] properties = new String[] {"STRING", "STRING", "STRING", "NUMBER"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String[] properties = new String[] {"STRING", "STRING", "STRING", "STRING"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		_viewer.setColumnProperties(properties);
 		_viewer.setContentProvider(new CertTableContentProvider());
 		_viewer.setLabelProvider(new CertTableLabelProvider());

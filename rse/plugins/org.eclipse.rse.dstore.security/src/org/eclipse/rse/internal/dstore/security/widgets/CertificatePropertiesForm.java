@@ -13,13 +13,13 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [231913] increasing width of form to accomodate translation
+ * David Dykstal (IBM) - [232131] using ICU for DateFormat
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.widgets;
 
 import java.security.Key;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat;
 
 import org.eclipse.rse.internal.dstore.security.UniversalSecurityPlugin;
 import org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties;
@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import com.ibm.icu.text.DateFormat;
 
 public class CertificatePropertiesForm extends SystemBaseForm
 {

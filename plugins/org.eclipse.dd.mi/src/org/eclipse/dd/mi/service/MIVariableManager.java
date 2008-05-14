@@ -988,17 +988,11 @@ public class MIVariableManager implements ICommandControl {
 									if (isModifiable()) {
 										addModifiableDescendant(getData().getName(), MIRootVariableObject.this);
 									}
-
-									rm.done();
-
-									// Object can now be used by others
-									creationCompleted(true);
 								} else {
 									rm.setStatus(getStatus());
-									rm.done();
-									// Object must tell any waiting monitors that it failed
-									creationCompleted(false);
 								}
+								
+								rm.done();
 							}
 						});
 			} else {
@@ -1451,13 +1445,27 @@ public class MIVariableManager implements ICommandControl {
 				if (isSuccess()) {
 					// Also store the object as a varObj that is up-to-date
 					updatedRootList.add(newVarObj);
+					// VarObj can now be used by others
+					newVarObj.creationCompleted(true);
 
 					rm.setData(newVarObj);
 					rm.done();
 				} else {
 					// Object was not created, remove it from our list
 					lruVariableList.remove(id);
-					
+					// Tell any waiting monitors that creation failed.
+					// It is important to do this call after we have removed the id
+					// from our LRU; this is to avoid the following:
+					//   The same varObj is requested before it was removed from the LRU
+					//   but after we called creationCompleted().  
+					//   In this case, the request for this varObj would be queued, but  
+					//   since creationCompleted() already sent the notifications
+					//   the newly queue request will never get serviced.
+					// We avoid this race condition by sending the notifications _after_ removing 
+					// the object from the LRU, to avoid any new requests being queue.
+					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=231655
+					newVarObj.creationCompleted(false);
+
 					rm.setStatus(getStatus());
 					rm.done();
 				}

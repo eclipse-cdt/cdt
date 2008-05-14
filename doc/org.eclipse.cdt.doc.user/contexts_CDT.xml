@@ -476,4 +476,25 @@
    label="Language Mappings"/> 
 </context>                   
 
+<context id="cdt_u_pref_multi_cfg">
+   <description></description>
+   <topic href="reference/cdt_u_pref_multi_cfg.htm"    	
+   label="Multi Configuration Edit tab"/> 
+</context>                   
+<context id="cdt_u_pref_prop_pages">
+   <description></description>
+   <topic href="reference/cdt_u_pref_prop_pages.htm"    	
+   label="Property Pages Settins tab"/> 
+</context>                   
+<context id="cdt_u_pref_wizard_defaults">
+   <description></description>
+   <topic href="reference/cdt_u_pref_wizard_defaults.htm"    	
+   label="CDT New Project Wizard Defaults tab"/> 
+</context>                   
+<context id="cdt_u_pref_wizard_toolchains">
+   <description></description>
+   <topic href="reference/cdt_u_pref_wizard_toolchains.htm"    	
+   label="Preferred Toolchains tab"/> 
+</context>                   
+
 </contexts>

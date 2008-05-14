@@ -424,22 +424,22 @@
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PreferredToolchainsTab"
            name="%Preferred.toolchains"
-           helpId=""
+           helpId="cdt_u_pref_wizard_toolchains"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.WizardDefaultsTab"
            name="%Wizard.defaults"
-           helpId=""
+           helpId="cdt_u_pref_wizard_defaults"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PropertyPageDefsTab"
            name="%PropertyPage.defaults"
-           helpId=""
+           helpId="cdt_u_pref_prop_pages"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PropertyMultiCfgTab"
            name="%multicfg"
-           helpId=""
+           helpId="cdt_u_pref_multi_cfg"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig">
      </tab>
   </extension>   

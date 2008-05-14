@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  * Martin Oberhuber (Wind River) - [202866] Fix exceptions in RSE browse dialog when SystemRegistry is not yet fully initialized
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David Dykstal (IBM) - [232130] meaningless label provided for filter references
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -421,9 +422,13 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
     
 	private void setPathTextFromSelection(Object selection)
 	{
+		String text = ""; //$NON-NLS-1$
 		ISystemViewElementAdapter adapter = getViewAdapter(selection);
-		String text = adapter.getAbsoluteName(selection);
-	
+		if (selection instanceof ISystemFilterReference) {
+			text = adapter.getText(selection);
+		} else {
+			text = adapter.getAbsoluteName(selection);
+		}
 		setPathText(text);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [230815] fix layout problems with long labels
  *******************************************************************************/
 
 
@@ -76,7 +76,6 @@ public class CertificateForm extends SystemBaseForm
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 3;
 			data = GridUtil.createFill();
-			data.widthHint = 400;
 			nameGroup.setLayoutData(data);
 			nameGroup.setLayout(layout);
 			
@@ -84,6 +83,7 @@ public class CertificateForm extends SystemBaseForm
 			lblPath.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_FILE));
 			_pathField = new Text(nameGroup, SWT.BORDER);				
 			_pathField.setLayoutData(GridUtil.createHorizontalFill());
+			((GridData)_pathField.getLayoutData()).widthHint = 150;
 			_pathField.setText(""); //$NON-NLS-1$
 			
 			_browseButton = new Button(nameGroup, SWT.PUSH);

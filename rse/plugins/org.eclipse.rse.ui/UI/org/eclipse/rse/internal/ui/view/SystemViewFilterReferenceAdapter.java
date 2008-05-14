@@ -26,6 +26,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [210563] error messages need to be shown if incurred during filter expansion
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [232148] Invalid thread access exception from SystemViewFilterReferenceAdapter.internalGetChildren()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -77,6 +78,7 @@ import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -302,53 +304,62 @@ public class SystemViewFilterReferenceAdapter
 	protected Object[] internalGetChildren(Object element, IProgressMonitor monitor)
 	{
 		Object[] children = null;
-		ISystemFilterReference fRef = getFilterReference(element);
+		final ISystemFilterReference fRef = getFilterReference(element);
 		ISystemFilter referencedFilter = fRef.getReferencedFilter();
 		boolean promptable = referencedFilter.isPromptable();
 
-		ISubSystem ss = fRef.getSubSystem();
-		ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(referencedFilter);
+		final ISubSystem ss = fRef.getSubSystem();
+		final ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(referencedFilter);
 
 		// PROMPTING FILTER?...
 		if (promptable)
 		{
-			children = new SystemMessageObject[1];
-			try
+			final Object[] pchildren = new SystemMessageObject[1];
+			final Object pelement = element;
+			// promptable's need to be run on the main thread since they display dialogs
+			Display.getDefault().syncExec(new Runnable()
 			{
-				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
-
-				ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
-				if (newFilter == null)
+				
+				public void run()
 				{
-					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
-				}
-				else // filter successfully created!
+					try
 					{
-					// return "filter created successfully" message object for this node
-					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FILTERCREATED), ISystemMessageObject.MSGTYPE_OBJECTCREATED, element);
-					// select the new filter reference...
-					ISystemFilterReference sfr = fRef.getParentSystemFilterReferencePool().getExistingSystemFilterReference(ss, newFilter);
-					ISystemViewInputProvider inputProvider = getInput();
-					if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer() != null))
-					{
-						SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
-						Viewer v = (Viewer)inputProvider.getViewer();
-						if (v instanceof ISystemResourceChangeListener)
+						ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
+		
+						ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
+						if (newFilter == null)
 						{
-							//sr.fireEvent((ISystemResourceChangeListener)v, event); // only expand in the current viewer, not all viewers!
-							RSEUIPlugin.getTheSystemRegistryUI().postEvent((ISystemResourceChangeListener) v, event); // only expand in the current viewer, not all viewers!
+							pchildren[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, pelement);
+						}
+						else // filter successfully created!
+							{
+							// return "filter created successfully" message object for this node
+							pchildren[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FILTERCREATED), ISystemMessageObject.MSGTYPE_OBJECTCREATED, pelement);
+							// select the new filter reference...
+							ISystemFilterReference sfr = fRef.getParentSystemFilterReferencePool().getExistingSystemFilterReference(ss, newFilter);
+							ISystemViewInputProvider inputProvider = getInput();
+							if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer() != null))
+							{
+								SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
+								Viewer v = (Viewer)inputProvider.getViewer();
+								if (v instanceof ISystemResourceChangeListener)
+								{
+									//sr.fireEvent((ISystemResourceChangeListener)v, event); // only expand in the current viewer, not all viewers!
+									RSEUIPlugin.getTheSystemRegistryUI().postEvent((ISystemResourceChangeListener) v, event); // only expand in the current viewer, not all viewers!
+								}
+							}
 						}
 					}
+					catch (Exception exc)
+					{
+						pchildren[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, pelement);
+						SystemBasePlugin.logError("Exception prompting for filter ", exc); //$NON-NLS-1$
+					}
+					//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
 				}
+			});
+			return pchildren;
 			}
-			catch (Exception exc)
-			{
-				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
-				SystemBasePlugin.logError("Exception prompting for filter ", exc); //$NON-NLS-1$
-			}
-			//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
-			return children;
-		}
 
 		// NON-PROMPTING FILTER?...
 		Object[] nestedFilterReferences = fRef.getSystemFilterReferences(ss);

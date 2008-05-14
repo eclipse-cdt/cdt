@@ -692,11 +692,12 @@ public class CPPTemplates {
 			IType ret = null;
 			IType[] params = null;
 			try {
-				ret = instantiateType(((IFunctionType) type).getReturnType(), argMap, instantiationScope);
+				final IType r = ((IFunctionType) type).getReturnType();
+				ret = instantiateType(r, argMap, instantiationScope);
 				IType[] ps = ((IFunctionType) type).getParameterTypes();
-				params = new IType[ps.length];
-				for (int i = 0; i < params.length; i++) {
-					params[i]= instantiateType(ps[i], argMap, instantiationScope);
+				params = instantiateTypes(ps, argMap, (ICPPScope) instantiationScope);
+				if (ret == r && params == ps) {
+					return type;
 				}
 			} catch (DOMException e) {
 			}
@@ -809,14 +810,14 @@ public class CPPTemplates {
 		IType[] result = types;
 		for (int i = 0; i < types.length; i++) {
 			IType type = CPPTemplates.instantiateType(types[i], argMap, instantiationScope);
-			if (type != types[i]) {
-				if (result == types) {
-					result = new IType[types.length];
-					if (i > 0) {
-						System.arraycopy(types, 0, result, 0, i);
-					}
+			if (result != types) {
+				result[i]= type;
+			} else if (type != types[i]) {
+				result = new IType[types.length];
+				if (i > 0) {
+					System.arraycopy(types, 0, result, 0, i);
 				}
-				result[i] = type;
+				result[i]= type;
 			}
 		}
 		return result;

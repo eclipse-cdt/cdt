@@ -156,6 +156,9 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
 		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
+		if (arguments == newArgs) {
+			return this;
+		}
 		return ((ICPPInternalTemplateInstantiator) getTemplateDefinition()).instantiate(newArgs);
 	}
 

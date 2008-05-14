@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -108,7 +107,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 		IType[] arguments = getArguments();
 		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
 		if (parentBinding instanceof PDOMNode && isChildOf((PDOMNode) parentBinding) &&
-				Arrays.equals(newArgs, arguments)) {
+				newArgs == arguments) {
 			return this;
 		}
 		IASTName name = new CPPASTName(getNameCharArray());

@@ -247,11 +247,8 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	}
 	
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding,	ObjectMap argMap, ICPPScope instantiationScope) {
-		try {
-			if (parentBinding == getParentBinding()) {
-				return this;
-			}
-		} catch (CoreException e) {
+		if (parentBinding instanceof PDOMNode && isChildOf((PDOMNode) parentBinding)) {
+			return this;
 		}
 		return new CPPUnknownClass(parentBinding, getUnknownName());
 	}

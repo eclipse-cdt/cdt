@@ -93,17 +93,18 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	@Override
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
-		IType[] newArgs = new IType[arguments.length];
-		int size = arguments.length;
-		for (int i = 0; i < size; i++) {
-			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap, instantiationScope);
-		}
+		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
 
+		boolean changed= arguments != newArgs;
 		ICPPClassTemplate classTemplate = getClassTemplate();
 		if (argMap.containsKey(classTemplate)) {
 			classTemplate = (ICPPClassTemplate) argMap.get(classTemplate);
+			changed= true;
 		}
 
+		if (!changed) {
+			return this;
+		}
 		return ((ICPPInternalTemplateInstantiator) classTemplate).instantiate(newArgs);
 	}
 

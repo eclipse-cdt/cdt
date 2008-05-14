@@ -38,6 +38,9 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 	@Override
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
+		if (parentBinding == unknownContainerBinding && newArgs == arguments) {
+			return this;
+		}
 		return new CPPUnknownClassInstance(parentBinding, name, newArgs);
 	}
 

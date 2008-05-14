@@ -68,13 +68,11 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
-		
-		IType [] newArgs = new IType[ arguments.length ];
-		int size = arguments.length;
-		for( int i = 0; i < size; i++ ){
-			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap, instantiationScope);
+		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
+		if (arguments == newArgs) {
+			return this;
 		}
-		
+
 		return ((ICPPInternalTemplateInstantiator)getTemplateDefinition()).instantiate( newArgs );
 	}
 }

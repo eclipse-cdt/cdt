@@ -308,9 +308,13 @@ public class CPPSemantics {
 				final ObjectMap argMap = deferred.getArgumentMap();
 				if (argMap != null) {
 					for (int i = 0; useOriginal && i < argMap.size(); i++) {
-						if (!argMap.keyAt(i).equals(argMap.getAt(i))) {
-							useOriginal= false;
-							break;
+						final Object key = argMap.keyAt(i);
+						if (!key.equals(argMap.getAt(i))) {
+							// bug 231868 non type parameters are modeled via their type :-(
+							if (key instanceof ICPPTemplateNonTypeParameter == false) {
+								useOriginal= false;
+								break;
+							}
 						}
 					}
 				}

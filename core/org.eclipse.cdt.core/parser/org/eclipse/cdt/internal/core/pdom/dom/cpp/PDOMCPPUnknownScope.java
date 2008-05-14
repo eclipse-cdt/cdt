@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -21,8 +22,6 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  */
 public class PDOMCPPUnknownScope extends CPPUnknownScope implements IIndexScope {
 
-	private PDOMCPPBinding fBinding;
-
 	public PDOMCPPUnknownScope(PDOMCPPBinding binding, IASTName name) {
 		super((ICPPUnknownBinding) binding, name);
 	}
@@ -34,11 +33,11 @@ public class PDOMCPPUnknownScope extends CPPUnknownScope implements IIndexScope 
 	
 	@Override
 	public IIndexScope getParent() {
-		return fBinding.getScope();
+		return getScopeBinding().getScope();
 	}
 	
 	@Override
 	public PDOMCPPBinding getScopeBinding() {
-		return fBinding;
+		return (PDOMCPPBinding) super.getScopeBinding();
 	}
 }

@@ -58,30 +58,30 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	final static int preFetchSize = 10 * 1024;
 	
-	private Text findText;
-	private Text replaceText;
+	private Text fFindText;
+	private Text fReplaceText;
 	
-	private Combo startText;
-	private Combo endText;
+	private Combo fStartText;
+	private Combo fEndText;
 	
-	private Button findButton;
-	private Button replaceButton;
-	private Button replaceFindButton;
-	private Button replaceAllButton;
-	private Button closeButton;
+	private Button fFindButton;
+	private Button fReplaceButton;
+	private Button fReplaceFindButton;
+	private Button fReplaceAllButton;
+	private Button fCloseButton;
 
 	private MemoryView fMemoryView;
 	
-	Button formatAsciiButton;
-	Button formatHexButton;
-	Button formatOctalButton;
-	Button formatBinaryButton;
-	Button formatDecimalButton;
-	Button formatByteSequenceButton;
+	Button fFormatAsciiButton;
+	Button fFormatHexButton;
+	Button fFormatOctalButton;
+	Button fFormatBinaryButton;
+	Button fFormatDecimalButton;
+	Button fFormatByteSequenceButton;
 	
-	Button caseInSensitiveCheckbox;
+	Button fCaseInSensitiveCheckbox;
 	
-	Button forwardButton;
+	Button fForwardButton;
 	
 	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, MemoryView memoryView)
 	{
@@ -96,7 +96,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private BigInteger getUserStart()
 	{
-		String start = startText.getText();
+		String start = fStartText.getText();
 		if(start.toUpperCase().startsWith("0X")) //$NON-NLS-1$
 			start = start.substring(2);
 		return new BigInteger(start, 16);
@@ -104,7 +104,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private BigInteger getUserEnd()
 	{
-		String end = endText.getText();
+		String end = fEndText.getText();
 		if(end.toUpperCase().startsWith("0X")) //$NON-NLS-1$
 			end = end.substring(2);
 		return new BigInteger(end, 16);
@@ -112,39 +112,39 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private boolean getIsDirectionForward()
 	{
-		return forwardButton.getSelection();
+		return fForwardButton.getSelection();
 	}
 	
 	private SearchPhrase getSearchPhrase()
 	{
 		SearchPhrase phrase = null;
 		
-		if(formatAsciiButton.getSelection())
+		if(fFormatAsciiButton.getSelection())
 		{
-			phrase = new AsciiSearchPhrase(findText.getText(), caseInSensitiveCheckbox.getSelection());
+			phrase = new AsciiSearchPhrase(fFindText.getText(), fCaseInSensitiveCheckbox.getSelection());
 		}
-		else if(formatHexButton.getSelection())
+		else if(fFormatHexButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText().toUpperCase().startsWith("0X") 
-				? findText.getText().substring(2) : findText.getText(), 16), 16);
+			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().toUpperCase().startsWith("0X") 
+				? fFindText.getText().substring(2) : fFindText.getText(), 16), 16);
 		}
-		else if(formatOctalButton.getSelection())
+		else if(fFormatOctalButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText().startsWith("0") 
-					? findText.getText().substring(1) : findText.getText(), 8), 8);
+			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().startsWith("0") 
+					? fFindText.getText().substring(1) : fFindText.getText(), 8), 8);
 		}
-		else if(formatBinaryButton.getSelection())
+		else if(fFormatBinaryButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText().toUpperCase().startsWith("0B") 
-					? findText.getText().substring(2) : findText.getText(), 2), 2);
+			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().toUpperCase().startsWith("0B") 
+					? fFindText.getText().substring(2) : fFindText.getText(), 2), 2);
 		}
-		else if(formatDecimalButton.getSelection())
+		else if(fFormatDecimalButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText(), 10), 10);
+			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText(), 10), 10);
 		}
-		else if(formatByteSequenceButton.getSelection())
+		else if(fFormatByteSequenceButton.getSelection())
 		{
-			phrase = new ByteSequenceSearchPhrase(findText.getText());
+			phrase = new ByteSequenceSearchPhrase(fFindText.getText());
 		}
 		
 		return phrase;
@@ -181,18 +181,18 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private byte[] getReplaceData()
 	{
-		if(formatAsciiButton.getSelection())
-			return replaceText.getText().getBytes();
-		else if(formatHexButton.getSelection())
-			return removeZeroPrefixByte(new BigInteger(replaceText.getText().toUpperCase().startsWith("0X") ? replaceText.getText().substring(2) : replaceText.getText(), 16).toByteArray());
-		else if(formatOctalButton.getSelection())
-			return removeZeroPrefixByte(new BigInteger(replaceText.getText().startsWith("0") ? replaceText.getText().substring(1) : replaceText.getText(), 8).toByteArray());
-		else if(formatBinaryButton.getSelection())
-			return removeZeroPrefixByte(new BigInteger(replaceText.getText().toUpperCase().startsWith("0B") ? replaceText.getText().substring(2) : replaceText.getText(), 2).toByteArray());
-		else if(formatDecimalButton.getSelection())
-			return removeZeroPrefixByte(new BigInteger(replaceText.getText(), 10).toByteArray());
-		else if(formatByteSequenceButton.getSelection())
-			return parseByteSequence(replaceText.getText());
+		if(fFormatAsciiButton.getSelection())
+			return fReplaceText.getText().getBytes();
+		else if(fFormatHexButton.getSelection())
+			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().toUpperCase().startsWith("0X") ? fReplaceText.getText().substring(2) : fReplaceText.getText(), 16).toByteArray());
+		else if(fFormatOctalButton.getSelection())
+			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().startsWith("0") ? fReplaceText.getText().substring(1) : fReplaceText.getText(), 8).toByteArray());
+		else if(fFormatBinaryButton.getSelection())
+			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().toUpperCase().startsWith("0B") ? fReplaceText.getText().substring(2) : fReplaceText.getText(), 2).toByteArray());
+		else if(fFormatDecimalButton.getSelection())
+			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText(), 10).toByteArray());
+		else if(fFormatByteSequenceButton.getSelection())
+			return parseByteSequence(fReplaceText.getText());
 		
 		return new byte[0];
 	}
@@ -201,8 +201,8 @@ public class FindReplaceDialog extends SelectionDialog
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		findButton = createButton(parent, 10, Messages.getString("FindReplaceDialog.ButtonFind"), true); //$NON-NLS-1$
-		findButton.addSelectionListener(new SelectionListener()
+		fFindButton = createButton(parent, 10, Messages.getString("FindReplaceDialog.ButtonFind"), true); //$NON-NLS-1$
+		fFindButton.addSelectionListener(new SelectionListener()
 		{
 			public void widgetDefaultSelected(SelectionEvent e) { }
 
@@ -212,8 +212,8 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 		});
 		
-		replaceFindButton = createButton(parent, 11, Messages.getString("FindReplaceDialog.ButtonReplaceFind"), false); //$NON-NLS-1$
-		replaceFindButton.addSelectionListener(new SelectionListener()
+		fReplaceFindButton = createButton(parent, 11, Messages.getString("FindReplaceDialog.ButtonReplaceFind"), false); //$NON-NLS-1$
+		fReplaceFindButton.addSelectionListener(new SelectionListener()
 		{
 			public void widgetDefaultSelected(SelectionEvent e) { }
 
@@ -223,8 +223,8 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 		});
 		
-		replaceButton = createButton(parent, 12, Messages.getString("FindReplaceDialog.ButtonReplace"), false); //$NON-NLS-1$
-		replaceButton.addSelectionListener(new SelectionListener()
+		fReplaceButton = createButton(parent, 12, Messages.getString("FindReplaceDialog.ButtonReplace"), false); //$NON-NLS-1$
+		fReplaceButton.addSelectionListener(new SelectionListener()
 		{
 			public void widgetDefaultSelected(SelectionEvent e) { }
 
@@ -234,8 +234,8 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 		});
 		
-		replaceAllButton = createButton(parent, 13, Messages.getString("FindReplaceDialog.ButtonReplaceAll"), false); //$NON-NLS-1$
-		replaceAllButton.addSelectionListener(new SelectionListener()
+		fReplaceAllButton = createButton(parent, 13, Messages.getString("FindReplaceDialog.ButtonReplaceAll"), false); //$NON-NLS-1$
+		fReplaceAllButton.addSelectionListener(new SelectionListener()
 		{
 			public void widgetDefaultSelected(SelectionEvent e) { }
 
@@ -245,7 +245,7 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 		});
 		
-		closeButton = createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("FindReplaceDialog.Close"), false); //$NON-NLS-1$
+		fCloseButton = createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("FindReplaceDialog.Close"), false); //$NON-NLS-1$
 		
 		((GridLayout) parent.getLayout()).numColumns = 2;
 				
@@ -287,7 +287,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	public BigInteger getEndAddress()
 	{
-		String text = endText.getText();
+		String text = fEndText.getText();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger endAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -297,7 +297,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	public BigInteger getStartAddress()
 	{
-		String text = startText.getText();
+		String text = fStartText.getText();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -325,10 +325,10 @@ public class FindReplaceDialog extends SelectionDialog
 			
 		}
 		
-		findButton.setEnabled(valid);
-		replaceButton.setEnabled(replaceValid);
-		replaceFindButton.setEnabled(replaceValid);
-		replaceAllButton.setEnabled(replaceValid);
+		fFindButton.setEnabled(valid);
+		fReplaceButton.setEnabled(replaceValid);
+		fReplaceFindButton.setEnabled(replaceValid);
+		fReplaceAllButton.setEnabled(replaceValid);
 	}
 	
 	private String pad(int characterCount, String value)
@@ -451,32 +451,32 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		Label findLabel = new Label(composite, SWT.NONE);
 		Label replaceLabel = new Label(composite, SWT.NONE);
-		replaceText = new Text(composite, SWT.BORDER);
+		fReplaceText = new Text(composite, SWT.BORDER);
 
 		findLabel.setText(Messages.getString("FindReplaceDialog.LabelFind"));  //$NON-NLS-1$
 		
-		findText = new Text(composite, SWT.BORDER);
+		fFindText = new Text(composite, SWT.BORDER);
 		FormData data = new FormData();
-		data.left = new FormAttachment(replaceText, 0, SWT.LEFT);
+		data.left = new FormAttachment(fReplaceText, 0, SWT.LEFT);
 		data.width = 260;
-		findText.setLayoutData(data);
+		fFindText.setLayoutData(data);
 		
 		data = new FormData();
-		data.top = new FormAttachment(findText, 0, SWT.CENTER);
+		data.top = new FormAttachment(fFindText, 0, SWT.CENTER);
 		findLabel.setLayoutData(data);
 		
 		// replace
 		
 		replaceLabel.setText(Messages.getString("FindReplaceDialog.LabelReplaceWith"));  //$NON-NLS-1$
 		data = new FormData();
-		data.top = new FormAttachment(findText);
+		data.top = new FormAttachment(fFindText);
 		replaceLabel.setLayoutData(data);
 		
 		data = new FormData();
 		data.top = new FormAttachment(replaceLabel, 0, SWT.CENTER);
 		data.left = new FormAttachment(replaceLabel);
 		data.width = 260;
-		replaceText.setLayoutData(data);
+		fReplaceText.setLayoutData(data);
 		
 		// group direction
 		
@@ -489,13 +489,13 @@ public class FindReplaceDialog extends SelectionDialog
 		layout.numColumns = 1;
 		directionGroup.setLayout(layout);
 		
-		forwardButton = new Button(directionGroup, SWT.RADIO);
-		forwardButton.setText(Messages.getString("FindReplaceDialog.ButtonForward")); //$NON-NLS-1$
+		fForwardButton = new Button(directionGroup, SWT.RADIO);
+		fForwardButton.setText(Messages.getString("FindReplaceDialog.ButtonForward")); //$NON-NLS-1$
 		Button backwardButton = new Button(directionGroup, SWT.RADIO);
 		backwardButton.setText(Messages.getString("FindReplaceDialog.ButtonBackward")); //$NON-NLS-1$
 		
 		data = new FormData();
-		data.top = new FormAttachment(replaceText);
+		data.top = new FormAttachment(fReplaceText);
 		data.right = new FormAttachment(formatGroup, 0, SWT.RIGHT);
 		data.left = new FormAttachment(formatGroup, 0, SWT.LEFT);
 		data.bottom = new FormAttachment(rangeGroup, 0, SWT.BOTTOM);
@@ -515,32 +515,32 @@ public class FindReplaceDialog extends SelectionDialog
 		Label startLabel = new Label(rangeGroup, SWT.NONE);
 		startLabel.setText(Messages.getString("FindReplaceDialog.LabelStartAddress")); 		 //$NON-NLS-1$
 		
-		startText = new Combo(rangeGroup, SWT.BORDER);
+		fStartText = new Combo(rangeGroup, SWT.BORDER);
 		GridData gridData = new GridData();
 		gridData.widthHint = 200;
 		gridData.grabExcessHorizontalSpace = true;
-		startText.setLayoutData(gridData);
+		fStartText.setLayoutData(gridData);
 		
 		// group range - end address
 		
 		Label endLabel = new Label(rangeGroup, SWT.NONE);
 		endLabel.setText(Messages.getString("FindReplaceDialog.LabelEndAddress"));  //$NON-NLS-1$
-		endText = new Combo(rangeGroup, SWT.BORDER);
+		fEndText = new Combo(rangeGroup, SWT.BORDER);
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		gridData.grabExcessHorizontalSpace = true;
-		endText.setLayoutData(gridData);
+		fEndText.setLayoutData(gridData);
 		
 		data = new FormData();
 		data.left = new FormAttachment(directionGroup);	
 		data.top = new FormAttachment(directionGroup, 0, SWT.TOP);
-		data.right = new FormAttachment(findText, 0, SWT.RIGHT);
+		data.right = new FormAttachment(fFindText, 0, SWT.RIGHT);
 		rangeGroup.setLayoutData(data);
 		
-		startText.setItems(removeNullElements(new String[] { getViewportStart(), getStart(), getEnd(), getMemoryBlockBaseAddress() }));
-		endText.setItems(removeNullElements(new String[] { getEnd(), getStart(), getMemoryBlockBaseAddress(), getViewportStart() }));
-		startText.select(0);
-		endText.select(0);
+		fStartText.setItems(removeNullElements(new String[] { getViewportStart(), getStart(), getEnd(), getMemoryBlockBaseAddress() }));
+		fEndText.setItems(removeNullElements(new String[] { getEnd(), getStart(), getMemoryBlockBaseAddress(), getViewportStart() }));
+		fStartText.select(0);
+		fEndText.select(0);
 		
 		// format group
 		
@@ -549,23 +549,23 @@ public class FindReplaceDialog extends SelectionDialog
 		layout.numColumns = 1;
 		formatGroup.setLayout(layout);
 		
-		formatAsciiButton = new Button(formatGroup, SWT.RADIO);
-		formatAsciiButton.setText(Messages.getString("FindReplaceDialog.ButtonASCII")); //$NON-NLS-1$
+		fFormatAsciiButton = new Button(formatGroup, SWT.RADIO);
+		fFormatAsciiButton.setText(Messages.getString("FindReplaceDialog.ButtonASCII")); //$NON-NLS-1$
 				
-		formatHexButton = new Button(formatGroup, SWT.RADIO);
-		formatHexButton.setText(Messages.getString("FindReplaceDialog.ButtonHexadecimal")); //$NON-NLS-1$
+		fFormatHexButton = new Button(formatGroup, SWT.RADIO);
+		fFormatHexButton.setText(Messages.getString("FindReplaceDialog.ButtonHexadecimal")); //$NON-NLS-1$
 		
-		formatOctalButton = new Button(formatGroup, SWT.RADIO);
-		formatOctalButton.setText(Messages.getString("FindReplaceDialog.ButtonOctal")); //$NON-NLS-1$
+		fFormatOctalButton = new Button(formatGroup, SWT.RADIO);
+		fFormatOctalButton.setText(Messages.getString("FindReplaceDialog.ButtonOctal")); //$NON-NLS-1$
 		
-		formatBinaryButton = new Button(formatGroup, SWT.RADIO);
-		formatBinaryButton.setText(Messages.getString("FindReplaceDialog.ButtonBinary")); //$NON-NLS-1$
+		fFormatBinaryButton = new Button(formatGroup, SWT.RADIO);
+		fFormatBinaryButton.setText(Messages.getString("FindReplaceDialog.ButtonBinary")); //$NON-NLS-1$
 		
-		formatDecimalButton = new Button(formatGroup, SWT.RADIO);
-		formatDecimalButton.setText(Messages.getString("FindReplaceDialog.ButtonDecimal")); //$NON-NLS-1$
+		fFormatDecimalButton = new Button(formatGroup, SWT.RADIO);
+		fFormatDecimalButton.setText(Messages.getString("FindReplaceDialog.ButtonDecimal")); //$NON-NLS-1$
 		
-		formatByteSequenceButton = new Button(formatGroup, SWT.RADIO);
-		formatByteSequenceButton.setText(Messages.getString("FindReplaceDialog.ButtonByteSequence")); //$NON-NLS-1$
+		fFormatByteSequenceButton = new Button(formatGroup, SWT.RADIO);
+		fFormatByteSequenceButton.setText(Messages.getString("FindReplaceDialog.ButtonByteSequence")); //$NON-NLS-1$
 		
 		data = new FormData();
 		data.top = new FormAttachment(rangeGroup);
@@ -594,15 +594,15 @@ public class FindReplaceDialog extends SelectionDialog
 		wrapCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonWrapSearch")); //$NON-NLS-1$
 		wrapCheckbox.setEnabled(false); // TODO implement wrap
 		
-		caseInSensitiveCheckbox = new Button(optionsGroup, SWT.CHECK);
-		caseInSensitiveCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonCaseInsensitive")); //$NON-NLS-1$
+		fCaseInSensitiveCheckbox = new Button(optionsGroup, SWT.CHECK);
+		fCaseInSensitiveCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonCaseInsensitive")); //$NON-NLS-1$
 		
-		formatAsciiButton.addSelectionListener(new SelectionListener()
+		fFormatAsciiButton.addSelectionListener(new SelectionListener()
 		{
 			public void widgetDefaultSelected(SelectionEvent e) { }
 
 			public void widgetSelected(SelectionEvent e) {
-				caseInSensitiveCheckbox.setEnabled(true);
+				fCaseInSensitiveCheckbox.setEnabled(true);
 			}
 		});
 		
@@ -611,16 +611,16 @@ public class FindReplaceDialog extends SelectionDialog
 			public void widgetDefaultSelected(SelectionEvent e) { }
 
 			public void widgetSelected(SelectionEvent e) {
-				caseInSensitiveCheckbox.setEnabled(false);
+				fCaseInSensitiveCheckbox.setEnabled(false);
 			}
 		};
-		formatHexButton.addSelectionListener(nonAsciiListener);
-		formatOctalButton.addSelectionListener(nonAsciiListener);
-		formatBinaryButton.addSelectionListener(nonAsciiListener);
-		formatDecimalButton.addSelectionListener(nonAsciiListener);
-		formatByteSequenceButton.addSelectionListener(nonAsciiListener);
+		fFormatHexButton.addSelectionListener(nonAsciiListener);
+		fFormatOctalButton.addSelectionListener(nonAsciiListener);
+		fFormatBinaryButton.addSelectionListener(nonAsciiListener);
+		fFormatDecimalButton.addSelectionListener(nonAsciiListener);
+		fFormatByteSequenceButton.addSelectionListener(nonAsciiListener);
 
-		startText.addModifyListener(new ModifyListener() {
+		fStartText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				boolean valid = true;
 				try
@@ -632,7 +632,7 @@ public class FindReplaceDialog extends SelectionDialog
 					valid = false;
 				}
 				
-				startText.setForeground(valid ? Display.getDefault().getSystemColor(SWT.COLOR_BLACK) : 
+				fStartText.setForeground(valid ? Display.getDefault().getSystemColor(SWT.COLOR_BLACK) : 
 					Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				
 				validate();
@@ -640,16 +640,16 @@ public class FindReplaceDialog extends SelectionDialog
 			
 		});
 		
-		endText.addModifyListener(new ModifyListener() {
+		fEndText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				try
 				{
 					getEndAddress();
-					endText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 				}
 				catch(Exception ex)
 				{
-					endText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				}
 				
 				validate();
@@ -657,33 +657,33 @@ public class FindReplaceDialog extends SelectionDialog
 			
 		});
 		
-		findText.addModifyListener(new ModifyListener() {
+		fFindText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e)
 			{
 				validate();
 			}
 		});
 		
-		replaceText.addModifyListener(new ModifyListener() {
+		fReplaceText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e)
 			{
 				validate();
 			}
 		});
 		
-		forwardButton.setSelection(true);
-		formatAsciiButton.setSelection(true);
+		fForwardButton.setSelection(true);
+		fFormatAsciiButton.setSelection(true);
 		
 		composite.setTabList(new Control[] {
-			findText, 
-			replaceText, 			
+			fFindText, 
+			fReplaceText, 			
 			directionGroup,
 			rangeGroup,
 			formatGroup,
 			optionsGroup,
 		});
 			
-		findText.setFocus();
+		fFindText.setFocus();
 		
 		return composite;
 	}

@@ -1,0 +1,60 @@
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="memoryTransport" name="memoryTransport" schema="schema/MemoryTransport.exsd"/>
+	
+	<extension
+	      id="org.eclipse.dd.debug.ui.memory.transport.dd"
+	      name="org.eclipse.dd.debug.ui.memory.transport.dd"
+	      point="org.eclipse.dd.debug.ui.memory.transport.memoryTransport">
+	    <importer 
+	        name="SRecordImporter"
+	        id="org.eclipse.dd.debug.ui.memory.transport.SRecordImporter"
+	        class="org.eclipse.dd.debug.ui.memory.transport.SRecordImporter">
+	    </importer>
+	    
+	    <exporter 
+	        name="SRecordExporter"
+	        id="org.eclipse.dd.debug.ui.memory.transport.SRecordExporter"
+	        class="org.eclipse.dd.debug.ui.memory.transport.SRecordExporter">
+	    </exporter>
+	    
+	    <exporter 
+	        name="PlainTextExporter"
+	        id="org.eclipse.dd.debug.ui.memory.transport.PlainTextExporter"
+	        class="org.eclipse.dd.debug.ui.memory.transport.PlainTextExporter">
+	    </exporter>
+	    
+	    <importer 
+	        name="SRecordImporter"
+	        id="org.eclipse.dd.debug.ui.memory.transport.PlainTextImporter"
+	        class="org.eclipse.dd.debug.ui.memory.transport.PlainTextImporter">
+	    </importer>
+	</extension>
+	
+	<extension point="org.eclipse.ui.viewActions">
+		<viewContribution
+	    	targetID="org.eclipse.debug.ui.MemoryView"
+	        id="org.eclipse.debug.ui.memoryView.toolbar">
+	        	<action
+	               	class="org.eclipse.dd.debug.ui.memory.transport.actions.ExportMemoryAction"
+	               	helpContextId="ExportMemoryAction_context"
+	               	icon="icons/export.png"
+	               	id="org.eclipse.dd.debug.ui.memory.transport.actions.ExportMemoryAction"
+	               	label="%ExportMemoryAction.label"
+	               	state="false"
+	               	style="push"
+	               	toolbarPath="additions"
+	               	tooltip="%ExportMemoryAction.label"/>
+	            <action
+	               	class="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
+	               	helpContextId="ExportMemoryAction_context"
+	               	icon="icons/import.png"
+	               	id="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
+	               	label="%ImportMemoryAction.label"
+	               	state="false"
+	               	style="push"
+	               	toolbarPath="additions"
+	               	tooltip="%ImportMemoryAction.label"/>
+	    </viewContribution>
+	</extension>
+</plugin>

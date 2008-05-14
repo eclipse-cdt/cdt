@@ -30,4 +30,11 @@ Memory Renderings
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.eclipse.dd.debug.ui.memory.transport"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

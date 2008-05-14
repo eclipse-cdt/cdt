@@ -34,6 +34,7 @@
  * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
  * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
  * David Dykstal (IBM) - [231867] TVT34:TCT196: PLK: "Subset" window too narrow
+ * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -246,7 +247,7 @@ public class SystemTableViewPart extends ViewPart
 		private IAdaptable _parent;
 		public UpAction()
 		{
-			super(SystemResources.ACTION_MOVEUPLEVEL_TOOLTIP, getEclipseImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_GOUPLEVEL_TOOLTIP, getEclipseImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
 			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/up_nav.gif")); //$NON-NLS-1$
 		}
 

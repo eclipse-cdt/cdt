@@ -22,6 +22,7 @@
  * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * David Dykstal (IBM) - [231943] Make "true" and "false" translatable on SystemTypeFieldEditor
+ * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -832,6 +833,7 @@ public class SystemResources extends NLS
 	public static String ACTION_MOVEDOWN_LABEL;
 	public static String ACTION_MOVEDOWN_TOOLTIP;
 	public static String ACTION_MOVEUPLEVEL_TOOLTIP;
+	public static String ACTION_GOUPLEVEL_TOOLTIP;
 
 	public static String ACTION_CONNECT_LABEL;
 	public static String ACTION_CONNECT_TOOLTIP;

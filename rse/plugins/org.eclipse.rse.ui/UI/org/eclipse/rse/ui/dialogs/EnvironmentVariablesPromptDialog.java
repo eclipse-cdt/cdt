@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * David Dykstal (IBM) - [231856] making dialog a bit wider
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -46,8 +47,8 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 	
 	/**
 	 * Constructor for EnvironmentVariablesPromptDialog.
-	 * @param shell
-	 * @param title
+	 * @param shell the parent shell
+	 * @param title the title of the dialog
 	 */
 	public EnvironmentVariablesPromptDialog(Shell shell, String title, IRSESystemType systemType, String invalidNameChars, String[] existingNames, boolean change) {
 		super(shell, title);
@@ -59,9 +60,9 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 
 	/**
 	 * Constructor for EnvironmentVariablesPromptDialog.
-	 * @param shell
-	 * @param title
-	 * @param inputObject
+	 * @param shell the parent shell
+	 * @param title the dialog title
+	 * @param inputObject the object providing values for this dialog
 	 */
 	public EnvironmentVariablesPromptDialog(Shell shell, String title, Object inputObject, String invalidNameChars, String[] existingNames, boolean change) {
 		super(shell, title, inputObject);
@@ -80,7 +81,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		// Prompt for name 
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_LABEL);
 		nameTextField = SystemWidgetHelpers.createTextField(page, null);
-		((GridData)nameTextField.getLayoutData()).widthHint = 300;
+		((GridData)nameTextField.getLayoutData()).widthHint = 500; // hint of this size allows more message text to be displayed
 		nameTextField.setToolTipText(SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_TOOLTIP);
 		if (name != null && !name.trim().equals("")) //$NON-NLS-1$
 		{
@@ -96,7 +97,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		// Prompt for value
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_SUBSYSTEM_ENVVAR_VALUE_LABEL);
 		valueTextField = SystemWidgetHelpers.createTextField(page, null);		
-		((GridData)valueTextField.getLayoutData()).widthHint = 300;
+		((GridData)valueTextField.getLayoutData()).widthHint = 500;
 		valueTextField.setToolTipText(SystemResources.RESID_SUBSYSTEM_ENVVAR_VALUE_TOOLTIP);
 		if (value != null)
 		{

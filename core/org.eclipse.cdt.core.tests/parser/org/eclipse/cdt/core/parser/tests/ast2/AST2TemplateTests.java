@@ -2487,4 +2487,22 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ba.assertNonProblem("C<> c2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);
 		ba.assertNonProblem("C<> c2", 3, ICPPTemplateInstance.class, ICPPClassType.class);
 	}
+	
+	//	template<class T1, int N> class TestClass {
+	//		int member1;
+	//		void fun1(void);
+	//	};
+	//	template<class T1,int N> inline void TestClass<T1,N>::fun1(void) {
+	//		member1 = 0; 
+	//	}
+	public void testDefinitionOfClassTemplateWithNonTypeParameter() throws Exception {
+		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		ICPPMethod f1= ba.assertNonProblem("fun1(void);", 4, ICPPMethod.class);
+		ICPPField m1= ba.assertNonProblem("member1;", 7, ICPPField.class);
+		ICPPMethod f2= ba.assertNonProblem("fun1(void) {", 4, ICPPMethod.class);
+		ICPPField m2= ba.assertNonProblem("member1 =", 7, ICPPField.class);
+		assertSame(m1, m2);
+		assertSame(f1, f2);
+	}
+
 }

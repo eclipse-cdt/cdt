@@ -17,6 +17,7 @@
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * Radoslav Gerganov (ProSyst) - [221392] [shells] Undo command doesn't work with Eclipse 3.4M5
+ * Radoslav Gerganov (ProSyst) - [231835] TVT34:TCT189: "work with compile commands" does not display
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -239,7 +240,7 @@ public class SystemCommandEditor extends SourceViewer
 	private void initializeActions()
 	{
 		IUndoManager undoManager = getUndoManager();
-		if (undoManager instanceof IUndoManagerExtension) {
+		if (undoManager instanceof IUndoManagerExtension && _site != null) {
 			IUndoManagerExtension undoManagerExt = (IUndoManagerExtension) undoManager;
 			_undoAction = new UndoActionHandler(_site, undoManagerExt.getUndoContext());
 			fGlobalActions.put(ITextEditorActionConstants.UNDO, _undoAction);
@@ -315,7 +316,9 @@ public class SystemCommandEditor extends SourceViewer
 	    IActionBars actionBars = getActionBars();
 		if (actionBars != null)
 		{
-			actionBars.setGlobalActionHandler(ITextEditorActionConstants.UNDO, _undoAction);
+			if (_undoAction != null) {
+				actionBars.setGlobalActionHandler(ITextEditorActionConstants.UNDO, _undoAction);
+			}
 			actionBars.setGlobalActionHandler(ITextEditorActionConstants.CUT, _cutAction);
 			actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, _copyAction);
 			actionBars.setGlobalActionHandler(ITextEditorActionConstants.PASTE, _pasteAction);

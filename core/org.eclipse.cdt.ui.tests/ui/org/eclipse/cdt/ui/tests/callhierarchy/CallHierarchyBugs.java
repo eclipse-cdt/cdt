@@ -161,7 +161,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	// public:
 	//    void vmethod();
 	//    void method();
-	// }
+	// };
 	// void vrefs() {
 	//    Base* b= 0;
 	//    b->vmethod(); b->method();
@@ -221,7 +221,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	// class Derived : public Base {
 	// public:
 	//    void vmethod();
-	// }
+	// };
 	// void vrefs() {
 	//    Base* b= 0;
 	//    b->vmethod();

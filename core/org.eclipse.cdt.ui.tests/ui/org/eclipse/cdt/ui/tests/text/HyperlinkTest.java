@@ -28,7 +28,13 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 
-
+/**
+ * This test just checks that hyperlinks are created in the right
+ * places. It does not test that the hyperlinks actually take you 
+ * to the right place.
+ * 
+ * @author Mike Kucera
+ */
 public class HyperlinkTest extends TestCase {
 	
 
@@ -46,9 +52,9 @@ public class HyperlinkTest extends TestCase {
 		"    int getY(); \n" +
 		"  private: \n" +
 		"    int x, y; \n" +
-		"} \n" +
+		"}; \n" +
 		"int main() {  \n" +
-		"    char[] str = \"STRING LITERAL\"; \n" +
+		"    char* str = \"STRING LITERAL\"; \n" +
 		"} \n";
 	
 	

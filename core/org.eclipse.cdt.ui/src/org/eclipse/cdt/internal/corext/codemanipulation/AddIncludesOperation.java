@@ -18,10 +18,14 @@ import java.util.List;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
@@ -44,8 +48,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	private ITranslationUnit fTranslationUnit;
 	private IRequiredInclude[] fIncludes;
 	private String[] fUsings;
-
-	private String newLine = System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
+	private final String fNewLine;
 
 	/**
 	 * Generate include statements for the passed java elements
@@ -62,8 +65,27 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		fIncludes= includes;
 		fUsings = using;
 		fTranslationUnit = tu;
+		fNewLine= getNewLine(tu);
 	}
 	
+	private String getNewLine(ITranslationUnit tu) {
+		try {
+			IBuffer buf= tu.getBuffer();
+			if (buf instanceof IAdaptable) {
+				IDocument doc= (IDocument) ((IAdaptable) buf).getAdapter(IDocument.class);
+				if (doc != null) {
+					String delim= doc.getLineDelimiter(0);
+					if (delim != null) {
+						return delim;
+					}
+				}
+			}
+		} catch (CModelException e) {
+		} catch (BadLocationException e) {
+		}
+		return System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$	}
+	}
+
 	public void executeIncludes(IProgressMonitor monitor) throws CoreException {
 		// Sanity
 		if (fIncludes == null || fIncludes.length == 0) {
@@ -97,9 +119,9 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 				for(int j = 0; j < toAdd.size(); j++) {
 					IRequiredInclude req = toAdd.get(j);
 					if (req.isStandard()) {
-						insert.append("#include <" + req.getIncludeName() + ">").append(newLine); //$NON-NLS-1$ //$NON-NLS-2$
+						insert.append("#include <" + req.getIncludeName() + ">").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						insert.append("#include \"" + req.getIncludeName() + "\"").append(newLine); //$NON-NLS-1$ //$NON-NLS-2$
+						insert.append("#include \"" + req.getIncludeName() + "\"").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				
@@ -150,7 +172,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 				StringBuffer insert = new StringBuffer(""); //$NON-NLS-1$
 				for(int j = 0; j < toAdd.size(); j++) {
 					String using = toAdd.get(j);
-					insert.append("using namespace " + using + ";").append(newLine); //$NON-NLS-1$ //$NON-NLS-2$
+					insert.append("using namespace " + using + ";").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
 				int pos;

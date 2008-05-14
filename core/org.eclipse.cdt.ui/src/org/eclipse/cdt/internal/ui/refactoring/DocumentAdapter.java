@@ -487,6 +487,8 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ITextFileBuffer.class)) {
 			return fTextFileBuffer;
+		} else if (adapter.isAssignableFrom(IDocument.class)) {
+			return fDocument;
 		}
 		return null;
 	}

@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -58,7 +59,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * 
  * This class is similar to the JDT DocumentAdapter class.
  */
-public class DocumentAdapter implements IBuffer, IDocumentListener {
+public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 
 	/**
 	 * Internal implementation of a NULL instanceof IBuffer.
@@ -543,4 +544,13 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(ITextFileBuffer.class)) {
+			return fTextFileBuffer;
+		} else if (adapter.isAssignableFrom(IDocument.class)) {
+			return fDocument;
+		}
+		return null;
+	}
 }

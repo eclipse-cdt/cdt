@@ -113,8 +113,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			fColorKey= colorKey;
 			fBoldKey= boldKey;
 			fItalicKey= italicKey;
-			fStrikethroughKey= strikethroughKey; 
-			fUnderlineKey= underlineKey; 
+			fStrikethroughKey= strikethroughKey;
+			fUnderlineKey= underlineKey;
 		}
 		
 		/**
@@ -297,31 +297,31 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	private static final String UNDERLINE= PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
 	
 	/**
-	 * The keys of the overlay store. 
+	 * The keys of the overlay store.
 	 */
 	private final String[][] fSyntaxColorListModel= new String[][] {
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_MultiLine, PreferenceConstants.EDITOR_MULTI_LINE_COMMENT_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_singleLine, PreferenceConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_cCommentTaskTags, PreferenceConstants.EDITOR_TASK_TAG_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppDirectives, PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppOthers, PreferenceConstants.EDITOR_PP_DEFAULT_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders, PreferenceConstants.EDITOR_PP_HEADER_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmLabels, PreferenceConstants.EDITOR_ASM_LABEL_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmDirectives, PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords, PreferenceConstants.EDITOR_C_KEYWORD_COLOR }, 
-//			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_operators, PreferenceConstants.EDITOR_C_OPERATOR_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_strings, PreferenceConstants.EDITOR_C_STRING_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_braces, PreferenceConstants.EDITOR_C_BRACES_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_numbers, PreferenceConstants.EDITOR_C_NUMBER_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_others, PreferenceConstants.EDITOR_C_DEFAULT_COLOR }, 
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_MultiLine, PreferenceConstants.EDITOR_MULTI_LINE_COMMENT_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_singleLine, PreferenceConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_cCommentTaskTags, PreferenceConstants.EDITOR_TASK_TAG_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppDirectives, PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppOthers, PreferenceConstants.EDITOR_PP_DEFAULT_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders, PreferenceConstants.EDITOR_PP_HEADER_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmLabels, PreferenceConstants.EDITOR_ASM_LABEL_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmDirectives, PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords, PreferenceConstants.EDITOR_C_KEYWORD_COLOR },
+//			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_operators, PreferenceConstants.EDITOR_C_OPERATOR_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_strings, PreferenceConstants.EDITOR_C_STRING_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_braces, PreferenceConstants.EDITOR_C_BRACES_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_numbers, PreferenceConstants.EDITOR_C_NUMBER_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_others, PreferenceConstants.EDITOR_C_DEFAULT_COLOR },
 	};
 	
-	private final String fCodeCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_code; 
-	private final String fCommentsCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_comments; 
-	private final String fPreprocessorCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_preprocessor; 
-	private final String fAssemblyCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_assembly; 
+	private final String fCodeCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_code;
+	private final String fCommentsCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_comments;
+	private final String fPreprocessorCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_preprocessor;
+	private final String fAssemblyCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_assembly;
 	
 	private ColorSelector fSyntaxForegroundColorEditor;
 	private Label fColorEditorLabel;
@@ -372,18 +372,18 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		
 		for (String[] element : fSyntaxColorListModel)
 			fListModel.add(new HighlightingColorListItem (
-					element[0], 
-					element[1], 
-					element[1] + BOLD, 
-					element[1] + ITALIC, 
-					element[1] + STRIKETHROUGH, 
+					element[0],
+					element[1],
+					element[1] + BOLD,
+					element[1] + ITALIC,
+					element[1] + STRIKETHROUGH,
 					element[1] + UNDERLINE));
 
 		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
 		for (SemanticHighlighting semanticHighlighting : semanticHighlightings)
 			fListModel.add(
 					new SemanticHighlightingColorListItem(
-							semanticHighlighting.getDisplayName(), 
+							semanticHighlighting.getDisplayName(),
 							SemanticHighlightings.getColorPreferenceKey(semanticHighlighting),
 							SemanticHighlightings.getBoldPreferenceKey(semanticHighlighting),
 							SemanticHighlightings.getItalicPreferenceKey(semanticHighlighting),
@@ -518,7 +518,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			return;
 		}
 		RGB rgb= PreferenceConverter.getColor(getPreferenceStore(), item.getColorKey());
-		fSyntaxForegroundColorEditor.setColorValue(rgb);		
+		fSyntaxForegroundColorEditor.setColorValue(rgb);
 		fBoldCheckBox.setSelection(getPreferenceStore().getBoolean(item.getBoldKey()));
 		fItalicCheckBox.setSelection(getPreferenceStore().getBoolean(item.getItalicKey()));
 		fStrikethroughCheckBox.setSelection(getPreferenceStore().getBoolean(item.getStrikethroughKey()));
@@ -559,12 +559,12 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		link.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), e.text, null, null); 
+				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), e.text, null, null);
 			}
 		});
 		// TODO replace by link-specific tooltips when
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
-//		link.setToolTipText(PreferencesMessages.CEditorColoringConfigurationBlock_link_tooltip); 
+//		link.setToolTipText(PreferencesMessages.CEditorColoringConfigurationBlock_link_tooltip);
 		
 		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.widthHint= 150; // only expand further if anyone else requires it
@@ -573,13 +573,13 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 		addFiller(colorComposite, 1);
 
-		fEnableSemanticHighlightingCheckbox= addCheckBox(colorComposite, 
+		fEnableSemanticHighlightingCheckbox= addCheckBox(colorComposite,
 				PreferencesMessages.CEditorColoringConfigurationBlock_enable_semantic_highlighting,
 				PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, 0);
 		
 		Label label;
 		label= new Label(colorComposite, SWT.LEFT);
-		label.setText(PreferencesMessages.CEditorColoringConfigurationBlock_coloring_element); 
+		label.setText(PreferencesMessages.CEditorColoringConfigurationBlock_coloring_element);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
 		Composite editorComposite= new Composite(colorComposite, SWT.NONE);
@@ -589,7 +589,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		layout.marginWidth= 0;
 		editorComposite.setLayout(layout);
 		GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-		editorComposite.setLayoutData(gd);		
+		editorComposite.setLayoutData(gd);
 	
 		fListViewer= new TreeViewer(editorComposite, SWT.SINGLE | SWT.BORDER);
 		fListViewer.setLabelProvider(new ColorListLabelProvider());
@@ -631,14 +631,14 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		fEnableCheckbox= new Button(stylesComposite, SWT.CHECK);
-		fEnableCheckbox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_enable); 
+		fEnableCheckbox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_enable);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		fEnableCheckbox.setLayoutData(gd);
 		
 		fColorEditorLabel= new Label(stylesComposite, SWT.LEFT);
-		fColorEditorLabel.setText(PreferencesMessages.CEditorColoringConfigurationBlock_color); 
+		fColorEditorLabel.setText(PreferencesMessages.CEditorColoringConfigurationBlock_color);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 20;
 		fColorEditorLabel.setLayoutData(gd);
@@ -649,35 +649,35 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		foregroundColorButton.setLayoutData(gd);
 		
 		fBoldCheckBox= new Button(stylesComposite, SWT.CHECK);
-		fBoldCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_bold); 
+		fBoldCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_bold);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 20;
 		gd.horizontalSpan= 2;
 		fBoldCheckBox.setLayoutData(gd);
 		
 		fItalicCheckBox= new Button(stylesComposite, SWT.CHECK);
-		fItalicCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_italic); 
+		fItalicCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_italic);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 20;
 		gd.horizontalSpan= 2;
 		fItalicCheckBox.setLayoutData(gd);
 		
 		fStrikethroughCheckBox= new Button(stylesComposite, SWT.CHECK);
-		fStrikethroughCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_strikethrough); 
+		fStrikethroughCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_strikethrough);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 20;
 		gd.horizontalSpan= 2;
 		fStrikethroughCheckBox.setLayoutData(gd);
 		
 		fUnderlineCheckBox= new Button(stylesComposite, SWT.CHECK);
-		fUnderlineCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_underline); 
+		fUnderlineCheckBox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_underline);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 20;
 		gd.horizontalSpan= 2;
 		fUnderlineCheckBox.setLayoutData(gd);
 		
 		label= new Label(colorComposite, SWT.LEFT);
-		label.setText(PreferencesMessages.CEditorColoringConfigurationBlock_preview); 
+		label.setText(PreferencesMessages.CEditorColoringConfigurationBlock_preview);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Control previewer= createPreviewer(colorComposite);
@@ -768,9 +768,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 				// do nothing
 			}
 			public void widgetSelected(SelectionEvent e) {
+				fListViewer.refresh(true);
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				if (item instanceof SemanticHighlightingColorListItem) {
-					fListViewer.refresh(true);
 					handleSyntaxColorListSelection();
 					uninstallSemanticHighlighting();
 					installSemanticHighlighting();

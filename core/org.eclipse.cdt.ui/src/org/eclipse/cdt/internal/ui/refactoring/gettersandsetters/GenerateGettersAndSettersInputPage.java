@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
@@ -21,6 +20,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
+
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterAndSetterContext.FieldWrapper;
 
 public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 
@@ -50,6 +53,23 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 			variableSelectionView.setAutoExpandLevel(3);
 			variableSelectionView.setInput(""); //$NON-NLS-1$
 			
+			for(Object obj : variableSelectionView.getVisibleExpandedElements()) {
+				System.out.println();
+				if (obj instanceof FieldWrapper){
+					if(obj.toString().contains(context.selectedName.getRawSignature())){
+						variableSelectionView.setSubtreeChecked(obj, true);
+					}					
+				}
+			}
+			ArrayList<GetterSetterInsertEditProvider> checkedFunctions = new ArrayList<GetterSetterInsertEditProvider>();
+			for(Object currentElement : variableSelectionView.getCheckedElements()){
+				if (currentElement instanceof GetterSetterInsertEditProvider) {
+					GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
+					checkedFunctions.add(editProvider);
+				}
+			}
+			context.selectedFunctions = checkedFunctions;
+						
 			variableSelectionView.addCheckStateListener(new ICheckStateListener(){
 
 				public void checkStateChanged(CheckStateChangedEvent event) {
@@ -61,12 +81,8 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 						}
 					}
 					context.selectedFunctions = checkedFunctions;
-					
 				}
-			
 			});
 		}
-
 	}
-
 }

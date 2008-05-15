@@ -92,6 +92,7 @@ public class FunctionFactory {
 		litExpr.setValue("this"); //$NON-NLS-1$
 		fieldRef.setFieldOwner(litExpr);
 		fieldRef.setFieldName(fieldDeclaration.getDeclarators()[0].getName());
+		fieldRef.setIsPointerDereference(true);
 		binExpr.setOperand1(fieldRef);
 		binExpr.setOperator(IASTBinaryExpression.op_assign);
 		CPPASTIdExpression idExpr = new CPPASTIdExpression();

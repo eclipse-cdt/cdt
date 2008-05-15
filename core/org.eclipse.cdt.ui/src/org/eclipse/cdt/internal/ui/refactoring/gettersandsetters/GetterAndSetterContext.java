@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
@@ -29,7 +30,8 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 	public ArrayList<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<IASTSimpleDeclaration>();
 	public ArrayList<GetterSetterInsertEditProvider> selectedFunctions = new ArrayList<GetterSetterInsertEditProvider>();
 	private IASTTranslationUnit unit;
-	
+	public IASTName selectedName;
+
 	public Object[] getChildren(Object parentElement) {
 
 		ArrayList<GetterSetterInsertEditProvider> children = new ArrayList<GetterSetterInsertEditProvider>();

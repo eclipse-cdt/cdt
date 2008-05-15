@@ -11,11 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
@@ -24,6 +28,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -62,10 +68,18 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	private void initRefactoring(IProgressMonitor pm) {
 		loadTranslationUnit(initStatus, pm);
 		context.setUnit(unit);
+		context.selectedName = getSelectedName();
 		findDeclarations();
-		
 	}
 	
+	private IASTName getSelectedName() {
+		Vector<IASTName> names = findAllMarkedNames();
+		if (names.size() < 1) {
+			return null;
+		}
+		return names.lastElement();
+	}
+
 	protected void findDeclarations() {
 
 		unit.accept(new CPPASTVisitor() {
@@ -106,19 +120,20 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 	@Override
 	protected void collectModifications(IProgressMonitor pm,ModificationCollector collector) throws CoreException, OperationCanceledException {
-// egtodo		
-//		ASTRewrite rewriter = collector.rewriterForTranslationUnit(unit);
-		
+		ArrayList<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
 		for(GetterSetterInsertEditProvider currentProvider : context.selectedFunctions){
-// egtodo			
-//			TextEditGroup editGroup = new TextEditGroup(Messages.GenerateGettersAndSettersRefactoring_Insert + currentProvider.toString());
-			ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) context.existingFunctionDeclarations.get(context.existingFunctionDeclarations.size()-1).getParent();
-			AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_public, currentProvider.getFunction(), false, collector);
+			getterAndSetters.add(currentProvider.getFunction());
 		}		
+		ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size()-1).getParent();
+
+		AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_public, getterAndSetters, false, collector);
 	}
 
 	public GetterAndSetterContext getContext() {
 		return context;
 	}
-
+	
+	public Region getRegion() {
+		return region;
+	}	
 }

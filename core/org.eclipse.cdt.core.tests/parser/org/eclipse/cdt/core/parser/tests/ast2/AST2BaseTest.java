@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -456,9 +458,32 @@ public class AST2BaseTest extends BaseTestCase {
     	
     	public IBinding assertNonProblem(String section, int len) {
     		IBinding binding= binding(section, len);
-    		assertTrue("ProblemBinding for name: " + section.substring(0, len),
-    				!(binding instanceof IProblemBinding));
+    		if(binding instanceof IProblemBinding) {
+    			IProblemBinding problem= (IProblemBinding) binding;
+    			fail("ProblemBinding for name: " + section.substring(0, len) + " (" + renderProblemID(problem.getID())+")"); 
+    		}
+    		if(binding == null) {
+    			fail("Null binding resolved for name: " + section.substring(0, len));
+    		}
     		return binding;
+    	}
+    	
+    	private String renderProblemID(int i) {
+    		try {
+    			for(Field field : IProblemBinding.class.getDeclaredFields()) {
+    				if(field.getName().startsWith("SEMANTIC_")) {
+    					if(field.getType() == int.class) {
+    						Integer ci= (Integer) field.get(null);
+    						if(ci.intValue() == i) {
+    							return field.getName();
+    						}
+    					}
+    				}
+    			}
+    		} catch(IllegalAccessException iae) {
+    			throw new RuntimeException(iae);
+    		}
+    		return "Unknown problem ID";
     	}
     	
     	public <T extends IBinding> T assertNonProblem(String section, int len, Class<T> type, Class... cs) {

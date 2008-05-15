@@ -146,7 +146,7 @@ public class CLIEventProcessor
             String state = rr.getResultClass();
             if (fInferior != null && "error".equals(state)) { //$NON-NLS-1$
                 if (fInferior.getState() == MIInferiorProcess.State.RUNNING) {
-                    fInferior.setState(MIInferiorProcess.State.RUNNING);
+                    fInferior.setState(MIInferiorProcess.State.STOPPED);
                     fCommandControl.getSession().dispatchEvent(
                         MIErrorEvent.parse(fContainerDmc, rr.getToken(), rr.getMIResults(), null),
                         fCommandControl.getProperties());

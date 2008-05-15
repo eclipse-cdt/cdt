@@ -222,6 +222,11 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
 		list.accept(visitor);
 	}
+	
+	public void specializationsAccept(IPDOMVisitor visitor) throws CoreException {
+		PDOMNodeLinkedList list= new PDOMNodeLinkedList(pdom, record + SPECIALIZATIONS, getLinkageImpl());
+		list.accept(visitor);
+	}
 
 	@Override
 	public void addMember(PDOMNode member) throws CoreException {

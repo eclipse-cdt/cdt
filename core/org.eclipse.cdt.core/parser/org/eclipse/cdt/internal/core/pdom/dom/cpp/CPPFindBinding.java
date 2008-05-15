@@ -103,11 +103,16 @@ public class CPPFindBinding extends FindBinding {
 	}
 
 
-	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int sigHash, int localToFileRec) 
+	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int sigHash, int localToFileRec, boolean searchSpecializations) 
 			throws CoreException {
 		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, constant, sigHash, localToFileRec);
 		try {
 			node.accept(visitor);
+			if (searchSpecializations && visitor.getResult() == null) {
+				if (node instanceof PDOMCPPClassTemplate) { 
+					((PDOMCPPClassTemplate) node).specializationsAccept(visitor);
+				} 
+			}
 		} catch(OperationCanceledException ce) {
 		}
 		return visitor.getResult();
@@ -127,13 +132,17 @@ public class CPPFindBinding extends FindBinding {
 	}
 
 	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding, int localToFileRec) throws CoreException {
+		return findBinding(node, linkage, binding, localToFileRec, false);
+	}
+
+	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding, int localToFileRec, boolean searchSpecializations) throws CoreException {
 		Integer hash = null;
 		try {
 			hash = IndexCPPSignatureUtil.getSignatureHash(binding);
 		} catch (DOMException e) {
 		}
 		if(hash != null) {
-			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec);
+			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec, searchSpecializations);
 		}
 		return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), new int[] {linkage.getBindingType(binding)}, localToFileRec);
 	}

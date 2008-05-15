@@ -70,7 +70,6 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
@@ -528,12 +527,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				} else if (binding instanceof ICPPClassType) {
 					return CPP_DEFERRED_CLASS_INSTANCE;
 				}
-			} else if (binding instanceof ICPPUnknownBinding) {
-				if (binding instanceof ICPPUnknownClassInstance) {
-					return CPP_UNKNOWN_CLASS_INSTANCE;
-				} else if (binding instanceof ICPPUnknownClassType) {
-					return CPP_UNKNOWN_CLASS_TYPE;
-				}
 			} else if (binding instanceof ICPPTemplateInstance) {
 				if (binding instanceof ICPPConstructor) {
 					return CPP_CONSTRUCTOR_INSTANCE;
@@ -602,6 +595,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPP_FUNCTION_TYPE;
 		} else if (binding instanceof ICPPFunction) {
 			return CPPFUNCTION;
+		} else if (binding instanceof ICPPUnknownBinding) {
+			if (binding instanceof ICPPUnknownClassInstance) {
+				return CPP_UNKNOWN_CLASS_INSTANCE;
+			} else if (binding instanceof ICPPUnknownClassType) {
+				return CPP_UNKNOWN_CLASS_TYPE;
+			}
 		} else if (binding instanceof ICPPClassTemplate) {
 			// this must be before class type
 			return CPP_CLASS_TEMPLATE;
@@ -670,7 +669,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (parent instanceof IPDOMMemberOwner) {
 			int localToFileRec= getLocalToFileRec(parent, binding);
-			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec);
+			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec, parent instanceof ICPPSpecialization);
 		}
 		return null;
 	}
@@ -693,12 +692,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  			// all instances are stored with their template definition
  			if (binding instanceof ICPPTemplateInstance) {
  				scopeBinding= ((ICPPTemplateInstance) binding).getTemplateDefinition();
- 			} else if (binding instanceof ICPPUnknownClassType &&
- 					binding instanceof ICPPDeferredClassInstance == false) {
- 				// the parent of an unknown class can be a template parameter, which is not a scope
- 				scopeBinding= ((ICPPUnknownClassType) binding).getUnknownContainerBinding();
- 			}
- 			else {
+ 			} else {
  				IScope scope = binding.getScope();
  	 			if (scope instanceof ICPPTemplateScope 
  	 					&& binding instanceof ICPPTemplateParameter == false

@@ -17,12 +17,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding 
 	implements ICPPTemplateTypeParameter, ICPPUnknownBinding, IIndexType {
+
+	private ICPPScope unknownScope;
 
 	public CompositeCPPTemplateTypeParameter(ICompositesFactory cf,	ICPPTemplateTypeParameter binding) {
 		super(cf, binding);
@@ -43,7 +46,10 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 	}
 
 	public ICPPScope getUnknownScope() {
-		return null;
+		if (unknownScope == null) {
+			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
+		}
+		return unknownScope;
 	}
 
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
@@ -52,7 +58,7 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 	}
 
 	public IASTName getUnknownName() {
-		return null;
+		return new CPPASTName(getNameCharArray());
 	}
 
 	public ICPPUnknownBinding getUnknownContainerBinding() {

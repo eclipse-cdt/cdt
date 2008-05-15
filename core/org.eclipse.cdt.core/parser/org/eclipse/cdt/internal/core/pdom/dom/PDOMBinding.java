@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
@@ -209,6 +210,11 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 			if (parent instanceof IIndexScope) {
 				return (IIndexScope) parent;
 			}
+			// unknown bindings don't always implement the scope directly
+			if (parent instanceof ICPPUnknownBinding) {
+				return (IIndexScope) ((ICPPUnknownBinding) parent).getUnknownScope();
+			}
+		} catch (DOMException e) {
 		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 		}
@@ -251,14 +257,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	protected static String getConstantNameForValue(PDOMLinkage linkage, int value) {
 		Class<? extends PDOMLinkage> c= linkage.getClass();
 		Field[] fields= c.getFields();
-		for (int i = 0; i < fields.length; i++) {
+		for (Field field : fields) {
 			try {
-				fields[i].setAccessible(true);
-				if ((fields[i].getModifiers() & Modifier.STATIC) != 0) {
-					if (int.class.equals(fields[i].getType())) {
-						int fvalue= fields[i].getInt(null);
+				field.setAccessible(true);
+				if ((field.getModifiers() & Modifier.STATIC) != 0) {
+					if (int.class.equals(field.getType())) {
+						int fvalue= field.getInt(null);
 						if (fvalue == value)
-							return fields[i].getName();
+							return field.getName();
 					}
 				}
 			} catch (IllegalAccessException iae) {

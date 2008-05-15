@@ -72,7 +72,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 	}
 
 	public IASTName getUnknownName() {
-		return null;
+		return new CPPASTName(getNameCharArray());
 	}
 
 	public ICPPUnknownBinding getUnknownContainerBinding() {

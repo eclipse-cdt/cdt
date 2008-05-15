@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -48,6 +49,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
+	private ICPPScope fUnknownScope;
 	
 	public PDOMCPPTemplateTypeParameter(PDOM pdom, PDOMNode parent,
 			ICPPTemplateTypeParameter param) throws CoreException {
@@ -141,12 +143,17 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 
 
 	public ICPPScope getUnknownScope() {
-		return null;
+		if (fUnknownScope == null) {
+			fUnknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
+		}
+		return fUnknownScope;
 	}
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) { fail(); return null;}
-	public IASTName getUnknownName() {
+	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) { 
 		return null;
+	}
+	public IASTName getUnknownName() {
+		return new CPPASTName(getNameCharArray());
 	}
 	public ICPPUnknownBinding getUnknownContainerBinding() {
 		return null;

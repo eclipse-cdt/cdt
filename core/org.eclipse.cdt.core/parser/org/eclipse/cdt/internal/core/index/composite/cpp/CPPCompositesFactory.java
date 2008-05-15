@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.index.CIndex;
@@ -76,16 +78,15 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
 	 */
 	public IIndexScope getCompositeScope(IIndexScope rscope) {
-		IIndexScope result;
-
 		try {
 			if (rscope == null) {
 				return null;
-			} else if (rscope instanceof ICPPClassScope) {
+			} 
+			if (rscope instanceof ICPPClassScope) {
 				ICPPClassScope classScope = (ICPPClassScope) rscope;
-				result = new CompositeCPPClassScope(this,
-						findOneBinding(classScope.getClassType()));
-			} else if (rscope instanceof ICPPNamespaceScope) {
+				return new CompositeCPPClassScope(this,	findOneBinding(classScope.getClassType()));
+			} 
+			if (rscope instanceof ICPPNamespaceScope) {
 				ICPPNamespace[] namespaces;
 				if (rscope instanceof CompositeCPPNamespace) {
 					// avoid duplicating the search
@@ -94,17 +95,23 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					namespaces = getNamespaces(rscope.getScopeBinding());
 				}
 				return new CompositeCPPNamespaceScope(this, namespaces);
-			} else if (rscope instanceof ICPPTemplateScope) {
+			} 
+			if (rscope instanceof ICPPTemplateScope) {
 				return new CompositeCPPTemplateScope(this, (ICPPTemplateScope) rscope);
-			} else {
-				throw new CompositingNotImplementedError(rscope.getClass().getName());
+			} 
+			if (rscope instanceof ICPPInternalUnknownScope) {
+				ICPPInternalUnknownScope uscope= (ICPPInternalUnknownScope) rscope;
+				final ICPPBinding binding = uscope.getScopeBinding();
+				return new CompositeCPPUnknownScope((CompositeCPPBinding) getCompositeBinding((IIndexFragmentBinding) binding), (IASTName) uscope.getPhysicalNode());
 			}
+			throw new CompositingNotImplementedError(rscope.getClass().getName());
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 			throw new CompositingNotImplementedError(ce.getMessage());		
+		} catch(DOMException ce) {
+			CCorePlugin.log(ce);
+			throw new CompositingNotImplementedError(ce.getMessage());		
 		}
-
-		return result;
 	}
 
 	/* (non-Javadoc)

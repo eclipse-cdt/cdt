@@ -31,7 +31,6 @@ import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension;
 import org.eclipse.cdt.debug.internal.core.model.CStackFrame;
 import org.eclipse.cdt.debug.internal.core.model.CThread;
-import org.eclipse.cdt.internal.core.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -136,6 +135,29 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		abort( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.3" ), null ); //$NON-NLS-1$
 	}
 
+	/**
+	 * Convert a simple literal address (e.g., "0x1000") to a BigInteger value
+	 * using the debug target's address factory.
+	 * 
+	 * We throw a NumberFormatException if the string is not a valid literal
+	 * address. If the backend implements the new&improved factory interface,
+	 * we'll throw a NumberFormatException if the string is a literal address
+	 * but is outside of the valid range. Old address factories will simply
+	 * truncate the value.
+	 * 
+	 * @param expression
+	 * @return
+	 */
+	private BigInteger evaluateLiteralAddress(String addr) {
+		IAddressFactory addrFactory = getDebugTarget().getAddressFactory();
+		if (addrFactory instanceof IAddressFactory2) {
+			return ((IAddressFactory2)addrFactory).createAddress(addr, false).getValue();
+		}
+		else {
+			return addrFactory.createAddress(addr).getValue();
+		}
+	}
+	
 	private void createMemoryBlocks( String[] expressions, String[] memorySpaceIDs ) {
 		ArrayList list = new ArrayList( expressions.length );
 		for ( int i = 0; i < expressions.length; ++i ) {
@@ -228,26 +250,11 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				
 				// See if the expression is a simple numeric value; if it is, we can avoid some costly
 				// processing (calling the backend to resolve the expression)
-				// Use IAddressFactory2 if possible to ensure we abort if the address
-				// is outside the factory's valid range
 				try {
-					IAddressFactory addrFactory = ((CDebugTarget)target).getAddressFactory();
-					String hexstr = null;
-					if (addrFactory instanceof IAddressFactory2) {
-						hexstr = ((IAddressFactory2)addrFactory).createAddress(expression, false).toString(16);
-					}
-					else {
-						hexstr = addrFactory.createAddress(expression).toString(16);
-					}
-					return new CMemoryBlockExtension((CDebugTarget)target, expression, new BigInteger(hexstr, 16));
-				} catch (NumberFormatException nfexc) {
-					if (nfexc.getMessage().equals(Messages.Addr_valueOutOfRange)) {
-						throw nfexc; 
-					}
-					
-					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression					
-				}
-				
+					return new CMemoryBlockExtension((CDebugTarget)target, expression, evaluateLiteralAddress(expression));
+				} catch (NumberFormatException nfexc) {}
+
+				// OK, expression is not a simple literal address; keep trucking and try to resolve as expression					
 				CStackFrame frame = getStackFrame( debugElement );
 				if ( frame != null ) {
 					// We need to provide a better way for retrieving the address of expression
@@ -278,7 +285,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 			msg = e.getMessage();
 		}
 		catch( NumberFormatException e ) {
-			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.0" ), (Object[])new String[] { expression, address } ); //$NON-NLS-1$
+			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.0" ), (Object[])new String[] { expression } ); //$NON-NLS-1$
 		}
 		finally {
 			if (exp != null) {
@@ -327,9 +334,8 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				IDebugTarget target = debugElement.getDebugTarget();
 				if ( target instanceof CDebugTarget ) {
 					if ( address != null ) {
-						BigInteger addr = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
-						return new CMemoryBlockExtension( (CDebugTarget)target, addr, memorySpaceID );
-					}
+						return new CMemoryBlockExtension((CDebugTarget)target, evaluateLiteralAddress(address), memorySpaceID);
+					} 
 				}
 			}
 		}

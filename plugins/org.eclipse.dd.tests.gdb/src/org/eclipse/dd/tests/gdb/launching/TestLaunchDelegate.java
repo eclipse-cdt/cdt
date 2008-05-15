@@ -81,7 +81,7 @@ public class TestLaunchDelegate extends LaunchConfigurationDelegate
         monitor.worked( 1 );  
         
         final ServicesLaunchSequence servicesLaunchSequence = 
-            new ServicesLaunchSequence(launch.getSession(), launch, exePath);
+            new ServicesLaunchSequence(launch.getSession(), launch, exePath, SessionType.LOCAL, false);
         launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
             servicesLaunchSequence.get();
@@ -99,7 +99,7 @@ public class TestLaunchDelegate extends LaunchConfigurationDelegate
 
         // Create and invoke the final launch sequence to setup GDB
         final FinalLaunchSequence finalLaunchSequence = 
-        	new FinalLaunchSequence(launch.getSession().getExecutor(), launch, SessionType.RUN);
+        	new FinalLaunchSequence(launch.getSession().getExecutor(), launch, SessionType.LOCAL, false);
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
         	finalLaunchSequence.get();

@@ -13,13 +13,19 @@ package org.eclipse.dd.gdb.internal.provisional.launching;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IProcessInfo;
+import org.eclipse.cdt.core.IProcessList;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -31,12 +37,17 @@ import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.Sessio
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
+import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
+import org.eclipse.dd.mi.service.command.output.CLIMonitorListProcessesInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.IStatusHandler;
 
 public class FinalLaunchSequence extends Sequence {
 
@@ -155,7 +166,6 @@ public class FinalLaunchSequence extends Sequence {
         }},
         /* 
          * If remote debugging, connect to target.
-         * If attach session, perform the attach. 
          */
         new Step() {
         	private boolean fTcpConnection;
@@ -233,14 +243,112 @@ public class FinalLaunchSequence extends Sequence {
                         				           fSerialDevice), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		}
-            	} else if (fSessionType == SessionType.ATTACH) {            		
-                    fCommandControl.queueCommand(
-                    		new CLIAttach(fCommandControl.getControlDMContext(), fPid), 
-                    	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
             	} else {
             		requestMonitor.done();
             	}
             }
+        },
+        /*
+        * If attach session, perform the attach. 
+        */
+       new Step() {
+        	private void promptForProcessID(final ILaunchConfiguration config, final DataRequestMonitor<Integer> rm) {
+        			IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
+        			final IStatus processPromptStatus = new Status(IStatus.INFO, "org.eclipse.dd.gdb.ui", 100, "", null); //$NON-NLS-1$//$NON-NLS-2$
+
+        			final IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+        			
+					final Status noPidStatus = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1,
+								                          LaunchMessages.getString("LocalAttachLaunchDelegate.No_Process_ID_selected"), //$NON-NLS-1$
+								                          null);
+
+        			if (prompter == null) {
+        				rm.setStatus(noPidStatus);
+        				rm.done();
+        				return;
+        			}
+        				
+        			// Need a job because prompter.handleStatus will block
+        			final Job promptForPid = new Job("Prompt for Process") { //$NON-NLS-1$
+        				@Override
+        				protected IStatus run(IProgressMonitor monitor) {
+        					try {
+        						Object result = prompter.handleStatus(processPromptStatus, FinalLaunchSequence.this);
+        						if (result instanceof Integer) {
+        							rm.setData((Integer)result);
+        						} else {
+        							rm.setStatus(noPidStatus);
+        						}
+        					} catch (CoreException e) {
+    							rm.setStatus(noPidStatus);
+        					}
+        					rm.done();
+
+        					return Status.OK_STATUS;
+        				}
+        			};
+
+        			if (fSessionType == SessionType.LOCAL) {
+        				try {
+        					IProcessList list = CCorePlugin.getDefault().getProcessList();
+        					if (list != null) fProcessList = list.getProcessList();
+        				} catch (CoreException e) {
+						} finally {
+							// If the list is null, the prompter will deal with it
+        					promptForPid.schedule();
+        				}
+        			} else {
+        				fCommandControl.queueCommand(
+        						new CLIMonitorListProcesses(fCommandControl.getControlDMContext()), 
+        						new DataRequestMonitor<CLIMonitorListProcessesInfo>(getExecutor(), rm) {
+        							@Override
+        							protected void handleCompleted() {
+        								if (isSuccess()) {
+        									fProcessList = getData().getProcessList();
+        								} else {
+        									// The monitor list command is not supported.
+        									// Just set the list to empty and let the user
+        									// put in the pid directly.
+        									fProcessList = new IProcessInfo[0];
+        								}
+
+        								promptForPid.schedule();
+        							}
+        						});
+        			}
+        	}
+
+        	@Override
+        	public void execute(final RequestMonitor requestMonitor) {
+        		if (fAttach) {
+        			// If we are attaching, get the process id.
+        			int pid = -1;
+        			try {
+        				// have we already been given the pid (maybe from a JUnit test launch or something)
+        				pid = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
+        			} catch (CoreException e) { 
+        				// do nothing and fall to below
+        			}
+
+        			if (pid != -1) {
+						fCommandControl.queueCommand(
+								new CLIAttach(fCommandControl.getControlDMContext(), pid), 
+								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));        				
+        			} else {
+        				promptForProcessID(fLaunch.getLaunchConfiguration(), 
+        						           new DataRequestMonitor<Integer>(getExecutor(), requestMonitor) {
+        					@Override
+        					protected void handleSuccess() {
+        						fCommandControl.queueCommand(
+        								new CLIAttach(fCommandControl.getControlDMContext(), getData()), 
+        								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        					}
+        				});
+        			}
+        		} else {
+        			requestMonitor.done();
+        		}
+        	}
         },
         /* 
          * Start tracking the breakpoints once we know we are connected to the target (necessary for remote debugging) 
@@ -265,27 +373,25 @@ public class FinalLaunchSequence extends Sequence {
 
     GdbLaunch fLaunch;
     SessionType fSessionType;
-    int fPid;
+    boolean fAttach;
 
     GDBControl fCommandControl;
-
-    public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType type) {
+    // The list of processes used in the case of an ATTACH session
+    IProcessInfo[] fProcessList = null;
+	
+    public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach) {
         super(executor);
         fLaunch = launch;
-        fSessionType = type;
+        fSessionType = sessionType;
+        fAttach = attach;
     }
 
-    // If a pid is specified, it is for an ATTACH type
-    public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, int attachToPid) {
-        this(executor, launch, SessionType.ATTACH);
-        fPid = attachToPid;
-    }
-    
-    
     @Override
     public Step[] getSteps() {
         return fSteps;
     }
+
+	public IProcessInfo[] getProcessList() { return fProcessList; }
 
 }
 

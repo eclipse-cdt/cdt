@@ -24,7 +24,7 @@
             delegate="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate"
             id="org.eclipse.dd.gdb.launch.attachCLaunch"
             modes="debug"
-            name="C/C++ Attach to Local Application (Experimental - DSF)"
+            name="C/C++ Attach to Running Application (Experimental - DSF)"
             public="true"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">

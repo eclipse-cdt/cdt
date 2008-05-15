@@ -26,7 +26,7 @@ public class GdbLocalRunLaunchConfigurationTabGroup extends AbstractLaunchConfig
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode)  {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new CMainTab(),
-            new CDebuggerTab(SessionType.RUN),
+            new CDebuggerTab(SessionType.LOCAL, false),
 			new SourceLookupTab(),
 			new CommonTab() 
 		};

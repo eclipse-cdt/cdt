@@ -26,7 +26,7 @@ public class GdbRemoteRunLaunchConfigurationTabGroup extends AbstractLaunchConfi
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode)  {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 				new CMainTab(),
-				new CDebuggerTab(SessionType.REMOTE),
+				new CDebuggerTab(SessionType.REMOTE, false),
 				new SourceLookupTab(),
 				new CommonTab() 
 		};

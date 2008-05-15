@@ -92,8 +92,10 @@ public class GDBControl extends AbstractMIControl {
     private static int fgInstanceCounter = 0;
     private final GDBControlDMContext fControlDmc;
 
-    public enum SessionType { RUN, ATTACH, CORE, REMOTE }
+    public enum SessionType { LOCAL, REMOTE, CORE }
     private SessionType fSessionType;
+    
+    public boolean fAttach;
     
     private boolean fConnected = false;
     
@@ -111,9 +113,10 @@ public class GDBControl extends AbstractMIControl {
     
     private PTY fPty;
     
-    public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType type, int gdbLaunchTimeout) {
+    public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType sessionType, boolean attach, int gdbLaunchTimeout) {
         super(session);
-        fSessionType = type;
+        fSessionType = sessionType;
+        fAttach = attach;
         fGdbPath = gdbPath;
         fExecPath = execPath;
         fGDBLaunchTimeout = gdbLaunchTimeout;
@@ -184,6 +187,9 @@ public class GDBControl extends AbstractMIControl {
         return fSessionType; 
     }
 
+    public boolean getIsAttachSession() { 
+        return fAttach; 
+    }
     public boolean canInterrupt() {
         return fProcess instanceof Spawner;
     }
@@ -241,11 +247,11 @@ public class GDBControl extends AbstractMIControl {
     /*
      * This method does the necessary work to setup the input/output streams for the
      * inferior process, by either preparing the PTY to be used, to simply leaving
-     * the PTY null, which indicates that the input/output streams of the CLI shoud
+     * the PTY null, which indicates that the input/output streams of the CLI should
      * be used instead; this decision is based on the type of session.
      */
     public void initInferiorInputOutput(final RequestMonitor requestMonitor) {
-    	if (fSessionType == SessionType.ATTACH || fSessionType == SessionType.REMOTE) {
+    	if (fSessionType == SessionType.REMOTE || fAttach) {
     		// These types do not use a PTY
     		fPty = null;
     		requestMonitor.done();
@@ -275,7 +281,7 @@ public class GDBControl extends AbstractMIControl {
 
 
     public boolean canRestart() {
-    	if (fSessionType == SessionType.ATTACH) return false;
+    	if (fAttach) return false;
     	
     	// Before GDB6.8, the Linux gdbserver would restart a new
     	// process when getting a -exec-run but the communication
@@ -307,7 +313,7 @@ public class GDBControl extends AbstractMIControl {
      * Insert breakpoint at entry if set, and start or restart the program.
      */
     protected void startOrRestart(final GdbLaunch launch, boolean restart, final RequestMonitor requestMonitor) {
-    	if (fSessionType == SessionType.ATTACH) {
+    	if (fAttach) {
     		// When attaching to a running process, we do not need to set a breakpoint or
     		// start the program; it is left up to the user.
     		requestMonitor.done();

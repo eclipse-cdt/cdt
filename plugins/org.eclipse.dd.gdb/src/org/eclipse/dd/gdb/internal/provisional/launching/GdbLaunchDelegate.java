@@ -46,7 +46,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -92,6 +91,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		}
 		
 		SessionType sessionType = getSessionType(config);
+		boolean attach = getIsAttach(config);
+		
         final GdbLaunch launch = (GdbLaunch)l;
 
         if (sessionType == SessionType.REMOTE) {
@@ -109,29 +110,9 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     	
         monitor.worked( 1 );
 
-        // If we are attaching, get the process id now, so as to avoid starting the launch
-        // and canceling it if the user does not put the pid properly.
-    	int pid = -1;
-        if (sessionType == SessionType.ATTACH) {
-        	try {
-        		// have we already been given the pid (maybe from a JUnit test launch or something)
-        		pid = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
-        	} catch (CoreException e) { 
-        		// do nothing and fall to below
-        	}
-
-        	if (pid == -1) {
-        		pid = promptForProcessID(config);
-        	}
-        	if (pid == -1) {
-        		throw new DebugException(new Status(IStatus.CANCEL, GdbPlugin.PLUGIN_ID, 
-        				LaunchMessages.getString("LocalAttachLaunchDelegate.No_Process_ID_selected"))); //$NON-NLS-1$
-        	}
-    	}
-        
         // Create and invoke the launch sequence to create the debug control and services
         final ServicesLaunchSequence servicesLaunchSequence = 
-            new ServicesLaunchSequence(launch.getSession(), launch, exePath);
+            new ServicesLaunchSequence(launch.getSession(), launch, exePath, sessionType, attach);
         launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
             servicesLaunchSequence.get();
@@ -151,12 +132,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         launch.addInferiorProcess(exePath.lastSegment());
 
         // Create and invoke the final launch sequence to setup GDB
-        final FinalLaunchSequence finalLaunchSequence;
-        if (sessionType == SessionType.ATTACH) {
-        	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, pid);
-        } else {
-        	finalLaunchSequence = new FinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType);
-        }
+        final FinalLaunchSequence finalLaunchSequence = 
+        	new FinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType, attach);
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
         	finalLaunchSequence.get();
@@ -167,36 +144,44 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         }
 	}
 
-    private SessionType getSessionType(ILaunchConfiguration config) {
+	private SessionType getSessionType(ILaunchConfiguration config) {
     	try {
     		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
     		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-    			return SessionType.RUN;
+    			return SessionType.LOCAL;
     		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-    			return SessionType.ATTACH;
+    			return SessionType.LOCAL;
     		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
     			return SessionType.CORE;
     		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
     			return SessionType.REMOTE;
-    		}
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
+    		    return SessionType.REMOTE;
+    	    }
     	} catch (CoreException e) {    		
     	}
-    	return SessionType.RUN;
+    	return SessionType.LOCAL;
     }
     
-	protected int promptForProcessID(ILaunchConfiguration config) throws CoreException {
-		IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null); //$NON-NLS-1$//$NON-NLS-2$
-		IStatus processPrompt = new Status(IStatus.INFO, "org.eclipse.dd.gdb.ui", 100, "", null); //$NON-NLS-1$//$NON-NLS-2$
-		// consult a status handler
-		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
-		if (prompter != null) {
-			Object result = prompter.handleStatus(processPrompt, config);
-			if (result instanceof Integer) {
-				return ((Integer)result).intValue();
-			}
-		}
-		return -1;
-	}
+	private boolean getIsAttach(ILaunchConfiguration config) {
+    	try {
+    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+    			return false;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+    			return true;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+    			return false;
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+    			return false;
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
+    		    return true;
+    	    }
+    	} catch (CoreException e) {    		
+    	}
+    	return false;
+    }
+    
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {

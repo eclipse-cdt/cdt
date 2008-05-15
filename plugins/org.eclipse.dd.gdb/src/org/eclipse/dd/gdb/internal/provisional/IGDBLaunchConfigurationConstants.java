@@ -13,5 +13,6 @@ package org.eclipse.dd.gdb.internal.provisional;
 public class IGDBLaunchConfigurationConstants {
 
 	public static final String DEBUGGER_MODE_REMOTE = "remote"; //$NON-NLS-1$
+	public static final String DEBUGGER_MODE_REMOTE_ATTACH = "remote_attach"; //$NON-NLS-1$
 
 }

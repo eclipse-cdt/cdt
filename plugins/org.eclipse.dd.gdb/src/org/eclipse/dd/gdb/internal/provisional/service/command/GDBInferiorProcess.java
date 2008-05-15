@@ -17,7 +17,6 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 
 /**
@@ -46,15 +45,12 @@ class GDBInferiorProcess extends MIInferiorProcess {
                     
                     // An inferior will be destroy():interrupt and kill if
                     // - For attach session:
-                    //   the inferior was not disconnected yet (no need to try
-                    //   to kill a disconnected program).
+                    //   never (we don't kill an independent process.)
                     // - For Program session:
-                    //   if the inferior was not terminated.
+                    //   if the inferior is still running.
                     // - For PostMortem(Core): send event
                     // else noop
-                    if ((gdb.getSessionType() == SessionType.ATTACH && gdb.isConnected()) || 
-                        (gdb.getSessionType() == SessionType.RUN && getState() != State.TERMINATED)) 
-                    {
+                    if (gdb.getIsAttachSession() == false) {
                         // Try to interrupt the inferior, first.
                         if (getState() == State.RUNNING) {
                             gdb.interrupt();

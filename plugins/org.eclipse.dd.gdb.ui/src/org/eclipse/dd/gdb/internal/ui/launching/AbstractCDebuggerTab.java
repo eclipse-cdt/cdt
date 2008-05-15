@@ -293,6 +293,8 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		fPageUpdated = false;
 		if (select != -1) {
 			fDCombo.select(select);
+		} else {
+			fDCombo.select(0);
 		}
 		//The behaviour is undefined for if the callbacks should be triggered
 		// for this,

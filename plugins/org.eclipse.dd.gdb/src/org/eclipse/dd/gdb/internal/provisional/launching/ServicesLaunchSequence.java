@@ -11,7 +11,6 @@
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +20,6 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
@@ -42,29 +40,10 @@ public class ServicesLaunchSequence extends Sequence {
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
-            	String debugMode = ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN;
-            	try {
-            		debugMode = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-            				                                                  ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-            	} catch (CoreException e) {
-            	}
-
-            	if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-            		fSessionType = SessionType.RUN;
-            	} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-            		fSessionType = SessionType.ATTACH;
-            	} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-            		fSessionType = SessionType.CORE;
-            	} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
-            		fSessionType = SessionType.REMOTE;
-            	} else {
-                	fSessionType = SessionType.RUN;
-            	}
-
                 //
                 // Create the connection.
                 //
-                fCommandControl = new GDBControl(fSession, getGDBPath(), fExecPath, fSessionType, 30);
+                fCommandControl = new GDBControl(fSession, getGDBPath(), fExecPath, fSessionType, fAttach, 30);
                 fCommandControl.initialize(requestMonitor);
             }
         },
@@ -128,17 +107,21 @@ public class ServicesLaunchSequence extends Sequence {
     DsfSession fSession;
     GdbLaunch fLaunch;
     IPath fExecPath;
+
     SessionType fSessionType;
+    boolean fAttach;
 
     GDBControl fCommandControl;
     CSourceLookup fSourceLookup;
     MIBreakpointsManager fBpmService;
 
-    public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IPath execPath) {
+    public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IPath execPath, SessionType sessionType, boolean attach) {
         super(session.getExecutor());
         fSession = session;
         fLaunch = launch;
         fExecPath = execPath;
+        fSessionType = sessionType;
+        fAttach = attach;
     }
     
     @Override

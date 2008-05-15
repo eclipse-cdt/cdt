@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -54,6 +55,9 @@ public class CompositeCPPTemplateScope extends CompositeScope implements ICPPTem
 	
 	@Override
 	public IIndexScope getParent() {
-		return (IIndexScope) rbinding;
+		// the binding is the binding for both the composite and the template scope, so
+		// make sure to use the parent of the scope.
+		final IIndexScope templateScope= rbinding.getScope(); 
+		return cf.getCompositeScope(templateScope.getParent());
 	}
 }

@@ -40,6 +40,7 @@ import org.eclipse.swt.graphics.RGB;
 /**
  *
  */
+@SuppressWarnings("restriction")
 public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements ISourceTagListener {
 
 	private ISourceTagProvider fSourceTagProvider;
@@ -252,7 +253,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 						break;
 					}
 				}
-				sourceTag = sourceTagIdx < sourceTagCount ? (ISourceTag)fSourceTags.get(sourceTagIdx++) : null;
+				sourceTag = sourceTagIdx < sourceTagCount ? fSourceTags.get(sourceTagIdx++) : null;
 				if (sourceTag != null) {
 					range = sourceTag.getRangeOfIdentifier();
 					sourceTagStart = range.getBeginOffset();
@@ -331,7 +332,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 		fSourceTags.clear();
 		if (sourceTagProvider != null) {
 			sourceTagProvider.getSourceTags(fSourceTags);
-			Collections.sort(fSourceTags, new Comparator() {
+			Collections.sort(fSourceTags, new Comparator<Object>() {
 				public int compare(Object o1, Object o2) {
 					ISourceRange sr1 = ((ISourceTag)o1).getRangeOfIdentifier();
 					ISourceRange sr2 = ((ISourceTag)o2).getRangeOfIdentifier();

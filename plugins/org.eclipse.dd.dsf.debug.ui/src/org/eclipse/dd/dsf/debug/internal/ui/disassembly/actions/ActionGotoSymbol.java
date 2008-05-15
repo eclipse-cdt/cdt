@@ -22,6 +22,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.widgets.Shell;
 
+@SuppressWarnings("restriction")
 public final class ActionGotoSymbol extends AbstractDisassemblyAction {
 	public ActionGotoSymbol(IDisassemblyPart disassemblyPart) {
 		super(disassemblyPart);

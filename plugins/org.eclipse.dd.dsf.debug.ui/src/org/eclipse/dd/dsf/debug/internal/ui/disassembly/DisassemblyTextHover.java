@@ -39,6 +39,7 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * A text hover to evaluate registers and variables under the cursor.
  */
+@SuppressWarnings("restriction")
 public class DisassemblyTextHover implements ITextHover {
 
 	private final DisassemblyPart fDisassemblyPart;
@@ -53,7 +54,7 @@ public class DisassemblyTextHover implements ITextHover {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
-	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+    public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		IDocument doc = textViewer.getDocument();
 		return CWordFinder.findWord(doc, offset);
 	}

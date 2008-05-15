@@ -54,6 +54,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * A presentation creator based on CDT syntax highlighting.
  */
+@SuppressWarnings("restriction")
 public class CSourcePresentationCreator extends PresentationReconciler implements ISourcePresentationCreator, IPropertyChangeListener {
 
 	/**

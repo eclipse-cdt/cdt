@@ -190,6 +190,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 /**
  * DisassemblyPart
  */
+@SuppressWarnings("restriction")
 public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener {
 
 	private final static boolean DEBUG = DsfDebugUIPlugin.getDefault().isDebugging();
@@ -255,7 +256,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private Color fSourceColor;
 	private Color fLabelColor;
 	private Control fRedrawControl;
-	private Point fContextClickLocation;
 	private RGB fPCAnnotationRGB;
 	private Composite fComposite;
 
@@ -560,8 +560,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@Override
-	public Object getAdapter(Class required) {
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object getAdapter(Class required) {
 		if (IVerticalRulerInfo.class.equals(required)) {
 			if (fVerticalRuler != null) {
 				return fVerticalRuler;
@@ -612,9 +613,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else if (IRunToLineTarget.class.equals(required)) {
 			return new IRunToLineTarget() {
 				public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
-					ITextSelection textSelection = (ITextSelection)selection;
-					int line = textSelection.getStartLine();
-					BigInteger address = getAddressOfLine(line);
+//					ITextSelection textSelection = (ITextSelection)selection;
+//					int line = textSelection.getStartLine();
+//					BigInteger address = getAddressOfLine(line);
 					// TLETODO [disassembly] run to line
 //					getRunControl().runUntil(...);
 				}
@@ -1288,7 +1289,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	protected void fillContextMenu(IMenuManager manager) {
 		Point cursorLoc = getSite().getShell().getDisplay().getCursorLocation();
-		fContextClickLocation = fViewer.getTextWidget().toControl(cursorLoc);
+		fViewer.getTextWidget().toControl(cursorLoc);
 		fActionToggleSource.update();
 		fActionToggleSymbols.update();
 		manager.add(new GroupMarker("group.top")); // ICommonMenuConstants.GROUP_TOP //$NON-NLS-1$
@@ -2254,32 +2255,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		return fDocument.getAddressOfLine(line);
 	}
 
-	private BigInteger getAddressOfOffset(int offset) {
-		return fDocument.getAddressOfOffset(offset);
-	}
-
-	private BigInteger getAddressOfPoint(Point location) {
-		int offset = getOffsetOfPoint(location);
-		if (offset < 0) {
-			return PC_UNKNOWN;
-		}
-		return getAddressOfOffset(offset);
-	}
-
-	private int getOffsetOfPoint(Point location) {
-		if (location == null) {
-			return -1;
-		}
-		StyledText text= fViewer.getTextWidget();
-		int line= ((location.y + text.getTopPixel()) / text.getLineHeight());
-		try {
-			return fDocument.getLineOffset(line);
-		} catch (BadLocationException e) {
-			internalError(e);
-			return -1;
-		}
-	}
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
@@ -3177,7 +3152,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
 	 */
-	public void applyTextPresentation(TextPresentation textPresentation) {
+	@SuppressWarnings("unchecked")
+    public void applyTextPresentation(TextPresentation textPresentation) {
 		IRegion coverage = textPresentation.getExtent();
 		if (coverage == null) {
 			coverage= new Region(0, fDocument.getLength());

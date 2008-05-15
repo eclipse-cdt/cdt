@@ -21,12 +21,16 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoring;
 
 /**
  * @author Guido Zgraggen IFS
  */
 public class HideMethodRefactoringTest extends RefactoringTest {
+	private int warnings;
+	private int errors;
+	private int fatalerrors;
 	
 	public HideMethodRefactoringTest(String name, Vector<TestSourceFile> files) {
 		super(name, files);
@@ -36,21 +40,40 @@ public class HideMethodRefactoringTest extends RefactoringTest {
 	protected void runTest() throws Throwable {
 
 		IFile refFile = project.getFile(fileWithSelection);
-		
-		HideMethodRefactoring refactoring = new HideMethodRefactoring(refFile,selection, null);
+		CRefactoring refactoring = new HideMethodRefactoring(refFile,selection, null);
+		try {
+		refactoring.lockIndex();
 		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-		assertConditionsOk(checkInitialConditions);
+		if(errors > 0) {
+			assertConditionsError(checkInitialConditions, errors);
+		}else if(fatalerrors > 0) {
+			assertConditionsError(checkInitialConditions, errors);
+			return;
+		}else {
+			assertConditionsOk(checkInitialConditions);
+		}
 		
 		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		assertConditionsOk(finalConditions);
+		if(warnings > 0){
+			assertConditionsWarning(finalConditions, warnings);
+		}else{
+			assertConditionsOk(finalConditions);
+		}
 		createChange.perform(NULL_PROGRESS_MONITOR);
 
 		compareFiles(fileMap);
-
+		}
+		finally {
+			refactoring.unlockIndex();
+		}
 	}
 
 	@Override
 	protected void configureRefactoring(Properties refactoringProperties) {
+		warnings = new Integer(refactoringProperties.getProperty("warnings", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
+		errors = new Integer(refactoringProperties.getProperty("errors", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
+		fatalerrors = new Integer(refactoringProperties.getProperty("fatalerrors", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
+		
 	}
 }

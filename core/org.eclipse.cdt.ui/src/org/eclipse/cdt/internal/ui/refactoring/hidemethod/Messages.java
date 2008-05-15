@@ -21,6 +21,7 @@ public final class Messages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String HideMethodRefactoring_HasExternalReferences;
 	public static String HideMethodRefactoring_HIDE_METHOD;
 	public static String HideMethodRefactoring_NoNameSelected;
 	public static String HideMethodRefactoring_NoMethodNameSelected;
@@ -32,6 +33,8 @@ public final class Messages extends NLS {
 	public static String HideMethodRefactoring_NO_FILE;
 	public static String HideMethodRefactoring_NO_PROPER_SELECTION;
 	public static String HideMethodRefactoring_EDITOR_NOT_SAVE;
+	public static String HideMethodRefactoring_EnclosingClassNotFound;
+	public static String HideMethodRefactoring_IsAlreadyPrivate;
 	public static String HideMethodRefactoring_NO_NODES;
 
 	static {

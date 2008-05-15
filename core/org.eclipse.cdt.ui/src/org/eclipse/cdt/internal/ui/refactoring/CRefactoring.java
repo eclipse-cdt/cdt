@@ -11,16 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
+import java.util.Vector;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -31,23 +29,16 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
@@ -62,6 +53,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
+
+import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 /**
  * The baseclass for all other refactorings, provides some common implementations for
@@ -97,7 +90,7 @@ public abstract class CRefactoring extends Refactoring {
 		}
 		else {
 			this.file = file;
-			this.region = getRegion(selection);
+			this.region = SelectionHelper.getRegion(selection);
 		}
 
 		this.initStatus=new RefactoringStatus();
@@ -270,14 +263,6 @@ public abstract class CRefactoring extends Refactoring {
 		return name;
 	}
 
-	private Region getRegion(ISelection selection) {
-		if (selection instanceof ITextSelection) {
-			final ITextSelection txtSelection= (ITextSelection) selection;
-			return new Region(txtSelection.getOffset(), txtSelection.getLength());
-		}
-		return null;
-	}
- 
 	protected boolean loadTranslationUnit(RefactoringStatus status,
 			IProgressMonitor mon) {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 10);
@@ -312,116 +297,6 @@ public abstract class CRefactoring extends Refactoring {
 		return tu.getAST(fIndex, AST_STYLE);
 	}
 
-	private static class ExpressionPosition {
-		public int start;
-		public int end;
-		              
-		@Override
-		public String toString() {
-			return String.format("Position ranges from %d to %d and has a length of %d", Integer.valueOf(start),   //$NON-NLS-1$
-					Integer.valueOf(end), Integer.valueOf(end - start));
-		}
-	}
-	
-	protected static ExpressionPosition createExpressionPosition(IASTNode expression) {
-		ExpressionPosition selection = new ExpressionPosition();
-
-		int nodeLength = 0;
-		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
-		if (nodeLocations.length != 1) {
-			for (IASTNodeLocation location : nodeLocations) {
-				if (location instanceof IASTMacroExpansionLocation) {
-					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) location;
-					selection.start = macroLoc.asFileLocation().getNodeOffset();
-					nodeLength = macroLoc.asFileLocation().getNodeLength();
-				}
-			}
-		} else {
-			if (nodeLocations[0] instanceof IASTMacroExpansionLocation) {
-				IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) nodeLocations[0];
-				selection.start = macroLoc.asFileLocation().getNodeOffset();
-				nodeLength = macroLoc.asFileLocation().getNodeLength();
-			} else {
-				IASTFileLocation loc = expression.getFileLocation();
-				selection.start = loc.getNodeOffset();
-				nodeLength = loc.getNodeLength();
-			}
-		}
-		selection.end = selection.start + nodeLength;
-		return selection;
-	}
-
-	protected boolean isExpressionWhollyInSelection(Region textSelection, IASTNode expression) {
-		ExpressionPosition exprPos = createExpressionPosition(expression);
-
-		int selStart = textSelection.getOffset();
-		int selEnd = textSelection.getLength() + selStart;
-
-		return exprPos.start >= selStart && exprPos.end <= selEnd;
-	}
-
-	public static boolean isSelectionOnExpression(Region textSelection, IASTNode expression) {
-		ExpressionPosition exprPos = createExpressionPosition(expression);
-		int selStart = textSelection.getOffset();
-		int selEnd = textSelection.getLength() + selStart;
-		return exprPos.end > selStart && exprPos.start < selEnd;
-	}
-	
-	protected boolean isInSameFile(IASTNode node) {
-		IPath path = new Path(node.getContainingFilename());
-		IFile locFile = ResourcesPlugin.getWorkspace().getRoot().getFile(file.getLocation());
-		IFile tmpFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		return locFile.equals(tmpFile);
-	}
-	
-	protected boolean isInSameFileSelection(Region textSelection, IASTNode node) {
-		if( isInSameFile(node) ) {
-			return isSelectionOnExpression(textSelection, node);
-		}
-		return false;
-	}
-	
-	protected boolean isSelectedFile(Region textSelection, IASTNode node) {
-		if( isInSameFile(node) ) {
-			return isExpressionWhollyInSelection(textSelection, node);
-		}
-		return false;
-	}
-
-	protected MethodContext findContext(IASTNode node) {
-		boolean found = false;
-		MethodContext context = new MethodContext();
-		context.setType(MethodContext.ContextType.NONE);
-		 IASTName name = null;
-		 while(node != null && !found){
-			 node = node.getParent();
-			 if(node instanceof IASTFunctionDeclarator){
-				 name=((IASTFunctionDeclarator)node).getName();
-				 found = true;
-				 context.setType(MethodContext.ContextType.FUNCTION);
-			 } else if (node instanceof IASTFunctionDefinition){
-				 name=((IASTFunctionDefinition)node).getDeclarator().getName();
-				 found = true;
-				 context.setType(MethodContext.ContextType.FUNCTION);
-			 } 
-		 }
-		 if(name instanceof ICPPASTQualifiedName){
-			 ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
-			 context.setMethodQName(qname);
-			 IBinding bind = qname.resolveBinding();
-			 IASTName[] decl = unit.getDeclarationsInAST(bind);//TODO HSR funktioniert nur fuer namen aus der aktuellen Translationunit
-			 for (IASTName tmpname : decl) {
-				 IASTNode methoddefinition = tmpname.getParent().getParent();
-				 if (methoddefinition instanceof IASTSimpleDeclaration) {
-					 context.setMethodDeclarationName(tmpname);
-					 context.setType(MethodContext.ContextType.METHOD);
-				 }
-			 }
-
-		 }
-		 return context;
-	}
-	
 	protected boolean translationUnitHasProblem() {
 		ProblemFinder pf = new ProblemFinder(initStatus);
 		unit.accept(pf);		
@@ -432,16 +307,6 @@ public abstract class CRefactoring extends Refactoring {
 		AmbiguityFinder af = new AmbiguityFinder();
 		unit.accept(af);
 		return af.ambiguityFound();
-	}
-	
-	protected IASTSimpleDeclaration findSimpleDeclarationInParents(IASTNode node) {
-		while(node != null){
-			if (node instanceof IASTSimpleDeclaration) {
-				return (IASTSimpleDeclaration) node;
-			}
-			node = node.getParent();
-		}
-		return null;
 	}
 	
 	public void lockIndex() throws CoreException, InterruptedException {
@@ -461,5 +326,27 @@ public abstract class CRefactoring extends Refactoring {
 
 	public IIndex getIndex() {
 		return fIndex;
+	}
+	
+	protected Vector<IASTName> findAllMarkedNames() {
+		final Vector<IASTName> namesVector = new Vector<IASTName>();
+
+		unit.accept(new CPPASTVisitor() {
+
+			{
+				shouldVisitNames = true;
+			}
+
+			@Override
+			public int visit(IASTName name) {
+				if (SelectionHelper.isInSameFileSelection(region, name, file)) {
+					if (!(name instanceof ICPPASTQualifiedName)) {
+						namesVector.add(name);
+					}
+				}
+				return super.visit(name);
+			}
+		});
+		return namesVector;
 	}
 }

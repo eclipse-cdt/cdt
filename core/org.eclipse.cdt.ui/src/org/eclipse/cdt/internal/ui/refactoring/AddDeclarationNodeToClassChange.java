@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
+import java.util.ArrayList;
+
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -38,17 +41,28 @@ public class AddDeclarationNodeToClassChange {
 
 	private final ICPPASTCompositeTypeSpecifier nodeClass;
 	private final VisibilityEnum visibility;
-	private final IASTNode fieldNodes;
+	private ArrayList<IASTNode> fieldNodes = new ArrayList<IASTNode>();
 	private final ModificationCollector collector;
 	
 	public static void createChange(ICPPASTCompositeTypeSpecifier nodeClass, VisibilityEnum visibility, IASTNode fieldNodes, boolean isField, ModificationCollector collector) {
 		new AddDeclarationNodeToClassChange(nodeClass, visibility, fieldNodes, collector, isField);
 	}
+	public static void createChange(ICPPASTCompositeTypeSpecifier nodeClass, VisibilityEnum visibility, ArrayList<IASTNode> fieldNodes, boolean isField, ModificationCollector collector) {
+		new AddDeclarationNodeToClassChange(nodeClass, visibility, fieldNodes, collector, isField);
+	}	
 
+	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier nodeClass, VisibilityEnum visibility, ArrayList<IASTNode> fieldNodes, ModificationCollector collector, boolean isField) {
+		this.fieldNodes = fieldNodes;
+		this.nodeClass = nodeClass;		
+		this.visibility = visibility;
+		this.collector = collector;
+		createRewrites(isField);
+	}
+	
 	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier nodeClass, VisibilityEnum visibility, IASTNode fieldNodes, ModificationCollector collector, boolean isField) {
 		this.nodeClass = nodeClass;		
 		this.visibility = visibility;
-		this.fieldNodes = fieldNodes;
+		this.fieldNodes.add(fieldNodes);
 		this.collector = collector;
 		createRewrites(isField);
 	}
@@ -58,8 +72,10 @@ public class AddDeclarationNodeToClassChange {
 		int lastFieldDeclaration = -1;
 		IASTDeclaration[] members = nodeClass.getMembers();
 		
-		// XXX Don't we have to differentiate between the default visibility in a class and a struct?
 		VisibilityEnum currentVisibility = VisibilityEnum.v_private;
+		if(IASTCompositeTypeSpecifier.k_struct == nodeClass.getKey()) {
+			currentVisibility = VisibilityEnum.v_public;
+		}	
 	
 		// Find the insert location by iterating over the elements of the class 
 		// and remembering the last element with the matching visibility
@@ -119,7 +135,9 @@ public class AddDeclarationNodeToClassChange {
 
 	private void insertBefore(IASTNode nearestNode) {			
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(nearestNode.getTranslationUnit());
-		rewrite.insertBefore(nearestNode.getParent(), nearestNode, fieldNodes, createEditDescription());
+		for(IASTNode node: fieldNodes) {
+			rewrite.insertBefore(nearestNode.getParent(), nearestNode, node, createEditDescription());
+		}
 	}
 
 	private void insertAtTheEnd(VisibilityEnum currentVisibility) {
@@ -131,7 +149,9 @@ public class AddDeclarationNodeToClassChange {
 			rewrite.insertBefore(nodeClass, null, label, createEditDescription());
 		}
 		
-		rewrite.insertBefore(nodeClass, null, fieldNodes, createEditDescription());
+		for(IASTNode node: fieldNodes) {
+			rewrite.insertBefore(nodeClass, null, node, createEditDescription());
+		}
 	}
 	
 	private TextEditGroup createEditDescription() {

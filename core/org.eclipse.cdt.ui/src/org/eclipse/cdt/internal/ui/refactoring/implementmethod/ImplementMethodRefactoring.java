@@ -131,7 +131,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		if (!insertLocation.hasFile()) {
 			insertLocation.setInsertFile(file);
 			insertLocation.setNodeToInsertAfter(NodeHelper
-					.getTopLevelParent(methodDeclaration));
+					.findTopLevelParent(methodDeclaration));
 		}
 	}
 

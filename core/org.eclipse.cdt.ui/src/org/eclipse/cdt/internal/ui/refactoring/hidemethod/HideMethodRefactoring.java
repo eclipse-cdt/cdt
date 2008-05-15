@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
 
@@ -99,29 +98,6 @@ public class HideMethodRefactoring extends CRefactoring {
 		}
 		sm.done();
 		return initStatus;
-	}
-	
-	private Vector<IASTName> findAllMarkedNames() {
-		final Vector<IASTName> namesVector = new Vector<IASTName>();		
-			
-		unit.accept(new CPPASTVisitor(){
-
-			{
-				shouldVisitNames = true;
-			}
-
-			@Override
-			public int visit(IASTName name) {
-				if( isInSameFileSelection(region, name) ) {
-					if (!(name instanceof ICPPASTQualifiedName)) {
-						namesVector.add(name);	
-					}
-				}				
-				return super.visit(name);
-			}
-
-		});			
-		return namesVector;
 	}
 	
 	protected IASTSimpleDeclaration findSimpleDeclaration(IASTNode fieldToFoundDecl) {

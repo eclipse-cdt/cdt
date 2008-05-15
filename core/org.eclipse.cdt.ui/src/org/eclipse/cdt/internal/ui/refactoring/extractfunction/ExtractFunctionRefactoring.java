@@ -98,6 +98,8 @@ import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.CPPASTAllVisitor;
+import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
+import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 public class ExtractFunctionRefactoring extends CRefactoring {
 
@@ -187,7 +189,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 
 		info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
-		MethodContext context = findContext(container.getNodesToWrite().get(0));
+		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0));
 		info.setMethodContext(context);
 		sm.done();
 		return status;
@@ -244,7 +246,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		final IASTName astMethodName = new CPPASTName(info.getMethodName()
 				.toCharArray());
-		MethodContext context = findContext(container.getNodesToWrite().get(0));
+		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0));
 
 		if (context.getType() == ContextType.METHOD) {
 			ICPPASTCompositeTypeSpecifier classDeclaration = (ICPPASTCompositeTypeSpecifier) context
@@ -273,7 +275,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		final IASTName astMethodName = new CPPASTName(info.getMethodName()
 				.toCharArray());
 
-		MethodContext context = findContext(container.getNodesToWrite().get(0));
+		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0));
 
 		// Create Declaration in Class
 		if (context.getType() == ContextType.METHOD) {
@@ -781,7 +783,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
 			IASTFunctionCallExpression callExpression, IASTName retname) {
 		if (info.getReturnVariable().equals(info.getInScopeDeclaredVariable())) {
-			IASTSimpleDeclaration orgDecl = findSimpleDeclarationInParents(info
+			IASTSimpleDeclaration orgDecl = NodeHelper.findSimpleDeclarationInParents(info
 					.getReturnVariable().getDeclaration());
 			IASTSimpleDeclaration decl = new CPPASTSimpleDeclaration();
 
@@ -848,7 +850,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			@Override
 			public int visit(IASTStatement stmt) {
 				if (!(stmt instanceof IASTCompoundStatement)
-						&& isSelectedFile(region, stmt)) {
+						&& SelectionHelper.isSelectedFile(region, stmt, file)) {
 					container.add(stmt);
 					return PROCESS_SKIP;
 				}
@@ -857,7 +859,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			@Override
 			public int visit(IASTExpression expression) {
-				if (isSelectedFile(region, expression)) {
+				if (SelectionHelper.isSelectedFile(region, expression, file)) {
 					container.add(expression);
 					return PROCESS_SKIP;
 				}

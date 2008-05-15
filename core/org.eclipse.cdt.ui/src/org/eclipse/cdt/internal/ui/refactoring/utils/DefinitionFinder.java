@@ -78,10 +78,10 @@ public class DefinitionFinder {
 		} else {
 			transUnit = parsedFiles.get(pdomref[0].getFileLocation().getFileName());
 		}
-		return findDefinitionInTranslationUnit(transUnit, methodName, pdomref[0]);
+		return findDefinitionInTranslationUnit(transUnit, pdomref[0]);
 	}
 
-	private static IASTName findDefinitionInTranslationUnit(IASTTranslationUnit transUnit, final IASTName name2, final IIndexName indexName) {
+	private static IASTName findDefinitionInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
 		final Container<IASTName> defName = new Container<IASTName>();
 		transUnit.accept(new CPPASTVisitor() {
 			{

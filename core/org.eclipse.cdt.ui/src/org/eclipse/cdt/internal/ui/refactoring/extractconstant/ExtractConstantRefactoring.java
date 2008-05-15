@@ -64,6 +64,8 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
+import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 
 /**
@@ -218,7 +220,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	private boolean isOneMarked(Collection<IASTLiteralExpression> literalExpressionVector, Region textSelection) {
 		boolean oneMarked = false;
 		for (IASTLiteralExpression expression : literalExpressionVector) {
-			boolean isInSameFileSelection = isInSameFileSelection(textSelection, expression);
+			boolean isInSameFileSelection = SelectionHelper.isInSameFileSelection(textSelection, expression, file);
 			if(isInSameFileSelection){
 				if(target == null) {
 					target = expression;
@@ -259,13 +261,13 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 		throws CoreException, OperationCanceledException {
 		
-		MethodContext context = findContext(target);
+		MethodContext context = NodeHelper.findMethodContext(target);
 		Collection<IASTExpression> locLiteralsToReplace = new ArrayList<IASTExpression>();
 
 		if(context.getType() == MethodContext.ContextType.METHOD){
 			
 			for (IASTExpression expression : literalsToReplace) {
-				MethodContext exprContext = findContext(expression);
+				MethodContext exprContext = NodeHelper.findMethodContext(expression);
 				if(exprContext.getType() == MethodContext.ContextType.METHOD){
 					if( MethodContext.isSameClass(exprContext.getMethodQName(), context.getMethodQName())){
 						locLiteralsToReplace.add(expression);

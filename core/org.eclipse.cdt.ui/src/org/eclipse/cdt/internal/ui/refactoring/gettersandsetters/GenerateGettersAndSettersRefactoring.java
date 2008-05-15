@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
@@ -84,7 +85,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 							if ((declarators[0] instanceof IASTFunctionDeclarator)) {
 								context.existingFunctionDeclarations.add(fieldDeclaration);
 							} else {
-								if(isInSameFile(fieldDeclaration)){
+								if(SelectionHelper.isInSameFile(fieldDeclaration, file)){
 									context.existingFields.add(fieldDeclaration);
 								}
 							}

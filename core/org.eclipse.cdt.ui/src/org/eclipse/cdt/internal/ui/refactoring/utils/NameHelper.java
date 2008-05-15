@@ -15,12 +15,13 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
@@ -37,7 +38,15 @@ public class NameHelper {
 
 	public static boolean isValidLocalVariableName(String name) {
 		boolean valid = Pattern.compile(localVariableRegexp).matcher(name).matches();
-		return valid; /* && Keyword.getKeyword(stringToValidate, stringToValidate.length()) == null*/ //TODO Check for keywords?;
+		return valid;
+	}
+	
+	public static boolean isKeyword(String name) {
+		CharArrayIntMap keywords = new CharArrayIntMap(0, -1);
+		Keywords.addKeywordsC(keywords);
+		Keywords.addKeywordsCpp(keywords);
+		Keywords.addKeywordsPreprocessor(keywords);
+		return keywords.containsKey(name.toCharArray());
 	}
 	
 	/**
@@ -67,34 +76,6 @@ public class NameHelper {
 
 		qname.addName(declaratorName);
 		return qname;
-	}
-	
-	
-	public static IASTFunctionDefinition getAncestorFunctionDefinition(IASTName startNode) {
-		return (IASTFunctionDefinition) getAncestorDefinition(startNode, IASTFunctionDefinition.class);
-	}
-	
-	public static IASTSimpleDeclaration getAncestorFunctionDeclaration(IASTName startNode) {
-		return (IASTSimpleDeclaration) getAncestorDefinition(startNode, IASTSimpleDeclaration.class);
-	}
-
-	public static ICPPASTCompositeTypeSpecifier getAncestorClassDefinition(IASTName startNode) {
-		return (ICPPASTCompositeTypeSpecifier) getAncestorDefinition(startNode, ICPPASTCompositeTypeSpecifier.class);
-	}
-	
-
-	public static IASTNode getAncestorDefinition(IASTName startNode, Class<? extends IASTNode> type) {
-		
-		IASTNode node = startNode;
-		
-		while(node != null ){
-			if(type.isInstance(node)) {
-				return node;
-			}
-			node = node.getParent();			
-		}
-		
-		return null;
 	}
 	
 	public static String trimFieldName(String fieldName){
@@ -129,6 +110,14 @@ public class NameHelper {
 			name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 		}
 		return name;
-	}
+	} 
 
+	public static String getTypeName(IASTParameterDeclaration parameter) {
+		IASTDeclSpecifier parameterDeclSpecifier = parameter.getDeclSpecifier();
+		if (parameterDeclSpecifier instanceof ICPPASTNamedTypeSpecifier) {
+			return ((ICPPASTNamedTypeSpecifier) parameterDeclSpecifier).getName().getRawSignature();
+		} else {
+			return parameterDeclSpecifier.getRawSignature();
+		}
+	}
 }

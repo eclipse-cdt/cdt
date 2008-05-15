@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight     (IBM)       - [232233] [dstore] Buffer in DataElement is not retained
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -371,10 +371,8 @@ public class XMLgenerator
 					indent();
 					append("<Buffer>"); //$NON-NLS-1$
 					nextLine();
-					indent();
 					append(text.toString());
 					nextLine();
-					indent();
 					append("</Buffer>"); //$NON-NLS-1$
 				}
 			}

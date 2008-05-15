@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.TreeMap;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -83,10 +84,12 @@ public class ASTCommenter {
 	private static ArrayList<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu, ArrayList<IASTComment> comments) {
 		IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
 		TreeMap<Integer,Object> treeOfPreProcessorLines = new TreeMap<Integer,Object>();
+		ArrayList<Integer> listOfPreProcessorOffset = new ArrayList<Integer>();
 
 		for (IASTPreprocessorStatement statement : preprocessorStatements) {
 			if (isInWorkspace(statement)) {
 				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement),null);
+				listOfPreProcessorOffset.add(statement.getFileLocation().getNodeOffset());
 			}
 		}
 
@@ -96,9 +99,39 @@ public class ASTCommenter {
 			if (treeOfPreProcessorLines.containsKey(comStartLineNumber)) {
 				continue;
 			}
+			if(commentIsAtTheBeginningBeforePreprocessorStatements(comment, listOfPreProcessorOffset)) {
+				continue;
+			}
 			commentsInCode.add(comment);
 		}
 		return commentsInCode;
+	}
+
+	private static boolean commentIsAtTheBeginningBeforePreprocessorStatements(
+			IASTComment comment, 
+			ArrayList<Integer> listOfPreProcessorOffset) {
+		if(listOfPreProcessorOffset.size() <1) {
+			return false;
+		}
+		
+		if(comment.getTranslationUnit()==null || comment.getTranslationUnit().getDeclarations().length < 1) {
+			return true;
+		}
+		IASTDeclaration decl = comment.getTranslationUnit().getDeclarations()[0];		
+		if(decl.getFileLocation().getNodeOffset() < comment.getFileLocation().getNodeOffset()) {
+			return false;
+		}
+		
+		Collections.sort(listOfPreProcessorOffset);
+		if(listOfPreProcessorOffset.get(0) < comment.getFileLocation().getNodeOffset()) {
+			return false;
+		}
+		
+		if(listOfPreProcessorOffset.get(0) < decl.getFileLocation().getNodeOffset()) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	private static boolean isInWorkspace(IASTNode node) {

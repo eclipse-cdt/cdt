@@ -1458,6 +1458,7 @@ public class CPPTemplates {
 			return null;
 		}
 
+		args= SemanticUtil.getSimplifiedTypes(args);
 		ICPPClassTemplatePartialSpecialization[] specializations = template.getPartialSpecializations();
 		if (specializations == null) {
 			return template;
@@ -1720,6 +1721,7 @@ public class CPPTemplates {
 		IType[] actualArgs = new IType[numParams];
 		boolean argsContainDependentType = false;
 
+		arguments= SemanticUtil.getSimplifiedTypes(arguments);
 		for (int i = 0; i < numParams; i++) {
 			arg = null;
 			param = parameters[i];

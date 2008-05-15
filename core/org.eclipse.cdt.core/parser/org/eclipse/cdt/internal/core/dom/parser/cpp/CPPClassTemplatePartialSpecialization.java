@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * @author aniefer
@@ -59,6 +60,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 
 	@Override
 	public IBinding instantiate( IType [] args ){
+		args= SemanticUtil.getSimplifiedTypes(args);
 		ICPPSpecialization instance = getInstance( args );
 		if( instance != null ){
 			return instance;
@@ -77,6 +79,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
 			if( CPPTemplates.isDependentType( arg ) ){
+				// mstodo the argmap may be partially filled
 				return deferredInstance( argMap, args );
 			}
 			try {

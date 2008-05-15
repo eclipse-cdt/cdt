@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
@@ -30,6 +32,8 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
@@ -219,6 +223,62 @@ public class SemanticUtil {
 			type= e.getProblem();
 		}
 		return type;
+	}
+
+	/**
+	 * Simplifies type by resolving typedefs within the given type.
+	 */
+	static IType getSimplifiedType(IType type) {
+		try {
+			if (type instanceof IFunctionType) {
+				IType ret = null;
+				IType[] params = null;
+				final IType r = ((IFunctionType) type).getReturnType();
+				ret = getSimplifiedType(r);
+				IType[] ps = ((IFunctionType) type).getParameterTypes();
+				params = getSimplifiedTypes(ps);
+				if (ret == r && params == ps) {
+					return type;
+				}
+				return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).isConst(),
+						((ICPPFunctionType) type).isVolatile());
+			} 
+
+			if (type instanceof ITypeContainer) {
+				final IType nestedType= ((ITypeContainer) type).getType();
+				if (nestedType == null) 
+					return type;
+				
+				IType newType= getSimplifiedType(nestedType);
+				if (newType != nestedType) {
+					type= (IType) type.clone();
+					((ITypeContainer) type).setType(newType);
+					return type;
+				} 
+				return type;
+			} 
+		} catch (DOMException e) {
+		}
+		return type;
+	}
+
+	public static IType[] getSimplifiedTypes(IType[] types) {
+		// Don't create a new array until it's really needed.
+		IType[] result = types;
+		for (int i = 0; i < types.length; i++) {
+			final IType type = types[i];
+			final IType newType= getSimplifiedType(type);
+			if (result != types) {
+				result[i]= newType;
+			} else if (type != newType) {
+				result = new IType[types.length];
+				if (i > 0) {
+					System.arraycopy(types, 0, result, 0, i);
+				}
+				result[i]= newType;
+			}
+		}
+		return result;
 	}
 
 }

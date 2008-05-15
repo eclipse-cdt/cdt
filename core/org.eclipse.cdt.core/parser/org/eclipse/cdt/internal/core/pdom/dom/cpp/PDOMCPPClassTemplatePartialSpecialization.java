@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -168,6 +169,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 
 	@Override
 	public IBinding instantiate(IType[] args) {
+		args= SemanticUtil.getSimplifiedTypes(args);
+		
 		ICPPSpecialization instance = getInstance( args );
 		if( instance != null ){
 			return instance;
@@ -186,6 +189,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
 			if( CPPTemplates.isDependentType( arg ) ){
+				// mstodo argMap may be partially initialized.
 				return deferredInstance( argMap, args );
 			}
 			try {

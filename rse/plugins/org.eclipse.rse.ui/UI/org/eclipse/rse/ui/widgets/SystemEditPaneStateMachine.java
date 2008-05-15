@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
+ * David Dykstal (IBM) - [232318] force layout and repaint after changing labels
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -25,9 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 
 
 /**
- * @author coulthar
- *
- * This class attempts to encapsulate the states an edit page (with apply/reset buttons)
+ * This class encapsulates the states an edit page (with apply/reset buttons)
  * can go through and handle managing the state transitions. For example, it manages
  * the enabled/disabled state of the apply/reset buttons. 
  * <p>
@@ -346,6 +345,9 @@ public class SystemEditPaneStateMachine
     			  //}
     			}
     		}
+    		Composite parent = applyButton.getParent();
+        	parent.layout();
+        	parent.update();
     	}
     }
 

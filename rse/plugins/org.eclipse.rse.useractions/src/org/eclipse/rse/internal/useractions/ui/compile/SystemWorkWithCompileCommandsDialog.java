@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David Dykstal (IBM) - [232318] fixing layout problems with button composite
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -243,15 +244,16 @@ public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog impl
 		// now populate bottom of right-side composite with apply/revert buttons within their own composite
 		int nbrColumns_buttonComposite = 3;
 		Composite applyResetButtonComposite = SystemWidgetHelpers.createFlushComposite(rightSideComposite, nbrColumns_buttonComposite);
-		((GridData) applyResetButtonComposite.getLayoutData()).horizontalIndent = 200; // shift buttons to the right
 		// now populate the buttons composite with apply and revert buttons
 		Label filler = SystemWidgetHelpers.createLabel(applyResetButtonComposite, ""); //$NON-NLS-1$
 		((GridData) filler.getLayoutData()).grabExcessHorizontalSpace = true;
 		((GridData) filler.getLayoutData()).horizontalAlignment = GridData.FILL;
 		applyButton = SystemWidgetHelpers.createPushButton(applyResetButtonComposite, this, SystemUDAResources.RESID_WWCOMPCMDS_BUTTON_APPLY_LABEL,
 				SystemUDAResources.RESID_WWCOMPCMDS_BUTTON_APPLY_TOOLTIP);
+		((GridData) applyButton.getLayoutData()).grabExcessHorizontalSpace = false;
 		revertButton = SystemWidgetHelpers.createPushButton(applyResetButtonComposite, this, SystemUDAResources.RESID_WWCOMPCMDS_BUTTON_REVERT_LABEL,
 				SystemUDAResources.RESID_WWCOMPCMDS_BUTTON_REVERT_TOOLTIP);
+		((GridData) revertButton.getLayoutData()).grabExcessHorizontalSpace = false;
 		// now add a spacer to soak up left-over height...
 		addGrowableFillerLine(rightSideComposite, 1);
 		// create state machine to manage edit pane

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -2481,6 +2483,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		assertInstance(col.getName(4).getParent(), ICPPASTTemplateId.class);
 		assertInstance(col.getName(5).getParent(), IASTIdExpression.class);
+	}
+	
+	// template<class T1, int q> class C {};    
+	// template<class T1, class T2> class A {};
+	// template< class T1, class T2, int q1, int q2>
+	// class A< C<T1, q1>, C<T2, q2> > {};      
+	public void testTemplateIdAsTemplateArgumentIsTypeId_229942() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		// 12 is template-id: C<T1, q1>
+		assertInstance(col.getName(12), ICPPASTTemplateId.class);
+		assertInstance(col.getName(12).getParent(), ICPPASTNamedTypeSpecifier.class);
+		assertInstance(col.getName(12).getParent().getParent(), IASTTypeId.class);
+
+		// 16 is template-id: C<T2, q2>
+		assertInstance(col.getName(16), ICPPASTTemplateId.class);
+		assertInstance(col.getName(16).getParent(), ICPPASTNamedTypeSpecifier.class);
+		assertInstance(col.getName(16).getParent().getParent(), IASTTypeId.class);
 	}
 	
 	//  // From discussion in 207840. See 14.3.4.

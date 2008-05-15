@@ -409,7 +409,7 @@ public final class CIndenter {
 	 *         reference position to <code>offset</code> resides, or <code>null</code>
 	 *         if it cannot be determined
 	 */
-	public StringBuffer getReferenceIndentation(int offset) {
+	public StringBuilder getReferenceIndentation(int offset) {
 		return getReferenceIndentation(offset, false);
 	}
 
@@ -422,7 +422,7 @@ public final class CIndenter {
 	 *         reference position to <code>offset</code> resides, or <code>null</code>
 	 *         if it cannot be determined
 	 */
-	private StringBuffer getReferenceIndentation(int offset, boolean assumeOpeningBrace) {
+	private StringBuilder getReferenceIndentation(int offset, boolean assumeOpeningBrace) {
 		int unit;
 		if (assumeOpeningBrace)
 			unit= findReferencePosition(offset, Symbols.TokenLBRACE);
@@ -444,7 +444,7 @@ public final class CIndenter {
 	 *         which offset resides, or <code>null</code> if it cannot be
 	 *         determined
 	 */
-	public StringBuffer computeIndentation(int offset) {
+	public StringBuilder computeIndentation(int offset) {
 		return computeIndentation(offset, false);
 	}
 
@@ -457,8 +457,8 @@ public final class CIndenter {
 	 *         which offset resides, or <code>null</code> if it cannot be
 	 *         determined
 	 */
-	public StringBuffer computeIndentation(int offset, boolean assumeOpeningBrace) {
-		StringBuffer reference= getReferenceIndentation(offset, assumeOpeningBrace);
+	public StringBuilder computeIndentation(int offset, boolean assumeOpeningBrace) {
+		StringBuilder reference= getReferenceIndentation(offset, assumeOpeningBrace);
 
 		// handle special alignment
 		if (fAlign != CHeuristicScanner.NOT_FOUND) {
@@ -483,13 +483,13 @@ public final class CIndenter {
 	 * Computes the indentation for a continuation line at <code>offset</code>.
 	 *
 	 * @param offset the offset in the document
-	 * @return a StringBuffer which reflects the correct indentation for
+	 * @return a StringBuilder which reflects the correct indentation for
 	 *         the line in  which offset resides, or <code>null</code> if it cannot be
 	 *         determined.
 	 * @throws BadLocationException
 	 */
-	public StringBuffer computeContinuationLineIndentation(int offset) throws BadLocationException {
-		StringBuffer reference= getLeadingWhitespace(offset);
+	public StringBuilder computeContinuationLineIndentation(int offset) throws BadLocationException {
+		StringBuilder reference= getLeadingWhitespace(offset);
 		IRegion line= fDocument.getLineInformationOfOffset(offset);
 		String string= fDocument.get(line.getOffset(), offset - line.getOffset());
 		if (string.trim().length() == 0)
@@ -534,7 +534,7 @@ public final class CIndenter {
 	 * @param indentLength the maximum visual indentation length
 	 * @return the stripped <code>reference</code>
 	 */
-	private StringBuffer stripExceedingChars(StringBuffer reference, int indentLength) {
+	private StringBuilder stripExceedingChars(StringBuilder reference, int indentLength) {
 		final int tabSize= fPrefs.prefTabSize;
 		int measured= 0;
 		int chars= reference.length();
@@ -560,15 +560,15 @@ public final class CIndenter {
 
 	/**
 	 * Returns the indentation of the line at <code>offset</code> as a
-	 * <code>StringBuffer</code>. If the offset is not valid, the empty string
+	 * <code>StringBuilder</code>. If the offset is not valid, the empty string
 	 * is returned.
 	 *
 	 * @param offset the offset in the document
 	 * @return the indentation (leading whitespace) of the line in which
 	 * 		   <code>offset</code> is located
 	 */
-	private StringBuffer getLeadingWhitespace(int offset) {
-		StringBuffer indent= new StringBuffer();
+	private StringBuilder getLeadingWhitespace(int offset) {
+		StringBuilder indent= new StringBuilder();
 		try {
 			IRegion line= fDocument.getLineInformationOfOffset(offset);
 			int lineOffset= line.getOffset();
@@ -600,10 +600,10 @@ public final class CIndenter {
 	 * @return the indentation corresponding to the document content specified
 	 *         by <code>start</code> and <code>indent</code>
 	 */
-	private StringBuffer createIndent(int start, final int indent, final boolean convertSpaceRunsToTabs) {
+	private StringBuilder createIndent(int start, final int indent, final boolean convertSpaceRunsToTabs) {
 		final boolean convertTabs= fPrefs.prefUseTabs && convertSpaceRunsToTabs;
 		final int tabLen= fPrefs.prefTabSize;
-		final StringBuffer ret= new StringBuffer();
+		final StringBuilder ret= new StringBuilder();
 		try {
 			int spaces= 0;
 			while (start < indent) {
@@ -643,7 +643,7 @@ public final class CIndenter {
 	 * @return the modified <code>buffer</code> reflecting the indentation
 	 *         adapted to <code>additional</code>
 	 */
-	public StringBuffer createReusingIndent(StringBuffer buffer, int additional) {
+	public StringBuilder createReusingIndent(StringBuilder buffer, int additional) {
 		int refLength= computeVisualLength(buffer);
 		int addLength= fPrefs.prefIndentationSize * additional; // may be < 0
 		int totalLength= Math.max(0, refLength + addLength);

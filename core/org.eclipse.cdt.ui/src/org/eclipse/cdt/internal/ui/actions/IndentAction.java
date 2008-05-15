@@ -66,8 +66,8 @@ public class IndentAction extends TextEditorAction {
 	/** The caret offset after an indent operation. */
 	private int fCaretOffset;
 	
-	/** 
-	 * Whether this is the action invoked by TAB. When <code>true</code>, indentation behaves 
+	/**
+	 * Whether this is the action invoked by TAB. When <code>true</code>, indentation behaves
 	 * differently to accommodate normal TAB operation.
 	 */
 	private final boolean fIsTabAction;
@@ -174,8 +174,8 @@ public class IndentAction extends TextEditorAction {
 	 * @param newLength the selection range
 	 */
 	private void selectAndReveal(int newOffset, int newLength) {
-		Assert.isTrue(newOffset >= 0); 
-		Assert.isTrue(newLength >= 0); 
+		Assert.isTrue(newOffset >= 0);
+		Assert.isTrue(newLength >= 0);
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof CEditor) {
 			ISourceViewer viewer= ((CEditor)editor).getViewer();
@@ -188,7 +188,7 @@ public class IndentAction extends TextEditorAction {
 	}
 
 	/**
-	 * Indents a single line using the heuristic scanner. Multiline comments are 
+	 * Indents a single line using the heuristic scanner. Multiline comments are
 	 * indented as specified by the <code>CCommentAutoIndentStrategy</code>.
 	 * 
 	 * @param document the document
@@ -196,9 +196,9 @@ public class IndentAction extends TextEditorAction {
 	 * @param caret the caret position
 	 * @param indenter the indenter
 	 * @param scanner the heuristic scanner
-	 * @param multiLine <code>true</code> if more than one line is being indented 
+	 * @param multiLine <code>true</code> if more than one line is being indented
 	 * @return <code>true</code> if <code>document</code> was modified, <code>false</code> otherwise
-	 * @throws BadLocationException if the document got changed concurrently 
+	 * @throws BadLocationException if the document got changed concurrently
 	 */
 	private boolean indentLine(IDocument document, int line, int caret, CIndenter indenter, CHeuristicScanner scanner, boolean multiLine) throws BadLocationException {
 		IRegion currentLine= document.getLineInformation(line);
@@ -224,9 +224,9 @@ public class IndentAction extends TextEditorAction {
 					
 					wsStart= offset + slashes;
 					
-					StringBuffer computed= indenter.computeIndentation(offset);
+					StringBuilder computed= indenter.computeIndentation(offset);
 					if (computed == null)
-						computed= new StringBuffer(0);
+						computed= new StringBuilder(0);
 					int tabSize= getTabSize();
 					while (slashes > 0 && computed.length() > 0) {
 						char c= computed.charAt(0);
@@ -251,7 +251,7 @@ public class IndentAction extends TextEditorAction {
 		
 		// standard C code indentation
 		if (indent == null) {
-			StringBuffer computed= indenter.computeIndentation(offset);
+			StringBuilder computed= indenter.computeIndentation(offset);
 			if (computed != null)
 				indent= computed.toString();
 			else
@@ -324,7 +324,7 @@ public class IndentAction extends TextEditorAction {
 	
 	/**
 	 * Returns the size in characters of a string. All characters count one, tabs count the editor's
-	 * preference for the tab display 
+	 * preference for the tab display
 	 * 
 	 * @param indent the string to be measured.
 	 * @return the size in characters of a string
@@ -459,7 +459,7 @@ public class IndentAction extends TextEditorAction {
 	}
 	
 	/**
-	 * Returns if the current selection is valid, i.e. whether it is empty and the caret in the 
+	 * Returns if the current selection is valid, i.e. whether it is empty and the caret in the
 	 * whitespace at the start of a line, or covers multiple lines.
 	 * 
 	 * @return <code>true</code> if the selection is valid for an indent operation
@@ -484,7 +484,7 @@ public class IndentAction extends TextEditorAction {
 			// or the selection has to extend over multiple lines
 			if (length == 0) {
 				return document.get(lineOffset, offset - lineOffset).trim().length() == 0;
-			} 
+			}
 //			return lineOffset + firstLine.getLength() < offset + length;
 			return false; // only enable for empty selections for now
 		} catch (BadLocationException e) {
@@ -508,7 +508,7 @@ public class IndentAction extends TextEditorAction {
 	}
 	
 	/**
-	 * Returns the document currently displayed in the editor, or <code>null</code> if none can be 
+	 * Returns the document currently displayed in the editor, or <code>null</code> if none can be
 	 * obtained.
 	 * 
 	 * @return the current document or <code>null</code>

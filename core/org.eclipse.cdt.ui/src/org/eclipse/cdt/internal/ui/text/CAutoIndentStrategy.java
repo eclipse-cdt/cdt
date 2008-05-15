@@ -49,15 +49,15 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	private static final String LINE_COMMENT= "//"; //$NON-NLS-1$
 //	private static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
 
-	private static class CompilationUnitInfo {
-		char[] buffer;
-		int delta;
-
-		CompilationUnitInfo(char[] buffer, int delta) {
-			this.buffer = buffer;
-			this.delta = delta;
-		}
-	}
+//	private static class CompilationUnitInfo {
+//		char[] buffer;
+//		int delta;
+//
+//		CompilationUnitInfo(char[] buffer, int delta) {
+//			this.buffer = buffer;
+//			this.delta = delta;
+//		}
+//	}
 
 	private boolean fCloseBrace;
 	private boolean fIsSmartMode;
@@ -89,7 +89,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 							// a comment starts, advance to the comment end
 							start = getCommentEnd(d, start + 1, end);
 						} else if (next == '/') {
-							// '//'-comment: nothing to do anymore on this line 
+							// '//'-comment: nothing to do anymore on this line
 							start = end;
 						}
 					}
@@ -186,7 +186,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				int indLine = d.getLineOfOffset(reference);
 				if (indLine != -1 && indLine != line) {
 					// take the indent of the found line
-					StringBuffer replaceText = new StringBuffer(getIndentOfLine(d, indLine));
+					StringBuilder replaceText = new StringBuilder(getIndentOfLine(d, indLine));
 					// add the rest of the current line including the just added close bracket
 					replaceText.append(d.get(whiteend, c.offset - whiteend));
 					replaceText.append(c.text);
@@ -230,7 +230,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			// Only shift if the last C line is further up and is a braceless block candidate
 			if (lastLine < line) {
 				CIndenter indenter = new CIndenter(d, scanner, fProject);
-				StringBuffer indent = indenter.computeIndentation(p, true);
+				StringBuilder indent = indenter.computeIndentation(p, true);
 				String toDelete = d.get(lineOffset, c.offset - lineOffset);
 				if (indent != null && !indent.toString().equals(toDelete)) {
 					c.text = indent.append(c.text).toString();
@@ -253,7 +253,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		CHeuristicScanner scanner= new CHeuristicScanner(d);
 		try {
 			ITypedRegion partition= TextUtilities.getPartition(d, fPartitioning, c.offset, false);
-			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType()) && d.get(c.offset-1, 1).charAt(0) == '\\') {
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType()) && c.offset > 0 && d.getChar(c.offset-1) == '\\') {
 				scanner = new CHeuristicScanner(d, fPartitioning, ICPartitions.C_PREPROCESSOR);
 				addIndent= 1;
 			}
@@ -263,7 +263,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			int start = reg.getOffset();
 			int lineEnd = start + reg.getLength();
 
-			StringBuffer indent= null;
+			StringBuilder indent= null;
 			CIndenter indenter= new CIndenter(d, scanner, fProject);
 			if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_AUTO_INDENT)) {
 				indent= indenter.computeIndentation(c.offset);
@@ -271,18 +271,18 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				// reuse existing indent
 				int wsEnd= findEndOfWhiteSpace(d, start, c.offset);
 				if (wsEnd > start) {
-					indent= new StringBuffer(d.get(start, wsEnd - start));
+					indent= new StringBuilder(d.get(start, wsEnd - start));
 					addIndent= 0;
 				}
 			}
 			if (indent == null) {
-				indent= new StringBuffer(); 
+				indent= new StringBuilder();
 			}
 			if (addIndent > 0 && indent.length() == 0) {
 				indent= indenter.createReusingIndent(indent, addIndent);
 			}
 
-			StringBuffer buf = new StringBuffer(c.text + indent);
+			StringBuilder buf = new StringBuilder(c.text + indent);
 			int contentStart = findEndOfWhiteSpace(d, c.offset, lineEnd);
 			c.length =  Math.max(contentStart - c.offset, 0);
 
@@ -301,10 +301,10 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				}
 
 				buf.append(TextUtilities.getDefaultLineDelimiter(d));
-				StringBuffer reference = null;
+				StringBuilder reference = null;
 				int nonWS = findEndOfWhiteSpace(d, start, lineEnd);
 				if (nonWS < c.offset && d.getChar(nonWS) == '{')
-					reference = new StringBuffer(d.get(start, nonWS - start));
+					reference = new StringBuilder(d.get(start, nonWS - start));
 				else
 					reference = indenter.getReferenceIndentation(c.offset);
 				if (reference != null)
@@ -326,10 +326,10 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 					c.caretOffset = c.offset + buf.length();
 					c.shiftsCaret = false;
 
-					StringBuffer reference = null;
+					StringBuilder reference = null;
 					int nonWS = findEndOfWhiteSpace(d, start, lineEnd);
 					if (nonWS < c.offset && d.getChar(nonWS) == '{')
-						reference = new StringBuffer(d.get(start, nonWS - start));
+						reference = new StringBuilder(d.get(start, nonWS - start));
 					else
 						reference = indenter.getReferenceIndentation(c.offset);
 
@@ -408,35 +408,35 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	}
 
 	private boolean isClosedBrace(IDocument document, int offset, int length) {
-		CompilationUnitInfo info = getCompilationUnitForMethod(document, offset, fPartitioning);
-		if (info == null)
-			return false;
-
 		return getBlockBalance(document, offset, fPartitioning) <= 0;
-		//TODO: Use smarter algorithm based on 
+		//TODO: Use smarter algorithm based on
+//		CompilationUnitInfo info = getCompilationUnitForMethod(document, offset, fPartitioning);
+//		if (info == null)
+//			return false;
+//
 //		CodeReader reader = new CodeReader(info.buffer);
 //		ICodeReaderFactory fileCreator = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE);
-//		
+//
 //		IScanner domScanner = new DOMScanner(reader, new ScannerInfo(), ParserMode.COMPLETE_PARSE,
 //				ParserLanguage.C, ParserFactory.createDefaultLogService(),
 //				C_GNU_SCANNER_EXTENSION, fileCreator);
-//		
+//
 //		ISourceCodeParser parser = new GNUCPPSourceParser(
 //				domScanner,
 //				ParserMode.COMPLETE_PARSE,
 //				ParserUtil.getParserLogService(),
 //				new GPPParserExtensionConfiguration());
-//	
+//
 //		IASTTranslationUnit translationUnit = parser.parse();
 //		final int relativeOffset = offset - info.delta;
 //	    IASTNode node = translationUnit.selectNodeForLocation(reader.getPath(), relativeOffset, length);
-//		
+//
 //		if (node == null)
 //			return false;
 //
 //		if (node instanceof IASTCompoundStatement) {
 //			return getBlockBalance(document, offset, fPartitioning) <= 0;
-//		} else if (node instanceof IASTIfStatement) { 
+//		} else if (node instanceof IASTIfStatement) {
 //			IASTIfStatement ifStatement = (IASTIfStatement) node;
 //			IASTExpression expression = ifStatement.getConditionExpression();
 //			IRegion expressionRegion = createRegion(expression, info.delta);
@@ -463,7 +463,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 //						return pos <= offset && offset + length < elseRegion.getOffset();
 //					}
 //				}
-//				
+//
 //				return true;
 //			}
 //		} else if (node instanceof IASTForStatement) {
@@ -582,7 +582,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			// (as the first might be partially selected) and use the value to
 			// indent all other lines.
 			boolean isIndentDetected= false;
-			StringBuffer addition= new StringBuffer();
+			StringBuilder addition= new StringBuilder();
 			int insertLength= 0;
 			int first= document.computeNumberOfLines(prefix) + firstLine; // don't format first line
 			int lines= temp.getNumberOfLines();
@@ -600,7 +600,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				if (!isIndentDetected) {
 					// indent the first pasted line
 					String current= IndentUtil.getCurrentIndent(temp, l, indentInsideLineComments);
-					StringBuffer correct= new StringBuffer(IndentUtil.computeIndent(temp, l, indenter, scanner));
+					StringBuilder correct= new StringBuilder(IndentUtil.computeIndent(temp, l, indenter, scanner));
 
 					insertLength= subtractIndent(correct, current, addition);
 					// workaround for bug 181139
@@ -651,7 +651,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	 * @param difference a string buffer - if the return value is positive, it will be cleared and set to the substring of <code>current</code> of that length
 	 * @return the difference in lenght of <code>correct</code> and <code>current</code>
 	 */
-	private int subtractIndent(CharSequence correct, CharSequence current, StringBuffer difference) {
+	private int subtractIndent(CharSequence correct, CharSequence current, StringBuilder difference) {
 		int c1= computeVisualLength(correct);
 		int c2= computeVisualLength(current);
 		int diff= c1 - c2;
@@ -1164,29 +1164,29 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		return false;
 	}
 
-	private static CompilationUnitInfo getCompilationUnitForMethod(IDocument document, int offset, String partitioning) {
-		try {
-			CHeuristicScanner scanner = new CHeuristicScanner(document);
-
-			IRegion sourceRange = scanner.findSurroundingBlock(offset);
-			if (sourceRange == null)
-				return null;
-			String source = document.get(sourceRange.getOffset(), sourceRange.getLength());
-
-			StringBuffer contents = new StringBuffer();
-			contents.append("class ____C{void ____m()"); //$NON-NLS-1$
-			final int methodOffset = contents.length();
-			contents.append(source);
-			contents.append("};"); //$NON-NLS-1$
-
-			char[] buffer = contents.toString().toCharArray();
-			return new CompilationUnitInfo(buffer, sourceRange.getOffset() - methodOffset);
-		} catch (BadLocationException e) {
-			CUIPlugin.log(e);
-		}
-
-		return null;
-	}
+//	private static CompilationUnitInfo getCompilationUnitForMethod(IDocument document, int offset, String partitioning) {
+//		try {
+//			CHeuristicScanner scanner = new CHeuristicScanner(document);
+//
+//			IRegion sourceRange = scanner.findSurroundingBlock(offset);
+//			if (sourceRange == null)
+//				return null;
+//			String source = document.get(sourceRange.getOffset(), sourceRange.getLength());
+//
+//			StringBuilder contents = new StringBuilder();
+//			contents.append("class ____C{void ____m()"); //$NON-NLS-1$
+//			final int methodOffset = contents.length();
+//			contents.append(source);
+//			contents.append("};"); //$NON-NLS-1$
+//
+//			char[] buffer = contents.toString().toCharArray();
+//			return new CompilationUnitInfo(buffer, sourceRange.getOffset() - methodOffset);
+//		} catch (BadLocationException e) {
+//			CUIPlugin.log(e);
+//		}
+//
+//		return null;
+//	}
 
 	/**
 	 * Returns the block balance, i.e. zero if the blocks are balanced at

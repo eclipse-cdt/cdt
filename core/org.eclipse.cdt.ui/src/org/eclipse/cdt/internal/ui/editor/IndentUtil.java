@@ -181,10 +181,10 @@ public final class IndentUtil {
 		
 		boolean indentInsideLineComments= indentInsideLineComments(project);
 		String current= getCurrentIndent(document, lines.getStartLine(), indentInsideLineComments);
-		StringBuffer correct= new StringBuffer(computeIndent(document, lines.getStartLine(), indenter, scanner));
+		StringBuilder correct= new StringBuilder(computeIndent(document, lines.getStartLine(), indenter, scanner));
 		
 		int tabSize= CodeFormatterUtil.getTabWidth(project);
-		StringBuffer addition= new StringBuffer();
+		StringBuilder addition= new StringBuilder();
 		int difference= subtractIndent(correct, current, addition, tabSize);
 		
 		if (difference == 0)
@@ -248,7 +248,7 @@ public final class IndentUtil {
 	 * @param shiftWidth
 	 * @param tabWidth
 	 * @return number of characters deleted
-	 * @throws BadLocationException 
+	 * @throws BadLocationException
 	 */
 	public static int cutIndent(IDocument document, int line, int shiftWidth, int tabWidth) throws BadLocationException {
 		return cutIndent(document, line, shiftWidth, tabWidth, new boolean[1], 0, false);
@@ -308,7 +308,7 @@ public final class IndentUtil {
 	 * @param difference a string buffer - if the return value is positive, it will be cleared and set to the substring of <code>current</code> of that length
 	 * @return the difference in lenght of <code>correct</code> and <code>current</code>
 	 */
-	private static int subtractIndent(CharSequence correct, CharSequence current, StringBuffer difference, int tabSize) {
+	private static int subtractIndent(CharSequence correct, CharSequence current, StringBuilder difference, int tabSize) {
 		int c1= computeVisualLength(correct, tabSize);
 		int c2= computeVisualLength(current, tabSize);
 		int diff= c1 - c2;
@@ -418,7 +418,7 @@ public final class IndentUtil {
 	}
 	
 	/**
-	 * Indents a single line using the heuristic scanner. Multiline comments are 
+	 * Indents a single line using the heuristic scanner. Multiline comments are
 	 * indented as specified by the <code>CCommentAutoIndentStrategy</code>.
 	 * 
 	 * @param document the document
@@ -448,13 +448,13 @@ public final class IndentUtil {
 			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
 				indent= computePreprocessorIndent(document, line, startingPartition);
 			} else if (!commentLines[lineIndex] && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
-				return false;				
+				return false;
 			}
-		} 
+		}
 		
 		// standard C code indentation
 		if (indent == null) {
-			StringBuffer computed= indenter.computeIndentation(offset);
+			StringBuilder computed= indenter.computeIndentation(offset);
 			if (computed != null)
 				indent= computed.toString();
 			else
@@ -517,7 +517,7 @@ public final class IndentUtil {
 		
 		// standard C code indentation
 		if (indent == null) {
-			StringBuffer computed= indenter.computeIndentation(offset);
+			StringBuilder computed= indenter.computeIndentation(offset);
 			if (computed != null)
 				indent= computed.toString();
 			else
@@ -559,7 +559,7 @@ public final class IndentUtil {
 		int previousLineLength= previousLine.getLength();
 		int previousLineEnd= previousLineStart + previousLineLength;
 		
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int previousLineNonWS= scanner.findNonWhitespaceForwardInAnyPartition(previousLineStart, previousLineEnd);
 		if (previousLineNonWS == CHeuristicScanner.NOT_FOUND || document.getChar(previousLineNonWS) != '*') {
 			// align with the comment start if the previous line is not an asterix line
@@ -571,7 +571,7 @@ public final class IndentUtil {
 			if (previousLineNonWS == CHeuristicScanner.NOT_FOUND)
 				previousLineNonWS= previousLineEnd;
 			
-			// add the initial space 
+			// add the initial space
 			// TODO this may be controlled by a formatter preference in the future
 			buf.append(' ');
 		}
@@ -598,9 +598,9 @@ public final class IndentUtil {
 		CHeuristicScanner ppScanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, partition.getType());
 		CIndenter ppIndenter= new CIndenter(document, ppScanner);
 		if (line == ppFirstLine + 1) {
-			return ppIndenter.createReusingIndent(new StringBuffer(), 1).toString();
+			return ppIndenter.createReusingIndent(new StringBuilder(), 1).toString();
 		}
-		StringBuffer computed= ppIndenter.computeIndentation(document.getLineOffset(line), false);
+		StringBuilder computed= ppIndenter.computeIndentation(document.getLineOffset(line), false);
 		if (computed != null) {
 			return computed.toString();
 		}
@@ -612,7 +612,7 @@ public final class IndentUtil {
 		
 		int previousLineNonWS= ppScanner.findNonWhitespaceForwardInAnyPartition(previousLineStart, previousLineEnd);
 		String previousIndent= document.get(previousLineStart, previousLineNonWS - previousLineStart);
-		computed= new StringBuffer(previousIndent);
+		computed= new StringBuilder(previousIndent);
 		return computed.toString();
 	}
 
@@ -628,7 +628,7 @@ public final class IndentUtil {
 		if (column > displayedWidth) {
 			return prefix;
 		}
-		final StringBuffer buffer = new StringBuffer(prefix);
+		final StringBuilder buffer = new StringBuilder(prefix);
 		appendIndent(buffer, displayedWidth, tabWidth, useSpaces, column);
 		return buffer.toString();
 	}
@@ -640,9 +640,9 @@ public final class IndentUtil {
 	 * @param tabWidth  the configured tab width
 	 * @param useSpaces  whether tabs should be substituted by spaces
 	 * @param startColumn  the column where to start measurement
-	 * @return StringBuffer
+	 * @return StringBuilder
 	 */
-	private static StringBuffer appendIndent(StringBuffer buffer, int width, int tabWidth, boolean useSpaces, int startColumn) {
+	private static StringBuilder appendIndent(StringBuilder buffer, int width, int tabWidth, boolean useSpaces, int startColumn) {
 		assert tabWidth > 0;
 		int tabStop = startColumn - startColumn % tabWidth;
 		int tabs = useSpaces ? 0 : (width-tabStop) / tabWidth;

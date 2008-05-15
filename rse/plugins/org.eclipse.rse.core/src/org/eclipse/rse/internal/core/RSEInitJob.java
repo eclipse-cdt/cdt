@@ -8,6 +8,7 @@
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -59,27 +60,31 @@ public final class RSEInitJob extends Job {
 	private class Phase {
 		private volatile boolean isCancelled = false;
 		private volatile boolean isComplete = false;
+		private IStatus completionStatus = Status.OK_STATUS;
 		private int phaseNumber = 0;
 		public Phase(int phaseNumber) {
 			this.phaseNumber = phaseNumber;
 		}
-		public synchronized void waitForCompletion() throws InterruptedException {
+		public synchronized IStatus waitForCompletion() throws InterruptedException {
 			while (!isComplete && !isCancelled) {
 				wait();
 			}
 			if (isCancelled) {
 				throw new InterruptedException();
 			}
+			return completionStatus;
 		}
-		public void done() {
+		public void done(IStatus status) {
 			synchronized (this) {
 				isComplete = true;
+				completionStatus = status;
 				notifyAll();
 			}
 			notifyListeners(phaseNumber);
 		}
 		public synchronized void cancel() {
 			isCancelled = true;
+			completionStatus = Status.CANCEL_STATUS;
 			notifyAll();
 		}
 		public boolean isComplete() {
@@ -95,11 +100,15 @@ public final class RSEInitJob extends Job {
 		public void done(IJobChangeEvent event) {
 			IStatus status = event.getJob().getResult();
 			if (status.getSeverity() == IStatus.CANCEL) {
-				modelPhase.cancel();
-				initializerPhase.cancel();
+				if (!modelPhase.isComplete()) {
+					modelPhase.cancel();
+				}
+				if (!initializerPhase.isComplete()) {
+					initializerPhase.cancel();
+				}
 				finalPhase.cancel();
 			} else {
-				finalPhase.done();
+				finalPhase.done(status);
 			}
 		}
 		public void running(IJobChangeEvent event) {
@@ -184,7 +193,7 @@ public final class RSEInitJob extends Job {
 		ISystemProfile defaultProfile = SystemProfileManager.getDefault().getDefaultPrivateSystemProfile();
 		ISystemModelChangeEvent event = new SystemModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ALL_RELOADED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE, defaultProfile);
 		RSECorePlugin.getTheSystemRegistry().fireEvent(event);
-		modelPhase.done();
+		modelPhase.done(result);
 		// instantiate and run initializers
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.rse.core.modelInitializers"); //$NON-NLS-1$
 		monitor.beginTask(RSECoreMessages.InitRSEJob_initializing_rse, elements.length);
@@ -216,7 +225,7 @@ public final class RSEInitJob extends Job {
 					   }
 				});
 		
-		initializerPhase.done();
+		initializerPhase.done(result);
 		// finish up - propogate cancel if necessary
 		if (monitor.isCanceled()) {
 			result = Status.CANCEL_STATUS;
@@ -308,24 +317,27 @@ public final class RSEInitJob extends Job {
 	/**
 	 * Wait for the completion of a particular phase
 	 * @param phase the phase to wait for
+	 * @return the completion status for that phase.
 	 * @see RSECorePlugin#INIT_ALL
 	 * @see RSECorePlugin#INIT_MODEL
 	 * @see RSECorePlugin#INIT_INITIALIZER
 	 */
-	public void waitForCompletion(int phase) throws InterruptedException {
+	public IStatus waitForCompletion(int phase) throws InterruptedException {
+		IStatus result = Status.OK_STATUS;
 		switch (phase) {
 		case RSECorePlugin.INIT_MODEL:
-			modelPhase.waitForCompletion();
+			result = modelPhase.waitForCompletion();
 			break;
 		case RSECorePlugin.INIT_INITIALIZER:
-			initializerPhase.waitForCompletion();
+			result = initializerPhase.waitForCompletion();
 			break;
 		case RSECorePlugin.INIT_ALL:
-			finalPhase.waitForCompletion();
+			result = finalPhase.waitForCompletion();
 			break;
 		default:
 			throw new IllegalArgumentException("undefined phase"); //$NON-NLS-1$
 		}
+		return result;
 	}
 
 	/**

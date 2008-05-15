@@ -7,12 +7,15 @@
  *
  * Contributors:
  * David Dykstal (IBM) - [197167] initial contribution.
+ * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
  *******************************************************************************/
 
 package org.eclipse.rse.tests.initialization;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.IRSEInitListener;
 import org.eclipse.rse.core.RSECorePlugin;
 
@@ -47,7 +50,15 @@ public class InitializationTest extends TestCase {
 	public void testInitialization() {
 		//-test-author-:DavidDykstal
 		try {
-			RSECorePlugin.waitForInitCompletion();
+			IStatus status = null;
+			status = RSECorePlugin.waitForInitCompletion(RSECorePlugin.INIT_MODEL);
+			assertEquals(Status.OK_STATUS, status);
+			status = RSECorePlugin.waitForInitCompletion(RSECorePlugin.INIT_INITIALIZER);
+			assertEquals(IStatus.WARNING, status.getSeverity()); // because of BadInitializer
+			status = RSECorePlugin.waitForInitCompletion(RSECorePlugin.INIT_ALL);
+			assertEquals(IStatus.WARNING, status.getSeverity()); // because of BadInitializer
+			status = RSECorePlugin.waitForInitCompletion();
+			assertEquals(IStatus.WARNING, status.getSeverity()); // because of BadInitializer
 		} catch (InterruptedException e) {
 			fail("interrupted");
 		} catch (RuntimeException e) {

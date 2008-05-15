@@ -23,6 +23,7 @@
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
+ * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -143,6 +144,7 @@ public class RSECorePlugin extends Plugin {
 	 * Waits until the RSE has completed a specific phase of its initialization.
 	 *
 	 * @param phase the phase to wait for completion.
+	 * @return an IStatus indicating how the initialization for that phase ended.
 	 * @throws InterruptedException if this wait was interrupted for some
 	 *             reason.
 	 * @throws IllegalArgumentException if the phase is undefined.
@@ -151,8 +153,8 @@ public class RSECorePlugin extends Plugin {
 	 * @see #INIT_MODEL
 	 * @since org.eclipse.rse.core 3.0
 	 */
-	public static void waitForInitCompletion(int phase) throws InterruptedException {
-		RSEInitJob.getInstance().waitForCompletion(phase);
+	public static IStatus waitForInitCompletion(int phase) throws InterruptedException {
+		return RSEInitJob.getInstance().waitForCompletion(phase);
 	}
 
 	/**

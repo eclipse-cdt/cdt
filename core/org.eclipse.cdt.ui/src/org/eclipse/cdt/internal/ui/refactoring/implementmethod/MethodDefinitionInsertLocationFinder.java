@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.FileHelper;
@@ -44,6 +45,9 @@ public class MethodDefinitionInsertLocationFinder {
 		if(node == null) {
 			return null;
 		} else if(node instanceof IASTFunctionDefinition) {
+			if(node.getParent() instanceof ICPPASTTemplateDeclaration) {
+				node = node.getParent();
+			}
 			return node;
 		}
 		return findFunctionDefinitionInParents(node.getParent());
@@ -82,9 +86,6 @@ public class MethodDefinitionInsertLocationFinder {
 			}
 		}
 		
-		if(!result.hasAnyNode()) {
-			return result;
-		}
 		
 		IPath path = file.getLocation().removeFileExtension().addFileExtension("cpp");  //$NON-NLS-1$
 		IFile fileForLocation = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);

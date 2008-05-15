@@ -21,29 +21,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-
 import org.eclipse.cdt.internal.ui.preferences.formatter.TranslationUnitPreview;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.ValidatingLabeledTextField;
-import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 
 /**
- * InputPage used by the ImplementMethod refactoring if its necessary to enteraditional parameter names.
+ * InputPage used by the ImplementMethod refactoring if its necessary to enter additional parameter names.
  * 
  * @author Mirko Stocker
  *
  */
 public class ParameterNamesInputPage extends UserInputWizardPage {
 
-	private final ImplementMethodRefactoring refactoring;	
-
+	private final ParameterHandler parameterHandler;	
 	private TranslationUnitPreview translationUnitPreview; 
 
-	public ParameterNamesInputPage(ImplementMethodRefactoring implementMethodRefactoring) {
+	public ParameterNamesInputPage(ParameterHandler parameterHandler) {
 		super(Messages.ParameterNamesInputPage_Title); 
-		this.refactoring = implementMethodRefactoring;
+		this.parameterHandler = parameterHandler;
 	}
 
 	public void createControl(Composite parent) {
@@ -59,13 +53,13 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		ValidatingLabeledTextField validatingLabeledTextField = new ValidatingLabeledTextField(superComposite);
 		validatingLabeledTextField.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		
-		for (final IASTParameterDeclaration parameterDeclaration : refactoring.getParameters()) {
+		for (final Parameter actParameter : parameterHandler.getParameters()) {
 
-			String type = parameterDeclaration.getDeclSpecifier().getRawSignature();
-			String content = String.valueOf(parameterDeclaration.getDeclarator().getName().toCharArray());
-			boolean enabled = parameterDeclaration.getDeclarator().getName().toCharArray().length > 0;
+			String type = actParameter.typeName;
+			String content = actParameter.parameterName;
+			boolean readOnly = !actParameter.isChangable;
 			
-			validatingLabeledTextField.addElement(type, content, enabled, new ValidatingLabeledTextField.Validator(){
+			validatingLabeledTextField.addElement(type, content, readOnly, new ValidatingLabeledTextField.Validator(){
 
 				@Override
 				public void hasErrors() {
@@ -79,23 +73,22 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 
 				@Override
 				public boolean isValidInput(String newName) {
-					boolean isValid = NameHelper.isValidLocalVariableName(newName);
-					
-					if(isValid) {
-						parameterDeclaration.getDeclarator().setName(new CPPASTName(newName.toCharArray()));
-						translationUnitPreview.setPreviewText(refactoring.createFunctionDefinition().getRawSignature());
-					}
-					
-					return isValid;
+					actParameter.parameterName = newName;
+					updatePreview();
+					return true;
 				}});
 		}
 
 		translationUnitPreview = new TranslationUnitPreview(new HashMap<String, String>(), superComposite);
 		translationUnitPreview.getControl().setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		translationUnitPreview.setPreviewText(refactoring.createFunctionDefinition().getRawSignature());
+		updatePreview();
 		
 		setControl(superComposite);
-		
-		setPageComplete(false);
+	}
+	
+	private void updatePreview() {
+		if (translationUnitPreview != null) {
+			translationUnitPreview.setPreviewText(parameterHandler.createFunctionDefinitionSignature());
+		}
 	}
 }

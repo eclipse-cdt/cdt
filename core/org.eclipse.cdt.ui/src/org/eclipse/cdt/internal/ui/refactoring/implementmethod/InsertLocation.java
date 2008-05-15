@@ -33,7 +33,7 @@ public class InsertLocation {
 	private IASTTranslationUnit targetTranslationUnit;
 
 	public boolean hasAnyNode() {
-		return nodeToInsertAfter == null && nodeToInsertBefore == null;
+		return nodeToInsertAfter != null || nodeToInsertBefore != null;
 	}
 	
 	public IASTNode getNodeToInsertBefore() {
@@ -84,6 +84,16 @@ public class InsertLocation {
 			targetTranslationUnit = affectedNode.getTranslationUnit();
 		} else if(hasFile()) {
 			targetTranslationUnit = TranslationUnitHelper.loadTranslationUnit(insertFile);
+		}
+	}
+	
+	public int getInsertPosition() {
+		if(nodeToInsertBefore != null) {
+			return nodeToInsertBefore.getFileLocation().getNodeOffset();
+		} else if (nodeToInsertAfter != null) {
+			return nodeToInsertAfter.getFileLocation().getNodeOffset() + nodeToInsertAfter.getFileLocation().getNodeLength();
+		} else {
+			return 0;
 		}
 	}
 }

@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
+
 
 /**
  * @author Mirko Stocker
@@ -66,7 +68,7 @@ public class ValidatingLabeledTextField extends Composite {
 		 * @param text the new value of the field
 		 * @return whether the value is valid or not
 		 */
-		public abstract boolean isValidInput(String text);
+		public boolean isValidInput(String text) { return true; }
 
 		public String errorMessageForEmptyField() {
 			return Messages.ValidatingLabeledTextField_CantBeEmpty; 
@@ -78,6 +80,10 @@ public class ValidatingLabeledTextField extends Composite {
 
 		public String errorMessageForDuplicateValues() {
 			return Messages.ValidatingLabeledTextField_DuplicatedNames; 
+		}
+
+		public String errorIsKeywordMessage() {
+			return Messages.ValidatingLabeledTextField_IsKeyword;
 		}
 	}
 
@@ -133,20 +139,24 @@ public class ValidatingLabeledTextField extends Composite {
 
 				boolean isNameAlreadyInUse = nameAlreadyInUse(textField, newName);
 				boolean isValid = validator.isValidInput(newName);
-				
-				if (isValid && !isNameAlreadyInUse && !isEmpty) {
+				boolean isKeyword = NameHelper.isKeyword(newName);
+				boolean isValidName = NameHelper.isValidLocalVariableName(newName);
+
+				boolean isOk = isValid && !isNameAlreadyInUse && !isEmpty && !isKeyword && isValidName;
+				if (isOk) {
 					setErrorStatus(EMPTY_STRING);
 				} else if (isEmpty) {
 					setErrorStatus(validator.errorMessageForEmptyField());
-				} else if (!isValid) {
+				} else if (!isValid  || !isValidName) {
 					setErrorStatus(validator.errorMessageForInvalidInput());
-				} else if (isNameAlreadyInUse) {
+				} else if (isKeyword) {
+					setErrorStatus(validator.errorIsKeywordMessage());
+				}else if (isNameAlreadyInUse) {
 					setErrorStatus(validator.errorMessageForDuplicateValues());
-				}
+				} 
+				validationStatus.put(textField, isOk);
 				
-				validationStatus.put(textField, Boolean.valueOf(isValid && !isNameAlreadyInUse && !isEmpty));
-				
-				if(validationStatus.values().contains(Boolean.FALSE) || isEmpty || isNameAlreadyInUse) {
+				if(validationStatus.values().contains(Boolean.FALSE) || isEmpty || isNameAlreadyInUse || isKeyword || !isValidName) {
 					validator.hasErrors();
 				} else {
 					validator.hasNoErrors();

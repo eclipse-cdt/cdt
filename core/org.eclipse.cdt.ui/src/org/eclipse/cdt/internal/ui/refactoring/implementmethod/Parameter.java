@@ -11,25 +11,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
-import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
-
 /**
- * @author Mirko Stocker
- *
+ * @author Lukas Felber
+ * 
  */
-public class ImplementMethodRefactoringWizard extends RefactoringWizard {
-
-       private final ImplementMethodRefactoring refactoring;
-
-	public ImplementMethodRefactoringWizard(ImplementMethodRefactoring refactoring) {
-    	   super(refactoring, WIZARD_BASED_USER_INTERFACE);
-    	   this.refactoring = refactoring;
-       }
-
-       @Override
-       protected void addUserInputPages() {
-    	   if(refactoring.getParameterHandler().needsAdditionalArgumentNames()) {
-    		   addPage(new ParameterNamesInputPage(refactoring.getParameterHandler()));
-    	   }
-       }
+public class Parameter {
+	public Parameter(String typeName, String parameterName, boolean isChangable) {
+		this.typeName = typeName;
+		this.parameterName = parameterName;
+		this.isChangable = isChangable;
+	}
+	public String typeName;
+	public String parameterName;
+	public boolean isChangable;
 }

@@ -1,3 +1,116 @@
+//!class template member functions
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+template<class T> class A
+{
+public:
+        A();
+        //$void test();$//
+};
+
+template<class T> A<T>::A()
+{
+}
+
+//=
+template<class T> class A
+{
+public:
+        A();
+        void test();
+};
+
+template<class T> A<T>::A()
+{
+}
+
+template<class T> inline void A<T>::test()
+{
+}
+
+
+
+//!member class
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+
+class Demo
+{
+	class SubClass 
+	{
+		//$void test();$//
+	};
+};
+
+
+//@A.cpp
+#include "A.h"
+
+//=
+#include "A.h"
+
+void Demo::SubClass::test()
+{
+}
+
+
+
+//!method declared in otherwise empty class without cpp file
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A
+{
+public:
+        //$void test();$//
+};
+
+//=
+class A
+{
+public:
+        void test();
+};
+
+inline void A::test()
+{
+}
+
+
+
+//!method declared in otherwise empty class
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A
+{
+public:
+        //$void test();$//
+};
+
+//=
+class A
+{
+public:
+        void test();
+};
+
+//@A.cpp
+
+//=
+
+
+void A::test()
+{
+}
+
+
 //!implement in existing namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -33,38 +146,10 @@ namespace NameSpace
 		return 5;
 	}
 
-	void ClassInNamespace::test2()
-	{
-		
-	}
+    void ClassInNamespace::test2()
+    {
+    }
 }
-//!method declared in otherwise empty class
-//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
-//@.config
-filename=A.h
-//@A.h
-class A
-{
-public:
-        //$void test();$//
-};
-
-//=
-class A
-{
-public:
-        void test();
-};
-
-//@A.cpp
-
-//=
-
-void A::test()
-{
-	
-}
-
 //!virtual method in the middle of con/destructor, without parameters and void return value
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -127,29 +212,6 @@ void function()
 void function_with_impl()
 {
 }
-//!method declared in otherwise empty class without cpp file
-//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
-//@.config
-filename=A.h
-//@A.h
-class A
-{
-public:
-        //$void test();$//
-};
-
-//=
-class A
-{
-public:
-        void test();
-};
-
-inline void A::test()
-{
-	
-}
-
 //!method at end, without parameters and void return value
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -182,8 +244,9 @@ A::A()
 
 void A::foo()
 {
-	
 }
+
+
 
 //!method at beginning, without parameters, void return value and const
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -251,8 +314,9 @@ A::A()
 
 int A::foo()
 {
-	
 }
+
+
 
 //!method with two int parameters
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -286,8 +350,9 @@ A::A()
 
 int A::foo(int param1, int param2)
 {
-	
 }
+
+
 
 //!method defined in header
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -319,8 +384,9 @@ A::A()
 
 inline void A::test()
 {
-	
 }
+
+
 
 //!implement a function at end of source file
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -340,8 +406,9 @@ void function_with_impl()
 
 void function()
 {
-	
 }
+
+
 //!implement with namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -370,8 +437,9 @@ void NameSpace::ClassInNamespace::other_test()
 
 void NameSpace::ClassInNamespace::test()
 {
-	
 }
+
+
 //!implement function within namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -399,10 +467,9 @@ namespace OuterSpace {
 	{	
 	}
 
-	int NameSpace::test2()
-	{
-		
-	}
+    int NameSpace::test2()
+    {
+    }
 }
 //!implement function within namespaces
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -434,45 +501,11 @@ namespace OuterSpace {
 		{	
 		}
 
-		int test2()
-		{
-			
-		}
+	    int test2()
+	    {
+	    }
 	}
 }
-//!class template member functions
-//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
-//@.config
-filename=A.h
-//@A.h
-template<class T> class A
-{
-public:
-        A();
-        //$void test();$//
-};
-
-template<class T> A<T>::A()
-{
-}
-
-//=
-template<class T> class A
-{
-public:
-        A();
-        void test();
-};
-
-template<class T> A<T>::A()
-{
-}
-
-template<class T> inline void A<T>::test()
-{
-	
-}
-
 //!class template member functions with multiple templates
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -503,8 +536,9 @@ template<class T, class U> A<T,U>::A()
 
 template<class T, class U> inline void A<T,U>::test()
 {
-	
 }
+
+
 
 //!with default parameters
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -527,8 +561,9 @@ public:
 
 void Class::test(int param1, int param2, int param3)
 {
-	
 }
+
+
 
 //!static method
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -551,32 +586,7 @@ public:
 
 void Class::test()
 {
-	
 }
 
-//!member class
-//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
-//@.config
-filename=A.h
-//@A.h
 
-class Demo
-{
-	class SubClass 
-	{
-		//$void test();$//
-	};
-};
-
-
-//@A.cpp
-#include "A.h"
-
-//=
-#include "A.h"
-
-void Demo::SubClass::test()
-{
-	
-}
 

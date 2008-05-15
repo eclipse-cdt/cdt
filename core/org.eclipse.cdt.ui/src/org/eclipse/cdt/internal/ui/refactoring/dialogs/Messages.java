@@ -30,6 +30,7 @@ public final class Messages extends NLS {
 	public static String ValidatingLabeledTextField_CantBeEmpty;
 	public static String ValidatingLabeledTextField_InvalidCharacters;
 	public static String ValidatingLabeledTextField_DuplicatedNames;
+	public static String ValidatingLabeledTextField_IsKeyword;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

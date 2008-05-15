@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
+import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -51,6 +53,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
 public class ChangeGenerator extends CPPASTVisitor {
+
 
 	private final LinkedHashMap<String, Integer> sourceOffsets = new LinkedHashMap<String, Integer>();
 	public LinkedHashMap<IASTNode, List<ASTModification>> modificationParent = new LinkedHashMap<IASTNode, List<ASTModification>>();
@@ -117,10 +120,23 @@ public class ChangeGenerator extends CPPASTVisitor {
 			for (IASTNode modifiedNode : rootModifications.getModifiedNodes()) {
 				List<ASTModification> modificationsForNode = rootModifications
 						.getModificationsForNode(modifiedNode);
-				modificationParent.put(modifiedNode.getParent(),
+				IASTNode modifiedNodeParent = determineParentToBeRewritten(modifiedNode, modificationsForNode);
+				modificationParent.put(modifiedNodeParent != null ? modifiedNodeParent : modifiedNode,
 						modificationsForNode);
 			}
 		}
+	}
+
+	private IASTNode determineParentToBeRewritten(IASTNode modifiedNode, List<ASTModification> modificationsForNode) {
+		IASTNode modifiedNodeParent = modifiedNode;
+		for(ASTModification currentModification : modificationsForNode){
+			if(currentModification.getKind() != ASTModification.ModificationKind.APPEND_CHILD){
+				modifiedNodeParent = modifiedNode.getParent();
+				break;
+			}
+		}
+		modifiedNodeParent = modifiedNodeParent != null ? modifiedNodeParent : modifiedNode;
+		return modifiedNodeParent;
 	}
 
 	@Override
@@ -129,12 +145,32 @@ public class ChangeGenerator extends CPPASTVisitor {
 
 			synthTreatment(translationUnit);
 		}
-		final IASTFileLocation fileLocation = translationUnit.getFileLocation();
-		if (fileLocation != null) {
-			sourceOffsets.put(fileLocation.getFileName(),
-					Integer.valueOf(fileLocation.getNodeOffset()));
-		}
+		IASTFileLocation location = getFileLocationOfEmptyTranslationUnit(translationUnit);
+		sourceOffsets.put(location.getFileName(),
+				Integer.valueOf(location.getNodeOffset()));
 		return super.visit(translationUnit);
+	}
+	
+	/**
+	 * This is a Workaround for a known but not jet solved Problem in IASTNode. If you get the FileFocation of a translationUnit
+	 * that was built on an empty file you will get null because there it explicitly returns null if the index and length is 0.
+	 * To get to the Filename and other information, the location is never the less needed.
+	 * @param node
+	 * @return a hopefully "unnull" FileLocation
+	 */
+	public IASTFileLocation getFileLocationOfEmptyTranslationUnit(IASTNode node) {
+		IASTFileLocation fileLocation = node.getFileLocation();
+		if (fileLocation == null) {
+			ILocationResolver lr = (ILocationResolver) node.getTranslationUnit().getAdapter(ILocationResolver.class);
+			if (lr != null) {
+				fileLocation = lr.getMappedFileLocation(0, 0);
+			} else {
+				// support for old location map
+				fileLocation = node.getTranslationUnit().flattenLocationsToFile(node.getNodeLocations());
+			}
+		}
+
+		return fileLocation;
 	}
 
 	@Override
@@ -164,7 +200,6 @@ public class ChangeGenerator extends CPPASTVisitor {
 	}
 
 	private void synthTreatment(IASTNode synthNode, String fileScope) {
-
 		String indent = getIndent(synthNode);
 		ASTWriter synthWriter = new ASTWriter(indent);
 		synthWriter.setModificationStore(modificationStore);
@@ -184,8 +219,9 @@ public class ChangeGenerator extends CPPASTVisitor {
 		synthWriter.setModificationStore(modificationStore);
 
 		for (ASTModification modification : modificationParent.get(synthTU)) {
-			IASTFileLocation targetLocation = modification.getTargetNode()
-			.getFileLocation();
+			IASTFileLocation targetLocation;
+			
+			targetLocation = getFileLocationOfEmptyTranslationUnit(modification.getTargetNode());
 			String currentFile = targetLocation.getFileName();
 			IPath implPath = new Path(currentFile);
 			IFile relevantFile = ResourcesPlugin.getWorkspace().getRoot()
@@ -209,8 +245,9 @@ public class ChangeGenerator extends CPPASTVisitor {
 						newNodeCode));
 				break;
 			case APPEND_CHILD:
-				edit.addChild(new InsertEdit(targetLocation.getNodeOffset()
-						+ targetLocation.getNodeLength(), newNodeCode));
+				String lineDelimiter = FileHelper.determineLineDelimiter(FileHelper.getIFilefromIASTNode(modification.getTargetNode()));
+					edit.addChild(new InsertEdit(targetLocation.getNodeOffset()
+						+ targetLocation.getNodeLength(),lineDelimiter + lineDelimiter + newNodeCode));
 				break;
 			}
 		}
@@ -236,7 +273,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 				.getFirstPositionOfCommonEndInSynthCode(lastCommonPositionInSynthCode, lastCommonPositionInOriginalCode);
 
 		int firstPositionOfCommonEndInOriginalCode = codeComparer
-				.getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInSynthCode);
+				.getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInOriginalCode, lastCommonPositionInSynthCode);
 		if (firstPositionOfCommonEndInSynthCode == -1) {
 			formattedCode.append(synthSource
 					.substring(lastCommonPositionInSynthCode + 1));
@@ -300,6 +337,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 		return modificationParent.containsKey(parent);
 	}
 
+
 	@Override
 	public int visit(IASTDeclarator declarator) {
 		if (hasChangedChild(declarator)) {
@@ -307,6 +345,16 @@ public class ChangeGenerator extends CPPASTVisitor {
 			return ASTVisitor.PROCESS_SKIP;
 		}
 		return super.visit(declarator);
+	}
+	
+
+	@Override
+	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+		if(hasChangedChild(namespaceDefinition)){
+			synthTreatment(namespaceDefinition);
+			return ASTVisitor.PROCESS_SKIP;
+		}
+		return super.visit(namespaceDefinition);
 	}
 
 	@Override
@@ -413,7 +461,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 			return lastCommonPosition;
 		}
 
-		public int getFirstPositionOfCommonEndInOriginalCode(int limmit) {
+		public int getFirstPositionOfCommonEndInOriginalCode(int originalLimit, int synthLimit) {
 
 			int lastCommonPosition = -1;
 			int originalCodePosition = -1;
@@ -431,8 +479,9 @@ public class ChangeGenerator extends CPPASTVisitor {
 				synthCodePosition = nextInterrestingPosition(reverseSynthCode,
 						synthCodePosition);
 			} while (originalCodePosition > -1
+					&& originalCodePosition < originalCode.length() - originalLimit
 					&& synthCodePosition > -1
-					&& synthCodePosition < synthCode.length() - limmit
+					&& synthCodePosition < synthCode.length() - synthLimit
 					&& reverseOriginalCode.charAt(originalCodePosition) == reverseSynthCode
 							.charAt(synthCodePosition));
 
@@ -473,6 +522,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 						synthCodePosition);
 
 			} while (originalCodePosition > -1
+					&& originalCodePosition < originalCode.length() - lastCommonPositionInOriginal
 					&& synthCodePosition > -1
 					&& synthCodePosition < synthCode.length() - limmit
 					&& reverseOriginalCode.charAt(originalCodePosition) == reverseSynthCode
@@ -531,9 +581,9 @@ public class ChangeGenerator extends CPPASTVisitor {
 
 		private void createChange(MultiTextEdit edit, int changeOffset) {
 
-			int lastCommonPositionInSynth = getLastCommonPositionInSynthCode();
-			int firstOfCommonEndInOriginal = getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInSynth);
 			int lastCommonPositionInOriginal = getLastCommonPositionInOriginalCode();
+			int lastCommonPositionInSynth = getLastCommonPositionInSynthCode();
+			int firstOfCommonEndInOriginal = getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInOriginal, lastCommonPositionInSynth);
 			int firstOfCommonEndInSynth = getFirstPositionOfCommonEndInSynthCode(
 					lastCommonPositionInSynth, lastCommonPositionInOriginal);
 

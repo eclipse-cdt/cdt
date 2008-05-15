@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 
 public class ModificationScopeStack {
 	private LinkedList<List<ASTModification>> scopeStack;
@@ -59,8 +60,14 @@ public class ModificationScopeStack {
 	public void popScope(IASTNode node) {
 		List<ASTModification> peek = scopeStack.peek();
 		if (peek != null) {
-			if (!peek.isEmpty() && peek.get(0).getTargetNode() == node) {
-				scopeStack.removeFirst();
+			if (!peek.isEmpty() && peek.get(0)!=null) {
+				if( peek.get(0).getKind() == ModificationKind.REPLACE){
+					if(peek.get(0).getTargetNode() == node)
+						scopeStack.removeFirst();
+				}
+				else if(peek.get(0).getNewNode() == node){
+					scopeStack.removeFirst();
+				}
 			}
 		}
 	}
@@ -100,4 +107,45 @@ public class ModificationScopeStack {
 		return Collections.unmodifiableList(modForNodeList);
 	}
 
+	public void clean(IASTNode actualNode) {
+		while(scopeStack.size() > 1){
+			for (IASTNode currentModifiedNode : getModifiedNodes()) {
+				for (ASTModification currentMod : getModificationsForNode(currentModifiedNode)) {
+					if(currentMod.getNewNode() == actualNode){
+						return;
+					}
+				}
+			}
+			if(!nodeIsChildOfModifications(actualNode, scopeStack.getFirst())){
+				scopeStack.removeFirst();
+			}
+			else{
+				return;
+			}
+		}
+	}
+
+	private boolean nodeIsChildOfModifications(IASTNode actualNode,
+			List<ASTModification> modifications) {
+		for(ASTModification currentModification : modifications){
+			if(currentModification != null && nodeIsChildOfModification(currentModification, actualNode)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean nodeIsChildOfModification(
+			ASTModification modification, IASTNode actualNode) {
+		IASTNode nodeToTest = actualNode;
+		while(nodeToTest != null){
+			if(modification.getNewNode() == nodeToTest){
+				return true;
+			}
+			else{
+				nodeToTest = nodeToTest.getParent();
+			}
+		}
+		return false;
+	}
 }

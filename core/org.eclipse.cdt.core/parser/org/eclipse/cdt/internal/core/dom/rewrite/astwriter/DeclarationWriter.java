@@ -159,7 +159,7 @@ public class DeclarationWriter extends NodeWriter{
 		templateSpecialization.getDeclaration().accept(visitor);
 	}
 
-	private void writeTemplateDeclaration(ICPPASTTemplateDeclaration templateDeclaration) {
+	protected void writeTemplateDeclaration(ICPPASTTemplateDeclaration templateDeclaration) {
 		if(templateDeclaration.isExported()){
 			scribe.print(EXPORT);
 		}
@@ -190,9 +190,7 @@ public class DeclarationWriter extends NodeWriter{
 		}
 		scribe.printLBrace();
 		scribe.newLine();
-		for (IASTDeclaration declarations : namespaceDefinition.getDeclarations()) {
-			declarations.accept(visitor);
-		}
+		writeDeclarationsInNamespace(namespaceDefinition, namespaceDefinition.getDeclarations());
 		if(hasFreestandingComments(namespaceDefinition)) {
 			writeFreeStandingComments(namespaceDefinition);
 		}
@@ -203,6 +201,12 @@ public class DeclarationWriter extends NodeWriter{
 		}else{
 			scribe.newLine();
 		}	
+	}
+
+	protected void writeDeclarationsInNamespace(ICPPASTNamespaceDefinition namespaceDefinition, IASTDeclaration[] declarations) {
+		for (IASTDeclaration declaration : declarations) {
+			declaration.accept(visitor);
+		}
 	}
 
 	private void writeNamespaceAlias(ICPPASTNamespaceAlias namespaceAliasDefinition) {

@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -32,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -82,17 +81,19 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore,
 			String givenIndentation, String fileScope, NodeCommentMap commentMap) {
 		super(givenIndentation, commentMap);
-		declaratorWriter = new ModifiedASTDeclaratorWriter(scribe, this,
-				modStore, commentMap);
-		expWriter = new ModifiedASTExpressionWriter(scribe, this, macroHandler,
-				modStore, commentMap);
-		statementWriter = new ModifiedASTStatementWriter(scribe, this, modStore, commentMap);
-		declSpecWriter = new ModifiedASTDeclSpecWriter(scribe, this, modStore, commentMap);
-
 		this.modificationStore = modStore;
 		this.fileScope = fileScope;
 		this.shouldVisitTranslationUnit = true;
 		this.stack = new ModificationScopeStack(modificationStore);
+		declaratorWriter = new ModifiedASTDeclaratorWriter(scribe, this,
+				stack, commentMap);
+		expWriter = new ModifiedASTExpressionWriter(scribe, this, macroHandler,
+				stack, commentMap);
+		statementWriter = new ModifiedASTStatementWriter(scribe, this, stack, commentMap);
+		declSpecWriter = new ModifiedASTDeclSpecWriter(scribe, this, stack, commentMap);
+		declarationWriter = new ModifiedASTDeclarationWriter(scribe, this, stack, commentMap);
+		
+
 	}
 
 	@Override
@@ -140,84 +141,72 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	@Override
 	public int leave(IASTDeclaration declaration) {
 		super.leave(declaration);
-		doAfterEveryNode(declaration);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTDeclarator declarator) {
 		super.leave(declarator);
-		doAfterEveryNode(declarator);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTDeclSpecifier declSpec) {
 		super.leave(declSpec);
-		doAfterEveryNode(declSpec);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTEnumerator enumerator) {
 		super.leave(enumerator);
-		doAfterEveryNode(enumerator);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTExpression expression) {
 		super.leave(expression);
-		doAfterEveryNode(expression);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTInitializer initializer) {
 		super.leave(initializer);
-		doAfterEveryNode(initializer);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTName name) {
 		super.leave(name);
-		doAfterEveryNode(name);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTParameterDeclaration parameterDeclaration) {
 		super.leave(parameterDeclaration);
-		doAfterEveryNode(parameterDeclaration);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTProblem problem) {
 		super.leave(problem);
-		doAfterEveryNode(problem);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTStatement statement) {
 		super.leave(statement);
-		doAfterEveryNode(statement);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTTranslationUnit tu) {
 		super.leave(tu);
-		doAfterEveryNode(tu);
 		return PROCESS_SKIP;
 	}
 
 	@Override
 	public int leave(IASTTypeId typeId) {
 		super.leave(typeId);
-		doAfterEveryNode(typeId);
 		return PROCESS_SKIP;
 	}
 
@@ -304,7 +293,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	@Override
 	public int visit(IASTTranslationUnit tu) {
 		ASTModificationHelper helper = new ASTModificationHelper(
-				modificationStore);
+				stack);
 
 		IASTDeclaration[] declarations = helper.createModifiedChildArray(tu, tu.getDeclarations(), IASTDeclaration.class);
 		for (IASTDeclaration currentDeclaration : declarations) {
@@ -321,48 +310,42 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		}
 		return PROCESS_SKIP;
 	}
-	
-	protected void doAfterEveryNode(IASTNode node) {
-		stack.popScope(node);
-	}
 
 	protected int doBeforeEveryNode(IASTNode node) {
+		stack.clean(node);
 		if (fileScope != null) {
 			String file = getCorrespondingFile(node);
 			if (!fileScope.equals(file)) {
 				return PROCESS_SKIP;
 			}
 		}
-
-		if (stack.getModifiedNodes().contains(node)) {
-			List<ASTModification> modificationList = stack
-					.getModificationsForNode(node);
-			if (modificationList == null) {
-				return PROCESS_CONTINUE;
-			}
-
-			for (ASTModification currentMod : modificationList) {
-				switch (currentMod.getKind()) {
-				case APPEND_CHILD:
-					stack.pushScope(node);
-					return PROCESS_CONTINUE;
-				case INSERT_BEFORE:
-					stack.pushScope(node);
-					return PROCESS_CONTINUE;
-				case REPLACE:
-					
-					if (currentMod.getNewNode() == null) {
-						continue;
+		
+		for (IASTNode currentModifiedNode : stack.getModifiedNodes()) {
+			for (ASTModification currentMod : stack.getModificationsForNode(currentModifiedNode)) {
+				if(currentMod.getNewNode() == node){
+					if(currentMod.getKind() != ModificationKind.REPLACE) {
+						stack.pushScope(currentModifiedNode);
+						return PROCESS_CONTINUE;
 					}
-					stack.pushScope(node);
-					currentMod.getNewNode().accept(this);
-					stack.popScope(node);
-					break;
 				}
 			}
-
-			return PROCESS_SKIP;
 		}
+		for (IASTNode currentModifiedNode : stack.getModifiedNodes()) {			
+			for (ASTModification currentMod : stack.getModificationsForNode(currentModifiedNode)) {
+				if(currentMod.getTargetNode() == node && currentMod.getKind() == ModificationKind.REPLACE){
+					if(currentMod.getNewNode() != null){
+						stack.pushScope(node);
+						currentMod.getNewNode().accept(this);
+						stack.popScope(node);
+						return PROCESS_SKIP;
+					}
+					else{
+						return PROCESS_SKIP;
+					}
+				}
+			}
+		}
+		
 		return PROCESS_CONTINUE;
 	}
 

@@ -14,23 +14,22 @@ package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 
 public class ASTModificationHelper {
 
-	private final ASTModificationStore modificationStore;
+	private final ModificationScopeStack modificationStore;
 
-	public ASTModificationHelper(ASTModificationStore modificationStore) {
-		this.modificationStore = modificationStore;
+	public ASTModificationHelper(ModificationScopeStack stack) {
+		this.modificationStore = stack;
 	}
 
 	
@@ -48,13 +47,8 @@ public class ASTModificationHelper {
 						modifiedChildren.remove(childModification.getTargetNode());
 						break;
 					case INSERT_BEFORE:
-						if (newNode != null) {
-							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), newNode);
-						}
-						break;
 					case APPEND_CHILD:
 						throw new UnhandledASTModificationException(childModification);
-	
 					}
 				}catch(ClassCastException e){
 					throw new UnhandledASTModificationException(childModification);
@@ -63,11 +57,12 @@ public class ASTModificationHelper {
 		}
 
 		for(ASTModification parentModification : modificationsForNode(parent)){
-			if(parentModification.getKind() == ModificationKind.APPEND_CHILD){
+			switch(parentModification.getKind()){
+			case APPEND_CHILD:
 				IASTNode newNode = parentModification.getNewNode();
-				T newTNode= cast(newNode, clazz);
-				if (newTNode != null) {
-					modifiedChildren.add(newTNode);
+				T appendedTNode = cast(newNode, clazz);
+				if (appendedTNode != null) {
+					modifiedChildren.add(appendedTNode);
 				}
 				else if (newNode instanceof ContainerNode){
 					ContainerNode nodeContainer = (ContainerNode) newNode;
@@ -78,6 +73,18 @@ public class ASTModificationHelper {
 						}
 					}
 				}
+				break;
+			
+			case INSERT_BEFORE:
+				T insertedTNode = cast(parentModification.getNewNode(), clazz);	
+				
+				int targetNodeIndex = modifiedChildren.indexOf(parentModification.getTargetNode());
+				if(targetNodeIndex >= 0){
+					modifiedChildren.add(targetNodeIndex, insertedTNode);
+				}
+				break;	
+				
+			case REPLACE:
 			}
 		}
 		
@@ -101,12 +108,15 @@ public class ASTModificationHelper {
 
 	public List<ASTModification> modificationsForNode(
 			IASTNode targetNode) {
-		ASTModificationMap rootModifications = modificationStore.getRootModifications();
-		if(rootModifications == null){
-			rootModifications = new ASTModificationMap();
+		List<ASTModification> modificationsForNode;
+		if(modificationStore.getModifiedNodes().contains(targetNode)){
+			modificationsForNode = modificationStore.getModificationsForNode(targetNode);
 		}
-		List<ASTModification> modificationsForNode = rootModifications.getModificationsForNode(targetNode);
-		return modificationsForNode;
+		else{
+			modificationsForNode = Collections.emptyList();
+		}
+			return modificationsForNode;
+		
 	}
 	
 	

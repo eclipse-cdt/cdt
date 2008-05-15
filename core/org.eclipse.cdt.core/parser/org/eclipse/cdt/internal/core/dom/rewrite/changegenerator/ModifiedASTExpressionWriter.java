@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ExpressionWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.MacroExpansionHandler;
@@ -30,9 +29,9 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 	private final ASTModificationHelper modificationHelper;
 
 	public ModifiedASTExpressionWriter(Scribe scribe, CPPASTVisitor visitor,
-			MacroExpansionHandler macroHandler, ASTModificationStore modStore, NodeCommentMap commentMap) {
+			MacroExpansionHandler macroHandler, ModificationScopeStack stack, NodeCommentMap commentMap) {
 		super(scribe, visitor, macroHandler, commentMap);
-		this.modificationHelper = new ASTModificationHelper(modStore);
+		this.modificationHelper = new ASTModificationHelper(stack);
 	}
 
 	@Override

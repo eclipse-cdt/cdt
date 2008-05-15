@@ -35,7 +35,7 @@ public class ASTModificationMap {
 	 * Adds a modification to this modification map.
 	 */
 	public void addModification(ASTModification mod) {
-		final IASTNode targetNode = mod.getTargetNode();
+		final IASTNode targetNode = mod.getKind()==ASTModification.ModificationKind.INSERT_BEFORE ? mod.getTargetNode().getParent() :mod.getTargetNode();
 		List<ASTModification> mods= fModifications.get(targetNode);
 		if (mods == null || mods.isEmpty()) {
 			mods= new ArrayList<ASTModification>();

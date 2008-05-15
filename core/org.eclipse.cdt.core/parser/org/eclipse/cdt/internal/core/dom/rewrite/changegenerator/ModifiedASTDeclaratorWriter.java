@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.DeclaratorWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.Scribe;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -35,9 +34,9 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 
 	private final ASTModificationHelper modificationHelper;
 
-	public ModifiedASTDeclaratorWriter(Scribe scribe, CPPASTVisitor visitor, ASTModificationStore modificationStore, NodeCommentMap commentMap) {
+	public ModifiedASTDeclaratorWriter(Scribe scribe, CPPASTVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
-		this.modificationHelper = new ASTModificationHelper(modificationStore);
+		this.modificationHelper = new ASTModificationHelper(stack);
 	}
 
 	@Override

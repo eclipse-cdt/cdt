@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
+ * David Dykstal (IBM) - [232317] add help for this preference page
  ********************************************************************************/
 package org.eclipse.rse.internal.connectorservice.dstore.ui.propertypages;
 
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class DStorePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Listener
 {
@@ -48,6 +50,9 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 	private Button _showMismatchedServerWarningButton;
 	
 	protected Control createContents(Composite gparent) {
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "DStorePreferencePage"); //$NON-NLS-1$
+
 		Composite parent = SystemWidgetHelpers.createComposite(gparent, 2);
 	
 		GridLayout layout = new GridLayout();

@@ -15,6 +15,7 @@ Contributors:
 Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
 Kevin Doyle		 (IBM)		  - [212940] Added help for Remote Monitor
 David Dykstal (IBM) - [231630] adding help for services property page
+David Dykstal (IBM) - [232317] adding help for datastore preferences page
 -->
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <contexts>
@@ -926,6 +927,13 @@ Messages are logged to the .log file in the .metadata folder of the workspace.
 </context>
 <context id="ActionExportConnectionDefinitions">
    <description>This action exports connection definitions to a file. A file selection dialog is displayed, and you specify the directory and file name into which to export the selected connections and their filters. You may then import the connections into another workbench using the import action.</description>
+</context>
+<context id="DStorePreferencePage">
+   <description>The DataStore preference page allows you to set various parameters associated with DataStore protocol.
+
+You may set the timeout value used to establish the initial connection as well as the &quot;keepalive&quot; characteristics of the underlying connection.
+
+You may also show or suppress warnings if the server and client versions of the protocol are not exactly matched.</description>
 </context>
 
 </contexts>

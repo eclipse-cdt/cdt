@@ -117,7 +117,12 @@ public class ModificationScopeStack {
 				}
 			}
 			if(!nodeIsChildOfModifications(actualNode, scopeStack.getFirst())){
-				scopeStack.removeFirst();
+				if(scopeStack.getFirst().get(0).getTargetNode().getTranslationUnit() == actualNode.getTranslationUnit()){
+					scopeStack.removeFirst();
+				}
+				else{
+					return;
+				}
 			}
 			else{
 				return;

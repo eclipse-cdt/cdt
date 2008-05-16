@@ -40,7 +40,8 @@ public class ExtractFunctionComposite extends Composite {
 		Group returnGroup = createReturnGroup(nameVisiComp);
 		createReturnValueChooser(returnGroup, info, ip);		
 
-		createReplaceCheckBox(nameVisiComp);
+		// Disabled for now
+		//createReplaceCheckBox(nameVisiComp);
 		
 		if (info.getMethodContext().getType() == MethodContext.ContextType.METHOD) {
 			visibilityPanelSetVisible(true);
@@ -105,13 +106,13 @@ public class ExtractFunctionComposite extends Composite {
 	}
 
 	
-	private void createReplaceCheckBox(Composite parent) {
-		replaceSimilar = new Button(parent, SWT.CHECK | SWT.LEFT);
-		GridData buttonLayoutData = new GridData(SWT.None);
-		buttonLayoutData.verticalIndent = 5;
-		replaceSimilar.setLayoutData(buttonLayoutData);
-		replaceSimilar.setText(Messages.ExtractFunctionComposite_ReplaceDuplicates); 
-	}
+//	private void createReplaceCheckBox(Composite parent) {
+//		replaceSimilar = new Button(parent, SWT.CHECK | SWT.LEFT);
+//		GridData buttonLayoutData = new GridData(SWT.None);
+//		buttonLayoutData.verticalIndent = 5;
+//		replaceSimilar.setLayoutData(buttonLayoutData);
+//		replaceSimilar.setText(Messages.ExtractFunctionComposite_ReplaceDuplicates); 
+//	}
 
 	
 	public ChooserComposite getReturnChooser() {

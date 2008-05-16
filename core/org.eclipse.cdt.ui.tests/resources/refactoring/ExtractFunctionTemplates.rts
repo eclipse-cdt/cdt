@@ -89,7 +89,8 @@ template<typename T> T exp()
 
 template <typename T>
 int tempFunct(){
-    T p = exp();
+
+	T p = exp();
 	p + 2;
 	return 0;
 }

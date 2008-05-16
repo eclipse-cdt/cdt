@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
@@ -34,9 +33,9 @@ import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -47,11 +46,11 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -60,14 +59,11 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -75,6 +71,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTExpressionList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTExpressionStatement;
@@ -85,6 +82,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 
@@ -97,16 +95,10 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.CPPASTAllVisitor;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 public class ExtractFunctionRefactoring extends CRefactoring {
-
-//  egtodo	
-//	private static final String COMMA_SPACE = ", "; //$NON-NLS-1$
-//	private static final String TYPENAME = "typename "; //$NON-NLS-1$
-//	private static final String TEMPLATE_START = "template <"; //$NON-NLS-1$
 
 	static final Integer NULL_INTEGER = Integer.valueOf(0);
 
@@ -312,18 +304,16 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				.rewriterForTranslationUnit(firstNodeToWrite
 						.getTranslationUnit());
 		TextEditGroup editGroup = new TextEditGroup(title);
+		if(methodCall instanceof IASTDeclaration){
+			CPPASTDeclarationStatement declarationStatement = new CPPASTDeclarationStatement((IASTDeclaration) methodCall);
+			methodCall = declarationStatement;
+		}
 		rewriter.replace(firstNodeToWrite, methodCall, editGroup);
 		for (IASTNode node : container.getNodesToWrite()) {
 			if (node != firstNodeToWrite) {
 				rewriter.remove(node, editGroup);
 			}
-		}
-
-		//Replace Dublicates not yet implemented
-		/* 
-		 * if(info.isReplaceDuplicates()){ replaceSimilar(astMethodName,
-		 * changesTreeSet, implementationFile, context.getType()); }
-		 */
+		}		
 	}
 
 	private void createMethodDefinition(final IASTName astMethodName,
@@ -363,6 +353,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		AddDeclarationNodeToClassChange.createChange(classDeclaration, info
 				.getVisibility(), methodDeclaration, false, collector);
+
 	}
 
 	private boolean isMethodAllreadyDefined(
@@ -431,209 +422,34 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return true;
 	}
 
-// egtodo
-//	private int calculateLength(IASTFunctionDefinition node) {
-//		int diff = 0;
-//		if (node.getParent() instanceof ICPPASTTemplateDeclaration) {
-//			ICPPASTTemplateDeclaration tempDec = (ICPPASTTemplateDeclaration) node
-//					.getParent();
-//			diff = node.getFileLocation().getNodeOffset()
-//					- tempDec.getFileLocation().getNodeOffset();
-//		}
-//
-//		return diff;
-//	}
-//
-//	private void replaceSimilar(final IASTName astMethodName,
-//			final ChangeTreeSet changesTreeSet, final IFile implementationFile,
-//			final ContextType contextType) {
-//		// Find similar code
-//		final List<IASTNode> nodesToRewriteWithoutComments = new LinkedList<IASTNode>();
-//
-//		for (IASTNode node : container.getNodesToWrite()) {
-//			if (!(node instanceof IASTComment)) {
-//				nodesToRewriteWithoutComments.add(node);
-//			}
-//		}
-//
-//		final Vector<IASTNode> initTrail = getTrail(nodesToRewriteWithoutComments);
-//		final String title;
-//		if (contextType == MethodContext.ContextType.METHOD) {
-//			title = Messages.ExtractFunctionRefactoring_CreateMethodCall;
-//		} else {
-//			title = Messages.ExtractFunctionRefactoring_CreateFunctionCall;
-//		}
-//
-//		if (!hasNameResolvingForSimilarError) {
-//			unit.accept(new SimilarFinderVisitor(this, changesTreeSet,
-//					initTrail, implementationFile, astMethodName,
-//					nodesToRewriteWithoutComments, title));
-//		}
-//	}
-
-	protected Vector<IASTNode> getTrail(List<IASTNode> stmts) {
-		final Vector<IASTNode> trail = new Vector<IASTNode>();
-
-		nameTrail = new HashMap<String, Integer>();
-		final Container<Integer> trailCounter = new Container<Integer>(
-				NULL_INTEGER);
-
-		for (IASTNode node : stmts) {
-			node.accept(new CPPASTAllVisitor() {
-				@Override
-				public int visitAll(IASTNode node) {
-
-					if (node instanceof IASTComment) {
-						// Visit Comment, but don't add them to the trail
-						return super.visitAll(node);
-					} else if (node instanceof IASTNamedTypeSpecifier) {
-						// Skip if somewhere is a named Type Specifier
-						trail.add(node);
-						return PROCESS_SKIP;
-					} else if (node instanceof IASTName) {
-						if (node instanceof ICPPASTConversionName
-								&& node instanceof ICPPASTOperatorName
-								&& node instanceof ICPPASTTemplateId) {
-							trail.add(node);
-							return super.visitAll(node);
-						}
-						// Save Name Sequenz Number
-						IASTName name = (IASTName) node;
-						TrailName trailName = new TrailName();
-						int actCount = trailCounter.getObject().intValue();
-						if (nameTrail.containsKey(name.getRawSignature())) {
-							Integer value = nameTrail.get(name
-									.getRawSignature());
-							actCount = value.intValue();
-						} else {
-							trailCounter.setObject(Integer
-									.valueOf(++actCount));
-							nameTrail.put(name.getRawSignature(),
-									trailCounter.getObject());
-						}
-						trailName.setNameNumber(actCount);
-						trailName.setRealName(name);
-
-						if (info.getReturnVariable() != null
-								&& info.getReturnVariable().getName()
-										.getRawSignature().equals(
-												name.getRawSignature())) {
-							returnNumber.setObject(Integer
-									.valueOf(actCount));
-						}
-
-						// Save type informations for the name
-						IBinding bind = name.resolveBinding();
-						IASTName[] declNames = name.getTranslationUnit()
-								.getDeclarationsInAST(bind);
-						if (declNames.length > 0) {
-							IASTNode tmpNode = ASTHelper
-									.getDeclarationForNode(declNames[0]);
-
-							IBinding declbind = declNames[0]
-									.resolveBinding();
-							if (declbind instanceof ICPPBinding) {
-								ICPPBinding cppBind = (ICPPBinding) declbind;
-								try {
-									trailName.setGloballyQualified(cppBind
-											.isGloballyQualified());
-								} catch (DOMException e) {
-									ILog logger = CUIPlugin.getDefault()
-											.getLog();
-									IStatus status = new Status(
-											IStatus.WARNING,
-											CUIPlugin.PLUGIN_ID,
-											IStatus.OK, e.getMessage(), e);
-
-									logger.log(status);
-								}
-							}
-
-							if (tmpNode != null) {
-								trailName.setDeclaration(tmpNode);
-							} else {
-								hasNameResolvingForSimilarError = true;
-							}
-						}
-
-						trail.add(trailName);
-						return PROCESS_SKIP;
-					} else {
-						trail.add(node);
-						return super.visitAll(node);
-					}
-				}
-			});
-
-		}
-
-		return trail;
-	}
-
-	protected boolean isStatementInTrail(IASTStatement stmt,
-			final Vector<IASTNode> trail) {
-		final Container<Boolean> same = new Container<Boolean>(Boolean.TRUE);
-		final TrailNodeEqualityChecker equalityChecker = new TrailNodeEqualityChecker(
-				names, namesCounter);
-
-		stmt.accept(new CPPASTAllVisitor() {
-			@Override
-			public int visitAll(IASTNode node) {
-
-				int pos = trailPos.getObject().intValue();
-
-				if (trail.size() <= 0 || pos >= trail.size()) {
-					same.setObject(Boolean.FALSE);
-					return PROCESS_ABORT;
-				}
-
-				if (node instanceof IASTComment) {
-					// Visit Comment, but they are not in the trail
-					return super.visitAll(node);
-				}
-
-				IASTNode trailNode = trail.get(pos);
-				trailPos.setObject(Integer.valueOf(pos + 1));
-
-				if (equalityChecker.isEquals(trailNode, node)) {
-					if (node instanceof ICPPASTQualifiedName
-							|| node instanceof IASTNamedTypeSpecifier) {
-						return PROCESS_SKIP;
-					}
-					return super.visitAll(node);
-
-				}
-				same.setObject(new Boolean(false));
-				return PROCESS_ABORT;
-			}
-		});
-
-		return same.getObject().booleanValue();
-	}
-
 	private void addMethod(IASTName astMethodName, MethodContext context,
 			ASTRewrite rewriter, IASTNode insertpoint, TextEditGroup group) {
 		
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		if (context.getType() == ContextType.METHOD) {
 			for (int i = 0; i < (context.getMethodQName().getNames().length - 1); i++) {
-				qname.addName(context.getMethodQName().getNames()[i]);
+				qname.addName(new CPPASTName(context.getMethodQName().getNames()[i].toCharArray()));
 			}
 		}
 		qname.addName(astMethodName);
 
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
 		func.setParent(unit);
-		func.setDeclSpecifier(getReturnType());
-		func.setDeclarator(extractedFunctionConstructionHelper
+
+		ICPPASTSimpleDeclSpecifier dummyDeclSpecifier = new CPPASTSimpleDeclSpecifier();
+		func.setDeclSpecifier(dummyDeclSpecifier);
+		dummyDeclSpecifier.setType(IASTSimpleDeclSpecifier.t_void);
+		
+		IASTStandardFunctionDeclarator createdFunctionDeclarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(qname, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames()));
+						.getAllUsedNames());
+		func.setDeclarator(createdFunctionDeclarator);
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
 		func.setBody(compound);
 		
-		
+		ASTRewrite subRW;
 		if(insertpoint.getParent() instanceof ICPPASTTemplateDeclaration) {
 			
 			CPPASTTemplateDeclaration templateDeclaration = new CPPASTTemplateDeclaration();
@@ -645,16 +461,17 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			
 			templateDeclaration.setDeclaration(func);
 
-			rewriter.insertBefore(insertpoint.getParent().getParent(), insertpoint.getParent(), templateDeclaration, group);
+			subRW = rewriter.insertBefore(insertpoint.getParent().getParent(), insertpoint.getParent(), templateDeclaration, group);
 
 		} else {
 			
-			rewriter.insertBefore(insertpoint.getParent(), insertpoint, func, group);
+			subRW = rewriter.insertBefore(insertpoint.getParent(), insertpoint, func, group);
 		}
 		
-
+		subRW.replace(dummyDeclSpecifier, getReturnType(), group);
+		
 		extractedFunctionConstructionHelper.constructMethodBody(compound,
-				container.getNodesToWrite(), rewriter, group);
+				container.getNodesToWrite(), subRW, group);
 
 		// Set return value
 		if (info.getReturnVariable() != null) {
@@ -673,7 +490,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				}
 				returnStmt.setReturnValue(expr);
 			}
-			rewriter.insertBefore(compound, null, returnStmt, group);
+			subRW.insertBefore(compound, null, returnStmt, group);
 		}
 
 	}
@@ -767,7 +584,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		IASTFunctionCallExpression callExpression = new CPPASTFunctionCallExpression();
 		IASTIdExpression idExpression = new CPPASTIdExpression();
-		idExpression.setName(astMethodName);
+		idExpression.setName(new CPPASTName(astMethodName.toCharArray()));
 		IASTExpressionList paramList = getCallParameters();
 		callExpression.setParameterExpression(paramList);
 		callExpression.setFunctionNameExpression(idExpression);

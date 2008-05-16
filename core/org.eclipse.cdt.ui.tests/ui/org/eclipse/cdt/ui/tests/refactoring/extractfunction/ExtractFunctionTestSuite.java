@@ -25,10 +25,9 @@ public class ExtractFunctionTestSuite extends TestSuite {
 	@SuppressWarnings("nls")
 	public static Test suite() throws Exception {
 		TestSuite suite = new ExtractFunctionTestSuite();
-		suite.addTest(RefactoringTester.suite("Extract Expression", "resources/refactoring/ExtractExpression.rts"));
 		suite.addTest(RefactoringTester.suite("ExtractMethodRefactoringTests", "resources/refactoring/ExtractMethod.rts"));
+		suite.addTest(RefactoringTester.suite("Extract Expression", "resources/refactoring/ExtractExpression.rts"));
 		suite.addTest(RefactoringTester.suite("ExtractMethodPreprocessorRefactoringTests", "resources/refactoring/ExtractMethodPreprocessor.rts"));
-		suite.addTest(RefactoringTester.suite("ExtractMethodDuplicatesTests", "resources/refactoring/ExtractMethodDuplicates.rts"));
 		suite.addTest(RefactoringTester.suite("Extract Function Templates Tests", "resources/refactoring/ExtractFunctionTemplates.rts"));
 		return suite;
 	}

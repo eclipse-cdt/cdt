@@ -328,7 +328,7 @@ struct other
 
 class Klass
 {
-	void set(bool b){};
+	void set(bool b){}
 	void test()
 	{
 	  other o;
@@ -344,16 +344,17 @@ struct other
 
 class Klass
 {
-	void set(bool b){};
+	void set(bool b){}
+
     bool value_from(other o)
     {
         return o.value();
     }
 
     void test()
-	{
-	  other o;
-	  this->set(value_from(o));
+    {
+        other o;
+        this->set(value_from(o));
 	}
 };
 

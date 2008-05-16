@@ -1,158 +1,3 @@
-//!ExtractFunctionRefactoringTest
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@A.h
-#ifndef A_H_
-#define A_H_
-
-class A
-{
-public:
-	A();
-	virtual ~A();
-	int foo();
-	
-private:
-	int help();
-};
-
-#endif /*A_H_*/
-
-//=
-#ifndef A_H_
-#define A_H_
-
-class A
-{
-public:
-	A();
-	virtual ~A();
-	int foo();
-	
-private:
-	int help();
-    void exp(int & i);
-};
-
-#endif /*A_H_*/
-
-//@A.cpp
-#include "A.h"
-
-A::A()
-{
-}
-
-A::~A()
-{
-}
-int A::foo()
-{
-	int i = 2;
-	//$++i;
-	help();$//
-	return i;
-}
-
-int A::help()
-{
-	return 42;
-}	
-
-//=
-#include "A.h"
-
-A::A()
-{
-}
-
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    ++i;
-    help();
-}
-
-int A::foo()
-{
-	int i = 2;
-    exp(i);
-	return i;
-}
-
-int A::help()
-{
-	return 42;
-}	
-
-//@.config
-filename=A.cpp
-methodname=exp
-replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
-
-//!Extract Function first extracted statement with leading comment
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@main.cpp
-int main(){
-	
-	int i;
-	//$i= 7;$//
-	return i;
-}
-
-//=
-void exp(int & i)
-{
-    i = 7;
-}
-
-int main(){
-	
-	int i;
-    exp(i);
-	return i;
-}
-
-//@.config
-filename=main.cpp
-methodname=exp
-replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
-
-//!Extract Function last extracted statement with trailling comment
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@main.cpp
-int main(){
-	
-	int i;
-	//$i= 7;$//
-	return i;
-}
-
-//=
-void exp(int & i)
-{
-    i = 7;
-}
-
-int main(){
-	
-	int i;
-    exp(i);
-	return i;
-}
-
-//@.config
-filename=main.cpp
-methodname=exp
-replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
-
 //!ExtractFunctionRefactoringTest variable defined in scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
@@ -185,7 +30,7 @@ public:
 	
 private:
 	int help();
-	int exp();
+    int exp();
 };
 
 #endif /*A_H_*/
@@ -241,6 +86,165 @@ int A::help()
 {
 	return 42;
 }	
+
+//!ExtractFunctionRefactoringTest
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+    void exp(int & i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo()
+{
+	int i = 2;
+	//comment
+	//$++i;
+	help();$//
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & i)
+{
+    //comment
+    ++i;
+    help();
+}
+
+int A::foo()
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@.config
+filename=A.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+
+//!Extract Function first extracted statement with leading comment
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@main.cpp
+int main(){
+	
+	int i;
+	// Comment
+	//$i= 7;$//
+	return i;
+}
+
+//=
+void exp(int & i)
+{
+    // Comment
+    i = 7;
+}
+
+int main(){
+	
+	int i;
+    exp(i);
+	return i;
+}
+
+//@.config
+filename=main.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
+
+//!Extract Function last extracted statement with trailling comment
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@main.cpp
+int main(){
+	
+	int i;
+	//$i= 7;$// // Comment
+	return i;
+}
+
+//=
+void exp(int & i)
+{
+    i = 7; // Comment
+}
+
+int main(){
+	
+	int i;
+    exp(i);
+    return i;
+}
+
+//@.config
+filename=main.cpp
+methodname=exp
+replaceduplicates=false
+returnvalue=false
+returnparameterindex=0
 
 //!ExtractFunctionRefactoringTest with two variable defined in scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -802,7 +806,7 @@ public:
 	
 private:
 	int help();
-	void exp(int *& i);
+    void exp(int *& i);
 };
 
 #endif /*A_H_*/
@@ -851,8 +855,7 @@ int A::foo()
 {
 	int* i = new int(2);
     exp(i);
-	//A end-comment
-	return *i;
+    return *i;
 }
 
 int A::help()
@@ -892,7 +895,7 @@ public:
 	
 private:
 	int help();
-	void exp(int *& i);
+    void exp(int *& i);
 };
 
 #endif /*A_H_*/
@@ -940,7 +943,7 @@ void A::exp(int *& i)
 int A::foo()
 {
 	//A beautiful comment
-    int *i = new int(2);
+	int* i = new int(2);
     exp(i);
 	return *i;
 }
@@ -1489,49 +1492,6 @@ public:
 };
 
 #endif /*B_H_*/
-//!ExtractMethod Bug #18 (problem with Qt's Q_FOREACH macro)
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@.config
-methodname=add_to_sum
-filename=main.cpp
-//@main.cpp
-#define for_each_int_in_array_with_index(list) for(int i = 0; i < sizeof(list) / sizeof(int); i++)
-
-struct Foreach
-{
-    int run()
-    {
-        int sum = 0;
-        int list [] = { 5, 6, 7 };
-        for_each_int_in_array_with_index(list)
-        {
-            //$sum += list[i];$//
-        }
-        return sum;
-    }
-};
-
-//=
-#define for_each_int_in_array_with_index(list) for(int i = 0; i < sizeof(list) / sizeof(int); i++)
-
-struct Foreach
-{
-    void add_to_sum(int & sum, int list[], int i)
-    {
-        sum += list[i];
-    }
-
-    int run()
-    {
-        int sum = 0;
-        int list [] = { 5, 6, 7 };
-        for_each_int_in_array_with_index(list)
-        {
-            add_to_sum(sum, list, i);
-        }
-        return sum;
-    }
-};
 
 //!ExtractFunctionRefactoringTest with Return Value take the second and Ref Parameter
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -2002,37 +1962,6 @@ void function()
 	}
 }
 
-//!ExtractMethod with Macros Bug #120 Extract Function generates superfluous characters
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@.config
-filename=Test.cpp
-methodname=createSuite
-//@Test.cpp
-#define CUTE(name) cute::test((&name),(#name))
-
-void runSuite(){
-	//$cute::suite s;
-	s.push_back(CUTE(thisIsATest));
-	s.push_back(CUTE(testFuerRainer));$//
-	cute::ide_listener lis;
-	cute::makeRunner(lis)(s, "The Suite");
-}
-//=
-#define CUTE(name) cute::test((&name),(#name))
-
-cute::suite createSuite()
-{
-    cute::suite s;
-    s.push_back(CUTE(thisIsATest));
-    s.push_back(CUTE(testFuerRainer));
-    return s;
-}
-
-void runSuite(){
-	cute::suite s = createSuite();
-	cute::ide_listener lis;
-	cute::makeRunner(lis)(s, "The Suite");
-}
 //! Bug #124 Extract Function with a Macro call in selected code "forgets" the macro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -2045,7 +1974,9 @@ methodname=runTest
 void testFuerRainer(){
         int i=int();
         //$++i;
+        //Leading Comment
         ASSERT (i);
+        //Trailling Comment
         --i;$//
 }
 
@@ -2056,7 +1987,9 @@ void testFuerRainer(){
 void runTest(int i)
 {
     ++i;
+    //Leading Comment
     ASSERT (i);
+    //Trailling Comment
     --i;
 }
 
@@ -2132,7 +2065,7 @@ string *runTest(int m_capacity)
 
 int main(){
 	int m_capacity;
-	string *newElements = runTest(m_capacity);
+    string *newElements = runTest(m_capacity);
 	newElements[0] = "s";
 }
 

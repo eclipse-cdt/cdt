@@ -585,6 +585,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			return;
 		}
 		
+		Throwable th= null;
 		try {
 			if (fShowActivity) {
 				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
@@ -597,15 +598,17 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (ast != null) {
 				writeToIndex(linkageID, ast, computeHashCode(scanInfo), pm);
 			}
+		} catch (CoreException e) {
+			th= e;
+		} catch (RuntimeException e) {
+			th= e; 
+		} catch (PDOMNotImplementedError e) {
+			th= e; 
+		} catch (StackOverflowError e) {
+			th= e;
 		}
-		catch (CoreException e) {
-			swallowError(path, e); 
-		}
-		catch (RuntimeException e) {
-			swallowError(path, e); 
-		}
-		catch (PDOMNotImplementedError e) {
-			swallowError(path, e); 
+		if (th != null) {
+			swallowError(path, th);
 		}
 	}
 	

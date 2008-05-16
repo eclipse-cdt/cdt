@@ -192,14 +192,19 @@ abstract public class PDOMWriter {
 					if (fShowActivity) {
 						System.out.println("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
 					}
+					Throwable th= null;
 					try {
 						storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes);
 					} catch (RuntimeException e) {
-						stati.add(CCorePlugin.createStatus(
-								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), e));
+						th= e; 
 					} catch (PDOMNotImplementedError e) {
+						th= e; 
+					} catch (StackOverflowError e) {
+						th= e;
+					}
+					if (th != null) {
 						stati.add(CCorePlugin.createStatus(
-								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), e));
+								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), th));
 					}
 					if (i<ifls.length-1) {
 						updateFileCount(0, 0, 1); // update header count
@@ -226,6 +231,7 @@ abstract public class PDOMWriter {
 				final IASTName[] na= j.next();
 				final IASTName name = na[0];
 				if (name != null) { // should not be null, just be defensive.
+					Throwable th= null;
 					try {
 						final IBinding binding = name.resolveBinding();
 						if (binding instanceof IProblemBinding) {
@@ -247,20 +253,20 @@ abstract public class PDOMWriter {
 							fStatistics.fDeclarationCount++;
 						}
 					} catch (RuntimeException e) {
-						if (!reported) {
-							stati.add(CCorePlugin.createStatus(
-									NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
-						}
-						reported= true;
-						j.remove();
+						th= e;
 					} catch (PDOMNotImplementedError e) {
+						th= e;
+					} catch (StackOverflowError e) {
+						th= e;
+					}
+					if (th != null) {
 						if (!reported) {
 							stati.add(CCorePlugin.createStatus(
-									NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
+									NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), th));
 						}
 						reported= true;
 						j.remove();
-					}
+					} 
 				}
 			}
 		}

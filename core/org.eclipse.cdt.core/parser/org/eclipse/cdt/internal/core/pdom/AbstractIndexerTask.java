@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -54,6 +55,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Task for the actual indexing. Various indexers need to implement the abstract methods.
@@ -89,6 +91,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		public IIndexMacro[] fMacros;
 		public ICPPUsingDirective[] fDirectives;
 	}
+	
+	protected enum MessageKind {parsingFileTask, errorWhileParsing, tooManyIndexProblems};
 	
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 	private boolean fIndexHeadersWithoutContext= true;
@@ -182,7 +186,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		
 		try {
-			IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanInfo, fCodeReaderFactory, fIndex, options, ParserUtil.getParserLogService());
+			IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanInfo, fCodeReaderFactory, fIndex, options, getLogService());
 			if (pm.isCanceled()) {
 				return null;
 			}
@@ -193,6 +197,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				((IndexBasedCodeReaderFactory) fCodeReaderFactory).cleanupAfterTranslationUnit();
 			}
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	protected IParserLogService getLogService() {
+		return ParserUtil.getParserLogService();
 	}
 
 	public final void runTask(IProgressMonitor monitor) throws InterruptedException {
@@ -433,7 +444,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (fShowActivity) {
 					System.out.println("Indexer: parsing " + filePath + " up front");  //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				monitor.subTask(MessageFormat.format(Messages.AbstractIndexerTask_parsingFileTask,
+				monitor.subTask(MessageFormat.format(getMessage(MessageKind.parsingFileTask),
 						new Object[]{fileName, path.removeLastSegments(1).toString()}));
 				
 				AbstractLanguage[] langs= getLanguages(fileName);
@@ -582,7 +593,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (fShowActivity) {
 				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
 			}
-			pm.subTask(MessageFormat.format(Messages.AbstractIndexerTask_parsingFileTask,
+			pm.subTask(MessageFormat.format(getMessage(MessageKind.parsingFileTask),
 					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
 			long start= System.currentTimeMillis();
 			IASTTranslationUnit ast= createAST(tu, lang, scanInfo, fASTOptions, pm);
@@ -698,12 +709,19 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		else {
 			s= CCorePlugin.createStatus(
-					MessageFormat.format(Messages.AbstractIndexerTask_errorWhileParsing, new Object[]{file}), e);
+					MessageFormat.format(getMessage(MessageKind.errorWhileParsing), new Object[]{file}), e);
 		}
-		CCorePlugin.log(s);
+		logError(s);
 		if (++fStatistics.fErrorCount > MAX_ERRORS) {
-			throw new CoreException(CCorePlugin.createStatus(Messages.AbstractIndexerTask_tooManyIndexProblems));
+			throw new CoreException(createStatus(getMessage(MessageKind.tooManyIndexProblems)));
 		}
+	}
+
+	/**
+	 * @param s
+	 */
+	protected void logError(IStatus s) {
+		CCorePlugin.log(s);
 	}
 
 	private static int computeHashCode(IScannerInfo scannerInfo) {
@@ -776,5 +794,28 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			return info;
 		}
 		return null;
+	}
+	
+	protected String getMessage(MessageKind kind, Object... arguments) {
+		switch (kind) {
+		case parsingFileTask:
+			return NLS.bind(Messages.AbstractIndexerTask_parsingFileTask,
+					arguments);
+		case errorWhileParsing:
+			return NLS.bind(Messages.AbstractIndexerTask_errorWhileParsing,
+					arguments);
+			
+		case tooManyIndexProblems:
+			return NLS.bind(Messages.AbstractIndexerTask_tooManyIndexProblems,
+					arguments);
+
+		}
+		
+		return null;
+	}
+	
+	
+	protected IStatus createStatus(String msg) {
+		return CCorePlugin.createStatus(msg);
 	}
 }

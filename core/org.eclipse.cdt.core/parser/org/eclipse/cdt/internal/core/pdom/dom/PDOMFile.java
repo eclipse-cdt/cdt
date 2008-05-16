@@ -47,6 +47,8 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Represents a file containing names.
@@ -260,7 +262,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			final String linkageName = Linkage.getLinkageName(getLinkageID());
 			fLinkage= pdom.createLinkage(linkageName);
 			if (fLinkage == null) {
-				throw new CoreException(CCorePlugin.createStatus("Unsupported linkage: " + linkageName)); //$NON-NLS-1$
+				throw new CoreException(createStatus("Unsupported linkage: " + linkageName)); //$NON-NLS-1$
 			}
 		}
 		return fLinkage;
@@ -627,5 +629,10 @@ public class PDOMFile implements IIndexFragmentFile {
 			return linkage.getUsingDirectives(this);
 		}
 		return ICPPUsingDirective.EMPTY_ARRAY;
+	}
+	
+	// required because we cannot reference CCorePlugin in order for StandaloneIndexer to work
+	private IStatus createStatus(String msg) {
+		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, msg, null); //$NON-NLS-1$
 	}
 }

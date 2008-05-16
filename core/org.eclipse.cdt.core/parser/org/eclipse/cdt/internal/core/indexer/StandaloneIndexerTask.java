@@ -18,10 +18,13 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * A task for index updates.
@@ -168,4 +171,53 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 			}
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#createStatus(java.lang.String)
+	 */
+	@Override
+	protected IStatus createStatus(String msg) {
+		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, msg, null); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getMessage(org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.MessageKind, java.lang.Object[])
+	 */
+	@Override
+	protected String getMessage(MessageKind kind, Object... arguments) {
+		// unfortunately we don't have OSGi on the remote system so for now we'll just settle for
+		// English strings
+		// TODO: find a way to do non-OSGi NLS
+		switch(kind) {
+		case parsingFileTask:
+			return new String("parsing {0} ({1})"); //$NON-NLS-1$
+			
+		case errorWhileParsing:
+			return new String("Error while parsing {0}."); //$NON-NLS-1$
+			
+		
+		case tooManyIndexProblems:
+			return new String("Too many errors while indexing, stopping indexer."); //$NON-NLS-1$
+		}
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getLogService()
+	 */
+	@Override
+	protected IParserLogService getLogService() {
+		return new StdoutLogService();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#logError(org.eclipse.core.runtime.IStatus)
+	 */
+	@Override
+	protected void logError(IStatus s) {
+		getLogService().traceLog(s.getMessage());
+	}
+	
+	
 }

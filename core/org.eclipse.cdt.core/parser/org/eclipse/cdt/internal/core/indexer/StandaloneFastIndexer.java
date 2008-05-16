@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -50,7 +51,7 @@ public class StandaloneFastIndexer extends StandaloneIndexer{
 	 * @param log - logger
 	 * @throws CoreException
 	 */
-	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map linkageFactoryMappings,
+	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
 			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log) throws CoreException {
 		WritablePDOM pdom = new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings);
 		fIndex = new WritableCIndex(
@@ -66,7 +67,7 @@ public class StandaloneFastIndexer extends StandaloneIndexer{
 	 * Create a delegate standalone indexing task
 	 */
 	@Override
-	protected StandaloneIndexerTask createTask(List added, List changed, List removed) {
+	protected StandaloneIndexerTask createTask(List<String> added, List<String> changed, List<String> removed) {
 		return new StandaloneFastIndexerTask(this, added, changed, removed);
 	}
 

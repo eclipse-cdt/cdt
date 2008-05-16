@@ -289,7 +289,7 @@ public abstract class StandaloneIndexer {
 	 * @param monitor
 	 * @throws IOException
 	 */
-	public void rebuild(List tus, IProgressMonitor monitor) throws IOException {
+	public void rebuild(List<String> tus, IProgressMonitor monitor) throws IOException {
 		fProgress = createProgress();
 		
 		try {
@@ -314,7 +314,7 @@ public abstract class StandaloneIndexer {
 	 * @param monitor
 	 * @throws IOException
 	 */
-	public void handleDelta(List added, List changed, List removed, IProgressMonitor monitor) throws IOException {
+	public void handleDelta(List<String> added, List<String> changed, List<String> removed, IProgressMonitor monitor) throws IOException {
 		fProgress= new IndexerProgress();
 				
 		fDelegate= createTask(getFilesAdded(added), changed, removed);
@@ -334,17 +334,17 @@ public abstract class StandaloneIndexer {
 	 * @param tus
 	 * @return
 	 */
-	private List getFilesAdded(List tus) {
-		List added = new ArrayList();
+	private List<String> getFilesAdded(List<String> tus) {
+		List<String> added = new ArrayList<String>();
 		
 		FilenameFilter filter = getExclusionFilter();
 		if (filter == null) {
 			filter = DEFAULT_FILTER;
 		}
 		
-		Iterator iter = tus.iterator();
+		Iterator<String> iter = tus.iterator();
 		while (iter.hasNext()) {
-			String path = (String) iter.next();
+			String path = iter.next();
 			File file = new File(path);
 			if (file.isDirectory()) {
 				String[] files = file.list(filter);
@@ -364,7 +364,7 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Creates a delegate standalone indexing task
 	 */
-	protected abstract StandaloneIndexerTask createTask(List added, List changed, List removed);
+	protected abstract StandaloneIndexerTask createTask(List<String> added, List<String> changed, List<String> removed);
 
 	/**
 	 * Return the type of references the parser should skip.

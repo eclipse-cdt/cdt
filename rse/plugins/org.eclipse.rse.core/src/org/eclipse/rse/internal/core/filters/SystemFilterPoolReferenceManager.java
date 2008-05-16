@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [197036] fixed parent references and names so that delete references would function correctly
+ * David Dykstal (IBM) - [213353] fix move of filter pool references
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -29,6 +30,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.references.SystemPersistableReferenceManager;
@@ -384,13 +386,16 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 * moved up in the list.
 	 */
 	public void moveSystemFilterPoolReference(ISystemFilterPoolReference filterPoolRef, int pos) {
-		int oldPos = super.getReferencingObjectPosition(filterPoolRef);
-		super.moveReferencingObjectPosition(pos, filterPoolRef);
+		int oldPos = getReferencingObjectPosition(filterPoolRef);
+		moveReferencingObjectPosition(pos, filterPoolRef);
 		invalidateFilterPoolReferencesCache();
 		if (fireEvents && (caller != null) && !noEvents) {
 			ISystemFilterPoolReference[] refs = new ISystemFilterPoolReference[1];
 			refs[0] = filterPoolRef;
 			caller.filterEventFilterPoolReferencesRePositioned(refs, pos - oldPos);
+		}
+		if (caller instanceof IRSEPersistableContainer) {
+			((IRSEPersistableContainer) caller).setDirty(true);
 		}
 	}
 

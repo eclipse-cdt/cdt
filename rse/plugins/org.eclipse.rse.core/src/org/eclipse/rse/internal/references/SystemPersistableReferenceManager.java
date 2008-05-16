@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [213353] fix move of filter pool references within its container
  *******************************************************************************/
 
 package org.eclipse.rse.internal.references;
@@ -207,12 +207,19 @@ public class SystemPersistableReferenceManager implements IRSEBasePersistableRef
 
 	/**
 	 * Move the given referencing object to a new zero-based position in the list.
+	 * This does not call back or send any events nor does it mark anything dirty.
 	 * @param newPosition New zero-based position
 	 * @param object The referencing object to move
 	 */
 	public void moveReferencingObjectPosition(int newPosition, IRSEBasePersistableReferencingObject object) {
-		//    	List list = internalGetList(); 
-		//FIXME	list.move(newPosition, object);		
+		int oldPosition = referencingObjectList.indexOf(object);
+		if (oldPosition >= 0) {
+			if (oldPosition != newPosition) {
+				referencingObjectList.remove(oldPosition);
+				referencingObjectList.add(newPosition, object);
+				invalidateCache();
+			}
+		}
 	}
 
 	/**

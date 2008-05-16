@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.net.URI;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -92,7 +91,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		public ICPPUsingDirective[] fDirectives;
 	}
 	
-	protected enum MessageKind {parsingFileTask, errorWhileParsing, tooManyIndexProblems};
+	protected enum MessageKind {parsingFileTask, errorWhileParsing, tooManyIndexProblems}
 	
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 	private boolean fIndexHeadersWithoutContext= true;
@@ -199,9 +198,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected IParserLogService getLogService() {
 		return ParserUtil.getParserLogService();
 	}
@@ -444,8 +440,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (fShowActivity) {
 					System.out.println("Indexer: parsing " + filePath + " up front");  //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				monitor.subTask(MessageFormat.format(getMessage(MessageKind.parsingFileTask),
-						new Object[]{fileName, path.removeLastSegments(1).toString()}));
+				monitor.subTask(getMessage(MessageKind.parsingFileTask,
+						fileName, path.removeLastSegments(1).toString()));
 				
 				AbstractLanguage[] langs= getLanguages(fileName);
 				for (AbstractLanguage lang : langs) {
@@ -593,8 +589,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (fShowActivity) {
 				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
 			}
-			pm.subTask(MessageFormat.format(getMessage(MessageKind.parsingFileTask),
-					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
+			pm.subTask(getMessage(MessageKind.parsingFileTask,
+					path.lastSegment(), path.removeLastSegments(1).toString()));
 			long start= System.currentTimeMillis();
 			IASTTranslationUnit ast= createAST(tu, lang, scanInfo, fASTOptions, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis()-start;
@@ -708,8 +704,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			}
 		}
 		else {
-			s= CCorePlugin.createStatus(
-					MessageFormat.format(getMessage(MessageKind.errorWhileParsing), new Object[]{file}), e);
+			s= CCorePlugin.createStatus(getMessage(MessageKind.errorWhileParsing, file), e);
 		}
 		logError(s);
 		if (++fStatistics.fErrorCount > MAX_ERRORS) {
@@ -799,18 +794,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected String getMessage(MessageKind kind, Object... arguments) {
 		switch (kind) {
 		case parsingFileTask:
-			return NLS.bind(Messages.AbstractIndexerTask_parsingFileTask,
-					arguments);
+			return NLS.bind(Messages.AbstractIndexerTask_parsingFileTask, arguments);
 		case errorWhileParsing:
-			return NLS.bind(Messages.AbstractIndexerTask_errorWhileParsing,
-					arguments);
-			
+			return NLS.bind(Messages.AbstractIndexerTask_errorWhileParsing, arguments);
 		case tooManyIndexProblems:
-			return NLS.bind(Messages.AbstractIndexerTask_tooManyIndexProblems,
-					arguments);
-
+			return Messages.AbstractIndexerTask_tooManyIndexProblems;
 		}
-		
 		return null;
 	}
 	

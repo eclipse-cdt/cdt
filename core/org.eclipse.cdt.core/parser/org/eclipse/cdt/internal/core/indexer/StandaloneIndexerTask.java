@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A task for index updates.
@@ -59,13 +60,13 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		}
 	}
 	
-	private static Object[] concat(Collection added, Collection changed) {
+	private static Object[] concat(Collection<?> added, Collection<?> changed) {
 		Object[] result= new Object[added.size() + changed.size()];
 		int i=0;
-		for (Iterator iterator = added.iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = added.iterator(); iterator.hasNext();) {
 			result[i++]= iterator.next();
 		}
-		for (Iterator iterator = changed.iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = changed.iterator(); iterator.hasNext();) {
 			result[i++]= iterator.next();
 		}
 		return result;
@@ -190,14 +191,13 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		// TODO: find a way to do non-OSGi NLS
 		switch(kind) {
 		case parsingFileTask:
-			return new String("parsing {0} ({1})"); //$NON-NLS-1$
+			return NLS.bind("parsing {0} ({1})", arguments); //$NON-NLS-1$
 			
 		case errorWhileParsing:
-			return new String("Error while parsing {0}."); //$NON-NLS-1$
+			return NLS.bind("Error while parsing {0}.", arguments); //$NON-NLS-1$
 			
-		
 		case tooManyIndexProblems:
-			return new String("Too many errors while indexing, stopping indexer."); //$NON-NLS-1$
+			return "Too many errors while indexing, stopping indexer."; //$NON-NLS-1$
 		}
 		
 		return null;

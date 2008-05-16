@@ -16,12 +16,12 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David Dykstal (IBM) - [226761] fix NPE in team view when expanding items
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -79,19 +79,21 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
+	 * @return the desired image descriptor
 	 */
-	public ImageDescriptor getImageDescriptor(Object element)
-	{
-    	ImageDescriptor filterImage = null;
+	public ImageDescriptor getImageDescriptor(Object element) {
+		ImageDescriptor filterImage = null;
 		ISystemFilterString filterString = getFilterString(element);
-    	if (filterString.getProvider() != null)
-    	{
-    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)filterString.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
-          filterImage = adapter.getSystemFilterStringImage(filterString); 
-    	}
-    	if (filterImage == null)
-    	  filterImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERSTRING_ID);
-    	return filterImage;  	
+		if (filterString.getProvider() != null) {
+			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) filterString.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
+			if (adapter != null) {
+				filterImage = adapter.getSystemFilterStringImage(filterString);
+			}
+		}
+		if (filterImage == null) {
+			filterImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERSTRING_ID);
+		}
+		return filterImage;
 	}
 	
 	/**

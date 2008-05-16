@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David Dykstal (IBM) - [226761] fix NPE in team view when expanding items
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -120,20 +121,21 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
+	 * @return the desired image descriptor
 	 */
-	public ImageDescriptor getImageDescriptor(Object element)
-	{
-		//return RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILTER_ID);
-    	ImageDescriptor filterImage = null;
-    	ISystemFilter filter = getFilter(element);
-    	if (filter.getProvider() != null)
-    	{
-    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)filter.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
-    		filterImage = adapter.getSystemFilterImage(filter);
-    	}
-    	if (filterImage == null)
-    	  filterImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
-    	return filterImage;  	
+	public ImageDescriptor getImageDescriptor(Object element) {
+		ImageDescriptor filterImage = null;
+		ISystemFilter filter = getFilter(element);
+		if (filter.getProvider() != null) {
+			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) filter.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
+			if (adapter != null) {
+				filterImage = adapter.getSystemFilterImage(filter);
+			}
+		}
+		if (filterImage == null) {
+			filterImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
+		}
+		return filterImage;
 	}
 	
 	/**

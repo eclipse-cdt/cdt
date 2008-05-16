@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David Dykstal (IBM) - [226761] fix NPE in team view when expanding items
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -90,21 +91,21 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
+	 * @return the desired image descriptor
 	 */
-	public ImageDescriptor getImageDescriptor(Object element)
-	{
-        //return RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILTERPOOL_ID);
-    	ImageDescriptor poolImage = null;
-    	ISystemFilterPool pool = (ISystemFilterPool)element;
-    	if (pool.getProvider() != null)
-    	{
-    		
-    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)pool.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
-          poolImage = adapter.getSystemFilterPoolImage(pool); 
-    	}
-    	if (poolImage == null)
-    	  poolImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
-    	return poolImage;  	
+	public ImageDescriptor getImageDescriptor(Object element) {
+		ImageDescriptor poolImage = null;
+		ISystemFilterPool pool = (ISystemFilterPool) element;
+		if (pool.getProvider() != null) {
+			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) pool.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
+			if (adapter != null) {
+				poolImage = adapter.getSystemFilterPoolImage(pool);
+			}
+		}
+		if (poolImage == null) {
+			poolImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
+		}
+		return poolImage;
 	}
 	
 	/**

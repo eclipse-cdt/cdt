@@ -1004,18 +1004,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		IASTDeclaration declaration = (IASTDeclaration) astStack.pop();
 		
-		// Ugly hack alert!
 		// For some reason ambiguous declarators cause bugs when they are a part of a template declaration.
 		// But it shouldn't be ambiguous anyway, so just throw away the ambiguity node.
-		if(declaration instanceof IASTSimpleDeclaration) {
-			for(IASTDeclarator declarator : ((IASTSimpleDeclaration)declaration).getDeclarators()) {
-				if(declarator instanceof CPPASTAmbiguousDeclarator) {
-					IASTAmbiguityParent owner = (IASTAmbiguityParent) declaration;
-					CPPASTAmbiguousDeclarator ambiguity = (CPPASTAmbiguousDeclarator)declarator;
-					owner.replace(ambiguity, ambiguity.getNodes()[0]);
-				}
-			}
-		}
+		resolveAmbiguousDeclaratorsToFunction(declaration);
 		
 		ICPPASTTemplateDeclaration templateDeclaration = nodeFactory.newTemplateDeclaration(declaration);
 		
@@ -1029,6 +1020,23 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		astStack.push(templateDeclaration);
 
 		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	/**
+	 * If we know that a declarator must be a function declarator then we can resolve
+	 * the ambiguity without resorting to binding resolution.
+	 */
+	private static void resolveAmbiguousDeclaratorsToFunction(IASTDeclaration declaration) {
+		if(declaration instanceof IASTSimpleDeclaration) {
+			for(IASTDeclarator declarator : ((IASTSimpleDeclaration)declaration).getDeclarators()) {
+				if(declarator instanceof CPPASTAmbiguousDeclarator) {
+					IASTAmbiguityParent owner = (IASTAmbiguityParent) declaration;
+					CPPASTAmbiguousDeclarator ambiguity = (CPPASTAmbiguousDeclarator)declarator;
+					owner.replace(ambiguity, ambiguity.getNodes()[0]);
+				}
+			}
+		}
 	}
 	
 	
@@ -1212,14 +1220,12 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * simple_declaration
      *     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
-     *     
-     * TODO: remove attemptAmbiguityResolution parameter
 	 */
 	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : Collections.emptyList();
-		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
+		ICPPASTDeclSpecifier declSpecifier = (ICPPASTDeclSpecifier) astStack.pop(); // may be null
 		List<IToken> ruleTokens = parser.getRuleTokens();
 		IToken nameToken = null;
 		
@@ -1240,7 +1246,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		// can happen if implicit int is used
 		else if(declSpecifier == null) { 
-			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
+			declSpecifier = nodeFactory.newCPPSimpleDeclSpecifier();
 			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
 		}
 		
@@ -1251,9 +1257,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		   ruleTokens.size() >= 2 &&
 		   baseKind(nameToken = ruleTokens.get(ruleTokens.size() - 2)) == TK_identifier) {
 			
-			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
+			declSpecifier = nodeFactory.newCPPSimpleDeclSpecifier();
 			for(IToken t : ruleTokens.subList(0, ruleTokens.size()-1))
-				setSpecifier((ICPPASTDeclSpecifier)declSpecifier, t);
+				setSpecifier(declSpecifier, t);
 			
 			int offset = offset(parser.getLeftIToken());
 			int length = endOffset(ruleTokens.get(ruleTokens.size()-2)) - offset;
@@ -1270,6 +1276,20 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		setOffsetAndLength(declaration);
 		for(Object declarator : declarators)
 			declaration.addDeclarator((IASTDeclarator)declarator);
+		
+		
+		// simple ambiguity resolutions
+//		if(declSpecifier.isFriend())
+//			resolveAmbiguousDeclaratorsToFunction(declaration);
+//		
+//		if(declSpecifier instanceof IASTSimpleDeclSpecifier) {
+//			IASTSimpleDeclSpecifier simple = (IASTSimpleDeclSpecifier) declSpecifier;
+//			if(simple.getType() == IASTSimpleDeclSpecifier.t_void && declaration.getDeclarators()[0].getPointerOperators().length == 0)
+//				resolveAmbiguousDeclaratorsToFunction(declaration);
+//			
+//		}
+		
+		
 		
 		astStack.push(declaration);
 

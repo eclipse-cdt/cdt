@@ -12,7 +12,6 @@ package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
-import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -20,6 +19,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
@@ -130,10 +130,10 @@ public class ServicesLaunchSequence extends Sequence {
     }
     
     private IPath getGDBPath() {
-        IPath retVal = new Path(IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+        IPath retVal = new Path(IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
         try {
-            retVal = new Path(fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-            		                                                        IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT));
+            retVal = new Path(fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
+            		                                                        IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT));
         } catch (CoreException e) {
         }
         return retVal;

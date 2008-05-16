@@ -18,8 +18,6 @@ import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
-import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
-import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,6 +30,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
+import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
@@ -72,8 +71,8 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
         	try {
-        		final String gdbinitFile = fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, 
-        				                                                           IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
+        		final String gdbinitFile = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
+        				                                                           IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
         		if (gdbinitFile != null && gdbinitFile.length() > 0) {
         			fCommandControl.queueCommand(
         					new CLISource(fCommandControl.getControlDMContext(), gdbinitFile), 
@@ -84,7 +83,7 @@ public class FinalLaunchSequence extends Sequence {
         							// should not consider this an error.
         							// If it is not the default, then the user must have specified it and
         							// we want to warn the user if we can't find it.
-        							if (!gdbinitFile.equals(IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT )) {
+        							if (!gdbinitFile.equals(IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT )) {
         								requestMonitor.setStatus(getStatus());
         							}
         							requestMonitor.done();
@@ -119,8 +118,8 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
     		try {
-    			boolean autolib = fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
-    					                                                        IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+    			boolean autolib = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
+    					                                                        IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
                 fCommandControl.queueCommand(
                 	new MIGDBSetAutoSolib(fCommandControl.getControlDMContext(), autolib), 
                 	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
@@ -136,7 +135,7 @@ public class FinalLaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
       		try {
       		    @SuppressWarnings("unchecked")
-    			List<String> p = fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, 
+    			List<String> p = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, 
     					                                                       new ArrayList<String>(1));
    				if (p.size() > 0) {
    					String[] paths = p.toArray(new String[p.size()]);
@@ -176,7 +175,7 @@ public class FinalLaunchSequence extends Sequence {
             private boolean checkConnectionType(RequestMonitor requestMonitor) {
                 try {
                 	fTcpConnection = fLaunch.getLaunchConfiguration().getAttribute(
-                                    IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP,
+                                    IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
                                     false);
                 } catch (CoreException e) {
                     requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve connection mode", e)); //$NON-NLS-1$
@@ -189,7 +188,7 @@ public class FinalLaunchSequence extends Sequence {
             private boolean getSerialDevice(RequestMonitor requestMonitor) {
                 try {
                     fSerialDevice = fLaunch.getLaunchConfiguration().getAttribute(
-                                    			IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
+                                    			IGDBLaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
                 } catch (CoreException e) {
                     requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve serial device", e)); //$NON-NLS-1$
                     requestMonitor.done();
@@ -201,7 +200,7 @@ public class FinalLaunchSequence extends Sequence {
             private boolean getTcpHost(RequestMonitor requestMonitor) {
                 try {
                     fRemoteTcpHost = fLaunch.getLaunchConfiguration().getAttribute(
-                    							IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid"); //$NON-NLS-1$
+                    							IGDBLaunchConfigurationConstants.ATTR_HOST, "invalid"); //$NON-NLS-1$
                 } catch (CoreException e) {
                     requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP host", e)); //$NON-NLS-1$
                     requestMonitor.done();
@@ -213,7 +212,7 @@ public class FinalLaunchSequence extends Sequence {
             private boolean getTcpPort(RequestMonitor requestMonitor) {
                 try {
                     fRemoteTcpPort = fLaunch.getLaunchConfiguration().getAttribute(
-                                    			IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
+                                    			IGDBLaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
                 } catch (CoreException e) {
                     requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP port", e)); //$NON-NLS-1$
                     requestMonitor.done();

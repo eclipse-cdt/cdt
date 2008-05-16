@@ -52,7 +52,7 @@ public class ExprMetaCommand<V extends ICommandResult> implements ICommand<V> {
     
     @Override
     public String toString() {
-        return getClass().toString() + fCtx == null ? "null" : fCtx.toString(); //$NON-NLS-1$
+        return getClass().getName() + (fCtx == null ? "null" : fCtx.toString()); //$NON-NLS-1$
     }
     
     public String getCommandControlFilter() {

@@ -4698,4 +4698,27 @@ public class AST2Tests extends AST2BaseTest {
     	parseAndCheckBindings(code, ParserLanguage.C);
     	parseAndCheckBindings(code, ParserLanguage.CPP);
     }
+    
+    //    int globalArray[4] = {1,2,3,4};
+    //    void function1(); // decl
+    //
+    //    void function1() {
+    //        getArray()[0] = 1; 
+    //    }
+    //
+    //    void function2() {
+    //        function1(); // ref
+    //    }
+    public void testOutOfOrderResolution_Bug232300() throws Exception {
+    	final boolean[] isCpp= {false, true};
+    	String code= getAboveComment();
+    	for (boolean element : isCpp) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), element);
+    		IBinding b1= ba.assertNonProblem("function1(); // decl", 9);
+    		IBinding b2= ba.assertNonProblem("function1() {", 9);
+    		IBinding b3= ba.assertNonProblem("function1(); // ref", 9);
+    		assertSame(b1, b2);
+    		assertSame(b2, b3);
+		}
+    }
 }

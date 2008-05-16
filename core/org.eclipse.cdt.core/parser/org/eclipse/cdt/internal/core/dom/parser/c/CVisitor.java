@@ -921,7 +921,12 @@ public class CVisitor {
         }  
 		
         if( parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ){
-		    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) parent.getParent();
+        	IASTDeclarator fdtor = (IASTDeclarator) parent.getParent();
+        	IASTDeclarator nested= fdtor.getNestedDeclarator();
+        	while (nested != null && nested.getPointerOperators().length == 0) {
+        		fdtor= nested;
+        		nested= nested.getNestedDeclarator();
+        	}
 		    IBinding temp = fdtor.getName().resolveBinding();
 		    if( temp != null && temp instanceof CFunction ){
 		        binding = ((CFunction) temp).resolveParameter( name );
@@ -939,8 +944,9 @@ public class CVisitor {
 			if( binding != null && !(binding instanceof IIndexBinding)) {
 			    if( binding instanceof IFunction ){
 			        IFunction function = (IFunction) binding;
-			        if( function instanceof CFunction )
+			        if( function instanceof CFunction ) {
 			        	((CFunction)function).addDeclarator( funcDeclarator );
+			        }
 			        return function;
 			    }
 		        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );

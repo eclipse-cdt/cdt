@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -96,7 +97,8 @@ public class CScope implements ICScope, IASTInternalScope {
     private IASTNode physicalNode = null;
     private boolean isFullyCached = false;
     
-    private CharArrayObjectMap [] bindings = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
+    private CharArrayObjectMap[] mapsToNameOrBinding = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
+    private ObjectMap reuseBindings= null;
     
     public CScope( IASTNode physical ){
         physicalNode = physical;
@@ -148,8 +150,14 @@ public class CScope implements ICScope, IASTInternalScope {
     }
 
     public IBinding getBinding( int namespaceType, char [] name ){
-        IASTName n = (IASTName) bindings[namespaceType].get( name );
-        return ( n != null ) ? n.resolveBinding() : null;
+    	Object o= mapsToNameOrBinding[namespaceType].get(name);
+    	if (o instanceof IBinding)
+    		return (IBinding) o;
+    	
+    	if (o instanceof IASTName) 
+    		return ((IASTName) o).resolveBinding();
+
+    	return null;
     }
 
 	/* (non-Javadoc)
@@ -159,8 +167,12 @@ public class CScope implements ICScope, IASTInternalScope {
         int type = ( binding instanceof ICompositeType || binding instanceof IEnumeration ) ? 
 				NAMESPACE_TYPE_TAG : NAMESPACE_TYPE_OTHER;
 
-		if( bindings[type] != CharArrayObjectMap.EMPTY_MAP ) {
-			bindings[type].remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
+		final CharArrayObjectMap bindingsMap = mapsToNameOrBinding[type];
+		if( bindingsMap != CharArrayObjectMap.EMPTY_MAP ) {
+			Object o= bindingsMap.remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
+			if (o != null && reuseBindings != null) {
+				reuseBindings.remove(o);
+			}
 		}
 		isFullyCached = false;
 	}
@@ -177,14 +189,35 @@ public class CScope implements ICScope, IASTInternalScope {
      */
     public void addName( IASTName name ) {
         int type = getNamespaceType( name );
-        if( bindings[type] == CharArrayObjectMap.EMPTY_MAP )
-            bindings[type] = new CharArrayObjectMap(1);
+        CharArrayObjectMap map = mapsToNameOrBinding[type];
+		if( map == CharArrayObjectMap.EMPTY_MAP )
+            map= mapsToNameOrBinding[type] = new CharArrayObjectMap(1);
         
-        char [] n = name.toCharArray();
-        Object current= bindings[type].get( n );
-        if( !(current instanceof IASTName) || ((CASTName)current).getOffset() > ((CASTName) name).getOffset() ){
-            bindings[type].put( n, name );
+        final char [] n = name.toCharArray();
+        final Object current= map.get( n );
+        if (current instanceof IASTName) {
+        	final CASTName currentName = (CASTName)current;
+			if (currentName.getOffset() <= ((CASTName) name).getOffset() ){
+        		return;
+        	}
+			if (name.getBinding() == null) {
+        		// bug 232300: we need to make sure that the binding is picked up even if the name is removed
+        		// from the cache. Simply assigning it to the name is not enough, because a declaration or 
+        		// definition needs to be added to the binding.
+				IBinding reuseBinding= currentName.getBinding();
+				if (reuseBinding == null && reuseBindings != null) {
+					reuseBinding= (IBinding) reuseBindings.get(currentName);
+				}
+				if (reuseBinding != null) {
+	        		if (reuseBindings == null) {
+	        			reuseBindings= new ObjectMap(1);
+	        		}
+	        		reuseBindings.put(name, reuseBinding);
+	        		reuseBindings.remove(currentName);
+				} 
+			}
         }
+        map.put(n, name);
     }
 
     private int getNamespaceType( IASTName name ){
@@ -213,17 +246,26 @@ public class CScope implements ICScope, IASTInternalScope {
 	        return null;
 	    }
 	    
-	    int type = getNamespaceType( name );
-	    Object o = bindings[type].get( name.toCharArray() );
+	    final int type = getNamespaceType( name );
+	    Object o = mapsToNameOrBinding[type].get( name.toCharArray() );
 	    
 	    if( o instanceof IBinding )
 	        return (IBinding) o;
 	
-	    if (o != null && o != name) {
-	    	IASTName foundName= (IASTName) o;
-	    	if( (resolve || foundName.getBinding() != null) && ( foundName != name ) ) {
-	    		if(!isTypeDefinition(name) || CVisitor.declaredBefore(foundName, name)) {
-	    			return foundName.resolveBinding();
+	    if (o instanceof IASTName) {
+	    	final IASTName n= (IASTName) o;
+	    	if (!isTypeDefinition(name) || CVisitor.declaredBefore(n, name)) {
+	    		IBinding b= n.getBinding();
+	    		if (b != null)
+	    			return b;
+
+	    		if (reuseBindings != null) {
+	    			b= (IBinding) reuseBindings.get(n);
+	    			if (b != null)
+	    				return b;
+	    		}
+	    		if (resolve && n != name) {
+	    			return n.resolveBinding();
 	    		}
 	    	}
 	    }
@@ -274,17 +316,17 @@ public class CScope implements ICScope, IASTInternalScope {
         
         Object[] obj = null;
         
-        for (CharArrayObjectMap binding : bindings) {
+        for (CharArrayObjectMap map : mapsToNameOrBinding) {
         	if (prefixLookup) {
-        		Object[] keys = binding.keyArray();
+        		Object[] keys = map.keyArray();
         		for (Object key2 : keys) {
         			char[] key = (char[]) key2;
         			if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
-        				obj = ArrayUtil.append(obj, binding.get(key));
+        				obj = ArrayUtil.append(obj, map.get(key));
         			}
         		}
         	} else {
-        		obj = ArrayUtil.append(obj, binding.get(c));
+        		obj = ArrayUtil.append(obj, map.get(c));
         	}
         }
 
@@ -310,11 +352,24 @@ public class CScope implements ICScope, IASTInternalScope {
        	IBinding[] result = null;
         
        	for (Object element : obj) {
-            if( element instanceof IBinding )
+            if( element instanceof IBinding ) {
             	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
-
-            if( (resolve || ((IASTName)element).getBinding() != null) && ( element != name ) )
-            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName)element).resolveBinding());
+            } else if (element instanceof IASTName) {
+    	    	final IASTName n= (IASTName) element;
+    	    	IBinding b= n.getBinding();
+    	    	if (b == null) {
+    	    		if (reuseBindings != null) {
+    	    			b= (IBinding) reuseBindings.get(n);
+    	    		}
+    	    		if (resolve && b == null && n != name) {
+    	    			b= n.resolveBinding();
+    	    		}
+    	    	}
+            	if (b != null) {
+                	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
+            	}
+            		
+            }
        	}
 
         return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
@@ -332,27 +387,6 @@ public class CScope implements ICScope, IASTInternalScope {
     		return null;
     	
     	return bindings[0];
-//    	IBinding candidate= bindings[0];
-//    	if(candidate instanceof IFunction) {
-//    		IASTNode parent= name.getParent();
-//    		if(parent instanceof IASTFunctionDeclarator) {
-//    			IASTNode parent2= parent.getParent();
-//    			if(parent2 instanceof IASTFunctionDefinition) {
-//    				IASTFunctionDefinition def= (IASTFunctionDefinition) parent2;
-//    				if(def.getDeclSpecifier().getStorageClass()==IASTDeclSpecifier.sc_static) {
-//    					try {
-//    						if(!((IFunction)candidate).isStatic()) {
-//    							return null;
-//    						}
-//    					} catch(DOMException de) {
-//    						CCorePlugin.log(de);
-//    					}
-//    				}
-//    			}
-//    		}
-//    	}
-//
-//    	return candidate;
     }
         
     /* (non-Javadoc)
@@ -380,8 +414,30 @@ public class CScope implements ICScope, IASTInternalScope {
 	}
 
 	public void flushCache() {
-		bindings[0].clear();
-		bindings[1].clear();
+		CharArrayObjectMap map= mapsToNameOrBinding[0];
+		CharArrayObjectMap builtins= new CharArrayObjectMap(map.size());
+		for (int i = 0; i < map.size(); i++) {
+			Object obj= map.getAt(i);
+			if (obj instanceof IASTName) {
+				((IASTName) obj).setBinding(null);
+			} else if (obj instanceof IBinding) {
+				builtins.put(((IBinding) obj).getNameCharArray(), obj);
+			}
+		}
+		mapsToNameOrBinding[0]= map;
+
+		map= mapsToNameOrBinding[1];
+		builtins= new CharArrayObjectMap(map.size());
+		for (int i = 0; i < map.size(); i++) {
+			Object obj= map.getAt(i);
+			if (obj instanceof IASTName) {
+				((IASTName) obj).setBinding(null);
+			} else if (obj instanceof IBinding) {
+				builtins.put(((IBinding) obj).getNameCharArray(), obj);
+			}
+		}
+		mapsToNameOrBinding[1]= map;
+		reuseBindings= null;
 		isFullyCached = false;
 	}
 
@@ -391,9 +447,10 @@ public class CScope implements ICScope, IASTInternalScope {
             type = NAMESPACE_TYPE_TAG;
         }
             
-        if( bindings[type] == CharArrayObjectMap.EMPTY_MAP )
-           bindings[type] = new CharArrayObjectMap(2);
+        CharArrayObjectMap map = mapsToNameOrBinding[type];
+		if( map == CharArrayObjectMap.EMPTY_MAP )
+           map= mapsToNameOrBinding[type] = new CharArrayObjectMap(2);
         
-		bindings[type].put(binding.getNameCharArray(), binding);
+		map.put(binding.getNameCharArray(), binding);
 	}
 }

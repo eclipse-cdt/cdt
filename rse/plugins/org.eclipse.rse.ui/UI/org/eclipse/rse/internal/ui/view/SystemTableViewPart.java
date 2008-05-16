@@ -33,8 +33,10 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API type
  * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
  * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
+ * David McKnight   (IBM)        - [231867] TVT34:TCT196: PLK: "Subset" window too narrow
  * David Dykstal (IBM) - [231867] TVT34:TCT196: PLK: "Subset" window too narrow
  * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
+ * David McKnight   (IBM)        - [232320] remote system details view restore problem
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -50,6 +52,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -132,7 +135,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.osgi.framework.Bundle;
 
@@ -661,7 +663,7 @@ public class SystemTableViewPart extends ViewPart
 		}
 	}
 
-	class RestoreStateRunnable extends UIJob
+	class RestoreStateRunnable extends Job
 	{
 		private IMemento _rmemento;
 		public RestoreStateRunnable(IMemento memento)
@@ -670,8 +672,14 @@ public class SystemTableViewPart extends ViewPart
 			_rmemento = memento;
 		}
 
-		public IStatus runInUIThread(final IProgressMonitor monitor)
+		public IStatus run(final IProgressMonitor monitor)
 		{
+			try {
+				RSECorePlugin.waitForInitCompletion();
+			}
+			catch (InterruptedException e){				
+			}
+			
 			final IMemento memento = _rmemento;
 			String profileId = memento.getString(TAG_TABLE_VIEW_PROFILE_ID);
 			String connectionId = memento.getString(TAG_TABLE_VIEW_CONNECTION_ID);
@@ -756,7 +764,7 @@ public class SystemTableViewPart extends ViewPart
 			if (subsystem.isConnected()) {
 				if (filterID != null) {
 					try {
-						input = subsystem.getObjectWithAbsoluteName(filterID);
+						input = subsystem.getObjectWithAbsoluteName(filterID, monitor);
 					}
 					catch (Exception e) {
 						//ignore
@@ -765,7 +773,7 @@ public class SystemTableViewPart extends ViewPart
 				else {
 					if (objectID != null) {
 						try {
-							input = subsystem.getObjectWithAbsoluteName(objectID);
+							input = subsystem.getObjectWithAbsoluteName(objectID, monitor);
 						}
 						catch (Exception e)	{
 							return Status.CANCEL_STATUS;
@@ -799,7 +807,13 @@ public class SystemTableViewPart extends ViewPart
 						_viewer.setLastColumnWidths(colWidths);
 					}
 
-					setInput(_mementoInput);
+					// set input needs to be run on the main thread
+					Display.getDefault().asyncExec(new Runnable()
+					{
+						public void run(){
+							setInput(_mementoInput);
+						}
+					});
 				}
 			}
 			return Status.OK_STATUS;
@@ -1755,8 +1769,9 @@ public class SystemTableViewPart extends ViewPart
 	{
 		RestoreStateRunnable rsr = new RestoreStateRunnable(memento);
 		rsr.setRule(RSECorePlugin.getTheSystemRegistry());
+		rsr.setSystem(true);
 		rsr.schedule();
-		_memento = null;
+		
 	}
 
 	/**

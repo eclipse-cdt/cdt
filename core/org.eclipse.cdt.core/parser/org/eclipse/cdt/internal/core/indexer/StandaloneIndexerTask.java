@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.internal.core.indexer;
 
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -25,7 +26,6 @@ import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * A task for index updates.
@@ -191,10 +191,10 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		// TODO: find a way to do non-OSGi NLS
 		switch(kind) {
 		case parsingFileTask:
-			return NLS.bind("parsing {0} ({1})", arguments); //$NON-NLS-1$
+			return MessageFormat.format("parsing {0} ({1})", arguments); //$NON-NLS-1$
 			
 		case errorWhileParsing:
-			return NLS.bind("Error while parsing {0}.", arguments); //$NON-NLS-1$
+			return MessageFormat.format("Error while parsing {0}.", arguments); //$NON-NLS-1$
 			
 		case tooManyIndexProblems:
 			return "Too many errors while indexing, stopping indexer."; //$NON-NLS-1$

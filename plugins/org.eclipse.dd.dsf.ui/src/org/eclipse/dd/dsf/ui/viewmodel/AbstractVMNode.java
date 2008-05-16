@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel;
 
+import java.util.concurrent.Executor;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
@@ -39,7 +40,7 @@ abstract public class AbstractVMNode implements IVMNode {
     /**
      * Accessor method for sub-classes.
      */
-    protected DsfExecutor getExecutor() {
+    protected Executor getExecutor() {
         return fProvider.getExecutor();
     }
 

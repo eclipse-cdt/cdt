@@ -17,13 +17,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.ui.concurrent.DisplayDsfExecutor;
+import org.eclipse.dd.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -75,7 +75,7 @@ abstract public class AbstractVMProvider implements IVMProvider
      * IPresentationContext object (bug 213629).  For now utilize the 
      * assumption that there is only one display. 
      */
-    private final DsfExecutor fExecutor = DisplayDsfExecutor.getDisplayDsfExecutor(Display.getDefault());
+    private final Executor fExecutor = SimpleDisplayExecutor.getSimpleDisplayExecutor(Display.getDefault());
 
     /**
      * The element content provider implementation that this provider delegates to.
@@ -527,12 +527,11 @@ abstract public class AbstractVMProvider implements IVMProvider
      * need to worry about the executor throwing the {@link RejectedExecutionException}
      * exception. 
      */
-    public DsfExecutor getExecutor() { 
+    public Executor getExecutor() { 
         return fExecutor; 
     }
     
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
-        assert getExecutor().isInExecutorThread();
         
         // Iterate through the current active proxies to try to find a proxy with the same
         // element and re-use it if found.  At the same time purge proxies that are no longer
@@ -568,7 +567,6 @@ abstract public class AbstractVMProvider implements IVMProvider
      * @see IColumnPresentationFactory#createColumnPresentation(IPresentationContext, Object)
      */
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-        assert fExecutor.isInExecutorThread();
         return null;
     }
 

@@ -18,6 +18,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -2476,7 +2478,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	const int i= 1;
 	//	A<i> a1;
-	public void _testNonTypeArgumentIsIDExpression_229942() throws Exception {
+	public void _testNonTypeArgumentIsIDExpression_229942_a() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2485,11 +2487,59 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(col.getName(5).getParent(), IASTIdExpression.class);
 	}
 	
+	//  class X {
+	//	   template<int x>
+	//	   class A {};
+	//
+	//	   void foo() {
+   	//	      A<i> a1;
+	//     }
+	//
+	//     const int i= 1;
+	//  };
+	public void _testNonTypeArgumentIsIDExpression_229942_b() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		assertInstance(col.getName(5).getParent(), ICPPASTTemplateId.class);
+		assertInstance(col.getName(6).getParent(), IASTIdExpression.class);
+	}
+	
+	//	template<int x>
+	//	class A {};
+	//
+	//	const int i= 1;
+	//	A<i+1> a1;
+	public void testExpressionArgumentIsExpression_229942_c() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		assertInstance(col.getName(4).getParent(), ICPPASTTemplateId.class);
+		assertInstance(col.getName(5).getParent(), IASTIdExpression.class);
+		assertInstance(col.getName(5).getParent().getParent(), IASTBinaryExpression.class);
+	}
+	
+	//	template<int x>
+	//	class A {};
+	//
+	//	const int i= 1;
+	//	A<typeid(1)> a1;
+	public void testTypeIdOperatorArgumentIsUnaryExpression_229942_d() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		assertInstance(col.getName(3), ICPPASTTemplateId.class);
+		assertInstance(((ICPPASTTemplateId)col.getName(3)).getTemplateArguments()[0], ICPPASTUnaryExpression.class);
+	}
+	
 	// template<class T1, int q> class C {};    
 	// template<class T1, class T2> class A {};
 	// template< class T1, class T2, int q1, int q2>
 	// class A< C<T1, q1>, C<T2, q2> > {};      
-	public void testTemplateIdAsTemplateArgumentIsTypeId_229942() throws Exception {
+	public void testTemplateIdAsTemplateArgumentIsTypeId_229942_e() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2503,6 +2553,32 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(col.getName(16), ICPPASTTemplateId.class);
 		assertInstance(col.getName(16).getParent(), ICPPASTNamedTypeSpecifier.class);
 		assertInstance(col.getName(16).getParent().getParent(), IASTTypeId.class);
+	}
+	
+	//	template <class T>
+	//	struct A {
+	//		A(T* t) {}
+	//	};
+	//
+	//	template <class T>
+	//	inline const A<T> foo(T* t) {
+	//		return A<T>(t);
+	//	}
+	//
+	//	template <class T>
+	//	inline const A<T> foo(const A<T> at) {
+	//		return at;
+	//	}
+	public void testTypeIdAsTemplateArgumentIsTypeId_229942_f() throws Exception {
+		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("T> at) {", 1);
+		
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		assertInstance(col.getName(23).getParent().getParent(), IASTTypeId.class);
+		assertInstance(col.getName(23).resolveBinding(), ICPPTemplateTypeParameter.class);
 	}
 	
 	//  // From discussion in 207840. See 14.3.4.

@@ -13,6 +13,10 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
@@ -1667,7 +1671,15 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// S<int(1)> y; // expression (illformed)
 	public void test8_2s4() throws Exception {
 		//test is only for syntax, semantics are not checked here.
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		assertInstance(col.getName(4), ICPPASTTemplateId.class);
+		assertInstance(((ICPPASTTemplateId)col.getName(4)).getTemplateArguments()[0], IASTTypeId.class);
+		
+		assertInstance(col.getName(7), ICPPASTTemplateId.class);
+		assertInstance(((ICPPASTTemplateId)col.getName(7)).getTemplateArguments()[0], IASTExpression.class);
 	}
 
 	// void foo()

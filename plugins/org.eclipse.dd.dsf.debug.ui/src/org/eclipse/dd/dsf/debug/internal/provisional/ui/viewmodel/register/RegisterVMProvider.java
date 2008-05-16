@@ -16,7 +16,6 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.F
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
-import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
@@ -148,27 +147,25 @@ public class RegisterVMProvider extends AbstractDMVMProvider
     @Override
 	public void update(IViewerInputUpdate update) {
     	/*
-    	 * Get the selection input object from and see if it is a STACK FRAME. If not then do
-    	 * the standard policy. If it is then we will always provide and execution selection.
+    	 * Use the execution context in the current selection as the input provider.
     	 * This insures that the REGISTER VIEW will not collapse and expand on stepping or on
     	 * re-selection in the DEBUG VIEW.  Currently the register content is not stack frame
     	 * specific. If it were to become so then we would need to modify this policy.
     	 */
     	Object element = update.getElement();
     	IDMContext ctx = ((IDMVMContext) element).getDMContext();
-    	if ( ctx instanceof IFrameDMContext ) {
-    		IExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
-    		if ( execDmc != null ) {
-    			/*
-    			 * This tells the Flexible Hierarchy that element driving this view has not changed
-    			 * and there is no need to redraw the view. Since this is a somewhat fake VMContext
-    			 * we provide our Root Layout node as the representative VM node.
-    			 */
-    			update.setInputElement(new ViewInputElement(RegisterVMProvider.this.getRootVMNode(), execDmc));
-    			update.done();
-    			return;
-    		}
-    	}
+
+    	IExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
+		if ( execDmc != null ) {
+			/*
+			 * This tells the Flexible Hierarchy that element driving this view has not changed
+			 * and there is no need to redraw the view. Since this is a somewhat fake VMContext
+			 * we provide our Root Layout node as the representative VM node.
+			 */
+			update.setInputElement(new ViewInputElement(RegisterVMProvider.this.getRootVMNode(), execDmc));
+			update.done();
+			return;
+		}
     	
     	/*
     	 * If we reach here, then we did not override the standard behavior. Invoke the

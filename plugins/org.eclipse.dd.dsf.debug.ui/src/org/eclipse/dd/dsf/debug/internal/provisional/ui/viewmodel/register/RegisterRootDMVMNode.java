@@ -16,16 +16,18 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRe
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 
+/*
+ * We are extending the ROOT VM node for the register view so we can 
+ * provide Memento providers for the root node. In the Register VM 
+ * Provider we are returning a pseudo VMContext selection when the 
+ * original input is a child of an execution context we return a selection  
+ * which represents an Execution Context instead.  This ensures that the 
+ * Register View does not collapse and redraw when going from frame to frame 
+ * when stepping or just when selecting within the view. 
+ */
 @SuppressWarnings("restriction")
 public class RegisterRootDMVMNode extends RootDMVMNode implements IElementMementoProvider {
 	
-	/*
-	 * We are extending the ROOT VM node for the register view so we can provide Memento providers for the root 
-	 * node. In the Register VM Provider we are returning a pseudo VMContext selection when the original  input
-	 * is a StackFrame we return a selection  which represents an Execution Context instead.  This ensures that 
-	 * the Register View does not collapse and redraw when going from frame to frame when stepping or just when
-	 * selecting within the view. 
-	 */
 	public RegisterRootDMVMNode(AbstractVMProvider provider) {
         super(provider);
     }
@@ -35,8 +37,7 @@ public class RegisterRootDMVMNode extends RootDMVMNode implements IElementMement
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
     public void compareElements(IElementCompareRequest[] requests) {
-        
-        for ( IElementCompareRequest request : requests ) { request.done(); } 
+        for ( IElementMementoRequest request : requests )  { request.done(); } 
     }
     
     /*

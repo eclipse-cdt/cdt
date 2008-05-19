@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [232355] Go To menu item missing
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -50,9 +50,10 @@ public class SystemCascadingGoToAction extends SystemBaseSubMenuAction
 	{
 		super(SystemResources.ACTION_CASCADING_GOTO_LABEL, SystemResources.ACTION_CASCADING_GOTO_TOOLTIP, shell);
 		setMenuID(ISystemContextMenuConstants.MENU_GOTO);
-		this.fSystemViewPart = systemViewPart;		
-        setCreateMenuEachTime(false);
-        setPopulateMenuEachTime(false);
+		this.fSystemViewPart = systemViewPart;
+		// something in ganymede m7 causes the actions of this menu to be lost, therefore must re-create each time
+        setCreateMenuEachTime(true);
+        setPopulateMenuEachTime(true);
 	    allowOnMultipleSelection(false);
 	    setContextMenuGroup(ISystemContextMenuConstants.GROUP_GOTO);        
 	}

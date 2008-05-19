@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Kushal Munir (IBM) - moved to internal package
  * Martin Oberhuber (Wind River) - [181917] EFS Improvements: Avoid unclosed Streams,
@@ -65,7 +65,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * Implementation of IFileStore for RSE.
- * 
+ *
  * The RSEFileStore delegates to this impl class in order to defer class
  * loading until file contents are really needed.
  */
@@ -86,7 +86,7 @@ public class RSEFileStoreImpl extends FileStore
 	public RSEFileStoreImpl(RSEFileStore store) {
 		_store = store;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#getChild(java.lang.String)
@@ -124,7 +124,7 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	private static void waitForRSEInit() {
 		if (!_initialized) {
-			//Force activating RSEUIPlugin, which kicks off InitRSEJob		
+			//Force activating RSEUIPlugin, which kicks off InitRSEJob
 			RSEUIPlugin.getDefault();
 			Job[] jobs = Job.getJobManager().find(null);
 			for (int i=0; i<jobs.length; i++) {
@@ -139,10 +139,10 @@ public class RSEFileStoreImpl extends FileStore
 			_initialized = true;
 		}
 	}
-	
+
 	/**
 	 * Return the best RSE connection object matching the given host name.
-	 * 
+	 *
 	 * @param hostNameOrAddr IP address of requested host.
 	 * @return RSE connection object matching the given host name, or
 	 *     <code>null</code> if no matching connection object was found.
@@ -159,9 +159,9 @@ public class RSEFileStoreImpl extends FileStore
 
 		IHost unconnected = null;
 		for (int i = 0; i < connections.length; i++) {
-			
+
 			IHost con = connections[i];
-			
+
 			//TODO use more elaborate methods of checking whether two
 			//host names/IP addresses are the same; or, use the host alias
 			if (hostNameOrAddr.equalsIgnoreCase(con.getHostName())) {
@@ -173,22 +173,24 @@ public class RSEFileStoreImpl extends FileStore
 				}
 			}
 		}
-		
+
 		return unconnected;
 	}
+
 	
 	/**
 	 * Return the best available remote file subsystem for a connection.
 	 * Criteria are:
 	 * <ol>
-	 *   <li>A connected FileServiceSubsystem</li>
-	 *   <li>A connected IRemoteFileSubSystem</li>
-	 *   <li>An unconnected FileServiceSubsystem</li>
-	 *   <li>An unconnected IRemoteFileSubSystem</li>
+	 * <li>A connected FileServiceSubsystem</li>
+	 * <li>A connected IRemoteFileSubSystem</li>
+	 * <li>An unconnected FileServiceSubsystem</li>
+	 * <li>An unconnected IRemoteFileSubSystem</li>
 	 * </ol>
-	 * @param host
-	 * @return an IRemoteFileSubSystem for the given connection, or 
-	 *     <code>null</code> if no IRemoteFileSubSystem is configured.
+	 * 
+	 * @param host the connection to check
+	 * @return an IRemoteFileSubSystem for the given connection, or
+	 *         <code>null</code> if no IRemoteFileSubSystem is configured.
 	 */
 	public static IRemoteFileSubSystem getRemoteFileSubSystem(IHost host) {
 		IRemoteFileSubSystem candidate = null;
@@ -229,7 +231,7 @@ public class RSEFileStoreImpl extends FileStore
 	{
 		IHost con = RSEFileStoreImpl.getConnectionFor(hostNameOrAddr, monitor);
 		if (con == null) {
-			throw new CoreException(new Status(IStatus.ERROR, 
+			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
 					NLS.bind(Messages.CONNECTION_NOT_FOUND, hostNameOrAddr)));
 		}
@@ -254,7 +256,7 @@ public class RSEFileStoreImpl extends FileStore
 	}
 
 	/**
-	 * Return the cached IRemoteFile handle. Used only as a handle into 
+	 * Return the cached IRemoteFile handle. Used only as a handle into
 	 * ISubSystem operations, attributes of this handle are never considered
 	 * except for exists() checking.
 	 * @return
@@ -262,12 +264,12 @@ public class RSEFileStoreImpl extends FileStore
 	private IRemoteFile getCachedRemoteFile() {
 		return _remoteFile;
 	}
-	
+
 	private void cacheRemoteFile(IRemoteFile remoteFile) {
 		//if (_remoteFile != remoteFile) _remoteFile = remoteFile;
 		_remoteFile = remoteFile;
 	}
-	
+
 	/**
 	 * Returns an IRemoteFile for this file store.
 	 * Requires that the file subsystem is connected.
@@ -293,7 +295,7 @@ public class RSEFileStoreImpl extends FileStore
 			//Handle was created naming a parent file store
 			IRemoteFile parent = parentStore.getImpl().getRemoteFileObject(monitor, forceExists);
 			if (parent==null) {
-				throw new CoreException(new Status(IStatus.ERROR, 
+				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
 						Messages.COULD_NOT_GET_REMOTE_FILE));
 			}
@@ -312,8 +314,8 @@ public class RSEFileStoreImpl extends FileStore
 			}
 			catch (SystemMessageException e) {
 				throw new CoreException(new Status(
-						IStatus.ERROR, 
-						Activator.getDefault().getBundle().getSymbolicName(), 
+						IStatus.ERROR,
+						Activator.getDefault().getBundle().getSymbolicName(),
 						getExceptionMessage(null, e), e));
 			}
 		}
@@ -326,13 +328,13 @@ public class RSEFileStoreImpl extends FileStore
 		}
 		return remoteFile;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#childNames(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException {
-		
+
 		String[] names;
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, true);
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
@@ -340,7 +342,7 @@ public class RSEFileStoreImpl extends FileStore
 		{
 			Object[] children = remoteFile.getContents(RemoteChildrenContentsType.getInstance());
 			names = new String[children.length];
-			                
+
 			for (int i = 0; i < children.length; i++)
 			{
 				names[i] = ((IRemoteFile)children[i]).getName();
@@ -350,7 +352,7 @@ public class RSEFileStoreImpl extends FileStore
 		{
 			try {
 				IRemoteFile[] children = null;
-				
+
 				if (subSys instanceof FileServiceSubSystem) {
 					FileServiceSubSystem fileServiceSubSystem = ((FileServiceSubSystem)subSys);
 					IHostFile[] results = fileServiceSubSystem.getFileService().list(remoteFile.getAbsolutePath(), "*", IFileService.FILE_TYPE_FILES_AND_FOLDERS, monitor); //$NON-NLS-1$
@@ -362,43 +364,43 @@ public class RSEFileStoreImpl extends FileStore
 					children = fileServiceSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFiles(fileServiceSubSystem, context, remoteFile, results);
 				}
 				else {
-					children = subSys.list(remoteFile, monitor); 
+					children = subSys.list(remoteFile, monitor);
 				}
-				
+
 				names = new String[children.length];
-				
+
 				for (int i = 0; i < children.length; i++) {
 					names[i] = (children[i]).getName();
-				}		
+				}
 			}
 			catch (SystemMessageException e) {
 				names = new String[0];
 			}
 		}
-		
+
 		return names;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#childInfos(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
-		
+
 		FileInfo[] infos;
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, true);
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		if (!remoteFile.isStale() && remoteFile.hasContents(RemoteChildrenContentsType.getInstance()) && !(subSys instanceof IFileServiceSubSystem))
 		{
 			Object[] children = remoteFile.getContents(RemoteChildrenContentsType.getInstance());
-			
+
 			infos = new FileInfo[children.length];
-			                
+
 			for (int i = 0; i < children.length; i++)
 			{
 				IRemoteFile file = (IRemoteFile)(children[i]);
 				FileInfo info = new FileInfo(file.getName());
-				
+
 				if (!file.exists()) {
 					info.setExists(false);
 				}
@@ -416,16 +418,16 @@ public class RSEFileStoreImpl extends FileStore
 						info.setLength(file.getLength());
 					}
 				}
-				
+
 				infos[i] = info;
 			}
 		}
 		else
 		{
 			try {
-				
+
 				IRemoteFile[] children = null;
-				
+
 				if (subSys instanceof FileServiceSubSystem) {
 					FileServiceSubSystem fileServiceSubSystem = ((FileServiceSubSystem)subSys);
 					IHostFile[] results = fileServiceSubSystem.getFileService().list(remoteFile.getAbsolutePath(), "*", IFileService.FILE_TYPE_FILES_AND_FOLDERS, monitor); //$NON-NLS-1$
@@ -437,16 +439,16 @@ public class RSEFileStoreImpl extends FileStore
 					children = fileServiceSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFiles(fileServiceSubSystem, context, remoteFile, results);
 				}
 				else {
-					children = subSys.list(remoteFile, monitor); 
+					children = subSys.list(remoteFile, monitor);
 				}
-				
+
 				infos = new FileInfo[children.length];
-				
+
 				for (int i = 0; i < children.length; i++)
 				{
 					IRemoteFile file = children[i];
 					FileInfo info = new FileInfo(file.getName());
-					
+
 					if (!file.exists()) {
 						info.setExists(false);
 					}
@@ -465,16 +467,16 @@ public class RSEFileStoreImpl extends FileStore
 							info.setLength(file.getLength());
 						}
 					}
-					
+
 					infos[i] = info;
-				}		
+				}
 			}
 			catch (SystemMessageException e) {
 				//TODO check whether we should not throw an exception ourselves
 				infos = new FileInfo[0];
 			}
 		}
-		
+
 		return infos;
 	}
 
@@ -488,7 +490,7 @@ public class RSEFileStoreImpl extends FileStore
 		// connect if needed. Will throw exception if not successful.
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		String classification = (remoteFile==null) ? null : remoteFile.getClassification();
-		
+
 		FileInfo info = new FileInfo(_store.getName());
 		if (remoteFile == null || !remoteFile.exists()) {
 			info.setExists(false);
@@ -505,7 +507,7 @@ public class RSEFileStoreImpl extends FileStore
 			}
 			return info;
 		}
-		
+
 		info.setExists(true);
 		info.setLastModified(remoteFile.getLastModified());
 		boolean isDir = remoteFile.isDirectory();
@@ -525,12 +527,12 @@ public class RSEFileStoreImpl extends FileStore
 		if (!isDir) {
 			info.setLength(remoteFile.getLength());
 		}
-		
+
 		return info;
 	}
 
 	/**
-	 * Return a message for logging, built from 
+	 * Return a message for logging, built from
 	 * @param item item where failure occurred
 	 * @param e exception
 	 * @return
@@ -551,7 +553,7 @@ public class RSEFileStoreImpl extends FileStore
     	}
     	return exceptionText;
     }
-    
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#putInfo(org.eclipse.core.filesystem.IFileInfo, int, org.eclipse.core.runtime.IProgressMonitor)
@@ -585,17 +587,17 @@ public class RSEFileStoreImpl extends FileStore
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#openInputStream(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException 
+	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException
 	{
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, true);
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
-		
+
 		if (remoteFile.isDirectory()) {
-			throw new CoreException(new Status(IStatus.ERROR, 
+			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
 					Messages.CANNOT_OPEN_STREAM_ON_FOLDER));
 		}
-		
+
 		if (remoteFile.isFile()) {
 			try {
 				return subSys.getInputStream(remoteFile.getParentPath(), remoteFile.getName(), true, monitor);
@@ -607,20 +609,20 @@ public class RSEFileStoreImpl extends FileStore
 						getExceptionMessage(null, e), e));
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#mkdir(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException 
+	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException
 	{
 		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {
-			throw new CoreException(new Status(IStatus.ERROR, 
+			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
 					Messages.COULD_NOT_GET_REMOTE_FILE));
 		}
@@ -632,13 +634,13 @@ public class RSEFileStoreImpl extends FileStore
 			}
 			catch (SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(), 
+						Activator.getDefault().getBundle().getSymbolicName(),
 						getExceptionMessage(null, e), e));
 			}
 			return _store;
 		}
 		else if (remoteFile.isFile()) {
-			throw new CoreException(new Status(IStatus.ERROR, 
+			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
 					Messages.FILE_NAME_EXISTS));
 		}
@@ -669,9 +671,9 @@ public class RSEFileStoreImpl extends FileStore
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
 						getExceptionMessage(null, e), e));
-			} 
+			}
 		}
-			
+
 		if (remoteFile.isFile()) {
 			try {
 				// Convert from EFS option constants to IFileService option constants
@@ -698,12 +700,12 @@ public class RSEFileStoreImpl extends FileStore
 			return null;
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#delete(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void delete(int options, IProgressMonitor monitor) throws CoreException 
+	public void delete(int options, IProgressMonitor monitor) throws CoreException
 	{
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();

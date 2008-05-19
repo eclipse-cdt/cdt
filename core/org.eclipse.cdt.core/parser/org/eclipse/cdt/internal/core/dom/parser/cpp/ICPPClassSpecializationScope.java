@@ -15,13 +15,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 /**
- * mstodo
+ * Composite scope of a class specialization. Supports creating instances for bindings found
+ * in the scope of the specialized class template.
  *
  * @since 5.0
  */
 public interface ICPPClassSpecializationScope extends ICPPClassScope {
+	/**
+	 * Returns the class that was specialized to get this scope.
+	 */
 	ICPPClassType getOriginalClassType();
 
-	
+	/**
+	 * Returns the instance for a binding that belongs to the scope of the original
+	 * class type.
+	 */
 	IBinding getInstance(IBinding original);
 }

@@ -231,41 +231,49 @@ public class SimpleScanner {
 	            boolean hex = false;
 	            boolean floatingPoint = c == '.';
 	            boolean firstCharZero = c == '0';
-	
+	            
 	            c = getChar();
 	
-	            if (c == 'x') {
-	                if (!firstCharZero && floatingPoint) {
-	                    ungetChar(c);
-	                    return newToken(Token.tDOT);
-	                }
+                if (firstCharZero && c == 'x') {
 	                hex = true;
 	                c = getChar();
 	            }
 	
+                int digits= 0;
+                
 	            while ((c >= '0' && c <= '9') || (hex && ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))) {
+	            	++digits;
 	                c = getChar();
 	            }
 	
-	            if (c == '.') {
-	                if (floatingPoint || hex) {
-	                    if (fTokenBuffer.toString().equals("..") && getChar() == '.') //$NON-NLS-1$
+	            if (!hex && c == '.') {
+	                if (floatingPoint && digits == 0) {
+	                	// encountered ..
+	                    if ((c= getChar()) == '.') {
 	                        return newToken(Token.tELIPSE);
+	                    } else {
+	                    	ungetChar(c);
+	                    	ungetChar('.');
+	                        return newToken(Token.tDOT);
+	                    }
 	                }
 	
 	                floatingPoint = true;
 	                c = getChar();
 	                while ((c >= '0' && c <= '9')) {
+		            	++digits;
 	                    c = getChar();
 	                }
 	            }
 	
-	            if (c == 'e' || c == 'E') {
-	                if (!floatingPoint)
+	            if (!hex && digits > 0 && (c == 'e' || c == 'E')) {
+	                if (!floatingPoint) {
 	                    floatingPoint = true;
+	                }
+	                
 	                // exponent type for floating point
 	                c = getChar();
-	
+
 	                // optional + or -
 	                if (c == '+' || c == '-') {
 	                    c = getChar();
@@ -282,10 +290,15 @@ public class SimpleScanner {
 	                }
 	            } else {
 	                if (floatingPoint) {
-	                    //floating-suffix
-	                    if (c == 'l' || c == 'L' || c == 'f' || c == 'F') {
-	                        c = getChar();
-	                    }
+	                	if (digits > 0) {
+		                    //floating-suffix
+		                    if (c == 'l' || c == 'L' || c == 'f' || c == 'F') {
+		                        c = getChar();
+		                    }
+	                	} else {
+	                    	ungetChar(c);
+	                        return newToken(Token.tDOT);
+	                	}
 	                } else {
 	                    //integer suffix
 	                    if (c == 'u' || c == 'U') {

@@ -646,4 +646,64 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//struct { int l; } s;
+	//void f() {
+	//  int x = (s.l -5);
+	//  // Comment
+	//  for(;;);
+	//}
+	
+	//struct {
+	//	int l;
+	//} s;
+	//void f() {
+	//	int x = (s.l - 5);
+	//	// Comment
+	//	for (;;)
+	//		;
+	//}
+	public void testIndentAfterDotL_Bug232739() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct { int e; } s;
+	//void f() {
+	//  int x = (s.e -5);
+	//  // Comment
+	//  for(;;);
+	//}
+	
+	//struct {
+	//	int e;
+	//} s;
+	//void f() {
+	//	int x = (s.e - 5);
+	//	// Comment
+	//	for (;;)
+	//		;
+	//}
+	public void testIndentAfterDotE_Bug232739() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct { int f; } s;
+	//void f() {
+	//  int x = (s.f -5);
+	//  // Comment
+	//  for(;;);
+	//}
+	
+	//struct {
+	//	int f;
+	//} s;
+	//void f() {
+	//	int x = (s.f - 5);
+	//	// Comment
+	//	for (;;)
+	//		;
+	//}
+	public void testIndentAfterDotF_Bug232739() throws Exception {
+		assertFormatterResult();
+	}
+
 }

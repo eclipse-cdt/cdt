@@ -2581,6 +2581,30 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(col.getName(23).resolveBinding(), ICPPTemplateTypeParameter.class);
 	}
 	
+	//	template <class T>
+	//	struct A {};
+	//
+	//	template <class T>
+	//	inline const void foo(void (*f)(A<T>), T t) {
+	//	}
+	//
+	//	const int i= 5;
+	//	template <class T>
+	//	inline const void foo(void (*f)(A<i>), T* t) { // disallowed, but we're testing the AST
+	//	}
+	public void _testTypeIdAsTemplateArgumentIsTypeId_229942_g() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		// 7 is T in A<T>
+		assertInstance(col.getName(7).getParent(), ICPPASTNamedTypeSpecifier.class);
+		assertInstance(col.getName(7).getParent().getParent(), IASTTypeId.class);
+		
+		// 17 is i in A<i>
+		assertInstance(col.getName(17).getParent(), IASTIdExpression.class);
+	}
+	
 	//  // From discussion in 207840. See 14.3.4.
 	//	class A {};
 	//
@@ -2622,4 +2646,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame(f1, f2);
 	}
 
+	//	class Z {};
+	//	
+	//	template<typename T1>
+	//	class A {
+	//		public:
+	//			template<typename T2 = Z> class B;
+	//	};
+	//	
+	//	template<> template<typename T3> class A<short>::B {
+	//		public:
+	//			T3 foo() { return (T3) 0; }
+	//	};
+	//	
+	//	void ref() {
+	//		A<short>::B<> b;
+	//	}
+	public void testNestedTemplateDefinitionParameter() throws Exception  {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPTemplateTypeParameter T3a= ba.assertNonProblem("T3 f", 2, ICPPTemplateTypeParameter.class);
+		ICPPTemplateTypeParameter T3b= ba.assertNonProblem("T3)", 2, ICPPTemplateTypeParameter.class);
+		ICPPClassType b= ba.assertNonProblem("B<>", 3, ICPPClassType.class, ICPPTemplateInstance.class);
+	}
 }

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -86,7 +87,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
     		    if (base instanceof IType) {
     		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, getScope());
     		    	specBase = SemanticUtil.getUltimateType(specBase, false);
-    		    	if (specBase instanceof IBinding) {
+    		    	if (specBase instanceof IBinding && !(specBase instanceof IProblemBinding)) {
     		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
     		    	}
     		    	result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBinding);

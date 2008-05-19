@@ -804,13 +804,16 @@ public class CPPSemantics {
 			return null;
 		}
 
-		int size = bases.length;
-		for (int i = 0; i < size; i++) {
-			inherited = null;
-			IBinding b = bases[i].getBaseClass();
+		for(ICPPBase base : bases) {
+			if(base instanceof IProblemBinding)
+				continue;
+			
+			IBinding b = base.getBaseClass();
 			if (b instanceof ICPPClassType == false)
 				continue;
 
+			inherited = null;
+			
 			final ICPPClassType cls= (ICPPClassType) b;
 			final ICPPScope parent = (ICPPScope) cls.getCompositeScope();
 			
@@ -827,8 +830,8 @@ public class CPPSemantics {
 				continue;
 			}
 	
-			if (!bases[i].isVirtual() || !data.visited.containsKey(parent)) {
-				if (bases[i].isVirtual()) {
+			if (!base.isVirtual() || !data.visited.containsKey(parent)) {
+				if (base.isVirtual()) {
 					data.visited.put(parent);
 				}
 	

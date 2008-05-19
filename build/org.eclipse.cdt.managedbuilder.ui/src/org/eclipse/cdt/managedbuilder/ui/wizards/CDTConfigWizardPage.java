@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -316,7 +317,11 @@ public class CDTConfigWizardPage extends WizardPage {
 				// disable manage configurations button
 				CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, true);
 				try {
-					PreferencesUtil.createPropertyDialogOn(getWizard().getContainer().getShell(), newProject, propertyId, null, null).open();
+					int res = PreferencesUtil.createPropertyDialogOn(getWizard().getContainer().getShell(), newProject, propertyId, null, null).open();
+					if (res != Window.OK) {
+						// if user presses cancel, remove the project.
+						nmWizard.performCancel();
+					}
 				} finally {
 					CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, oldManage);
 				}

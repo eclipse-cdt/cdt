@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)   [202822] should not be synchronizing on clean method
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
@@ -26,17 +26,18 @@ import org.eclipse.dstore.internal.core.util.DataElementRemover;
 
 /**
  * <p>
- * Abtract class for handling updates.  A <code>UpdateHandler</code> is a <code>Handler</code> that 
- * contains a queue of data responses to be sent to the client.  Each DataStore instance uses a single
- * update handler that periodically sends it's data queue either to a client or directly
- * to a domain listener on the client.
+ * Abstract class for handling updates. A <code>UpdateHandler</code> is a
+ * <code>Handler</code> that contains a queue of data responses to be sent to
+ * the client. Each DataStore instance uses a single update handler that
+ * periodically sends it's data queue either to a client or directly to a domain
+ * listener on the client.
  * </p>
  * <p>
- * The UpdateHandler is the means by which the DataStore sends information or files from the remote tools to the client.
+ * The UpdateHandler is the means by which the DataStore sends information or
+ * files from the remote tools to the client.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class UpdateHandler extends Handler
 {
@@ -84,16 +85,16 @@ public abstract class UpdateHandler extends Handler
 				{
 					DataElement parent = child.getParent();
 					DataElementRemover.addToRemovedCount();
-					
+
 					cleanChildren(child); // clean the children
-					
+
 					if (child.isSpirit())
 					{
 						// officially delete this now
 						child.delete();
 					}
 					child.clear();
-					
+
 					if (parent != null)
 					{
 						synchronized (parent)
@@ -109,9 +110,9 @@ public abstract class UpdateHandler extends Handler
 		}
 		// delete objects under temproot
 		_dataStore.getTempRoot().removeNestedData();
-		
+
 	}
-	
+
 	/**
 	 * Recursively clean children for deletion
 	 * @param parent
@@ -123,8 +124,8 @@ public abstract class UpdateHandler extends Handler
 		{
 		for (int i = 0; i < nestedData.size(); i++){
 			DataElement child = (DataElement)nestedData.get(i);
-			cleanChildren(child);	
-			
+			cleanChildren(child);
+
 			if (child.isSpirit())
 			{
 				// officially delete this now
@@ -180,7 +181,7 @@ public abstract class UpdateHandler extends Handler
 				}
 				else
 				{
-					
+
 					if (_dataStore != null && object != null && !object.isDeleted())
 					{
 						if (object.getType().equals(DataStoreResources.model_status))
@@ -189,8 +190,8 @@ public abstract class UpdateHandler extends Handler
 							{
 								//DKM
 								// move to the back of the queue
-								// this is done so that if status that was already queued changed to done in between 
-								// requests, and had not yet been transferred over comm layer, the completed status 
+								// this is done so that if status that was already queued changed to done in between
+								// requests, and had not yet been transferred over comm layer, the completed status
 								// object does not come back to client (as "done") before the results of a query
 								_dataObjects.remove(object);
 								_dataObjects.add(object);
@@ -198,11 +199,11 @@ public abstract class UpdateHandler extends Handler
 						}
 					}
 				}
-			}			
+			}
 		}
 		notifyInput();
 	}
-	
+
 	/**
 	 * Causes the current thread to wait until this class request has been
 	 * fulfilled.
@@ -219,7 +220,7 @@ public abstract class UpdateHandler extends Handler
 	 * Implemented to provide the means by which updates on the queue are sent.
 	 */
 	public abstract void sendUpdates();
-	
+
 
 	/**
 	 * Implemented to provide the means by which files are sent
@@ -229,7 +230,7 @@ public abstract class UpdateHandler extends Handler
 	 * @param binary indicates whether to send the bytes as binary or text
 	 */
 	public abstract void updateFile(String path, byte[] bytes, int size, boolean binary);
-	
+
 	/**
 	 * Implemented to provide the means by which files are sent and appended
 	 * @param path the path of the file to send
@@ -238,7 +239,7 @@ public abstract class UpdateHandler extends Handler
 	 * @param binary indicates whether to send the bytes as binary or text
 	 */
 	public abstract void updateAppendFile(String path, byte[] bytes, int size, boolean binary);
-	
+
 	/**
 	 * Implemented to provide the means by which files are sent
 	 * @param path the path of the file to send
@@ -248,7 +249,7 @@ public abstract class UpdateHandler extends Handler
 	 * @param byteStreamHandlerId indicates the byte stream handler to receive the bytes
 	 */
 	public abstract void updateFile(String path, byte[] bytes, int size, boolean binary, String byteStreamHandlerId);
-	
+
 	/**
 	 * Implemented to provide the means by which files are sent and appended
 	 * @param path the path of the file to send
@@ -258,26 +259,26 @@ public abstract class UpdateHandler extends Handler
 	 * @param byteStreamHandlerId indicates the byte stream handler to receive the bytes
 	 */
 	public abstract void updateAppendFile(String path, byte[] bytes, int size, boolean binary, String byteStreamHandlerId);
-	
+
 	/**
 	 * Implemented to provide the means by which classes are requested
 	 * across the comm channel.
 	 * @param className the name of the class to request
 	 */
 	public abstract void requestClass(String className);
-	
+
 	/**
 	 * Implemented to provide the means by which keepalive requests are sent
 	 * across the comm channel.
 	 */
 	public abstract void sendKeepAliveRequest();
-	
+
 	/**
 	 * Impleted to provide the means by which a class on the host is updated on the client
 	 * @param runnable
 	 * @param deserializebyteStreamHandlerId
 	 */
-	public abstract void updateClassInstance(IRemoteClassInstance runnable, String deserializebyteStreamHandlerId); 
+	public abstract void updateClassInstance(IRemoteClassInstance runnable, String deserializebyteStreamHandlerId);
 
 	/**
 	 * Implemented to provide the means by which classes are sent
@@ -285,7 +286,7 @@ public abstract class UpdateHandler extends Handler
 	 * @param className the name of the class to send
 	 */
 	public abstract void sendClass(String className);
-	
+
 	/**
 	 * Implemented to provide the means by which classes are sent
 	 * across the comm channel.
@@ -299,5 +300,5 @@ public abstract class UpdateHandler extends Handler
 	 * across the comm channel.
 	 */
 	public abstract void sendKeepAliveConfirmation();
-		
+
 }

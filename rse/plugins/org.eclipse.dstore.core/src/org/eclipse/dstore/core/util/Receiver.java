@@ -37,7 +37,6 @@ import org.eclipse.dstore.internal.core.util.XMLparser;
  * communication layer.
  * 
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class Receiver extends SecuredThread implements IDataStorePreferenceListener
 {

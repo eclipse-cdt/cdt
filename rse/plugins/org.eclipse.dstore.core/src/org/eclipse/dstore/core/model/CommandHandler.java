@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
@@ -25,18 +25,17 @@ import org.eclipse.dstore.core.util.CommandGenerator;
 
 /**
  * <p>
- * Abtract class for handling commands.  A <code>CommandHandler</code> is a <code>Handler</code> that 
- * contains a queue of commands to be sent to miners.  Each DataStore instance uses a single
- * command handler that periodically sends it's queue either to a server or directly
- * to miners.
+ * Abstract class for handling commands. A <code>CommandHandler</code> is a
+ * <code>Handler</code> that contains a queue of commands to be sent to miners.
+ * Each DataStore instance uses a single command handler that periodically sends
+ * it's queue either to a server or directly to miners.
  * </p>
  * <p>
- * The CommandHandler is the means by which the DataStore sends information or files from
- * the client to the remote tools.
+ * The CommandHandler is the means by which the DataStore sends information or
+ * files from the client to the remote tools.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class CommandHandler extends Handler
 {
@@ -96,7 +95,7 @@ public abstract class CommandHandler extends Handler
 				{
 					_commands.add(command);
 				}
-			}			
+			}
 		}
 		notifyInput();
 	}
@@ -114,7 +113,7 @@ public abstract class CommandHandler extends Handler
 
 	/**
 	 * Create and add a new command object to the command queue.
-	 * 
+	 *
 	 * @param commandDescriptor the descriptor for the new command
 	 * @param arguments the arguments for the command
 	 * @param object the subject of the command
@@ -131,7 +130,7 @@ public abstract class CommandHandler extends Handler
 
 	/**
 	 * Create and add a new command object to the command queue.
-	 * 
+	 *
 	 * @param commandDescriptor the descriptor for the new command
 	 * @param arg the arg for the command
 	 * @param object the subject of the command
@@ -148,7 +147,7 @@ public abstract class CommandHandler extends Handler
 
 	/**
 	 * Create and add a new command object to the command queue.
-	 * 
+	 *
 	 * @param commandDescriptor the descriptor for the new command
 	 * @param object the subject of the command
 	 * @param refArg indicates whether the subject should be represented in the command as a
@@ -182,7 +181,7 @@ public abstract class CommandHandler extends Handler
 		DataElement status = null;
 		if ((cmd != null) && _dataStore != null)
 		{
-		    
+
 			status = cmd.get(cmd.getNestedSize() -1);
 			if (status != null && !status.getName().equals(DataStoreResources.model_done))
 			{
@@ -206,7 +205,7 @@ public abstract class CommandHandler extends Handler
 
 		_commands.clear();
 	}
-	
+
 	public CommandGenerator getCommandGenerator()
 	{
 		return _commandGenerator;
@@ -216,18 +215,18 @@ public abstract class CommandHandler extends Handler
 	 * Implemented to provide the means by which commands in the queue are sent
 	 */
 	public abstract void sendCommands();
-	
-	
+
+
 	/**
 	 * Implemented to provide the means by which file bytes are sent
 	 * @param fileName the name of the file to send
 	 * @param bytes to bytes of the file to send
 	 * @param size the number of bytes to send
 	 * @param binary indicates whether to send the bytes as binary or text
-	 */		
+	 */
 	public abstract void sendFile(String fileName, byte[] bytes, int size, boolean binary);
-	
-	
+
+
 	/**
 	 * Implemented to provide the means by which file bytes are sent
 	 * @param fileName the name of the file to send
@@ -235,18 +234,18 @@ public abstract class CommandHandler extends Handler
 	 * @param size the number of bytes to send
 	 * @param binary indicates whether to send the bytes as binary or text
 	 * @param byteStreamHandlerId indicates which byte stream handler to receive the bytes with
-	 */		
+	 */
 	public abstract void sendFile(String fileName, byte[] bytes, int size, boolean binary, String byteStreamHandlerId);
-	
+
 	/**
 	 * Implemented to provide the means by which file bytes are sent and appended
 	 * @param fileName the name of the file to send
 	 * @param bytes to bytes of the file to send
 	 * @param size the number of bytes to send
 	 * @param binary indicates whether to send the bytes as binary or text
-	 */		
+	 */
 	public abstract void sendAppendFile(String fileName, byte[] bytes, int size, boolean binary);
-	
+
 	/**
 	 * Implemented to provide the means by which file bytes are sent and appended
 	 * @param fileName the name of the file to send
@@ -254,7 +253,7 @@ public abstract class CommandHandler extends Handler
 	 * @param size the number of bytes to send
 	 * @param binary indicates whether to send the bytes as binary or text
 	 * @param byteStreamHandlerId indicates which byte stream handler to receive the bytes with
-	 */		
+	 */
 	public abstract void sendAppendFile(String fileName, byte[] bytes, int size, boolean binary, String byteStreamHandlerId);
 
 	/**
@@ -263,7 +262,7 @@ public abstract class CommandHandler extends Handler
 	 * @param className the name of the class to send
 	 */
 	public abstract void sendClass(String className);
-	
+
 	/**
 	 * Implemented to provide the means by which classes are sent
 	 * across the comm channel.
@@ -271,14 +270,14 @@ public abstract class CommandHandler extends Handler
 	 * @param classByteStreamHandlerId indicates which class byte stream handler to receive the class with
 	 */
 	public abstract void sendClass(String className, String classByteStreamHandlerId);
-	
-	
+
+
 	/**
 	 * Runs the specified class on the remote system
 	 */
 	public abstract void sendClassInstance(IRemoteClassInstance runnable, String classByteStreamHandlerId);
-	
-	
+
+
 	/**
 	 * Causes the current thread to wait until this class request has been
 	 * fulfilled.
@@ -290,7 +289,7 @@ public abstract class CommandHandler extends Handler
 			super.waitForInput();
 		}
 	}
-	
+
 	/**
 	 * Implemented to provide the means by which classes are requested
 	 * across the comm channel.

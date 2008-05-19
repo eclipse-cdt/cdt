@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Kushal Munir (IBM) - moved to internal package
  * Martin Oberhuber (Wind River) - [181917] EFS Improvements: Avoid unclosed Streams,
@@ -45,14 +45,14 @@ import org.osgi.framework.BundleContext;
 
 /**
  * Implementation of IFileStore for RSE.
- * 
+ *
  * An RSEFileStore is an immutable object. Once created, it always
  * references the same remote item. Therefore, instances can be
  * shared.
- * 
+ *
  * @since RSE 2.0
  */
-public class RSEFileStore extends FileStore implements IFileStore 
+public class RSEFileStore extends FileStore
 {
 	private RSEFileStore _parent;
 	private String _host;
@@ -62,7 +62,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 	//cached IRemoteFile object: an Object to avoid early class loading
 	private transient RSEFileStoreImpl _impl = null;
 	private static HashMap instanceMap = new HashMap();
-	
+
 	/**
 	 * Constructor to use if the parent file store is known.
 	 * @param parent the parent file store.
@@ -74,7 +74,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 		_name = name;
 		_absolutePath = parent._absolutePath.append(name);
 	}
-	
+
 	/**
 	 * Constructor to use if the file store is a handle.
 	 * @param host the connection name for the file store.
@@ -93,7 +93,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 			}
 		}
 	}
-	
+
 	/**
 	 * Public factory method for obtaining RSEFileStore instances.
 	 * @param uri URI to get a fileStore for
@@ -138,13 +138,13 @@ public class RSEFileStore extends FileStore implements IFileStore
 		//TODO consider computing this instead of storing it
 		return _host;
 	}
-	
+
 	/**
 	 * Returns an absolute path for this file store.
-	 * 
+	 *
 	 * The absolute path is in normalized form, as it can use in URIs
 	 * (with separator '/').
-	 * 
+	 *
 	 * @return an absolute path for this file store in normalized form.
 	 */
 	/*package*/ String getAbsolutePath() {
@@ -159,7 +159,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 	public String getName() {
 		return _name;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#getParent()
@@ -169,7 +169,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 	}
 
 	/**
-	 * Returns the parent file store as an RSEFileStore. 
+	 * Returns the parent file store as an RSEFileStore.
 	 * @return the parent file store as an RSEFileStore.
 	 */
 	/*package*/ RSEFileStore getParentStore() {
@@ -179,22 +179,22 @@ public class RSEFileStore extends FileStore implements IFileStore
 	/**
 	 * Get FileStore implementation.
 	 * <p>
-	 * Moved implementation to separate class in order to defer class loading 
+	 * Moved implementation to separate class in order to defer class loading
 	 * until resources plugin is up.
 	 * </p>
 	 * @return the RSEFileStoreImpl implementation.
 	 */
 	/*package*/ RSEFileStoreImpl getImpl() throws CoreException {
 		//FIXME Workaround for Platform bug 181998 - activation problems on early startup:
-		//Resources plugin opens the workspace in its start() method, triggers the 
-		//save manager and this in turn would activate org.eclipse.rse.ui which depends 
-		//on resources... this activation circle does not work, therefore throw an 
+		//Resources plugin opens the workspace in its start() method, triggers the
+		//save manager and this in turn would activate org.eclipse.rse.ui which depends
+		//on resources... this activation circle does not work, therefore throw an
 		//exception if resources are not yet up.
 		if (_impl==null) {
 			if (!isResourcesPluginUp()) {
 				throw new CoreException(new Status(IStatus.WARNING,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						Messages.RESOURCES_NOT_LOADED)); 
+						Messages.RESOURCES_NOT_LOADED));
 			}
 			_impl = new RSEFileStoreImpl(this);
 		}
@@ -218,7 +218,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 		}
 		return resourcesBundle.getState()==Bundle.ACTIVE;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#childNames(int, org.eclipse.core.runtime.IProgressMonitor)
@@ -226,7 +226,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException {
 		return getImpl().childNames(options, monitor);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#childInfos(int, org.eclipse.core.runtime.IProgressMonitor)
@@ -281,7 +281,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#openInputStream(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException 
+	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException
 	{
 		return getImpl().openInputStream(options, monitor);
 	}
@@ -298,7 +298,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#mkdir(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException 
+	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException
 	{
 		return getImpl().mkdir(options, monitor);
 	}
@@ -311,12 +311,12 @@ public class RSEFileStore extends FileStore implements IFileStore
 	{
 		return getImpl().openOutputStream(options, monitor);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#delete(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void delete(int options, IProgressMonitor monitor) throws CoreException 
+	public void delete(int options, IProgressMonitor monitor) throws CoreException
 	{
 		getImpl().delete(options, monitor);
 	}

@@ -2082,7 +2082,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     // void f(C<char>& str) {
     //   str.m();
     // }
-    public void _testBug232086() throws Exception {
+    public void testBug232086() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction b0 = bh.assertNonProblem("m();", 1, ICPPFunction.class);
     }

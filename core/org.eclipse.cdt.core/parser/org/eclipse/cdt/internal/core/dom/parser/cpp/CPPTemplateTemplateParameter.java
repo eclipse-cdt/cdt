@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -36,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author aniefer
@@ -43,9 +46,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
 		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPUnknownBinding {
 
-	private ICPPTemplateParameter[] templateParameters = null;
-	private ObjectMap instances = null;
-	private ICPPScope unknownScope = null;
+	private ICPPTemplateParameter[] templateParameters;
+	private ObjectMap instances;
+	private ICPPScope unknownScope;
 	
 	/**
 	 * @param name
@@ -65,7 +68,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	    return unknownScope;
 	}
 	
-
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (templateParameters == null) {
 			ICPPASTTemplatedTypeTemplateParameter template = (ICPPASTTemplatedTypeTemplateParameter) getPrimaryDeclaration().getParent();
@@ -90,7 +92,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return templateParameters;
 	}
 
-
 	public IBinding resolveTemplateParameter(ICPPASTTemplateParameter templateParameter) {
 		IASTName name = CPPTemplates.getTemplateParameterName(templateParameter);
 		
@@ -108,12 +109,19 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return binding;
 	}
 
-
 	public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
 	public IType getDefault() throws DOMException {
+		IASTNode[] nds = getDeclarations();
+		if (nds == null || nds.length == 0)
+		    return null;
+		IASTName name = (IASTName) nds[0];
+		ICPPASTTemplatedTypeTemplateParameter param = (ICPPASTTemplatedTypeTemplateParameter) name.getParent();
+		IASTExpression defaultValue = param.getDefaultValue();
+		if (defaultValue != null)
+		    return CPPVisitor.createType(defaultValue);
 		return null;
 	}
 

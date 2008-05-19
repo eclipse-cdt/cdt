@@ -33,55 +33,58 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     static public class CPPBaseProblem extends ProblemBinding implements ICPPBase, ICPPInternalBase {
-    	private ICPPClassType classProblem = null; 
-        public CPPBaseProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+    	private ICPPClassType classProblem;
+
+        public CPPBaseProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
+
         public IBinding getBaseClass() {
-        	if( classProblem == null ){
-        		classProblem = new CPPClassType.CPPClassTypeProblem( node, id, arg );
+        	if (classProblem == null) {
+        		classProblem = new CPPClassType.CPPClassTypeProblem(node, id, arg);
         	}
         	return classProblem;
         }
 
         public int getVisibility() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
 
         public boolean isVirtual() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
+
 		public IName getBaseClassSpecifierName() {
 			return (IName) node;
 		}
+
 		public void setBaseClass(IBinding binding) throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
     }
-    private ICPPASTBaseSpecifier base = null;
-	private IBinding baseClass = null;
+
+    private ICPPASTBaseSpecifier base;
+	private IBinding baseClass;
     
-    public CPPBaseClause( ICPPASTBaseSpecifier base ){
+    public CPPBaseClause(ICPPASTBaseSpecifier base) {
         this.base = base;
     }
-    
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getBaseClass()
      */
     public IBinding getBaseClass() throws DOMException {
-		if( baseClass == null ){
+		if (baseClass == null) {
 	    	IBinding b = base.getName().resolveBinding();
-	    	while( b instanceof ITypedef && ((ITypedef)b).getType() instanceof IBinding ){
-				b = (IBinding) ((ITypedef)b).getType();
+	    	while (b instanceof ITypedef && ((ITypedef) b).getType() instanceof IBinding) {
+				b = (IBinding) ((ITypedef) b).getType();
 	    	}
-	    	if( b instanceof ICPPClassType || b instanceof ICPPTemplateParameter )
+	    	if (b instanceof ICPPClassType || b instanceof ICPPTemplateParameter) {
 	    		baseClass = b;
-	    	
-	    	else if( b instanceof IProblemBinding ){
-	    		baseClass =  new CPPClassType.CPPClassTypeProblem( base.getName(), ((IProblemBinding)b).getID(), base.getName().toCharArray() );
+	    	} else if (b instanceof IProblemBinding) {
+	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ((IProblemBinding) b).getID(), base.getName().toCharArray());
 	    	} else {
-				baseClass = new CPPClassType.CPPClassTypeProblem( base.getName(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND, base.getName().toCharArray() );
+				baseClass = new CPPClassType.CPPClassTypeProblem(base.getName(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND, base.getName().toCharArray());
 	    	}
 		}
 		return baseClass;
@@ -93,10 +96,10 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     public int getVisibility() {
 		int vis = base.getVisibility();
 		
-		if( vis == 0 ){
+		if (vis == 0) {
 			ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) base.getParent();
 			int key = compSpec.getKey();
-			if( key == ICPPClassType.k_class )
+			if (key == ICPPClassType.k_class)
 				vis = ICPPBase.v_private;
 			else
 				vis = ICPPBase.v_public;
@@ -120,11 +123,11 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 	}
 
     @Override
-	public Object clone(){
+	public Object clone() {
         ICPPBase t = null;
    		try {
             t = (ICPPBase) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;

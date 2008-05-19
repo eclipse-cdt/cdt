@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -725,6 +726,7 @@ public class CPPVisitor {
 	    }
         return isConstructor(clsName, declarator);
 	}
+
 	public static boolean isConstructor(IASTName parentName, IASTDeclarator declarator) {
 	    if (declarator == null      || !(declarator instanceof IASTFunctionDeclarator))
 	        return false;
@@ -1607,6 +1609,7 @@ public class CPPVisitor {
 		}
 		return type;
 	}
+
 	private static IType getArrayTypes(IType type, IASTArrayDeclarator declarator) {
 	    IASTArrayModifier[] mods = declarator.getArrayModifiers();
 	    for (IASTArrayModifier mod : mods) {
@@ -1766,20 +1769,21 @@ public class CPPVisitor {
 	        IBinding binding = resolveBinding(expression);
 	        try {
 				if (binding instanceof IVariable) {
-                    return ((IVariable)binding).getType();
+                    return ((IVariable) binding).getType();
 				} else if (binding instanceof IEnumerator) {
-					return ((IEnumerator)binding).getType();
+					return ((IEnumerator) binding).getType();
 				} else if (binding instanceof IProblemBinding) {
 					return (IType) binding;
 				} else if (binding instanceof IFunction) {
-					return ((IFunction)binding).getType();
+					return ((IFunction) binding).getType();
 				} else if (binding instanceof ICPPTemplateNonTypeParameter) {
-					return ((ICPPTemplateNonTypeParameter)binding).getType();
+					return ((ICPPTemplateNonTypeParameter) binding).getType();
+				} else if (binding instanceof ICPPClassType) {
+					return ((ICPPClassType) binding);
 				}
 			} catch (DOMException e) {
 				return e.getProblem();
 			}
-			
 	    } else if (expression instanceof IASTCastExpression) {
 	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
 	        IType type = createType(id.getDeclSpecifier());
@@ -2198,22 +2202,22 @@ public class CPPVisitor {
 	 * @return whether the specified expression is an rvalue
 	 */
 	static boolean isRValue(IASTExpression exp) {
-		if(exp instanceof IASTUnaryExpression) {
+		if (exp instanceof IASTUnaryExpression) {
 			IASTUnaryExpression ue= (IASTUnaryExpression) exp;
-			if(ue.getOperator() == IASTUnaryExpression.op_amper) {
+			if (ue.getOperator() == IASTUnaryExpression.op_amper) {
 				return true;
 			}
 		}
-		if(exp instanceof IASTLiteralExpression)
+		if (exp instanceof IASTLiteralExpression)
 			return true;
-		if(exp instanceof IASTFunctionCallExpression) {
+		if (exp instanceof IASTFunctionCallExpression) {
 			try {
 				IASTFunctionCallExpression fc= (IASTFunctionCallExpression) exp;
 				IASTExpression fne= fc.getFunctionNameExpression();
-				if(fne instanceof IASTIdExpression) {
+				if (fne instanceof IASTIdExpression) {
 					IASTIdExpression ide= (IASTIdExpression) fne;
 					IBinding b= ide.getName().resolveBinding();
-					if(b instanceof IFunction) {
+					if (b instanceof IFunction) {
 						IFunctionType tp= ((IFunction)b).getType();
 						return !(tp.getReturnType() instanceof ICPPReferenceType);
 					}

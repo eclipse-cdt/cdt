@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 public abstract class CASTAmbiguity extends CASTNode  {
 
@@ -55,51 +55,66 @@ public abstract class CASTAmbiguity extends CASTNode  {
     
     @Override
 	public boolean accept(ASTVisitor visitor) {
-        IASTNode [] nodez = getNodes();
-        int [] issues = new int[ nodez.length ];
-        for( int i = 0; i < nodez.length; ++i )
-        {
-            IASTNode s = nodez[i];
-            s.accept(visitor);
-            CASTNameCollector resolver = new CASTNameCollector();
-            s.accept( resolver );
-            IASTName [] names  = resolver.getNames();
-            for( int j = 0; j < names.length; ++j )
-            {
-                try
-                {
-                    IBinding b = names[j].resolveBinding();
-                    if( b == null || b instanceof IProblemBinding )
-                        ++issues[i];
-                    IScope scope = CVisitor.getContainingScope( names[j] );
-                    if( scope != null )
-                    {
-                        try {
-                            ASTInternal.flushCache(scope);
-                        } catch (DOMException e) {
-                        }
-                    }
-                }
-                catch( Exception t )
-                {
-                    ++issues[i];
-                }
-            }
-        }
-        int bestIndex = 0;
-        int bestValue = issues[0];
-        for( int i = 1; i < issues.length; ++i )
-        {
-            if( issues[i] < bestValue )
-            {
-                bestIndex = i;
-                bestValue = issues[i];
-            }
-        }
+		IScope scope= CVisitor.getContainingScope(this);
 
-        IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
-        owner.replace(this, nodez[bestIndex]);
-        return true;
-    }
+		IASTNode[] nodez = getNodes();
+		int bestIndex = 0;
+		int bestValue = Integer.MAX_VALUE;
+		for (int i = 0; i < nodez.length; ++i) {
+			final IASTNode s = nodez[i];
+			s.accept(visitor);
+
+			int issues= 0;
+			final CASTNameCollector resolver = new CASTNameCollector();
+			s.accept(resolver);
+			final IASTName[] names= resolver.getNames();
+			for (IASTName name : names) {
+				try {
+					IBinding b = name.resolveBinding();
+					if (b instanceof IProblemBinding) {
+						issues++;
+					}
+				} catch (Exception t) {
+					issues++;
+				}
+				if (issues == bestValue) {
+					break;
+				}
+			}
+			if (scope instanceof IASTInternalScope) {
+				final IASTInternalScope internalScope = (IASTInternalScope) scope;
+				try {
+					internalScope.flushCache();
+				} catch (DOMException e) {
+				}
+			}
+			if (issues < bestValue) {
+				bestValue= issues;
+				bestIndex= i;
+				if (issues == 0) {
+					break;
+				}
+			}
+		}
+
+		IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
+		owner.replace(this, nodez[bestIndex]);
+		
+		if (scope instanceof IASTInternalScope) {
+			try {
+				IASTNode node= ((IASTInternalScope) scope).getPhysicalNode();
+				if (node != null) {
+					CASTNameCollector nc = new CASTNameCollector();
+					node.accept(nc);
+					final IASTName[] names= nc.getNames();
+					for (IASTName name : names) {
+						name.setBinding(null);
+					}
+				}
+			} catch (DOMException e) {
+			}
+		}
+		return true;
+	}
 
 }

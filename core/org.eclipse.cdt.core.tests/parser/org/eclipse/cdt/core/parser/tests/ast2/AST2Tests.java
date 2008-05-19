@@ -3005,7 +3005,7 @@ public class AST2Tests extends AST2BaseTest {
 			assertFalse(col.getName(i).resolveBinding() instanceof IProblemBinding);
 		
 		tu = parse(
-				"void f() { typedef int x; int y; x * y; }", ParserLanguage.C); //$NON-NLS-1$
+				"int y; void f() { typedef int x; x * y; }", ParserLanguage.C); //$NON-NLS-1$
 		col = new CNameCollector();
 		tu.accept(col);
 		for (int i = 0; i < col.size(); ++i)

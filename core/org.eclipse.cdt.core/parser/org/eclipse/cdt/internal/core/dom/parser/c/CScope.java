@@ -11,10 +11,6 @@
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
-/*
- * Created on Nov 25, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -415,28 +411,34 @@ public class CScope implements ICScope, IASTInternalScope {
 
 	public void flushCache() {
 		CharArrayObjectMap map= mapsToNameOrBinding[0];
-		CharArrayObjectMap builtins= new CharArrayObjectMap(map.size());
+		CharArrayObjectMap builtins= null;
 		for (int i = 0; i < map.size(); i++) {
 			Object obj= map.getAt(i);
 			if (obj instanceof IASTName) {
 				((IASTName) obj).setBinding(null);
 			} else if (obj instanceof IBinding) {
+				if (builtins == null) {
+					builtins= new CharArrayObjectMap(2);
+				}
 				builtins.put(((IBinding) obj).getNameCharArray(), obj);
 			}
 		}
-		mapsToNameOrBinding[0]= map;
+		mapsToNameOrBinding[0]= builtins == null ? CharArrayObjectMap.EMPTY_MAP : builtins;
 
 		map= mapsToNameOrBinding[1];
-		builtins= new CharArrayObjectMap(map.size());
+		builtins= null;
 		for (int i = 0; i < map.size(); i++) {
 			Object obj= map.getAt(i);
 			if (obj instanceof IASTName) {
 				((IASTName) obj).setBinding(null);
 			} else if (obj instanceof IBinding) {
+				if (builtins == null) {
+					builtins= new CharArrayObjectMap(2);
+				}
 				builtins.put(((IBinding) obj).getNameCharArray(), obj);
 			}
 		}
-		mapsToNameOrBinding[1]= map;
+		mapsToNameOrBinding[1]= builtins == null ? CharArrayObjectMap.EMPTY_MAP : builtins;
 		reuseBindings= null;
 		isFullyCached = false;
 	}

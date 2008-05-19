@@ -181,17 +181,14 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 			return null;
 		}
 		
+		boolean argsContainDependentType= false;
 		ObjectMap argMap = new ObjectMap( specArgs.length );
 		int numSpecArgs = specArgs.length;
 		for( int i = 0; i < numSpecArgs; i++ ){
 			IType spec = specArgs[i];
 			IType arg = args[i];
 			
-			//If the argument is a template parameter, we can't instantiate yet, defer for later
-			if( CPPTemplates.isDependentType( arg ) ){
-				// mstodo argMap may be partially initialized.
-				return deferredInstance( argMap, args );
-			}
+			argsContainDependentType= argsContainDependentType || CPPTemplates.isDependentType(arg);
 			try {
 				if( !CPPTemplates.deduceTemplateArgument( argMap,  spec, arg ) )
 					return null;
@@ -199,7 +196,11 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 				return null;
 			}
 		}
-		
+
+		if (argsContainDependentType) {
+			return deferredInstance( argMap, args );
+		}
+
 		ICPPTemplateParameter [] params = getTemplateParameters();
 		int numParams = params.length;
 		for( int i = 0; i < numParams; i++ ){

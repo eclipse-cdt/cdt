@@ -1875,9 +1875,9 @@ public class CPPTemplates {
 	            				result = bindings[0];
 	            			} 
 	            		}
-	    	            if (unknown instanceof ICPPUnknownClassInstance && result instanceof ICPPTemplateDefinition) {
+	    	            if (unknown instanceof ICPPUnknownClassInstance && result instanceof ICPPInternalTemplateInstantiator) {
 	    	            	IType[] newArgs = CPPTemplates.instantiateTypes(((ICPPUnknownClassInstance) unknown).getArguments(), argMap, null);
-	    	            	result = CPPTemplates.instantiateTemplate((ICPPTemplateDefinition) result, newArgs, null);
+	    	            	result = ((ICPPInternalTemplateInstantiator) result).instantiate(newArgs);
 	    	            }
 	            	}
 	            }

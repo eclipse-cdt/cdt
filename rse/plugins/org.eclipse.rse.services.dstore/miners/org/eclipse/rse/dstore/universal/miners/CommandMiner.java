@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Noriaki Takatsu (IBM)  - [230399] [multithread] changes to stop CommandMiner threads when clients disconnect
+ * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -42,6 +43,9 @@ import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.Pattern
 /**
  * The CommandMiner provides the ability to run remote interactive shell 
  * commands via the DataStore.
+ * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CommandMiner extends Miner
 {

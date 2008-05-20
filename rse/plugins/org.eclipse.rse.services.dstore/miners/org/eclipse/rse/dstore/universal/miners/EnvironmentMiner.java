@@ -17,6 +17,7 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * Noriaki Takatsu (IBM)  - [226237] [dstore] Move the place where the ServerLogger instance is made
+ * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -28,12 +29,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dstore.core.miners.Miner;
-import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.server.ServerLogger;
 
-
+/**
+ * The environment miner provides access to the environment variables
+ * on a remote system and allows the store environment variables to be altered
+ * for use in other miners that launch shells.
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class EnvironmentMiner extends Miner
 {
     private DataElement _system;

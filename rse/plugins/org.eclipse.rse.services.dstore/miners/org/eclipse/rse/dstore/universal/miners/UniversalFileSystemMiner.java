@@ -34,6 +34,7 @@
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * David McKnight     (IBM)   [225507] [api][breaking] RSE dstore API leaks non-API types
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -79,6 +80,12 @@ import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.java.ClassFileUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
+/**
+ * This miner allows for remote file browsing and management.
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class UniversalFileSystemMiner extends Miner {
 
 	private DataElement deUFSnode;

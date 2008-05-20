@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -44,6 +45,9 @@ import org.eclipse.rse.services.clientserver.processes.handlers.UniversalServerP
 /**
  * Miner for getting process information from a remote system.
  * @author mjberger
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UniversalProcessMiner extends Miner
 {

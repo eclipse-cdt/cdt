@@ -79,7 +79,6 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -325,8 +324,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// TODO [cmodel] problem declaration?
 		} else if (declaration instanceof IASTAmbiguousDeclaration) {
 			// TODO [cmodel] ambiguous declaration?
-		} else if (declaration instanceof IASTDeclarationAmbiguity) {
-			// TODO [cmodel] declaration ambiguity?
 		} else {
 			assert false : "TODO: " + declaration.getClass().getName(); //$NON-NLS-1$
 		}

@@ -14,7 +14,9 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
  * @author jcamelon
+ * @deprecated there is no class that implements this interface. Use {@link IASTAmbiguousDeclaration}, instead.
  */
+@Deprecated
 public interface IASTDeclarationAmbiguity extends IASTDeclaration
 {
 

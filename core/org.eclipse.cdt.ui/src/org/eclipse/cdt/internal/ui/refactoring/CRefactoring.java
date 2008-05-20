@@ -52,7 +52,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
@@ -178,7 +177,7 @@ public abstract class CRefactoring extends Refactoring {
 
 		@Override
 		public int visit(IASTDeclaration declaration) {
-			if (declaration instanceof IASTAmbiguousDeclaration || declaration instanceof IASTDeclarationAmbiguity) {
+			if (declaration instanceof IASTAmbiguousDeclaration) {
 				ambiguityFound = true;
 			}
 			return ASTVisitor.PROCESS_CONTINUE;

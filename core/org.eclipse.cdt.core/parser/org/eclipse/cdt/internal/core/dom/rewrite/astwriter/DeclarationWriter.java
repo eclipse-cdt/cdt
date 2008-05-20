@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 
@@ -75,8 +74,6 @@ public class DeclarationWriter extends NodeWriter{
 			//Not implemented
 		} else if (declaration instanceof IASTASMDeclaration) {
 			writeASMDeclatation((IASTASMDeclaration) declaration);
-		} else if (declaration instanceof IASTDeclarationAmbiguity) {
-			//There is no class which implements IASTDeclarationAmbiguity
 		} else if (declaration instanceof IASTFunctionDefinition) {
 			writeFunctionDefinition((IASTFunctionDefinition) declaration);
 		} else if (declaration instanceof IASTProblemDeclaration) {

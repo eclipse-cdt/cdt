@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * Martin Oberhuber (Wind River) - [227516] [regression] Fix ArrayIndexOutOfBoundsException in TableView
+ * David McKnight   (IBM)        - [187058] Incorrect Right Click Menu in Remote System Details View with no selection
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -38,6 +39,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
@@ -73,6 +75,7 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonSelectAllAction;
+import org.eclipse.rse.internal.ui.actions.SystemImportConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.internal.ui.actions.SystemSubMenuManager;
@@ -97,6 +100,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.ISystemAction;
+import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -257,6 +261,8 @@ public class SystemTableView
 
 	// these variables were copied from SystemView to allow for limited support
 	// of actions.  I say limited because somethings don't yet work properly.
+	private SystemNewConnectionAction _newConnectionAction;
+	private SystemImportConnectionAction _importConnectionAction;
 	protected SystemRefreshAction _refreshAction;
 	protected PropertyDialogAction _propertyDialogAction;
 	private SystemOpenExplorerPerspectiveAction _openToPerspectiveAction;
@@ -1406,6 +1412,30 @@ public class SystemTableView
 			_refreshAction = new SystemRefreshAction(getShell());
 		return _refreshAction;
 	}
+	
+	/**
+	 * Rather than pre-defining this common action we wait until it is first needed,
+	 *  for performance reasons.
+	 */
+	public IAction getNewConnectionAction() {
+		if (_newConnectionAction == null) _newConnectionAction = new SystemNewConnectionAction(getShell(), true, this); // true=>from popup menu
+		return _newConnectionAction;
+	}
+
+	/**
+	 * Rather than pre-defining this common action we wait until it is first needed,
+	 * for performance reasons.
+	 */
+	private IAction getImportConnectionAction() {
+		if (_importConnectionAction == null) {
+			_importConnectionAction = new SystemImportConnectionAction(); // true=>from popup menu
+			_importConnectionAction.setShell(getShell());
+			_importConnectionAction.setText(SystemResources.RESID_IMPORT_CONNECTION_LABEL_LONG);
+		}
+		return _importConnectionAction; 
+	}
+	
+	
 	/*
 	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
@@ -1752,8 +1782,6 @@ public class SystemTableView
 
 	public void menuAboutToShow(IMenuManager manager)
 	{
-		SystemView.createStandardGroups(manager);
-
 		fillContextMenu(manager);
 
 		  if (!menuListenerAdded)
@@ -1794,9 +1822,16 @@ public class SystemTableView
 	public void fillContextMenu(IMenuManager menu)
 	{
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
-
+		Object firstIn = selection.getFirstElement();
+		if (firstIn instanceof ISystemRegistry)
 		{
-
+			menu.add(getNewConnectionAction());
+			menu.add(getImportConnectionAction());
+			menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
+		}
+		else 
+		{
+			SystemView.createStandardGroups(menu);
 			// ADD COMMON ACTIONS...
 			// no need for refresh of object in table
 			menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getRefreshAction());

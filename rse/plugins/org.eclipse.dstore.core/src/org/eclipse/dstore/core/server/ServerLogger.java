@@ -14,6 +14,7 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight  (IBM)  - [226086] [dstore][api][breaking] Move ServerLogger class to dstore.core
  * Jacob Garcowski (IBM)  - [232738] [dstore] Delay creation of log file until written to
+ * Noriaki Takatsu (IBM)  - [232443] [multithread] A single rsecomm.log for all clients 
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -43,8 +44,8 @@ public class ServerLogger implements IServerLogger
 	
 	private static final String LOG_TO_STDOUT = "Log_To_StdOut"; //$NON-NLS-1$
 
-	private static Object writeLock = new Object();
-	private static PrintWriter _logFileStream = null;
+	private Object writeLock = new Object();
+	private PrintWriter _logFileStream = null;
 	
 	public static final boolean DEBUG = false;
 	private static int log_level = 0;

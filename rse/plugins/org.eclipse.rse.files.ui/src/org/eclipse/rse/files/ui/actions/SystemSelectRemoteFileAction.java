@@ -13,20 +13,25 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
- * Xuan Chen (IBM) - [220999] [api] Also need to remove unnecessary APIs
+ * Xuan Chen (IBM) - [220999] [api] [breaking] Also need to remove unnecessary APIs
+ * Xuan Chen (IBM) - [231346] [api][regression] No longer able to restrict selection to files only in SystemSelectRemoteFileAction
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -34,6 +39,7 @@ import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -64,7 +70,7 @@ import org.eclipse.swt.widgets.Shell;
  *   <li>{@link #getSelectedConnection()}
  * </ul>
  */
-public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
+public class SystemSelectRemoteFileAction extends SystemBaseDialogAction 
 {
     private IRSESystemType[] systemTypes;
     private IHost systemConnection, outputConnection;
@@ -81,7 +87,57 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	private IValidatorRemoteSelection selectionValidator;
 	private List viewerFilters = new ArrayList();
 	private SystemActionViewerFilter customViewerFilter = null;
+	private boolean allowFolderSelection = true;
 
+	static class RemoteFileSelectionValidator implements IValidatorRemoteSelection
+	{
+		private boolean allowFolderSelect = true;
+		public RemoteFileSelectionValidator(boolean allowFolderSelection)
+		{
+			super();
+			this.allowFolderSelect = allowFolderSelection;
+		}
+		
+		/**
+		 * The user has selected a remote object. Return null if OK is to be enabled, or a SystemMessage
+		 *  if it is not to be enabled. The message will be displayed on the message line.
+		 */
+		public SystemMessage isValid(IHost selectedConnection, Object[] selectedObjects, ISystemRemoteElementAdapter[] remoteAdaptersForSelectedObjects)
+		{
+			//if (selectedConnection != sourceConnection) {} // someday, but can't happen today.
+			SimpleSystemMessage msg = null;
+			
+			if (selectedObjects == null || selectedObjects.length == 0)
+			{
+				msg =  new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						IStatus.INFO, 
+						FileResources.MSG_MAKE_SELECTION);
+				return msg;
+			}
+			
+			if (allowFolderSelect == true)
+			{
+				return null;
+			}
+			
+			for (int i = 0; i < selectedObjects.length; i++) 
+			{
+				if (selectedObjects[i] instanceof IRemoteFile)
+				{
+					IRemoteFile selectedFile = (IRemoteFile)selectedObjects[i];
+					if (selectedFile != null && selectedFile.isDirectory()) {
+						msg =  new SimpleSystemMessage(Activator.PLUGIN_ID, 
+								IStatus.INFO, 
+								FileResources.MSG_SELECT_FOLDER_NOT_VALID);
+						return msg;
+					}
+				}
+			}
+			
+			return null;
+		}
+		
+	}
 	/**
 	 * Constructor that uses default action label and tooltip
 	 * 
@@ -90,6 +146,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	public SystemSelectRemoteFileAction(Shell shell)
 	{
 		this(shell, FileResources.ACTION_SELECT_FILE_LABEL, FileResources.ACTION_SELECT_FILE_TOOLTIP);
+		
 	}	
 	/**
 	 * Constructor when you have your own action label and tooltip
@@ -408,6 +465,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
 		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
+		dlg.setSelectionValidator(selectionValidator);
 		
 		if (systemConnection != null)
 		{
@@ -447,8 +505,11 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
           else
             dlg.enableAddMode(addButtonCallback);
          */
-        if (selectionValidator != null)
-          dlg.setSelectionValidator(selectionValidator);
+        if (selectionValidator == null)
+        {
+        	selectionValidator = new RemoteFileSelectionValidator(allowFolderSelection);
+        }
+        dlg.setSelectionValidator(selectionValidator);
         /*
         if (!allowFolderSelection) {
             dlg.setAllowFolderSelection(allowFolderSelection);
@@ -495,6 +556,16 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	 */
 	public void addViewerFilter(ViewerFilter filter) {
 		viewerFilters.add(filter);
+	}
+	
+	/**
+	 * Sets whether to allow folder selection. The default selection validator will use this to
+	 * determine whether the OK button will be enabled when a folder is selected. The default
+	 * is <code>true</code>.
+	 * @param allow <code>true</code> to allow folder selection, <code>false</code> otherwise.
+	 */
+	public void setAllowFolderSelection(boolean allow) {
+	    allowFolderSelection = allow;
 	}
 	
 }

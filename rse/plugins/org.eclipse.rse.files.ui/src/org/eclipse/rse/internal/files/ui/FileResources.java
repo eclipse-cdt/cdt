@@ -404,6 +404,9 @@ public class FileResources extends NLS
 	
 	public static String MSG_CREATEFILEGENERIC_PROGRESS;
 	public static String MSG_CREATEFOLDERGENERIC_PROGRESS;
+	
+	public static String MSG_MAKE_SELECTION;
+	public static String MSG_SELECT_FOLDER_NOT_VALID;
   	
 
 	// preferences

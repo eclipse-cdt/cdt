@@ -675,10 +675,15 @@ public class SystemTableViewPart extends ViewPart
 		public IStatus run(final IProgressMonitor monitor)
 		{
 			try {
-				RSECorePlugin.waitForInitCompletion();
+				IStatus wstatus = RSECorePlugin.waitForInitCompletion();
+				if (!wstatus.isOK()){
+					return wstatus;
+				}
 			}
 			catch (InterruptedException e){				
+				return Status.CANCEL_STATUS;
 			}
+			
 			
 			final IMemento memento = _rmemento;
 			String profileId = memento.getString(TAG_TABLE_VIEW_PROFILE_ID);

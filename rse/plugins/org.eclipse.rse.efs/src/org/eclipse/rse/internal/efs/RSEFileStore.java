@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
  * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
  * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
+ * Timur Shiplov    (Xored)      - [224538] RSEFileStore.getParent() returns null for element which is not root of filesystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -165,6 +166,11 @@ public class RSEFileStore extends FileStore
 	 * @see org.eclipse.core.filesystem.provider.FileStore#getParent()
 	 */
 	public IFileStore getParent() {
+		if (_parent == null && _absolutePath.segmentCount() > 0) {
+			String parentPath = _absolutePath.removeLastSegments(1).toString();
+			URI parentUri = RSEFileSystem.getURIFor(_host, parentPath);
+			_parent = RSEFileStore.getInstance(parentUri);
+		}
 		return _parent;
 	}
 

@@ -20,6 +20,7 @@
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
+ * David Dykstal (IBM) - [197027] Can lose data if closing eclipse before profile is saved
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -27,12 +28,16 @@ package org.eclipse.rse.internal.persistence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -42,6 +47,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -64,7 +71,96 @@ import org.eclipse.rse.services.Mutex;
  * @see RSECorePlugin#getThePersistenceManager() 
  */
 public class RSEPersistenceManager implements IRSEPersistenceManager {
+	
+	private class RSESaveParticipant implements ISaveParticipant {
 
+		public RSESaveParticipant() {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
+		 */
+		public void doneSaving(ISaveContext context) {
+			// do nothing
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
+		 */
+		public void prepareToSave(ISaveContext context) throws CoreException {
+			canScheduleSave = false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
+		 */
+		public void rollback(ISaveContext context) {
+			canScheduleSave = true;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
+		 */
+		public void saving(ISaveContext context) throws CoreException {
+			List jobs = new ArrayList(10);
+			synchronized(saveJobs) {
+				jobs.addAll(saveJobs);
+			}
+			for (Iterator z = jobs.iterator(); z.hasNext();) {
+				Job job = (Job) z.next();
+				try {
+					job.join();
+				} catch (InterruptedException e) {
+					// do nothing
+				}
+			}
+		}
+
+	}
+	
+	private class RSESaveJobChangeListener implements IJobChangeListener {
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void aboutToRun(IJobChangeEvent event) {
+			// do nothing
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#awake(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void awake(IJobChangeEvent event) {
+			// do nothing
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void done(IJobChangeEvent event) {
+			synchronized (saveJobs) {
+				saveJobs.remove(event.getJob());
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#running(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void running(IJobChangeEvent event) {
+			// do nothing
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void scheduled(IJobChangeEvent event) {
+			synchronized (saveJobs) {
+				saveJobs.add(event.getJob());
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#sleeping(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void sleeping(IJobChangeEvent event) {
+			// do nothing
+		}
+	}
+	
 	private class ProviderRecord {
 		private String providerId = null;
 		private IConfigurationElement configurationElement = null;
@@ -85,14 +181,23 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	
 	private Map knownProviders = new HashMap(10);
 	private Map loadedProviders = new HashMap(10);
+	private Set saveJobs = new HashSet(10);
 	private RSEDOMExporter _exporter;
 	private RSEDOMImporter _importer;
+	private RSESaveParticipant saveParticipant = new RSESaveParticipant();
+	private RSESaveJobChangeListener jobChangeListener = new RSESaveJobChangeListener();
 	private Mutex mutex = new Mutex();
+	private volatile boolean canScheduleSave = true;
 	
 	public RSEPersistenceManager(ISystemRegistry registry) {
 		_exporter = RSEDOMExporter.getInstance();
 		_importer = RSEDOMImporter.getInstance();
 		_importer.setSystemRegistry(registry);
+		try {
+			ResourcesPlugin.getWorkspace().addSaveParticipant(RSECorePlugin.getDefault(), saveParticipant);
+		} catch (CoreException e) {
+			RSECorePlugin.getDefault().getLogger().logError("Could not register save participant.", e); //$NON-NLS-1$
+		}
 		getProviderExtensions();
 	}
 
@@ -445,8 +550,9 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 				cleanTree(profile);
 				if (dom.needsSave()) {
 					Job job = provider.getSaveJob(dom);
-					if (job != null) {
-						job.schedule(3000); // three second delay
+					job.addJobChangeListener(jobChangeListener);
+					if (job != null && canScheduleSave) {
+						job.schedule(2000); // two second delay
 					} else {
 						provider.saveRSEDOM(dom, new NullProgressMonitor());
 					}

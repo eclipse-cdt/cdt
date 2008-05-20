@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [232355] Go To menu item missing
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.ui.views.framelist.UpAction;
 /**
  * A cascading menu action for "Go To->"
  */
-public class SystemCascadingGoToAction extends SystemBaseSubMenuAction 
+public class SystemCascadingGoToAction extends SystemBaseSubMenuAction
 {
 	//private IAdaptable pageInput;
 	//private IMenuManager parentMenuManager;
@@ -42,9 +42,9 @@ public class SystemCascadingGoToAction extends SystemBaseSubMenuAction
 	private ForwardAction forwardAction;
 	private UpAction upAction;
 
-	
+
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	public SystemCascadingGoToAction(Shell shell, SystemViewPart systemViewPart)
 	{
@@ -52,10 +52,11 @@ public class SystemCascadingGoToAction extends SystemBaseSubMenuAction
 		setMenuID(ISystemContextMenuConstants.MENU_GOTO);
 		this.fSystemViewPart = systemViewPart;
 		// something in ganymede m7 causes the actions of this menu to be lost, therefore must re-create each time
+		// FIXME this looks like a hack
         setCreateMenuEachTime(true);
         setPopulateMenuEachTime(true);
 	    allowOnMultipleSelection(false);
-	    setContextMenuGroup(ISystemContextMenuConstants.GROUP_GOTO);        
+	    setContextMenuGroup(ISystemContextMenuConstants.GROUP_GOTO);
 	}
 
 	/**
@@ -71,14 +72,14 @@ public class SystemCascadingGoToAction extends SystemBaseSubMenuAction
 		return gotoMenu;
 	}
 
-	protected void makeActions() 
+	protected void makeActions()
 	{
 		FrameList frameList = fSystemViewPart.getFrameList();
 		backAction = new BackAction(frameList);
 		forwardAction = new ForwardAction(frameList);
 		upAction = new UpAction(frameList);
-		
+
 		actionsMade = true;
 	}
-	
+
 }

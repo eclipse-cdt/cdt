@@ -184,10 +184,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (bindings == null)
             bindings = new CharArrayObjectMap(1);
 
-		if (constructor instanceof IASTName && ((IASTName)constructor).getBinding() != null) {
-			constructor = ((IASTName)constructor).getBinding();
-		}
-
         Object o = bindings.get(CONSTRUCTOR_KEY);
         if (o != null) {
             if (o instanceof ObjectSet) {
@@ -284,11 +280,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         			if (obj instanceof IASTName) {
         				IASTName n = (IASTName) obj;
         				binding = shouldResolve(forceResolve, n, forName) ? n.resolveBinding() : n.getBinding();
-        				if (binding != null) {
-        					set.remove(n);
-        					set.put(binding);
-        					i--;
-        					continue;
+        				if (binding instanceof ICPPConstructor) {
+    						bs = (IBinding[]) ArrayUtil.append(ICPPConstructor.class, bs, binding);
         				}
         			} else if (obj instanceof ICPPConstructor) {
 						bs = (IBinding[]) ArrayUtil.append(ICPPConstructor.class, bs, obj);
@@ -297,8 +290,9 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         		return (ICPPConstructor[]) ArrayUtil.trim(ICPPConstructor.class, bs);
 	        } else if (o instanceof IASTName) {
 	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName)o).getBinding() != null) {
+	        		// always store the name, rather than the binding, such that we can properly flush the scope.
+	        		bindings.put(CONSTRUCTOR_KEY, o);
 	        		binding = ((IASTName)o).resolveBinding();
-	        		bindings.put(CONSTRUCTOR_KEY, binding);
 	        	}
 	        } else if (o instanceof IBinding) {
 	        	binding = (IBinding) o;
@@ -450,16 +444,16 @@ class ImplicitsAnalysis {
 		char[] name = compSpec.getName().toCharArray();
 		IASTDeclarator dcltor = null;
 		IASTDeclSpecifier spec = null;
-        for (int i = 0; i < members.length; i++) {
-			if (members[i] instanceof IASTSimpleDeclaration) {
-			    IASTDeclarator[] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+        for (IASTDeclaration member : members) {
+			if (member instanceof IASTSimpleDeclaration) {
+			    IASTDeclarator[] dtors = ((IASTSimpleDeclaration)member).getDeclarators();
 			    if (dtors.length == 0 || dtors.length > 1)
 			    	continue;
 			    dcltor = dtors[0];
-			    spec = ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
-			} else if (members[i] instanceof IASTFunctionDefinition) {
-			    dcltor = ((IASTFunctionDefinition)members[i]).getDeclarator();
-			    spec = ((IASTFunctionDefinition)members[i]).getDeclSpecifier();
+			    spec = ((IASTSimpleDeclaration)member).getDeclSpecifier();
+			} else if (member instanceof IASTFunctionDefinition) {
+			    dcltor = ((IASTFunctionDefinition)member).getDeclarator();
+			    spec = ((IASTFunctionDefinition)member).getDeclSpecifier();
 			}
 
 
@@ -490,14 +484,14 @@ class ImplicitsAnalysis {
 		List<ICPPASTFunctionDeclarator> result= new ArrayList<ICPPASTFunctionDeclarator>();
 		IASTDeclaration[] members = compSpec.getMembers();
 		IASTDeclarator dcltor = null;
-        for (int i = 0; i < members.length; i++) {
-			if (members[i] instanceof IASTSimpleDeclaration) {
-			    IASTDeclarator[] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+        for (IASTDeclaration member : members) {
+			if (member instanceof IASTSimpleDeclaration) {
+			    IASTDeclarator[] dtors = ((IASTSimpleDeclaration)member).getDeclarators();
 			    if (dtors.length == 0 || dtors.length > 1)
 			    	continue;
 			    dcltor = dtors[0];
-			} else if (members[i] instanceof IASTFunctionDefinition) {
-			    dcltor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			} else if (member instanceof IASTFunctionDefinition) {
+			    dcltor = ((IASTFunctionDefinition)member).getDeclarator();
 			}
 			if (!(dcltor instanceof ICPPASTFunctionDeclarator) ||
 				!CharArrayUtils.equals(dcltor.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray()))

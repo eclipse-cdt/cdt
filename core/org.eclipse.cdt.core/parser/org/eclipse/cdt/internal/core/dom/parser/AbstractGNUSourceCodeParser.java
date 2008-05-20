@@ -416,20 +416,20 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected void resolveAmbiguities() {
-        getTranslationUnit().accept(createVisitor());
+        final IASTTranslationUnit translationUnit = getTranslationUnit();
+		translationUnit.accept(createAmbiguityNodeVisitor()); 
+		if (translationUnit instanceof ASTTranslationUnit) {
+			((ASTTranslationUnit)translationUnit).cleanupAfterAmbiguityResolution();
+		}
     }
 
-    protected abstract ASTVisitor createVisitor();
+    protected abstract ASTVisitor createAmbiguityNodeVisitor();
 
-    /**
-     * 
-     */
     protected abstract void nullifyTranslationUnit();
 
     protected IToken skipOverCompoundStatement() throws BacktrackException,
             EndOfFileException {
-        // speed up the parser by skiping the body
-        // simply look for matching brace and return
+        // speed up the parser by skipping the body, simply look for matching brace and return
         consume(IToken.tLBRACE);
         IToken result = null;
         int depth = 1;

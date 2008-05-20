@@ -333,4 +333,19 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final IASTNodeSelector getNodeSelector(String filePath) {
 		return new ASTNodeSelector(this, fLocationResolver, filePath);
 	}
+
+	/**
+	 * @since 5.0
+	 */
+	public void cleanupAfterAmbiguityResolution() {
+		// clear bindings (see bug 232811)
+		accept(new ASTVisitor(){
+			{shouldVisitNames= true;}
+			@Override
+			public int visit(IASTName name) {
+				name.setBinding(null);
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
 }

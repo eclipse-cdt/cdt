@@ -3,20 +3,12 @@ package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguity;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 
 @SuppressWarnings("restriction")
@@ -37,68 +29,66 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
 		return declarators.toArray(new IASTDeclarator[declarators.size()]);
 	}
 
-	
-	
-	@Override
-	public boolean accept(ASTVisitor visitor) {
-		// this code was copied from CPPASTAmbiguity.accept() and slightly modified.
-		IASTNode nodeToReplace = this;
-    	IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
-    	
-        IASTNode[] nodez = getNodes();
-        int[] problems = new int[nodez.length];
-        
-        for(int i = 0; i < nodez.length; ++i) {
-        	defaultDeclarator = i;
-            IASTNode node = nodez[i];
-            owner.replace(nodeToReplace, node);
-            nodeToReplace = node;
-            
-            node.accept(visitor);
-            CPPASTNameCollector nameCollector = new CPPASTNameCollector();
-            node.accept(nameCollector);
-            IASTName[] names = nameCollector.getNames();
-            for(IASTName name : names) {
-            	if(name.toCharArray().length > 0) { // don't count dummy name nodes
-	                try {
-	                    IBinding b = name.resolveBinding();
-	                    if(b == null || b instanceof IProblemBinding) {
-	                        ++problems[i];
-	                    }
-	                } catch (Exception t) {
-	                	t.printStackTrace();
-	                    ++problems[i];
-	                }
-            	}
-            }
-            if(names.length > 0) {
-                IScope scope = CPPVisitor.getContainingScope(names[0]);
-                
-                if( scope != null ) {
-                    try {
-                    	IScope parentScope = scope;
-                    	do {
-                    		ASTInternal.flushCache(parentScope);
-                    	} while((parentScope = parentScope.getParent()) != null);
-                    } catch (DOMException de) {}
-                }
-            }
-        }
-        
-        int bestIndex = 0;
-        int bestValue = problems[0];
-        for (int i = 1; i < problems.length; ++i) {
-            if (problems[i] < bestValue) {
-                bestIndex = i;
-                bestValue = problems[i];
-            }
-        }
-
-        //IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
-        owner.replace(nodeToReplace, nodez[bestIndex]);
-        defaultDeclarator = 0;
-        return true;
-	}
+//	@Override
+//	public boolean accept(ASTVisitor visitor) {
+//		// this code was copied from CPPASTAmbiguity.accept() and slightly modified.
+//		IASTNode nodeToReplace = this;
+//    	IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
+//    	
+//        IASTNode[] nodez = getNodes();
+//        int[] problems = new int[nodez.length];
+//        
+//        for(int i = 0; i < nodez.length; ++i) {
+//        	defaultDeclarator = i;
+//            IASTNode node = nodez[i];
+//            owner.replace(nodeToReplace, node);
+//            nodeToReplace = node;
+//            
+//            node.accept(visitor);
+//            NameCollector nameCollector = new NameCollector();
+//            node.accept(nameCollector);
+//            IASTName[] names = nameCollector.getNames();
+//            for(IASTName name : names) {
+//            	if(name.toCharArray().length > 0) { // don't count dummy name nodes
+//	                try {
+//	                    IBinding b = name.resolveBinding();
+//	                    if(b == null || b instanceof IProblemBinding) {
+//	                        ++problems[i];
+//	                    }
+//	                } catch (Exception t) {
+//	                	t.printStackTrace();
+//	                    ++problems[i];
+//	                }
+//            	}
+//            }
+//            if(names.length > 0) {
+//                IScope scope = CPPVisitor.getContainingScope(names[0]);
+//                
+//                if( scope != null ) {
+//                    try {
+//                    	IScope parentScope = scope;
+//                    	do {
+//                    		ASTInternal.flushCache(parentScope);
+//                    	} while((parentScope = parentScope.getParent()) != null);
+//                    } catch (DOMException de) {}
+//                }
+//            }
+//        }
+//        
+//        int bestIndex = 0;
+//        int bestValue = problems[0];
+//        for (int i = 1; i < problems.length; ++i) {
+//            if (problems[i] < bestValue) {
+//                bestIndex = i;
+//                bestValue = problems[i];
+//            }
+//        }
+//
+//        //IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
+//        owner.replace(nodeToReplace, nodez[bestIndex]);
+//        defaultDeclarator = 0;
+//        return true;
+//	}
 
 	public void addDeclarator(IASTDeclarator declarator) {
 		if(declarator != null) {
@@ -147,6 +137,4 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
 	public int getRoleForName(IASTName n) {
 		return getDefaultDeclarator().getRoleForName(n);
 	}
-
-
 }

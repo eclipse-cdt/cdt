@@ -77,7 +77,6 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -4620,16 +4619,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return null;
     }
 
-    private static class EmptyVisitor extends CPPASTVisitor {
-        {
-            shouldVisitStatements = true;
-        }
-    }
-
-    private static final EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
+    private static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {
+    };
 
     @Override
-	protected ASTVisitor createVisitor() {
+	protected ASTVisitor createAmbiguityNodeVisitor() {
         return EMPTY_VISITOR;
     }
 

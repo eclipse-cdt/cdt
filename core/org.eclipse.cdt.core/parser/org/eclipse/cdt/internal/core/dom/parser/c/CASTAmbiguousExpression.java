@@ -13,12 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 
-public class CASTAmbiguousExpression extends CASTAmbiguity implements
-        IASTAmbiguousExpression {
+public class CASTAmbiguousExpression extends CASTAmbiguity implements IASTAmbiguousExpression {
 
     private IASTExpression [] expressions = new IASTExpression[2];
     private int expressionsPos=-1;
@@ -29,6 +29,12 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements
 			addExpression(e);
 	}
 
+    @Override
+	protected IScope getAffectedScope() {
+    	// an expression cannot pollute a parent scope
+    	return null;
+    }
+    
 	public void addExpression(IASTExpression e) {
     	if (e != null) {
     		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, ++expressionsPos, e );

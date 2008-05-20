@@ -79,7 +79,6 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -119,13 +118,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
  */
 public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
-    private static class EmptyVisitor extends CASTVisitor {
-        {
-            shouldVisitStatements = true;
-        }
-    }
-    
-    private static final EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
+    private static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {
+    };
 
     private final boolean supportGCCStyleDesignators;
 
@@ -2275,7 +2269,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected ASTVisitor createVisitor() {
+	protected ASTVisitor createAmbiguityNodeVisitor() {
         return EMPTY_VISITOR;
     }
 

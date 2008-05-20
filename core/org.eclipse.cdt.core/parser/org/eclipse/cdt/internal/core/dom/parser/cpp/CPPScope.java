@@ -11,9 +11,6 @@
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -282,8 +279,8 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    Object[] obj = null;
 	    if (prefixLookup) {
 	    	Object[] keys = bindings != null ? bindings.keyArray() : new Object[0];
-	    	for (int i = 0; i < keys.length; i++) {
-	    		char[] key = (char[]) keys[i];
+	    	for (Object key2 : keys) {
+	    		char[] key = (char[]) key2;
 	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
 	    			obj = ArrayUtil.append(obj, bindings.get(key));
 	    		}
@@ -293,10 +290,10 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    }
 	    
 	    obj = ArrayUtil.trim(Object.class, obj);
-	    for (int i = 0; i < obj.length; i++) {
-	        if (obj[i] instanceof ObjectSet) {
+	    for (Object element : obj) {
+	        if (element instanceof ObjectSet) {
 	        	@SuppressWarnings("unchecked")
-	        	ObjectSet<Object> os= (ObjectSet<Object>) obj[i];
+	        	ObjectSet<Object> os= (ObjectSet<Object>) element;
         		for (int j = 0; j < os.size(); j++) {
         			Object o = os.keyAt(j);
         			if (o instanceof IASTName) {
@@ -311,12 +308,12 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
         				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, o);
         			}
         		}
-	        } else if (obj[i] instanceof IASTName) {
+	        } else if (element instanceof IASTName) {
 	        	IBinding binding = null;
-	        	if (forceResolve && obj[i] != name && obj[i] != name.getParent()) {
-	        		binding = ((IASTName) obj[i]).resolveBinding();
+	        	if (forceResolve && element != name && element != name.getParent()) {
+	        		binding = ((IASTName) element).resolveBinding();
 	        	} else {
-	        		IASTName n = (IASTName) obj[i];
+	        		IASTName n = (IASTName) element;
     				if (n instanceof ICPPASTQualifiedName) {
     					IASTName[] ns = ((ICPPASTQualifiedName)n).getNames();
     					n = ns[ns.length - 1];
@@ -329,7 +326,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	        	}
 	        	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
 	        } else {
-	        	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, obj[i]);
+	        	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
 	        }
 	    }
 	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
@@ -351,15 +348,15 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    removeBinding(key, binding);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void removeBinding(char[] key, IBinding binding) {
 	    if (bindings == null || ! bindings.containsKey(key))
 	        return;
 	    
 	    Object obj = bindings.get(key);
 	    if (obj instanceof ObjectSet) {
+	    	@SuppressWarnings("unchecked")
 	        ObjectSet<Object> set = (ObjectSet<Object>) obj;
-	        for (int i = set.size() - 1; i > 0; i--) {
+	        for (int i = set.size() - 1; i >= 0; i--) {
                 Object o = set.keyAt(i);
                 if ((o instanceof IBinding && o == binding) ||
                     (o instanceof IASTName && ((IASTName)o).getBinding() == binding)) {
@@ -384,9 +381,46 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	}
 
 	public void flushCache() {
+		final CharArrayObjectMap map= bindings;
+		if (map != null) {
+			CharArrayObjectMap allBuiltins= null;
+			for (int i = 0; i < map.size(); i++) {
+				Object o= map.getAt(i);
+				if (o instanceof IASTName) {
+					((IASTName) o).setBinding(null);
+				} else if (o instanceof IBinding) {
+					if (allBuiltins == null) {
+						allBuiltins= new CharArrayObjectMap(1);
+					}
+					allBuiltins.put(map.keyAt(i), o);
+				} else if (o instanceof ObjectSet) {
+					@SuppressWarnings("unchecked")
+					final ObjectSet<Object> set= (ObjectSet<Object>) map.getAt(i);
+					if (set != null) {
+						ObjectSet<Object> builtins= null;
+						for (int j= set.size()-1; j >= 0; j--) {
+							Object p= set.keyAt(j);
+							if (p instanceof IASTName) {
+								((IASTName) p).setBinding(null);
+							} else if (p instanceof IBinding) {
+								if (builtins == null) {
+									builtins= new ObjectSet<Object>(1);
+								}
+								builtins.put(p);
+							}
+						}
+						if (builtins != null) {
+							if (allBuiltins == null) {
+								allBuiltins= new CharArrayObjectMap(1);
+							}
+							allBuiltins.put(map.keyAt(i), builtins);
+						}
+					}
+				}
+			}
+			bindings= allBuiltins;
+		}
 		isfull = false;
-		if (bindings != null)
-			bindings.clear();
 	}
     
 	@SuppressWarnings("unchecked")

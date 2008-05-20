@@ -13,6 +13,7 @@
  * Contributors:
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight  (IBM)  - [226086] [dstore][api][breaking] Move ServerLogger class to dstore.core
+ * Jacob Garcowski (IBM)  - [232738] [dstore] Delay creation of log file until written to
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -47,6 +48,10 @@ public class ServerLogger implements IServerLogger
 	
 	public static final boolean DEBUG = false;
 	private static int log_level = 0;
+	
+	private boolean initialized = false;
+	private String logPathName = null;
+	private boolean logToFile = true;
 
 	/**
 	 * Constructs a new ServerLogger.
@@ -54,24 +59,27 @@ public class ServerLogger implements IServerLogger
 	 * @param logPathName the path on the filesystem to store the log information
 	 */
 	public ServerLogger(String logPathName) {
-		if (_logFileStream == null) {
-			// Read .properties file to configure
-			boolean logToFile = true;
-			
-			try { 
-				ResourceBundle properties = ResourceBundle.getBundle("rsecomm"); //$NON-NLS-1$
-				String debug_level = properties.getString(DEBUG_LEVEL).trim();
-				log_level = Integer.parseInt(debug_level);				
-				String log_location = properties.getString(LOG_LOCATION).trim();
-				if (log_location.equalsIgnoreCase(LOG_TO_STDOUT)) {
-					logToFile = false;
-					_logFileStream = new PrintWriter(System.out);
-				}
-			} catch (Exception e) {
-				// Just use logging defaults: log_level = 0, log to file
-				//e.printStackTrace();
+		this.logPathName = logPathName;
+		// Read .properties file to configure
+		try { 
+			ResourceBundle properties = ResourceBundle.getBundle("rsecomm"); //$NON-NLS-1$
+			String debug_level = properties.getString(DEBUG_LEVEL).trim();
+			log_level = Integer.parseInt(debug_level);				
+			String log_location = properties.getString(LOG_LOCATION).trim();
+			if (log_location.equalsIgnoreCase(LOG_TO_STDOUT)) {
+				logToFile = false;
+				_logFileStream = new PrintWriter(System.out);
 			}
-				
+		} catch (Exception e) {
+			// Just use logging defaults: log_level = 0, log to file
+			//e.printStackTrace();
+		}
+	}
+	
+	private void initialize()
+	{
+		initialized = true;
+		if (_logFileStream == null) {				
 			if (logToFile) {
 				try {
 			  		File _logFile = new File(logPathName, "rsecomm.log"); //$NON-NLS-1$
@@ -97,6 +105,8 @@ public class ServerLogger implements IServerLogger
 	 * @param message Message text to be logged.
 	 */
 	public void logInfo(String minerName, String message) {
+		if (!initialized)
+			initialize();
 		if (log_level >= LOG_INFO) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {
@@ -119,6 +129,8 @@ public class ServerLogger implements IServerLogger
 	 * @param message Message text to be logged.
 	 */
 	public void logWarning(String minerName, String message) {
+		if (!initialized)
+			initialize();
 		if (log_level >= LOG_WARNING) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {
@@ -143,6 +155,8 @@ public class ServerLogger implements IServerLogger
 	 * @param exception Exception that generated the error.  Used to print a stack trace.
 	 */
 	public void logError(String minerName, String message, Throwable exception) {
+		if (!initialized)
+			initialize();
 		if (_logFileStream != null) {
 			synchronized(writeLock) {
 				try {
@@ -166,6 +180,8 @@ public class ServerLogger implements IServerLogger
 	 * @param message Message text to be logged.
 	 */
 	public synchronized void logDebugMessage(String minerName, String message) {
+		if (!initialized)
+			initialize();
 		if (DEBUG && log_level == LOG_DEBUG) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {

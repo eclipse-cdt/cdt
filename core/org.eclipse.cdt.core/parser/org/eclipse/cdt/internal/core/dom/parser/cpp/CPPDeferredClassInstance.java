@@ -31,9 +31,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDeferredClassInstance {
 	
-	private IType[] fArguments;
-	private ObjectMap fArgmap;
-	private ICPPClassTemplate fClassTemplate;
+	private final IType[] fArguments;
+	private final ObjectMap fArgmap;
+	private final ICPPClassTemplate fClassTemplate;
 
 	public CPPDeferredClassInstance(ICPPClassTemplate orig,	ObjectMap argMap, IType[] arguments) {
 		super(orig);

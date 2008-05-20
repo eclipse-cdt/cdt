@@ -1086,15 +1086,21 @@ public class CPPTemplates {
 
 		IType[] result = new IType[params.length];
 		for (int i = 0; i < params.length; i++) {
-		    if (params[i] instanceof IASTNode) {
-				result[i] = CPPVisitor.createType((IASTNode) params[i]);
-			} else if (params[i] instanceof IParameter) {
+			IType type= null;
+		    final Object param = params[i];
+			if (param instanceof IASTNode) {
+		    	type= CPPVisitor.createType((IASTNode) param);
+			} else if (param instanceof IParameter) {
 				try {
-					result[i] = ((IParameter) params[i]).getType();
+					type= ((IParameter) param).getType();
 				} catch (DOMException e) {
-					result[i] = e.getProblem();
+					type= e.getProblem();
 				}
 			}
+			// prevent null pointer exception when the type cannot be determined
+			// happens when templates with still ambiguous template-ids are accessed during
+			// resolution of other ambiguities.
+		    result[i]= type == null ? new CPPBasicType(-1, 0) : type;
 		}
 		return result;
 	}

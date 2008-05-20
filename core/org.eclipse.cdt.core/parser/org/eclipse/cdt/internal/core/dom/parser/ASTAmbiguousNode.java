@@ -70,8 +70,9 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		
 		int minIssues = Integer.MAX_VALUE;
 		for (IASTNode alternative : alternatives) {
-			// flush scope, if this is not the first alternative
-			if (nodeToReplace != this && scope instanceof IASTInternalScope) {
+			// flush scope, even if this is the first alternative. The ambiguous node may have contributed an
+		    // invalid binding to the scope during the resolution of other ambiguous nodes.
+			if (scope instanceof IASTInternalScope) {
 				try {
 					((IASTInternalScope) scope).flushCache();
 				} catch (DOMException e) {

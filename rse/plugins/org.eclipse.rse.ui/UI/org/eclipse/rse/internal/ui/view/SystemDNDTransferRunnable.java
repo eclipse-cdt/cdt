@@ -20,6 +20,7 @@
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [228587] [dnd] NPE From Refresh on Copy/Paste
+ * David McKnight   (IBM)        - [232889] Dragging and dropping files from a remote unix system to a local project does not work
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -580,7 +581,8 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		{
 			ISystemDragDropAdapter targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
 
-			if (targetAdapter != null)
+			// checking for IResource since we already handle them specially
+			if (targetAdapter != null && !(target instanceof IResource))
 			{
 				targetSubSystem = targetAdapter.getSubSystem(target);				
 

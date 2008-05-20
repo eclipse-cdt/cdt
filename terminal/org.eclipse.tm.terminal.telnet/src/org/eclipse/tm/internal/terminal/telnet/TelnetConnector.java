@@ -13,7 +13,8 @@
  * Contributors:
  * Michael Scharf (Wind River) - extracted from TerminalControl
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
- * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
+ * Sean Adams (Cisco) - [231959][terminal][telnet] NPE in TelnetConnector.java
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -33,7 +34,6 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
 	private Socket fSocket;
-	private ITerminalControl fControl;
 	private TelnetConnection fTelnetConnection;
 	private final TelnetSettings fSettings;
 	private int fWidth = -1;

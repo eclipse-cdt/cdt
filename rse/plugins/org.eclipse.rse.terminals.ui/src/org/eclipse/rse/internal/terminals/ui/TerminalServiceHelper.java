@@ -7,6 +7,7 @@
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Yu-Fen Kuo (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Anna Dushistova (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui;
@@ -21,7 +22,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.internal.terminals.ui.views.RSETerminalConnector;
 import org.eclipse.rse.internal.terminals.ui.views.TerminalViewTab;
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 import org.eclipse.swt.custom.CTabItem;
@@ -35,19 +35,6 @@ public class TerminalServiceHelper {
      */
     public TerminalServiceHelper() {
         super();
-    }
-
-    /**
-     * Helper method to return the path to change-directory to, given a selected
-     * remote file object
-     */
-    public static String getWorkingDirectory(IRemoteFile selectedFile) {
-        String path = null;
-        if (selectedFile.isDirectory())
-            path = selectedFile.getAbsolutePath();
-        else
-            path = selectedFile.getParentPath();
-        return path;
     }
 
     public static ITerminalServiceSubSystem getTerminalSubSystem(

@@ -12,68 +12,20 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - Adapted from ShellServiceSubSystemConfigurationAdapter
+ * Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui.configuration.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.terminals.ui.Activator;
-import org.eclipse.rse.internal.terminals.ui.TerminalServiceHelper;
-import org.eclipse.rse.internal.terminals.ui.actions.LaunchTerminalAction;
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
-import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
-import org.eclipse.swt.widgets.Shell;
 
 public class TerminalServiceSubSystemConfigurationAdapter extends
         SubSystemConfigurationAdapter {
-    protected LaunchTerminalAction terminalAction;
     protected ImageDescriptor activeImageDescriptor;
     protected ImageDescriptor inactiveImageDescriptor;
-
-    public IAction[] getSubSystemActions(SystemMenuManager menu,
-            IStructuredSelection selection, Shell shell, String menuGroup,
-            ISubSystemConfiguration factory, ISubSystem selectedSubSystem) {
-        List allActions = new ArrayList();
-        IAction[] baseActions = super.getSubSystemActions(menu, selection,
-                shell, menuGroup, factory, selectedSubSystem);
-        for (int i = 0; i < baseActions.length; i++) {
-            allActions.add(baseActions[i]);
-        }
-
-        // launching terminals and finding files
-        if (selectedSubSystem instanceof IRemoteFileSubSystem) {
-            IRemoteFileSubSystem fs = (IRemoteFileSubSystem) selectedSubSystem;
-            ITerminalServiceSubSystem cmdSubSystem = TerminalServiceHelper
-                    .getTerminalSubSystem(fs.getHost());
-            if (cmdSubSystem != null) {
-                allActions.add(getTerminalAction(cmdSubSystem, shell));
-            }
-        } else if (selectedSubSystem instanceof ITerminalServiceSubSystem) {
-            allActions.add(getTerminalAction(
-                    (ITerminalServiceSubSystem) selectedSubSystem, shell));
-        }
-
-        return (IAction[]) allActions.toArray(new IAction[allActions.size()]);
-    }
-
-    public IAction getTerminalAction(
-            ITerminalServiceSubSystem selectedSubSystem, Shell shell) {
-        if (terminalAction == null) {
-            terminalAction = new LaunchTerminalAction(shell, selectedSubSystem);
-        } else {
-            terminalAction.setSubSystem(selectedSubSystem);
-        }
-        return terminalAction;
-    }
 
     public ImageDescriptor getImage(ISubSystemConfiguration config) {
         if (inactiveImageDescriptor == null) {

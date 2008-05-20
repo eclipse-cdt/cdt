@@ -47,25 +47,57 @@ Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should 
             id="org.eclipse.rse.terminals.ui.view.TerminalView">
       </view>
     </extension>
-  <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution  
-            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
-            id="org.eclipse.rse.terminals.ui.launch">
-            <visibility> 
-                <and>
-                    <objectState name="isdirectory" value="true"/>
-                    <objectState name="isTerminalSubSystemExists" value="true"/>
-                </and> 
-            </visibility>
-         <action
-               label="Launch Terminal"
-               icon="icons/terminal_view.gif"
-               tooltip="%Launch_Terminal_Tooltip"
-               class="org.eclipse.rse.internal.terminals.ui.actions.LaunchTerminalActionDelegate"
-               enablesFor="1"
-               id="org.eclipse.rse.terminalss.ui.actions.LaunchTerminalActionDelegate">
-         </action>
-       </objectContribution>    
-   </extension>
+    <extension
+           point="org.eclipse.ui.menus">
+        <menuContribution
+              locationURI="popup:org.eclipse.rse.ui.view.systemView?after=additions">
+           <command
+                 commandId="org.eclipse.rse.terminals.ui.actions.LaunchTerminalCommand"
+                 icon="icons/terminal_view.gif"
+                 label="%Launch_Terminal_Label"
+                 tooltip="%Launch_Terminal_Tooltip">
+             <visibleWhen>
+               <iterate>
+               <or>
+               <and>
+                  <test
+                        args="terminals"
+                        property="org.eclipse.rse.core.hasSubSystemCategory"
+                        value="true">
+                  </test>
+                  <instanceof
+                        value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+                  </instanceof>
+                  <test
+                        property="org.eclipse.rse.subsystems.files.isdirectory"
+                        value="true">
+                  </test>
+                  </and>
+                  <instanceof
+                        value="org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem">
+                  </instanceof>
+               </or>
+                 </iterate> 
+                 </visibleWhen>
+               </command> 
+             </menuContribution>  
+            </extension>      
+     <extension point="org.eclipse.ui.commands">
+        <category
+              id="org.eclipse.rse.terminals.ui.commands.category"
+              name="%terminalsCategory.name">
+        </category>
+        <command
+              categoryId="org.eclipse.rse.terminals.ui.commands.category"
+              id="org.eclipse.rse.terminals.ui.actions.LaunchTerminalCommand"
+              name="%Launch_Terminal_Label">
+        </command>
+     </extension>
+     <extension
+           point="org.eclipse.ui.handlers">
+        <handler
+              class="org.eclipse.rse.internal.terminals.ui.handlers.LaunchTerminalCommandHandler"
+              commandId="org.eclipse.rse.terminals.ui.actions.LaunchTerminalCommand">
+        </handler>
+     </extension>
 </plugin>

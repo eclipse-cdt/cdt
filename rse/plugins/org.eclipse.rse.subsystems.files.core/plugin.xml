@@ -58,5 +58,17 @@
 			<adapter type="org.eclipse.rse.services.files.IFilePermissionsService"/>		
 		</factory> 
 	</extension>
-
+	
+<!-- ================================================================= -->
+<!-- 		Property Testers                                           -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.core.expressions.propertyTesters">
+		<propertyTester
+			class="org.eclipse.rse.internal.subsystems.files.core.RemoteFilePropertyTester"
+			id="org.eclipse.rse.subsystems.files.core.RemoteFilePropertyTester"
+			namespace="org.eclipse.rse.subsystems.files"
+			properties="isdirectory"
+			type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+		</propertyTester>
+	</extension>
 </plugin>

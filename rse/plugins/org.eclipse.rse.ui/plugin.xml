@@ -16,6 +16,7 @@ Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions exten
 Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
 Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
 Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
+Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -491,4 +492,14 @@ Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActi
         </viewerContentBinding>
     </extension>
 	
+	<extension point="org.eclipse.core.expressions.propertyTesters">
+        <propertyTester
+             id="org.eclipse.rse.ui.SubSystemPropertyTester"
+             type="org.eclipse.core.runtime.IAdaptable"
+             namespace="org.eclipse.rse.core"
+             properties="hasSubSystemCategory"
+             class="org.eclipse.rse.internal.ui.subsystems.SubSystemPropertyTester">
+        </propertyTester>
+    </extension>
+
 </plugin>

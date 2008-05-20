@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -51,7 +52,7 @@ import org.eclipse.cdt.ui.NamespacesGrouping;
 /**
  * A base content provider for C elements. It provides access to the
  * C element hierarchy without listening to changes in the C model.
- * Use this class when you want to present the C elements 
+ * Use this class when you want to present the C elements
  * in a modal dialog or wizard.
  * <p>
  * The following C element hierarchy is surfaced by this content provider:
@@ -111,7 +112,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Returns whether the members are provided 
+	 * Returns whether the members are provided
 	 * from a working copy a compilation unit.
 	 */
 	public boolean getProvideWorkingCopy() {
@@ -243,7 +244,19 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			if (!cp.getProject().isOpen()) {
 				return false;
 			}
-			return true;	
+			return true;
+		}
+
+		if (element instanceof ICContainer) {
+			ICContainer container= (ICContainer)element;
+			IResource resource= container.getResource();
+			if (resource instanceof IContainer) {
+				try {
+					return ((IContainer)resource).members().length > 0;
+				} catch (CoreException exc) {
+					return false;
+				}
+			}
 		}
 
 		if (element instanceof IParent) {
@@ -370,7 +383,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			children = list.toArray();
 		}
 		if (fNamespacesGrouping) {
-			// check if there is another namespace with the same name for the same parent			
+			// check if there is another namespace with the same name for the same parent
 			List<Object> list = new ArrayList<Object>(children.length);
 			Map<String, NamespacesGrouping> map = new HashMap<String, NamespacesGrouping>();
 			for (int i = 0; i < children.length; ++i) {
@@ -573,7 +586,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		int a2Len = a2.length;
 		Object[] res = new Object[a1Len + a2Len];
 		System.arraycopy(a1, 0, res, 0, a1Len);
-		System.arraycopy(a2, 0, res, a1Len, a2Len); 
+		System.arraycopy(a2, 0, res, a1Len, a2Len);
 		return res;
 	}
 

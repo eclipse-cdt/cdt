@@ -337,6 +337,20 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -digestBuilder -digestOutputDir=$SITE \
     -siteXML=$SITE/site-europa.xml
 
+#Create P2 metadata
+echo "Creating P2 metadata..."
+java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
+    -updateSite ${SITE}/ \
+    -site file:${SITE}/site.xml \
+    -metadataRepository file:${SITE}/ \
+    -metadataRepositoryName "Target Management 3.0 Update Site" \
+    -artifactRepository file:${SITE}/ \
+    -artifactRepositoryName "Target Management 3.0 Artifacts" \
+    -compress \
+    -reusePack200Files \
+    -noDefaultIUs \
+
 cd $SITE
 chgrp -R dsdp-tmadmin .
 chmod -R g+w .

@@ -506,14 +506,14 @@ public class RxThread extends Thread {
 			} else if (rr != null) {
 				event = new MIInferiorExitEvent(session, rr);
 			}
-			session.getMIInferior().setTerminated();
+			session.getMIInferior().setTerminated(0,false);
 		} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MIInferiorSignalExitEvent(session, exec);
 			} else if (rr != null) {
 				event = new MIInferiorSignalExitEvent(session, rr);
 			}
-			session.getMIInferior().setTerminated();
+			session.getMIInferior().setTerminated(0,false);
 		} else if ("shlib-event".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MISharedLibEvent(session, exec);

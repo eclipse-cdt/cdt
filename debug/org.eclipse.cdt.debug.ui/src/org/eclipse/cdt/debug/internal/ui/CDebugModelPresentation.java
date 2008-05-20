@@ -630,7 +630,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		if ( t != null ) {
 			if ( !t.isPostMortem() ) {
 				CDebugElementState state = t.getState();
-				if ( state.equals( CDebugElementState.EXITED ) ) {
+				if ( state.equals( CDebugElementState.EXITED )  || state.equals( CDebugElementState.TERMINATED )) {
 					Object info = t.getCurrentStateInfo();
 					String label = CDebugUIMessages.getString( "CDTDebugModelPresentation.3" ); //$NON-NLS-1$
 					String reason = ""; //$NON-NLS-1$

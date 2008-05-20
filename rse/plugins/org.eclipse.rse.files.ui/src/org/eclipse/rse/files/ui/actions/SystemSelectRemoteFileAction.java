@@ -84,7 +84,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	private boolean  showPropertySheetDetailsButton = false;
 	private boolean  multipleSelectionMode = false;
 	private boolean  onlyConnection = false;
-	private IValidatorRemoteSelection selectionValidator;
+	private IValidatorRemoteSelection clientProvidedSelectionValidator = null;
 	private List viewerFilters = new ArrayList();
 	private SystemActionViewerFilter customViewerFilter = null;
 	private boolean allowFolderSelection = true;
@@ -92,10 +92,12 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	static class RemoteFileSelectionValidator implements IValidatorRemoteSelection
 	{
 		private boolean allowFolderSelect = true;
-		public RemoteFileSelectionValidator(boolean allowFolderSelection)
+		private IValidatorRemoteSelection previousInChain = null;
+		public RemoteFileSelectionValidator(boolean allowFolderSelection, IValidatorRemoteSelection previousInChain)
 		{
 			super();
 			this.allowFolderSelect = allowFolderSelection;
+			this.previousInChain = previousInChain;
 		}
 		
 		/**
@@ -117,7 +119,14 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 			
 			if (allowFolderSelect == true)
 			{
-				return null;
+				if (previousInChain != null)
+				{
+					return previousInChain.isValid(selectedConnection, selectedObjects, remoteAdaptersForSelectedObjects);
+				}
+				else
+				{
+					return null;
+				}
 			}
 			
 			for (int i = 0; i < selectedObjects.length; i++) 
@@ -132,6 +141,11 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 						return msg;
 					}
 				}
+			}
+			
+			if (previousInChain != null)
+			{
+				return previousInChain.isValid(selectedConnection, selectedObjects, remoteAdaptersForSelectedObjects);
 			}
 			
 			return null;
@@ -338,7 +352,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
      */
     public void setSelectionValidator(IValidatorRemoteSelection selectionValidator)
     {
-    	this.selectionValidator = selectionValidator;
+    	this.clientProvidedSelectionValidator = selectionValidator;
     }
     
 
@@ -465,7 +479,6 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
 		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
-		dlg.setSelectionValidator(selectionValidator);
 		
 		if (systemConnection != null)
 		{
@@ -505,10 +518,8 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
           else
             dlg.enableAddMode(addButtonCallback);
          */
-        if (selectionValidator == null)
-        {
-        	selectionValidator = new RemoteFileSelectionValidator(allowFolderSelection);
-        }
+		IValidatorRemoteSelection selectionValidator = new RemoteFileSelectionValidator(allowFolderSelection, clientProvidedSelectionValidator);
+       
         dlg.setSelectionValidator(selectionValidator);
         /*
         if (!allowFolderSelection) {

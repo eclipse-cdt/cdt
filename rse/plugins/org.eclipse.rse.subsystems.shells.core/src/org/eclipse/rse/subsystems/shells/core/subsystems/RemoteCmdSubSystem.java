@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [230285] [shells] Remote shells should be restored on quit and re-start of RSE
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -521,11 +522,13 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		// DKM: changing this so that only first active shell is saved
 		StringBuffer shellBuffer = new StringBuffer();
 		boolean gotShell = false;
-		for (int i = 0; i < cmdShells.size() && !gotShell; i++)
+		for (int i = 0; i < cmdShells.size() /*&& !gotShell*/; i++)
 		{
-			/*
-			 * if (i != 0) { shellBuffer.append('|'); }
-			 */
+		
+			if (i != 0) { 
+				shellBuffer.append('|'); 
+			}
+
 			IRemoteCommandShell cmd = (IRemoteCommandShell) cmdShells.get(i);
 			if (cmd.isActive())
 			{
@@ -543,14 +546,22 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
-		if (set != null)
-		{
-			IProperty property = set.getProperty(COMMAND_SHELLS_MEMENTO);
-			if (property != null)
-			{
-				property.setValue(shellBuffer.toString());
+		if (gotShell){
+			IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+			if (set == null){
+				set = createPropertySet("Remote"); //$NON-NLS-1$
 			}
+			if (set != null)
+			{
+				IProperty property = set.getProperty(COMMAND_SHELLS_MEMENTO);
+				if (property == null){
+					property = set.addProperty(COMMAND_SHELLS_MEMENTO, shellBuffer.toString());
+				}
+				else {
+					property.setValue(shellBuffer.toString());
+				}
+			}
+			commit();
 		}
 	}
 

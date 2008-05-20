@@ -124,6 +124,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -1556,16 +1557,27 @@ public class CPPVisitor {
 	     
 	    IASTName name = fnDtor.getName();
 		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
 			name = ns[ns.length - 1];
 		}
 	    if (name instanceof ICPPASTConversionName) {
-	    	returnType = createType(((ICPPASTConversionName)name).getTypeId());
+	    	returnType = createType(((ICPPASTConversionName) name).getTypeId());
 	    } else {
 	    	returnType = getPointerTypes(returnType, fnDtor);
 	    }
 	    
-	    IType type = new CPPFunctionType(returnType, pTypes, fnDtor.isConst(), fnDtor.isVolatile());
+	    IScope scope = fnDtor.getFunctionScope();
+	    IType thisType = getThisType(scope);
+	    if (thisType instanceof IPointerType) {
+			try {
+				IType classType = ((IPointerType) thisType).getType();
+		    	thisType = new CPPPointerType(classType, fnDtor.isConst(), fnDtor.isVolatile());
+			} catch (DOMException e) {
+			}
+	    } else {
+	    	thisType = null;
+	    }
+	    IType type = new CPPFunctionType(returnType, pTypes, (IPointerType) thisType);
 	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
 	    if (nested != null) {
 	    	return createType(type, nested);
@@ -1726,34 +1738,41 @@ public class CPPVisitor {
 	    try {
 			IASTNode node = null;
 			while (scope != null) {
-				if (scope instanceof ICPPBlockScope) {
+				if (scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope) {
 					node = ASTInternal.getPhysicalNodeOfScope(scope);
+					if (node instanceof IASTFunctionDeclarator)
+						break;
 					if (node.getParent() instanceof IASTFunctionDefinition)
 						break;
 				}
 				scope = scope.getParent();
 			}
-			if (node != null && node.getParent() instanceof IASTFunctionDefinition) {
-				IASTFunctionDefinition def = (IASTFunctionDefinition) node.getParent();
-				IASTName fName = def.getDeclarator().getName();
-				if (fName instanceof ICPPASTQualifiedName) {
-				    IASTName[] ns = ((ICPPASTQualifiedName)fName).getNames();
-				    fName = ns[ns.length - 1];
+			if (node != null) {
+				if (node.getParent() instanceof IASTFunctionDefinition) {
+					IASTFunctionDefinition def = (IASTFunctionDefinition) node.getParent();
+					node = def.getDeclarator();
 				}
-				IScope s = getContainingScope(fName);
-				ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def.getDeclarator();
-				if (s instanceof ICPPTemplateScope)
-					s = getParentScope(s, fName.getTranslationUnit());
-				if (s instanceof ICPPClassScope) {
-					ICPPClassScope cScope = (ICPPClassScope) s;
-					IType type = cScope.getClassType();
-					if (type instanceof ICPPClassTemplate) {
-					    type = (IType) CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
+				if (node instanceof IASTFunctionDeclarator) {
+					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
+					IASTName fName = dtor.getName();
+					if (fName instanceof ICPPASTQualifiedName) {
+					    IASTName[] ns = ((ICPPASTQualifiedName)fName).getNames();
+					    fName = ns[ns.length - 1];
 					}
-					if (dtor.isConst() || dtor.isVolatile())
-						type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile());
-					type = new CPPPointerType(type);
-					return type;
+					IScope s = getContainingScope(fName);
+					if (s instanceof ICPPTemplateScope)
+						s = getParentScope(s, fName.getTranslationUnit());
+					if (s instanceof ICPPClassScope) {
+						ICPPClassScope cScope = (ICPPClassScope) s;
+						IType type = cScope.getClassType();
+						if (type instanceof ICPPClassTemplate) {
+						    type = (IType) CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
+						}
+						if (dtor.isConst() || dtor.isVolatile())
+							type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile());
+						type = new CPPPointerType(type);
+						return type;
+					}
 				}
 			}
 		} catch (DOMException e) {
@@ -1942,7 +1961,7 @@ public class CPPVisitor {
 			if (op == IASTUnaryExpression.op_star && type instanceof ICPPClassType) {
 				try {
 					ICPPFunction operator= CPPSemantics.findOperator(expression, (ICPPClassType) type);
-					if (operator!=null) {
+					if (operator != null) {
 						return operator.getType().getReturnType();
 					}
 				} catch(DOMException de) {
@@ -1951,19 +1970,34 @@ public class CPPVisitor {
 			}
 			if (op == IASTUnaryExpression.op_star && (type instanceof IPointerType || type instanceof IArrayType)) {
 			    try {
-					return ((ITypeContainer)type).getType();
+					return ((ITypeContainer) type).getType();
 				} catch (DOMException e) {
 					return e.getProblem();
 				}
 			} else if (op == IASTUnaryExpression.op_amper) {
-				if (type instanceof ICPPReferenceType)
+				if (type instanceof ICPPReferenceType) {
 					try {
-						return new CPPPointerType(((ICPPReferenceType)type).getType());
+						type = ((ICPPReferenceType) type).getType();
 					} catch (DOMException e) {
 					}
+				}
+				if (type instanceof ICPPFunctionType) {
+					ICPPFunctionType functionType = (ICPPFunctionType) type;
+					IPointerType thisType = functionType.getThisType();
+					if (thisType != null) {
+						ICPPClassType classType;
+						try {
+							classType = (ICPPClassType) thisType.getType();
+						} catch (DOMException e) {
+							return e.getProblem();
+						}
+						return new CPPPointerToMemberType(type, classType,
+								thisType.isConst(), thisType.isVolatile());
+					}
+				}
 				return new CPPPointerType(type);
 			} else if (type instanceof CPPBasicType) {
-				((CPPBasicType)type).setValue(expression);
+				((CPPBasicType) type).setValue(expression);
 			}
 			return type;
 	    } else if (expression instanceof ICPPASTFieldReference) {

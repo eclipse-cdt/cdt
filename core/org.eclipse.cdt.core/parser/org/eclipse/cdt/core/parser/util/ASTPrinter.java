@@ -50,10 +50,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
-
 /**
  * A utility that prints an AST to the console, useful for debugging purposes.
- * 
  * 
  * @author Mike Kucera
  */
@@ -70,39 +68,37 @@ public class ASTPrinter {
 	 * to be called from a conditional breakpoint during debugging.
 	 */
 	public static boolean print(IASTNode root, PrintStream out) {
-		if(root == null) {
+		if (root == null) {
 			out.println("null"); 
 			return false;
 		}
 		
-		if(root instanceof IASTTranslationUnit) {
+		if (root instanceof IASTTranslationUnit) {
 			IASTPreprocessorStatement[] preStats = ((IASTTranslationUnit)root).getAllPreprocessorStatements();
-			if(preStats != null) {
-				for(IASTPreprocessorStatement stat : preStats)
+			if (preStats != null) {
+				for (IASTPreprocessorStatement stat : preStats)
 					print(out, 0, stat);
 			}
 		}
 
 		root.accept(new PrintVisitor(out));
 		
-		if(root instanceof IASTTranslationUnit) {
+		if (root instanceof IASTTranslationUnit) {
 			IASTProblem[] problems = ((IASTTranslationUnit)root).getPreprocessorProblems();
-			if(problems != null) {
-				for(IASTProblem problem : problems)
+			if (problems != null) {
+				for (IASTProblem problem : problems)
 					print(out, 0, problem);
 			}
 			
 			IASTComment[] comments = ((IASTTranslationUnit)root).getComments();
-			if(comments != null) {
-				for(IASTComment comment : comments)
+			if (comments != null) {
+				for (IASTComment comment : comments)
 					print(out, 0, comment);
 			}
 		}
 		return false;
 	}
 
-	
-		
 	/**
 	 * Prints the AST to stdout.
 	 * 
@@ -113,7 +109,6 @@ public class ASTPrinter {
 		return print(root, System.out);
 	}
 	
-	
 	/**
 	 * Prints problem nodes in the AST to the given printstream.
 	 * 
@@ -121,17 +116,17 @@ public class ASTPrinter {
 	 * to be called from a conditional breakpoint during debugging.
 	 */
 	public static boolean printProblems(IASTNode root, PrintStream out) {
-		if(root == null) {
+		if (root == null) {
 			out.println("null");
 			return false;
 		}
 		
 		root.accept(new ProblemVisitor(out));
 		
-		if(root instanceof IASTTranslationUnit) {
+		if (root instanceof IASTTranslationUnit) {
 			IASTProblem[] problems = ((IASTTranslationUnit)root).getPreprocessorProblems();
-			if(problems != null) {
-				for(IASTProblem problem : problems) {
+			if (problems != null) {
+				for (IASTProblem problem : problems) {
 					print(out, 0, problem);
 				}
 			}
@@ -139,7 +134,6 @@ public class ASTPrinter {
 		
 		return false;
 	}
-	
 	
 	/**
 	 * Prints problem nodes in the AST to stdout.
@@ -151,13 +145,11 @@ public class ASTPrinter {
 		return printProblems(root, System.out);
 	}
 	
-	
-	
 	private static void print(PrintStream out, int indentLevel, Object n) {
-		for(int i = 0; i < indentLevel; i++)
+		for (int i = 0; i < indentLevel; i++)
 			out.print("  "); 
 		
-		if(n == null) {
+		if (n == null) {
 			out.println("NULL"); 
 			return;
 		}
@@ -165,20 +157,20 @@ public class ASTPrinter {
 		String classname = n.getClass().getName();
 		out.print(classname);
 		
-		if(n instanceof ASTNode) {
+		if (n instanceof ASTNode) {
 			ASTNode node = (ASTNode) n;
 			out.print(" (" + node.getOffset() + "," + node.getLength() + ") ");
-			if(node.getParent() == null && !(node instanceof IASTTranslationUnit)) {
+			if (node.getParent() == null && !(node instanceof IASTTranslationUnit)) {
 				out.print("PARENT IS NULL ");
 			}
-			if(PRINT_PARENT_PROPERTIES)
+			if (PRINT_PARENT_PROPERTIES)
 				out.print(node.getPropertyInParent());
 		}
 		
-		if(n instanceof ICArrayType) {
+		if (n instanceof ICArrayType) {
 			ICArrayType at = (ICArrayType)n;
 			try {
-				if(at.isRestrict()) {
+				if (at.isRestrict()) {
 					out.print(" restrict"); 
 				}
 			} catch (DOMException e) { 
@@ -186,64 +178,53 @@ public class ASTPrinter {
 			}
 		}
 		
-		if(n instanceof IASTName) {
+		if (n instanceof IASTName) {
 			out.print(" " + ((IASTName)n).toString()); 
-		}
-		else if(n instanceof ICASTPointer) {
+		} else if (n instanceof ICASTPointer) {
 			ICASTPointer pointer = (ICASTPointer) n;
-			if(pointer.isConst())
+			if (pointer.isConst())
 				out.print(" const"); 
-			if(pointer.isVolatile())
+			if (pointer.isVolatile())
 				out.print(" volatile"); 
-			if(pointer.isRestrict())
+			if (pointer.isRestrict())
 				out.print(" restrict");
-		}
-		else if(n instanceof ICPointerType) {
+		} else if (n instanceof ICPointerType) {
 			ICPointerType pointer = (ICPointerType)n;
-			try {
-				if(pointer.isConst())
-					out.print(" const"); 
-				if(pointer.isVolatile())
-					out.print(" volatile"); 
-				if(pointer.isRestrict())
-					out.print(" restrict");
-			} catch (DOMException e) {
-				e.printStackTrace();
-			}
+			if (pointer.isConst())
+				out.print(" const"); 
+			if (pointer.isVolatile())
+				out.print(" volatile"); 
+			if (pointer.isRestrict())
+				out.print(" restrict");
 			out.println();
 			try {
 				print(out, indentLevel, ((ITypeContainer)n).getType());
 			} catch(Exception e) {}
-		}
-		else if(n instanceof ICASTArrayModifier) {
-			if(((ICASTArrayModifier)n).isRestrict()) {
+		} else if (n instanceof ICASTArrayModifier) {
+			if (((ICASTArrayModifier)n).isRestrict()) {
 				out.print(" restrict"); 
 			}
-		}
-		else if(n instanceof IASTComment) {
+		} else if (n instanceof IASTComment) {
 			out.print("'" + new String(((IASTComment)n).getComment()) + "'");
-		}
-//		else if(n instanceof ICompositeType) {
+//		} else if (n instanceof ICompositeType) {
 //			try {
 //				IField[] fields = ((ICompositeType)n).getFields();
-//				if(fields == null || fields.length == 0) {
+//				if (fields == null || fields.length == 0) {
 //					out.print(" no fields");
 //				}
-//				for(IField field : fields) {
+//				for (IField field : fields) {
 //					out.println();
 //					print(out, indentLevel + 1, field);
 //				}
 //			} catch (DOMException e) {
 //				e.printStackTrace();
 //			}
-//		}
-		else if(n instanceof ITypeContainer) {
+		} else if (n instanceof ITypeContainer) {
 			out.println();
 			try {
 				print(out, indentLevel, ((ITypeContainer)n).getType());
 			} catch(Exception e) {}
-		}
-		else if(n instanceof IVariable) {
+		} else if (n instanceof IVariable) {
 			IVariable var = (IVariable) n;
 			IType t;
 			try {
@@ -254,16 +235,13 @@ public class ASTPrinter {
 				//e.printStackTrace();
 			}
 	
-		}
-		else if(n instanceof IProblemBinding) {
+		} else if (n instanceof IProblemBinding) {
 			IProblemBinding problem = (IProblemBinding)n;
 			out.print(problem.getMessage());
 		}
 		
-			
 		out.println();
 	}
-
 	
 	private static class ProblemVisitor extends ASTVisitor {
 		private PrintStream out;
@@ -284,26 +262,25 @@ public class ASTPrinter {
 		
 		@Override
 		public int visit(IASTDeclaration declaration) {
-			if(declaration instanceof IASTProblemDeclaration)
+			if (declaration instanceof IASTProblemDeclaration)
 				print(out, 0, declaration);
 			return PROCESS_CONTINUE;
 		}
 		
 		@Override
 		public int visit(IASTExpression expression) {
-			if(expression instanceof IASTProblemExpression)
+			if (expression instanceof IASTProblemExpression)
 				print(out, 0, expression);
 			return PROCESS_CONTINUE;
 		}
 		
 		@Override
 		public int visit(IASTStatement statement) {
-			if(statement instanceof IASTProblemStatement)
+			if (statement instanceof IASTProblemStatement)
 				print(out, 0, statement);
 			return PROCESS_CONTINUE;
 		}
 	}
-	
 	
 	/**
 	 * This visitor extends from CPPASTVisitor but you can still
@@ -335,7 +312,6 @@ public class ASTPrinter {
 			shouldVisitTemplateParameters = true;
 		}
 		
-		
 		private void print(IASTNode node) {
 			ASTPrinter.print(out, indentLevel,  node);
 		}
@@ -366,7 +342,7 @@ public class ASTPrinter {
 			for (IASTPointerOperator pointer : pointers) {
 				print(pointer);
 			}
-			if(declarator instanceof IASTArrayDeclarator) {
+			if (declarator instanceof IASTArrayDeclarator) {
 				IASTArrayDeclarator decl = (IASTArrayDeclarator)declarator;
 				org.eclipse.cdt.core.dom.ast.IASTArrayModifier[] modifiers = decl.getArrayModifiers();
 				for (IASTArrayModifier modifier : modifiers) {
@@ -407,7 +383,7 @@ public class ASTPrinter {
 		@Override
 		public int visit(IASTName name) {
 			print(name);
-			if(RESOLVE_BINDINGS) {
+			if (RESOLVE_BINDINGS) {
 				try {
 					IBinding binding = name.resolveBinding();
 					print(binding);
@@ -474,7 +450,6 @@ public class ASTPrinter {
 			indentLevel++;
 			return super.visit(templateParameter);
 		}
-		
 		
 //		@Override
 //		public int leave(ICASTDesignator designator) {
@@ -571,6 +546,5 @@ public class ASTPrinter {
 			indentLevel--;
 			return super.leave(templateParameter);
 		}
-		
-	}	
+	}
 }

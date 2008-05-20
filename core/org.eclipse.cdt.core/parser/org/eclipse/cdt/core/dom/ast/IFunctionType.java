@@ -30,5 +30,5 @@ public interface IFunctionType extends IType {
      * ISO C99 6.7.5.3, ISO C++98 8.3.4-3 
      * @throws DOMException
      */
-    public IType [] getParameterTypes() throws DOMException;
+    public IType[] getParameterTypes() throws DOMException;
 }

@@ -106,6 +106,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
@@ -701,8 +702,7 @@ public class CPPTemplates {
 				}
 			} catch (DOMException e) {
 			}
-			return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).isConst(),
-					((ICPPFunctionType) type).isVolatile());
+			return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).getThisType());
 		} 
 		
 		if (type instanceof ICPPTemplateParameter) {
@@ -750,6 +750,16 @@ public class CPPTemplates {
 			try {
 				IType temp = ((ITypeContainer) type).getType();
 				IType newType = instantiateType(temp, argMap, instantiationScope);
+				if (type instanceof ICPPPointerToMemberType) {
+					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) type;
+					IType memberOfClass = ptm.getMemberOfClass();
+					IType newMemberOfClass = instantiateType(memberOfClass, argMap, instantiationScope);
+					if ((newType != temp || newMemberOfClass != memberOfClass) &&
+							newMemberOfClass instanceof ICPPClassType) {
+						return new CPPPointerToMemberType(newType, (ICPPClassType) newMemberOfClass,
+								ptm.isConst(), ptm.isVolatile());
+					}
+				}
 				if (newType != temp) {
 					temp = (IType) type.clone();
 					((ITypeContainer) temp).setType(newType);
@@ -1319,7 +1329,7 @@ public class CPPTemplates {
 						return false;
 
 					p = ((ICPPPointerToMemberType) p).getType();
-					p = ((ICPPPointerToMemberType) a).getType();
+					a = ((ICPPPointerToMemberType) a).getType();
 				} else if (p instanceof IPointerType) {
 					if (!(a instanceof IPointerType)) {
 						return false;
@@ -1651,8 +1661,7 @@ public class CPPTemplates {
 				}
 
 				//14.1s8 function to pointer and array to pointer conversions
-				if (pType instanceof IFunctionType)
-			    {
+				if (pType instanceof IFunctionType) {
 					pType = new CPPPointerType(pType);
 			    } else if (pType instanceof IArrayType) {
 			    	try {

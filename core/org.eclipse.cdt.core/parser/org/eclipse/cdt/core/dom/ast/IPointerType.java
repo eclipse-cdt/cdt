@@ -28,11 +28,11 @@ public interface IPointerType extends IType {
      * is this a const pointer
      * @throws DOMException
      */
-    public boolean isConst() throws DOMException;
+    public boolean isConst();
     
     /** 
      * is this a volatile pointer
      * @throws DOMException
      */
-    public boolean isVolatile() throws DOMException;
+    public boolean isVolatile();
 }

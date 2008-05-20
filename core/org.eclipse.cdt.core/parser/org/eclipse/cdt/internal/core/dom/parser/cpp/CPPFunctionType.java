@@ -14,8 +14,10 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -24,73 +26,74 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
  * @author aniefer
  */
 public class CPPFunctionType implements ICPPFunctionType {
-    private IType[] parameters = null;
-    private IType returnType = null;
-	private boolean isConst = false;
-	private boolean isVolatile = false;
+    private IType[] parameters;
+    private IType returnType;
+    private IPointerType thisType;
     
     /**
      * @param returnType
      * @param types
      */
-    public CPPFunctionType( IType returnType, IType []  types ) {
+    public CPPFunctionType(IType returnType, IType[] types) {
         this.returnType = returnType;
         this.parameters = types;
-    }
-	public CPPFunctionType( IType returnType, IType [] types, boolean isConst, boolean isVolatile ) {
-        this.returnType = returnType;
-        this.parameters = types;
-		this.isConst = isConst;
-		this.isVolatile = isVolatile;
     }
 
-    public boolean isSameType( IType o ){
-        if( o instanceof ITypedef )
-            return o.isSameType( this );
-        if( o instanceof ICPPFunctionType ){
+	public CPPFunctionType(IType returnType, IType[] types, IPointerType thisType) {
+        this.returnType = returnType;
+        this.parameters = types;
+        this.thisType = thisType;
+    }
+
+    public boolean isSameType(IType o) {
+        if (o instanceof ITypedef)
+            return o.isSameType(this);
+        if (o instanceof ICPPFunctionType) {
             ICPPFunctionType ft = (ICPPFunctionType) o;
-            IType [] fps;
+            IType[] fps;
             try {
                 fps = ft.getParameterTypes();
-            } catch ( DOMException e ) {
+            } catch (DOMException e) {
                 return false;
             }
 			try {
                 //constructors & destructors have null return type
-                if( ( returnType == null ) ^ ( ft.getReturnType() == null ) )
+                if ((returnType == null) ^ (ft.getReturnType() == null))
                     return false;
-                else if( returnType != null && ! returnType.isSameType( ft.getReturnType() ) )
+                else if (returnType != null && ! returnType.isSameType(ft.getReturnType()))
                     return false;
-            } catch ( DOMException e1 ) {
+            } catch (DOMException e1) {
                 return false;
             }
 			
 			try {
-				if( parameters.length == 1 && fps.length == 0 ){
-					if( !(parameters[0] instanceof IBasicType) || ((IBasicType)parameters[0]).getType() != IBasicType.t_void )
+				if (parameters.length == 1 && fps.length == 0) {
+					if (!(parameters[0] instanceof IBasicType) || ((IBasicType) parameters[0]).getType() != IBasicType.t_void)
 						return false;
-				} else if( fps.length == 1 && parameters.length == 0 ){
-					if( !(fps[0] instanceof IBasicType) || ((IBasicType)fps[0]).getType() != IBasicType.t_void )
+				} else if (fps.length == 1 && parameters.length == 0) {
+					if (!(fps[0] instanceof IBasicType) || ((IBasicType) fps[0]).getType() != IBasicType.t_void)
 						return false;
-				} else if( parameters.length != fps.length ){
+				} else if (parameters.length != fps.length) {
 	                return false;
 	            } else {
-					 for( int i = 0; i < parameters.length; i++ ){
-		                if (parameters[i] == null || ! parameters[i].isSameType( fps[i] ) )
+					for (int i = 0; i < parameters.length; i++) {
+		                if (parameters[i] == null || ! parameters[i].isSameType(fps[i]))
 		                    return false;
 		            }
 	            }
-			} catch (DOMException e ){
+			} catch (DOMException e) {
 				return false;
 			}
            
-            if( isConst != ft.isConst() || isVolatile != ft.isVolatile() )
+            if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile()) {
                 return false;
+            }
                 
             return true;
         }
         return false;
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getReturnType()
      */
@@ -106,21 +109,33 @@ public class CPPFunctionType implements ICPPFunctionType {
     }
 
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;
     }
 
-	public boolean isConst() {
-		return isConst;
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.ICPPFunctionType#getThisType()
+     */
+    public IPointerType getThisType() {
+        return thisType;
+    }
+
+	public final boolean isConst() {
+		return thisType != null && thisType.isConst();
 	}
 
-	public boolean isVolatile() {
-		return isVolatile;
+	public final boolean isVolatile() {
+		return thisType != null && thisType.isVolatile();
+	}
+
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

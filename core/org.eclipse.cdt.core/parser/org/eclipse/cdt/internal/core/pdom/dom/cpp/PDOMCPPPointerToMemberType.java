@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -39,7 +40,7 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 		Database db = pdom.getDB();
 		
 		// type
-		ICPPClassType ct = type.getMemberOfClass();
+		IType ct = type.getMemberOfClass();
 		int typeRec = 0;
 		if (ct != null) {
 			PDOMNode targetTypeNode = getLinkageImpl().addType(this, ct);
@@ -81,8 +82,8 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 		public PDOMCPPPointerToMemberTypeClone(ICPPPointerToMemberType pointer) {
 			super(pointer);
 		}
-		public ICPPClassType getMemberOfClass() {
-			return ((ICPPPointerToMemberType)delegate).getMemberOfClass();
+		public IType getMemberOfClass() {
+			return ((ICPPPointerToMemberType) delegate).getMemberOfClass();
 		}
 		@Override
 		public Object clone() {

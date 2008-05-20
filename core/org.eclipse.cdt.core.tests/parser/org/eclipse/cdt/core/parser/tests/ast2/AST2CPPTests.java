@@ -1743,8 +1743,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		def = (IASTFunctionDefinition) tu.getDeclarations()[2];
 		expStatement = (IASTExpressionStatement) ((IASTCompoundStatement) def
 				.getBody()).getStatements()[0];
-		IASTUnaryExpression ue = (IASTUnaryExpression) expStatement
-		.getExpression();
+		IASTUnaryExpression ue = (IASTUnaryExpression) expStatement.getExpression();
 		type = CPPVisitor.getExpressionType(ue);
 		
 		assertTrue(type instanceof IQualifierType);
@@ -1896,7 +1895,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		IType t = pm.getType();
 		assertNotNull(t);
 		assertTrue(t instanceof ICPPPointerToMemberType);
-		ICPPClassType cls = ((ICPPPointerToMemberType) t).getMemberOfClass();
+		IType cls = ((ICPPPointerToMemberType) t).getMemberOfClass();
 		assertSame(S, cls);
 		assertTrue(((ICPPPointerToMemberType) t).getType() instanceof IBasicType);
 	}
@@ -1937,9 +1936,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		IType t = pm.getType();
 		assertTrue(t instanceof ICPPPointerToMemberType);
-		IFunctionType ft = (IFunctionType) ((ICPPPointerToMemberType) t)
-		.getType();
-		ICPPClassType ST = ((ICPPPointerToMemberType) t).getMemberOfClass();
+		IFunctionType ft = (IFunctionType) ((ICPPPointerToMemberType) t).getType();
+		IType ST = ((ICPPPointerToMemberType) t).getMemberOfClass();
 		
 		assertTrue(ft.getReturnType() instanceof IPointerType);
 		assertSame(ST, ((IPointerType) ft.getReturnType()).getType());

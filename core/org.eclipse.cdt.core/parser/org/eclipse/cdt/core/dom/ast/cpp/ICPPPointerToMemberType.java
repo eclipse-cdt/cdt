@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 /*
@@ -15,6 +16,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author aniefer
@@ -22,8 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 public interface ICPPPointerToMemberType extends IPointerType {
 
 	/**
-	 * Get the class to whose members this points to
-	 * 
+	 * Get the class to whose members this points to.
+	 * @return Either ICPPClassType or ICPPTeplateTypeParameter.
 	 */
-	public ICPPClassType getMemberOfClass();
+	public IType getMemberOfClass();
 }

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 /*
  * Created on Feb 11, 2005
@@ -28,10 +29,10 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 /**
  * @author aniefer
  */
-public class CPPPointerToMemberType extends CPPPointerType implements
-		ICPPPointerToMemberType {
-    private ICPPASTPointerToMember operator = null;
-	private ICPPClassType clsType = null;
+public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointerToMemberType {
+    private ICPPASTPointerToMember operator;
+	private IType classType;  // Can be either ICPPClassType or ICPPTemplateTypeParameter
+
 	/**
 	 * @param type
 	 * @param operator
@@ -41,49 +42,53 @@ public class CPPPointerToMemberType extends CPPPointerType implements
 		this.operator = operator;
 	}
 
-	@Override
-	public boolean isSameType( IType o ){
-	    if( o == this )
-            return true;
-        if( o instanceof ITypedef || o instanceof IIndexType)
-            return o.isSameType( this );
+	public CPPPointerToMemberType(IType type, ICPPClassType thisType, boolean isConst, boolean isVolatile) {
+		super(type, isConst, isVolatile);
+		this.classType = thisType;
+	}
 
-	    if( !super.isSameType( o ) )
+	@Override
+	public boolean isSameType(IType o) {
+	    if (o == this)
+            return true;
+        if (o instanceof ITypedef || o instanceof IIndexType)
+            return o.isSameType(this);
+
+	    if (!super.isSameType(o))
 	        return false;
 	    
-	    if( !( o instanceof CPPPointerToMemberType ) ) 
+	    if (!(o instanceof CPPPointerToMemberType)) 
 	        return false;   
 	    
 	    CPPPointerToMemberType pt = (CPPPointerToMemberType) o;
-	    ICPPClassType cls = pt.getMemberOfClass();
-	    if( cls != null )
-	        return cls.isSameType( getMemberOfClass() );
+	    IType cls = pt.getMemberOfClass();
+	    if (cls != null)
+	        return cls.isSameType(getMemberOfClass());
 	    return false;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType#getMemberOfClass()
 	 */
-	public ICPPClassType getMemberOfClass() {
-		if( clsType == null ){ 
+	public IType getMemberOfClass() {
+		if (classType == null) { 
 			ICPPASTPointerToMember pm = operator;
 			IASTName name = pm.getName();
-			if( name instanceof ICPPASTQualifiedName ){
-				IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-				if( ns.length > 1 )
-					name = ns[ ns.length - 2 ];
+			if (name instanceof ICPPASTQualifiedName) {
+				IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+				if (ns.length > 1)
+					name = ns[ns.length - 2];
 				else 
-					name = ns[ ns.length - 1 ]; 
+					name = ns[ns.length - 1]; 
 			}
 			
 			IBinding binding = name.resolveBinding();
-			if( binding instanceof ICPPClassType ){
-				clsType = (ICPPClassType) binding;
+			if (binding instanceof IType) {
+				classType = (IType) binding;
 			} else {
-				clsType = new CPPClassType.CPPClassTypeProblem( name, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray() );
+				classType = new CPPClassType.CPPClassTypeProblem(name, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray());
 			}
 		}
-		return clsType;
+		return classType;
 	}
-
 }

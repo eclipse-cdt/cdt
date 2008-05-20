@@ -2009,14 +2009,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue(col.getName(2).resolveBinding() instanceof ICPPSpecialization);
 	}
 	
-    // template<class T>
+    // template<class T1>
     // struct Closure {
-    //   Closure(T* obj, void (T::*method)()) {}
+    //   Closure(T1* obj1, void (T1::*method1)()) {}
     // };
     //
-    // template<class T>
-    // Closure<T>* makeClosure(T* obj, void (T::*method)()) {
-    //   return new Closure<T>(obj, method);
+    // template<class T2>
+    // Closure<T2>* makeClosure(T2* obj2, void (T2::*method2)()) {
+    //   return new Closure<T2>(obj2, method2);
     // }
     //
     // struct A {
@@ -2025,7 +2025,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     //     makeClosure(this, &A::m1);
     //   }
     // };
-    public void _testBug201204() throws Exception {
+    public void testBug201204() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction fn= bh.assertNonProblem("makeClosure(this", 11, ICPPFunction.class);
     }

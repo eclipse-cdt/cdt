@@ -348,20 +348,17 @@ public class ASTTypeUtil {
 				}
 			}
 			
-			try {
-				if (((IPointerType) type).isConst()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.CONST); needSpace = true;
+			if (((IPointerType) type).isConst()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
 				}
-				if (((IPointerType) type).isVolatile()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.VOLATILE); needSpace = true;
+				result.append(Keywords.CONST); needSpace = true;
+			}
+			if (((IPointerType) type).isVolatile()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
 				}
-			} catch (DOMException e) {
+				result.append(Keywords.VOLATILE); needSpace = true;
 			}
 		} else if (type instanceof IQualifierType) {
 			if (type instanceof ICQualifierType) {

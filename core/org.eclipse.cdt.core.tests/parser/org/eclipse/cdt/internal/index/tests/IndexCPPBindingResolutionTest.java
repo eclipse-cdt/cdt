@@ -1400,7 +1400,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		try {
 			assertTrue(type instanceof ICPPPointerToMemberType);
 			ICPPPointerToMemberType ptmt = (ICPPPointerToMemberType) type;
-			ICPPClassType classType = ptmt.getMemberOfClass();
+			ICPPClassType classType = (ICPPClassType) ptmt.getMemberOfClass();
 			assertQNEquals(cqn, classType);
 			if(qn!=null) {
 				assert(ptmt.getType() instanceof ICPPBinding);

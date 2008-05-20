@@ -21,17 +21,17 @@ public class CompositePointerType extends CompositeTypeContainer implements IPoi
 		super((ITypeContainer) pointerType, cf);
 	}
 	
-	public boolean isConst() throws DOMException {
-		return ((IPointerType)type).isConst();
+	public boolean isConst() {
+		return ((IPointerType) type).isConst();
 	}
 
-	public boolean isVolatile() throws DOMException {
-		return ((IPointerType)type).isVolatile();
+	public boolean isVolatile() {
+		return ((IPointerType) type).isVolatile();
 	}
 	
 	@Override
 	public boolean isSameType(IType other) {
-		return ((IPointerType)type).isSameType(other);
+		return ((IPointerType) type).isSameType(other);
 	}
 	
 	@Override

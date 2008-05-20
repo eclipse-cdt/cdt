@@ -159,7 +159,7 @@ public class CPPSemantics {
 	public static final IType VOID_TYPE = new CPPBasicType(IBasicType.t_void, 0);
 
 	// Set to true for debugging.
-	public static boolean traceBindingResolution = false;
+	public static boolean traceBindingResolution = true;
 	
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {
@@ -489,10 +489,8 @@ public class CPPSemantics {
 		        getAssociatedScopes(getUltimateType(element, true), namespaces, classes, tu);
 		    }
 		} else if (t instanceof ICPPPointerToMemberType) {
-		    IBinding binding = ((ICPPPointerToMemberType)t).getMemberOfClass();
-		    if (binding instanceof IType)
-		        getAssociatedScopes((IType)binding, namespaces, classes, tu);
-		    getAssociatedScopes(getUltimateType(((ICPPPointerToMemberType)t).getType(), true), namespaces, classes, tu);
+		    IType binding = ((ICPPPointerToMemberType) t).getMemberOfClass();
+	        getAssociatedScopes(binding, namespaces, classes, tu);
 		}
 		return;
     }

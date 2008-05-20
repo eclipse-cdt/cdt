@@ -240,8 +240,7 @@ public class SemanticUtil {
 				if (ret == r && params == ps) {
 					return type;
 				}
-				return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).isConst(),
-						((ICPPFunctionType) type).isVolatile());
+				return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).getThisType());
 			} 
 
 			if (type instanceof ITypeContainer) {

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -360,4 +361,13 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     public boolean isStatic( boolean resolveAll ) {
     	return hasStorageClass( IASTDeclSpecifier.sc_static );
     }
+    
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		result.append(getName());
+		IFunctionType t = getType();
+		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
+		return result.toString();
+	}
 }

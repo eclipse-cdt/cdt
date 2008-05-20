@@ -26,23 +26,27 @@ public class PointerTypeClone implements IPointerType, ITypeContainer, IIndexTyp
 	public PointerTypeClone(IPointerType pointer) {
 		this.delegate = pointer;
 	}
+
 	public IType getType() throws DOMException {
 		if (type == null) {
 			return delegate.getType();
 		}
 		return type;
 	}
-	public boolean isConst() throws DOMException {
+
+	public boolean isConst() {
 		return delegate.isConst();
 	}
-	public boolean isVolatile() throws DOMException {
+
+	public boolean isVolatile() {
 		return delegate.isVolatile();
 	}
+
 	public boolean isSameType(IType type) {
-		if( type instanceof ITypedef )
-		    return ((ITypedef)type).isSameType( this );
+		if (type instanceof ITypedef)
+		    return ((ITypedef)type).isSameType(this);
 		
-		if( !( type instanceof IPointerType )) 
+		if (!(type instanceof IPointerType)) 
 		    return false;
 		
 		IPointerType rhs = (IPointerType) type;
@@ -57,9 +61,11 @@ public class PointerTypeClone implements IPointerType, ITypeContainer, IIndexTyp
 		}
 		return false;
 	}
+
 	public void setType(IType type) {
 		this.type = type;
 	}
+
 	@Override
 	public Object clone() {
 		return new PointerTypeClone(this);

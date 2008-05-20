@@ -546,23 +546,21 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		if (gotShell){
-			IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
-			if (set == null){
-				set = createPropertySet("Remote"); //$NON-NLS-1$
-			}
-			if (set != null)
-			{
-				IProperty property = set.getProperty(COMMAND_SHELLS_MEMENTO);
-				if (property == null){
-					property = set.addProperty(COMMAND_SHELLS_MEMENTO, shellBuffer.toString());
-				}
-				else {
-					property.setValue(shellBuffer.toString());
-				}
-			}
-			commit();
+		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+		if (set == null){
+			set = createPropertySet("Remote"); //$NON-NLS-1$
 		}
+		if (set != null)
+		{
+			IProperty property = set.getProperty(COMMAND_SHELLS_MEMENTO);
+			if (property == null){
+				property = set.addProperty(COMMAND_SHELLS_MEMENTO, shellBuffer.toString());
+			}
+			else {
+				property.setValue(shellBuffer.toString());
+			}
+		}
+		commit();
 	}
 
 	protected void internalRemoveShell(Object command) throws InvocationTargetException,

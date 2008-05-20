@@ -37,13 +37,14 @@ import org.eclipse.dstore.core.model.ISchemaExtender;
 import org.eclipse.dstore.core.server.SystemServiceManager;
 
 /**
- * Miner is the abstract base class of all DataStore extensions).
- * The DataStore framework knows how to load and route commands to miners
- * because it interfaces miners through the restricted set of interfaces declared here.
- * To add a new miner, developers must extend this class and implement the abstract methods declared here.
- *
- * @noinstantiate This class is not intended to be instantiated by clients.  The dstore server infrastructure
- *    will take care of loading the Miner.
+ * Miner is the abstract base class of all DataStore extensions). The DataStore
+ * framework knows how to load and route commands to miners because it
+ * interfaces miners through the restricted set of interfaces declared here. To
+ * add a new miner, developers must extend this class and implement the abstract
+ * methods declared here.
+ * 
+ * This class and its subclasses are not intended to be instantiated by clients.
+ * The dstore server infrastructure will take care of loading the Miner.
  */
 public abstract class Miner extends Handler
 implements ISchemaExtender

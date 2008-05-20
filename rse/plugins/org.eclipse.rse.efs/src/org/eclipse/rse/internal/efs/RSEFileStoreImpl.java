@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
+ * Timur Shipilov   (Xored)      - [224540] [efs] RSEFileStore.mkdir(EFS.NONE, null) doesn't create parent folder
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -619,6 +620,13 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException
 	{
+		if (options == EFS.NONE) {
+			IFileStore parent = getParent();
+			if (parent != null) {
+				parent.mkdir(options, monitor);
+			}
+		}
+
 		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {

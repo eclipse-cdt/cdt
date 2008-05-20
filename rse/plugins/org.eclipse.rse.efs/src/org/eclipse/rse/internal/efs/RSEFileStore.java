@@ -20,7 +20,7 @@
  * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
  * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
  * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
- * Timur Shiplov    (Xored)      - [224538] RSEFileStore.getParent() returns null for element which is not root of filesystem
+ * Timur Shipilov   (Xored)      - [224538] RSEFileStore.getParent() returns null for element which is not root of filesystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;

@@ -339,6 +339,10 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
 
 #Create P2 metadata
 echo "Creating P2 metadata..."
+#Always create from scratch
+cd ${SITE}
+if [ -f content.xml ]; then rm -f content.xml; fi
+if [ -f content.jar ]; then rm -f content.jar; fi
 java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
     -updateSite ${SITE}/ \

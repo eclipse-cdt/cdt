@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - Adding Javadoc
+ * David McKnight   (IBM)        - [232670] SystemMessageDialog should not throw IndicatorExceptions
  *******************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -35,7 +36,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -482,14 +482,11 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * Open the dialog with Yes, No, Details button for an Inquiry/Question
 	 * message.
 	 *
-	 * @throws IndicatorException if the message is not an Inquiry message
 	 * @return <code>true</code> if Yes was pressed, <code>false</code> if
 	 *         No was pressed.
 	 */
-	public boolean openQuestion() throws IndicatorException
+	public boolean openQuestion()
 	{
-		if (message.getIndicator()!=SystemMessage.INQUIRY)
-			throw new IndicatorException("Message "+message.getFullMessageID()+" is not an inquiry message."); //$NON-NLS-1$ //$NON-NLS-2$
 		yesNoButtons=true;
 		open();
 		return (buttonIdPressed==IDialogConstants.YES_ID);
@@ -497,8 +494,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 
 	/**
 	 * Open the dialog with Yes/No, Details button for an Inquiry/Question
-	 * message. Eats up the IndicatorException, so only call this when you know
-	 * what you are doing!
+	 * message. 
 	 *
 	 * @return <code>true</code> if Yes was pressed, <code>false</code> if
 	 *         No was pressed.
@@ -510,8 +506,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 
 	/**
 	 * opens the dialog with an optional Yes/No or OK, Details button for an
-	 * Inquiry/Question message. Eats up the IndicatorException, so only call
-	 * this when you know what you are doing!
+	 * Inquiry/Question message. 
 	 *
 	 * Before RSE 3.0, this method had no arguments. Since RSE 3.0, it is taking
 	 * a boolean argument.
@@ -527,7 +522,6 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 
 	/**
 	 * opens the dialog with Yes, No, Cancel Details for an Inquiry/Question message
-	 * throws an IndicatorException if the indicator is not Inquiry
 	 * @return IDialogConstants.YES_ID or NO_ID
   	 */
 	public int openYesNoCancel()

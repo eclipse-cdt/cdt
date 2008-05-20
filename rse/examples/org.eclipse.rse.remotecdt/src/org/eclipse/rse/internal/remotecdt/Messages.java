@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Ewa Matejska (PalmSource) - [158783] browse button for cdt remote path
+ * Johann Draschwandtner (Wind River) - [231827][remotecdt]Auto-compute default for Remote path
  *******************************************************************************/
 package org.eclipse.rse.internal.remotecdt;
 
@@ -34,6 +35,10 @@ public class Messages extends NLS {
 	public static String RemoteCMainTab_ErrorNoConnection;
 	public static String RemoteCMainTab_Connection;
 	public static String RemoteCMainTab_New;
+	public static String RemoteCMainTab_Properties;
+	public static String RemoteCMainTab_Properties_title;
+	public static String RemoteCMainTab_Properties_Location;
+	public static String RemoteCMainTab_Properties_Skip_default;
 
 	public static String RemoteRunLaunchDelegate_RemoteShell;
 	public static String RemoteRunLaunchDelegate_1;

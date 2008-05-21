@@ -52,6 +52,8 @@ public class CRenameLocalProcessor extends CRenameProcessorDelegate {
     @Override
 	protected void analyzeTextMatches(ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, 
             RefactoringStatus status) {
+    	
+    	super.analyzeTextMatches(matches, monitor, status);
         if (fScope != null) {
             CRefactoringArgument argument = getArgument();
             ASTManager r = getAstManager();
@@ -76,12 +78,13 @@ public class CRenameLocalProcessor extends CRenameProcessorDelegate {
             int[] range= result;
             for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
                 CRefactoringMatch m = iter.next();
-                int off= m.getOffset();
-                if (off < range[0] || off > range[1]) {
-                    iter.remove();
+                if (m.getAstInformation() != CRefactoringMatch.AST_REFERENCE) {
+                	int off= m.getOffset();
+                	if (off < range[0] || off > range[1]) {
+                		iter.remove();
+                	}
                 }
             }
         }
-        super.analyzeTextMatches(matches, monitor, status);
     }
 }

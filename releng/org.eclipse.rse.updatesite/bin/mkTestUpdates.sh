@@ -337,7 +337,7 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -digestBuilder -digestOutputDir=$SITE \
     -siteXML=$SITE/site-europa.xml
 
-if false ; then
+##if false ; then
 #Create P2 metadata
 echo "Creating P2 metadata..."
 #Always create from scratch
@@ -355,8 +355,8 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -compress \
     -reusePack200Files \
     -noDefaultIUs \
-    -vmargs -Xmx128M
-fi
+    -vmargs -Xmx256M
+##fi
 
 cd $SITE
 chgrp -R dsdp-tmadmin .

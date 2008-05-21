@@ -1997,13 +1997,16 @@ public class CPPVisitor {
 					ICPPFunctionType functionType = (ICPPFunctionType) type;
 					IPointerType thisType = functionType.getThisType();
 					if (thisType != null) {
-						ICPPClassType classType;
+						IType nestedType;
 						try {
-							classType = (ICPPClassType) thisType.getType();
+							nestedType = thisType.getType();
+							while (nestedType instanceof ITypeContainer) {
+								nestedType = ((ITypeContainer) nestedType).getType();
+							}
 						} catch (DOMException e) {
 							return e.getProblem();
 						}
-						return new CPPPointerToMemberType(type, classType,
+						return new CPPPointerToMemberType(type, (ICPPClassType) nestedType,
 								thisType.isConst(), thisType.isVolatile());
 					}
 				}

@@ -48,6 +48,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	private static final String RETURN = "@return\n"; //$NON-NLS-1$
 
 	protected boolean documentPureVirtuals= true;
+	protected boolean documentDeclarations= true;
 	
 	public DoxygenMultilineAutoEditStrategy() {
 	}
@@ -136,11 +137,12 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 			
 			if(sdec.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
 				return result;
-			} else if(documentPureVirtuals && sdec.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {
+			} else if(sdec.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {
 				IASTDeclarator[] dcs= sdec.getDeclarators();
-				if(dcs.length == 1) {
-					ICPPASTFunctionDeclarator fdecl= (ICPPASTFunctionDeclarator) sdec.getDeclarators()[0];
-					if(fdecl.isPureVirtual()) {
+				if(dcs.length == 1 && dcs[0] instanceof ICPPASTFunctionDeclarator) {
+					ICPPASTFunctionDeclarator fdecl= (ICPPASTFunctionDeclarator) dcs[0];
+					boolean shouldDocument= documentDeclarations || (documentPureVirtuals && fdecl.isPureVirtual());
+					if(shouldDocument) {
 						return documentFunction(fdecl, sdec.getDeclSpecifier());
 					}
 				}

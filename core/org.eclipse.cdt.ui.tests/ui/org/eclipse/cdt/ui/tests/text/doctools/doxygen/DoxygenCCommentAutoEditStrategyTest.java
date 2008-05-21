@@ -413,10 +413,115 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	//	 public:
 	//       /**
 	//        * X
+	//        * @param x
 	//        */
 	//		 virtual void foo(D x);
 	// };
 	public void testAutoDocCommentContent19() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	//	class A {};
+	//  /**X
+	//	A baz;
+	
+	//	class A {};
+	//  /**
+	//   * X
+	//   */
+	//	A baz;
+	public void testAutoDocCommentContent20() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	/** Declarations **/
+	
+	// /**X
+	//  int foo_bar();
+	
+	// /**
+	//  * X
+	//  * @return
+	//  */
+	//  int foo_bar();
+	public void testAutoDocCommentContent3_Dec() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// /**   X
+	//  int foo_bar();
+	
+	// /**   
+	//  * X
+	//  * @return
+	//  */
+	//  int foo_bar();
+	public void testAutoDocCommentContent4_Dec() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// /**X
+	//  *
+	//  */
+	//  int foo_bar();
+	
+	// /**
+	//  * X
+	//  *
+	//  */
+	//  int foo_bar();
+	public void testAutoDocCommentContent5_Dec() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// /**X
+	//  void foo_bar(int x);
+	
+	// /**
+	//  * X
+	//  * @param x
+	//  */
+	//  void foo_bar(int x);
+	public void testAutoDocCommentContent6_Dec() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// class A {}; class B {};
+	// /**X
+	//  C* bar_baz(A a, B b, int c);
+	
+	// class A {}; class B {};
+	// /**
+	//  * X
+	//  * @param a
+	//  * @param b
+	//  * @param c
+	//  * @return
+	//  */
+	//  C* bar_baz(A a, B b, int c);
+	public void testAutoDocCommentContent7_Dec() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	//	#define STATIC static
+	//
+	//	class D {
+	//	public:
+	//      /**X
+	//      STATIC void D::foo(int x);
+	//	};
+	
+	//	#define STATIC static
+	//
+	//	class D {
+	//	public:
+	//      /**
+	//       * X
+	//       * @param x
+	//       */
+	//      STATIC void D::foo(int x);
+	//	};
+	public void testAutoDocCommentContent17_Dec() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 	

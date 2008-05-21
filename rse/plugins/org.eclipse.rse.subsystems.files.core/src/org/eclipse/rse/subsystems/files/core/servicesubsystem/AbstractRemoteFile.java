@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -47,7 +47,7 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 		return _subSystem;
 	}
 
-	public IHost getSystemConnection()
+	public IHost getHost()
 	{
 		return _subSystem.getHost();
 	}

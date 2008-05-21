@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -99,11 +100,11 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
     /**
      * Return the connection this remote file is from.
      */
-    public IHost getSystemConnection();
+    public IHost getHost();
     
     /**
      * Return the parent remote file object expanded to get this object,
-     * or <code>null</nul> if no such parent exists.
+     * or <code>null</code> if no such parent exists.
      * 
      * @return the parent remote file object or <code>null</code>.
      */

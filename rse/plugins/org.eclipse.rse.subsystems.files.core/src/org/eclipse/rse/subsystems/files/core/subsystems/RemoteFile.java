@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
+ * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -335,7 +336,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     /**
      * Return the connection this remote file is from.
      */
-    public IHost getSystemConnection()
+    public IHost getHost()
     {
     	IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
     	if (ss == null)

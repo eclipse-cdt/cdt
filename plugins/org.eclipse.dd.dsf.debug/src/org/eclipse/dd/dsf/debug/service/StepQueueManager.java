@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -168,7 +169,12 @@ public class StepQueueManager extends AbstractDsfService
      * Returns whether the step instruction for the given context has timed out.
      */
     public boolean isSteppingTimedOut(IExecutionDMContext execCtx) {
-        return fTimedOutFlags.containsKey(execCtx) ? fTimedOutFlags.get(execCtx) : false;
+        for (IExecutionDMContext timedOutCtx : fTimedOutFlags.keySet()) {
+            if (execCtx.equals(timedOutCtx) || DMContexts.isAncestorOf(execCtx, timedOutCtx)) {
+                return fTimedOutFlags.get(timedOutCtx);
+            }
+        }
+        return false;
     }
     
 

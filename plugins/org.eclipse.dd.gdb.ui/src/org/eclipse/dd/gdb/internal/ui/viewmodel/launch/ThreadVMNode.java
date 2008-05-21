@@ -32,6 +32,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.dd.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -118,6 +119,14 @@ public class ThreadVMNode extends AbstractDMVMNode
                 rm.done();
                 return;
             }
+        } else if (e instanceof ISteppingTimedOutEvent && 
+                   ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) 
+        {
+            // The timed out event occured on a container and not on a thread.  Do not
+            // return a context for this event, which will force the view model to generate
+            // a delta for all the threads.
+            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+            rm.done();
         } else if (e instanceof ModelProxyInstalledEvent) {
             getThreadVMCForModelProxyInstallEvent(
                 parentDelta, 

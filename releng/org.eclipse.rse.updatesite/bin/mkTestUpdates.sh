@@ -354,7 +354,8 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -artifactRepositoryName "Target Management 3.0 Artifacts" \
     -compress \
     -reusePack200Files \
-    -noDefaultIUs
+    -noDefaultIUs \
+    -vmargs -Xmx128M
 fi
 
 cd $SITE

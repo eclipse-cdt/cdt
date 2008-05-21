@@ -103,6 +103,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 //		C2* m123();
 //		C2* m12();
 //		C2* m23();
+//      C1* operator()(int x);
 //
 //private:
 //		void m2private();
@@ -1145,6 +1146,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	static const MYSTRUCT_TYPE myArrayOfStructs[] = {{enum/*cursor*/
 	public void testCompletionInInitializerList_Bug230389() throws Exception {
 		final String[] expected= {"enum0", "enum1", "enum2"};
+		assertCompletionResults(expected);
+	}
+	
+	// void test() {
+	//    C2 c2;
+	//    c2(1)->iam/*cursor*/
+	public void testUserdefinedCallOperator_Bug231277() throws Exception {
+		final String[] expected= {"iam1()"};
 		assertCompletionResults(expected);
 	}
 }

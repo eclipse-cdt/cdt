@@ -2386,6 +2386,19 @@ public class CPPSemantics {
 			data = new LookupData(astName);
 			data.forceQualified = true;
 			data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		} else if (exp instanceof IASTFunctionCallExpression) {
+			astName.setName(OverloadableOperator.PAREN.toCharArray());
+			data = new LookupData(astName);
+			data.forceQualified = true;
+			final IASTExpression paramExpression = ((IASTFunctionCallExpression)exp).getParameterExpression();
+			if (paramExpression == null) {
+				data.functionParameters= IASTExpression.EMPTY_EXPRESSION_ARRAY;
+			}
+			else if (paramExpression instanceof IASTExpressionList) {
+				data.functionParameters= ((IASTExpressionList) paramExpression).getExpressions();
+			} else {
+				data.functionParameters = new IASTExpression[] {paramExpression};
+			}
 		} else {
 			return null;
 		}

@@ -1864,6 +1864,13 @@ public class CPPVisitor {
 		        		if (ftype != null)
 		        			return ftype.getReturnType();
 		        	}
+					t= getUltimateTypeUptoPointers(t);
+					if (t instanceof ICPPClassType) {
+						ICPPFunction op = CPPSemantics.findOperator(expression, (ICPPClassType) t);
+						if (op != null) {
+							return op.getType().getReturnType();
+						}
+					}
 	        	} catch(DOMException e) {
 	        		return e.getProblem();
 	        	} 

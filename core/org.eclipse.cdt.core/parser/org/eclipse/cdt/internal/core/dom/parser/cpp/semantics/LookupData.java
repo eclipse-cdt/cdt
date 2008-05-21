@@ -297,60 +297,73 @@ class LookupData {
      * an IType[] of function arguments, including the implied object argument
      */
     public IType getImpliedObjectArgument() {
-        IType implied = null;
-
-        if (astName != null) {
-            IASTName tempName = astName;
-            while (tempName.getParent() instanceof IASTName)
-                tempName = (IASTName) tempName.getParent();
-
-            ASTNodeProperty prop = tempName.getPropertyInParent();
-            if ((prop == CPPSemantics.STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof ICPPASTUnaryExpression)) {
-            	ICPPASTUnaryExpression unaryExp = (ICPPASTUnaryExpression) tempName.getParent();
-            	IASTExpression oprd= unaryExp.getOperand();
-            	return CPPVisitor.getExpressionType(oprd);
-            } else if (prop == IASTFieldReference.FIELD_NAME ||
-            	(prop == CPPSemantics.STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof ICPPASTFieldReference)) {
-                ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempName.getParent();
-                implied = CPPVisitor.getExpressionType(fieldRef.getFieldOwner());
-                IType ultimateImplied= SemanticUtil.getUltimateTypeUptoPointers(implied);
-                if (prop != CPPSemantics.STRING_LOOKUP_PROPERTY && fieldRef.isPointerDereference() &&
-                		ultimateImplied instanceof ICPPClassType) {
-                	ICPPFunction operator= CPPSemantics.findOperator(fieldRef, (ICPPClassType) ultimateImplied);
-                	try {
-                		if (operator!=null) {
-                			implied= operator.getType().getReturnType();
-                		}
-                	} catch(DOMException de) {
-                		return de.getProblem();
-                	}
-                } else if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
-                    try {
-                        implied = ((IPointerType)implied).getType();
-                    } catch (DOMException e) {
-                        implied = e.getProblem();
-                    }
-                }
-            } else if (prop == IASTIdExpression.ID_NAME) {
-                IScope scope = CPPVisitor.getContainingScope(tempName);
-                if (scope instanceof ICPPClassScope) {
-                    implied = ((ICPPClassScope)scope).getClassType();
-                } else {
-                    implied = CPPVisitor.getThisType(scope);
-                    if (implied instanceof IPointerType) {
-                        try {
-                            implied = ((IPointerType)implied).getType();
-                        } catch (DOMException e) {
-                            implied = e.getProblem();
-                        }
-                    }
-                }
-            } else if (prop == CPPSemantics.STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof IASTArraySubscriptExpression) {
-        		IASTExpression exp = ((IASTArraySubscriptExpression)tempName.getParent()).getArrayExpression();
-        		implied = CPPVisitor.getExpressionType(exp);
-            }
+        if (astName == null) 
+        	return null;
+        
+        IASTName tempName= astName;
+        IASTNode tempNameParent= tempName.getParent();
+        while (tempNameParent instanceof IASTName) {
+        	tempName= (IASTName) tempNameParent;
+        	tempNameParent= tempName.getParent();
         }
-        return implied;
+
+        try {
+        	final ASTNodeProperty prop = tempName.getPropertyInParent();
+        	if (prop == CPPSemantics.STRING_LOOKUP_PROPERTY) {
+        		if (tempNameParent instanceof ICPPASTUnaryExpression) {
+        			ICPPASTUnaryExpression unaryExp = (ICPPASTUnaryExpression) tempNameParent;
+        			IASTExpression oprd= unaryExp.getOperand();
+        			return CPPVisitor.getExpressionType(oprd);
+        		}
+        		if (tempNameParent instanceof ICPPASTFieldReference) {
+        			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
+        			IType implied = CPPVisitor.getExpressionType(fieldRef.getFieldOwner());
+        			if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
+        				return ((IPointerType)implied).getType();
+        			}
+        			return implied;
+        		}
+        		if (tempNameParent instanceof IASTArraySubscriptExpression) {
+             		IASTExpression exp = ((IASTArraySubscriptExpression)tempNameParent).getArrayExpression();
+             		return CPPVisitor.getExpressionType(exp);
+             	} 
+        		if (tempNameParent instanceof IASTFunctionCallExpression) {
+        			return CPPVisitor.getExpressionType(((IASTFunctionCallExpression) tempNameParent).getFunctionNameExpression());
+        		}
+        		return null;
+        	} 
+        	if (prop == IASTFieldReference.FIELD_NAME) {
+        		ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
+        		IType implied = CPPVisitor.getExpressionType(fieldRef.getFieldOwner());
+        		IType ultimateImplied= SemanticUtil.getUltimateTypeUptoPointers(implied);
+        		if (fieldRef.isPointerDereference()) {
+        			if (ultimateImplied instanceof ICPPClassType) {
+        				ICPPFunction operator= CPPSemantics.findOperator(fieldRef, (ICPPClassType) ultimateImplied);
+        				if (operator!=null) {
+        					return operator.getType().getReturnType();
+        				}
+        			} else if (implied instanceof IPointerType) {
+        				return ((IPointerType)implied).getType();
+        			}
+        		}
+        		return implied;
+        	}
+        	if (prop == IASTIdExpression.ID_NAME) {
+        		IScope scope = CPPVisitor.getContainingScope(tempName);
+        		if (scope instanceof ICPPClassScope) {
+        			return ((ICPPClassScope)scope).getClassType();
+        		} 
+
+        		IType implied = CPPVisitor.getThisType(scope);
+        		if (implied instanceof IPointerType) {
+        			return ((IPointerType)implied).getType();
+        		}
+        		return implied;
+        	}
+        	return null;
+        } catch (DOMException e) {
+        	return e.getProblem();
+        }
     }
 
 	public boolean forFriendship() {

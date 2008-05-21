@@ -176,11 +176,17 @@ public class CPPScopeMapper {
 			return "";    //$NON-NLS-1$
 		}
 		StringBuilder buf= new StringBuilder();
-		buf.append(scope.getScopeName().toCharArray());
+		IName scopeName = scope.getScopeName();
+		if (scopeName != null) {
+			buf.append(scopeName.toCharArray());
+		}
 		scope= scope.getParent();
 		while (scope != null && scope != tuscope) {
 			buf.append(':');  
-			buf.append(scope.getScopeName().toCharArray());
+			scopeName= scope.getScopeName();
+			if (scopeName != null) {
+				buf.append(scope.getScopeName().toCharArray());
+			}
 			scope= scope.getParent();
 		}
 		return buf.toString();

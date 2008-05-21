@@ -13,7 +13,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dd.mi,
  org.junit4,
  org.eclipse.debug.core,
- org.eclipse.cdt.debug.mi.core,
  org.eclipse.swt,
  org.eclipse.dd.gdb
 Bundle-ActivationPolicy: lazy

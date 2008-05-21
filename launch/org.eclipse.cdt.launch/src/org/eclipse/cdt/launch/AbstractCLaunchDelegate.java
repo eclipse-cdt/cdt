@@ -569,8 +569,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			if (buildConfigID.length() > 0 && projDes != null)
 			{
 				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(buildConfigID);
-				buildConfiguration.setActive();
-				CDTPropertyManager.performOk(null);
+				if (null != buildConfiguration) {
+					buildConfiguration.setActive();
+					CDTPropertyManager.performOk(null);
+				}
 			}
 			
 		} catch (CoreException e) {}

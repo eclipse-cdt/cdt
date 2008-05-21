@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeFunctionType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;

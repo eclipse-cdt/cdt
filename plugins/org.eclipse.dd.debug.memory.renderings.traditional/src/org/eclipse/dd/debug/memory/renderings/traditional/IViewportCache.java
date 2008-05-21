@@ -9,9 +9,9 @@ public interface IViewportCache {
 
     public void dispose();
     public void refresh();
-    public MemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException;
+    public TraditionalMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException;
     public void archiveDeltas();
-    public void setEditedValue(BigInteger address, MemoryByte[] bytes);
+    public void setEditedValue(BigInteger address, TraditionalMemoryByte[] bytes);
     public void clearEditBuffer();
     public void writeEditBuffer();
     public boolean containsEditedCell(BigInteger address);

@@ -32,6 +32,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -106,7 +107,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     private boolean fIsTargetLittleEndian = false;
     
     private boolean fIsDisplayLittleEndian = false;
-
+    
     // constants used to identify radix
     public final static int RADIX_HEX = 1;
 
@@ -482,6 +483,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         return fSelection;
     }
+    
+    protected int getHistoryDepth()
+    {
+    	return fViewportCache.getHistoryDepth();
+    }
+    
+    protected void setHistoryDepth(int depth)
+    {
+    	fViewportCache.setHistoryDepth(depth);
+    }
 
     public void logError(String message, Exception e)
     {
@@ -609,7 +620,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return fViewportCache;
     }
 
-    public MemoryByte[] getBytes(BigInteger address, int bytes)
+    public TraditionalMemoryByte[] getBytes(BigInteger address, int bytes)
         throws DebugException
     {
         return getViewportCache().getBytes(address, bytes);
@@ -652,7 +663,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 				}
 				
 				return false;
-			}
+			}	
             
         }
 
@@ -662,7 +673,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
             BigInteger end;
 
-            MemoryByte[] bytes;
+            TraditionalMemoryByte[] bytes;
 
             public MemoryUnit clone()
             {
@@ -670,9 +681,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
                 b.start = this.start;
                 b.end = this.end;
-                b.bytes = new MemoryByte[this.bytes.length];
+                b.bytes = new TraditionalMemoryByte[this.bytes.length];
                 for(int i = 0; i < this.bytes.length; i++)
-                	b.bytes[i] = new MemoryByte(this.bytes[i].getValue());
+                	b.bytes[i] = new TraditionalMemoryByte(this.bytes[i].getValue());
 
                 return b;
             }
@@ -694,8 +705,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         protected MemoryUnit fCache = null;
 
-        protected MemoryUnit fHistoryCache = null;
+        protected MemoryUnit fHistoryCache[] = new MemoryUnit[0];
 
+        protected int fHistoryDepth = 0;
+        
         public ViewportCache()
         {
             start();
@@ -708,6 +721,17 @@ public class Rendering extends Composite implements IDebugEventSetListener
             {
                 this.notify();
             }
+        }
+        
+        public int getHistoryDepth()
+        {
+        	return fHistoryDepth;
+        }
+        
+        public void setHistoryDepth(int depth)
+        {
+        	fHistoryDepth = depth;
+        	fHistoryCache = new MemoryUnit[fHistoryDepth];
         }
 
         public void refresh()
@@ -737,8 +761,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         private void queueRequest(BigInteger startAddress, BigInteger endAddress)
         {
             AddressPair pair = new AddressPair(startAddress, endAddress);
-            if(!pair.equals(fLastQueued))
-            	queue(pair);
+            queue(pair);
         }
         
         private void queueRequestArchiveDeltas()
@@ -751,8 +774,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
         {
         	synchronized(fQueue)
             {
-                fQueue.addElement(element);
-                fLastQueued = element;
+        		if(!(fQueue.size() > 0 && element.equals(fLastQueued)))
+                {
+        			fQueue.addElement(element);
+                	fLastQueued = element;
+                }
             }
             synchronized(this)
             {
@@ -789,7 +815,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 }
                 if(archiveDeltas)
                 {
-                    fHistoryCache = fCache.clone();
+                	for(int i = fViewportCache.getHistoryDepth() - 1; i > 0; i--)
+                		fHistoryCache[i] = fHistoryCache[i - 1];
+                		
+                    fHistoryCache[0] = fCache.clone();
                 }
                 else if(pair != null)
                 {
@@ -837,9 +866,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 final MemoryByte readBytes[] = memoryBlock
                 	.getBytesFromAddress(startAddress, units);
                 
-                MemoryByte cachedBytes[] = new MemoryByte[readBytes.length];
+                TraditionalMemoryByte cachedBytes[] = new TraditionalMemoryByte[readBytes.length];
                 for(int i = 0; i < readBytes.length; i++)
-                	cachedBytes[i] = new MemoryByte(readBytes[i].getValue(), readBytes[i].getFlags());
+                	cachedBytes[i] = new TraditionalMemoryByte(readBytes[i].getValue(), readBytes[i].getFlags());
 
 				// derive the target endian from the read MemoryBytes.
             	if (cachedBytes.length > 0) {
@@ -855,7 +884,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             		if(addressableSize.compareTo(BigInteger.ONE) != 0)
             		{
             			int unitSize = addressableSize.intValue();
-            			MemoryByte cachedBytesAsByteSequence[] = new MemoryByte[cachedBytes.length];
+            			TraditionalMemoryByte cachedBytesAsByteSequence[] = new TraditionalMemoryByte[cachedBytes.length];
             			for(int unit = 0; unit < units; unit++)
             			{
             				for(int unitbyte = 0; unitbyte < unitSize; unitbyte++)
@@ -867,40 +896,43 @@ public class Rendering extends Composite implements IDebugEventSetListener
             		}
             	}
                 
-            	final MemoryByte[] cachedBytesFinal = cachedBytes;
+            	final TraditionalMemoryByte[] cachedBytesFinal = cachedBytes;
                 Display.getDefault().asyncExec(new Runnable()
                 {
                     public void run()
                     {
                         // generate deltas
-                        if(fHistoryCache != null && fHistoryCache.isValid())
-                        {
-                            BigInteger maxStart = startAddress
-                                .max(fHistoryCache.start);
-                            BigInteger minEnd = endAddress
-                                .min(fHistoryCache.end).subtract(
-                                    BigInteger.valueOf(1));
-
-                            BigInteger overlapLength = minEnd
-                                .subtract(maxStart);
-                            if(overlapLength.compareTo(BigInteger.valueOf(0)) > 0)
-                            {
-                                // there is overlap
-
-                                int offsetIntoOld = maxStart.subtract(
-                                    fHistoryCache.start).intValue();
-                                int offsetIntoNew = maxStart.subtract(
-                                    startAddress).intValue();
-
-                                for(int i = overlapLength.intValue(); i >= 0; i--)
-                                {
-                                	cachedBytesFinal[offsetIntoNew + i]
-                                        .setChanged(cachedBytesFinal[offsetIntoNew
-                                            + i].getValue() != fHistoryCache.bytes[offsetIntoOld
-                                            + i].getValue());
-                                }
-                            }
-                        }
+                    	for(int historyIndex = 0; historyIndex < getHistoryDepth(); historyIndex++)
+                    	{
+	                        if(fHistoryCache[historyIndex] != null && fHistoryCache[historyIndex].isValid())
+	                        {
+	                            BigInteger maxStart = startAddress
+	                                .max(fHistoryCache[historyIndex].start);
+	                            BigInteger minEnd = endAddress
+	                                .min(fHistoryCache[historyIndex].end).subtract(
+	                                    BigInteger.valueOf(1));
+	
+	                            BigInteger overlapLength = minEnd
+	                                .subtract(maxStart);
+	                            if(overlapLength.compareTo(BigInteger.valueOf(0)) > 0)
+	                            {
+	                                // there is overlap
+	
+	                                int offsetIntoOld = maxStart.subtract(
+	                                    fHistoryCache[historyIndex].start).intValue();
+	                                int offsetIntoNew = maxStart.subtract(
+	                                    startAddress).intValue();
+	
+	                                for(int i = overlapLength.intValue(); i >= 0; i--)
+	                                {
+	                                	cachedBytesFinal[offsetIntoNew + i]
+	                                        .setChanged(historyIndex, cachedBytesFinal[offsetIntoNew
+	                                            + i].getValue() != fHistoryCache[historyIndex].bytes[offsetIntoOld
+	                                            + i].getValue());
+	                                }
+	                            }
+	                        }
+                    	}
 
                         fCache = new MemoryUnit();
                         fCache.start = startAddress;
@@ -910,8 +942,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         // If the history does not exist, populate the history with the just populated cache. This solves the
                         // use case of 1) connect to target; 2) edit memory before the first suspend debug event; 3) paint
                         // differences in changed color.
-                        if(fHistoryCache == null)
-                        	fHistoryCache = fCache.clone();
+                        if(fHistoryCache[0] == null)
+                        	fHistoryCache[0] = fCache.clone();
 
                         Rendering.this.redrawPanes();
                     }
@@ -927,7 +959,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
 
         // bytes will be fetched from cache
-        public MemoryByte[] getBytes(BigInteger address, int bytesRequested)
+        public TraditionalMemoryByte[] getBytes(BigInteger address, int bytesRequested)
             throws DebugException
         {
             assert Thread.currentThread().equals(
@@ -952,7 +984,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             if(contains)
             {
                 int offset = address.subtract(fCache.start).intValue();
-                MemoryByte bytes[] = new MemoryByte[bytesRequested];
+                TraditionalMemoryByte bytes[] = new TraditionalMemoryByte[bytesRequested];
                 for(int i = 0; i < bytes.length; i++)
                 {
                     bytes[i] = fCache.bytes[offset + i];
@@ -961,10 +993,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 return bytes;
             }
             
-            MemoryByte bytes[] = new MemoryByte[bytesRequested];
+            TraditionalMemoryByte bytes[] = new TraditionalMemoryByte[bytesRequested];
             for(int i = 0; i < bytes.length; i++)
             {
-                bytes[i] = new MemoryByte();
+                bytes[i] = new TraditionalMemoryByte();
                 bytes[i].setReadable(false);
             }
 
@@ -983,13 +1015,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
             return fEditBuffer.containsKey(address);
         }
 
-        private MemoryByte[] getEditedMemory(BigInteger address)
+        private TraditionalMemoryByte[] getEditedMemory(BigInteger address)
         {
             assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
                 .getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
-            return (MemoryByte[]) fEditBuffer.get(address);
+            return (TraditionalMemoryByte[]) fEditBuffer.get(address);
         }
 
         public void clearEditBuffer()
@@ -1014,7 +1046,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             while(iterator.hasNext())
                 {
                     BigInteger address = (BigInteger) iterator.next();
-                    MemoryByte[] bytes = (MemoryByte[]) fEditBuffer
+                    TraditionalMemoryByte[] bytes = (TraditionalMemoryByte[]) fEditBuffer
                         .get(address);
 
                     byte byteValue[] = new byte[bytes.length];
@@ -1038,7 +1070,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             clearEditBuffer();
         }
 
-        public void setEditedValue(BigInteger address, MemoryByte[] bytes)
+        public void setEditedValue(BigInteger address, TraditionalMemoryByte[] bytes)
         {
             assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages

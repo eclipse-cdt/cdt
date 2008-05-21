@@ -352,6 +352,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     
     private Color colorBackground;
     private Color colorChanged;
+    private Color colorsChanged[] = null;
     private Color colorEdit;
     private Color colorSelection;
     private Color colorText;
@@ -417,12 +418,18 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     	if(colorTextAlternate != null)
     		colorTextAlternate.dispose();
     	colorTextAlternate = null;
+    	
+    	disposeChangedColors();
     }
 
     public void applyPreferences()
     {
     	if(!fRendering.isDisposed())
     	{
+    		IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+    		
+    		fRendering.setHistoryDepth(store.getInt(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT));
+    		
     		fRendering.setBackground(getColorBackground());
     	
 	    	AbstractPane panes[] = fRendering.getRenderingPanes();
@@ -446,6 +453,41 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     public Color getColorChanged()
     {
     	return colorChanged; 
+    }
+    
+    private void disposeChangedColors()
+    {
+    	if(colorsChanged != null)
+    		for(int i = 0; i < colorsChanged.length; i++)
+    			colorsChanged[i].dispose();
+		colorsChanged = null;
+    }
+    
+    public Color[] getColorsChanged()
+    {
+    	if(colorsChanged != null && colorsChanged.length != fRendering.getHistoryDepth())
+    	{
+    		disposeChangedColors();
+    	}
+    	
+    	if(colorsChanged == null)
+    	{
+	    	colorsChanged = new Color[fRendering.getHistoryDepth()];
+	    	colorsChanged[0] = colorChanged;
+	    	int shades = fRendering.getHistoryDepth() + 4;
+	    	int red = (255 - colorChanged.getRed()) / shades; 
+    		int green = (255 - colorChanged.getGreen()) / shades;
+    		int blue = (255 - colorChanged.getBlue()) / shades;
+	    	for(int i = 1; i < fRendering.getHistoryDepth(); i++)
+	    	{
+	    		colorsChanged[i] = new Color(colorChanged.getDevice(), 
+	    			colorChanged.getRed() + ((shades - i) * red),
+	    			colorChanged.getGreen() + ((shades - i) * green),
+	    			colorChanged.getBlue() + ((shades - i) * blue));
+	    	}
+    	}
+    	
+    	return colorsChanged;
     }
     
     public Color getColorEdit()
@@ -1060,6 +1102,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     {
         if(this.fRendering != null)
             this.fRendering.dispose();
+        disposeColors();
         super.dispose();
     }
 
@@ -1126,9 +1169,21 @@ class TraditionalMemoryByte extends MemoryByte implements IMemoryByte
 {
 	private boolean isEdited = false;
 	
+	private boolean[] changeHistory = new boolean[0];
+	
+	public TraditionalMemoryByte()
+	{
+		super();
+	}
+	
 	public TraditionalMemoryByte(byte byteValue)
 	{
 		super(byteValue);
+	}
+	
+	public TraditionalMemoryByte(byte byteValue, byte byteFlags)
+	{
+		super(byteValue, byteFlags);
 	}
 	
 	public boolean isEdited()
@@ -1139,6 +1194,26 @@ class TraditionalMemoryByte extends MemoryByte implements IMemoryByte
 	public void setEdited(boolean edited)
 	{
 		isEdited = edited;
+	}
+	
+	public boolean isChanged(int historyDepth)
+	{
+		return changeHistory.length > historyDepth && changeHistory[historyDepth];
+	}
+	
+	public void setChanged(int historyDepth, boolean changed)
+	{
+		if(historyDepth >= changeHistory.length)
+		{
+			boolean newChangeHistory[] = new boolean[historyDepth + 1];
+			System.arraycopy(changeHistory, 0, newChangeHistory, 0, changeHistory.length);
+			changeHistory = newChangeHistory;
+		}
+		
+		changeHistory[historyDepth] = changed;
+		
+		if(historyDepth == 0)
+			this.setChanged(changed);
 	}
 }
 

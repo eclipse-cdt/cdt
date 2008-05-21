@@ -17,6 +17,7 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
@@ -102,8 +103,8 @@ public class DataPane extends AbstractPane
                 }
                 //else
                 {
-                	if(bytes[i] instanceof TraditionalMemoryByte)
-                		bytesToSet[i].setEdited(((TraditionalMemoryByte) bytes[i]).isEdited());
+//                	if(bytes[i] instanceof TraditionalMemoryByte)
+//                		bytesToSet[i].setEdited(((TraditionalMemoryByte) bytes[i]).isEdited());
                     bytesToSet[i].setChanged(bytes[i].isChanged());
                 }
             }
@@ -272,7 +273,7 @@ public class DataPane extends AbstractPane
                         * fRendering.getColumnCount() + col)
                         * fRendering.getAddressesPerColumn()));
 
-                    MemoryByte bytes[] = fRendering.getBytes(cellAddress,
+                    TraditionalMemoryByte bytes[] = fRendering.getBytes(cellAddress,
                         fRendering.getBytesPerColumn());
 
                     if(fRendering.getSelection().isSelected(cellAddress))
@@ -293,7 +294,6 @@ public class DataPane extends AbstractPane
                         
                         // Allow subclasses to override this method to do their own coloring
                         applyCustomColor(gc, bytes, col);
-
                     }
 
                     gc.drawText(getCellText(bytes), cellWidth * col
@@ -337,31 +337,46 @@ public class DataPane extends AbstractPane
     }
 
    // Allow subclasses to override this method to do their own coloring
-   protected  void applyCustomColor(GC gc, MemoryByte bytes[], int col)
+   protected  void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
     {
-        // TODO consider adding finer granularity?
-        boolean anyByteChanged = false;
-        for(int n = 0; n < bytes.length && !anyByteChanged; n++)
-            if(bytes[n].isChanged())
-                anyByteChanged = true;
+	   // TODO consider adding finer granularity?
+       boolean anyByteEditing = false;
+       for(int n = 0; n < bytes.length && !anyByteEditing; n++)
+       	if(bytes[n] instanceof TraditionalMemoryByte)
+       		if(((TraditionalMemoryByte) bytes[n]).isEdited())
+       			anyByteEditing = true;
         
-        // TODO consider adding finer granularity?
-        boolean anyByteEditing = false;
-        for(int n = 0; n < bytes.length && !anyByteEditing; n++)
-        	if(bytes[n] instanceof TraditionalMemoryByte)
-        		if(((TraditionalMemoryByte) bytes[n]).isEdited())
-        			anyByteEditing = true;
-        
-        if(anyByteEditing)
-        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
-        else if(anyByteChanged)
-        	gc.setForeground(fRendering.getTraditionalRendering().getColorChanged());
-        else if(isOdd(col))
+        if(isOdd(col))
     		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
     	else
     		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-        
         gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+        
+        if(anyByteEditing)
+        {
+        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
+        }
+        else
+        {
+        	boolean isColored = false;
+        	for(int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
+        	{
+	        	// TODO consider adding finer granularity?
+	            for(int n = 0; n < bytes.length; n++)
+	            {
+	                if(bytes[n].isChanged(i))
+	                {
+	                	if(i == 0)
+	                		gc.setForeground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
+	                	else
+	                		gc.setBackground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
+	                	isColored = true;
+	                	break;
+	                }
+	            }
+        	}   
+        }
+        
     }
 
 }

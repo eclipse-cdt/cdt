@@ -80,6 +80,9 @@ public class TraditionalRenderingPreferencePage
 		addField(new RadioGroupFieldEditor(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, 
 				"Edit Buffer", 1, new String[][] { { "Save on E&nter, Cancel on Focus Lost", "saveOnEnterCancelOnFocusLost" },
 				{ "Save on Enter or Focus L&ost", "saveOnEnterOrFocusLost" } }, getFieldEditorParent()));
+		
+		addField(new ScaleFieldEditor(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT,
+				"History &Trail Levels", getFieldEditorParent(), 1, 10, 1, 1));
 	}
 
 	/* (non-Javadoc)

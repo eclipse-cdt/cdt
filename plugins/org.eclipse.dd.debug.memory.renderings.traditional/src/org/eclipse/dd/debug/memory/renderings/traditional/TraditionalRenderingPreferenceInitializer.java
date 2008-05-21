@@ -56,6 +56,8 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, 
 				TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);
+		
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1");
 	}
 
 }

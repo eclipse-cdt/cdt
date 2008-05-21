@@ -323,7 +323,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		if (!fAttachMode) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-					ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT);
+					fStopInMain.getSelection());
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, 
 				    fStopInMainSymbol.getText());
 

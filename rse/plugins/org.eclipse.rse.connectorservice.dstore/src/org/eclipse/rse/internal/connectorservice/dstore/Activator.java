@@ -17,12 +17,14 @@
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
+ * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.IUniversalDStoreConstants;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
@@ -74,7 +76,11 @@ public class Activator extends SystemBasePlugin {
 		store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, IDStoreDefaultPreferenceConstants.DEFAULT_ALERT_MISMATCHED_SERVER);
 
 		// cache remote classes
-		store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES);				
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES);			
+		
+		// alert defaults
+		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);		
+		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
 	}
 
 	/**

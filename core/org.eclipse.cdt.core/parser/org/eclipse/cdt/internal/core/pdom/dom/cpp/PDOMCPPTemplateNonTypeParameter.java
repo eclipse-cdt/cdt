@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMemberOwner,
 		ICPPTemplateNonTypeParameter, IIndexType {
 
-	private static final int MEMBERLIST = PDOMCPPVariable.RECORD_SIZE + 4;
+	private static final int MEMBERLIST = PDOMCPPVariable.RECORD_SIZE;
 
 	/**
 	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.

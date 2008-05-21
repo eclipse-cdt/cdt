@@ -4721,4 +4721,19 @@ public class AST2Tests extends AST2BaseTest {
     		assertSame(b2, b3);
 		}
     }
+    
+    // #define foo __typeof__((int*)0 - (int*)0)
+    // typedef foo ptrdiff_t;
+    public void testRedefinePtrdiff_Bug230895() throws Exception {
+    	final boolean[] isCpps= {false, true};
+    	String code= getAboveComment();
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    		IBinding b1= ba.assertNonProblem("ptrdiff_t", 9);
+    		assertInstance(b1, ITypedef.class);
+    		ITypedef td= (ITypedef) b1;
+    		IType t= td.getType();
+    		assertFalse(t instanceof ITypedef);
+		}    	
+    }
 }

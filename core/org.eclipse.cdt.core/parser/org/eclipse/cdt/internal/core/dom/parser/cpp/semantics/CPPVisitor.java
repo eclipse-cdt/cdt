@@ -1918,8 +1918,12 @@ public class CPPVisitor {
 	        			IScope scope = getContainingScope(expression);
 	        			try {
 	        				IBinding[] bs = scope.find(PTRDIFF_T);
-	        				if (bs.length > 0 && bs[0] instanceof IType) {
-	        					return (IType) bs[0];
+	        				if (bs.length > 0) {
+	        					for (IBinding b : bs) {
+	        						if (b instanceof IType && CPPSemantics.declaredBefore(b, binary, false)) {
+	        							return (IType) b;
+	        						}
+								}
 	        				}
 	        			} catch (DOMException e) {
 	        			}

@@ -1969,11 +1969,12 @@ public class RenameVariableTests extends RenameTests {
         String contents = writer.toString();
         IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
         
-        int offset =  contents.indexOf("v1") ; //$NON-NLS-1$
-        offset=  contents.indexOf("v1", offset+1) ; //$NON-NLS-1$        
-        Change changes = getRefactorChanges(cpp, offset, "z"); //$NON-NLS-1$
-        assertTotalChanges( 1, changes );
-        assertChange( changes, cpp, offset, 2, "z" );  //$NON-NLS-1$
+        int offset1=  contents.indexOf("v1") ; //$NON-NLS-1$
+        int offset2=  contents.indexOf("v1", offset1+1) ; //$NON-NLS-1$        
+        Change changes = getRefactorChanges(cpp, offset2, "z"); //$NON-NLS-1$
+        assertTotalChanges( 2, changes );
+        assertChange( changes, cpp, offset1, 2, "z" );  //$NON-NLS-1$
+        assertChange( changes, cpp, offset2, 2, "z" );  //$NON-NLS-1$
     }
     
     public void testBug72646() throws Exception {

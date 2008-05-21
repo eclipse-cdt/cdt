@@ -159,7 +159,7 @@ public class CPPSemantics {
 	public static final IType VOID_TYPE = new CPPBasicType(IBasicType.t_void, 0);
 
 	// Set to true for debugging.
-	public static boolean traceBindingResolution = true;
+	public static boolean traceBindingResolution = false;
 	
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {

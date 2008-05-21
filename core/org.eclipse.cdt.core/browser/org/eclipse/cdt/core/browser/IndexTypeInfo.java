@@ -531,6 +531,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + elementType;
+		result = prime * result + ((fileLocal == null) ? 0 : fileLocal.hashCode());
 		result = prime * result + IndexTypeInfo.hashCode(fqn);
 		result = prime * result + IndexTypeInfo.hashCode(params);
 		return result;
@@ -549,6 +550,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			return false;
 		IndexTypeInfo other = (IndexTypeInfo) obj;
 		if (elementType != other.elementType)
+			return false;
+		if (fileLocal == null) {
+			if (other.fileLocal != null)
+				return false;
+		} else if (!fileLocal.equals(other.fileLocal))
 			return false;
 		if (!Arrays.equals(fqn, other.fqn))
 			return false;

@@ -8,6 +8,7 @@
  * Contributors:
  *    IBM - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -68,6 +70,14 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
 			expression.setParent(this);
 			expression.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
 		}
+    }
+    
+    public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ata) {
+    	templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, ata);
+    	if (ata != null) {
+    		ata.setParent(this);
+    		ata.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
+    	}
     }
 
     public IASTNode[] getTemplateArguments() {

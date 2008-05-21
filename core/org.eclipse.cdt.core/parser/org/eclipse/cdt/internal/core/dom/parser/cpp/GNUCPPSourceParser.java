@@ -11,6 +11,7 @@
  *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
  *     Ed Swartz (Nokia)
  *     Mike Kucera (IBM)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -77,6 +78,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -270,64 +272,87 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
         return last;
     }
-
     
     protected List<IASTNode> templateArgumentList() throws EndOfFileException, BacktrackException {
-        IToken start = LA(1);
-        int startingOffset = start.getOffset();
-        int endOffset = 0;
-        start = null;
-        List<IASTNode> list = new ArrayList<IASTNode>();
+    	IToken start = LA(1);
+    	int startingOffset = start.getOffset();
+    	int endOffset = 0;
+    	start = null;
+    	List<IASTNode> list = new ArrayList<IASTNode>();
 
-        boolean completedArg = false;
-        boolean failed = false;
+    	boolean failed = false;
 
-        final int initialTemplateIdScopesSize= templateIdScopes.size();
-        templateIdScopes.push(IToken.tLT);
-        try {
-        	while (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
-        		completedArg = false;
+    	final int initialTemplateIdScopesSize= templateIdScopes.size();
+    	templateIdScopes.push(IToken.tLT);
+    	try {
+    		while (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
+    			IToken argStart = mark();
+    			IASTTypeId typeId = typeId(false);
 
-        		IToken mark = mark();
-        		IASTTypeId typeId = typeId(false);
-        		if (typeId == null) {
-        			backup(mark);
-        		} else if (LT(1) != IToken.tCOMMA && LT(1) != IToken.tGT && LT(1) != IToken.tEOC){
-        			//didn't consume the whole argument, probably confused typeId with idExpression
-        			//backup and try the assignmentExpression
-        			backup(mark);
-        		} else {
-        			list.add(typeId);
-        			completedArg = true;
-        		}
-        		if (!completedArg) {
-        			try {
-        				IASTExpression expression = assignmentExpression();
-        				list.add(expression);
-        				completedArg = true;
-        			} catch (BacktrackException e) {
-        				backup(mark);
-        			}
-        		}
+    			if(typeId != null && (LT(1)==IToken.tCOMMA || LT(1)==IToken.tGT || LT(1)==IToken.tEOC)) {
+    				// potentially a type-id - check for id-expression ambiguity
+    				IToken typeIdEnd= mark();
 
-        		if (LT(1) == IToken.tCOMMA) {
-        			consume();
-        		} else if (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
-        			failed = true;
-        			endOffset = LA(1).getEndOffset();
-        			break;
-        		}
-        	}
-        }
-        finally {
-        	do {
-        		templateIdScopes.pop();
-        	} while (templateIdScopes.size() > initialTemplateIdScopesSize);
-        }
-        if (failed)
-            throwBacktrack(startingOffset, endOffset - startingOffset);
+    				backup(argStart);
+    				try {
+    					IASTExpression expression = assignmentExpression();
+    					if(expression instanceof IASTIdExpression) {
+    						IASTIdExpression idExpression= (IASTIdExpression) expression;
+    						if(idExpression.getName() instanceof ICPPASTTemplateId) {
+    							/*
+    							 * A template-id cannot be used in an id-expression as a template argument.
+    							 * 
+    							 * 5.1-11 A template-id shall be used as an unqualified-id only as specified in
+    							 * 14.7.2, 14.7, and 14.5.4.
+    							 */
+    							throw backtrack;
+    						}
 
-        return list;
+    						if (mark() != typeIdEnd) 
+    							throw backtrack;
+
+    						ICPPASTAmbiguousTemplateArgument ambiguity= createAmbiguousTemplateArgument();
+    						ambiguity.addTypeId(typeId);
+    						ambiguity.addIdExpression(idExpression);
+    						list.add(ambiguity);
+    					} else {
+    						// prefer the typeId at this stage
+    						throw backtrack;
+    					}
+    				} catch (BacktrackException e) {
+    					// no ambiguity - its a type-id
+    					list.add(typeId);
+    					backup(typeIdEnd);
+    				}
+    			} else {
+    				// not a type-id - try as expression
+    				backup(argStart);
+    				try {
+    					IASTExpression expression = assignmentExpression();
+    					list.add(expression);
+    				} catch (BacktrackException e) {
+    					backup(argStart);
+    				}
+    			}
+
+    			if (LT(1) == IToken.tCOMMA) {
+    				consume();
+    			} else if (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
+    				failed = true;
+    				endOffset = LA(1).getEndOffset();
+    				break;
+    			}
+    		}
+    	}
+    	finally {
+    		do {
+    			templateIdScopes.pop();
+    		} while (templateIdScopes.size() > initialTemplateIdScopesSize);
+    	}
+    	if (failed)
+    		throwBacktrack(startingOffset, endOffset - startingOffset);
+
+    	return list;
     }
 
     /**
@@ -1610,6 +1635,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTAmbiguousExpression createAmbiguousExpression() {
         return new CPPASTAmbiguousExpression();
     }
+    
+    protected ICPPASTAmbiguousTemplateArgument createAmbiguousTemplateArgument() {
+    	return new CPPASTAmbiguousTemplateArgument();
+    }
 
     protected IASTArraySubscriptExpression createArraySubscriptExpression() {
         return new CPPASTArraySubscriptExpression();
@@ -2540,10 +2569,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (args != null)
                 for (int i = 0; i < args.size(); ++i) {
                     IASTNode n = args.get(i);
-                    if (n instanceof IASTTypeId)
+                    if (n instanceof IASTTypeId) {
                         result.addTemplateArgument((IASTTypeId) n);
-                    else if(n instanceof IASTExpression)
+                    } else if(n instanceof IASTExpression) {
                         result.addTemplateArgument((IASTExpression) n);
+                    } else if(n instanceof ICPPASTAmbiguousTemplateArgument) {
+                    	result.addTemplateArgument((ICPPASTAmbiguousTemplateArgument) n);
+                    }
                 }
         }
         return result;

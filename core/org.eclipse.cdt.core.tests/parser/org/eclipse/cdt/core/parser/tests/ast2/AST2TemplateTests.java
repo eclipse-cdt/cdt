@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -2478,7 +2479,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	const int i= 1;
 	//	A<i> a1;
-	public void _testNonTypeArgumentIsIDExpression_229942_a() throws Exception {
+	public void testNonTypeArgumentIsIDExpression_229942_a() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2497,7 +2498,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//     const int i= 1;
 	//  };
-	public void _testNonTypeArgumentIsIDExpression_229942_b() throws Exception {
+	public void testNonTypeArgumentIsIDExpression_229942_b() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2592,7 +2593,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	template <class T>
 	//	inline const void foo(void (*f)(A<i>), T* t) { // disallowed, but we're testing the AST
 	//	}
-	public void _testTypeIdAsTemplateArgumentIsTypeId_229942_g() throws Exception {
+	public void testTypeIdAsTemplateArgumentIsTypeId_229942_g() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2603,6 +2604,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		// 17 is i in A<i>
 		assertInstance(col.getName(17).getParent(), IASTIdExpression.class);
+	}
+	
+	//	typedef int td;
+	//	template<> class Alias<td const *> {
+	//	};
+	public void testNonAmbiguityCase_229942_h() throws Exception {
+		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP);
+		CPPNameCollector col= new CPPNameCollector();
+		tu.accept(col);
+
+		// 2 is Alias
+		ICPPASTTemplateId tid= assertInstance(col.getName(2).getParent(), ICPPASTTemplateId.class);
+		IASTNode[] args= tid.getTemplateArguments();
+		assertEquals(1, args.length);
+		assertInstance(args[0], IASTTypeId.class);
 	}
 	
 	//  // From discussion in 207840. See 14.3.4.

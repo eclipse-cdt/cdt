@@ -349,7 +349,11 @@ public class CPPSemantics {
 	        if (name.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !(binding instanceof IType || binding instanceof ICPPConstructor)) {
 	        	IASTNode parent = name.getParent().getParent();
 	        	if (parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
-	        		//don't do a problem here
+	        		if(!(binding instanceof IType)) {
+	        		    // a type id needs to hold a type
+	        			binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name());
+	        		}
+	        		// don't create a problem here
 	        	} else {
 	        		binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name());
 	        	}

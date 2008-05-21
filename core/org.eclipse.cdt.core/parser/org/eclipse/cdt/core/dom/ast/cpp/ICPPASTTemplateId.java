@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -57,19 +58,24 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	/**
 	 * Add template argument.
 	 * 
-	 * @param typeId
-	 *            <code>IASTTypeId</code>
+	 * @param typeId <code>IASTTypeId</code>
 	 */
 	public void addTemplateArgument(IASTTypeId typeId);
 
 	/**
 	 * Add template argument.
 	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code>
+	 * @param expression <code>IASTExpression</code>
 	 */
 	public void addTemplateArgument(IASTExpression expression);
 
+	/**
+	 * Add an ambiguity node for later resolution.
+	 * 
+	 * @param ambiguity
+	 */
+	public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ambiguity);
+	
 	/**
 	 * Get all template arguments. (as nodes)
 	 * 

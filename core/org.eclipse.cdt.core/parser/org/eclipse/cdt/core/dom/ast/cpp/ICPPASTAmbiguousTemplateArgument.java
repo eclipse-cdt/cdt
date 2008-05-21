@@ -1,0 +1,35 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Symbian Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Andrew Ferguson (Symbian) - Initial Implementation
+ *******************************************************************************/
+package org.eclipse.cdt.core.dom.ast.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+
+/**
+ * Place-holder in the AST for template arguments that are not yet
+ * understood.
+ */
+public interface ICPPASTAmbiguousTemplateArgument extends IASTNode {
+	/**
+	 * Add an partial parse tree that could be a suitable subtree representing
+	 * the template argument
+	 * @param idExpression a non-null id-expression
+	 */
+	public void addIdExpression(IASTIdExpression idExpression);
+	
+	/**
+	 * Add an partial parse tree that could be a suitable subtree representing
+	 * the template argument
+	 * @param typeId a non-null type-id
+	 */
+	public void addTypeId(IASTTypeId typeId);
+}

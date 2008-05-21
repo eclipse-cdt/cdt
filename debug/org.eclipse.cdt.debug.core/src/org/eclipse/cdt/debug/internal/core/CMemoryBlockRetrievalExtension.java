@@ -257,14 +257,15 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				// OK, expression is not a simple literal address; keep trucking and try to resolve as expression					
 				CStackFrame frame = getStackFrame( debugElement );
 				if ( frame != null ) {
-					// We need to provide a better way for retrieving the address of expression
+					// Get the address of the expression
 					ICDIExpression cdiExpression = frame.getCDITarget().createExpression( expression );
 					exp = new CExpression( frame, cdiExpression, null );
 					IValue value = exp.getValue();
 					if ( value instanceof ICValue ) {
 						ICType type = ((ICValue)value).getType();
-						if ( type != null && (type.isPointer() || type.isIntegralType() || type.isArray()) ) {
-							address = value.getValueString();
+						if ( type != null ) {
+							// get the address for the expression, allow all types
+							address = frame.evaluateExpressionToString(exp.getExpressionString());
 							if ( address != null ) {
 								// ???
 								BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$

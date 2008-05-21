@@ -215,64 +215,67 @@ public abstract class AbstractMIControl extends AbstractDsfService
         if (fStoppedCommandProcessing) {
             rm.setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
             rm.done();
-        } else if ( fRxCommands.size() > 3 ) {
-        	
+        } else {
         	/*
-        	 *  We  only allow three  outstanding commands  to be on the wire  to the backend
-        	 *  at any one time. This allows for coalesence as well as allowing for canceling
+        	 *  We only allow three outstanding commands to be on the wire to the backend
+        	 *  at any one time. This allows for coalescing as well as canceling
         	 *  existing commands on a state change. So we add it to the waiting list and let
         	 *  the user know they can now work with this item if need be.
         	 */
         	fCommandQueue.add(handle);
             processCommandQueued(handle);
-        } else {
-        	
-        	/*
-        	 *  We are putting this one on the wire. We need to add it to the waiting list so
-        	 *  the user has the chance to cancel it when we tell them we are acknowledging it
-        	 *  has been officially accepted. They could choose to cancel it before we go and
-        	 *  send it. That is why we put it into the QUEUE and then check to see if it  is
-        	 *  still there.
-        	 */
-        	fCommandQueue.add(handle);
-            processCommandQueued(handle);
             
-            if ( fCommandQueue.remove(handle) ) {
-            	processCommandSent(handle);
-            	
-            	// Before the command is sent, Check the Thread Id and send it to 
-            	// the queue only if the id has been changed.
-            	if( handle.getThreadId()!= null && 
-            			handle.getThreadId().intValue() != fCurrentThreadId && handle.getThreadId().intValue() != 0)
-            	{
-            		// Re-set the level
-            		fCurrentThreadId = handle.getThreadId().intValue();
-            		CommandHandle cmdHandle = new CommandHandle(
-            		    new MIThreadSelect(handle.fCommand.getContext(), fCurrentThreadId), null);
-            		cmdHandle.generateTokenId();
-            		fTxCommands.add(cmdHandle);
-            	}
-
-            	// Before the command is sent, Check the Stack level and send it to 
-            	// the queue only if the level has been changed. 
-            	if( handle.getStackFrameId()!= null && 
-            			handle.getStackFrameId().intValue() != fCurrentStackLevel)
-            	{
-            		// Re-set the level
-            		fCurrentStackLevel = handle.getStackFrameId().intValue();
-            		CommandHandle cmdHandle = new CommandHandle(
-            		    new MIStackSelectFrame(handle.fCommand.getContext(), fCurrentStackLevel), null);
-            		cmdHandle.generateTokenId();
-            		fTxCommands.add(cmdHandle);
-            	}
-        		handle.generateTokenId();
-        		fTxCommands.add(handle);
+            if (fRxCommands.size() < 3) {
+                // In a separate dispatch cycle.  This allows command listeners 
+            	// to respond to the command queued event.  
+                getExecutor().execute(new DsfRunnable() {
+                    public void run() {
+                        processNextQueuedCommand();
+                    }
+                });
             }
         }
         
         return handle;
     }
-    
+
+    private void processNextQueuedCommand() {
+		if ( fCommandQueue.size() > 0 ) {
+			CommandHandle handle = fCommandQueue.remove(0);
+			if ( handle != null ) {
+				processCommandSent(handle);
+
+				// Before the command is sent, Check the Thread Id and send it to 
+				// the queue only if the id has been changed.
+				if( handle.getThreadId()!= null && 
+						handle.getThreadId().intValue() != fCurrentThreadId && handle.getThreadId().intValue() != 0)
+				{
+					// Re-set the level
+					fCurrentThreadId = handle.getThreadId().intValue();
+					CommandHandle cmdHandle = new CommandHandle(
+							new MIThreadSelect(handle.fCommand.getContext(), fCurrentThreadId), null);
+					cmdHandle.generateTokenId();
+					fTxCommands.add(cmdHandle);
+				}
+
+				// Before the command is sent, Check the Stack level and send it to 
+				// the queue only if the level has been changed. 
+				if( handle.getStackFrameId()!= null && 
+						handle.getStackFrameId().intValue() != fCurrentStackLevel)
+				{
+					// Re-set the level
+					fCurrentStackLevel = handle.getStackFrameId().intValue();
+					CommandHandle cmdHandle = new CommandHandle(
+							new MIStackSelectFrame(handle.fCommand.getContext(), fCurrentStackLevel), null);
+					cmdHandle.generateTokenId();
+					fTxCommands.add(cmdHandle);
+				}
+				handle.generateTokenId();
+				fTxCommands.add(handle);
+			}
+		}
+    }
+
     /*
      *   This is the command which allows the user to retract a previously issued command. The
      *   state of the command  is that it is in the waiting queue  and has not yet been handed 
@@ -736,14 +739,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             
             getExecutor().execute(new DsfRunnable() {
             	public void run() {
-            		if ( fCommandQueue.size() > 0 ) {
-            			CommandHandle comHandle = fCommandQueue.remove(0);
-            			if ( comHandle != null ) {
-            				processCommandSent(comHandle);
-                    		comHandle.generateTokenId();
-            				fTxCommands.add(comHandle);
-            			}
-            		}
+        			processNextQueuedCommand();
             	}
             });
         }

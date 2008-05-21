@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -61,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.Keywords;
 
 
@@ -371,15 +373,15 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendArrayQualifiersString(StringBuilder buffer, IASTArrayDeclarator declarator) {
 		final IASTArrayModifier[] modifiers= declarator.getArrayModifiers();
-		for (int i = 0; i < modifiers.length; i++) {
+		final int count= modifiers.length;
+		for (int i = 0; i < count; i++) {
 			buffer.append(Keywords.cpLBRACKET).append(Keywords.cpRBRACKET);
 		}
 		return buffer;
 	}
 
 	private static StringBuilder appendPointerOperatorsString(StringBuilder buffer, IASTPointerOperator[] pointerOperators) {
-		for (int i= 0; i < pointerOperators.length; i++) {
-			final IASTPointerOperator pointerOperator= pointerOperators[i];
+		for (final IASTPointerOperator pointerOperator : pointerOperators) {
 			if (pointerOperator instanceof IASTPointer) {
 				final IASTPointer pointer= (IASTPointer)pointerOperator;
 				if (pointer instanceof ICPPASTPointerToMember) {
@@ -586,6 +588,11 @@ public class ASTStringUtil {
 				case ICASTSimpleDeclSpecifier.t_Bool:
 					buffer.append(Keywords._BOOL).append(' ');
 					break;
+				}
+			} else if (simpleDeclSpec instanceof IGPPASTSimpleDeclSpecifier) {
+				final IGPPASTSimpleDeclSpecifier gppSimpleDeclSpec= (IGPPASTSimpleDeclSpecifier)simpleDeclSpec;
+				if (gppSimpleDeclSpec.isLongLong()) {
+					buffer.append(Keywords.LONG_LONG).append(' ');
 				}
 			}
 			switch (simpleDeclSpec.getType()) {

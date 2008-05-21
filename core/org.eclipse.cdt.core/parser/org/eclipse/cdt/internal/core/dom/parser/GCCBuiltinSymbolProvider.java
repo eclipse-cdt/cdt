@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -270,7 +270,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		cpp_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG);
 		cpp_long_double = new CPPBasicType(IBasicType.t_double, ICPPBasicType.IS_LONG);
 		cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, ICPPBasicType.IS_LONG | ICPPBasicType.IS_COMPLEX, null);
-		cpp_long_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG_LONG);
+		cpp_long_long_int = new GPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG_LONG, null);
 		cpp_signed_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_SIGNED);
 		
 		cpp_unsigned_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED);

@@ -5527,13 +5527,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 	
 	// long x= 10L;
-	public void _testLongLiteral_225534() throws Exception {
+	public void testLongLiteral_225534() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		IASTDeclarator decltor= ((IASTSimpleDeclaration)tu.getDeclarations()[0]).getDeclarators()[0];
 		IASTInitializerExpression init= (IASTInitializerExpression) decltor.getInitializer();
 		ICPPASTLiteralExpression exp= (ICPPASTLiteralExpression) init.getExpression();
 		ICPPBasicType type= (ICPPBasicType) CPPVisitor.getExpressionType(exp);
-		assertEquals(ICPPBasicType.IS_LONG, type.getType());
+		assertTrue(type.isLong());
 	}
 	
 	//	void foo/*_a*/(int x) {}
@@ -5567,13 +5567,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		foo/*f2*/(010UL);
 	//		foo/*f3*/(0x010UL);
 	//
-	//		foo/*g1*/(100000000000000000L);
-	//		foo/*g2*/(0100000000000L);
-	//		foo/*g3*/(0x01000000000L);
+	//		foo/*g1*/(100000000000000000LL);
+	//		foo/*g2*/(0100000000000LL);
+	//		foo/*g3*/(0x01000000000LL);
 	//
-	//		foo/*h1*/(100000000000000000UL);
-	//		foo/*h2*/(0100000000000UL);
-	//		foo/*h3*/(0x01000000000UL);
+	//		foo/*h1*/(100000000000000000ULL);
+	//		foo/*h2*/(0100000000000ULL);
+	//		foo/*h3*/(0x01000000000ULL);
 	//
 	//		foo/*i1*/(11.1F);
 	//		foo/*i2*/(11E1F);
@@ -5584,7 +5584,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		foo/*k1*/(11.1L);
 	//		foo/*k2*/(11.1E1L);
 	//	}
-	public void _testLiteralsViaOverloads_225534() throws Exception {
+	public void testLiteralsViaOverloads_225534() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		char[] cs= {'a','b','e','f','g','h','i','j','k'};
 		for(char c : cs) {

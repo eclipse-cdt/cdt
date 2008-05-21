@@ -1808,7 +1808,8 @@ public class CPPVisitor {
 	        IType type = createType(id.getDeclSpecifier());
 	        return createType(type, id.getAbstractDeclarator());
 	    } else if (expression instanceof ICPPASTLiteralExpression) {
-	    	switch(((ICPPASTLiteralExpression) expression).getKind()) {
+	    	ICPPASTLiteralExpression lit= (ICPPASTLiteralExpression) expression;
+	    	switch(lit.getKind()) {
 	    		case ICPPASTLiteralExpression.lk_this : {
 	    			IScope scope = getContainingScope(expression);
 	    			return getThisType(scope);
@@ -1818,10 +1819,10 @@ public class CPPVisitor {
 	    			return new CPPBasicType(ICPPBasicType.t_bool, 0, expression);
 	    		case IASTLiteralExpression.lk_char_constant:
 	    			return new CPPBasicType(IBasicType.t_char, 0, expression);
-	    		case IASTLiteralExpression.lk_float_constant:
-	    			return new CPPBasicType(IBasicType.t_float, 0, expression);
-	    		case IASTLiteralExpression.lk_integer_constant:
-	    			return new CPPBasicType(IBasicType.t_int, 0, expression);
+	    		case IASTLiteralExpression.lk_float_constant: 
+	    			return classifyTypeOfFloatLiteral(lit);
+	    		case IASTLiteralExpression.lk_integer_constant: 
+	    			return classifyTypeOfIntLiteral(lit);
 	    		case IASTLiteralExpression.lk_string_literal:
 	    			IType type = new CPPBasicType(IBasicType.t_char, 0, expression);
 	    			type = new CPPQualifierType(type, true, false);
@@ -2093,6 +2094,64 @@ public class CPPVisitor {
 	    return null;
 	}
 	
+	private static IType classifyTypeOfFloatLiteral(final IASTLiteralExpression expr) {
+		final String lit= expr.toString();
+		final int len= lit.length();
+		int kind= IBasicType.t_double;
+		int flags= 0;
+		if (len > 0) {
+			switch(lit.charAt(len-1)) {
+			case 'f': case 'F':
+				kind= IBasicType.t_float;
+				break;
+			case 'l': case 'L':
+				flags |= ICPPBasicType.IS_LONG;
+				break;
+			}
+		}
+		return new CPPBasicType(kind, flags, expr);
+	}
+
+	private static IType classifyTypeOfIntLiteral(IASTLiteralExpression expression) {
+		int makelong= 0;
+		boolean unsigned= false;
+	
+		final String lit= expression.toString();
+		for (int i=lit.length()-1; i >=0; i--) {
+			final char c= lit.charAt(i);
+			if (!(c > 'f' && c <= 'z') && !(c > 'F' && c <= 'Z')) {
+				break;
+			}
+			switch (lit.charAt(i)) {
+			case 'u':
+			case 'U':
+				unsigned = true;
+				break;
+			case 'l':
+			case 'L':
+				makelong++;
+				break;
+			}
+		}
+
+		int flags= 0;
+		if (unsigned) {
+			flags |= ICPPBasicType.IS_UNSIGNED;
+		}
+		
+		if (makelong > 1) {
+			flags |= ICPPBasicType.IS_LONG_LONG;
+			GPPBasicType result = new GPPBasicType(IBasicType.t_int, flags, null);
+			result.setValue(expression);
+			return result;
+		} 
+		
+		if (makelong == 1) {
+			flags |= ICPPBasicType.IS_LONG;
+		} 
+		return new CPPBasicType(IBasicType.t_int, flags, expression);
+	}
+
 	public static IASTDeclarator getMostNestedDeclarator(IASTDeclarator dtor) {
 	    if (dtor == null) return null;
 	    IASTDeclarator nested = null;

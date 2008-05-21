@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 10, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -28,11 +25,11 @@ public class GPPBasicType extends CPPBasicType implements IGPPBasicType {
 	public GPPBasicType( int type, int bits, IType typeOf ){
 		super( type, bits );
 		this.typeOf = typeOf;
-		if( type == IBasicType.t_unspecified ){
+		if( this.type == IBasicType.t_unspecified ){
 			if((qualifierBits & ( IS_COMPLEX | IS_IMAGINARY )) != 0 )
-				type = IBasicType.t_float;
+				this.type = IBasicType.t_float;
 			else if( (qualifierBits & IS_LONG_LONG) != 0 )
-				type = IBasicType.t_int;
+				this.type = IBasicType.t_int;
 		}
 	}
 

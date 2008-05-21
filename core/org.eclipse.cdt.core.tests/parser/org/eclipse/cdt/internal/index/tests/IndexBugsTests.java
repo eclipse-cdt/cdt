@@ -1104,7 +1104,7 @@ public class IndexBugsTests extends BaseTestCase {
 			IIndexBinding[] bindings = fIndex.findBindings("func_209049".toCharArray(),
 					IndexFilter.ALL, NPM);
 			IFunctionType ft = ((IFunction) bindings[0]).getType();
-			assertEquals("void (long long)", ASTTypeUtil.getType(ft));
+			assertEquals("void (long long int)", ASTTypeUtil.getType(ft));
 		} finally {
 			fIndex.releaseReadLock();
 		}

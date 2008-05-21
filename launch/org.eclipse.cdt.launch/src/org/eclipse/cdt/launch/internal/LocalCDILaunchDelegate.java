@@ -200,7 +200,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			}
 			cancel( "", -1 ); //$NON-NLS-1$
 		}
-		IPath exePath = getProgramPath( config );
+		IPath exePath = verifyProgramPath( config );
 		if (exePath == null) {
 			exePath= getProgramPathForPid(pid);
 		}

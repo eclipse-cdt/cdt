@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -155,15 +156,12 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
         {
             if( getParent instanceof IASTFunctionDefinition )
                 return r_definition;
-            if( getParent instanceof IASTSimpleDeclaration )
-            {
-                if( getInitializer() != null )
+            if( getParent instanceof IASTSimpleDeclaration ) {
+                final int storage = ((IASTSimpleDeclaration) getParent).getDeclSpecifier().getStorageClass(); 
+                if( getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
                     return r_definition;
                 
-                IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
-                int storage = sd.getDeclSpecifier().getStorageClass(); 
                 if( storage == IASTDeclSpecifier.sc_extern || 
-                    storage == IASTDeclSpecifier.sc_typedef ||
                     storage == IASTDeclSpecifier.sc_static )
                 {
                     return r_declaration;

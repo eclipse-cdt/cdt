@@ -11,9 +11,7 @@
 package org.eclipse.cdt.core.dom.lrparser.c99;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
@@ -74,10 +72,6 @@ public class C99Language extends BaseExtensibleLanguage {
 
 	public int getLinkageID() {
 		return ILinkage.C_LINKAGE_ID;
-	}
-
-	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
-		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
 	}
 
 	@Override

@@ -11,14 +11,12 @@
 package org.eclipse.cdt.core.dom.upc;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeyword;
@@ -43,13 +41,11 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	public static final String ID = PLUGIN_ID + ".upc"; //$NON-NLS-1$ 
 	
 	private static final IDOMTokenMap TOKEN_MAP = new DOMToUPCTokenMap();
-	private static final C99Language C99_LANGUAGE = C99Language.getDefault();
 	
 	private static final UPCLanguage myDefault  = new UPCLanguage();
 	private static final String[] upcKeywords = UPCKeyword.getAllKeywords();
 
 	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
-	
 	
 	
 	public static UPCLanguage getDefault() {
@@ -80,24 +76,10 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	public int getLinkageID() {
 		return ILinkage.C_LINKAGE_ID;
 	}
-	
-	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
-		return C99_LANGUAGE.getSelectedNames(ast, start, length);
-	}
-
-	@Override
-	public String[] getBuiltinTypes() {
-		return C99_LANGUAGE.getBuiltinTypes();
-	}
 
 	@Override
 	public String[] getKeywords() {
 		return upcKeywords;
-	}
-
-	@Override
-	public String[] getPreprocessorKeywords() {
-		return C99_LANGUAGE.getPreprocessorKeywords();
 	}
 
 	@Override

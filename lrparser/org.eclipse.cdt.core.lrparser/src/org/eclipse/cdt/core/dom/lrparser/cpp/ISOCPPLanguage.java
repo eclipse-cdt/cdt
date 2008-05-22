@@ -11,9 +11,7 @@
 package org.eclipse.cdt.core.dom.lrparser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
@@ -77,11 +75,6 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	public int getLinkageID() {
 		return ILinkage.CPP_LINKAGE_ID;
 	}
-
-	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
-		return GPPLanguage.getDefault().getSelectedNames(ast, start, length);
-	}
-
 
 	@Override
 	protected ParserLanguage getParserLanguage() {

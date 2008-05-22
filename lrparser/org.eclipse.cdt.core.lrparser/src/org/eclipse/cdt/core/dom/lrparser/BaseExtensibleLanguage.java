@@ -12,7 +12,9 @@ package org.eclipse.cdt.core.dom.lrparser;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -44,7 +46,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	private static final boolean DEBUG_PRINT_GCC_AST = false;
 	private static final boolean DEBUG_PRINT_AST = false;
 	
-	private final ICLanguageKeywords keywords;
+	private ICLanguageKeywords keywords = null;
 	
 	
 	/**
@@ -91,7 +93,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	
 	
 	
-	public BaseExtensibleLanguage() {
+	private void getCLanguageKeywords() {
 		ParserLanguage lang = getParserLanguage();
 		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
 		keywords = new CLanguageKeywords(lang, config);
@@ -203,17 +205,28 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	}
 	
 	
-	
+	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
+		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
+	}
 	
 	public String[] getBuiltinTypes() {
+		if(keywords == null)
+			getCLanguageKeywords();
+			
 		return keywords.getBuiltinTypes();
 	}
 
 	public String[] getKeywords() {
+		if(keywords == null)
+			getCLanguageKeywords();
+		
 		return keywords.getKeywords();
 	}
 
 	public String[] getPreprocessorKeywords() {
+		if(keywords == null)
+			getCLanguageKeywords();
+		
 		return keywords.getPreprocessorKeywords();
 	}
 	

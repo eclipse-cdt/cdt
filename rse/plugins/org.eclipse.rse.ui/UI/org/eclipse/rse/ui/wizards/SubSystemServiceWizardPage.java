@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [190231] Move ISubSystemPropertiesWizardPage from UI to Core
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * David Dykstal (IBM) - [232585] adding help for new subsystem wizard page
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -38,6 +39,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.PropertySetServiceElement;
@@ -75,6 +77,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 
 	public Control createContents(Composite parent)
 	{
+		SystemWidgetHelpers.setHelp(parent, "org.eclipse.rse.ui.ServiceSubsystemWizardPage"); //$NON-NLS-1$
 		_form = new ServicesForm(parent.getShell(), getMessageLine());
 		Control control = _form.createContents(parent);
 		

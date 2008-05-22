@@ -16,11 +16,17 @@ Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
 Kevin Doyle		 (IBM)		  - [212940] Added help for Remote Monitor
 David Dykstal (IBM) - [231630] adding help for services property page
 David Dykstal (IBM) - [232317] adding help for datastore preferences page
+David Dykstal (IBM) - [232585] adding help for service subsystem wizard page
 -->
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <contexts>
    <context id="ServicesPropertyPage">
       <description>This page displays properties that configure the underlying services used by this subsystem.Select the configuration to be used for this subsystem and then edit the properties for each available service in that configuration.</description>
+   </context>
+   <context id="ServiceSubsystemWizardPage">
+      <description>This wizard page displays the properties of the underlying services used by this subsystem.
+
+Select the configuration to be used for this subsystem and then edit the properties for each available service in that configuration.</description>
    </context>
 
 <!-- System types table in RS preferences -->
@@ -45,9 +51,6 @@ David Dykstal (IBM) - [232317] adding help for datastore preferences page
 <context id="teamview">
 <description>Use this view to work with the team-sharable artifacts from the Remote System Explorer: connection, filters, user actions and compile commands. These are contained in profiles. Use this view to see the sharable artifacts by profile, and share those artifacts using the popup menu of the root node. </description>
 <topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
-</context>
-<context id="ServicesPropertyPage">
-   <description>This page displays the properties used to configure the underlying services used by this subsystem. Select the service and then configure its properties with the appropriate values.</description>
 </context>
 <!-- TEAM VIEW ACTION: New Profile action...   -->
 <context id="actn0003">

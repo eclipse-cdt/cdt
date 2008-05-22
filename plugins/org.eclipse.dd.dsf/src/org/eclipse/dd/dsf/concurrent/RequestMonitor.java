@@ -87,9 +87,6 @@ public class RequestMonitor {
         public void requestCanceled(RequestMonitor rm);
     }
 
-    
-    public static final IStatus STATUS_CANCEL = new Status(IStatus.CANCEL, DsfPlugin.PLUGIN_ID, "Request canceled"); //$NON-NLS-1$
-    
     /** 
      * The executor that will be used in order to invoke the handler of the results
      * of the request.

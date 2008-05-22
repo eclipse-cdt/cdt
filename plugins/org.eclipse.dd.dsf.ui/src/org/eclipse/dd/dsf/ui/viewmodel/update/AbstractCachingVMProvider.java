@@ -21,6 +21,7 @@ import java.util.concurrent.Executor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
@@ -193,6 +194,21 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         RootElementMarkerKey(Object rootElement) {
             fRootElement = rootElement;
         }
+        
+        @Override
+        public String toString() {
+            return "Root marker for " + fRootElement;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof RootElementMarkerKey && ((RootElementMarkerKey)obj).fRootElement.equals(fRootElement);
+        }
+        
+        @Override
+        public int hashCode() {
+            return fRootElement.hashCode();
+        }
     }
     
     class RootElementMarkerEntry extends Entry {
@@ -364,7 +380,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                         // This causes the update to return with an error.
                         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
                         // Instead of checking isSuccess(), check getData() != null.
-                        if(getData() != null) {
+                        if(getData() != null && !isCanceled()) {
                             // Check if the udpate retrieved all children by specifying "offset = -1, length = -1"
                             int updateOffset = update.getOffset();
                             if (updateOffset < 0) {
@@ -654,7 +670,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             entry.insert(fCacheListHead);
         }
         
-        // Update they root element marker.
+        // Update they root element marker: 
+        // - ensure that the root marker is root markers' map,
+        // - ensure that the root marker is in the cache map,
+        // - and ensure that it's at the end of the cache. 
         RootElementMarkerKey rootMarker = fRootMarkers.get(key.fRootElement);
         if (rootMarker == null) {
             rootMarker = new RootElementMarkerKey(key.fRootElement);
@@ -664,7 +683,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         if (rootMarkerEntry == null) {
             rootMarkerEntry = new RootElementMarkerEntry(rootMarker);
             addEntry(rootMarker, rootMarkerEntry); 
-        } else {
+        } else if (rootMarkerEntry.fNext != fCacheListHead) {
             rootMarkerEntry.remove();
             rootMarkerEntry.insert(fCacheListHead);
         }
@@ -691,36 +710,44 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
      * {@link IElementPropertiesProvider}.
      */
     @Deprecated
-    public void getModelData(IVMNode node, IViewerUpdate update, IDMService service, final IDMContext dmc, 
-        final DataRequestMonitor rm, Executor executor)
+    public void getModelData(final IVMNode node, final IViewerUpdate update, final IDMService service, final IDMContext dmc, 
+        final DataRequestMonitor rm, final Executor executor)
     { 
-        ElementDataKey key = makeEntryKey(node, update);
-        final ElementDataEntry entry = getElementDataEntry(key);
-        Object dataOrStatus = entry.fDataOrStatus.get(dmc);
-        if(dataOrStatus != null) {
-            if (dataOrStatus instanceof IDMData) {  
-                rm.setData( (IDMData)dataOrStatus );
-            } else {
-                rm.setStatus((IStatus)dataOrStatus );
-            }
-            rm.done();
-        } else {
-            service.getModelData(dmc, 
-                new ViewerDataRequestMonitor<IDMData>(executor, update) {
-                    @Override
-                    protected void handleCompleted() {
-                        if (isSuccess()) {
-                            entry.fDataOrStatus.put(dmc, getData());
-                            rm.setData(getData());
-                        } else {
-                            entry.fDataOrStatus.put(dmc, getStatus());
-                            rm.setStatus(getStatus());
-                        }
-                        rm.done();
+        getExecutor().execute(new DsfRunnable() {
+            public void run() {
+                
+                ElementDataKey key = makeEntryKey(node, update);
+                final ElementDataEntry entry = getElementDataEntry(key);
+                Object dataOrStatus = entry.fDataOrStatus.get(dmc);
+                if(dataOrStatus != null) {
+                    if (dataOrStatus instanceof IDMData) {  
+                        rm.setData( (IDMData)dataOrStatus );
+                    } else {
+                        rm.setStatus((IStatus)dataOrStatus );
                     }
-                }       
-            );
-        }
+                    rm.done();
+                } else {
+                    service.getExecutor().execute(new DsfRunnable() {
+                        public void run() {
+                            service.getModelData(dmc, 
+                                new ViewerDataRequestMonitor<IDMData>(executor, update) {
+                                    @Override
+                                    protected void handleCompleted() {
+                                        if (isSuccess()) {
+                                            entry.fDataOrStatus.put(dmc, getData());
+                                            rm.setData(getData());
+                                        } else {
+                                            entry.fDataOrStatus.put(dmc, getStatus());
+                                            rm.setStatus(getStatus());
+                                        }
+                                        rm.done();
+                                    }
+                                });
+                        }
+                    });
+                }
+            }
+        });
     }
     
     /**

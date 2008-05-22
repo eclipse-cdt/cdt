@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -1056,22 +1057,21 @@ public class CPPTemplates {
 				if (definition instanceof ICPPClassTemplatePartialSpecialization) {
 					ICPPClassTemplatePartialSpecialization spec = (ICPPClassTemplatePartialSpecialization) definition;
 					IASTNode[] args = ((ICPPASTTemplateId) name).getTemplateArguments();
-					IType[] specArgs = null;
 					try {
-						specArgs = spec.getArguments();
+						IType[] specArgs = spec.getArguments();
+						if (args.length == specArgs.length) {
+							int i = 0;
+							for (; i < args.length; i++) {
+								IType t1 = specArgs[i];
+								IType t2 = CPPVisitor.createType(args[i]);
+								if (isSameTemplateArgument(t1, t2))
+									continue;
+								break;
+							}
+							result = (i == args.length);
+						}
 					} catch (DOMException e) {
 						result = false;
-					}
-					if (specArgs != null && args.length == specArgs.length) {
-						int i = 0;
-						for (; i < args.length; i++) {
-							IType t1 = specArgs[i];
-							IType t2 = CPPVisitor.createType(args[i]);
-							if (t1 != null && t2 != null && t1.isSameType(t2))
-								continue;
-							break;
-						}
-						result = (i == args.length);
 					}
 				}
 			} else {
@@ -1087,6 +1087,27 @@ public class CPPTemplates {
 		return result;
 	}
 
+	/**
+	 * @param argA
+	 * @param argB
+	 * @return whether the two specified template arguments are the same
+	 * @throws DOMException
+	 */
+	private static final boolean isSameTemplateArgument(IType argA, IType argB) throws DOMException {
+		// special case treatment for non-type integral parameters
+		if(argA instanceof ICPPBasicType && argB instanceof ICPPBasicType) {
+			IASTExpression eA= ((ICPPBasicType) argA).getValue();
+			IASTExpression eB= ((ICPPBasicType) argB).getValue();
+			if(eA != null && eB != null) {
+				return expressionsEquivalent(eA, eB);
+			} else if(eA == null ^ eB == null) {
+				return false;
+			}
+		}
+		
+		return argA != null && argB != null && argA.isSameType(argB);
+	}
+	
 	static public IType[] createTypeArray(Object[] params) {
 		if (params == null)
 			return IType.EMPTY_TYPE_ARRAY;

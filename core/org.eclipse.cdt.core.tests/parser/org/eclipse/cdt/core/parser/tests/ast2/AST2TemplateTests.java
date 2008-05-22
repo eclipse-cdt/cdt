@@ -2684,4 +2684,32 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPTemplateTypeParameter T3b= ba.assertNonProblem("T3)", 2, ICPPTemplateTypeParameter.class);
 		ICPPClassType b= ba.assertNonProblem("B<>", 3, ICPPClassType.class, ICPPTemplateInstance.class);
 	}
+
+	//	template<class T, int x> class A {public: class X {};};
+	//	template<class T1> class A<T1,1> {public: class Y {};};
+	//	template<class T2> class A<T2,2> {public: class Z {};};
+	//
+	//	class B {};
+	//
+	//	A<B, 0>::X x;
+	//	A<B, 1>::Y y;
+	//	A<B, 2>::Z z;
+	public void testNonTypeArgumentDisambiguation_233460() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPClassType b2= ba.assertNonProblem("A<B, 0>", 7, ICPPClassType.class, ICPPTemplateInstance.class);
+		ICPPClassType b3= ba.assertNonProblem("A<B, 1>", 7, ICPPClassType.class, ICPPTemplateInstance.class);
+		ICPPClassType b4= ba.assertNonProblem("A<B, 2>", 7, ICPPClassType.class, ICPPTemplateInstance.class);
+		
+		assertTrue(!b2.isSameType(b3));
+		assertTrue(!b3.isSameType(b4));
+		assertTrue(!b4.isSameType(b2));
+		
+		ICPPClassType X= ba.assertNonProblem("X x", 1, ICPPClassType.class);
+		ICPPClassType Y= ba.assertNonProblem("Y y", 1, ICPPClassType.class);
+		ICPPClassType Z= ba.assertNonProblem("Z z", 1, ICPPClassType.class);
+		
+		assertTrue(!X.isSameType(Y));
+		assertTrue(!Y.isSameType(Z));
+		assertTrue(!Z.isSameType(X));
+	}
 }

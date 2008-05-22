@@ -41,22 +41,24 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3442a.jar ]; then
+ep_ver=3.4RC1
+ep_date=200805161333
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3445c.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
-    if [ -d eclipse-3.4M7-${ep_arch} ]; then
-      rm -rf eclipse-3.4M7-${ep_arch}
+    if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
+      rm -rf eclipse-${ep_ver}-${ep_arch}
     fi
-    mkdir eclipse-3.4M7-${ep_arch}
-    cd eclipse-3.4M7-${ep_arch}
+    mkdir eclipse-${ep_ver}-${ep_arch}
+    cd eclipse-${ep_ver}-${ep_arch}
   else
     rm -rf eclipse
   fi
-  # Eclipse SDK 3.4M7: Need the SDK so we can link into docs
+  # Eclipse SDK: Need the SDK so we can link into docs
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M7-200805020100/eclipse-SDK-3.4M7-${ep_arch}.tar.gz"
-  tar xfvz eclipse-SDK-3.4M7-${ep_arch}.tar.gz
-  rm eclipse-SDK-3.4M7-${ep_arch}.tar.gz
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-${ep_ver}-${ep_date}/eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz"
+  tar xfvz eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
+  rm eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
   if false ; then
     # Remove P2 due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=225537
     # See http://wiki.eclipse.org/Equinox_p2_Removal
@@ -73,7 +75,7 @@ if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3442a.jar ]; then
     if [ -e eclipse ]; then 
       rm eclipse
     fi
-    ln -s eclipse-3.4M7-${ep_arch}/eclipse eclipse
+    ln -s eclipse-${ep_ver}-${ep_arch}/eclipse eclipse
   fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
@@ -120,9 +122,9 @@ fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M7-200805020100/eclipse-test-framework-3.4M7.zip"
-  unzip -o eclipse-test-framework-3.4M7.zip
-  rm eclipse-test-framework-3.4M7.zip
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-${ep_ver}-${ep_date}/eclipse-test-framework-${ep_ver}.zip"
+  unzip -o eclipse-test-framework-${ep_ver}.zip
+  rm eclipse-test-framework-${ep_ver}.zip
 fi
 if [ ! -f eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   echo "Getting RXTX..."

@@ -23,6 +23,7 @@
  * Rupen Mardirossian (IBM)		-  [210682] created checkForCollision method that returns a boolean for SystemCopyDialog enhancement
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -264,9 +265,12 @@ implements  IValidatorRemoteSelection
 		if (targetConnection == srcConnection)
 		{
 			ss = targetFolder.getParentRemoteFileSubSystem();
-
-
-			ok = ss.copy(srcFileOrFolder, targetFolder, newName, null);
+			try {
+				ss.copy(srcFileOrFolder, targetFolder, newName, null);
+				ok = true;
+			} catch (Exception e) {
+				SystemBasePlugin.logError("Exception occurred during copy", e); //$NON-NLS-1$
+			}
 			if (!ok)
 			{
 				String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getName());

@@ -24,6 +24,7 @@
  * Rupen Mardirossian (IBM)		-  [210682] Modified MoveRemoteFileJob.runInWorkspace to use SystemCopyDialog for collisions in move operations
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -51,6 +52,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
@@ -246,8 +248,12 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
 		
 		boolean ok = false;
-		
-		ok = ss.move(srcFileOrFolder, targetFolder, newName, monitor);
+		try {
+			ss.move(srcFileOrFolder, targetFolder, newName, monitor);
+			ok = true;
+		} catch (Exception e) {
+			SystemBasePlugin.logError("Exception occurred during a move operation", e); //$NON-NLS-1$
+		}
 		if (!ok)
 		{
 			String msgTxt = NLS.bind(FileResources.FILEMSG_MOVE_FILE_FAILED, srcFileOrFolder.getName());

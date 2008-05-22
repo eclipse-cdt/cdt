@@ -54,6 +54,7 @@
  * Rupen Mardirossian (IBM)      - [198728] Folder being copied across systems is added to original set of files in order to extract empty (sub)folders in doDrop method			
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * Rupen Mardirossian (IBM)      - [227213] Copy and pasting to the parent folder will create a "Copy of" that resource
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2255,24 +2256,9 @@ public class SystemViewRemoteFileAdapter
 
 								try
 								{
-									if (targetFS.copy(srcFileOrFolder, targetFolder, name, monitor))
-									{
-										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
-										resultSet.addResource(copiedFile);
-									}
-									else
-									{
-										// need a failed message here
-										String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getAbsolutePath());
-										String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
-
-
-
-									SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-											ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
-											IStatus.ERROR, msgTxt, msgDetails);
-									resultSet.setMessage(msg);
-									}
+									targetFS.copy(srcFileOrFolder, targetFolder, name, monitor);
+									IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
+									resultSet.addResource(copiedFile);
 								}
 								catch (SystemMessageException e)
 								{
@@ -2593,12 +2579,9 @@ public class SystemViewRemoteFileAdapter
 								if (name != null)
 								{
 									monitor.subTask(copyMessage.getLevelOneText());
-									if (targetFS.copy(srcFileOrFolder, targetFolder, name, monitor))
-									{
-										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
-										return copiedFile;
-
-									}
+									targetFS.copy(srcFileOrFolder, targetFolder, name, monitor);
+									IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
+									return copiedFile;
 								}
 							}
 						}
@@ -2799,8 +2782,8 @@ public class SystemViewRemoteFileAdapter
 				}
 			}
 			*/
-			ok = ss.delete(file, monitor);
-
+			ss.delete(file, monitor);
+			ok = true;
 			file.markStale(true);
 			parentFile.markStale(true);
 		}
@@ -2852,7 +2835,6 @@ public class SystemViewRemoteFileAdapter
 			catch (Exception exc)
 			{
 				ok = false;
-				ok = false;
 				String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
 				String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
 
@@ -2864,7 +2846,13 @@ public class SystemViewRemoteFileAdapter
 		}
 		if (ss != null)
 		{
-			ok = ss.deleteBatch(files, monitor);
+			try {
+				ss.deleteBatch(files, monitor);
+				ok = true;
+			} catch (Exception e) {
+				SystemBasePlugin.logError("Exception occurred during batch delete", e); //$NON-NLS-1$
+				ok = false;
+			}
 			return ok;
 		}
 		else
@@ -2960,7 +2948,12 @@ public class SystemViewRemoteFileAdapter
 				localResource = UniversalFileTransferUtility.getTempFileFor(file);
 			}
 
-			ok = ss.rename(file, newName, monitor);
+			try {
+				ss.rename(file, newName, monitor);
+			} catch (Exception e) {
+				SystemBasePlugin.logError("Exception occurred during rename", e); //$NON-NLS-1$
+				ok = false;
+			}
 			if (localResource != null && localResource.exists())
 			{
 

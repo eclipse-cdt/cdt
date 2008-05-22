@@ -12,6 +12,7 @@
  *   - <copied code from org.eclipse.core.tests.resources/ResourceTest (Copyright IBM)>
  *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
  * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -110,16 +111,11 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 
 	public IRemoteFile copySourceFileOrFolder(String sourceFullName, String sourceName, String targetFolderFullName) throws Exception
 	{
-		boolean ok = false;
 		IRemoteFile result = null;
 		IRemoteFile originalTargetArchiveFile = fss.getRemoteFileObject(sourceFullName, mon);
 		IRemoteFile targetFolder = fss.getRemoteFileObject(targetFolderFullName, mon);
-		ok = fss.copy(originalTargetArchiveFile, targetFolder, sourceName, mon);
-		if (ok)
-		{
-			//copy is successful
-			result = fss.getRemoteFileObject(getNewAbsoluteName(targetFolder, sourceName), mon);
-		}
+		fss.copy(originalTargetArchiveFile, targetFolder, sourceName, mon);
+		result = fss.getRemoteFileObject(getNewAbsoluteName(targetFolder, sourceName), mon);
 		//Need to call resolveFilterString of the parent to make sure the newly copied child
 		//is added to the DStore map.  Otherwise, next time when query it, it will just created a
 		//default filter string.  And the dstore server cannot handler it correctly.

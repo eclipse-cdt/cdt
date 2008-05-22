@@ -37,6 +37,7 @@
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  * Martin Oberhuber (Wind River) - [221211] Fix markStale() for delete() operation with exceptions
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -797,14 +798,13 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#copy(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException
+	public void copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IFileService service = getFileService();
 		service.copy(sourceFolderOrFile.getParentPath(), sourceFolderOrFile.getName(), targetFolder.getAbsolutePath(), newName, monitor);
-		return true;
 	}
 
-	public boolean copyBatch(IRemoteFile[] sourceFolderOrFiles, IRemoteFile targetFolder, IProgressMonitor monitor) throws SystemMessageException
+	public void copyBatch(IRemoteFile[] sourceFolderOrFiles, IRemoteFile targetFolder, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IFileService service = getFileService();
 		String[] sourceParents = new String[sourceFolderOrFiles.length];
@@ -816,7 +816,6 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 			sourceNames[i] = sourceFolderOrFiles[i].getName();
 		}
 		service.copyBatch(sourceParents, sourceNames, targetFolder.getAbsolutePath(), monitor);
-		return true;
 	}
 
 	public IRemoteFile getParentFolder(IRemoteFile folderOrFile, IProgressMonitor monitor)
@@ -854,7 +853,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		return createFolder(folderToCreate, monitor);
 	}
 
-	public boolean delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws SystemMessageException
+	public void delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IFileService service = getFileService();
 		String parent = folderOrFile.getParentPath();
@@ -864,10 +863,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		} finally {
 			folderOrFile.markStale(true);
 		}
-		return true;
 	}
 
-	public boolean deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws SystemMessageException
+	public void deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws SystemMessageException
 	{
 
 		String[] parents = new String[folderOrFiles.length];
@@ -882,10 +880,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 		IFileService service = getFileService();
 		service.deleteBatch(parents, names, monitor);
-		return true;
 	}
 
-	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws SystemMessageException
+	public void rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		removeCachedRemoteFile(folderOrFile);
 		IFileService service = getFileService();
@@ -894,10 +891,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		String newPath = srcParent + folderOrFile.getSeparator() + newName;
 		service.rename(srcParent, oldName, newName, monitor);
 		folderOrFile.getHostFile().renameTo(newPath);
-		return true;
 	}
 
-	public boolean move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException
+	public void move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IFileService service = getFileService();
 		String srcParent = sourceFolderOrFile.getParentPath();
@@ -910,23 +906,20 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 			sourceFolderOrFile.markStale(true);
 			targetFolder.markStale(true);
 		}
-		return true;
 	}
 
-	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws SystemMessageException
+	public void setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
 		_hostFileService.setLastModified(parent, name, newDate, monitor);
-		return true;
 	}
 
-	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException
+	public void setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
 		_hostFileService.setReadOnly(parent, name, readOnly, monitor);
-		return true;
 	}
 
 	public ILanguageUtilityFactory getLanguageUtilityFactory()

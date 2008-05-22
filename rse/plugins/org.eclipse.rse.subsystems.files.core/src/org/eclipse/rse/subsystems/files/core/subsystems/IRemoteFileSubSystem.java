@@ -21,6 +21,7 @@
  * Kevin Doyle		(IBM)		 - [208778] new API getOutputSteam for getting an output stream in append mode
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -370,40 +371,43 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *
 	 * @param folderOrFile represents the object to be deleted.
 	 * @param monitor progressMonitor
-	 * @return false if the given folder/file didn't exist to begin with, else true. Throws an exception if anything fails.
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws SystemMessageException;
+	public void delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Delete the given batch of remote file or folder.
 	 * <ul>
 	 *   <li>If any of the inputs are a folder, those folders must be empty for this to succeed.
 	 * </ul>
-	 * Should throw an exception if some files and folders were deleted and others were not due to an exception during the operation.
+	 * <p>
+	 * If an error occurs during the deletion of an item, this operation stops on that item and a {@link SystemMessageException} is thrown.
+	 * Items deleted before that item will remain deleted. Items specified after that item will not be deleted.
+	 * The item on which the error occurs will not be deleted.
 	 * Without an exception thrown in such cases, views may not be refreshed correctly to account for deleted resources.
 	 * @param folderOrFiles represents the objects to be deleted.
 	 * @param monitor progressMonitor
-	 * @return false if any of the given folder/file dont exist to begin with, else true. Throws an exception if anything fails.
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws SystemMessageException;
+	public void deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Rename the given remote file or folder. This renames it in memory and, iff it exists, on disk.
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param newName new name to give it.
 	 * @param monitor the progress monitor
-	 * @return false if the given folder/file didn't exist on disk (still renamed in memory), else true. Throws an exception if anything fails.
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws SystemMessageException;
+	public void rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Move a file or folder to a new target parent folder.
@@ -412,12 +416,12 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param targetFolder The folder to move to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
 	 * @param newName The new name for the moved file or folder
 	 * @param monitor progress monitor
-	 * @return true if the move succeeded
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName,IProgressMonitor monitor) throws SystemMessageException;
+	public void move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName,IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Set the last modified date for the given file or folder. Like a Unix "touch" operation.
@@ -425,12 +429,12 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param newDate new date, in milliseconds from epoch, to assign.
 	 * @param monitor the progress monitor
-	 * @return false if the given folder/file didn't exist on disk (operation fails), else true. Throws an exception if anything fails.
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws SystemMessageException;
+	public void setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Set a files read-only permissions.
@@ -438,12 +442,12 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param readOnly whether to set it to be read-only or not
 	 * @param monitor the progress monitor
-	 * @return false if the given folder/file didn't exist on disk (operation fails), else true. Throws an exception if anything fails.
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
+	public void setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
 
 
 	// ----------------------------
@@ -454,29 +458,32 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 
 	/**
 	 * Copy a file or folder to a new target parent folder.
-	 *
 	 * @param sourceFolderOrFile The file or folder to copy
 	 * @param targetFolder The folder to copy to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
 	 * @param newName The new name for the copied file or folder
 	 * @param monitor progress monitor
-	 * @return true if the copy succeeded
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException;
+	public void copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Copy a set of remote files or folders to a new target parent folder. Precondition: Sources and target must all be on the same system!
+	 * Copy a set of remote files or folders to a new target parent folder. Precondition: Sources and target must all be on the same system.
+	 * <p>
+	 * If an error occurs during the copy of an item, this operation stops on that item and a {@link SystemMessageException} is thrown.
+	 * Items copied before that item will remain copied. Items copied after that item will not be copied.
+	 * The item on which the error occurs will not be copied.
 	 * @param sourceFolderOrFile The file or folder to copy
 	 * @param targetFolder The folder to copy to.
 	 * @param monitor progress monitor
-	 * @return true if all copies succeeded
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since org.eclipse.rse.subsystems.files.core 3.0
 	 */
-	public boolean copyBatch(IRemoteFile[] sourceFolderOrFile, IRemoteFile targetFolder, IProgressMonitor monitor) throws SystemMessageException;
+	public void copyBatch(IRemoteFile[] sourceFolderOrFile, IRemoteFile targetFolder, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Get the remote file and save it locally.

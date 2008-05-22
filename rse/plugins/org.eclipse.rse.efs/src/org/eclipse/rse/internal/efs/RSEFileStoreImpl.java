@@ -27,6 +27,7 @@
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
  * Timur Shipilov   (Xored)      - [224540] [efs] RSEFileStore.mkdir(EFS.NONE, null) doesn't create parent folder
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -560,27 +561,21 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.provider.FileStore#putInfo(org.eclipse.core.filesystem.IFileInfo, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
-		boolean success = true;
 		// connect if needed. Will throw exception if not successful.
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		try {
 			if ((options & EFS.SET_ATTRIBUTES) != 0) {
 				//We cannot currently write isExecutable(), isHidden()
-				success &= subSys.setReadOnly(remoteFile, info.getAttribute(EFS.ATTRIBUTE_READ_ONLY), monitor);
+				subSys.setReadOnly(remoteFile, info.getAttribute(EFS.ATTRIBUTE_READ_ONLY), monitor);
 			}
 			if ((options & EFS.SET_LAST_MODIFIED) != 0) {
-				success &= subSys.setLastModified(remoteFile, info.getLastModified(), monitor);
+				subSys.setLastModified(remoteFile, info.getLastModified(), monitor);
 			}
 		} catch(Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
 					getExceptionMessage(toString(), e), e));
-		}
-		if (!success) {
-			cacheRemoteFile(null);
-			//will throw exception if not exists
-			remoteFile = getRemoteFileObject(monitor, true);
 		}
 	}
 
@@ -719,12 +714,7 @@ public class RSEFileStoreImpl extends FileStore
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		try {
 			cacheRemoteFile(null);
-			boolean success = subSys.delete(remoteFile, monitor);
-			if (!success) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						Messages.DELETE_FAILED));
-			}
+			subSys.delete(remoteFile, monitor);
 		}
 		catch (SystemMessageException e) {
 			throw new CoreException(new Status(IStatus.ERROR,

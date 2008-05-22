@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -93,7 +94,7 @@ public class UniFilePlus extends File {
 	public boolean delete() {
 		boolean ok = true;
 		try {
-			ok = remoteFile.getParentRemoteFileSubSystem().delete(remoteFile, new NullProgressMonitor());
+			remoteFile.getParentRemoteFileSubSystem().delete(remoteFile, new NullProgressMonitor());
 			//hmm, should we set remoteFile to null?
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
@@ -321,7 +322,8 @@ public class UniFilePlus extends File {
 	public boolean renameTo(File dest) {
 		boolean ok = false;
 		try {
-			ok = remoteFile.getParentRemoteFileSubSystem().rename(remoteFile, dest.getName(), new NullProgressMonitor());
+			remoteFile.getParentRemoteFileSubSystem().rename(remoteFile, dest.getName(), new NullProgressMonitor());
+			ok = true;
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
@@ -338,7 +340,8 @@ public class UniFilePlus extends File {
 		if (time < 0) throw new IllegalArgumentException();
 		try {
 			IProgressMonitor monitor = new NullProgressMonitor();
-			ok = remoteFile.getParentRemoteFileSubSystem().setLastModified(remoteFile, time, monitor);
+			remoteFile.getParentRemoteFileSubSystem().setLastModified(remoteFile, time, monitor);
+			ok = true;
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
@@ -353,7 +356,8 @@ public class UniFilePlus extends File {
 	public boolean setReadOnly() {
 		boolean ok = false;
 		try {
-			ok = remoteFile.getParentRemoteFileSubSystem().setReadOnly(remoteFile, true, new NullProgressMonitor());
+			remoteFile.getParentRemoteFileSubSystem().setReadOnly(remoteFile, true, new NullProgressMonitor());
+			ok = true;
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;

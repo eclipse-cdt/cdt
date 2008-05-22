@@ -383,7 +383,7 @@ public class MIStack extends AbstractDsfService
                     // Note: this is a short-cut, but it won't work once we implement retrieving
                     // partial lists of stack frames.
                     int idx = frameDmc.getLevel();
-                    if (idx == -1) {
+                    if (idx == -1 || idx >= getData().getMIFrames().length) {
                         rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE, "Invalid frame " + frameDmc, null));  //$NON-NLS-1$
                         rm.done();
                         return;
@@ -533,7 +533,7 @@ public class MIStack extends AbstractDsfService
         
 	    fRunControl.getCache().execute(
                 new MIStackListLocals(frameDmc, true),
-                new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
+                new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
                     @Override
                     protected void handleSuccess() {
                         localsList.addAll( Arrays.asList(

@@ -761,7 +761,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		ISystemFilter filter = getFilter(element);
 		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
-		return ssParentFactory.showRefreshOnFilter();
+		return ssParentFactory.showRefreshOnFilter() && !filter.isPromptable();
 	}
 
 	// ------------------------------------------------------------

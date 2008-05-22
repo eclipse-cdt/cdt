@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -179,9 +180,13 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * 
      * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy#installed(org.eclipse.jface.viewers.Viewer)
      */
-    public void installed(Viewer viewer) {  
+    public void installed(final Viewer viewer) {  
         fViewer = viewer;
-        fProvider.handleEvent(new ModelProxyInstalledEvent(this, viewer, fRootElement));
+        getVMProvider().getExecutor().execute( new DsfRunnable() {
+            public void run() {
+                fProvider.handleEvent(new ModelProxyInstalledEvent(DefaultVMModelProxyStrategy.this, viewer, fRootElement));
+            }
+        });
     }
     
     /**

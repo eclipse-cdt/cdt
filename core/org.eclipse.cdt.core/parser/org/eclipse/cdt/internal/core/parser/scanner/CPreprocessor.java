@@ -283,9 +283,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
 
         IMacro[] toAdd = config.getAdditionalMacros();
-        for (final IMacro macro : toAdd) {
-        	addMacroDefinition(macro.getSignature(), macro.getExpansion());
-		}
+        if(toAdd != null) {
+        	for (final IMacro macro : toAdd) {
+        		addMacroDefinition(macro.getSignature(), macro.getExpansion());
+        	}
+        }
         
         final Map<String, String> macroDict= info.getDefinedSymbols();
         if (macroDict != null) {

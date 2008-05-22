@@ -28,7 +28,7 @@ umask 0022
 mkdir -p tools
 cd tools
 cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
-	checkout -r M7_34 org.eclipse.releng.basebuilder
+	checkout -r M5_34 org.eclipse.releng.basebuilder
 cd ..
 
 # Let's go!

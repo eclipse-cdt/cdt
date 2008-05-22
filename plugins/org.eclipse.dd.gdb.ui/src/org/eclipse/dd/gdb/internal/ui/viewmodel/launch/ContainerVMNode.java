@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Ericsson and others.
+ * Copyright (c) 2006, 2008 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial API and implementation
+ *     Wind River Systems - Factored out AbstractContainerVMNode
  *******************************************************************************/
 
 package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
@@ -16,30 +17,21 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.AbstractContainerVMNode;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBProcessData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.GDBStartedEvent;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
-import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
-import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -50,13 +42,13 @@ import org.eclipse.ui.IMemento;
 
 
 @SuppressWarnings("restriction")
-public class ContainerVMNode extends AbstractDMVMNode 
-    implements IElementLabelProvider, IElementMementoProvider
+public class ContainerVMNode extends AbstractContainerVMNode
+    implements IElementMementoProvider
 {
 
     
 	public ContainerVMNode(AbstractDMVMProvider provider, DsfSession session) {
-        super(provider, session, IRunControl.IExecutionDMContext.class);
+        super(provider, session);
 	}
 
 	@Override
@@ -75,19 +67,7 @@ public class ContainerVMNode extends AbstractDMVMNode
 	}
 
 	
-    public void update(final ILabelUpdate[] updates) {
-        try {
-            getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
-                    updateLabelInSessionThread(updates);
-                }});
-        } catch (RejectedExecutionException e) {
-            for (ILabelUpdate update : updates) {
-                handleFailedUpdate(update);
-            }
-        }
-    }
-	
+    @Override
 	protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
         	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
@@ -107,8 +87,8 @@ public class ContainerVMNode extends AbstractDMVMNode
             update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
             
             runControl.getProcessData(
-                dmc, 
-                new ViewerDataRequestMonitor<GDBProcessData>(getExecutor(), update) { 
+                dmc,
+                new ViewerDataRequestMonitor<GDBProcessData>(getExecutor(), update) {
 					@Override
                     public void handleCompleted() {
                         if (!isSuccess()) {
@@ -122,46 +102,29 @@ public class ContainerVMNode extends AbstractDMVMNode
         }
     }
 
-    public int getDeltaFlags(Object e) {
-        if(e instanceof IRunControl.IContainerResumedDMEvent || 
-           e instanceof IRunControl.IContainerSuspendedDMEvent) 
-        {
-            return IModelDelta.CONTENT;
-        } else if (e instanceof GDBControl.GDBExitedEvent || e instanceof InferiorExitedDMEvent) {
-            return IModelDelta.CONTENT;
-        } else if (e instanceof GDBStartedEvent) {
-            return IModelDelta.EXPAND;
-        } else if (e instanceof InferiorStartedDMEvent) {
-            return IModelDelta.EXPAND | IModelDelta.SELECT;            
-        } if(e instanceof IStartedDMEvent || e instanceof IExitedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-        return IModelDelta.NO_CHANGE;
-    }
+	@Override
+	public int getDeltaFlags(Object e) {
+		if (e instanceof GDBControl.GDBExitedEvent) {
+	        return IModelDelta.CONTENT;
+	    } else if (e instanceof GDBControl.GDBStartedEvent) {
+	        return IModelDelta.EXPAND;
+	    }
+	    return super.getDeltaFlags(e);
+	}
 
-    public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-    	if(e instanceof IRunControl.IContainerResumedDMEvent || 
-    	   e instanceof IRunControl.IContainerSuspendedDMEvent) 
-    	{
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-        } else if (e instanceof GDBControl.GDBExitedEvent || e instanceof InferiorExitedDMEvent) {
-            // Note: we must process the inferior started/exited events before the thread's 
-            // started/exited events otherwise the inferior's handlers would never be called.
-            parentDelta.setFlags(parentDelta.getFlags() |  IModelDelta.CONTENT);
-        } else if (e instanceof GDBStartedEvent) {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
-        } else if (e instanceof InferiorStartedDMEvent) {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);
-        } else if (e instanceof IStartedDMEvent || e instanceof IExitedDMEvent) {
-            IContainerDMContext containerCtx = DMContexts.getAncestorOfType(((IDMEvent<?>)e).getDMContext(), IContainerDMContext.class);
-            if (containerCtx != null) {
-                parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
-            }
-        }
+	@Override
+	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+		if (e instanceof GDBControl.GDBExitedEvent) {
+	        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+	    } else if (e instanceof GDBControl.GDBStartedEvent) {
+	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
+	    } else {
+	    	super.buildDelta(e, parentDelta, nodeOffset, requestMonitor);
+	    	return;
+	    }
+		requestMonitor.done();
+	 }
 
-    	requestMonitor.done();
-  	 }
-    
     /*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
@@ -190,7 +153,7 @@ public class ContainerVMNode extends AbstractDMVMNode
                                 	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
                                 	if ( runControl != null ) {
                                 		runControl.getProcessData(
-                                		    procDmc, 
+                                		    procDmc,
                                 		    new ViewerDataRequestMonitor<GDBProcessData>(runControl.getExecutor(), request) {
                                                 @Override
                                                 protected void handleCompleted() {
@@ -242,7 +205,7 @@ public class ContainerVMNode extends AbstractDMVMNode
                             	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
                             	if ( runControl != null ) {
                             		runControl.getProcessData(
-                            		    procDmc, 
+                            		    procDmc,
                             		    new ViewerDataRequestMonitor<GDBProcessData>(runControl.getExecutor(), request) {
                                             @Override
                                             protected void handleCompleted() {

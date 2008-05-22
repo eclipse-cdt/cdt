@@ -2712,4 +2712,30 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue(!Y.isSameType(Z));
 		assertTrue(!Z.isSameType(X));
 	}
+	
+	//	template <int x>
+	//	class C {
+	//	public:
+	//		inline C() {};
+	//	};
+	//
+	//	const int _256=0x100;
+	//
+	//	typedef C<_256> aRef;
+	//
+	//	void foo(aRef& aRefence) {}
+	//	void bar(C<_256>& aRefence) {}
+	//	void baz(void) {}
+	//
+	//	int main (void) {
+	//		C<256> t;
+	//		foo(t);
+	//		bar(t);
+	//		baz();
+	//	}
+	public void _testBug207871() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("foo(t)", 3);
+		ba.assertNonProblem("bar(t)", 3);
+	}
 }

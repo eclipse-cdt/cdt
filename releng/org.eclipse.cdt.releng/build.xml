@@ -21,7 +21,7 @@
 		<property name="buildingOSGi" value="true"/>
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
-		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build/scripts"/>
+		<property name="pde.build.scripts" value="${eclipse.pdebuild.scripts}"/>
 		<property name="collectingFolder" value="eclipse"/>
 		<property name="archivePrefix" value="eclipse"/>
 		<property name="buildType" value="I" />

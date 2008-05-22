@@ -120,7 +120,7 @@ public class GDBControl extends AbstractMIControl {
         fGdbPath = gdbPath;
         fExecPath = execPath;
         fGDBLaunchTimeout = gdbLaunchTimeout;
-        fControlDmc = new GDBControlDMContext(session.getId(), getClass().getName() + ":" + ++fgInstanceCounter); //$NON-NLS-1$
+        fControlDmc = new GDBControlDMContext(session.getId(), "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override

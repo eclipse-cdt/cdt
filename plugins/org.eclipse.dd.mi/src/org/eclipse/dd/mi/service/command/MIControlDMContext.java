@@ -57,6 +57,6 @@ public class MIControlDMContext extends AbstractDMContext {
     
     @Override
     public String toString() {
-        return baseToString() + ".control(" + fCommandControlId + ")";  //$NON-NLS-1$//$NON-NLS-2$*/
+        return baseToString() + fCommandControlId;
     }
 }

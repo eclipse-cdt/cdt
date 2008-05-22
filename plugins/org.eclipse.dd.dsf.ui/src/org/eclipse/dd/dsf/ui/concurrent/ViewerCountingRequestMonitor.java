@@ -33,7 +33,10 @@ public class ViewerCountingRequestMonitor extends CountingRequestMonitor {
     
     @Override
     public synchronized boolean isCanceled() { 
-        return fUpdate.isCanceled() || super.isCanceled();
+        // isCanceled() is called implicitly by the super-constructor before fUpdate
+        // is initialized.  The fUpdate != null is here to protect against an NPE 
+        // from that.
+        return (fUpdate != null && fUpdate.isCanceled()) || super.isCanceled();
     }
     
     @Override

@@ -73,8 +73,10 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
      * <br>
      * @param requestMonitor
      */
-    public void requestMonitorDone(V requestMonitor) {
-        ((MultiStatus)getStatus()).merge(requestMonitor.getStatus());
+    public synchronized void requestMonitorDone(V requestMonitor) {
+        if (getStatus() instanceof MultiStatus) {
+            ((MultiStatus)getStatus()).merge(requestMonitor.getStatus());
+        }
         assert fStatusMap.containsKey(requestMonitor);
         fStatusMap.put(requestMonitor, true);
         assert fDoneCounter > 0;

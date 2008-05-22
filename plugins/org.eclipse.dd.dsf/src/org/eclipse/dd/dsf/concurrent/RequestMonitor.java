@@ -143,6 +143,9 @@ public class RequestMonitor {
     
     /** Returns the status of the completed method. */
     public synchronized IStatus getStatus() {
+        if (isCanceled()) {
+            return Status.CANCEL_STATUS;
+        }
         return fStatus; 
     }
     

@@ -92,9 +92,8 @@ public class CountingRequestMonitor extends RequestMonitor {
     
     @Override
     public synchronized void setStatus(IStatus status) {
-        if (!(getStatus() instanceof MultiStatus)) {
-            super.setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Combined status of multiple asynchronous operations", null)); //$NON-NLS-1$
+        if ((getStatus() instanceof MultiStatus)) {
+            ((MultiStatus)getStatus()).add(status);
         }
-        ((MultiStatus)getStatus()).add(status);
     };
 }

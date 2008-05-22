@@ -73,7 +73,7 @@ public class Utilities {
 	 * IRemoteFile object.
 	 */
 	public static String getAsString(IRemoteFile selectedDirectory) {
-		return selectedDirectory.getSystemConnection().getSystemProfileName() + '.' + selectedDirectory.getSystemConnection().getAliasName() + ":" + selectedDirectory.getAbsolutePath(); //$NON-NLS-1$
+		return selectedDirectory.getHost().getSystemProfileName() + '.' + selectedDirectory.getHost().getAliasName() + ":" + selectedDirectory.getAbsolutePath(); //$NON-NLS-1$
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class Utilities {
 	 * UniFilePlus object.
 	 */
 	public static String getAsString(UniFilePlus selectedDirectory) {
-		return selectedDirectory.remoteFile.getSystemConnection().getSystemProfileName() + '.' + selectedDirectory.remoteFile.getSystemConnection().getAliasName() + ":" + selectedDirectory.getPath(); //$NON-NLS-1$
+		return selectedDirectory.remoteFile.getHost().getSystemProfileName() + '.' + selectedDirectory.remoteFile.getHost().getAliasName() + ":" + selectedDirectory.getPath(); //$NON-NLS-1$
 	}
 
 	/**

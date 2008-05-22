@@ -352,7 +352,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
      */
     public String getAbsolutePathPlusConnection()
     {
-    	IHost conn = getSystemConnection();
+    	IHost conn = getHost();
     	if (conn == null)
     	  return getAbsolutePath();
     	else
@@ -1127,7 +1127,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	
 	public String getHostName()
 	{
-		return getSystemConnection().getHostName();
+		return getHost().getHostName();
 	}
 
 

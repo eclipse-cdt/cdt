@@ -258,8 +258,8 @@ implements  IValidatorRemoteSelection
 		targetFolder    = (IRemoteFile)targetContainer;
 		IRemoteFile srcFileOrFolder = (IRemoteFile)oldObject;
 
-		IHost targetConnection = targetFolder.getSystemConnection();
-		IHost srcConnection    = srcFileOrFolder.getSystemConnection();
+		IHost targetConnection = targetFolder.getHost();
+		IHost srcConnection    = srcFileOrFolder.getHost();
 
 		boolean ok = false;
 		if (targetConnection == srcConnection)
@@ -421,7 +421,7 @@ implements  IValidatorRemoteSelection
 		String dlgTitle = (mode==MODE_COPY ? SystemResources.RESID_COPY_TITLE : SystemResources.RESID_MOVE_TITLE);
 
 		firstSelection = getFirstSelectedFile();
-		sourceConnection = firstSelection.getSystemConnection();
+		sourceConnection = firstSelection.getHost();
 		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell, dlgTitle, sourceConnection);
 		dlg.setNeedsProgressMonitor(true);
 		dlg.setMessage(getPromptString());

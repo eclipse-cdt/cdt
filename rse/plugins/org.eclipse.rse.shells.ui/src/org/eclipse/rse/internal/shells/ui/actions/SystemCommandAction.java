@@ -493,7 +493,7 @@ public class SystemCommandAction extends SystemBaseAction
 			return _cmdSubSystem;
 		}
 
-		IHost sysConn = selectedFile.getSystemConnection();
+		IHost sysConn = selectedFile.getHost();
 		if (sysConn != null)
 		{
 			ISubSystem currSubSystem = selectedFile.getParentRemoteFileSubSystem();

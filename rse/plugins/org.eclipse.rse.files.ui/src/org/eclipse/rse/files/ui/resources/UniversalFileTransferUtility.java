@@ -2346,7 +2346,7 @@ public class UniversalFileTransferUtility
 
 		String absolutePath = srcFileOrFolder.getAbsolutePath();
 
-		if (srcFileOrFolder.getSystemConnection().getSystemType().isLocal())
+		if (srcFileOrFolder.getHost().getSystemType().isLocal())
 		{
 			absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath(), srcFileOrFolder.getParentRemoteFileSubSystem());
 		}

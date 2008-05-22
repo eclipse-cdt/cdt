@@ -182,7 +182,7 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 	{
 		IWorkspaceRoot root = SystemBasePlugin.getWorkspaceRoot();
 
-		String projectName = directory.getSystemConnection().getAliasName() + '_' + directory.getName();
+		String projectName = directory.getHost().getAliasName() + '_' + directory.getName();
 		projectName = projectName.replaceAll("[/:*?\"<>|\\\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		IProject editProject = root.getProject(projectName);
 

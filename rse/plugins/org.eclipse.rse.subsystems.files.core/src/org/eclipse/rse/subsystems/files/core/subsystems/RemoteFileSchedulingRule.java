@@ -70,6 +70,6 @@ public class RemoteFileSchedulingRule implements ISchedulingRule
 	
 	public String getHostName()
 	{
-		return _file.getSystemConnection().getHostName();
+		return _file.getHost().getHostName();
 	}
 }

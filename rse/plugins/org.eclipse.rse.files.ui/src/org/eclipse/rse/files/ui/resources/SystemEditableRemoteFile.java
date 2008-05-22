@@ -1382,7 +1382,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		try
 		{
-			if (remoteFile.getSystemConnection().getSystemType().isLocal())
+			if (remoteFile.getHost().getSystemType().isLocal())
 			{
 				// Open local files "in-place", i.e. don't copy them to the 
 				// RemoteSystemsTempFiles project first

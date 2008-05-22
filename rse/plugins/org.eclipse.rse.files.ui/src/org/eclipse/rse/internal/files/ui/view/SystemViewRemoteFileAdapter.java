@@ -2135,7 +2135,7 @@ public class SystemViewRemoteFileAdapter
 							{
 								String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND,
 										srcFileOrFolder.getAbsolutePath(),
-										srcFileOrFolder.getSystemConnection().getAliasName());
+										srcFileOrFolder.getHost().getAliasName());
 
 								SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 										ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
@@ -2545,7 +2545,7 @@ public class SystemViewRemoteFileAdapter
 						{
 							String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND,
 									srcFileOrFolder.getAbsolutePath(),
-									srcFileOrFolder.getSystemConnection().getAliasName());
+									srcFileOrFolder.getHost().getAliasName());
 
 							SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
 									ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,

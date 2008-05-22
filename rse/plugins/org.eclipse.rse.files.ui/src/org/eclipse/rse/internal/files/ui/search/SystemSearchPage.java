@@ -934,14 +934,14 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 					// if it's a file, but not an archive, get the file name, connection info, and parent folder name
 					if (supportsSearch && remoteFile.isFile() && !remoteFile.isArchive()) {
 						fileName = remoteFile.getName();
-						IHost conn = remoteFile.getSystemConnection();
+						IHost conn = remoteFile.getHost();
 						profileName = conn.getSystemProfileName();
 						connectionName = conn.getAliasName();
 						folderName = remoteFile.getParentPath();
 					}
 					// otherwise if it's a folder or an archive, get the connection info and the name
 					else if (supportsSearch && (remoteFile.isDirectory() || (remoteFile.isArchive() && supportsArchiveManagement))) {
-						IHost conn = remoteFile.getSystemConnection();
+						IHost conn = remoteFile.getHost();
 						profileName = conn.getSystemProfileName();
 						connectionName = conn.getAliasName();
 						folderName = remoteFile.getAbsolutePath();

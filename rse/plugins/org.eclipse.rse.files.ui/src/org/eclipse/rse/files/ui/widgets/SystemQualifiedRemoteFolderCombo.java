@@ -733,7 +733,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 		  	    currFolder = getFolder();
 		  	  } catch (Exception exc) {}
 		  	  if (currFolder != null)
-		  	    defaultConnection = currFolder.getSystemConnection();
+		  	    defaultConnection = currFolder.getHost();
 		  	    
 		  	  if (browseAction == null)
 		  	  {

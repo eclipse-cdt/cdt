@@ -277,7 +277,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	 */
 	public void setRootFolder(IRemoteFile rootFolder)
 	{
-		setRootFolder(rootFolder.getSystemConnection(),rootFolder.getAbsolutePath());
+		setRootFolder(rootFolder.getHost(),rootFolder.getAbsolutePath());
 	}
 	/**
 	 * Set a file or folder to preselect. This will:

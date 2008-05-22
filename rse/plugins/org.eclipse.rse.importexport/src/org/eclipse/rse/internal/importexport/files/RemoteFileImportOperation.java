@@ -459,7 +459,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 			return;
 		}
 		try {
-			IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem(((UniFilePlus) fileObject).remoteFile.getSystemConnection());
+			IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem(((UniFilePlus) fileObject).remoteFile.getHost());
 			// 030820: added the following kludge to circumvent problem in
 			// artemis.  (artemis 3 will fix this)
 			// TODO remove for 6.0

@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [210563] error messages need to be shown if incurred during filter expansion
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David McKnight   (IBM)        - [232148] Invalid thread access exception from SystemViewFilterReferenceAdapter.internalGetChildren()
+ * David McKnight    (IBM)  - [233494] Show in Table Action should be removed from promptable filters
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -750,7 +751,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		ISystemFilter filter = getFilter(element);
 		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
-		return ssParentFactory.showGenericShowInTableOnFilter();
+		return ssParentFactory.showGenericShowInTableOnFilter() && !filter.isPromptable();
 	}
 
 	/**

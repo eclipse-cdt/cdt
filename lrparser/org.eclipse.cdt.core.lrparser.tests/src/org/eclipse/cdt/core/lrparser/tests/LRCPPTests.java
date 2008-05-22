@@ -105,4 +105,24 @@ public class LRCPPTests extends AST2CPPTests {
     	} catch(AssertionFailedError _) {
     	} 
     }
+    
+    @Override
+    public void testBug99262B() throws Exception { // gcc
+    	try {
+    		super.testBug99262B();
+    		fail();
+    	} catch(AssertionFailedError _) {
+    	} 
+    }
+    
+    @Override
+    public void testLiteralsViaOverloads_225534() throws Exception { // gcc, I think
+    	try {
+    		super.testLiteralsViaOverloads_225534();
+    		fail();
+    	} catch(AssertionFailedError _) {
+    	} 
+    }
+    
+    
 }

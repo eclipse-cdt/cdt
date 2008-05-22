@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
+import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -38,8 +40,7 @@ public class C99Language extends BaseExtensibleLanguage {
 	public static final String ID = PLUGIN_ID + ".c99"; //$NON-NLS-1$ 
 	
 	private static final IDOMTokenMap TOKEN_MAP = DOMToC99TokenMap.DEFAULT_MAP;
-	private static GCCLanguage GCC_LANGUAGE = GCCLanguage.getDefault();
-	
+	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
 	
 	private static C99Language DEFAULT = new C99Language();
 	
@@ -58,6 +59,11 @@ public class C99Language extends BaseExtensibleLanguage {
 		return TOKEN_MAP;
 	}
 
+	@Override
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
+		return SCANNER_CONFIGURATION;
+	}
+	
 	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
 		return null;
 	}
@@ -71,23 +77,11 @@ public class C99Language extends BaseExtensibleLanguage {
 	}
 
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
-		return GCC_LANGUAGE.getSelectedNames(ast, start, length);
-	}
-
-	public String[] getBuiltinTypes() {
-		return GCC_LANGUAGE.getBuiltinTypes();
-	}
-
-	public String[] getKeywords() {
-		return GCC_LANGUAGE.getKeywords();
-	}
-
-	public String[] getPreprocessorKeywords() {
-		return GCC_LANGUAGE.getPreprocessorKeywords();
+		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
 	}
 
 	@Override
-	protected ParserLanguage getParserLanguageForPreprocessor() {
+	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;
 	}
 
@@ -103,6 +97,8 @@ public class C99Language extends BaseExtensibleLanguage {
 		}
 		return tu;
 	}
+
+	
 	
 
 }

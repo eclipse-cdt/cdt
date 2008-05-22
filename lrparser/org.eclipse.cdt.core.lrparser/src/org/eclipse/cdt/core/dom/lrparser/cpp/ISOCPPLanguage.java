@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
+import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -38,7 +40,8 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	public static final String ID = PLUGIN_ID + ".isocpp"; //$NON-NLS-1$ 
 	
 	private static final IDOMTokenMap TOKEN_MAP = DOMToISOCPPTokenMap.DEFAULT_MAP;
-	private static GPPLanguage GPP_LANGUAGE = GPPLanguage.getDefault();
+	
+	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
 	
 	
 	private static ISOCPPLanguage DEFAULT = new ISOCPPLanguage();
@@ -57,6 +60,11 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	protected IDOMTokenMap getTokenMap() {
 		return TOKEN_MAP;
 	}
+	
+	@Override
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
+		return SCANNER_CONFIGURATION;
+	}
 
 	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
 		return null;
@@ -71,23 +79,12 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	}
 
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
-		return GPP_LANGUAGE.getSelectedNames(ast, start, length);
+		return GPPLanguage.getDefault().getSelectedNames(ast, start, length);
 	}
 
-	public String[] getBuiltinTypes() {
-		return GPP_LANGUAGE.getBuiltinTypes();
-	}
-
-	public String[] getKeywords() {
-		return GPP_LANGUAGE.getKeywords();
-	}
-
-	public String[] getPreprocessorKeywords() {
-		return GPP_LANGUAGE.getPreprocessorKeywords();
-	}
 
 	@Override
-	protected ParserLanguage getParserLanguageForPreprocessor() {
+	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.CPP;
 	}
 

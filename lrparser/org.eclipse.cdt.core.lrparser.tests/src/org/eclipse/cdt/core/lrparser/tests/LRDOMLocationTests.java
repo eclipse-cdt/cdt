@@ -76,5 +76,15 @@ public class LRDOMLocationTests extends DOMLocationTests {
     	}
     	catch(AssertionFailedError e) {}
     }
+    
+    
+    @Override
+	public void testBug120607() throws Exception { // #assert and #unassert are gcc extensions
+    	try {
+    		super.testBug120607();
+    		fail();
+    	}
+    	catch(AssertionFailedError e) {}
+    }
 
 }

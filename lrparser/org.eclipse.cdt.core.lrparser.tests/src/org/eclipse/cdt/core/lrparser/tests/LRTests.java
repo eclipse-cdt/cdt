@@ -262,4 +262,14 @@ public class LRTests extends AST2Tests {
 			fail();
 		} catch(Throwable _) { }
 	}	
+	
+	@Override
+	public void testRedefinePtrdiff_Bug230895() throws Exception {
+		try {
+			super.testRedefinePtrdiff_Bug230895();
+			fail();
+		} catch(Throwable _) { }
+	}	
+	
+	
 }

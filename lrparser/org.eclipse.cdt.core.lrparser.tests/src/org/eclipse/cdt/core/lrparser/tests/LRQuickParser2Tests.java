@@ -141,6 +141,42 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	}
 	
 	
+	@Override
+	public void testBug40007() throws Exception { // gcc extension
+		 try {
+			super.testBug40007();
+			fail();
+		} catch(AssertionFailedError _) { 
+		} catch(AssertionError _) {
+		}
+		
+	}
+	
+	@Override
+	public void testBug39703() throws Exception { // gcc extension
+		 try {
+			super.testBug39703();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
+	
+	
+	@Override
+	public void testBug39554() throws Exception { // gcc extension
+		 try {
+			super.testBug39554();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
+	
+	
+	@Override
+	public void testBug39686() throws Exception { // gcc extension
+		 try {
+			super.testBug39686();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
 
 	
 }

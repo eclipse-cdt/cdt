@@ -126,7 +126,20 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 		try {
 			super.testGNUASMExtension();
 			fail();
-		} catch(AssertionFailedError _) { }
+		} catch(AssertionFailedError _) { 
+		} catch(AssertionError _) {
+		}		
 	}
 
+	@Override
+	public void testBug39551B() throws Exception {
+		try {
+			super.testBug39551B();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
+	
+	
+	
+	
 }

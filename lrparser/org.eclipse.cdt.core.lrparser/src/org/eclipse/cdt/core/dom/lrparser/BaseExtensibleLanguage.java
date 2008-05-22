@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
@@ -44,6 +43,9 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	
 	private static final boolean DEBUG_PRINT_GCC_AST = false;
 	private static final boolean DEBUG_PRINT_AST = false;
+	
+	private final ICLanguageKeywords keywords;
+	
 	
 	/**
 	 * Retrieve the parser (runs after the preprocessor runs).
@@ -79,7 +81,21 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	 * an instance of CPreprocessor.
 	 * 
 	 */
-	protected abstract ParserLanguage getParserLanguageForPreprocessor();
+	protected abstract ParserLanguage getParserLanguage();
+	
+	
+	/**
+	 * Returns the scanner extension configuration for this language, may not return null
+	 */
+	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
+	
+	
+	
+	public BaseExtensibleLanguage() {
+		ParserLanguage lang = getParserLanguage();
+		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
+		keywords = new CLanguageKeywords(lang, config);
+	}
 	
 	
 	@SuppressWarnings("unchecked")
@@ -113,9 +129,9 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		}
 
 		// TODO temporary
-		IScannerExtensionConfiguration config = new GCCScannerExtensionConfiguration();
+		IScannerExtensionConfiguration config = new ScannerExtensionConfiguration();
 		
-		ParserLanguage pl = getParserLanguageForPreprocessor();
+		ParserLanguage pl = getParserLanguage();
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
@@ -162,9 +178,9 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		}
 		
 		// TODO temporary
-		IScannerExtensionConfiguration config = new GCCScannerExtensionConfiguration();
+		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
 		
-		ParserLanguage pl = getParserLanguageForPreprocessor();
+		ParserLanguage pl = getParserLanguage();
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setContentAssistMode(offset);
 		
@@ -188,5 +204,17 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	
 	
 	
+	
+	public String[] getBuiltinTypes() {
+		return keywords.getBuiltinTypes();
+	}
+
+	public String[] getKeywords() {
+		return keywords.getKeywords();
+	}
+
+	public String[] getPreprocessorKeywords() {
+		return keywords.getPreprocessorKeywords();
+	}
 	
 }

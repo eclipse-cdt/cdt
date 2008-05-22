@@ -16,8 +16,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
+import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeyword;
 import org.eclipse.cdt.core.index.IIndex;
@@ -44,8 +46,11 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	private static final C99Language C99_LANGUAGE = C99Language.getDefault();
 	
 	private static final UPCLanguage myDefault  = new UPCLanguage();
-	private static final String[] keywords = UPCKeyword.getAllKeywords();
+	private static final String[] upcKeywords = UPCKeyword.getAllKeywords();
 
+	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
+	
+	
 	
 	public static UPCLanguage getDefault() {
 		return myDefault;
@@ -80,20 +85,23 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return C99_LANGUAGE.getSelectedNames(ast, start, length);
 	}
 
+	@Override
 	public String[] getBuiltinTypes() {
 		return C99_LANGUAGE.getBuiltinTypes();
 	}
 
+	@Override
 	public String[] getKeywords() {
-		return keywords;
+		return upcKeywords;
 	}
 
+	@Override
 	public String[] getPreprocessorKeywords() {
 		return C99_LANGUAGE.getPreprocessorKeywords();
 	}
 
 	@Override
-	protected ParserLanguage getParserLanguageForPreprocessor() {
+	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;
 	}
 
@@ -109,10 +117,10 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		}
 		return tu;
 	}
-	
-	
-	
 
-
+	@Override
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
+		return SCANNER_CONFIGURATION;
+	}
 
 }

@@ -41,6 +41,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -1327,20 +1328,21 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         String hostPath = (String) attributes.get(ICBreakpoint.SOURCE_HANDLE);
 
         if (hostPath != null) {
+
             ISourceLookupDMContext srcDmc = DMContexts.getAncestorOfType(dmc, ISourceLookupDMContext.class);
             if (srcDmc != null) {
                 fSourceLookup.getDebuggerPath(srcDmc, hostPath,
                     new DataRequestMonitor<String>(getExecutor(), rm) {
                         @Override
                         protected void handleSuccess() {
-                            attributes.put(ATTR_DEBUGGER_PATH, getData());
+                            attributes.put(ATTR_DEBUGGER_PATH, adjustDebuggerPath(getData()));
                             rm.done();
                         }
                     });
             } else {
                 // Source lookup not available for given context, use the host
                 // path for the debugger path.
-                attributes.put(ATTR_DEBUGGER_PATH, hostPath);
+                attributes.put(ATTR_DEBUGGER_PATH, adjustDebuggerPath(hostPath));
                 rm.done();
             }
         } else {
@@ -1348,6 +1350,23 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             // (e.g. watchpoints)
             rm.done();
         }
+    }
+
+    /**
+     * See bug232415
+     * 
+     * @param path	the absolute path to the source file
+     * @return
+     */
+    private String adjustDebuggerPath(String path) {
+    	String result = path;
+    	// Make it MinGW-specific
+    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
+        	if (!path.startsWith("/")) { //$NON-NLS-1$
+        		result = path.substring(path.lastIndexOf('\\') + 1);
+        	}
+    	}
+    	return result;
     }
 
     /**

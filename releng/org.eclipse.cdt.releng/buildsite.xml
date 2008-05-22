@@ -18,6 +18,9 @@
 	<feature id="org.eclipse.cdt.core.lrparser.feature" url="features/org.eclipse.cdt.core.lrparser.feature_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>
+	<feature id="org.eclipse.cdt.core.parser.upc.feature" url="features/org.eclipse.cdt.core.parser.upc.feature_@buildVersion@.jar" version="@buildVersion@">
+		<category name="CDT Optional Features"/>
+	</feature>
 	<feature id="org.eclipse.cdt.xlc.feature" url="features/org.eclipse.cdt.xlc.feature_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>

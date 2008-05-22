@@ -18,18 +18,18 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/europa/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/ganymede"/>
    </url>
 
    <includes
-         id="org.eclipse.cdt.core.parser.c99.feature"
+         id="org.eclipse.cdt.core.lrparser.feature"
          version="0.0.0"/>
 
    <requires>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="net.sourceforge.lpg.lpgjavaruntime" version="1.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.cdt.core.parser.c99"/>
+      <import plugin="org.eclipse.cdt.core.lrparser"/>
    </requires>
 
    <plugin

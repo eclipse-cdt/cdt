@@ -45,7 +45,7 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
- * This class provides default behaviours for multi-line comment auto-editing.
+ * This class provides default behaviors for multi-line comment auto-editing.
  * 
  * This class is intended to be sub-classed.
  * 
@@ -64,22 +64,27 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 */
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
 		if(doc instanceof IDocumentExtension4) {
-			IDocumentExtension4 ext4= (IDocumentExtension4) doc;
-			DocumentRewriteSession drs= ext4.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED_SMALL);
-			try {
-				if (cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text))
-					customizeDocumentAfterNewLine(doc, cmd);
-				else if ("/".equals(cmd.text)) { //$NON-NLS-1$
-					customizeDocumentForMultilineCommentEnd(doc, cmd);
+			boolean forNewLine= cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
+			boolean forCommentEnd= "/".equals(cmd.text); //$NON-NLS-1$
+			
+			if(forNewLine || forCommentEnd) {
+				IDocumentExtension4 ext4= (IDocumentExtension4) doc;
+				DocumentRewriteSession drs= ext4.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED_SMALL);
+				try {
+					if (forNewLine) {
+						customizeDocumentAfterNewLine(doc, cmd);
+					} else if (forCommentEnd) {
+						customizeDocumentForMultilineCommentEnd(doc, cmd);
+					}
+				} finally {
+					ext4.stopRewriteSession(drs);
 				}
-			} finally {
-				ext4.stopRewriteSession(drs);
 			}
 		}
 	}
 	
 	/**
-	 * This implements a rule that when in a multiline comment context typing a forward slash with
+	 * This implements a rule that when in a multi-line comment context typing a forward slash with
 	 * one white space after the "*" will move eliminate the whitespace.
 	 * @param doc
 	 * @param command
@@ -232,8 +237,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	}
 	
 	/**
-	 * @return the ast unit for the active editor, or null if there is no active editor, or
-	 * the ast could not be obtained.
+	 * @return the AST unit for the active editor, or null if there is no active editor, or
+	 * the AST could not be obtained.
 	 */
 	public IASTTranslationUnit getAST() {
 		final ITranslationUnit unit= getTranslationUnit();
@@ -335,7 +340,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	/**
 	 * Returns the offset of the first non-whitespace character in the specified document, searching
 	 * right/downward from the specified start offset up to the specified end offset. If there is
-	 * no nonwhitespace then the end offset is returned.
+	 * no non-whitespace then the end offset is returned.
 	 * @param document
 	 * @param offset
 	 * @param end
@@ -353,10 +358,10 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	}
 	
 	/**
-	 * Returns the range of the Javadoc prefix on the given line in
+	 * Returns the range of the java-doc prefix on the given line in
 	 * <code>document</code>. The prefix greedily matches the following regex
 	 * pattern: <code>\w*\*\w*</code>, that is, any number of whitespace
-	 * characters, followed by an asterix ('*'), followed by any number of
+	 * characters, followed by an asterisk ('*'), followed by any number of
 	 * whitespace characters.
 	 *
 	 * @param document the document to which <code>line</code> refers

@@ -45,5 +45,18 @@
             plugin="org.eclipse.dd.gdb.ui">
       </statusHandler>
    </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.CDebuggerPage">
+      <debuggerPage
+            class="org.eclipse.dd.gdb.internal.ui.launching.GdbDebuggerPage"
+            debuggerID="org.eclipse.dd.gdb.GdbDebugger"
+            id="org.eclipse.dd.gdb.ui.GdbDebuggerPage">
+      </debuggerPage>
+      <debuggerPage
+            class="org.eclipse.dd.gdb.internal.ui.launching.GdbServerDebuggerPage"
+            debuggerID="org.eclipse.dd.gdb.GdbServerDebugger"
+            id="org.eclipse.dd.gdb.ui.GdbServerDebuggerPage">
+      </debuggerPage>
+   </extension>
    
 </plugin>

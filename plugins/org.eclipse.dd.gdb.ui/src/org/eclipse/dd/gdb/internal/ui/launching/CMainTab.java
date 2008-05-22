@@ -162,6 +162,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fProjButton = createPushButton(projComp, LaunchMessages.getString("Launch.common.Browse_1"), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -195,6 +196,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		fSearchButton = createPushButton(mainComp, LaunchMessages.getString("CMainTab.Search..."), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -204,6 +206,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		Button fBrowseForBinaryButton;
 		fBrowseForBinaryButton = createPushButton(mainComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
 		fBrowseForBinaryButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleBinaryBrowseButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -229,6 +232,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fTerminalButton = createCheckButton(mainComp, LaunchMessages.getString("CMainTab.UseTerminal")); //$NON-NLS-1$
 		fTerminalButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -322,6 +326,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
@@ -331,7 +336,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 				}
 				return super.getText(element);
 			}
-
+			
+			@Override
 			public Image getImage(Object element) {
 				if (! (element instanceof ICElement)) {
 					return super.getImage(element);
@@ -351,6 +357,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		ILabelProvider qualifierLabelProvider = new CElementLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
@@ -474,7 +481,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 */
 	protected ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
-		ArrayList list = new ArrayList(cproject.length);
+		ArrayList<ICProject> list = new ArrayList<ICProject>(cproject.length);
 
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
@@ -494,7 +501,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				list.add(cproject[i]);
 			}
 		}
-		return (ICProject[])list.toArray(new ICProject[list.size()]);
+		return list.toArray(new ICProject[list.size()]);
 	}
 
 	/**
@@ -514,6 +521,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 
 		setErrorMessage(null);
@@ -702,6 +710,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_MAIN_TAB);
 	}
@@ -711,6 +720,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
 	}

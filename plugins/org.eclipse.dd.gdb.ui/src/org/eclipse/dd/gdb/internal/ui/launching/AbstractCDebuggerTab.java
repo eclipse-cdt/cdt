@@ -96,6 +96,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		ICDebuggerPage tab = getDynamicTab();
 		if ( (super.getErrorMessage() != null) || (tab == null)) {
@@ -120,7 +121,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 				}
 			}
 			if (wc != null) {
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map)null);
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map<?,?>)null);
 			}
 		} else {
 			if (wc == null) {
@@ -188,6 +189,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	
 	abstract public void createControl(Composite parent);
 
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		ICDebuggerPage dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
@@ -208,7 +210,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebugConfig().getID());
 			ICDebuggerPage dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
-				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map)null);
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map<?,?>)null);
 			} else {
 				dynamicTab.performApply(config);
 			}
@@ -224,6 +226,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -247,6 +250,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		return fInitDefaults;
 	}
 
+	@Override
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_DEBUGGER_TAB);
 	}

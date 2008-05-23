@@ -44,6 +44,7 @@
  * David McKnight     (IBM)      - [227406][api][dstore] need apis for getting buffer size in IDataStoreProvider
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight     (IBM)      - [221211] [api][breaking][files] need batch operations to indicate which operations were successful
+ * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1351,7 +1352,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	}
 
-	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
+	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
@@ -1374,7 +1375,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		// When running a server older than 2.0.1 success is not set for directories, so we must
 		// check if the source message is an empty string
 		if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
-			return true;
+			return;
 		}
 		String msgTxt = NLS.bind(ServiceResources.FILEMSG_DELETE_FILE_FAILED, FileSystemMessageUtil.getSourceLocation(status));
 		String msgDetails = ServiceResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;

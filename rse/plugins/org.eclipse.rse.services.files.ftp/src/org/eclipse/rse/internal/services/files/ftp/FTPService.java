@@ -73,6 +73,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Javier Montalvo Orus (Symbian) - [212382] additional "initCommands" slot for ftpListingParsers extension point
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -111,6 +112,7 @@ import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundException;
 import org.eclipse.rse.services.clientserver.messages.SystemLockTimeoutException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -1024,7 +1026,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#delete(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
 	 */
-	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
+	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
     	remoteParent = checkEncoding(remoteParent);
     	fileName = checkEncoding(fileName);
 
@@ -1043,12 +1045,12 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				catch (IOException e)
 				{
 					if (!file.exists())
-						return false;
+						throw new SystemElementNotFoundException(file.getAbsolutePath(), "delete"); //$NON-NLS-1$
 					throw new RemoteFileIOException(e);
 				}
 				catch (SystemMessageException e) {
 					if (!file.exists())
-						return false;
+						throw new SystemElementNotFoundException(file.getAbsolutePath(), "delete"); //$NON-NLS-1$
 					throw e;
 				}
 				finally {
@@ -1060,7 +1062,6 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		} finally {
 			progressMonitor.end();
 		}
-		return true;
 	}
 
 	private void internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, MyProgressMonitor monitor)

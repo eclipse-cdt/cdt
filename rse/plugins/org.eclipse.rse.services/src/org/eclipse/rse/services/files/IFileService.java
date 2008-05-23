@@ -25,6 +25,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Fix API since tags
  * David Dykstal (IBM) - [221211] clarifying javadoc on batch operations
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
+ * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -410,15 +411,13 @@ public interface IFileService extends IService
 	 * @param remoteParent the folder containing the file to delete
 	 * @param fileName the name of the file or folder to delete
 	 * @param monitor the progress monitor
-	 * @return <code>true</code> if the requested element was successfully
-	 * 	deleted, or <code>false</code> if the element had not existed in the
-	 * 	first place so the operation was a silent no-op.
 	 * @throws SystemMessageException if an error occurs or the user canceled
-	 * 		the operation.
+	 * 		the operation. SystemElementNotFoundException is thrown if the remote
+	 * 		file doesn't exist.
 	 * 
 	 * @since org.eclipse.rse.services 3.0
 	 */
-	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
+	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Delete a set of files or folders on the host. Should throw an exception

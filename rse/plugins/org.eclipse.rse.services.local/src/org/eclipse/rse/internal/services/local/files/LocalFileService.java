@@ -37,6 +37,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * David McKnight   (IBM)        - [231211] Local xml file not opened when workspace encoding is different from local system encoding
+ * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -82,6 +83,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
@@ -1016,7 +1018,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		return new LocalVirtualHostFile(child);
 	}
 
-	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
+	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (fileName.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
@@ -1045,12 +1047,15 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			result = fileToDelete.delete();
 		}
-		if (!result && fileToDelete.exists()) {
-			// Deletion failed without specification why... likely a Security
-			// problem?
-			throw new RemoteFileSecurityException(null);
+		if (!result) {
+			if (fileToDelete.exists()) {
+				// Deletion failed without specification why... likely a Security
+				// problem?
+				throw new RemoteFileSecurityException(null);
+			} else {
+				throw new SystemElementNotFoundException(fileToDelete.getAbsolutePath(), "delete"); //$NON-NLS-1$
+			}
 		}
-		return result;
 	}
 
 	public void deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException

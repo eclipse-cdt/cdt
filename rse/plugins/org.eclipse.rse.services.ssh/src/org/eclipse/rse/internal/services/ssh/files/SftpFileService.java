@@ -26,6 +26,7 @@
  * Martin Oberhuber (Wind River) - [224799] Fix JSch encoding problems with Arabic filenames
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Martin Oberhuber (Wind River) - [170910] Adopt RSE ITerminalService API for SSH
+ * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -68,6 +69,7 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundException;
 import org.eclipse.rse.services.clientserver.messages.SystemLockTimeoutException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -891,7 +893,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		return result;
 	}
 
-	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
+	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String fullPath = concat(remoteParent, fileName);
 		Activator.trace("SftpFileService.delete.waitForLock"); //$NON-NLS-1$
@@ -905,14 +907,16 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 					//bug 154419: test for dangling symbolic link
 					if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
 						//simply try to delete --> if it really doesnt exist, this will throw an exception
+						//FIXME either throw SystemElementNotFoundException here OR add check for
+						//SSH_FX_NO_SUCH_FILE in makeSystemMessageException() and throw SENFE there
 						getChannel("SftpFileService.delete.rm").rm(fullPathRecoded); //$NON-NLS-1$
 					} else {
 						throw e;
 					}
 				}
 				if (attrs==null) {
-					//doesn't exist, nothing to do
-					return false;
+					//doesn't exist, throw SystemElementNotFoundException
+					throw new SystemElementNotFoundException(fullPath, "delete"); //$NON-NLS-1$
 				} else if (attrs.isDir()) {
 					try {
 						getChannel("SftpFileService.delete.rmdir").rmdir(fullPathRecoded); //$NON-NLS-1$
@@ -942,7 +946,6 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		} else {
 			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
-		return true;
 	}
 
 	public void rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException

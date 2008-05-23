@@ -13,6 +13,7 @@
  * Radoslav Gerganov (ProSyst) - [230850] [WinCE] Implement setLastModified and setReadOnly in WinCEFileService
  * Radoslav Gerganov (ProSyst) - [231425] [WinCE] Use the progress monitors in WinCEFileService
  * Radoslav Gerganov (ProSyst) - [230856] [WinCE] Improve the error handling in WinCEFileService
+ * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -36,6 +37,7 @@ import org.eclipse.rse.internal.subsystems.files.wince.Activator;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
+import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnexpectedErrorException;
@@ -196,13 +198,16 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     }
   }
 
-  public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
+  public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
     String fullPath = concat(remoteParent, fileName);
     IRapiSession session = sessionProvider.getSession();
     if (monitor == null) {
       monitor = new NullProgressMonitor();
     }
     try {
+      if (!exist(session, fullPath)) {
+        throw new SystemElementNotFoundException(fullPath, "delete"); //$NON-NLS-1$
+      }
       if (isDirectory(session, fullPath)) {
         // recursive delete if it is a directory
         RapiFindData[] allFiles = session.findAllFiles(concat(fullPath, "*"), Rapi.FAF_NAME); //$NON-NLS-1$
@@ -221,7 +226,6 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     } catch (RapiException e) {
       throw new RemoteFileIOException(e);
     }
-    return true;
   }
 
   public void download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding,

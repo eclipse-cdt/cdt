@@ -29,10 +29,10 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 	
 	private static final boolean PRINT_POSITIONS= false;
 
-	private static final Class THIS= SemanticHighlightingTest.class;
+	private static final Class<?> THIS= SemanticHighlightingTest.class;
 	
 	public static Test suite() {
-		return new SemanticHighlightingTestSetup(new TestSuite(THIS), "/SHTest/src/SHTest.cpp");
+		return new SemanticHighlightingTestSetup(new TestSuite(THIS), TESTFILE);
 	}
 
 	public void testStaticFieldHighlighting() throws Exception {

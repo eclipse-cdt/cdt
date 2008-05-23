@@ -28,8 +28,6 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
-import org.eclipse.cdt.ui.tests.text.MarkOccurrenceTest.MarkOccurrenceTestSetup;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
@@ -42,6 +40,7 @@ public class ShiftActionTest extends BaseUITestCase {
 	private static final String FILE = "shiftTest.c";
 
 	private static final class EmptyBundle extends ListResourceBundle {
+		@Override
 		protected Object[][] getContents() {
 			return new Object[0][];
 		}
@@ -55,6 +54,7 @@ public class ShiftActionTest extends BaseUITestCase {
 			super(test);
 		}
 		
+		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			
@@ -65,6 +65,7 @@ public class ShiftActionTest extends BaseUITestCase {
 			IFile file= EditorTestHelper.createFile(fCProject.getProject(), FILE, "", new NullProgressMonitor());
 		}
 
+		@Override
 		protected void tearDown () throws Exception {
 			EditorTestHelper.closeAllEditors();
 			if (fCProject != null) {
@@ -74,7 +75,7 @@ public class ShiftActionTest extends BaseUITestCase {
 		}
 	}
 	
-	private static final Class THIS= ShiftActionTest.class;
+	private static final Class<?> THIS= ShiftActionTest.class;
 	public static Test suite() {
 		return new ShiftTestSetup(new TestSuite(THIS));
 	}
@@ -82,14 +83,15 @@ public class ShiftActionTest extends BaseUITestCase {
 	private CEditor fEditor;
 	private SourceViewer fSourceViewer;
 	private IDocument fDocument;
-	private MarkOccurrenceTestSetup fProjectSetup;
+	private ShiftTestSetup fProjectSetup;
 
 	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
-			fProjectSetup= new MarkOccurrenceTestSetup(this);
+			fProjectSetup= new ShiftTestSetup(this);
 			fProjectSetup.setUp();
 		}
 		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(PROJECT + '/' + FILE), true);
@@ -101,6 +103,7 @@ public class ShiftActionTest extends BaseUITestCase {
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		if (fProjectSetup != null) {
 			fProjectSetup.tearDown();

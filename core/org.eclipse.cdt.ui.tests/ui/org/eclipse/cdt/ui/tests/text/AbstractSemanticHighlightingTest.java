@@ -18,6 +18,7 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -42,7 +43,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.index.provider.ReadOnlyPDOMProviderBridge;
@@ -71,10 +71,11 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			fTestFilename= testFilename;
 		}
 		
+		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			
-			String sdkCode= 
+			String sdkCode=
 				"void SDKFunction();\n"+
 				"class SDKClass { public: SDKMethod(); };\n\n";
 			
@@ -139,6 +140,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			return fTestFilename;
 		}
 
+		@Override
 		protected void tearDown () throws Exception {
 			EditorTestHelper.closeEditor(fEditor);
 			
@@ -165,19 +167,35 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 	public static final String LINKED_FOLDER= "resources/semanticHighlighting";
 	
 	public static final String PROJECT= "SHTest";
-	
+	public static final String TESTFILE= "/SHTest/src/SHTest.cpp";
 	private static CEditor fEditor;
 	
 	private static SourceViewer fSourceViewer;
 
 	private String fCurrentHighlighting;
 
+	private SemanticHighlightingTestSetup fProjectSetup;
+
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
+			fProjectSetup= new SemanticHighlightingTestSetup(this, TESTFILE);
+			fProjectSetup.setUp();
+		}
 		disableAllSemanticHighlightings();
 		EditorTestHelper.runEventQueue(500);
 	}
 	
+	@Override
+	protected void tearDown() throws Exception {
+		if (fProjectSetup != null) {
+			fProjectSetup.tearDown();
+			fProjectSetup= null;
+		}
+		super.tearDown();
+	}
+
 	protected void assertEqualPositions(Position[] expected, Position[] actual) {
 		assertEquals(expected.length, actual.length);
 		for (int i= 0, n= expected.length; i < n; i++) {

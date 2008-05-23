@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -2737,5 +2738,22 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("foo(t)", 3);
 		ba.assertNonProblem("bar(t)", 3);
+	}
+	
+	//	template<int x>
+	//	class C {};
+	//
+	//	template<int y>
+	//	class D {
+	//	public:
+	//		C<y> go();
+	//	};
+	public void _testDeferredNonTypeArgument() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPDeferredClassInstance ci= ba.assertNonProblem("C<y>", 4, ICPPDeferredClassInstance.class);
+		ObjectMap args= ci.getArgumentMap();
+		assertEquals(1, args.size());
+		assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
+		assertInstance(args.getAt(0), ICPPTemplateNonTypeParameter.class);
 	}
 }

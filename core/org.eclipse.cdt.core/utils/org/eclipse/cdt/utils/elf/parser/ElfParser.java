@@ -53,7 +53,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 					}
 				}
 	
-				//Take a second run at it if the data array failed. 			
+				//Take a second run at it if the data array failed.
 	 			if(attribute == null) {
 					attribute = Elf.getAttributes(path.toOSString());
 	 			}
@@ -75,6 +75,9 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 						case Attribute.ELF_TYPE_CORE :
 							binary = createBinaryCore(path);
 							break;
+					}
+					if (binary instanceof ElfBinaryObject) {
+						((ElfBinaryObject)binary).setElfAttributes(attribute);
 					}
 				}
 			} catch (IOException e) {

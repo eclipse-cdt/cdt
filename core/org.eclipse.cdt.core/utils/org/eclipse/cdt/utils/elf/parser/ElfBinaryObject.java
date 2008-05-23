@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.core.runtime.IPath;
 
 /*
- * ElfBinaryObject 
+ * ElfBinaryObject
  */
 public class ElfBinaryObject extends BinaryObjectAdapter {
 
@@ -39,6 +39,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	private ISymbol[] symbols;
 	private final AR.ARHeader header;
 	private IAddressFactory addressFactory;
+	private volatile Elf.Attribute fElfAttributes;
 
 	public ElfBinaryObject(IBinaryParser parser, IPath p, AR.ARHeader h){
 		super(parser, p, IBinaryFile.OBJECT);
@@ -48,6 +49,13 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	public ElfBinaryObject(IBinaryParser parser, IPath p, int type){
 		super(parser, p, type);
 		header = null;
+	}
+
+	/**
+	 * @param elfAttributes the elfAttributes to set
+	 */
+	void setElfAttributes(Elf.Attribute elfAttributes) {
+		fElfAttributes= elfAttributes;
 	}
 
 	/* (non-Javadoc)
@@ -133,7 +141,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 			if (helper != null) {
 				helper.dispose();
 			}
-		}		
+		}
 	}
 	
 	protected void loadInfo(ElfHelper helper) throws IOException {
@@ -154,11 +162,12 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();
-		addressFactory = attribute.getAddressFactory(); 
+		addressFactory = attribute.getAddressFactory();
+		fElfAttributes= null;
 	}
 
 	protected void loadSymbols(ElfHelper helper) throws IOException {
-		ArrayList list = new ArrayList();
+		ArrayList<Symbol> list = new ArrayList<Symbol>();
 
 //		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, list);
 		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, list);
@@ -166,12 +175,12 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, list);
 		list.trimToSize();
 
-		symbols = (ISymbol[])list.toArray(NO_SYMBOLS);
+		symbols = list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);
 		list.clear();
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type, List list) {
+	protected void addSymbols(Elf.Symbol[] array, int type, List<Symbol> list) {
 		for (int i = 0; i < array.length; i++) {
 			list.add(new Symbol(this, array[i].toString(), type, array[i].st_value, array[i].st_size));
 		}
@@ -181,6 +190,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(Elf.class)) {
@@ -205,12 +215,50 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {
-			try {
-				loadInfo();
-			} catch (IOException e) {
-				return new Addr32Factory();
+			if (fElfAttributes != null) {
+				addressFactory= fElfAttributes.getAddressFactory();
+			}
+			if (addressFactory == null) {
+				try {
+					loadInfo();
+				} catch (IOException e) {
+					return new Addr32Factory();
+				}
 			}
 		}
 		return addressFactory;
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#isLittleEndian()
+	 */
+	@Override
+	public boolean isLittleEndian() {
+		if (fElfAttributes != null) {
+			return fElfAttributes.isLittleEndian();
+		}
+		return super.isLittleEndian();
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#hasDebug()
+	 */
+	@Override
+	public boolean hasDebug() {
+		if (fElfAttributes != null) {
+			return fElfAttributes.hasDebug();
+		}
+		return super.hasDebug();
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPU()
+	 */
+	@Override
+	public String getCPU() {
+		if (fElfAttributes != null) {
+			return fElfAttributes.getCPU();
+		}
+		return super.getCPU();
 	}
 }

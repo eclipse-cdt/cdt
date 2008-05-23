@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.settings.model;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +34,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 	private static final String EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".externalSettingsProvider"; //$NON-NLS-1$
 	
 	private static ExtensionContainerFactory fInstance;
-	private Map fDescriptorMap;
+	private Map<String, CExtensionSettingProviderDescriptor> fDescriptorMap;
 
 	private static class NullProvider extends CExternalSettingProvider {
 		private static final NullProvider INSTANCE = new NullProvider();
@@ -51,12 +50,12 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 		private CExternalSetting[] fSettings;
 
 		CESContainer(CExternalSetting[] settings){
-			fSettings = (CExternalSetting[])settings.clone();
+			fSettings = settings.clone();
 		}
 		
 		@Override
 		public CExternalSetting[] getExternalSettings() {
-			return (CExternalSetting[])fSettings.clone();
+			return fSettings.clone();
 		}
 		
 	}
@@ -110,9 +109,9 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 				if(obj instanceof CExternalSettingProvider){
 					return (CExternalSettingProvider)obj;
 				} else
-					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString(SettingsModelMessages.getString("ExtensionContainerFactory.4"))); //$NON-NLS-1$
+					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("ExtensionContainerFactory.4")); //$NON-NLS-1$
 			}
-			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString(SettingsModelMessages.getString("ExtensionContainerFactory.5"))); //$NON-NLS-1$
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("ExtensionContainerFactory.5")); //$NON-NLS-1$
 		}
 		
 		private IConfigurationElement getProviderElement(){
@@ -123,8 +122,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 		
 		private static IConfigurationElement getProviderElement(IExtension ext){
 			IConfigurationElement els[] = ext.getConfigurationElements();
-			for(int i = 0; i < els.length; i++){
-				IConfigurationElement el = els[i];
+			for (IConfigurationElement el : els) {
 				String name = el.getName();
 				if(PROVIDER.equals(name))
 					return el;
@@ -133,7 +131,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 		}
 	}
 	
-	private Map getProviderDescriptorMap(){
+	private Map<String, CExtensionSettingProviderDescriptor> getProviderDescriptorMap(){
 		if(fDescriptorMap == null){
 			initProviderInfoSynch();
 		}
@@ -146,10 +144,10 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 		
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_ID);
 		IExtension exts[] = extensionPoint.getExtensions();
-		fDescriptorMap = new HashMap();
+		fDescriptorMap = new HashMap<String, CExtensionSettingProviderDescriptor>();
 		
-		for(int i = 0; i < exts.length; i++){
-			CExtensionSettingProviderDescriptor dr = new CExtensionSettingProviderDescriptor(exts[i]);
+		for (IExtension ext : exts) {
+			CExtensionSettingProviderDescriptor dr = new CExtensionSettingProviderDescriptor(ext);
 			fDescriptorMap.put(dr.getId(), dr);
 		}
 	}
@@ -174,7 +172,7 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 	@Override
 	public CExternalSettingsContainer createContainer(String id,
 			IProject project, ICConfigurationDescription cfgDes) throws CoreException {
-		CExtensionSettingProviderDescriptor dr = (CExtensionSettingProviderDescriptor)getProviderDescriptorMap().get(id);
+		CExtensionSettingProviderDescriptor dr = getProviderDescriptorMap().get(id);
 		if(dr != null)
 			return dr.getContainer(project, cfgDes);
 		return CExternalSettingsManager.NullContainer.INSTANCE;
@@ -190,21 +188,21 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 	}
 	
 	public static void setReferencedProviderIds(ICConfigurationDescription cfg, String ids[]){
-		Set newIdsSet = new HashSet(Arrays.asList(ids));
-		Set oldIdsSet = new HashSet(Arrays.asList(getReferencedProviderIds(cfg)));
-		Set newIdsSetCopy = new HashSet(newIdsSet);
+		Set<String> newIdsSet = new HashSet<String>(Arrays.asList(ids));
+		Set<String> oldIdsSet = new HashSet<String>(Arrays.asList(getReferencedProviderIds(cfg)));
+		Set<String> newIdsSetCopy = new HashSet<String>(newIdsSet);
 		newIdsSet.removeAll(oldIdsSet);
 		oldIdsSet.removeAll(newIdsSetCopy);
 		
 		if(oldIdsSet.size() != 0){
-			for(Iterator iter = oldIdsSet.iterator(); iter.hasNext();){
-				removeReference(cfg, (String)iter.next());
+			for (String string : oldIdsSet) {
+				removeReference(cfg, string);
 			}
 		}
 
 		if(newIdsSet.size() != 0){
-			for(Iterator iter = newIdsSet.iterator(); iter.hasNext();){
-				createReference(cfg, (String)iter.next());
+			for (String string : newIdsSet) {
+				createReference(cfg, string);
 			}
 		}
 	}
@@ -228,15 +226,15 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 	}
 	
 	public static void updateReferencedProviderIds(ICConfigurationDescription cfg, String ids[]){
-		Set newIdsSet = new HashSet(Arrays.asList(ids));
-		Set oldIdsSet = new HashSet(Arrays.asList(getReferencedProviderIds(cfg)));
-		Set newIdsSetCopy = new HashSet(newIdsSet);
+		Set<String> newIdsSet = new HashSet<String>(Arrays.asList(ids));
+		Set<String> oldIdsSet = new HashSet<String>(Arrays.asList(getReferencedProviderIds(cfg)));
+		Set<String> newIdsSetCopy = new HashSet<String>(newIdsSet);
 		newIdsSetCopy.removeAll(oldIdsSet);
 		newIdsSet.removeAll(newIdsSetCopy);
 		
 		if(newIdsSet.size() != 0){
-			for(Iterator iter = newIdsSet.iterator(); iter.hasNext();){
-				providerChanged(cfg, (String)iter.next());
+			for (String string : newIdsSet) {
+				providerChanged(cfg, string);
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.resources.IContainer;
@@ -30,97 +27,8 @@ import org.eclipse.core.runtime.Status;
 
 public class Util {
 	
-	private final static char[] DOUBLE_QUOTES = "''".toCharArray(); //$NON-NLS-1$
-	private final static char[] SINGLE_QUOTE = "'".toCharArray(); //$NON-NLS-1$
 	private static final int DEFAULT_READING_SIZE = 8192;
 
-	/* Bundle containing messages */
-	protected static ResourceBundle bundle;
-	private final static String bundleName = "org.eclipse.cdt.internal.core.messages"; //$NON-NLS-1$
-	static {
-		relocalize();
-	}
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given strings.
-	 */
-	public static String bind(String id, String binding1, String binding2) {
-		return bind(id, new String[] {binding1, binding2});
-	}
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given string.
-	 */
-	public static String bind(String id, String binding) {
-		return bind(id, new String[] {binding});
-	}
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given string values.
-	 */
-	public static String bind(String id, String[] bindings) {
-		if (id == null)
-			return "No message available"; //$NON-NLS-1$
-		String message = null;
-		try {
-			message = bundle.getString(id);
-		} catch (MissingResourceException e) {
-			// If we got an exception looking for the message, fail gracefully by just returning
-			// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-			return "Missing message: " + id + " in: " + bundleName; //$NON-NLS-2$ //$NON-NLS-1$
-		}
-		// for compatibility with MessageFormat which eliminates double quotes in original message
-		char[] messageWithNoDoubleQuotes =
-		CharOperation.replace(message.toCharArray(), DOUBLE_QUOTES, SINGLE_QUOTE);
-		message = new String(messageWithNoDoubleQuotes);
-	
-		if (bindings == null)
-			return message;
-		int length = message.length();
-		int start = -1;
-		int end = length;
-		StringBuffer output = new StringBuffer(80);
-		while (true) {
-			if ((end = message.indexOf('{', start)) > -1) {
-				output.append(message.substring(start + 1, end));
-				if ((start = message.indexOf('}', end)) > -1) {
-					int index = -1;
-					try {
-						index = Integer.parseInt(message.substring(end + 1, start));
-						output.append(bindings[index]);
-					} catch (NumberFormatException nfe) {
-						output.append(message.substring(end + 1, start + 1));
-					} catch (ArrayIndexOutOfBoundsException e) {
-						output.append("{missing " + Integer.toString(index) + "}"); //$NON-NLS-2$ //$NON-NLS-1$
-					}
-				} else {
-					output.append(message.substring(end, length));
-					break;
-				}
-			} else {
-				output.append(message.substring(start + 1, length));
-				break;
-			}
-		}
-		return output.toString();
-	}
-	/**
-	 * Lookup the message with the given ID in this catalog 
-	 */
-	public static String bind(String id) {
-		return bind(id, (String[])null);
-	}
-	/**
-	 * Creates a NLS catalog for the given locale.
-	 */
-	public static void relocalize() {
-		try  {		
-			bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
-		} catch(MissingResourceException e) {
-			System.out.println("Missing resource : " + bundleName.replace('.', '/') + ".properties for locale " + Locale.getDefault()); //$NON-NLS-1$//$NON-NLS-2$
-			throw e;
-		}
-	}
 	
 	/**
 	 * Returns the contents of the given file as a byte array.
@@ -339,7 +247,7 @@ public class Util {
 		 * are known to be existing.
 		 * Note this cache is kept for the whole session.
 		 */ 
-		public static HashSet existingExternalFiles = new HashSet();
+		public static HashSet<File> existingExternalFiles = new HashSet<File>();
 		
 	/*
 	 * Returns whether the given resource matches one of the exclusion patterns.
@@ -363,8 +271,8 @@ public class Util {
 	public final static boolean isExcluded(IPath resourcePath, char[][] exclusionPatterns) {
 		if (exclusionPatterns == null) return false;
 		char[] path = resourcePath.toString().toCharArray();
-		for (int i = 0, length = exclusionPatterns.length; i < length; i++)
-			if (CharOperation.pathMatch(exclusionPatterns[i], path, true, '/'))
+		for (char[] exclusionPattern : exclusionPatterns)
+			if (CharOperation.pathMatch(exclusionPattern, path, true, '/'))
 				return true;
 		return false;
 	}

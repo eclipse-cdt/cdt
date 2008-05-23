@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -148,7 +147,7 @@ class SourceManipulationInfo extends CElementInfo {
 	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
-			throw new IllegalArgumentException("operation.nullContainer"); //$NON-NLS-1$
+			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
 		ICElement[] elements= new ICElement[] {getElement()};
 		ICElement[] containers= new ICElement[] {container};
@@ -177,7 +176,7 @@ class SourceManipulationInfo extends CElementInfo {
 	public void move(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
-			throw new IllegalArgumentException("operation.nullContainer"); //$NON-NLS-1$
+			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
 		ICElement[] elements= new ICElement[] {getElement()};
 		ICElement[] containers= new ICElement[] {container};

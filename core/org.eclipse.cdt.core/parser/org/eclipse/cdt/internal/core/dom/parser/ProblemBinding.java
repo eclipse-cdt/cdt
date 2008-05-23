@@ -10,10 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *******************************************************************************/
-
-/*
- * Created on Jan 17, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.text.MessageFormat;
@@ -53,7 +49,6 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         return node;
     }
     
-    protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
     protected static final String[] errorMessages;
     static {
         errorMessages = new String[IProblemBinding.LAST_PROBLEM];

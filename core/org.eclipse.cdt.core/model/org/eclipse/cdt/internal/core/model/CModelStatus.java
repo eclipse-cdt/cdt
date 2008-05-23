@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * Singleton OK object
 	 */
-	public static final ICModelStatus VERIFIED_OK = new CModelStatus(OK, OK, org.eclipse.cdt.internal.core.Util.bind("status.OK")); //$NON-NLS-1$
+	public static final ICModelStatus VERIFIED_OK = new CModelStatus(OK, OK, CoreModelMessages.getString("status.OK")); //$NON-NLS-1$
 
 	/**
 	 * Constructs an C model status with no corresponding elements.
@@ -283,16 +283,6 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				case NO_LOCAL_CONTENTS :
 					return CoreModelMessages.getFormattedString("status.noLocalContents", getPath().toString()); //$NON-NLS-1$
 
-				case INVALID_CONTAINER_ENTRY :
-					return CoreModelMessages.getFormattedString(
-							"pathentry.invalidContainer", new String[]{getString(), getFirstElementName()}); //$NON-NLS-1$
-
-				case VARIABLE_PATH_UNBOUND :
-					return CoreModelMessages.getFormattedString("pathentry.unboundVariablePath", //$NON-NLS-1$
-							new String[]{getPath().makeRelative().toString(), getFirstElementName()});
-
-				case PATHENTRY_CYCLE :
-					return CoreModelMessages.getFormattedString("pathentry.cycle", getFirstElementName()); //$NON-NLS-1$
 			}
 			return getString();
 		}

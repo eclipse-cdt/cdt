@@ -67,7 +67,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         char[] file= getOriginatingFileName();
         int line= getSourceLineNumber();
         Object[] args = new Object[] { msg, new String(file), new Integer(line) };
-        return ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
+        return ParserMessages.getFormattedString("BaseProblemFactory.problemPattern", args); //$NON-NLS-1$
     }
 
     public static String getMessage(int id, String arg) {
@@ -157,9 +157,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     			ParserMessages.getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
 	}
 
-    protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
-
-	/*
+    /*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getOriginatingFileName()
 	 */
 	public char[] getOriginatingFileName() {

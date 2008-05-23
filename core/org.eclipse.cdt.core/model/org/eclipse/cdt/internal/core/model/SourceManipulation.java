@@ -9,7 +9,6 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
-			throw new IllegalArgumentException("operation.nullContainer"); //$NON-NLS-1$
+			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
 		ICElement[] elements= new ICElement[] {this};
 		ICElement[] containers= new ICElement[] {container};
@@ -82,7 +81,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	public void move(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
-			throw new IllegalArgumentException("operation.nullContainer"); //$NON-NLS-1$
+			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
 		ICElement[] elements= new ICElement[] {this};
 		ICElement[] containers= new ICElement[] {container};

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.index.provider.messages"; //$NON-NLS-1$
 	public static String IndexProviderManager_0;
 	public static String IndexProviderManager_NoCompatibleFragmentsAvailable;
-	public static String OfflinePDOMProviderBridge_UnsupportedUsage;
-	public static String PDOMCache_VersionTooOld;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

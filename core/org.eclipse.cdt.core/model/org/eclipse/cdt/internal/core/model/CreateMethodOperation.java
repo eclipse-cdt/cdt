@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -63,7 +62,7 @@ public class CreateMethodOperation extends CreateMemberOperation {
 	 */
 	@Override
 	public String getMainTaskName(){
-		return "operation.createMethodProgress"; //$NON-NLS-1$
+		return CoreModelMessages.getString("operation.createMethodProgress"); //$NON-NLS-1$
 	}
 
 	/**

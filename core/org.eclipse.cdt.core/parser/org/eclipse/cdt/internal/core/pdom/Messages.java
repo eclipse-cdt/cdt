@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.osgi.util.NLS;
@@ -20,7 +19,6 @@ public class Messages extends NLS {
 	public static String PDOMManager_creationOfIndexInterrupted;
 	public static String PDOMManager_ExistingFileCollides;
 	public static String PDOMManager_indexMonitorDetail;
-	public static String PDOMManager_JoinIndexerTask;
 	public static String PDOMManager_notifyJob_label;
 	public static String PDOMManager_notifyTask_message;
 	public static String PDOMManager_StartJob_name;
@@ -29,7 +27,6 @@ public class Messages extends NLS {
 	public static String TeamPDOMExportOperation_errorCreateArchive;
 	public static String TeamPDOMExportOperation_errorCreatingTempFile;
 	public static String TeamPDOMExportOperation_errorWriteTempFile;
-	public static String TeamPDOMExportOperation_subtaskCreateDatabase;
 	public static String TeamPDOMExportOperation_taskExportIndex;
 	public static String AbstractIndexerTask_parsingFileTask;
 	public static String AbstractIndexerTask_errorWhileParsing;

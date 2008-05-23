@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Siemens AG.
+ * Copyright (c) 2006, 2008 Siemens AG.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,6 @@
  * Contributors:
  * Norbert Ploett - Initial implementation
  *******************************************************************************/
-
-
 package org.eclipse.cdt.internal.errorparsers;
 
 import org.eclipse.osgi.util.NLS;
@@ -28,9 +26,6 @@ public class Messages extends NLS {
 	public static String GLDErrorParser_error_general;
 	public static String GLDErrorParser_error_text;
 	public static String GLDErrorParser_warning_general;
-	public static String MakeErrorParser_error_entering;
-	public static String MakeErrorParser_error_general;
-	public static String MakeErrorParser_error_leaving;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

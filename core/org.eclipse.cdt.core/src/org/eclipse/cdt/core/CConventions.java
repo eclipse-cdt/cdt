@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.CharOperation;
-import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.Messages;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @author hamer
@@ -79,11 +80,11 @@ public class CConventions {
 	 */
 	public static IStatus validateClassName(String name) {
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.nullName"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_nullName, null); 
 		}
 		String trimmed = name.trim();
 		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.nameWithBlanks"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_nameWithBlanks, null); 
 		}
 		int index = name.lastIndexOf(scopeResolutionOperator);
 		char[] scannedID;
@@ -112,17 +113,17 @@ public class CConventions {
 
 		if (scannedID != null) {
 			if (CharOperation.contains('$', scannedID)) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.dollarName"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_dollarName, null); 
 			}
 			if (scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.leadingUnderscore"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_leadingUnderscore, null); 
 			}
 			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.lowercaseName"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_lowercaseName, null); 
 			}
 			return CModelStatus.VERIFIED_OK;
 		}
-		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.invalidName", name), null); //$NON-NLS-1$
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_class_invalidName, name), null); 
 	}
 
 	/**
@@ -140,11 +141,11 @@ public class CConventions {
 	 */
 	public static IStatus validateNamespaceName(String name) {
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.namespace.nullName"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_nullName, null); 
 		}
 		String trimmed = name.trim();
 		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.namespace.nameWithBlanks"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_nameWithBlanks, null); 
 		}
 		int index = name.lastIndexOf(scopeResolutionOperator);
 		char[] scannedID;
@@ -173,17 +174,17 @@ public class CConventions {
 
 		if (scannedID != null) {
 			if (CharOperation.contains('$', scannedID)) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.namespace.dollarName"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_dollarName, null); 
 			}
 			if (scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.namespace.leadingUnderscore"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_leadingUnderscore, null); 
 			}
 //			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-//				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.namespace.lowercaseName"), null); //$NON-NLS-1$
+//				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention.namespace.lowercaseName"), null); //$NON-NLS-1$
 //			}
 			return CModelStatus.VERIFIED_OK;
 		}
-		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.invalidName", name), null); //$NON-NLS-1$
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_class_invalidName, name), null); 
 	}
 
 	/**
@@ -196,17 +197,17 @@ public class CConventions {
 	public static IStatus validateScopeName(String name) {
 
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.nullName"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_nullName, null); 
 		}
 		int length;
 		if ((length = name.length()) == 0) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.emptyName"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_emptyName, null); 
 		}
 		if (name.charAt(0) == fgDot || name.charAt(length-1) == fgDot) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.dotName"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_dotName, null); 
 		}
 		if (CharOperation.isWhitespace(name.charAt(0)) || CharOperation.isWhitespace(name.charAt(name.length() - 1))) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.nameWithBlanks"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_nameWithBlanks, null); 
 		}
 
 		StringTokenizer st = new StringTokenizer(name, scopeResolutionOperator);
@@ -216,13 +217,13 @@ public class CConventions {
 			typeName = typeName.trim(); // grammar allows spaces
 			char[] scannedID = typeName.toCharArray();
 			if (scannedID == null) {
-				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.illegalIdentifier", typeName), null); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_illegalIdentifier, typeName), null); 
 			}
 			if (firstToken && scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.leadingUnderscore"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_leadingUnderscore, null); 
 			}
 			if (firstToken && scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.lowercaseName"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_lowercaseName, null); 
 			}
 			firstToken = false;
 		}
@@ -257,11 +258,11 @@ public class CConventions {
 	 */
 	public static IStatus validateIdentifier(String id) {
 		if (!isLegalIdentifier(id)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.illegalIdentifier", id), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_illegalIdentifier, id), null); 
 		}
 
 		if (!isValidIdentifier(id)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.invalid", id), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id), null); 
 		}
 
 		return CModelStatus.VERIFIED_OK;
@@ -365,17 +366,17 @@ public class CConventions {
 	public static IStatus validateFileName(String name) {
 		//TODO could use a prefs option for file naming conventions
 		if (name == null || name.length() == 0) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.nullName"), null); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_nullName, null); 
 		}
 		if (!isLegalFilename(name)) {
 			//TODO we need platform-independent validation, see bug#24152
-			//return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.invalid"), null); //$NON-NLS-1$
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.possiblyInvalid"), null); //$NON-NLS-1$
+			//return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention.filename.invalid"), null); //$NON-NLS-1$
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_possiblyInvalid, null); 
 		}
 
 		String trimmed = name.trim();
 		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1)) { //$NON-NLS-1$
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.nameWithBlanks"), null); //$NON-NLS-1$
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_nameWithBlanks, null); 
 		}
 		
 		return CModelStatus.VERIFIED_OK;
@@ -402,7 +403,7 @@ public class CConventions {
 	    }
 
 	    if (!CoreModel.isValidHeaderUnitName(project, name)) {
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.headerFilename.filetype"), null); //$NON-NLS-1$
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_headerFilename_filetype, null); 
 	    }
 
 		return val;
@@ -429,7 +430,7 @@ public class CConventions {
 	    }
 
 	    if (!CoreModel.isValidSourceUnitName(project, name)) {
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.sourceFilename.filetype"), null); //$NON-NLS-1$
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_sourceFilename_filetype, null); 
 	    }
 
 		return val;
@@ -451,11 +452,11 @@ public class CConventions {
 	 */
 	public static IStatus validateEnumName(String name) {
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.nullName"), null); //$NON-NLS-1$ 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_nullName, null); 
 		}
 		String trimmed = name.trim();
 		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.nameWithBlanks"), null); //$NON-NLS-1$ 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_nameWithBlanks, null); 
 		}
 		int index = name.lastIndexOf(scopeResolutionOperator);
 		char[] scannedID;
@@ -484,16 +485,16 @@ public class CConventions {
 	
 		if (scannedID != null) {
 			if (CharOperation.contains('$', scannedID)) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.dollarName"), null); //$NON-NLS-1$ 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_dollarName, null); 
 			}
 			if (scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.leadingUnderscore"), null); //$NON-NLS-1$ 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_leadingUnderscore, null); 
 			}
 			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.lowercaseName"), null); //$NON-NLS-1$
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_lowercaseName, null); 
 			}
 			return CModelStatus.VERIFIED_OK;
 		}
-		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.invalidName"), null);  //$NON-NLS-1$
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_invalidName, null);  
 	}
 }

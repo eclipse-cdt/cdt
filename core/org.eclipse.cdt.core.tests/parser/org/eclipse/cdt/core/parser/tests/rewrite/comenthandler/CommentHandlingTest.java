@@ -87,19 +87,19 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	@Override
 	protected void runTest() throws Throwable {
 
-		if (fileMap.size() > 1) {
-			fail("To many files for CommentHandlingTest"); //$NON-NLS-1$
-		} else if (fileMap.size() == 0) {
+		if (fileMap.size() == 0) {
 			fail("No file for testing"); //$NON-NLS-1$
 		}
-
-		TestSourceFile file = fileMap.values().iterator().next();
-		NodeCommentMap nodeMap = ASTCommenter.getCommentedNodeMap(getUnit());
 		
-		StringBuilder expectedResultBuilder = buildExpectedResult(file);
-		StringBuilder actualResultBuilder = buildActualResult(nodeMap);
-		
-		assertEquals(expectedResultBuilder.toString(), actualResultBuilder.toString());
+		for(String fileName : fileMap.keySet()) {
+			TestSourceFile file = fileMap.get(fileName);
+			NodeCommentMap nodeMap = ASTCommenter.getCommentedNodeMap(getUnit(fileName));
+			
+			StringBuilder expectedResultBuilder = buildExpectedResult(file);
+			StringBuilder actualResultBuilder = buildActualResult(nodeMap);
+			
+			assertEquals(expectedResultBuilder.toString(), actualResultBuilder.toString());
+		}
 	}
 
 	private StringBuilder buildExpectedResult(TestSourceFile file) {
@@ -160,8 +160,8 @@ public class CommentHandlingTest extends RewriteBaseTest {
 		return LEADING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP + TRAILING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP + FREESTANDING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP;
 	}
 	
-	private IASTTranslationUnit getUnit() throws CoreException {
-		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(project.getFile(fileMap.keySet().iterator().next()));
+	private IASTTranslationUnit getUnit(String fileName) throws CoreException {
+		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(project.getFile(fileName));
 		return tu.getAST();
 	}
 	

@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -241,7 +243,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 						targetLocation.getNodeLength(), newNodeCode));
 				break;
 			case INSERT_BEFORE:
-				edit.addChild(new InsertEdit(targetLocation.getNodeOffset(),
+				edit.addChild(new InsertEdit(getOffsetIncludingComments(modification.getTargetNode()),
 						newNodeCode));
 				break;
 			case APPEND_CHILD:
@@ -303,15 +305,54 @@ public class ChangeGenerator extends CPPASTVisitor {
 		return formattedCode.toString();
 	}
 
-	public static String originalCodeOfNode(IASTNode node) {
+	public String originalCodeOfNode(IASTNode node) {
 		if (node.getFileLocation() != null) {
 			IFile sourceFile = FileHelper.getIFilefromIASTNode(node);
-			int nodeOffset = node.getFileLocation().getNodeOffset();
-			int nodeLength = node.getFileLocation().getNodeLength();
-			return FileContentHelper.getContent(sourceFile, nodeOffset,
-					nodeLength);
+			int nodeOffset = getOffsetIncludingComments(node);
+			int nodeLength = getNodeLengthIncludingComments(node);
+			
+			return FileContentHelper.getContent(sourceFile, nodeOffset,	nodeLength);
 		}
 		return null;
+	}
+
+	private int getNodeLengthIncludingComments(IASTNode node) {
+		int nodeOffset = node.getFileLocation().getNodeOffset();
+		int nodeLength = node.getFileLocation().getNodeLength();
+		
+		ArrayList<IASTComment> comments = commentMap.getAllCommentsForNode(node);
+		if(!comments.isEmpty()) {
+			int startOffset = nodeOffset;
+			int endOffset = nodeOffset + nodeLength;
+			for(IASTComment comment : comments) {
+				IASTFileLocation commentLocation = comment.getFileLocation();
+				if(commentLocation.getNodeOffset() < startOffset) {
+					startOffset = commentLocation.getNodeOffset();
+				}
+				if(commentLocation.getNodeOffset() + commentLocation.getNodeLength() >= endOffset) {
+					endOffset = commentLocation.getNodeOffset() + commentLocation.getNodeLength();
+				}
+			}
+			nodeLength = endOffset - startOffset;
+		}
+		return nodeLength;
+	}
+
+	private int getOffsetIncludingComments(IASTNode node) {
+		int nodeOffset = node.getFileLocation().getNodeOffset();
+		
+		ArrayList<IASTComment> comments = commentMap.getAllCommentsForNode(node);
+		if(!comments.isEmpty()) {
+			int startOffset = nodeOffset;
+			for(IASTComment comment : comments) {
+				IASTFileLocation commentLocation = comment.getFileLocation();
+				if(commentLocation.getNodeOffset() < startOffset) {
+					startOffset = commentLocation.getNodeOffset();
+				}
+			}
+			nodeOffset = startOffset;
+		}
+		return nodeOffset;
 	}
 
 	private String getIndent(IASTNode nextNode) {
@@ -564,7 +605,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 		}
 
 		protected void createChange(MultiTextEdit edit, IASTNode changedNode) {
-			int changeOffset = changedNode.getFileLocation().getNodeOffset();
+			int changeOffset = getOffsetIncludingComments(changedNode);
 
 			TextEditGroup editGroup = new TextEditGroup(Messages.ChangeGenerator_group);
 			for (ASTModification currentModification : modificationParent

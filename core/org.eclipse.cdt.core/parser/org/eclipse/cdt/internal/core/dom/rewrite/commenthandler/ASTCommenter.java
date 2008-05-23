@@ -83,12 +83,12 @@ public class ASTCommenter {
 
 	private static ArrayList<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu, ArrayList<IASTComment> comments) {
 		IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
-		TreeMap<Integer,Object> treeOfPreProcessorLines = new TreeMap<Integer,Object>();
+		TreeMap<Integer,String> treeOfPreProcessorLines = new TreeMap<Integer,String>();
 		ArrayList<Integer> listOfPreProcessorOffset = new ArrayList<Integer>();
 
 		for (IASTPreprocessorStatement statement : preprocessorStatements) {
 			if (isInWorkspace(statement)) {
-				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement),null);
+				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement), statement.getFileLocation().getFileName());
 				listOfPreProcessorOffset.add(statement.getFileLocation().getNodeOffset());
 			}
 		}
@@ -96,8 +96,10 @@ public class ASTCommenter {
 		ArrayList<IASTComment> commentsInCode = new ArrayList<IASTComment>();
 		for (IASTComment comment : comments) {
 			int comStartLineNumber = OffsetHelper.getStartingLineNumber(comment);
-			if (treeOfPreProcessorLines.containsKey(comStartLineNumber)) {
-				continue;
+			if (treeOfPreProcessorLines.containsKey(comStartLineNumber)
+					&& treeOfPreProcessorLines.get(comStartLineNumber).equals(comment.getFileLocation().getFileName()
+					)) {
+					continue;
 			}
 			if(commentIsAtTheBeginningBeforePreprocessorStatements(comment, listOfPreProcessorOffset)) {
 				continue;

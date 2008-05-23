@@ -135,4 +135,19 @@ public class NodeCommentMap {
 	public HashMap<IASTNode, ArrayList<IASTComment>> getFreestandingMap() {
 		return freestandingMap;
 	}
+
+	/**
+	 * Returns an ArrayList for the given node. This ArrayList contains all the comments 
+	 * which are assigned to this specific node. If no comments are available an empty
+	 * ArrayList is returned.
+	 * @param node The key to fetch the associated comments.
+	 * @return ArrayList
+	 */
+	public ArrayList<IASTComment> getAllCommentsForNode(IASTNode node) {
+		ArrayList<IASTComment> comment = new ArrayList<IASTComment>();
+		comment.addAll(getFreestandingCommentsForNode(node));
+		comment.addAll(getLeadingCommentsForNode(node));
+		comment.addAll(getTrailingCommentsForNode(node));
+		return comment;
+	}
 }

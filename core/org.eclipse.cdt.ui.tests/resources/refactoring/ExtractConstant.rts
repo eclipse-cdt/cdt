@@ -77,6 +77,87 @@ void A::bar()
 	int b = theAnswer;
 }
 
+//!ExtractConstantInt 2
+//#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	void bar();
+};
+
+#endif /*A_H_*/
+
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	void bar();
+    static const int theAnswer = 42;
+};
+
+#endif /*A_H_*/
+
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	//Hallo
+	return //$42$//;
+}
+
+void A::bar()
+{
+	int a = 42;
+	int b = 42;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	//Hallo
+	return theAnswer;
+}
+
+void A::bar()
+{
+	int a = theAnswer;
+	int b = theAnswer;
+}
+
 //!ExtractConstantFloat
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@A.h

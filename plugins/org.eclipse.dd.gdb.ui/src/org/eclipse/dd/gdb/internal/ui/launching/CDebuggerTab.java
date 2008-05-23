@@ -546,7 +546,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			} else {
 				// In attach mode, figure out if we are doing a remote connect based on the currently
 				// chosen debugger
-				if (getDebugConfig().getName().equals("gdbserver Debugger DSF")) fRemoteMode = true; //$NON-NLS-1$
+				if (getDebugConfig().getID().equals(REMOTE_DEBUGGER_ID)) fRemoteMode = true;
 				else fRemoteMode = false;
 			}
 			initializeAdvancedAttributes(config);

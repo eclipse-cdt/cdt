@@ -209,31 +209,51 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
     
     
     public int getDeltaFlags(Object e) {
-        if(e instanceof IResumedDMEvent || e instanceof ISuspendedDMEvent) {
+        if (e instanceof IContainerResumedDMEvent || e instanceof IContainerSuspendedDMEvent) {
+            // No need to react to container events, because the container 
+            // nodes will deal with them. We need this if statement however, 
+            // because the these events extend IResumedDMEvent and 
+            // ISuspendedDMEvent and would trigger the if statement below.
+            return IModelDelta.NO_CHANGE;
+        } else if (e instanceof IResumedDMEvent && 
+                   ((IResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
+        {
+            return IModelDelta.CONTENT;            
+        } else if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
-        }
-        if (e instanceof ModelProxyInstalledEvent) {
+        } else if (e instanceof ISteppingTimedOutEvent && 
+                 !(((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) ) 
+        {
+            return IModelDelta.CONTENT;            
+        } else if (e instanceof ModelProxyInstalledEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
         }
         return IModelDelta.NO_CHANGE;
     }
 
     public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        if(e instanceof IContainerResumedDMEvent) {
-            IExecutionDMContext[] triggeringContexts = ((IContainerResumedDMEvent)e).getTriggeringContexts();
-            if (triggeringContexts.length != 0) {
-                parentDelta.addNode(createVMContext(triggeringContexts[0]), IModelDelta.CONTENT);
-            }
+        if(e instanceof IContainerResumedDMEvent || e instanceof IContainerSuspendedDMEvent) {
+            // No need to react to container events, because the container 
+            // nodes will deal with them. We need this if statement however, 
+            // because the these events extend IResumedDMEvent and 
+            // ISuspendedDMEvent and would trigger the if statement below.
             rm.done();
-        } else if (e instanceof IContainerSuspendedDMEvent) {
-            IExecutionDMContext[] triggeringContexts = ((IContainerSuspendedDMEvent)e).getTriggeringContexts();
-            if (triggeringContexts.length != 0) {
-                parentDelta.addNode(createVMContext(triggeringContexts[0]), IModelDelta.CONTENT);
-            }
-            rm.done();
-        } else if(e instanceof IResumedDMEvent || e instanceof ISuspendedDMEvent) {
+        } else if(e instanceof IResumedDMEvent && 
+                  ((IResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
+        {
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
             rm.done();
+        } else if (e instanceof ISuspendedDMEvent) {
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+            rm.done();            
+        } else if (e instanceof ISteppingTimedOutEvent && 
+            !(((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) ) 
+        {
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+            // Workaround for bug 233730: we need to add a separate delta node for the state flag in 
+            // order to trigger an update of the run control actions.
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.STATE);
+            rm.done();            
         } else if (e instanceof ModelProxyInstalledEvent) {
             getThreadVMCForModelProxyInstallEvent(
                 parentDelta,

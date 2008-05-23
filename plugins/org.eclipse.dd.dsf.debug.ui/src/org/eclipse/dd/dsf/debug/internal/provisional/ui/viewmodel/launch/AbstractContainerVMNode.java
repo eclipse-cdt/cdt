@@ -18,9 +18,12 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
+import org.eclipse.dd.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
@@ -62,10 +65,16 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
 	protected abstract void updateLabelInSessionThread(ILabelUpdate[] updates);
 
 	public int getDeltaFlags(Object e) {
-	    if(e instanceof IRunControl.IContainerResumedDMEvent ||
-	       e instanceof IRunControl.IContainerSuspendedDMEvent)
+        if (e instanceof IContainerResumedDMEvent && 
+            ((IContainerResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
+        {
+            return IModelDelta.CONTENT;            
+        } else if (e instanceof IContainerSuspendedDMEvent) {
+            return IModelDelta.CONTENT;
+	    } else if (e instanceof ISteppingTimedOutEvent && 
+                   ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext)
 	    {
-	        return IModelDelta.CONTENT;
+           return IModelDelta.CONTENT;            
 	    } else if (e instanceof IExitedDMEvent) {
 	        return IModelDelta.CONTENT;
 	    } else if (e instanceof IStartedDMEvent) {
@@ -79,11 +88,20 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
 	}
 
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-		if(e instanceof IRunControl.IContainerResumedDMEvent ||
-		   e instanceof IRunControl.IContainerSuspendedDMEvent)
+		if(e instanceof IContainerResumedDMEvent &&
+           ((IContainerResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
 		{
 	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-	    } else if (e instanceof IExitedDMEvent) {
+		} else if (e instanceof IContainerSuspendedDMEvent) {
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);		
+		} else if (e instanceof ISteppingTimedOutEvent && 
+                   ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext)
+		{
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+            // Workaround for bug 233730: we need to add a separate delta node for the state flag in 
+            // order to trigger an update of the run control actions.
+            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.STATE);
+		} else if (e instanceof IExitedDMEvent) {
 	    	IExecutionDMContext exeContext= ((IExitedDMEvent) e).getDMContext();
 			if (exeContext instanceof IContainerDMContext) {
 	    		parentDelta.setFlags(parentDelta.getFlags() |  IModelDelta.CONTENT);

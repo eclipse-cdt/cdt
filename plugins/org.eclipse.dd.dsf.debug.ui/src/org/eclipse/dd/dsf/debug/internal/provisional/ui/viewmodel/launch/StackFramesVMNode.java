@@ -38,6 +38,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
@@ -77,6 +78,30 @@ public class StackFramesVMNode extends AbstractDMVMNode
         update.done();
     }
 
+    @Override
+    protected void updateElementCountInSessionThread(final IChildrenCountUpdate update) {
+        IStack stackService = getServicesTracker().getService(IStack.class);
+        final IExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
+        if (stackService == null || execDmc == null) {
+            handleFailedUpdate(update);
+            return;
+        }          
+        
+        stackService.getStackDepth(
+            execDmc, 0,
+            new ViewerDataRequestMonitor<Integer>(getSession().getExecutor(), update) { 
+                @Override
+                public void handleCompleted() {
+                    if (!isSuccess()) {
+                        handleFailedUpdate(update);
+                        return;
+                    }
+                    update.setChildCount(getData());
+                    update.done();
+                }
+            });
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
@@ -90,19 +115,37 @@ public class StackFramesVMNode extends AbstractDMVMNode
             return;
         }          
         
-        stackService.getFrames(
-            execDmc, 
-            new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
-                @Override
-                public void handleCompleted() {
-                    if (!isSuccess()) {
-                        handleFailedUpdate(update);
-                        return;
+        if (update.getOffset() == 0 && update.getLength() == 1) {
+            stackService.getTopFrame(
+                execDmc, 
+                new ViewerDataRequestMonitor<IFrameDMContext>(getSession().getExecutor(), update) { 
+                    @Override
+                    public void handleCompleted() {
+                        if (!isSuccess()) {
+                            handleFailedUpdate(update);
+                            return;
+                        }
+                        update.setChild(createVMContext(getData()), 0);
+                        update.done();
                     }
-                    fillUpdateWithVMCs(update, getData());
-                    update.done();
-                }
-            });
+                });
+            
+            // Requesting top stack frame only
+        } else {
+            stackService.getFrames(
+                execDmc, 
+                new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
+                    @Override
+                    public void handleCompleted() {
+                        if (!isSuccess()) {
+                            handleFailedUpdate(update);
+                            return;
+                        }
+                        fillUpdateWithVMCs(update, getData());
+                        update.done();
+                    }
+                });
+        }
     }
     
     /*
@@ -249,7 +292,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             getVMProvider().updateNode(
                 this,
                 new VMChildrenUpdate(
-                    parentDelta, getVMProvider().getPresentationContext(), -1, -1,
+                    parentDelta, getVMProvider().getPresentationContext(), 0, 1,
                     new DataRequestMonitor<List<Object>>(getExecutor(), rm) { 
                         @Override
                         public void handleCompleted() {
@@ -391,7 +434,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
     private void buildDeltaForSteppingTimedOutEvent(final StepQueueManager.ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
-        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         rm.done();
     }
     

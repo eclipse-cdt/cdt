@@ -11,6 +11,7 @@
 package org.eclipse.dd.dsf.ui.viewmodel.update;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -238,7 +239,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
      * Also, the ordering is used to optimize the flushing of the cache data (see 
      * {@link FlushMarkerKey} for more details).
      */
-    private final Map<Object, Entry> fCacheData = new HashMap<Object, Entry>(200, 0.75f);
+    private final Map<Object, Entry> fCacheData = Collections.synchronizedMap(new HashMap<Object, Entry>(200, 0.75f));
     
     /**
      * Pointer to the first cache entry in the double-linked list of cache entries.
@@ -758,9 +759,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     @Deprecated
     public IDMData getArchivedModelData(IVMNode node, IViewerUpdate update, IDMContext dmc) {
         ElementDataKey key = makeEntryKey(node, update);
-        final ElementDataEntry entry = getElementDataEntry(key);
-        if ( entry.fArchiveData != null) {
-            return entry.fArchiveData.get(dmc);
+        final Entry entry = fCacheData.get(key);
+        if ( entry instanceof ElementDataEntry) {
+            Map<IDMContext,IDMData> archiveData = ((ElementDataEntry)entry).fArchiveData; 
+            if (archiveData != null) {
+                return archiveData.get(dmc);
+            }
         }
         return null;
     }

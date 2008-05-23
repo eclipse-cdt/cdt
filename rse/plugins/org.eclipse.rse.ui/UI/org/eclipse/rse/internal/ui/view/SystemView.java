@@ -55,6 +55,7 @@
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * David McKnight  (IBM)         - [231903] TVT34:TCT198: PLK: problems with "Show prompt" checkbox and "New connection prompt"
  * David McKnight  (IBM)         - [233530] Not Prompted on Promptable Filters after using once by double click
+ * David McKnight  (IBM)         - [233570] ClassCastException when moving filter after "go into" action
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3993,7 +3994,7 @@ public class SystemView extends SafeTreeViewer
 			if (debug) logDebugMsg("...Did not find ss " + ss.getName()); //$NON-NLS-1$
 			return;
 		}
-		Item ssItem = (Item) item;
+
 		boolean wasSelected = false;
 		IStructuredSelection oldSelections = (IStructuredSelection) getSelection();
 
@@ -4001,22 +4002,22 @@ public class SystemView extends SafeTreeViewer
 		if (debug) logDebugMsg("...Found ss " + ss); //$NON-NLS-1$
 
 		// STEP 2: ARE WE SHOWING A REFERENCE TO THE FILTER's PARENT POOL?
-		Item parentRefItem = null;
+		Widget parentRefItem = null;
 		ISystemFilterContainer refdParent = null;
 		// 3a (reference to filter pool or filter)
 		if (parent instanceof ISystemFilterContainerReference) // given a reference to parent?
 		{
 			refdParent = ((ISystemFilterContainerReference) parent).getReferencedSystemFilterContainer();
-			parentRefItem = (Item) internalFindReferencedItem(ssItem, refdParent, SEARCH_INFINITE);
+			parentRefItem = (Item) internalFindReferencedItem(item, refdParent, SEARCH_INFINITE);
 		}
 		// 3b and 3d. (filter pool or filter)
 		else if (parent instanceof ISystemFilterContainer) {
 			refdParent = (ISystemFilterContainer) parent;
-			parentRefItem = (Item) internalFindReferencedItem(ssItem, refdParent, SEARCH_INFINITE);
+			parentRefItem = (Item) internalFindReferencedItem(item, refdParent, SEARCH_INFINITE);
 		}
 		// 3c (subsystem)
 		else {
-			parentRefItem = ssItem;
+			parentRefItem = item;
 		}
 		if (parentRefItem != null) {
 			if (debug) logDebugMsg("......We are showing reference to parent"); //$NON-NLS-1$
@@ -4025,10 +4026,14 @@ public class SystemView extends SafeTreeViewer
 			// HMMM... WE NEED TO REFRESH EVEN IF NOT EXPANDED IF ADDING FIRST CHILD
 			if (!add) // move or delete
 			{
-				if (!(((TreeItem) parentRefItem).getExpanded())) {
-					refresh(parentRefItem.getData()); // flush cached widgets so next expand is fresh
-					return;
+				if (parentRefItem instanceof Item){
+					if (!(((TreeItem) parentRefItem).getExpanded())) {
+						refresh(parentRefItem.getData()); // flush cached widgets so next expand is fresh
+						return;
+					}
 				}
+
+				
 				// move or delete and parent is expanded...
 				Item oldItem = (Item) internalFindReferencedItem(parentRefItem, afilterstring ? (Object) filterstring : (Object) filter, 1);
 				//if (debug)

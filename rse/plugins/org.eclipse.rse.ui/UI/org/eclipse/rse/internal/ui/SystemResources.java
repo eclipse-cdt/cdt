@@ -23,6 +23,7 @@
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * David Dykstal (IBM) - [231943] Make "true" and "false" translatable on SystemTypeFieldEditor
  * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
+ * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -1035,6 +1036,8 @@ public class SystemResources extends NLS
 	public static String SystemImportConnectionAction_ImportJobName;
 
 	public static String SystemImportConnectionAction_UnexpectedException;
+
+	public static String SystemTableViewPart_title;
 
 	public static String SystemTypeFieldEditor_false;
 

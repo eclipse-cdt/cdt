@@ -38,6 +38,7 @@
  * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
  * David McKnight   (IBM)        - [232320] remote system details view restore problem
  * David McKnight   (IBM)        - [233578] Promptable Filter Displayed 3 times when clicking cancel
+ * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -138,6 +139,8 @@ import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.osgi.framework.Bundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Comment goes here
@@ -1575,12 +1578,8 @@ public class SystemTableViewPart extends ViewPart
 		{
 			String type = va.getType(object);
 			String name = va.getName(object);
-			//setPartName(type + " " + name);
-
-			setContentDescription(type + " "+ name); //$NON-NLS-1$
-
-			//SystemTableViewProvider provider = (SystemTableViewProvider) _viewer.getContentProvider();
-			//setTitleImage(provider.getImage(object));
+			String title = MessageFormat.format(SystemResources.SystemTableViewPart_title, new String[] {type, name});
+			setContentDescription(title);
 		}
 	    }
 	}

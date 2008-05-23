@@ -37,7 +37,7 @@
  * David Dykstal (IBM) - [231867] TVT34:TCT196: PLK: "Subset" window too narrow
  * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
  * David McKnight   (IBM)        - [232320] remote system details view restore problem
- * David McKnight   (IBM)        - [233478] Promptable Filter Displayed 3 times when clicking cancel
+ * David McKnight   (IBM)        - [233578] Promptable Filter Displayed 3 times when clicking cancel
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1343,7 +1343,7 @@ public class SystemTableViewPart extends ViewPart
 				{
 					adapter.getChildren((IAdaptable)element, new NullProgressMonitor());
 				}
-				else if (!alreadyHandled && adapter.hasChildren((IAdaptable)element))
+				else if (adapter.hasChildren((IAdaptable)element))
 				{
 					setInput((IAdaptable) element);
 				}

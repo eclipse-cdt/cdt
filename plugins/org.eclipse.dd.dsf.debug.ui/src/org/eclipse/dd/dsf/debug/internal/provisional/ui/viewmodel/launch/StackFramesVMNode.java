@@ -24,9 +24,7 @@ import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -320,12 +318,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
         // label has changed.
         if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
-        } else if (e instanceof IResumedDMEvent) {
-            if (((IResumedDMEvent)e).getReason() == StateChangeReason.STEP) {
-                return IModelDelta.STATE;
-            } else {
-                return IModelDelta.CONTENT;
-            }
         } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
         } else if (e instanceof ModelProxyInstalledEvent) {
@@ -356,8 +348,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
         } else if (e instanceof ISuspendedDMEvent) {
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();
             buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, execDmc, execDmc, parent, nodeOffset, rm);
-        } else if (e instanceof IResumedDMEvent) {
-            buildDeltaForResumedEvent((IResumedDMEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
             buildDeltaForSteppingTimedOutEvent((StepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof ModelProxyInstalledEvent) {
@@ -415,23 +405,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-    private void buildDeltaForResumedEvent(final IResumedDMEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        IStack stackService = getServicesTracker().getService(IStack.class);
-        if (stackService == null) {
-            // Required services have not initialized yet.  Ignore the event.
-            rm.done();
-            return;
-        }          
-
-        IResumedDMEvent resumedEvent = e; 
-        if (resumedEvent.getReason() != StateChangeReason.STEP) {
-            // Refresh the list of stack frames only if the run operation is not a step.  Also, clear the list
-            // of cached frames.
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
-        rm.done();
-    }
-
     private void buildDeltaForSteppingTimedOutEvent(final StepQueueManager.ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

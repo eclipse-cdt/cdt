@@ -59,15 +59,15 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/** Cloned memento key from {@link CommonNavigator}. */
 	private static String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$
 	/** Memento key for delayed enablement of link-with-editor */
-	static String LINKING_ENABLED_DELAYED = LINKING_ENABLED + ".delayed"; //$NON-NLS-1$ 
+	static String LINKING_ENABLED_DELAYED = LINKING_ENABLED + ".delayed"; //$NON-NLS-1$
 
 	/** The input object as supplied in the call to {@link #inputChanged()} */
 	private Object fRealInput;
 	private IPropertyChangeListener fPropertyChangeListener;
-	/** 
+	/**
 	 * Flag set in {@link #restoreState(IMemento) restoreState},
-	 * indicating whether link-with-editor should be enabled delayed 
-	 * as a (old) workaround for 
+	 * indicating whether link-with-editor should be enabled delayed
+	 * as a (old) workaround for
 	 * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344">bug 186344</a>
 	 */
 	private boolean fLinkingEnabledDelayed;
@@ -124,14 +124,15 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		boolean showCUChildren= store.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 		boolean groupIncludes= store.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
 		if (memento != null) {
-			String mementoValue= memento.getString(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
-			if (mementoValue != null) {
-				showCUChildren= Boolean.valueOf(mementoValue).booleanValue();
-			}
-			mementoValue= memento.getString(PreferenceConstants.CVIEW_GROUP_INCLUDES);
-			if (mementoValue != null) {
-				groupIncludes= Boolean.valueOf(mementoValue).booleanValue();
-			}
+			// options controlled by preference only
+//			String mementoValue= memento.getString(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
+//			if (mementoValue != null) {
+//				showCUChildren= Boolean.valueOf(mementoValue).booleanValue();
+//			}
+//			mementoValue= memento.getString(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+//			if (mementoValue != null) {
+//				groupIncludes= Boolean.valueOf(mementoValue).booleanValue();
+//			}
 			// old workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344
 			Integer value= memento.getInteger(LINKING_ENABLED_DELAYED);
 			fLinkingEnabledDelayed= value != null && value.intValue() != 0;
@@ -157,7 +158,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @see org.eclipse.cdt.ui.CElementContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { 
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fRealInput= newInput;
 		super.inputChanged(viewer, oldInput, findInputElement(newInput));
 		
@@ -237,7 +238,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			return ((IWorkspaceRoot)parent).getProjects();
 		} else if (parent instanceof IProject) {
 			return super.getChildren(CoreModel.getDefault().create((IProject)parent));
-		} 
+		}
 		return super.getElements(parent);
 	}
 
@@ -264,7 +265,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	public boolean hasChildren(Object element) {
 		if (element instanceof IProject) {
 			IProject project= (IProject) element;
-			return project.isAccessible();	
+			return project.isAccessible();
 		}
 		return super.hasChildren(element);
 	}
@@ -273,7 +274,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
 	 */
 	@SuppressWarnings("unchecked")
-	public void getPipelinedChildren(Object parent, Set currentChildren) { 
+	public void getPipelinedChildren(Object parent, Set currentChildren) {
 		customizeCElements(getChildren(parent), currentChildren);
 	}
 
@@ -284,7 +285,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	public void getPipelinedElements(Object input, Set currentElements) {
 		// only replace plain resource elements with custom elements
 		// and avoid duplicating elements already customized
-		// by upstream content providers 
+		// by upstream content providers
 		customizeCElements(getElements(input), currentElements);
 	}
 
@@ -360,7 +361,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRefresh(org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
 	public boolean interceptRefresh(PipelinedViewerUpdate refreshSynchronization) {
-		@SuppressWarnings("unchecked") 
+		@SuppressWarnings("unchecked")
 		final Set<Object> refreshTargets = refreshSynchronization.getRefreshTargets();
 		return convertToCElements(refreshTargets);
 	}
@@ -401,7 +402,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			if (project != null && CoreModel.hasCNature(project)) {
 				ICElement element= CoreModel.getDefault().create(container);
 				if (element != null) {
-					// don't convert the root  
+					// don't convert the root
 					if( !(element instanceof ICModel) && !(element instanceof ICProject) ) {
 						modification.setParent(element);
 					}
@@ -418,7 +419,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * Converts the given set to ICElements.
 	 * 
 	 * @param currentChildren
-	 *            The set of current children that would be contributed or 
+	 *            The set of current children that would be contributed or
 	 *            refreshed in the viewer.
 	 * @return <code>true</code> if the input set was modified
 	 */

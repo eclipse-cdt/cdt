@@ -134,7 +134,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 
 	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
 		IBinding binding= getBindingInAST(name, forceResolve);
-		if (binding == null) {
+		if (binding == null && forceResolve) {
 			final IASTTranslationUnit tu = name.getTranslationUnit();
 			IIndex index = tu.getIndex();
 			if (index != null) {

@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -128,8 +129,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
@@ -610,25 +609,35 @@ public class CPPSemantics {
 
         return resultMap;
 	}
-	static protected void lookup(LookupData data, Object start) throws DOMException{
-		IASTNode node = data.astName;
-
-		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
-		boolean isIndexBased= false;
+	
+	private static IIndexFileSet getIndexFileSet(LookupData data) {
 		if (data.tu != null) {
 			final IIndexFileSet fs= data.tu.getIndexFileSet();
-			if (fs != null) {
-				fileSet= fs;
-				isIndexBased= true;
-			}
+			if (fs != null) 
+				return fs;
 		}
+		return IIndexFileSet.EMPTY;
+	}
+
+	/**
+	 * Perform a lookup with the given data starting in the given scope, considering bases and parent scopes.
+	 * @param data the lookup data created off a name
+	 * @param start either a scope or a name.
+	 */
+	static protected void lookup(LookupData data, Object start) throws DOMException{
+		final IIndexFileSet fileSet= getIndexFileSet(data);
+		final boolean isIndexBased= fileSet != IIndexFileSet.EMPTY;
 		
+		IASTNode node = data.astName;
 		ICPPScope scope = null;
 		if (start instanceof ICPPScope)
 		    scope = (ICPPScope) start;
 		else if (start instanceof IASTName)
 		    scope = getLookupScope((IASTName) start);
 		else 
+			return;
+		
+		if (data.astName == null) 
 			return;
 		
 		boolean friendInLocalClass = false;
@@ -647,55 +656,35 @@ public class CPPSemantics {
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem(node);
 			
 			if (!data.usingDirectivesOnly) {
-				if (ASTInternal.isFullyCached(scope)) {
-					if (!data.contentAssist && data.astName != null) {
-						IBinding binding = scope.getBinding(data.astName, true, fileSet);
+				if (data.contentAssist) {
+					if (!ASTInternal.isFullyCached(scope)) {
+						lookupInScope(data, scope, blockItem);
+					}
+					// now scope is fully cached.
+					final IBinding[] bindings = scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
+					mergeResults(data, bindings, true);
+				}
+				else {
+					boolean done= false;
+					if (!ASTInternal.isFullyCached(scope)) {
+						final IASTName[] names= lookupInScope(data, scope, blockItem);
+						if (names != null) {
+							mergeResults(data, names, true);
+							done= true;
+						} 
+					}
+				
+					if (!done) {
+						// now scope is fully cached.
+						final IBinding binding = scope.getBinding(data.astName, true, fileSet);
 						if (binding != null && 
-							(CPPSemantics.declaredBefore(binding, data.astName, isIndexBased) || 
-							  (scope instanceof ICPPClassScope && data.checkWholeClassScope)))
-						{
+								(CPPSemantics.declaredBefore(binding, data.astName, isIndexBased) || 
+										(scope instanceof ICPPClassScope && data.checkWholeClassScope))) {
 							mergeResults(data, binding, true);	
 						}
-					} else if (data.astName != null) {
-						IBinding[] bindings = scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
-						mergeResults(data, bindings, true);
-					}
-				} else if (data.astName != null) {
-					IBinding[] b = null;
-					if (!data.contentAssist) {
-						IBinding binding = scope.getBinding(data.astName, false, fileSet);
-						if (binding instanceof CPPImplicitFunction || binding instanceof CPPImplicitTypedef) 
-							mergeResults(data, binding, true);
-						else if (binding != null)
-							b = new IBinding[] { binding };
-					} else {
-						b = scope.getBindings(data.astName, false, data.prefixLookup, fileSet);
-					}
-					
-					IASTName[] inScope = lookupInScope(data, scope, blockItem);
-					
-					if (inScope != null) {
-						if (data.contentAssist) {
-							Object[] objs = ArrayUtil.addAll(Object.class, null, inScope);
-							if (b != null) {
-								for (IBinding element : b) {
-									if (isFromIndex(element))
-										objs = ArrayUtil.append(Object.class, objs, element);
-								}
-							}
-							mergeResults(data, objs, true);
-						} else {
-							mergeResults(data, inScope, true);
-						}
-					} else if (!data.contentAssist) {
-						if (b != null && isFromIndex(b[0])) {
-							mergeResults(data, b, true);
-						}
-					} else if (b != null) {
-						mergeResults(data, b, true);
 					}
 				}
-
+				
 				// store using-directives found in this block or namespace for later use.
 				if ((!data.hasResults() || !data.qualified() || data.contentAssist) && scope instanceof ICPPNamespaceScope) {
 					final ICPPNamespaceScope blockScope= (ICPPNamespaceScope) scope;
@@ -1514,10 +1503,24 @@ public class CPPSemantics {
 	    if (bindings == null || bindings.length == 0) {
 	        return null;
 	    } else if (bindings.length == 1) {
-	        if (bindings[0] instanceof IBinding)
-	    	    return (IBinding) bindings[0];
-	    	else if (bindings[0] instanceof IASTName && ((IASTName) bindings[0]).getBinding() != null)
-	    	    return ((IASTName) bindings[0]).getBinding();
+//	        if (bindings[0] instanceof IBinding)
+//	    	    return (IBinding) bindings[0];
+//	    	else if (bindings[0] instanceof IASTName && ((IASTName) bindings[0]).getBinding() != null)
+//	    	    return ((IASTName) bindings[0]).getBinding();
+	        
+	    	IBinding candidate= null;
+	        if (bindings[0] instanceof IBinding) {
+	        	candidate= (IBinding) bindings[0];
+	        } else if (bindings[0] instanceof IASTName) {
+	    		candidate= ((IASTName) bindings[0]).getBinding();
+	    	}
+	        if (candidate != null) {
+	        	 if (candidate instanceof IType == false && candidate instanceof ICPPNamespace == false 
+	        			 && LookupData.typesOnly(name)) {
+	        		return null;
+	        	 }
+	        	 return candidate;
+	        }
 	    }
 	    
 	    if (name.getPropertyInParent() != STRING_LOOKUP_PROPERTY) {
@@ -1558,15 +1561,23 @@ public class CPPSemantics {
 	        // are likely to be redeclared we need to assume that there is a declaration
 	        // in one of the headers.
 	    	if (indexBased) {
-	    		if (cpp instanceof ICPPNamespace || cpp instanceof ICPPFunction || cpp instanceof ICPPVariable) {
-	    			try {
+    			try {
+    				if (cpp instanceof ICPPNamespace || cpp instanceof ICPPFunction || cpp instanceof ICPPVariable) {
 	    				IScope scope= cpp.getScope();
-	    				if (!(scope instanceof ICPPBlockScope) && scope instanceof ICPPNamespaceScope) {
+	    				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
 	    					return true;
 	    				}
-	    			} catch (DOMException e) {
-	    			}
-	    		}
+    				} else if (cpp instanceof ICompositeType || cpp instanceof IEnumeration) {
+	    				IScope scope= cpp.getScope();
+	    				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
+	    					// if this is not the definition, it may be found in a header. (bug 229571)
+	    					if (cpp.getDefinition() == null) {
+	    						return true;
+	    					}
+	    				}
+    				}
+    			} catch (DOMException e) {
+    			}
 	    	}
 	        IASTNode[] n = cpp.getDeclarations();
 	        if (n != null && n.length > 0) {
@@ -1765,6 +1776,9 @@ public class CPPSemantics {
 	    	return resolveFunction(data, fns.keyArray(IFunction.class));
 	    }
 	    
+	    if (data.typesOnly && obj instanceof ICPPNamespace == false) {
+	    	return null;
+	    }
 	    return obj;
 	}
 

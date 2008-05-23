@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -799,5 +800,18 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     // void test() {x;}
 	public void testEndlessLoopWithUsingDeclaration_Bug209813() throws DOMException {
 		getProblemFromASTName("x;", 1);
+	}
+	
+	// class MyClass {};
+	
+	// void test(MyClass* ptr);
+	// class MyClass;
+	public void testClassRedeclarationAfterReference_Bug229571() throws Exception {
+		IBinding cl= getBindingFromASTName("MyClass;", 7);
+		IFunction fn= getBindingFromASTName("test(", 4, IFunction.class);
+		IType type= fn.getType().getParameterTypes()[0];
+		assertInstance(type, IPointerType.class);
+		type= ((IPointerType) type).getType();
+		assertSame(type, cl);
 	}
 }

@@ -105,7 +105,7 @@ class LookupData {
 	public LookupData(IASTName n) {
 		astName = n;
 		tu= (CPPASTTranslationUnit) astName.getTranslationUnit();
-		typesOnly = typesOnly();
+		typesOnly = typesOnly(astName);
 		considerConstructors = considerConstructors();
 		checkWholeClassScope = checkWholeClassScope();
 	}
@@ -131,16 +131,16 @@ class LookupData {
 	    return false;
 	}
 	
-	private boolean typesOnly() {
-		if (astName == null) return false;
-		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
-		IASTNode parent = astName.getParent();
+	static boolean typesOnly(IASTName name) {
+		if (name == null) return false;
+		if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
+		IASTNode parent = name.getParent();
 		if (parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier ||
 		    parent instanceof ICPPASTCompositeTypeSpecifier)
 		    return true;
 		if (parent instanceof ICPPASTQualifiedName) {
 		    IASTName[] ns = ((ICPPASTQualifiedName)parent).getNames();
-		    return (astName != ns[ns.length -1]);
+		    return (name != ns[ns.length -1]);
 		}
 		return false;
 	}

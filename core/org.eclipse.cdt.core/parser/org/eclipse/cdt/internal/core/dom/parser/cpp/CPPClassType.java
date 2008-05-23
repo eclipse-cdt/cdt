@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -225,8 +227,15 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			definition = action.result;
 
 			if( definition == null ){
-				node.getTranslationUnit().accept( action );
+				final IASTTranslationUnit translationUnit = node.getTranslationUnit();
+				translationUnit.accept( action );
 				definition = action.result;
+				if (definition == null && typeInIndex == null) {
+					IIndex index= translationUnit.getIndex();
+					if (index != null) {
+						typeInIndex= (ICPPClassType) index.adaptBinding(this);
+					}
+				}
 			}
 			checked = true;
 		}

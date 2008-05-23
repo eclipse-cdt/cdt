@@ -525,7 +525,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
 					final FormattedValueDMContext valueDmc = exprService.getFormattedValueContext(exprCtxt, formatId);
 					exprService.getModelData(
 	              	valueDmc, 
-	                  new DataRequestMonitor<FormattedValueDMData>(getExecutor(), null) {
+	                  new DataRequestMonitor<FormattedValueDMData>(getExecutor(), rm) {
 	          			@Override
 	          			protected void handleSuccess() {
 	          				if(! regValue.equals(getData().getFormattedValue()) || ! valueDmc.getFormatID().equals(formatId)){
@@ -533,10 +533,13 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
 		          	                @Override
 		          	                protected void handleSuccess() {
 		          	                	generateRegisterChangedEvent(regDmc);
+		          	                	rm.done();
 		          	                }
 		          	            });
 	          				}//if
-      	                    rm.done();
+	          				else {
+	          					rm.done();
+	          				}
 	          			}//handleOK
 	              	}
 	              );

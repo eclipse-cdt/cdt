@@ -2806,7 +2806,6 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public boolean doDeleteBatch(Shell shell, List resourceSet, IProgressMonitor monitor) throws Exception
 	{
-		boolean ok;
 		IRemoteFileSubSystem ss = null;
 		IRemoteFile[] files = new IRemoteFile[resourceSet.size()];
 		for (int i = 0; i < resourceSet.size(); i++)
@@ -2834,7 +2833,6 @@ public class SystemViewRemoteFileAdapter
 			}
 			catch (Exception exc)
 			{
-				ok = false;
 				String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
 				String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
 
@@ -2846,19 +2844,9 @@ public class SystemViewRemoteFileAdapter
 		}
 		if (ss != null)
 		{
-			try {
-				ss.deleteBatch(files, monitor);
-				ok = true;
-			} catch (Exception e) {
-				SystemBasePlugin.logError("Exception occurred during batch delete", e); //$NON-NLS-1$
-				ok = false;
-			}
-			return ok;
+			ss.deleteBatch(files, monitor);
 		}
-		else
-		{
-			return false;
-		}
+		return true;
 	}
 	// FOR COMMON RENAME ACTIONS
 	/**
@@ -2936,7 +2924,6 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public boolean doRename(Shell shell, Object element, String newName, IProgressMonitor monitor) throws Exception
 	{
-		boolean ok = true;
 		IRemoteFile file = (IRemoteFile) element;
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
 
@@ -2948,12 +2935,7 @@ public class SystemViewRemoteFileAdapter
 				localResource = UniversalFileTransferUtility.getTempFileFor(file);
 			}
 
-			try {
-				ss.rename(file, newName, monitor);
-			} catch (Exception e) {
-				SystemBasePlugin.logError("Exception occurred during rename", e); //$NON-NLS-1$
-				ok = false;
-			}
+			ss.rename(file, newName, monitor);
 			if (localResource != null && localResource.exists())
 			{
 
@@ -2976,7 +2958,7 @@ public class SystemViewRemoteFileAdapter
 //				//sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, file, file.getParentRemoteFile(), file.getParentRemoteFileSubSystem(), null, null);
 //			}
 //			file.markStale(true);
-			return ok;
+			return true;
 
 	}
 

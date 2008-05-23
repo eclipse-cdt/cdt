@@ -46,20 +46,19 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
+import org.eclipse.rse.internal.ui.dialogs.CopyRunnable;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.rse.internal.ui.dialogs.CopyRunnable;
 
 /**
  * Move selected files and folders action.
@@ -239,46 +238,25 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	 * @param monitor Usually not needed
 	 * @see SystemBaseCopyAction#doCopy(Object, Object, String, IProgressMonitor)
 	 */
-	protected boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor)
-		throws Exception 
-    {
-		IRemoteFile targetFolder    = (IRemoteFile)targetContainer;
-		IRemoteFile srcFileOrFolder = (IRemoteFile)oldObject;
+	protected boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor) throws Exception {
+		IRemoteFile targetFolder = (IRemoteFile) targetContainer;
+		IRemoteFile srcFileOrFolder = (IRemoteFile) oldObject;
 
 		IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
-		
-		boolean ok = false;
-		try {
-			ss.move(srcFileOrFolder, targetFolder, newName, monitor);
-			ok = true;
-		} catch (Exception e) {
-			SystemBasePlugin.logError("Exception occurred during a move operation", e); //$NON-NLS-1$
-		}
-		if (!ok)
-		{
-			String msgTxt = NLS.bind(FileResources.FILEMSG_MOVE_FILE_FAILED, srcFileOrFolder.getName());
-			String msgDetails = FileResources.FILEMSG_MOVE_FILE_FAILED_DETAILS;
-		   SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-				   ISystemFileConstants.FILEMSG_MOVE_FILE_FAILED,
-				   IStatus.ERROR, msgTxt, msgDetails);		
-		  throw new SystemMessageException(msg); 
-		}
+
+		ss.move(srcFileOrFolder, targetFolder, newName, monitor);
+		String sep = targetFolder.getSeparator();
+		String targetFolderName = targetFolder.getAbsolutePath();
+		String resultPath = null;
+
+		if (!targetFolderName.endsWith(sep))
+			resultPath = targetFolderName + sep + newName;
 		else
-		{
-		   String sep = targetFolder.getSeparator();
-		   String targetFolderName = targetFolder.getAbsolutePath();
-		   String resultPath = null;
-		   
-		   if (!targetFolderName.endsWith(sep))		     
-			   resultPath = targetFolderName+sep+newName;
-		   else
-			   resultPath = targetFolderName+newName;
+			resultPath = targetFolderName + newName;
 
-		   copiedFiles.addElement(resultPath);
-		   movedFiles.add(srcFileOrFolder);
-		}
-
-		return ok;
+		copiedFiles.addElement(resultPath);
+		movedFiles.add(srcFileOrFolder);
+		return true;
 	}
 
 	/**

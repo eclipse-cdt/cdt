@@ -32,12 +32,10 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -48,13 +46,9 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
-import org.eclipse.rse.internal.files.ui.Activator;
-import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
-import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -265,30 +259,14 @@ implements  IValidatorRemoteSelection
 		if (targetConnection == srcConnection)
 		{
 			ss = targetFolder.getParentRemoteFileSubSystem();
-			try {
-				ss.copy(srcFileOrFolder, targetFolder, newName, null);
-				ok = true;
-			} catch (Exception e) {
-				SystemBasePlugin.logError("Exception occurred during copy", e); //$NON-NLS-1$
-			}
-			if (!ok)
-			{
-				String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getName());
-				String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-						ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
-						IStatus.ERROR, msgTxt, msgDetails);
-				throw new SystemMessageException(msg);
-			}
+			ss.copy(srcFileOrFolder, targetFolder, newName, null);
+			ok = true;
+			String sep = targetFolder.getSeparator();
+			String targetFolderName = targetFolder.getAbsolutePath();
+			if (!targetFolderName.endsWith(sep))
+				copiedFiles.addElement(targetFolderName+sep+newName);
 			else
-			{
-				String sep = targetFolder.getSeparator();
-				String targetFolderName = targetFolder.getAbsolutePath();
-				if (!targetFolderName.endsWith(sep))
-					copiedFiles.addElement(targetFolderName+sep+newName);
-				else
-					copiedFiles.addElement(targetFolderName+newName);
-			}
+				copiedFiles.addElement(targetFolderName+newName);
 		}
 		// DKM - for cross system copy
 		else

@@ -46,7 +46,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 	private Text _keepaliveResponseTimeout;
 	private Text _socketReadTimeout;
 	
-	private Button _cacheRemoteClassesButton;
+//	private Button _cacheRemoteClassesButton;
 	private Button _showMismatchedServerWarningButton;
 	
 	protected Control createContents(Composite gparent) {
@@ -86,10 +86,10 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		});
 			
 		
-		_cacheRemoteClassesButton = SystemWidgetHelpers.createCheckBox(parent, DStoreResources.RESID_PREFERENCE_CACHE_REMOTE_CLASSES_LABEL, this);
-		_cacheRemoteClassesButton.setToolTipText(DStoreResources.RESID_PREFERENCE_CACHE_REMOTE_CLASSES_TOOLTIP);
-		_cacheRemoteClassesButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
-		((GridData)_cacheRemoteClassesButton.getLayoutData()).horizontalSpan = 2;
+//		_cacheRemoteClassesButton = SystemWidgetHelpers.createCheckBox(parent, DStoreResources.RESID_PREFERENCE_CACHE_REMOTE_CLASSES_LABEL, this);
+//		_cacheRemoteClassesButton.setToolTipText(DStoreResources.RESID_PREFERENCE_CACHE_REMOTE_CLASSES_TOOLTIP);
+//		_cacheRemoteClassesButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+//		((GridData)_cacheRemoteClassesButton.getLayoutData()).horizontalSpan = 2;
 
 		_showMismatchedServerWarningButton = SystemWidgetHelpers.createCheckBox(parent, DStoreResources.RESID_PREFERENCE_SHOW_MISMATCHED_SERVER_LABEL, this);
 		_showMismatchedServerWarningButton.setToolTipText(DStoreResources.RESID_PREFERENCE_SHOW_MISMATCHED_SERVER_TOOLTIP);
@@ -191,7 +191,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 			cacheRemoteClasses = store.getDefaultBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);
 		}
-		_cacheRemoteClassesButton.setSelection(cacheRemoteClasses);
+//		_cacheRemoteClassesButton.setSelection(cacheRemoteClasses);
 		
 		
 		// do keepalive
@@ -269,8 +269,8 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		_showMismatchedServerWarningButton.setSelection(showMismatchedWarning);
 		
 		// cache remote classes
-		boolean cacheRemoteClasses = store.getDefaultBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
-		_cacheRemoteClassesButton.setSelection(cacheRemoteClasses);
+//		boolean cacheRemoteClasses = store.getDefaultBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
+//		_cacheRemoteClassesButton.setSelection(cacheRemoteClasses);
 		
 	}
 
@@ -314,8 +314,8 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		
 		
 		// cache remote classes
-		boolean cacheRemoteClasses = _cacheRemoteClassesButton.getSelection();
-		store.setValue(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);				
+//		boolean cacheRemoteClasses = _cacheRemoteClassesButton.getSelection();
+//		store.setValue(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);				
 		
 		// show mismatched server warning
 		boolean showMismatchedWarning = _showMismatchedServerWarningButton.getSelection();

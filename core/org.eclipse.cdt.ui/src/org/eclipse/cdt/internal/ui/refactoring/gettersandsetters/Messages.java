@@ -21,7 +21,6 @@ public final class Messages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String GenerateGettersAndSettersRefactoring_Insert;
 	public static String GettersAndSetters_Name;
 
 	static {

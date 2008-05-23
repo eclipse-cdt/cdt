@@ -22,7 +22,6 @@ public final class Messages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String ImplementMethodRefactoring_MethodDefinition;
 	public static String ParameterNamesInputPage_Title;
 	public static String ParameterNamesInputPage_CompleteMissingMails;
 

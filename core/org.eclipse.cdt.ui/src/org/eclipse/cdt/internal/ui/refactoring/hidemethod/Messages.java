@@ -27,15 +27,8 @@ public final class Messages extends NLS {
 	public static String HideMethodRefactoring_NoMethodNameSelected;
 	public static String HideMethodRefactoring_CanOnlyHideMethods;
 	public static String HideMethodRefactoring_FILE_CHANGE_TEXT;
-	public static String HideMethodRefactoring_BAD_TYPE;
-	public static String HideMethodRefactoring_NO_SELECTION;
-	public static String HideMethodRefactoring_BAD_DIALECT;
-	public static String HideMethodRefactoring_NO_FILE;
-	public static String HideMethodRefactoring_NO_PROPER_SELECTION;
-	public static String HideMethodRefactoring_EDITOR_NOT_SAVE;
 	public static String HideMethodRefactoring_EnclosingClassNotFound;
 	public static String HideMethodRefactoring_IsAlreadyPrivate;
-	public static String HideMethodRefactoring_NO_NODES;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

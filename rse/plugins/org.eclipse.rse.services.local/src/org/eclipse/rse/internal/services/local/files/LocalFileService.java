@@ -38,6 +38,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * David McKnight   (IBM)        - [231211] Local xml file not opened when workspace encoding is different from local system encoding
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
+ * David McKnight   (IBM)        - [233373] NPE when deleting a file from a read-only folder on Local
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1047,14 +1048,17 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			result = fileToDelete.delete();
 		}
-		if (!result) {
-			if (fileToDelete.exists()) {
-				// Deletion failed without specification why... likely a Security
-				// problem?
-				throw new RemoteFileSecurityException(null);
-			} else {
-				throw new SystemElementNotFoundException(fileToDelete.getAbsolutePath(), "delete"); //$NON-NLS-1$
-			}
+		if (!result){
+		  if (fileToDelete.exists()) {
+			// Deletion failed without specification why... likely a Security
+			// problem?
+			// TODO we'll want to wrap a message with the IOException at some point after
+			// 3.0.1
+			throw new RemoteFileSecurityException(new IOException());
+		  }
+		  else {
+		  	throw new SystemElementNotFoundException(fileToDelete.getAbsolutePath(), "delete"); //$NON-NLS-1$	
+		  } 
 		}
 	}
 

@@ -663,8 +663,7 @@ public class CPPSemantics {
 					// now scope is fully cached.
 					final IBinding[] bindings = scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
 					mergeResults(data, bindings, true);
-				}
-				else {
+				} else {
 					boolean done= false;
 					if (!ASTInternal.isFullyCached(scope)) {
 						final IASTName[] names= lookupInScope(data, scope, blockItem);

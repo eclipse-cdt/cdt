@@ -1636,8 +1636,14 @@ public class CPPTemplates {
 	}
 
 	static private boolean isValidArgument(ICPPTemplateParameter param, IType argument) {
-		//TODO
-		return true;
+		try {
+			while (argument instanceof ITypeContainer) {
+				argument = ((ITypeContainer) argument).getType();
+			}
+		} catch (DOMException e) {
+			return false;
+		}
+		return !(argument instanceof IProblemBinding);
 	}
 
 	static protected boolean matchTemplateParameterAndArgument(ICPPTemplateParameter param, IType argument, ObjectMap map) {
@@ -1658,7 +1664,6 @@ public class CPPTemplates {
 				return false;
 			}
 
-
 			int size = pParams.length;
 			if (aParams.length != size) {
 				return false;
@@ -1666,9 +1671,8 @@ public class CPPTemplates {
 
 			for (int i = 0; i < size; i++) {
 				if ((pParams[i] instanceof ICPPTemplateTypeParameter && !(aParams[i] instanceof ICPPTemplateTypeParameter)) ||
-					(pParams[i] instanceof ICPPTemplateTemplateParameter && !(aParams[i] instanceof ICPPTemplateTemplateParameter)) ||
-					(pParams[i] instanceof ICPPTemplateNonTypeParameter && !(aParams[i] instanceof ICPPTemplateNonTypeParameter)))
-				{
+						(pParams[i] instanceof ICPPTemplateTemplateParameter && !(aParams[i] instanceof ICPPTemplateTemplateParameter)) ||
+						(pParams[i] instanceof ICPPTemplateNonTypeParameter && !(aParams[i] instanceof ICPPTemplateNonTypeParameter))) {
 					return false;
 				}
 			}
@@ -1696,7 +1700,7 @@ public class CPPTemplates {
 				if (cost == null || cost.rank == Cost.NO_MATCH_RANK) {
 					return false;
 				}
-			} catch(DOMException e) {
+			} catch (DOMException e) {
 				return false;
 			}
 		}

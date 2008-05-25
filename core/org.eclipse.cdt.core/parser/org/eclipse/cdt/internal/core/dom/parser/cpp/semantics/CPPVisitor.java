@@ -499,7 +499,7 @@ public class CPPVisitor {
 		                		IProblemBinding.SEMANTIC_NAME_NOT_FOUND, alias.getAlias().toCharArray());
 		            }
 		        }
-		    } catch(DOMException e) {
+		    } catch (DOMException e) {
 		        binding = e.getProblem();
 		    }
 			
@@ -967,7 +967,7 @@ public class CPPVisitor {
 			    IASTFunctionDefinition fdef = (IASTFunctionDefinition) parent;
 			    return ((ICPPASTFunctionDeclarator)fdef.getDeclarator()).getFunctionScope();
 			}
-		} catch(DOMException e) {
+		} catch (DOMException e) {
 			IProblemBinding problem = e.getProblem();
 			if (problem instanceof ICPPScope)
 				return problem;
@@ -1245,8 +1245,7 @@ public class CPPVisitor {
 				    } else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
 						IASTNode p = name.getParent().getParent();
 						if (p instanceof IASTSimpleDeclaration &&
-							((IASTSimpleDeclaration)p).getDeclarators().length == 0)
-						{
+								((IASTSimpleDeclaration) p).getDeclarators().length == 0) {
 							break;
 						}
 					} else if (prop == IASTDeclarator.DECLARATOR_NAME) {
@@ -1608,16 +1607,17 @@ public class CPPVisitor {
 	private static IType getPointerTypes(IType type, IASTDeclarator declarator) {
 	    IASTPointerOperator[] ptrOps = declarator.getPointerOperators();
 		for (IASTPointerOperator ptrOp : ptrOps) {
-		    if (ptrOp instanceof IGPPASTPointerToMember)
+		    if (ptrOp instanceof IGPPASTPointerToMember) {
 		        type = new GPPPointerToMemberType(type, (IGPPASTPointerToMember) ptrOp);
-			else if (ptrOp instanceof ICPPASTPointerToMember)
+		    } else if (ptrOp instanceof ICPPASTPointerToMember) {
 				type = new CPPPointerToMemberType(type, (ICPPASTPointerToMember) ptrOp);
-			else if (ptrOp instanceof IGPPASTPointer)
+		    } else if (ptrOp instanceof IGPPASTPointer) {
 			    type = new GPPPointerType(type, (IGPPASTPointer) ptrOp);
-		    else if (ptrOp instanceof IASTPointer)
+		    } else if (ptrOp instanceof IASTPointer) {
 		        type = new CPPPointerType(type, (IASTPointer) ptrOp);
-		    else if (ptrOp instanceof ICPPASTReferenceOperator)
+		    } else if (ptrOp instanceof ICPPASTReferenceOperator) {
 		        type = new CPPReferenceType(type);
+		    }
 		}
 		return type;
 	}
@@ -1651,14 +1651,15 @@ public class CPPVisitor {
 			node = node.getParent();
 		}
 		
-		if (node instanceof IASTParameterDeclaration)
+		if (node instanceof IASTParameterDeclaration) {
 			declSpec = ((IASTParameterDeclaration) node).getDeclSpecifier();
-		else if (node instanceof IASTSimpleDeclaration)
+		} else if (node instanceof IASTSimpleDeclaration) {
 			declSpec = ((IASTSimpleDeclaration)node).getDeclSpecifier();
-		else if (node instanceof IASTFunctionDefinition)
+		} else if (node instanceof IASTFunctionDefinition) {
 			declSpec = ((IASTFunctionDefinition)node).getDeclSpecifier();
-		else if (node instanceof IASTTypeId)
+		} else if (node instanceof IASTTypeId) {
 			declSpec = ((IASTTypeId)node).getDeclSpecifier();
+		}
 	
 		IType type = createType(declSpec);
 		type = createType(type, declarator);
@@ -1718,7 +1719,7 @@ public class CPPVisitor {
 			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
 				//TODO workaround... is there anything better? 
 				try {
-					type = ((ICPPTemplateNonTypeParameter)binding).getType();
+					type = ((ICPPTemplateNonTypeParameter) binding).getType();
 				} catch (DOMException e) {
 					type = e.getProblem();
 				}
@@ -1872,7 +1873,7 @@ public class CPPVisitor {
 							return op.getType().getReturnType();
 						}
 					}
-	        	} catch(DOMException e) {
+	        	} catch (DOMException e) {
 	        		return e.getProblem();
 	        	} 
 	        } else if (binding instanceof ITypedef) {
@@ -1965,7 +1966,7 @@ public class CPPVisitor {
 			IType type = getExpressionType(((IASTUnaryExpression)expression).getOperand());
 			while (type instanceof ITypedef) {
 				try {
-					type = ((ITypeContainer)type).getType();
+					type = ((ITypedef) type).getType();
 				} catch (DOMException e) {
 					break;
 				}
@@ -1976,7 +1977,7 @@ public class CPPVisitor {
 					if (operator != null) {
 						return operator.getType().getReturnType();
 					}
-				} catch(DOMException de) {
+				} catch (DOMException de) {
 					return de.getProblem();
 				}
 			}
@@ -2063,7 +2064,7 @@ public class CPPVisitor {
 					return ((IPointerType)t).getType();
 				else if (t instanceof IArrayType)
 					return ((IArrayType)t).getType();
-			} catch(DOMException e) {
+			} catch (DOMException e) {
 			}
 		} else if (expression instanceof IGNUASTCompoundStatementExpression) {
 			IASTCompoundStatement compound = ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement();
@@ -2329,7 +2330,7 @@ public class CPPVisitor {
 						return !(tp.getReturnType() instanceof ICPPReferenceType);
 					}
 				}
-			} catch(DOMException de) {
+			} catch (DOMException de) {
 				// fall-through
 			}
 		}

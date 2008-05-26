@@ -28,7 +28,6 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 
     private int kind;
     private IASTName name;
-
     
     public CPPASTElaboratedTypeSpecifier() {
 	}
@@ -59,43 +58,43 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
+	            default: break;
 	        }
 		}
-        if( name != null ) if( !name.accept( action ) ) return false;
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (name != null) if (!name.accept(action)) return false;
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
 	public int getRoleForName(IASTName n) {
-		if( n != name ) return r_unclear;
+		if (n != name) return r_unclear;
 		
 		IASTNode parent = getParent();
-		if( !( parent instanceof IASTDeclaration ) )
+		if (!(parent instanceof IASTDeclaration))
 			return r_reference;
 		
-		if( parent instanceof IASTSimpleDeclaration ){
-			IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators(); 
-			if( dtors.length == 0 )
+		if (parent instanceof IASTSimpleDeclaration) {
+			IASTDeclarator[] dtors = ((IASTSimpleDeclaration)parent).getDeclarators(); 
+			if (dtors.length == 0)
 				return r_declaration;
 		}
 		
 		//can't tell, resolve the binding
 		IBinding binding = name.resolveBinding();
-		if( binding instanceof ICPPInternalBinding ){
-			IASTNode [] decls = ((ICPPInternalBinding)binding).getDeclarations();
-			if( ArrayUtil.contains( decls, name ) ) 
+		if (binding instanceof ICPPInternalBinding) {
+			IASTNode[] decls = ((ICPPInternalBinding)binding).getDeclarations();
+			if (ArrayUtil.contains(decls, name)) 
 				return r_declaration;
 		}
 		return r_reference;

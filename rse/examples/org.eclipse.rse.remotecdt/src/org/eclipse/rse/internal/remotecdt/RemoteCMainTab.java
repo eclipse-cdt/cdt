@@ -12,6 +12,7 @@
  * Yu-Fen Kuo (MontaVista) - [190613] Fix NPE in Remotecdt when RSEUIPlugin has not been loaded
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * Johann Draschwandtner (Wind River) - [231827][remotecdt]Auto-compute default for Remote path
+ * Johann Draschwandtner (Wind River) - [233057][remotecdt]Fix button enablement
  *******************************************************************************/
 
 package org.eclipse.rse.internal.remotecdt;
@@ -176,9 +177,9 @@ public class RemoteCMainTab extends CMainTab {
 				setDirty(true);
 				updateLaunchConfigurationDialog();
 				useDefaultsFromConnection();
+				updatePropertiesButton();
 			}
 		});
-		updateConnectionPulldown();
 
 		newRemoteConnectionButton = createPushButton(projComp, Messages.RemoteCMainTab_New, null);
 		newRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
@@ -198,6 +199,7 @@ public class RemoteCMainTab extends CMainTab {
 			}
 		});
 
+		updateConnectionPulldown();
 	}
 
 	/*
@@ -307,6 +309,7 @@ public class RemoteCMainTab extends CMainTab {
 
 		updateTargetProgFromConfig(config);
 		updateSkipDownloadFromConfig(config);
+		updatePropertiesButton();
 	}
 
 	protected void handleNewRemoteConnectionSelected() {
@@ -413,7 +416,6 @@ public class RemoteCMainTab extends CMainTab {
 		        }
 		        super.buttonPressed(buttonId);
 		    }
-
 		}
 		IHost currentConnectionSelected = getCurrentConnection();
 		RemoteConnectionPropertyDialog dlg = new RemoteConnectionPropertyDialog(getControl().getShell(),
@@ -481,9 +483,26 @@ public class RemoteCMainTab extends CMainTab {
 				}
 			}
 
-			if(connections.length > 0)
+			if(connections.length > 0) {
 				connectionCombo.select(connections.length - 1);
+			}
+			updatePropertiesButton();
 		}
+	}
+
+	private void updatePropertiesButton() {
+		if((remoteConnectionPropertiesButton == null) || remoteConnectionPropertiesButton.isDisposed()) {
+			return;
+		}
+		boolean bEnableProperties = false; 
+		IHost currentConnectionSelected = getCurrentConnection();
+		if(currentConnectionSelected != null) {
+			IRSESystemType sysType = currentConnectionSelected.getSystemType();
+			if (sysType != null && sysType.isEnabled() && !sysType.isLocal()) {
+				bEnableProperties = true;
+			}
+		}
+		remoteConnectionPropertiesButton.setEnabled(bEnableProperties);
 	}
 
 	protected void updateTargetProgFromConfig(ILaunchConfiguration config) {

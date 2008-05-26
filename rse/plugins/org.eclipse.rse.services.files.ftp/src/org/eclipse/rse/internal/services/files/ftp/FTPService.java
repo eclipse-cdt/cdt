@@ -75,6 +75,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [218040] FTP should support permission modification
+ * Martin Oberhuber (Wind River) - [234045] FTP Permission Error Handling
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1573,7 +1574,10 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		} else if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
 				clearCache(parent);
-				_ftpClient.sendSiteCommand("CHMOD "+newPermissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (!_ftpClient.sendSiteCommand("CHMOD " + newPermissions + " " + file.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
+					String lastMessage = _ftpClient.getReplyString();
+					throw new RemoteFileSecurityException(new Exception(lastMessage));
+				}
 			} catch (IOException e) {
 				String pluginId = Activator.getDefault().getBundle().getSymbolicName();
 				String messageText = e.getLocalizedMessage();
@@ -1716,7 +1720,10 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		if (_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
 				clearCache(inFile.getParentPath());
-				_ftpClient.sendSiteCommand("CHMOD " + s + " " + inFile.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (!_ftpClient.sendSiteCommand("CHMOD " + s + " " + inFile.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
+					String lastMessage = _ftpClient.getReplyString();
+					throw new RemoteFileSecurityException(new Exception(lastMessage));
+				}
 			} catch (IOException e) {
 				String pluginId = Activator.getDefault().getBundle().getSymbolicName();
 				String messageText = e.getLocalizedMessage();

@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -40,21 +39,21 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionContext {
 	final static class RecursionResolvingBinding extends ProblemBinding {
-		public RecursionResolvingBinding() {
-			super(null, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, CharArrayUtils.EMPTY);
-		}
 		public RecursionResolvingBinding(IASTName node) {
 			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, node.toCharArray());
+			if (fShowRecursionProblems)
+				System.out.println(getMessage());
 		}
 	}
-
-	private char[] name;
 
     private static final char[] EMPTY_CHAR_ARRAY = {};
 	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
 
 	static final int MAX_RESOLUTION_DEPTH = 5;
 
+	private static boolean fShowRecursionProblems = false;
+	
+	private char[] name;
     private IBinding binding = null;
     private int fResolutionDepth= 0;
 
@@ -69,9 +68,8 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
     public IBinding resolveBinding() {
         if (binding == null) {
         	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-        		binding= new RecursionResolvingBinding(this);
-        	}
-        	else {
+        		binding = new RecursionResolvingBinding(this);
+        	} else {
         		binding = CPPVisitor.createBinding(this);
         	}
         }
@@ -80,7 +78,7 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 
 	public void incResolutionDepth() {
 		if (binding == null && ++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-			binding= new RecursionResolvingBinding(this);
+    		binding = new RecursionResolvingBinding(this);
 		}
 	}
 

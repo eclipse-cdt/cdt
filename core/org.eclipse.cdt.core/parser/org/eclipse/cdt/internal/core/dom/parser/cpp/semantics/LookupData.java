@@ -114,7 +114,7 @@ class LookupData {
 		astName = null;
 	}
 	
-	public final char[] name () {
+	public final char[] name() {
 		if (astName != null)
 			return astName.toCharArray();
 		return CPPSemantics.EMPTY_NAME_ARRAY;

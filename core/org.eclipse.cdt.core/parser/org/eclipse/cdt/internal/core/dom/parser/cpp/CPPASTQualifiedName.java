@@ -74,18 +74,18 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 
 	public void addName(IASTName name) {
 		if (name != null) {
-			names = (IASTName[]) ArrayUtil.append( IASTName.class, names, ++namesPos, name );
+			names = (IASTName[]) ArrayUtil.append(IASTName.class, names, ++namesPos, name);
 			name.setParent(this);
 			name.setPropertyInParent(SEGMENT_NAME);
 		}
 	}
 
 	private void removeNullNames() {
-        names = (IASTName[]) ArrayUtil.removeNullsAfter( IASTName.class, names, namesPos );
+        names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
 	}
 
 	private IASTName[] names = null;
-	private int namesPos=-1;
+	private int namesPos= -1;
 	private boolean isFullyQualified;
 	private String signature;
 
@@ -145,7 +145,6 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 
 	public void setSignature(String signature) {
 		this.signature = signature;
-
 	}
 
 	@Override
@@ -188,7 +187,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		IASTNode parent = getParent();
 		if (parent instanceof IASTNameOwner) {
 			int role = ((IASTNameOwner) parent).getRoleForName(this);
-			if( role == IASTNameOwner.r_reference ) return false;
+			if (role == IASTNameOwner.r_reference) return false;
 			return true;
 		}
 		return false;
@@ -198,21 +197,21 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		IASTNode parent = getParent();
 		if (parent instanceof IASTNameOwner) {
 			int role = ((IASTNameOwner) parent).getRoleForName(this);
-			if( role == IASTNameOwner.r_reference ) return true;
+			if (role == IASTNameOwner.r_reference) return true;
 			return false;
 		}
 		return false;
 	}
 
 	public int getRoleForName(IASTName n) {
-		IASTName [] namez = getNames();
-		for( int i = 0; i < names.length; ++i )
-			if( namez[i] == n )
+		IASTName[] namez = getNames();
+		for(int i = 0; i < names.length; ++i)
+			if (namez[i] == n)
 			{
-				if( i < names.length - 1 )
+				if (i < names.length - 1)
 					return r_reference;
 				IASTNode p = getParent();
-				if( i == names.length - 1 && p instanceof IASTNameOwner )
+				if (i == names.length - 1 && p instanceof IASTNameOwner)
 					return ((IASTNameOwner)p).getRoleForName(this);
 				return r_unclear;
 			}
@@ -226,20 +225,20 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 
 	public void setBinding(IBinding binding) {
 		removeNullNames();
-		names[names.length - 1].setBinding( binding );
+		names[names.length - 1].setBinding(binding);
 	}
 
 	public boolean isConversionOrOperator() {
 		IASTName[] nonNullNames = getNames(); // ensure no null names
 		
 		int len=nonNullNames.length;
-		if (nonNullNames[len-1] instanceof ICPPASTConversionName || nonNullNames[len-1] instanceof ICPPASTOperatorName) {
+		if (nonNullNames[len - 1] instanceof ICPPASTConversionName || nonNullNames[len - 1] instanceof ICPPASTOperatorName) {
 			return true;
 		}
 		
 		// check templateId's name
-		if (nonNullNames[len-1] instanceof ICPPASTTemplateId) {
-			IASTName tempName = ((ICPPASTTemplateId)nonNullNames[len-1]).getTemplateName();
+		if (nonNullNames[len - 1] instanceof ICPPASTTemplateId) {
+			IASTName tempName = ((ICPPASTTemplateId)nonNullNames[len - 1]).getTemplateName();
 			if (tempName instanceof ICPPASTConversionName || tempName instanceof ICPPASTOperatorName) {
 				return true;
 			}
@@ -252,7 +251,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {
             int role = ((IASTNameOwner) parent).getRoleForName(this);
-            if( role == IASTNameOwner.r_definition ) return true;
+            if (role == IASTNameOwner.r_definition) return true;
             return false;
         }
         return false;

@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -78,8 +79,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
         IASTName name = compTypeSpec.getName();
         if (name instanceof ICPPASTQualifiedName) {
-        	IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-        	name = ns[ns.length - 1];
+        	name = ((ICPPASTQualifiedName) name).getLastName();
         }
 
         IBinding binding = name.resolveBinding();
@@ -142,8 +142,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName();
 	    if (compName instanceof ICPPASTQualifiedName) {
-	    	IASTName[] ns = ((ICPPASTQualifiedName)compName).getNames();
-	    	compName = ns[ns.length - 1];
+	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
 	    }
 		return CPPVisitor.getContainingScope(compName);
 	}
@@ -162,14 +161,13 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	@Override
 	public void addName(IASTName name) throws DOMException {
-		IASTNode parent = name.getParent();
 		if (name instanceof ICPPASTQualifiedName) {
-			final IASTName[] qn= ((ICPPASTQualifiedName) name).getNames();
-			final IASTName ln= qn[qn.length-1];
+			IASTName ln= ((ICPPASTQualifiedName) name).getLastName();
 			if (CPPVisitor.getContainingScope(name) != CPPVisitor.getContainingScope(ln)) {
 				return;
 			}
 		}
+		IASTNode parent = name.getParent();
 		if (parent instanceof IASTDeclarator) {
 			if (CPPVisitor.isConstructor(this, (IASTDeclarator) parent)) {
 				addConstructor(name);
@@ -208,8 +206,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName();
 	    if (compName instanceof ICPPASTQualifiedName) {
-	    	IASTName[] ns = ((ICPPASTQualifiedName)compName).getNames();
-	    	compName = ns[ns.length - 1];
+	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
 	    }
 	    if (CharArrayUtils.equals(c, compName.toCharArray())) {
 	        if (isConstructorReference(name)) {
@@ -228,8 +225,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName();
 	    if (compName instanceof ICPPASTQualifiedName) {
-	    	IASTName[] ns = ((ICPPASTQualifiedName)compName).getNames();
-	    	compName = ns[ns.length - 1];
+	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
 	    }
 	    IBinding[] result = null;
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.toCharArray()))
@@ -313,12 +309,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName();
 	    if (compName instanceof ICPPASTQualifiedName) {
-	    	IASTName[] ns = ((ICPPASTQualifiedName)compName).getNames();
-	    	compName = ns[ns.length - 1];
+	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
 	    }
 
 	    if (CharArrayUtils.equals(compName.toCharArray(), n)) {
-	        return new IBinding[] {getClassType()};
+	        return new IBinding[] { getClassType() };
 	    }
 
 	    return super.find(name);
@@ -330,8 +325,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    if (node instanceof ICPPASTTemplateId)
 	    	node = node.getParent();
 	    if (node instanceof ICPPASTQualifiedName) {
-	    	IASTName[] ns = ((ICPPASTQualifiedName)node).getNames();
-	    	if (ns[ns.length - 1] == name)
+	    	if (((ICPPASTQualifiedName) node).getLastName() == name)
 	    		node = node.getParent();
 	    	else
 	    		return false;
@@ -494,8 +488,7 @@ class ImplicitsAnalysis {
 			    dcltor = ((IASTFunctionDefinition)member).getDeclarator();
 			}
 			if (!(dcltor instanceof ICPPASTFunctionDeclarator) ||
-				!CharArrayUtils.equals(dcltor.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray()))
-			{
+					!CharArrayUtils.equals(dcltor.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
 	        	continue;
 			}
 
@@ -517,12 +510,12 @@ class ImplicitsAnalysis {
 	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec, String name) {
 		boolean result= false;
 		IASTDeclarator pdtor= dec.getDeclarator();
-		if (pdtor.getPointerOperators().length == 1 && pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator) {
-			if (dec.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
-				ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) dec.getDeclSpecifier();
-				if (name == null || name.equals(nts.getName().getRawSignature())) {
-					result= true;
-				}
+		if (pdtor.getPointerOperators().length == 1 &&
+				pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator &&
+				dec.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
+			ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) dec.getDeclSpecifier();
+			if (name == null || name.equals(nts.getName().getRawSignature())) {
+				result= true;
 			}
 		}
 		return result;

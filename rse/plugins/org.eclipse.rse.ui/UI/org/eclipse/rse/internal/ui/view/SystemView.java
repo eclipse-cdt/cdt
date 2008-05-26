@@ -3108,7 +3108,7 @@ public class SystemView extends SafeTreeViewer
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				TreeItem matchedItem = (TreeItem)match;
 				Object data = matchedItem.getData();
-				boolean wasExpanded = matchedItem.getExpanded();							
+				boolean wasExpanded = matchedItem.getExpanded();
 				smartRefresh(new TreeItem[] { matchedItem }); // refresh the remote object
 				if (firstSelection && // for now, we just select the first binary occurrence we find
 						(data == remoteObject)) // same binary object as given?
@@ -3557,7 +3557,6 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 		// ok, we have found all expanded descendants of all selected items. 
-
 		// If none of the expanded sub-nodes are remote simply use the inherited algorithm for refresh
 		if (!areAnyRemote) {
 			for (int idx = 0; idx < itemsToRefresh.length; idx++)
@@ -3574,6 +3573,7 @@ public class SystemView extends SafeTreeViewer
 			TreeItem currItem = itemsToRefresh[idx];
 			setExpanded(currItem, false); // collapse node
 			ourInternalRefresh(currItem, currItem.getData(), true, true); // dispose of children, update plus
+			
 			if (wasExpanded[idx]) {
 				createChildren(currItem); // re-expand
 				currItem.setExpanded(true);
@@ -3582,6 +3582,8 @@ public class SystemView extends SafeTreeViewer
 
 			}
 		}
+		
+
 		// 2. expand each previously expanded sub-node, recursively        
 		for (int idx = 0; idx < expandedChildren.size(); idx++) {
 			ExpandedItem itemToExpand = (ExpandedItem) expandedChildren.get(idx);
@@ -3611,6 +3613,7 @@ public class SystemView extends SafeTreeViewer
 				if (debug) System.out.println("Re-Expanded non-remote Item: " + itemToExpand.data); //$NON-NLS-1$
 			}
 		}
+
 		getControl().setRedraw(true);
 	}
 	
@@ -4026,6 +4029,7 @@ public class SystemView extends SafeTreeViewer
 			// HMMM... WE NEED TO REFRESH EVEN IF NOT EXPANDED IF ADDING FIRST CHILD
 			if (!add) // move or delete
 			{
+				// Widgets can only be Tree or TreeItem here
 				if (parentRefItem instanceof Item){
 					if (!(((TreeItem) parentRefItem).getExpanded())) {
 						refresh(parentRefItem.getData()); // flush cached widgets so next expand is fresh

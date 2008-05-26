@@ -72,10 +72,10 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		String baseName = RSEFileStoreTest.class.getName();
 		TestSuite suite = new TestSuite(baseName);
 
-		// Add a test suite for each connection type
+		//// Add a test suite for each connection type
 		//String[] connTypes = { null, "local", "ssh", "ftp", "linux", "windows" };
-		//String[] connTypes = { "local" };
-		String[] connTypes = { "ssh" };
+		String[] connTypes = { null, "local" };
+		//String[] connTypes = { "ssh" };
 
 		for (int i = 0; i < connTypes.length; i++) {
 			String suiteName = connTypes[i] == null ? "EFS" : connTypes[i];

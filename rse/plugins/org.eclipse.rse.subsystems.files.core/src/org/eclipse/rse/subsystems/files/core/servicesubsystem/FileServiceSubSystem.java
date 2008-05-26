@@ -37,7 +37,8 @@
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  * Martin Oberhuber (Wind River) - [221211] Fix markStale() for delete() operation with exceptions
- * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * David Dykstal (IBM) - [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * Martin Oberhuber (Wind River) - [234038] Mark IRemoteFile stale when changing permissions
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -912,6 +913,8 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
+		//mark stale regardless of whether the call succeeds or not
+		folderOrFile.markStale(true);
 		_hostFileService.setLastModified(parent, name, newDate, monitor);
 	}
 
@@ -919,6 +922,8 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
+		//mark stale regardless of whether the call succeeds or not
+		folderOrFile.markStale(true);
 		_hostFileService.setReadOnly(parent, name, readOnly, monitor);
 	}
 

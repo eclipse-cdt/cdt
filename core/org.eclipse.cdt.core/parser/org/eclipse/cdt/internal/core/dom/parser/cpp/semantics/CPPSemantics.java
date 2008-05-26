@@ -10,6 +10,7 @@
  *    Markus Schorn (Wind River Systems)
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -334,8 +335,7 @@ public class CPPSemantics {
 			}
 		}
 		if (name.getParent() instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
-			if (name == ns[ns.length - 1])
+			if (name == ((ICPPASTQualifiedName)name.getParent()).getLastName())
 				name = (IASTName) name.getParent();
 		}
 		
@@ -514,8 +514,7 @@ public class CPPSemantics {
     	    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) parent.getParent();
     	    IASTName n = compSpec.getName();
     	    if (n instanceof ICPPASTQualifiedName) {
-    	        IASTName[] ns = ((ICPPASTQualifiedName)n).getNames();
-    	        n = ns[ns.length - 1];
+    	        n = ((ICPPASTQualifiedName) n).getLastName();
     	    }
     	    
 	        scope = CPPVisitor.getContainingScope(n);
@@ -1413,7 +1412,10 @@ public class CPPSemantics {
 			    }
 			}
 			if (specName != null) {
-			    ASTInternal.addName(scope,  specName);
+				if (!(specName instanceof ICPPASTQualifiedName) ||
+						data.astName == ((ICPPASTQualifiedName) specName).getLastName()) {
+					ASTInternal.addName(scope, specName);
+				}
 			    if (nameMatches(data, specName, scope)) {
 				    if (resultName == null)
 					    resultName = specName;
@@ -1427,8 +1429,7 @@ public class CPPSemantics {
 			ICPPASTUsingDeclaration using = (ICPPASTUsingDeclaration) declaration;
 			IASTName name = using.getName();
 			if (name instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-				name = ns[ns.length - 1];
+				name = ((ICPPASTQualifiedName) name).getLastName();
 			}
 			ASTInternal.addName(scope,  name);
 			if (nameMatches(data, name, scope)) {
@@ -1476,8 +1477,7 @@ public class CPPSemantics {
 		    if (scope instanceof CPPScope == false || ((CPPScope) scope).canDenoteScopeMember(qname))
 		    	return false;
 				
-			final IASTName[] qn= qname.getNames();
-			potential= qn[qn.length-1];
+			potential= qname.getLastName();
 	    }
 	    char[] c = potential.toCharArray();
 	    char[] n = data.name();

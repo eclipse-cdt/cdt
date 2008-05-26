@@ -1,16 +1,17 @@
 /********************************************************************************
- * Copyright (c) 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
- * David McKnight   (IBM)        - [209703] apply encoding and updating remote file when apply on property page 
+ * David McKnight   (IBM)        - [209703] apply encoding and updating remote file when apply on property page
+ * Martin Oberhuber (Wind River) - [234038] Force refresh IRemoteFile after changing permissions
  * ********************************************************************************/
 package org.eclipse.rse.internal.files.ui.propertypages;
 
@@ -43,7 +44,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Property page for viewing and changing the user, group and permissions
- * for a particular file.   
+ * for a particular file.
  * */
 public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 
@@ -56,14 +57,14 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 	private Button _otherRead;
 	private Button _otherWrite;
 	private Button _otherExecute;
-	
+
 	private Text _userEntry;
 	private Text _groupEntry;
-	
+
 	private IHostFilePermissions _permissions;
 	private String _owner;
 	private String _group;
-	
+
 	/**
 	 * Get the input remote file object
 	 */
@@ -72,19 +73,19 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		Object element = getElement();
 		IRemoteFile file = (IRemoteFile)element;
 
-		
+
 		return file;
 	}
-	
-	protected Control createContentArea(Composite parent) {		
 
-		
+	protected Control createContentArea(Composite parent) {
+
+
 		// Inner composite
-		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, 1);	
-		
+		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, 1);
+
 		IRemoteFile file = getRemoteFile();
 		IFilePermissionsService service = getPermissionsService(file);
-		if (service == null ||  
+		if (service == null ||
 				(service.getCapabilities(file.getHostFile()) & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) == 0){
 			// not supported
 			SystemWidgetHelpers.createLabel(parent, FileResources.MESSAGE_FILE_PERMISSIONS_NOT_SUPPORTED);
@@ -99,74 +100,74 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			data.verticalAlignment = SWT.BEGINNING;
 			data.grabExcessVerticalSpace = false;
 			permissionsGroup.setLayoutData(data);
-			
+
 			Label userTypeLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_TYPE_LABEL);
-			
+
 			Label readLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_READ_LABEL);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			readLabel.setLayoutData(data);
-			
-			Label writeLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_WRITE_LABEL);		
+
+			Label writeLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_WRITE_LABEL);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			writeLabel.setLayoutData(data);
-			
+
 			Label executeLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_EXECUTE_LABEL);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			executeLabel.setLayoutData(data);
-				
-			
+
+
 			Label userLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_USER_LABEL);
 			_userRead = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_userRead.setLayoutData(data);
-			
+
 			_userWrite = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_userWrite.setLayoutData(data);
-			
+
 			_userExecute = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_userExecute.setLayoutData(data);
-			
+
 			Label groupLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_GROUP_LABEL);
-	
+
 			_groupRead = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_groupRead.setLayoutData(data);
-			
+
 			_groupWrite = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_groupWrite.setLayoutData(data);
-			
+
 			_groupExecute = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_groupExecute.setLayoutData(data);
-			
+
 			Label otherLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_OTHERS_LABEL);
 			_otherRead = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_otherRead.setLayoutData(data);
-			
+
 			_otherWrite = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_otherWrite.setLayoutData(data);
-			
+
 			_otherExecute = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_otherExecute.setLayoutData(data);
-			
+
 			Group ownerGroup = SystemWidgetHelpers.createGroupComposite(composite_prompts, 2, FileResources.RESID_PREF_PERMISSIONS_OWNERSHIP_LABEL);
 			data = new GridData();
 			data.horizontalSpan = 1;
@@ -175,24 +176,24 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			data.grabExcessHorizontalSpace = false;
 			data.verticalAlignment = SWT.BEGINNING;
 			data.grabExcessVerticalSpace = false;
-			ownerGroup.setLayoutData(data);	
-			
+			ownerGroup.setLayoutData(data);
+
 			Label userOwnerLabel = SystemWidgetHelpers.createLabel(ownerGroup, FileResources.RESID_PREF_PERMISSIONS_USER_LABEL);
 			_userEntry = new Text(ownerGroup, SWT.BORDER);
 			data = new GridData();
 			data.widthHint = 100;
 			_userEntry.setLayoutData(data);
-			
+
 			Label groupOwnerLabel = SystemWidgetHelpers.createLabel(ownerGroup, FileResources.RESID_PREF_PERMISSIONS_GROUP_LABEL);
 			_groupEntry = new Text(ownerGroup, SWT.BORDER);
 			data = new GridData();
 			data.widthHint = 100;
 			_groupEntry.setLayoutData(data);
-			
-			
+
+
 			initFields();
 		}
-		
+
 		return composite_prompts;
 	}
 
@@ -205,37 +206,37 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		_userEntry.setEnabled(enabled);
 		_groupEntry.setEnabled(enabled);
 	}
-	
+
 	private void enablePermissionFields(boolean enabled){
-		
+
 		_groupExecute.setEnabled(enabled);
 		_groupRead.setEnabled(enabled);
 		_groupWrite.setEnabled(enabled);
-		
+
 		_userExecute.setEnabled(enabled);
 		_userRead.setEnabled(enabled);
 		_userWrite.setEnabled(enabled);
 
 		_otherExecute.setEnabled(enabled);
 		_otherRead.setEnabled(enabled);
-		_otherWrite.setEnabled(enabled);		
+		_otherWrite.setEnabled(enabled);
 	}
-	
+
 	private IFilePermissionsService getPermissionsService(IRemoteFile remoteFile){
 
 		if (remoteFile instanceof IAdaptable){
 			return (IFilePermissionsService)((IAdaptable)remoteFile).getAdapter(IFilePermissionsService.class);
 		}
 
-		return null;		
+		return null;
 	}
-	
 
-	
-	
+
+
+
 	private void initFields() {
 		IRemoteFile remoteFile = getRemoteFile();
-		
+
 		IFilePermissionsService ps = getPermissionsService(remoteFile);
 		if (ps == null){
 			enablePermissionFields(false);
@@ -245,10 +246,10 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			initPermissionFields(remoteFile, ps);
 		}
 	}
-	
+
 	private void initPermissionFields(IRemoteFile file, IFilePermissionsService service){
 		_permissions = null; // null set so that we make sure we're getting fresh permissions
-		
+
 		final IRemoteFile rFile = file;
 		final IFilePermissionsService pService = service;
 
@@ -259,16 +260,16 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		else {
 			enablePermissionFields(false);
 		}
-		
+
 		if ((capabilities & IFilePermissionsService.FS_CAN_SET_OWNER) != 0){
 			enableOwnershipFields(true);
-		}	
+		}
 		else {
 			enableOwnershipFields(false);
 		}
-		
+
 		if ((capabilities & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) != 0){
-				
+
 			try
 			{
 				_permissions = file.getPermissions();
@@ -279,8 +280,8 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 							try
 							{
 								_permissions = pService.getFilePermissions(rFile.getHostFile(), monitor);
-									
-								// notify change 
+
+								// notify change
 								Display.getDefault().asyncExec(new Runnable()
 								{
 									public void run()
@@ -293,19 +294,19 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 										_groupExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE));
 										_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
 										_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
-										_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));	
-										
+										_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));
+
 										_owner = _permissions.getUserOwner();
 										_group = _permissions.getGroupOwner();
-										
+
 										_userEntry.setText(_owner);
 										_groupEntry.setText(_group);
-										
+
 									}
 								});
 							}
 							catch (Exception e)
-							{						
+							{
 							}
 							return Status.OK_STATUS;
 						}
@@ -321,17 +322,17 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 					_groupExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE));
 					_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
 					_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
-					_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));	
-					
+					_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));
+
 					_owner = _permissions.getUserOwner();
 					_group = _permissions.getGroupOwner();
-					
+
 					_userEntry.setText(_owner);
 					_groupEntry.setText(_group);
 				}
 			}
 			catch (Exception e){
-				
+
 			}
 		}
 		else {
@@ -340,23 +341,23 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		}
 	}
 
-	
+
 
 	public boolean performOk() {
 		IRemoteFile remoteFile = getRemoteFile();
-		
+
 		boolean changed = false;
-		
+
 		// permission changes
 		if (_permissions != null){
 			IFilePermissionsService service = getPermissionsService(remoteFile);
-			
+
 			int capabilities = service.getCapabilities(remoteFile.getHostFile());
 			if ((capabilities & IFilePermissionsService.FS_CAN_SET_PERMISSIONS) != 0){
 				try
 				{
 					IHostFilePermissions newPermissions = (IHostFilePermissions)_permissions.clone();
-					
+
 					if (_permissions.getPermission(IHostFilePermissions.PERM_USER_READ) != _userRead.getSelection()){
 						changed = true;
 						newPermissions.setPermission(IHostFilePermissions.PERM_USER_READ, _userRead.getSelection());
@@ -393,7 +394,7 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 						changed = true;
 						newPermissions.setPermission(IHostFilePermissions.PERM_OTHER_EXECUTE, _otherExecute.getSelection());
 					}
-					
+
 					if (_owner != _userEntry.getText()){
 						changed = true;
 						newPermissions.setUserOwner(_userEntry.getText());
@@ -402,19 +403,21 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 						changed = true;
 						newPermissions.setGroupOwner(_groupEntry.getText());
 					}
-					
-					
+
+
 					if (changed){
+						//mark file stale even if an exception is thrown later, to ensure proper re-get
+						remoteFile.markStale(true, true);
 						// assuming permissions are good
 						service.setFilePermissions(remoteFile.getHostFile(), newPermissions, new NullProgressMonitor());
-						
+
 						_permissions = newPermissions;
 					}
 				}
 				catch (Exception e){
-					
+
 				}
-			}						
+			}
 		}
 
 		if (changed){
@@ -423,16 +426,16 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
 		}
-		
-		
+
+
 		return super.performOk();
 	}
-	
+
 	protected boolean wantDefaultAndApplyButton()
 	{
 		return true;
 	}
-	
+
 	protected void performApply() {
 		performOk();
 	}
@@ -440,9 +443,9 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 	protected void performDefaults() {
 		IRemoteFile file = getRemoteFile();
 		IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)file).getAdapter(IFilePermissionsService.class);
-		initPermissionFields(file, service);		
+		initPermissionFields(file, service);
 	}
-	
+
 	public void setVisible(boolean visible) {
 		if (visible){
 			IRemoteFile file = getRemoteFile();
@@ -451,13 +454,13 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 				{
 					file = file.getParentRemoteFileSubSystem().getRemoteFileObject(file.getAbsolutePath(), new NullProgressMonitor());
 				}
-				catch (Exception e){				
+				catch (Exception e){
 				}
 				setElement((IAdaptable)file);
-				
+
 				// reset according to the changed file
 				performDefaults();
-			}			
+			}
 		}
 		super.setVisible(visible);
 	}

@@ -102,23 +102,44 @@ public class GeneratePDOMApplication implements IApplication {
 			}
 		}
 		
+		String[] oldvals= null;
 		if(!quiet) {
+			oldvals= new String[] {
+					System.getProperty(IPDOMIndexerTask.TRACE_ACTIVITY),
+					System.getProperty(IPDOMIndexerTask.TRACE_PROBLEMS),
+					System.getProperty(IPDOMIndexerTask.TRACE_STATISTICS),
+			};
 			System.setProperty(IPDOMIndexerTask.TRACE_ACTIVITY, Boolean.TRUE.toString());
 			System.setProperty(IPDOMIndexerTask.TRACE_PROBLEMS, Boolean.TRUE.toString());
 			System.setProperty(IPDOMIndexerTask.TRACE_STATISTICS, Boolean.TRUE.toString());
 		}
+		try {
+			IExportProjectProvider pprovider = getExportProjectProvider(pproviderFQN);
+			if(pprovider==null) {
+				fail(MessageFormat.format(Messages.GeneratePDOMApplication_CouldNotFindInitializer, new Object[]{pproviderFQN}));
+			}
+			File targetLocation = new File(target);
 
-		IExportProjectProvider pprovider = getExportProjectProvider(pproviderFQN);
-		if(pprovider==null) {
-			fail(MessageFormat.format(Messages.GeneratePDOMApplication_CouldNotFindInitializer, new Object[]{pproviderFQN}));
+			GeneratePDOM generate = new GeneratePDOM(pprovider,	appArgs, targetLocation, indexerID);
+			output(Messages.GeneratePDOMApplication_GenerationStarts);
+			generate.run(); // CoreException handled in start method
+			output(Messages.GeneratePDOMApplication_GenerationEnds);
+		} finally {
+			if (oldvals != null) {
+				restoreSystemProperty(IPDOMIndexerTask.TRACE_ACTIVITY, oldvals[0]);
+				restoreSystemProperty(IPDOMIndexerTask.TRACE_PROBLEMS, oldvals[1]);
+				restoreSystemProperty(IPDOMIndexerTask.TRACE_STATISTICS, oldvals[2]);
+			}
 		}
-		File targetLocation = new File(target);
-
-		GeneratePDOM generate = new GeneratePDOM(pprovider,	appArgs, targetLocation, indexerID);
-		output(Messages.GeneratePDOMApplication_GenerationStarts);
-		generate.run(); // CoreException handled in start method
-		output(Messages.GeneratePDOMApplication_GenerationEnds);
 		return null;
+	}
+
+	private void restoreSystemProperty(String key, String value) {
+		if (value == null) {
+			System.clearProperty(key);
+		} else {
+			System.setProperty(key, value);
+		}
 	}
 
 	protected void output(String s) {
@@ -154,14 +175,13 @@ public class GeneratePDOMApplication implements IApplication {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint indexExtensions = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
 			IExtension[] extensions = indexExtensions.getExtensions();
-			for(int i=0; i<extensions.length; i++) {
-				IExtension extension = extensions[i];
+			for (IExtension extension : extensions) {
 				IConfigurationElement[] ce = extension.getConfigurationElements();
 
-				for(int j=0; j<ce.length; j++) {
-					if(ce[j].getName().equals(EXPORT_PROJECT_PROVIDER)) {
+				for (IConfigurationElement element : ce) {
+					if(element.getName().equals(EXPORT_PROJECT_PROVIDER)) {
 						try {
-							IExportProjectProvider epp = (IExportProjectProvider) ce[j].createExecutableExtension("class"); //$NON-NLS-1$
+							IExportProjectProvider epp = (IExportProjectProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
 							projectInitializers.put(epp.getClass().getName(), epp);
 						} catch(CoreException cee) {
 							CCorePlugin.log(cee);

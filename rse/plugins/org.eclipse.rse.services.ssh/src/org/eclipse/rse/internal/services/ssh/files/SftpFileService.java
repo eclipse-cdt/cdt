@@ -27,6 +27,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Martin Oberhuber (Wind River) - [170910] Adopt RSE ITerminalService API for SSH
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
+ * Martin Oberhuber (Wind River) - [190904] Changing read-only attribute throws exception
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -909,7 +910,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 						//simply try to delete --> if it really doesnt exist, this will throw an exception
 						//FIXME either throw SystemElementNotFoundException here OR add check for
 						//SSH_FX_NO_SUCH_FILE in makeSystemMessageException() and throw SENFE there
-						getChannel("SftpFileService.delete.rm").rm(fullPathRecoded); //$NON-NLS-1$
+							getChannel("SftpFileService.delete.rm").rm(fullPathRecoded); //$NON-NLS-1$
 					} else {
 						throw e;
 					}
@@ -1132,15 +1133,16 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 					permNew |= 128; //u+w
 				}
 				if (permNew != permOld) {
-					//getChannel("SftpFileService.setReadOnly").chmod(permNew, path); //$NON-NLS-1$
-					attr.setPERMISSIONS(permNew);
-					getChannel("SftpFileService.setReadOnly").setStat(recode(path), attr); //$NON-NLS-1$					ok=true;
+					getChannel("SftpFileService.setReadOnly").chmod(permNew, recode(path)); //$NON-NLS-1$
 					Activator.trace("SftpFileService.setReadOnly ok"); //$NON-NLS-1$
 				} else {
 					Activator.trace("SftpFileService.setReadOnly nothing-to-do"); //$NON-NLS-1$
 				}
 			} catch (Exception e) {
 				Activator.trace("SftpFileService.setReadOnly "+path+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				if ((e instanceof SftpException) && ((SftpException) e).id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+					throw new SystemElementNotFoundException(Activator.PLUGIN_ID, path, "setReadOnly");
+				}
 				throw makeSystemMessageException(e);
 			} finally {
 				fDirChannelMutex.release();

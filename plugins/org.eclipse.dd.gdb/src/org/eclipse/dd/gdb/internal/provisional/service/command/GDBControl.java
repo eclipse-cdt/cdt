@@ -537,7 +537,8 @@ public class GDBControl extends AbstractMIControl {
                     // to allow for easy overriding.
                     commandList.add(fGdbPath.toOSString());
                     commandList.add("--interpreter"); //$NON-NLS-1$
-                    commandList.add("mi"); //$NON-NLS-1$
+                    // We currently work with MI version 2
+                    commandList.add("mi2"); //$NON-NLS-1$
                     // Don't read the gdbinit file here.  It is read explicitly in
                     // the LaunchSequence to make it easier to customize.
                     commandList.add("--nx"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -154,18 +153,17 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		try {
 			index = CCorePlugin.getIndexManager().getIndex(tu.getCProject(), IIndexManager.ADD_DEPENDENCIES);
 			index.acquireReadLock();
+			try {
+				extractIncludes(fEditor, index);
+				addInclude(tu);
+			}
+			finally {
+				index.releaseReadLock();
+			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
-			return;
 		} catch (InterruptedException e) {
-			return;
-		}
-		try {
-			extractIncludes(fEditor, index);
-			addInclude(tu);
-		}
-		finally {
-			index.releaseReadLock();
+			Thread.currentThread().interrupt();
 		}
 		fUsings = null;
 		fRequiredIncludes = null;
@@ -250,11 +248,8 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			}
 
 			try {			
-				Pattern pattern = Pattern.compile(name);
-				
-				IndexFilter filter= new IndexFilter() {
-				};
-				IIndexBinding[] bindings= index.findBindings(pattern, false, filter, new NullProgressMonitor());
+				IndexFilter filter= IndexFilter.ALL_DECLARED_OR_IMPLICIT;
+				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), false, filter, new NullProgressMonitor());
 				ArrayList<DisplayName> pdomNames= new ArrayList<DisplayName>();
 				for (int i = 0; i < bindings.length; ++i) {
 					IIndexBinding binding= bindings[i];
@@ -267,8 +262,8 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 						defs= index.findDeclarations(binding);
 					}
 					if (defs != null) {
-						for (int j = 0; j < defs.length; j++) {
-							pdomNames.add(new DisplayName(defs[j], binding));
+						for (IIndexName def : defs) {
+							pdomNames.add(new DisplayName(def, binding));
 						}
 					}
 				}

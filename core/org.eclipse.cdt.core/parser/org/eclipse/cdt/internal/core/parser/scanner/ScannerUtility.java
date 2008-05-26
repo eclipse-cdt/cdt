@@ -45,6 +45,14 @@ public class ScannerUtility {
 		char[] aus = new char[len + 1];
 		
 		originalPath.getChars(0, len, ein, 0);
+		
+		// allow double backslash at beginning for windows UNC paths, bug 233511
+		if(ein.length >= 2 && ein[0] == BSLASH && ein[1] == BSLASH && 
+		   File.separatorChar == BSLASH) {
+		    aus[j++] = BSLASH;
+		}
+
+		
 		for (int i=0; i<len; i++) {
 			char c = ein[i]; 
 			switch (c) {

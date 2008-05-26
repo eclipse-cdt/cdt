@@ -306,9 +306,7 @@ public class RSEFileStoreImpl extends FileStore
 			try {
 				remoteFile = parent.getParentRemoteFileSubSystem().getRemoteFileObject(parent, getName(), monitor);
 			} catch(SystemMessageException e) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						getExceptionMessage(null, e), e));
+				rethrowCoreException(e, EFS.ERROR_READ);
 			}
 		} else {
 			//Handle was created with an absolute name
@@ -317,10 +315,7 @@ public class RSEFileStoreImpl extends FileStore
 				remoteFile = subSys.getRemoteFileObject(_store.getAbsolutePath(), monitor);
 			}
 			catch (SystemMessageException e) {
-				throw new CoreException(new Status(
-						IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						getExceptionMessage(null, e), e));
+				rethrowCoreException(e, EFS.ERROR_READ);
 			}
 		}
 
@@ -328,7 +323,8 @@ public class RSEFileStoreImpl extends FileStore
 		if (forceExists && (remoteFile == null || !remoteFile.exists())) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					Messages.FILE_STORE_DOES_NOT_EXIST));
+					EFS.ERROR_NO_LOCATION,
+					Messages.FILE_STORE_DOES_NOT_EXIST, null));
 		}
 		return remoteFile;
 	}
@@ -636,13 +632,13 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException
 	{
-		//TODO Check should be done by IRemoteFileSubSystem.createFolders()
-		//if ((options & EFS.SHALLOW)!=0) {
-		//	IFileStore parent = getParent();
-		//	if (parent == null) || !parent.{
-		//		parent.mkdir(options, monitor);
-		//	}
-		//}
+		//TODO bug 234026: Check should be done by IRemoteFileSubSystem.createFolders()
+		if ((options & EFS.SHALLOW) == 0) {
+			IFileStore parent = getParent();
+			if (parent != null) {
+				parent.mkdir(options, monitor);
+			}
+		}
 
 		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);

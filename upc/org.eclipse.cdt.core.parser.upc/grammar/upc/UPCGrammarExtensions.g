@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 ./
 $End
 

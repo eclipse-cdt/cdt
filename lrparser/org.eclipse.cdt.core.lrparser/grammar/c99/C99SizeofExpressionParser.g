@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.c99
-%options template=btParserTemplateD.g
+%options template=FixedBtParserTemplateD.g
 
 
 $Import

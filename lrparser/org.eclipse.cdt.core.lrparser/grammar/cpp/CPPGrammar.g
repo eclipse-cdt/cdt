@@ -126,6 +126,7 @@ $Globals
 	import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 	import org.eclipse.cdt.core.dom.lrparser.IParser;
 	import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+	import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 ./
 $End
 

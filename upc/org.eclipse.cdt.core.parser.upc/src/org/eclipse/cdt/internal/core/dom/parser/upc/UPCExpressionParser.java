@@ -19,6 +19,7 @@ import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
@@ -31,13 +32,14 @@ import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 
 public class UPCExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
     private static ParseTable prs = new UPCExpressionParserprs();
-    private BacktrackingParser btParser;
+    private FixedBacktrackingParser btParser;
 
-    public BacktrackingParser getParser() { return btParser; }
+    public FixedBacktrackingParser getParser() { return btParser; }
     private void setResult(Object object) { btParser.setSym1(object); }
     public Object getRhsSym(int i) { return btParser.getSym(i); }
 
@@ -142,7 +144,7 @@ public class UPCExpressionParser extends PrsStream implements RuleAction , IPars
     {
         try
         {
-            btParser = new BacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
         }
         catch (NotBacktrackParseTableException e)
         {

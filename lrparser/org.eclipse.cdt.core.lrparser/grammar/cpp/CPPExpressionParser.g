@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.cpp
-%options template=btParserTemplateD.g
+%options template=FixedBtParserTemplateD.g
 
 -- All we need to do is import the main parser and redefine the start symbol.
 

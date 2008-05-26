@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.cpp
-%options template=btParserTemplateD.g
+%options template=FixedBtParserTemplateD.g
 
 
 -- This file is needed because LPG won't allow redefinition of the 

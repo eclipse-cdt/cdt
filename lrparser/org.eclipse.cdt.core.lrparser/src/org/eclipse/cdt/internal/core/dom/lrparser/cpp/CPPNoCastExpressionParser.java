@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
@@ -30,9 +31,9 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 public class CPPNoCastExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
 {
     private static ParseTable prs = new CPPNoCastExpressionParserprs();
-    private BacktrackingParser btParser;
+    private FixedBacktrackingParser btParser;
 
-    public BacktrackingParser getParser() { return btParser; }
+    public FixedBacktrackingParser getParser() { return btParser; }
     private void setResult(Object object) { btParser.setSym1(object); }
     public Object getRhsSym(int i) { return btParser.getSym(i); }
 
@@ -137,7 +138,7 @@ public class CPPNoCastExpressionParser extends PrsStream implements RuleAction ,
     {
         try
         {
-            btParser = new BacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
         }
         catch (NotBacktrackParseTableException e)
         {

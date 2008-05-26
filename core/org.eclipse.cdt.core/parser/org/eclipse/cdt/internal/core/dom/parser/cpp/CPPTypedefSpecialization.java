@@ -8,16 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
@@ -45,6 +48,11 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
     public IType getType() throws DOMException {
         if (type == null) {
             type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
+            if (type == this) {
+            	// A typedef pointing to itself is a sure recipe for an infinite loop. 
+            	type = new ProblemBinding(getDefinition(), IProblemBinding.SEMANTIC_INVALID_TYPE,
+            			getNameCharArray());
+            }
 	    }
 		return type;
     }

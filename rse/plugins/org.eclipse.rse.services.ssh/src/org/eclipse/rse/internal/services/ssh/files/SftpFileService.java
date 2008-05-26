@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [170910] Adopt RSE ITerminalService API for SSH
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [190904] Changing read-only attribute throws exception
+ * Martin Oberhuber (Wind River) - [218042] Support UNIX permission modification on ssh
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -1247,10 +1248,27 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	public void setFilePermissions(IHostFile file,
 			IHostFilePermissions permissions, IProgressMonitor monitor)
 	throws SystemMessageException {
-		return;
+		//See setReadOnly()
+		String path = file.getAbsolutePath();
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				getChannel("SftpFileService.setFilePermissions").chmod(permissions.getPermissionBits(), recode(path)); //$NON-NLS-1$
+				Activator.trace("SftpFileService.setFilePermissions ok"); //$NON-NLS-1$
+			} catch (Exception e) {
+				Activator.trace("SftpFileService.setFilePermissions " + path + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				if ((e instanceof SftpException) && ((SftpException) e).id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+					throw new SystemElementNotFoundException(Activator.PLUGIN_ID, path, "setFilePermissions");
+				}
+				throw makeSystemMessageException(e);
+			} finally {
+				fDirChannelMutex.release();
+			}
+		} else {
+			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
+		}
 	}
 
 	public int getCapabilities(IHostFile file) {
-		return IFilePermissionsService.FS_CAN_GET_ALL;
+		return IFilePermissionsService.FS_CAN_GET_ALL | IFilePermissionsService.FS_CAN_SET_PERMISSIONS;
 	}
 }

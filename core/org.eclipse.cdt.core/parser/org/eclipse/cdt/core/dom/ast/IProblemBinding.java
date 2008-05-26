@@ -40,7 +40,7 @@ public interface IProblemBinding extends IBinding, IScope, IType {
     public IASTNode getASTNode();
 	
 	/**
-	 * returns the file name this problem occured in if known.
+	 * returns the file name this problem occurred in if known.
 	 */
 	public String getFileName();
 	
@@ -80,7 +80,7 @@ public interface IProblemBinding extends IBinding, IScope, IType {
 
     /**
      * Invalid type provided
-     * Required attribugtes: A_TYPE_NAME
+     * Required attributes: A_TYPE_NAME
      */
     public static final int SEMANTIC_INVALID_TYPE = 0x005;
 
@@ -115,7 +115,7 @@ public interface IProblemBinding extends IBinding, IScope, IType {
     public static final int SEMANTIC_INVALID_REDEFINITION = 0x00B;
     
     /**
-     * invalid redeclaration of the name
+     * invalid re-declaration of the name
      */
     public static final int SEMANTIC_INVALID_REDECLARATION = 0x00C;
     
@@ -124,5 +124,4 @@ public interface IProblemBinding extends IBinding, IScope, IType {
 	public static final int SEMANTIC_RECURSION_IN_LOOKUP = 0x00E;
 
 	public static final int LAST_PROBLEM = SEMANTIC_RECURSION_IN_LOOKUP;
-
 }

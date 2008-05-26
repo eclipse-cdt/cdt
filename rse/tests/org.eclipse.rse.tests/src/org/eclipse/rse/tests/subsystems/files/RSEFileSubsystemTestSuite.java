@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
@@ -56,10 +56,11 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		// the ftp server to use possibly changed to whatever host will do.
 		suite.addTestSuite(FTPFileSubsystemTestCase.class);
 		suite.addTestSuite(FileServiceTgzArchiveTest.class);
-		
+		suite.addTest(RSEFileStoreTest.suite());
+
 		return suite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
 	 */

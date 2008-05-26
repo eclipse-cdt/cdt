@@ -131,7 +131,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	public IRemoteFile createFileOrFolder(IFileServiceSubSystem inputFss, String targetFolderName, String fileOrFolderName, boolean isFolder) throws Exception
 	{
 		IRemoteFile result = null;
-		System.out.println("createFileOrFolder: targetFolderName is " + targetFolderName);
+		//System.out.println("createFileOrFolder: targetFolderName is " + targetFolderName);
 		IRemoteFile targetFolder = inputFss.getRemoteFileObject(targetFolderName, mon);
 		String fileOrFolderAbsName = getNewAbsoluteName(targetFolder, fileOrFolderName);
 		IRemoteFile newFileOrFolderPath = inputFss.getRemoteFileObject(fileOrFolderAbsName, mon);

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.tests.core.RSECoreTestCase;
 import org.eclipse.rse.tests.internal.RSEConnectionManager;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
@@ -34,7 +35,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 	private final IRSEConnectionManager connectionManager = new RSEConnectionManager();
 	private final IRSEConnectionProperties localSystemConnectionProperties;
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -44,7 +45,7 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name The test name.
 	 */
 	public RSEBaseConnectionTestCase(String name) {
@@ -60,25 +61,25 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 
 	/**
 	 * Returns the associated RSE connection manager instance.
-	 * 
+	 *
 	 * @return The connection manager instance. Should be never <code>null</code>.
 	 */
 	protected IRSEConnectionManager getConnectionManager() {
 		return connectionManager;
 	}
-	
+
 	/**
 	 * Lookup and return the local system type connection. This connection
 	 * should be usually available on all systems.
-	 * 
+	 *
 	 * @return The local system type connection or <code>null</code> if the lookup fails.
 	 */
 	protected IHost getLocalSystemConnection() {
 		assertNotNull("Local system connection properties are not available!", localSystemConnectionProperties); //$NON-NLS-1$
-		
+
 		Exception exception = null;
 		String cause = null;
-		
+
 		IHost connection = null;
 		try {
 			connection = getConnectionManager().findOrCreateConnection(localSystemConnectionProperties);
@@ -88,70 +89,70 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 		}
 		assertNull("Failed to find and create local system connection! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertNotNull("Failed to find and create local system connection! Cause unknown!", connection); //$NON-NLS-1$
-		
+
 		return connection;
 	}
-	
+
 	protected IHost getSSHHost()
 	{
 		return getHost("sshConnection.properties");
 	}
-	
+
 	protected IHost getFTPHost()
 	{
 		return getHost("ftpConnection.properties");
 	}
-	
-	protected IHost getLinuxHost()
-	{		
-		//Ensure that the SSL acknowledge dialog does not show up. 
-		//We need to setDefault first in order to set the value of a preference.  
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
 
-		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
-		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-		
+	protected IHost getLinuxHost()
+	{
 		return getHost("linuxConnection.properties");
 	}
-	
+
 	protected IHost getWindowsHost()
 	{
-		//Ensure that the SSL acknowledge dialog does not show up. 
-		//We need to setDefault first in order to set the value of a preference.  
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
-
-		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
-		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-
 		return getHost("windowsConnection.properties");
 	}
-	
+
 	protected IHost getHost(String propertiesFileName) {
 		IHost host;
-		
+
 		// Calculate the location of the test connection properties
 		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
 		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append(propertiesFileName); //$NON-NLS-1$
+		location = location.append(propertiesFileName);
 		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
 		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
 		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
-		
+
 		// Load the properties from the calculated location without backing up defaults
 		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
 		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
+
 		// Lookup and create the connection now if necessary
 		host = getConnectionManager().findOrCreateConnection(properties);
 		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-				
+
+		// For connections with dstore, need to disable SSL alerts
+		// since the UI messagebox on connect would make the test hang
+		ISubSystem[] ss = host.getSubSystems();
+		for (int i = 0; i < ss.length; i++) {
+			String id = ss[i].getSubSystemConfiguration().getId();
+			if (id.indexOf("dstore.") >= 0) {
+				IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+				////Ensure that the SSL acknowledge dialog does not show up.
+				////We no longer need to setDefault first in order to set the value of a preference.
+				////Since this is now in connectorservice.dstore/Activator, and it's sure to be active here
+				// store.setDefault(ISystemPreferencesConstants.ALERT_SSL,ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
+				// store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
+				store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
+				store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
+				break;
+			}
+		}
+
 		return host;
 	}
-	
+
 	/**
 	 * Lookup/create and return the remote system connection according to the list of system parameters.
 	 * @param systemTypeID The type id string of the remote system.
@@ -159,25 +160,25 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 	 * @param systemName The connection name.
 	 * @param userID The user id used to logon to the remote system.
 	 * @param password The password of the user id to logon to the remote system.
-	 * 
+	 *
 	 * @return The remote system connection or <code>null</code> if the lookup/creation fails.
 	 */
 	protected IHost getRemoteSystemConnection(String systemTypeID, String systemAddress, String systemName, String userID, String password) {
-		
+
 		Exception exception = null;
 		String cause = null;
 		// Pre-create the local system connection properties
 		Properties properties = new Properties();
 		properties.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID, systemTypeID);
-		properties.setProperty(IRSEConnectionProperties.ATTR_ADDRESS, systemAddress); //$NON-NLS-1$
-		properties.setProperty(IRSEConnectionProperties.ATTR_NAME, systemName); //$NON-NLS-1$
-		properties.setProperty(IRSEConnectionProperties.ATTR_USERID, userID); //$NON-NLS-1$
+		properties.setProperty(IRSEConnectionProperties.ATTR_ADDRESS, systemAddress);
+		properties.setProperty(IRSEConnectionProperties.ATTR_NAME, systemName);
+		properties.setProperty(IRSEConnectionProperties.ATTR_USERID, userID);
 		if (password != null)
-			properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, password); //$NON-NLS-1$
-		
+			properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, password);
+
 		IRSEConnectionProperties remoteSystemConnectionProperties;
 		remoteSystemConnectionProperties = getConnectionManager().loadConnectionProperties(properties, false);
-		
+
 		IHost connection = null;
 		try {
 			connection = getConnectionManager().findOrCreateConnection(remoteSystemConnectionProperties);
@@ -187,7 +188,7 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 		}
 		assertNull("Failed to find and create remote system connection! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertNotNull("Failed to find and create remote system connection! Cause unknown!", connection); //$NON-NLS-1$
-		
+
 		return connection;
 	}
 }

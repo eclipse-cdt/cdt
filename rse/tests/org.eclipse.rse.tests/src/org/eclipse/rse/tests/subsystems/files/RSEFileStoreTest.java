@@ -11,6 +11,7 @@
 
 package org.eclipse.rse.tests.subsystems.files;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,11 +30,18 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.efs.RSEFileSystem;
+import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.shells.core.model.SimpleCommandOperation;
+import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 
 /**
  * Testcase for RSEFileStore
@@ -44,6 +52,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 	//For testing the test: verify methods on Eclipse Local Filesystem
 	public static String fDefaultPropertiesFile = null;
 
+	private IRemoteFile fHomeDirectory;
+	private String fTestStorePath;
 	private IFileStore fTestStore;
 	private InputStream fIS;
 	private OutputStream fOS;
@@ -98,12 +108,27 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		return new NullProgressMonitor();
 	}
 
+	protected IShellServiceSubSystem getShellServiceSubSystem() {
+		if (fPropertiesFileName == null) {
+			return null;
+		}
+		IHost host = getHost(fPropertiesFileName);
+		ISubSystem[] ss = RSECorePlugin.getTheSystemRegistry().getServiceSubSystems(host, IShellService.class);
+		for (int i = 0; i < ss.length; i++) {
+			if (ss[i] instanceof ShellServiceSubSystem) {
+				return (ShellServiceSubSystem) ss[i];
+			}
+		}
+		return null;
+	}
+
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fPropertiesFileName == null) {
 			//For testing the test: Use Eclipse EFS.getLocalFileSystem()
 			String homePath = System.getProperty("user.home");
 			IPath testPath = new Path(homePath + "/rseTest" + System.currentTimeMillis());
+			fTestStorePath = testPath.toOSString();
 			fTestStore = EFS.getLocalFileSystem().getStore(testPath);
 			fTestStore.mkdir(EFS.NONE, getDefaultProgressMonitor());
 		} else {
@@ -111,9 +136,10 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 			IHost host = getHost(fPropertiesFileName);
 			IRemoteFileSubSystem fss = RemoteFileUtility.getFileSubSystem(host);
 			fss.checkIsConnected(getDefaultProgressMonitor());
-			IRemoteFile homeDirectory = fss.getRemoteFileObject(".", getDefaultProgressMonitor());
-			IPath testPath = new Path(homeDirectory.getAbsolutePath() + "/rseTest" + System.currentTimeMillis());
-			URI testURI = RSEFileSystem.getURIFor(host.getHostName(), testPath.toString());
+			fHomeDirectory = fss.getRemoteFileObject(".", getDefaultProgressMonitor());
+			IPath testPath = new Path(fHomeDirectory.getAbsolutePath() + "/rseTest" + System.currentTimeMillis());
+			fTestStorePath = testPath.toString();
+			URI testURI = RSEFileSystem.getURIFor(host.getHostName(), fTestStorePath);
 			fTestStore = RSEFileSystem.getInstance().getStore(testURI);
 			fTestStore.mkdir(EFS.NONE, getDefaultProgressMonitor());
 		}
@@ -228,8 +254,108 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		//assertTrue("2.6.2", info.getLastModified() <= parentModified); //not actually changed
 	}
 
-	public void testModifyNonExisting() throws Exception {
+	public void testDeleteSpecialCases() throws Exception {
 		//-test-author-:MartinOberhuber
+		String testFileName = "noPerm.txt"; //$NON-NLS-1$
+		boolean exceptionThrown = false;
+
+		//delete file without read permissions on parent
+		IFileStore store = createFile(testFileName);
+		IFileInfo info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
+		store.putInfo(info, EFS.SET_ATTRIBUTES, getDefaultProgressMonitor());
+		info = fTestStore.fetchInfo();
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
+		info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, false);
+		fTestStore.putInfo(info, EFS.SET_ATTRIBUTES, getDefaultProgressMonitor());
+		try {
+			store.delete(EFS.NONE, getDefaultProgressMonitor());
+		} catch (CoreException ce) {
+			exceptionThrown = true;
+			System.out.println("Good! " + ce);
+			assertTrue("1.1.1", ce.getStatus().getCode() == EFS.ERROR_DELETE);
+		}
+		if (fDefaultPropertiesFile != null || File.separatorChar != '\\') {
+			// On Windows, no exception is thrown (read-only stuff can be deleted)
+			if (fHomeDirectory == null || fHomeDirectory.getSeparatorChar() != '\\') {
+				assertTrue("1.1", exceptionThrown);
+				IFileInfo info2 = store.fetchInfo();
+				assertTrue(info2.exists());
+			}
+		}
+
+		// restore deletable
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+		info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
+		fTestStore.putInfo(info, EFS.SET_ATTRIBUTES, getDefaultProgressMonitor());
+		store.delete(EFS.NONE, getDefaultProgressMonitor());
+		info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
+		assertTrue("1.2", !info.exists());
+
+		if (fHomeDirectory != null && fHomeDirectory.getSeparatorChar() == '/' && fHomeDirectory.getParentRemoteFileSubSystem().isCaseSensitive()) {
+			//IRemoteFileSubSystem rfss = fHomeDirectory.getParentRemoteFileSubSystem();
+			IRemoteCmdSubSystem rcmd = getShellServiceSubSystem();
+			//SimpleCommandOperation op = new SimpleCommandOperation(rcmd, fHomeDirectory, false);
+			SimpleCommandOperation op = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
+			op.runCommand("ln -s notExisting2.txt \"" + fTestStorePath + "/" + testFileName + "\"", true);
+			while (op.isActive()) {
+				Thread.sleep(200);
+			}
+			//delete symbolic link pointing to nowhere
+			store.delete(EFS.NONE, getDefaultProgressMonitor());
+			info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
+			assertTrue("1.3", !info.exists());
+
+			SimpleCommandOperation op2 = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
+			op2.runCommand("ln -s . \"" + fTestStorePath + "/" + testFileName + "\"", true);
+			while (op2.isActive()) {
+				Thread.sleep(200);
+			}
+			// delete symbolic link pointing to current folder
+			store.delete(EFS.NONE, getDefaultProgressMonitor());
+			info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
+			assertTrue("1.4", !info.exists());
+
+			//Delete without even read permission on parent folder
+			store = createFile(testFileName);
+			SimpleCommandOperation op3 = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
+			op3.runCommand("chmod 000 \"" + fTestStorePath + "\"", true);
+			while (op3.isActive()) {
+				Thread.sleep(200);
+			}
+			exceptionThrown = false;
+			try {
+				store.delete(EFS.NONE, getDefaultProgressMonitor());
+			} catch (CoreException ce) {
+				exceptionThrown = true;
+				System.out.println("Good! " + ce);
+				assertTrue("1.5.1", ce.getStatus().getCode() == EFS.ERROR_DELETE);
+			}
+			assertTrue("1.5", exceptionThrown);
+
+			exceptionThrown = false;
+			try {
+				info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
+			} catch (CoreException ce) {
+				exceptionThrown = true;
+				System.out.println("Good! " + ce);
+				assertTrue("1.6.1", ce.getStatus().getCode() == EFS.ERROR_READ);
+			}
+			assertTrue("1.6", exceptionThrown);
+			SimpleCommandOperation op4 = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
+			op4.runCommand("chmod 777 \"" + fTestStorePath + "\"", true);
+			while (op3.isActive()) {
+				Thread.sleep(200);
+			}
+			//Experience shows that we need to wait a little longer until the filesystem calms down
+			Thread.sleep(500);
+			info = store.fetchInfo();
+			assertTrue(info.exists());
+		}
+	}
+
+	public void testModifyNonExisting() throws Exception {
+		// -test-author-:MartinOberhuber
 		IFileStore store = fTestStore.getChild("nonExisting.txt");
 		IFileInfo info;
 		boolean exceptionThrown = false;
@@ -238,10 +364,11 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
 		assertTrue("1.1", !info.exists());
 
-		//delete non-Existing
+		// delete non-Existing
 		store.delete(EFS.NONE, getDefaultProgressMonitor());
-		//TODO IFileStore.delete() does not specify whether deleting a non-existing file should throw an Exception.
-		//EFS.getLocalFileSystem() does not throw the exception.
+		// TODO IFileStore.delete() does not specify whether deleting a
+		// non-existing file should throw an Exception.
+		// EFS.getLocalFileSystem() does not throw the exception.
 		info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
 		assertTrue("1.2", !info.exists());
 

@@ -241,17 +241,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	}
 	
 	/*
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#hasDebug()
-	 */
-	@Override
-	public boolean hasDebug() {
-		if (fElfAttributes != null) {
-			return fElfAttributes.hasDebug();
-		}
-		return super.hasDebug();
-	}
-	
-	/*
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPU()
 	 */
 	@Override

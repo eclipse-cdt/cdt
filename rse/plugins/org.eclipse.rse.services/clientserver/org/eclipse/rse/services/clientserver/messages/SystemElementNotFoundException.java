@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.messages;
@@ -21,7 +22,7 @@ import org.eclipse.rse.services.clientserver.IClientServerConstants;
  * but that element did not exist. Like trying to delete a file that does not
  * exist. The framework may treat such an exception differently than other kinds
  * of exceptions.
- * 
+ *
  * @since 3.0
  */
 public class SystemElementNotFoundException extends SystemMessageException {
@@ -33,18 +34,39 @@ public class SystemElementNotFoundException extends SystemMessageException {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Constructor for subclasses to use custom messages.
+	 *
+	 * @param msg A SystemMessage.
+	 */
+	public SystemElementNotFoundException(SystemMessage msg) {
+		super(msg);
+	}
+
+	/**
 	 * Constructor.
 	 *
 	 * @param element an Absolute Path for the element that could not be found.
+	 * @param operation Operation about to be performed that failed
 	 */
 	public SystemElementNotFoundException(String element, String operation) {
-		super(getMyMessage(element, operation));
+		super(getMyMessage(IClientServerConstants.PLUGIN_ID, element, operation));
 	}
 
-	private static SystemMessage getMyMessage(String element, String operation) {
-		//TODO generate an internal backtrace and attach to the message
+	/**
+	 * Constructor.
+	 *
+	 * @param pluginId ID of plugin in which the failure occurred
+	 * @param element an Absolute Path for the element that could not be found.
+	 * @param operation Operation about to be performed that failed
+	 */
+	public SystemElementNotFoundException(String pluginId, String element, String operation) {
+		super(getMyMessage(pluginId, element, operation));
+	}
+
+	private static SystemMessage getMyMessage(String pluginId, String element, String operation) {
+		//TODO generate an internal backtrace and attach to the message?
 		String msgText = NLS.bind(CommonMessages.MSG_ELEMENT_NOT_FOUND, operation, element);
-		SystemMessage msg = new SimpleSystemMessage(IClientServerConstants.PLUGIN_ID,
+		SystemMessage msg = new SimpleSystemMessage(pluginId,
 				ICommonMessageIds.MSG_ELEMENT_NOT_FOUND, IStatus.ERROR, msgText);
 		return msg;
 	}

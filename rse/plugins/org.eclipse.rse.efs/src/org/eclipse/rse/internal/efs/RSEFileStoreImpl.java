@@ -28,6 +28,7 @@
  * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
  * Timur Shipilov   (Xored)      - [224540] [efs] RSEFileStore.mkdir(EFS.NONE, null) doesn't create parent folder
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -52,6 +53,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
+import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
@@ -179,7 +181,7 @@ public class RSEFileStoreImpl extends FileStore
 		return unconnected;
 	}
 
-	
+
 	/**
 	 * Return the best available remote file subsystem for a connection.
 	 * Criteria are:
@@ -189,7 +191,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * <li>An unconnected FileServiceSubsystem</li>
 	 * <li>An unconnected IRemoteFileSubSystem</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param host the connection to check
 	 * @return an IRemoteFileSubSystem for the given connection, or
 	 *         <code>null</code> if no IRemoteFileSubSystem is configured.
@@ -556,6 +558,24 @@ public class RSEFileStoreImpl extends FileStore
     	return exceptionText;
     }
 
+	/**
+	 * Re-interpret RSE internal exceptions into proper EFS CoreException.
+	 *
+	 * @param e Original exception from RSE SubSystems
+	 * @param codeHint hint as to what the EFS Error Code might be
+	 * @throws CoreException create CoreException according to EFS specification
+	 */
+	private void rethrowCoreException(Exception e, int codeHint) throws CoreException {
+		//default pluginId to the EFS provider; override by root if possible
+		String pluginId = Activator.getDefault().getBundle().getSymbolicName();
+		String msg = getExceptionMessage(toString(), e);
+		int code = codeHint;
+		if (e instanceof SystemElementNotFoundException) {
+			code = EFS.ERROR_NOT_EXISTS;
+		}
+		throw new CoreException(new Status(IStatus.ERROR, pluginId, code, msg, e));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#putInfo(org.eclipse.core.filesystem.IFileInfo, int, org.eclipse.core.runtime.IProgressMonitor)
@@ -566,16 +586,14 @@ public class RSEFileStoreImpl extends FileStore
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		try {
 			if ((options & EFS.SET_ATTRIBUTES) != 0) {
-				//We cannot currently write isExecutable(), isHidden()
+				// We cannot currently write isExecutable(), isHidden()
 				subSys.setReadOnly(remoteFile, info.getAttribute(EFS.ATTRIBUTE_READ_ONLY), monitor);
 			}
 			if ((options & EFS.SET_LAST_MODIFIED) != 0) {
 				subSys.setLastModified(remoteFile, info.getLastModified(), monitor);
 			}
-		} catch(Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					Activator.getDefault().getBundle().getSymbolicName(),
-					getExceptionMessage(toString(), e), e));
+		} catch (Exception e) {
+			rethrowCoreException(e, EFS.ERROR_WRITE);
 		}
 	}
 
@@ -591,7 +609,8 @@ public class RSEFileStoreImpl extends FileStore
 		if (remoteFile.isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					Messages.CANNOT_OPEN_STREAM_ON_FOLDER));
+					EFS.ERROR_WRONG_TYPE,
+					Messages.CANNOT_OPEN_STREAM_ON_FOLDER, null));
 		}
 
 		if (remoteFile.isFile()) {
@@ -600,13 +619,15 @@ public class RSEFileStoreImpl extends FileStore
 			}
 			catch (SystemMessageException e) {
 				cacheRemoteFile(null);
-				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						getExceptionMessage(null, e), e));
+				rethrowCoreException(e, EFS.ERROR_READ);
 			}
 		}
 
-		return null;
+		//file does not exist, apparently
+		//TODO use Java MessageFormat for embedding filename in message
+		throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
+		    // EFS.ERROR_NOT_EXISTS,
+			EFS.ERROR_READ, Messages.FILE_STORE_DOES_NOT_EXIST + ": " + toString(), null)); //$NON-NLS-1$
 	}
 
 	/*
@@ -615,37 +636,49 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException
 	{
-		if (options == EFS.NONE) {
-			IFileStore parent = getParent();
-			if (parent != null) {
-				parent.mkdir(options, monitor);
-			}
-		}
+		//TODO Check should be done by IRemoteFileSubSystem.createFolders()
+		//if ((options & EFS.SHALLOW)!=0) {
+		//	IFileStore parent = getParent();
+		//	if (parent == null) || !parent.{
+		//		parent.mkdir(options, monitor);
+		//	}
+		//}
 
 		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					Messages.COULD_NOT_GET_REMOTE_FILE));
+					EFS.ERROR_NOT_EXISTS,
+					Messages.COULD_NOT_GET_REMOTE_FILE, null));
 		}
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		if (!remoteFile.exists()) {
 			try {
-				remoteFile = subSys.createFolder(remoteFile, monitor);
+				if ((options & EFS.SHALLOW) != 0) {
+					//TODO following check should be obsolete
+					if (!remoteFile.getParentRemoteFile().exists()) {
+						throw new CoreException(new Status(IStatus.ERROR,
+								Activator.getDefault().getBundle().getSymbolicName(),
+								EFS.ERROR_WRITE,
+								Messages.FILE_STORE_DOES_NOT_EXIST, null));
+					}
+					remoteFile = subSys.createFolder(remoteFile, monitor);
+				} else {
+					remoteFile = subSys.createFolders(remoteFile, monitor);
+				}
 				cacheRemoteFile(remoteFile);
 			}
 			catch (SystemMessageException e) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						getExceptionMessage(null, e), e));
+				rethrowCoreException(e, EFS.ERROR_WRITE);
 			}
 			return _store;
 		}
 		else if (remoteFile.isFile()) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					Messages.FILE_NAME_EXISTS));
+					EFS.ERROR_WRONG_TYPE,
+					Messages.FILE_NAME_EXISTS, null));
 		}
 		else {
 			return _store;
@@ -671,9 +704,7 @@ public class RSEFileStoreImpl extends FileStore
 				cacheRemoteFile(remoteFile);
 			}
 			catch (SystemMessageException e) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						getExceptionMessage(null, e), e));
+				rethrowCoreException(e, EFS.ERROR_WRITE);
 			}
 		}
 
@@ -688,20 +719,18 @@ public class RSEFileStoreImpl extends FileStore
 				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), options, monitor);
 			}
 			catch (SystemMessageException e) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						Activator.getDefault().getBundle().getSymbolicName(),
-						Messages.CANNOT_OPEN_STREAM_ON_FOLDER, e));
+				rethrowCoreException(e, EFS.ERROR_WRITE);
 			}
 		}
 		else if (remoteFile.isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					Messages.CANNOT_OPEN_STREAM_ON_FOLDER));
+					EFS.ERROR_WRONG_TYPE,
+					Messages.CANNOT_OPEN_STREAM_ON_FOLDER, null));
 		}
-		else {
-			//TODO check what to do for symbolic links and other strange stuff
-			return null;
-		}
+		//Fallback: No file, no folder?
+		//TODO check what to do for symbolic links and other strange stuff
+		return null;
 	}
 
 	/*
@@ -716,10 +745,11 @@ public class RSEFileStoreImpl extends FileStore
 			cacheRemoteFile(null);
 			subSys.delete(remoteFile, monitor);
 		}
+		catch (SystemElementNotFoundException e) {
+			/* not considered an error by EFS -- ignore */
+		}
 		catch (SystemMessageException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					Activator.getDefault().getBundle().getSymbolicName(),
-					getExceptionMessage(null, e), e));
+			rethrowCoreException(e, EFS.ERROR_DELETE);
 		}
 	}
 }

@@ -38,7 +38,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * David McKnight   (IBM)        - [231211] Local xml file not opened when workspace encoding is different from local system encoding
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
- * David McKnight   (IBM)        - [233373] NPE when deleting a file from a read-only folder on Local
+ * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -88,6 +88,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundExcep
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationFailedException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.HostFilePermissions;
 import org.eclipse.rse.services.files.IFilePermissionsService;
@@ -476,7 +477,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 					String systemEncoding = SystemEncodingUtil.getInstance().getEnvironmentEncoding();
 					boolean sizeCheck = !isBinary && systemEncoding.equals(hostEncoding);
-					
+
 					if (sizeCheck && (destinationFile.length() != file.length())) {
 						throw new SystemOperationCancelledException();
 //						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath()); //$NON-NLS-1$
@@ -1048,17 +1049,15 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			result = fileToDelete.delete();
 		}
-		if (!result){
-		  if (fileToDelete.exists()) {
-			// Deletion failed without specification why... likely a Security
-			// problem?
-			// TODO we'll want to wrap a message with the IOException at some point after
-			// 3.0.1
-			throw new RemoteFileSecurityException(new IOException());
-		  }
-		  else {
-		  	throw new SystemElementNotFoundException(fileToDelete.getAbsolutePath(), "delete"); //$NON-NLS-1$	
-		  } 
+		if (!result) {
+			if (fileToDelete.exists()) {
+				// Deletion failed without specification why... likely a Security
+				// problem, or an open file in the files to be deleted.
+				// TODO Externalize Message
+				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Failed to delete: " + fileToDelete.getAbsolutePath());
+			} else {
+				throw new SystemElementNotFoundException(fileToDelete.getAbsolutePath(), "delete");
+			}
 		}
 	}
 
@@ -1548,10 +1547,17 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		}
 	}
 
-	public void setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor)
+	public void setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File file = new File(parent, name);
-		file.setLastModified(timestamp);
+		if (!file.setLastModified(timestamp)) {
+			if (!file.exists()) {
+				// TODO externalize message
+				throw new SystemElementNotFoundException(Activator.PLUGIN_ID, file.getAbsolutePath(), "setLastModified");
+			} else {
+				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "setLastModified: " + file.getAbsolutePath());
+			}
+		}
 	}
 
 	public void setReadOnly(String parent, String name,
@@ -1559,10 +1565,11 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	{
 		File file = new File(parent, name);
 		if (!file.exists()) {
-			String pluginId = Activator.PLUGIN_ID;
-			String messageText = "File does not exist";
-			SimpleSystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText);
-			throw new SystemMessageException(message);
+			//TODO Externalize message, and/or centralize e.g. RemoteFileNotFoundException
+			//See org.eclipse.core.filesystem/src/org/eclipse/core/internal/filesystem/Messages.java - fileNotFound
+			String messageText = "File not found";
+			//TODO throw new RemoteFileNotFoundException
+			throw new SystemElementNotFoundException(Activator.PLUGIN_ID, file.getAbsolutePath(), "setReadOnly");
 		}
 		if (readOnly != file.canWrite()) {
 			return;
@@ -1570,15 +1577,15 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		if (readOnly)
 		{
 			if (!file.setReadOnly()) {
-				String pluginId = Activator.PLUGIN_ID;
-				String messageText = "Cannot set file read only";
-				SimpleSystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText);
-				throw new SystemMessageException(message);
+				//TODO Externalize message
+				throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Failed to setReadOnly: " + file.getAbsolutePath());
 			}
 			return;
 		}
 		else
 		{
+			Exception remoteException = null;
+			String remoteError = ""; //$NON-NLS-1$
 			if (!_isWindows)
 			{
 				// make this read-write
@@ -1591,15 +1598,19 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				{
 					Process p = Runtime.getRuntime().exec(cmd);
 					exitValue = p.waitFor();
+					if (p.getErrorStream().available() > 0) {
+						remoteError = ": " + new BufferedReader(new InputStreamReader(p.getErrorStream())).readLine(); //$NON-NLS-1$
+					} else if (p.getInputStream().available() > 0) {
+						remoteError = ": " + new BufferedReader(new InputStreamReader(p.getInputStream())).readLine(); //$NON-NLS-1$
+					}
 				}
 				catch (Exception e)
 				{
+					remoteException = e;
 				}
 				if (exitValue != 0) {
-					String pluginId = Activator.PLUGIN_ID;
-					String messageText = "Cannot set file read-write";
-					SimpleSystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText);
-					throw new SystemMessageException(message);
+					//TODO Externalize message
+					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Failed to setWritable: " + remoteError, remoteException);
 				}
 			}
 			// windows version
@@ -1614,16 +1625,30 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				{
 					Process p = Runtime.getRuntime().exec(cmd);
 					exitValue = p.waitFor();
+					if (p.getErrorStream().available() > 0) {
+						remoteError = ": " + new BufferedReader(new InputStreamReader(p.getErrorStream())).readLine(); //$NON-NLS-1$
+					} else if (p.getInputStream().available() > 0) {
+						remoteError = ": " + new BufferedReader(new InputStreamReader(p.getInputStream())).readLine(); //$NON-NLS-1$
+					}
 				}
 				catch (Exception e)
 				{
+					remoteException = e;
 				}
 				if (exitValue != 0) {
-					String pluginId = Activator.PLUGIN_ID;
-					String messageText = "Cannot set file read-write";
-					SimpleSystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText);
-					throw new SystemMessageException(message);
+					//TODO Externalize String
+					throw new SystemOperationFailedException(Activator.PLUGIN_ID, "Failed to setWritable: " + remoteError, remoteException);
 				}
+			}
+			//Verify that it actually worked
+			if (!file.canWrite()) {
+				if (remoteError.length() == 0) {
+					// TODO Externalize String
+					remoteError = "Failed to setWritable: " + file.getAbsolutePath();
+				} else {
+					remoteError = remoteError.substring(2);
+				}
+				throw new SystemOperationFailedException(Activator.PLUGIN_ID, remoteError);
 			}
 		}
 	}
@@ -1640,6 +1665,13 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 		try {
 			stream = new FileInputStream(file);
+		}
+		catch (FileNotFoundException e) {
+			if (!file.exists()) {
+				throw new SystemElementNotFoundException(Activator.PLUGIN_ID, file.getAbsolutePath(), "getInputStream");
+			} else {
+				throw new RemoteFileIOException(e);
+			}
 		}
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);
@@ -1671,6 +1703,13 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				stream = new FileOutputStream(file);
 			} else {
 				stream = new FileOutputStream(file, true);
+			}
+		}
+		catch (FileNotFoundException e) {
+			if (!file.exists()) {
+				throw new SystemElementNotFoundException(Activator.PLUGIN_ID, file.getAbsolutePath(), "getOutputStream");
+			} else {
+				throw new RemoteFileIOException(e);
 			}
 		}
 		catch (Exception e) {

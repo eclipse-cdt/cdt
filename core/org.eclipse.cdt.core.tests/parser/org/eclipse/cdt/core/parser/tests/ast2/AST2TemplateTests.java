@@ -2032,6 +2032,34 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPFunction fn= bh.assertNonProblem("makeClosure(this", 11, ICPPFunction.class);
     }
 
+	// template <class R, class T, class P1, class P2, class P3, class P4>
+	// class A {};
+	//
+	// template <class R, class T, class P1, class P2, class P3, class P4>
+	// A<R, T, P1, P2, P3, P4>* func(const T* obj, R (T::*m)(P1, P2, P3, P4) const);
+	//
+	// template <class R, class T, class P1, class P2, class P3, class P4>
+	// class B {};
+	//
+	// template <class R, class T, class P1, class P2, class P3, class P4>
+	// B<R, T, P1, P2, P3, P4>* func(T* obj, R (T::*m)(P1, P2, P3, P4));
+	//
+	// struct C {
+	//	 int m1(int a1, int a2, int a3, int a4);
+	//	 int m2(int a1, int a2, int a3, int a4) const;
+	// };
+	//
+	// void f(C* c, const C* d) {
+	//	 func(c, &C::m1);
+	//	 func(d, &C::m2);
+	// }
+    public void _testBug233889() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction fn1= bh.assertNonProblem("func(c", 4, ICPPFunction.class);
+		ICPPFunction fn2= bh.assertNonProblem("func(d", 4, ICPPFunction.class);
+		assertNotSame(fn1, fn2);
+    }
+
     // template<class _T1, class _T2>
     // struct pair {
     //   typedef _T1 first_type;

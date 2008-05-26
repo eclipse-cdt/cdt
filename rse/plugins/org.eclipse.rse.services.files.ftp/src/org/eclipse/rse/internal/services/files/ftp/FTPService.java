@@ -74,6 +74,7 @@
  * Javier Montalvo Orus (Symbian) - [212382] additional "initCommands" slot for ftpListingParsers extension point
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
+ * Martin Oberhuber (Wind River) - [218040] FTP should support permission modification
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1707,13 +1708,29 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		return null;
 	}
 
-	public void setFilePermissions(IHostFile file,
+	public void setFilePermissions(IHostFile inFile,
 			IHostFilePermissions permissions, IProgressMonitor monitor)
 			throws SystemMessageException {
+		//see also #setReadOnly()
+		String s = Integer.toOctalString(permissions.getPermissionBits());
+		if (_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
+			try {
+				clearCache(inFile.getParentPath());
+				_ftpClient.sendSiteCommand("CHMOD " + s + " " + inFile.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (IOException e) {
+				String pluginId = Activator.getDefault().getBundle().getSymbolicName();
+				String messageText = e.getLocalizedMessage();
+				SystemMessage message = new SimpleSystemMessage(pluginId, IStatus.ERROR, messageText, e);
+				throw new SystemMessageException(message);
+			} finally {
+				_commandMutex.release();
+			}
+		}
+
 	}
 
 	public int getCapabilities(IHostFile file) {
-		return IFilePermissionsService.FS_CAN_GET_ALL;
+		return IFilePermissionsService.FS_CAN_GET_ALL | FS_CAN_SET_PERMISSIONS;
 	}
 
 }

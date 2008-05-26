@@ -62,7 +62,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
@@ -103,10 +103,9 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		return baseKind(token) == TK_Completion;
 	}
 	
-	
 	@Override
-	protected IParser getExpressionStatementParser() {
-		return new C99ExpressionStatementParser(parser.getOrderedTerminalSymbols()); 
+	protected IParser getExpressionParser() {
+		return new C99ExpressionParser(parser.getOrderedTerminalSymbols()); 
 	}
 
 	@Override

@@ -26,7 +26,7 @@ $End
 $Rules
 
 	expression_parser_start
-	    ::= expression ';'
+	    ::= expression
 	      | ERROR_TOKEN
 	          /. $Build  consumeExpressionProblem();  $EndBuild ./
           

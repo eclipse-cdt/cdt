@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -103,6 +104,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTASMDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayModifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArraySubscriptExpression;
@@ -558,6 +560,13 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 
 	public IASTDeclSpecifier newSimpleDeclSpecifier() {
 		return newCPPSimpleDeclSpecifier();
+	}
+
+	public ICPPASTAmbiguousTemplateArgument newAmbiguousTemplateArgument(IASTTypeId typeId, IASTIdExpression idExpression) {
+		ICPPASTAmbiguousTemplateArgument ambiguity = new CPPASTAmbiguousTemplateArgument();
+		ambiguity.addTypeId(typeId);
+		ambiguity.addIdExpression(idExpression);
+		return ambiguity;
 	}
 
 	

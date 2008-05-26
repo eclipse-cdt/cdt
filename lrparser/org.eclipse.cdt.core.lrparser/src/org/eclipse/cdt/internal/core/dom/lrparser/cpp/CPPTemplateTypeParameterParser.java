@@ -2198,65 +2198,72 @@ public CPPTemplateTypeParameterParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 517:  explicit_instantiation ::= template declaration
+            // Rule 515:  template_argument ::= type_id
             //
-            case 517: {       action.builder.
+            case 515: {       action.builder.
+   consumeTemplateArgumentTypeId();                 break;
+            }  
+   
+            //
+            // Rule 516:  explicit_instantiation ::= template declaration
+            //
+            case 516: {       action.builder.
    consumeTemplateExplicitInstantiation();                 break;
             }  
    
             //
-            // Rule 518:  explicit_specialization ::= template < > declaration
+            // Rule 517:  explicit_specialization ::= template < > declaration
             //
-            case 518: {       action.builder.
+            case 517: {       action.builder.
    consumeTemplateExplicitSpecialization();                 break;
             }  
    
             //
-            // Rule 519:  try_block ::= try compound_statement <openscope-ast> handler_seq
+            // Rule 518:  try_block ::= try compound_statement <openscope-ast> handler_seq
             //
-            case 519: {       action.builder.
+            case 518: {       action.builder.
    consumeStatementTryBlock();                 break;
             }  
    
             //
-            // Rule 522:  handler ::= catch ( exception_declaration ) compound_statement
+            // Rule 521:  handler ::= catch ( exception_declaration ) compound_statement
             //
-            case 522: {       action.builder.
+            case 521: {       action.builder.
    consumeStatementCatchHandler(false);                 break;
             }  
    
             //
-            // Rule 523:  handler ::= catch ( ... ) compound_statement
+            // Rule 522:  handler ::= catch ( ... ) compound_statement
             //
-            case 523: {       action.builder.
+            case 522: {       action.builder.
    consumeStatementCatchHandler(true);                 break;
             }  
    
             //
-            // Rule 524:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            // Rule 523:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            //
+            case 523: {       action.builder.
+   consumeDeclarationSimple(true);                 break;
+            }  
+   
+            //
+            // Rule 524:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
             //
             case 524: {       action.builder.
    consumeDeclarationSimple(true);                 break;
             }  
    
             //
-            // Rule 525:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
+            // Rule 525:  exception_declaration ::= type_specifier_seq
             //
             case 525: {       action.builder.
-   consumeDeclarationSimple(true);                 break;
-            }  
-   
-            //
-            // Rule 526:  exception_declaration ::= type_specifier_seq
-            //
-            case 526: {       action.builder.
    consumeDeclarationSimple(false);                 break;
             }  
    
             //
-            // Rule 534:  type_parameter_start ::= ERROR_TOKEN
+            // Rule 533:  type_parameter_start ::= ERROR_TOKEN
             //
-            case 534: {       action.builder.
+            case 533: {       action.builder.
    consumeDeclarationProblem();                 break;
             }  
 

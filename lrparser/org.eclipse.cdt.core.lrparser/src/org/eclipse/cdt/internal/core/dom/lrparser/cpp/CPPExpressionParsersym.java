@@ -13,7 +13,7 @@
 
 package org.eclipse.cdt.internal.core.dom.lrparser.cpp;
 
-public interface CPPExpressionStatementParsersym {
+public interface CPPExpressionParsersym {
     public final static int
       TK_asm = 63,
       TK_auto = 48,
@@ -22,7 +22,7 @@ public interface CPPExpressionStatementParsersym {
       TK_case = 79,
       TK_catch = 119,
       TK_char = 15,
-      TK_class = 62,
+      TK_class = 61,
       TK_const = 46,
       TK_const_cast = 32,
       TK_continue = 80,
@@ -31,7 +31,7 @@ public interface CPPExpressionStatementParsersym {
       TK_do = 82,
       TK_double = 16,
       TK_dynamic_cast = 33,
-      TK_else = 121,
+      TK_else = 122,
       TK_enum = 68,
       TK_explicit = 49,
       TK_export = 75,
@@ -106,7 +106,7 @@ public interface CPPExpressionStatementParsersym {
       TK_RightShift = 88,
       TK_LeftShift = 89,
       TK_LT = 28,
-      TK_GT = 61,
+      TK_GT = 62,
       TK_LE = 93,
       TK_GE = 94,
       TK_EQ = 97,
@@ -119,7 +119,7 @@ public interface CPPExpressionStatementParsersym {
       TK_Colon = 71,
       TK_ColonColon = 4,
       TK_DotDotDot = 95,
-      TK_Assign = 67,
+      TK_Assign = 66,
       TK_StarAssign = 107,
       TK_SlashAssign = 108,
       TK_PercentAssign = 109,
@@ -130,14 +130,14 @@ public interface CPPExpressionStatementParsersym {
       TK_AndAssign = 114,
       TK_CaretAssign = 115,
       TK_OrAssign = 116,
-      TK_Comma = 66,
+      TK_Comma = 67,
       TK_RightBracket = 118,
       TK_RightParen = 73,
       TK_RightBrace = 72,
       TK_SemiColon = 13,
       TK_ERROR_TOKEN = 74,
       TK_0 = 45,
-      TK_EOF_TOKEN = 122;
+      TK_EOF_TOKEN = 121;
 
       public final static String orderedTerminalSymbols[] = {
                  "",
@@ -201,13 +201,13 @@ public interface CPPExpressionStatementParsersym {
                  "throw",
                  "using",
                  "LeftBrace",
-                 "GT",
                  "class",
+                 "GT",
                  "asm",
                  "delete",
                  "new",
-                 "Comma",
                  "Assign",
+                 "Comma",
                  "enum",
                  "struct",
                  "union",
@@ -261,8 +261,8 @@ public interface CPPExpressionStatementParsersym {
                  "RightBracket",
                  "catch",
                  "Dot",
-                 "else",
                  "EOF_TOKEN",
+                 "else",
                  "Invalid"
              };
 

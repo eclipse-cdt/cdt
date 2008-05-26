@@ -13,7 +13,7 @@
 
 package org.eclipse.cdt.internal.core.dom.lrparser.c99;
 
-public interface C99ExpressionStatementParsersym {
+public interface C99ExpressionParsersym {
     public final static int
       TK_auto = 14,
       TK_break = 81,
@@ -81,11 +81,11 @@ public interface C99ExpressionStatementParsersym {
       TK_GT = 56,
       TK_LE = 57,
       TK_GE = 58,
-      TK_EQ = 62,
-      TK_NE = 63,
-      TK_Caret = 64,
-      TK_Or = 65,
-      TK_AndAnd = 66,
+      TK_EQ = 61,
+      TK_NE = 62,
+      TK_Caret = 63,
+      TK_Or = 64,
+      TK_AndAnd = 65,
       TK_OrOr = 68,
       TK_Question = 69,
       TK_Colon = 59,
@@ -105,7 +105,7 @@ public interface C99ExpressionStatementParsersym {
       TK_RightBracket = 51,
       TK_RightParen = 41,
       TK_RightBrace = 46,
-      TK_SemiColon = 61,
+      TK_SemiColon = 66,
       TK_ERROR_TOKEN = 47,
       TK_EOF_TOKEN = 80;
 
@@ -171,12 +171,12 @@ public interface C99ExpressionStatementParsersym {
                  "GE",
                  "Colon",
                  "Assign",
-                 "SemiColon",
                  "EQ",
                  "NE",
                  "Caret",
                  "Or",
                  "AndAnd",
+                 "SemiColon",
                  "Arrow",
                  "OrOr",
                  "Question",

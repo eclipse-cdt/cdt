@@ -10,14 +10,25 @@
 -----------------------------------------------------------------------------------
 
 %options la=2
-%options package=org.eclipse.cdt.internal.core.dom.parser.upc
+%options package=org.eclipse.cdt.internal.core.dom.lrparser.c99
 %options template=btParserTemplateD.g
 
+-- All we need to do is import the main parser and redefine the start symbol.
+
 
 $Import
-	C99ExpressionStatementParser.g
+	C99Grammar.g
 $End
 
-$Import
-    UPCGrammarExtensions.g
+$Start
+    expression_parser_start
+$End
+
+$Rules
+
+	expression_parser_start
+	    ::= expression
+	      | ERROR_TOKEN
+	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+          
 $End

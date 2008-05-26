@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.upc.UPCExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCSizeofExpressionParser;
 
@@ -61,8 +61,8 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	}
 		
 	@Override
-	protected IParser getExpressionStatementParser() {
-		return new UPCExpressionStatementParser(parser.getOrderedTerminalSymbols());
+	protected IParser getExpressionParser() {
+		return new UPCExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 
 	@Override

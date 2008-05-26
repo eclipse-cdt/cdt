@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -49,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -91,13 +94,14 @@ import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoFunctionDeclaratorParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPTemplateTypeParameterParser;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -141,8 +145,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	
 	@Override
-	protected IParser getExpressionStatementParser() {
-		return new CPPExpressionStatementParser(parser.getOrderedTerminalSymbols()); 
+	protected IParser getExpressionParser() {
+		return new CPPExpressionParser(parser.getOrderedTerminalSymbols()); 
 	}
 	
 	@Override
@@ -386,8 +390,10 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		for(Object arg : templateArguments) {
 			if(arg instanceof IASTExpression)
 				templateId.addTemplateArgument((IASTExpression)arg);
-			else
+			else if(arg instanceof IASTTypeId)
 				templateId.addTemplateArgument((IASTTypeId)arg);
+			else if(arg instanceof ICPPASTAmbiguousTemplateArgument)
+				templateId.addTemplateArgument((ICPPASTAmbiguousTemplateArgument)arg);
 		}
 		
 		setOffsetAndLength(templateId);
@@ -397,6 +403,32 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 
+	/**
+	 * Disambiguates template arguments.
+	 */
+	public void consumeTemplateArgumentTypeId() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IParser secondaryParser = getExpressionParser();
+		IASTNode result = runSecondaryParser(secondaryParser);
+		
+		// The grammar rule allows assignment_expression, but the ambiguity
+		// only arises with id_expressions.
+		if(!(result instanceof IASTIdExpression))
+			return;
+		
+		IASTTypeId typeId = (IASTTypeId) astStack.pop();
+		IASTIdExpression idExpression = (IASTIdExpression) result;
+		
+		ICPPASTAmbiguousTemplateArgument ambiguityNode = nodeFactory.newAmbiguousTemplateArgument(typeId, idExpression);
+		//setOffsetAndLength(ambiguityNode);
+		
+		astStack.push(ambiguityNode);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
 	/**
 	 * operator_id
      *     ::= 'operator' overloadable_operator
@@ -1170,7 +1202,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTName typeName = findFirstAndRemove(topScope, IASTName.class);
 		
 		// TODO what does the second argument mean?
-		ICPPASTNamedTypeSpecifier declSpec = nodeFactory.newCPPNamedTypeSpecifier(typeName, true);
+		ICPPASTNamedTypeSpecifier declSpec = nodeFactory.newCPPNamedTypeSpecifier(typeName, false);
 		
 		// now apply the rest of the specifiers
 		for(Object token : topScope)
@@ -1836,6 +1868,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     	
     	if(TRACE_AST_STACK) System.out.println(astStack);
     }
+
+
+	
     
     
 }

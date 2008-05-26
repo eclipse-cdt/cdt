@@ -1737,12 +1737,11 @@ template_argument_list_opt
       | $empty
       
 
--- TODO there are ambiguities here, for example f<i>, i could be variable or type
--- may need to double parse
 template_argument
     ::= assignment_expression
       | type_id
-      | qualified_or_unqualified_name
+          /. $Build  consumeTemplateArgumentTypeId();  $EndBuild ./
+      --| qualified_or_unqualified_name -- accessible through assignment_expression
 
 
 explicit_instantiation

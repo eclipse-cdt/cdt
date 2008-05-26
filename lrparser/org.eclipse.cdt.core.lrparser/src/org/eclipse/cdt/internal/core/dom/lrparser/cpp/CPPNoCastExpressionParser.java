@@ -2191,65 +2191,72 @@ public CPPNoCastExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 516:  explicit_instantiation ::= template declaration
+            // Rule 514:  template_argument ::= type_id
             //
-            case 516: {       action.builder.
+            case 514: {       action.builder.
+   consumeTemplateArgumentTypeId();                 break;
+            }  
+   
+            //
+            // Rule 515:  explicit_instantiation ::= template declaration
+            //
+            case 515: {       action.builder.
    consumeTemplateExplicitInstantiation();                 break;
             }  
    
             //
-            // Rule 517:  explicit_specialization ::= template < > declaration
+            // Rule 516:  explicit_specialization ::= template < > declaration
             //
-            case 517: {       action.builder.
+            case 516: {       action.builder.
    consumeTemplateExplicitSpecialization();                 break;
             }  
    
             //
-            // Rule 518:  try_block ::= try compound_statement <openscope-ast> handler_seq
+            // Rule 517:  try_block ::= try compound_statement <openscope-ast> handler_seq
             //
-            case 518: {       action.builder.
+            case 517: {       action.builder.
    consumeStatementTryBlock();                 break;
             }  
    
             //
-            // Rule 521:  handler ::= catch ( exception_declaration ) compound_statement
+            // Rule 520:  handler ::= catch ( exception_declaration ) compound_statement
             //
-            case 521: {       action.builder.
+            case 520: {       action.builder.
    consumeStatementCatchHandler(false);                 break;
             }  
    
             //
-            // Rule 522:  handler ::= catch ( ... ) compound_statement
+            // Rule 521:  handler ::= catch ( ... ) compound_statement
             //
-            case 522: {       action.builder.
+            case 521: {       action.builder.
    consumeStatementCatchHandler(true);                 break;
             }  
    
             //
-            // Rule 523:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            // Rule 522:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            //
+            case 522: {       action.builder.
+   consumeDeclarationSimple(true);                 break;
+            }  
+   
+            //
+            // Rule 523:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
             //
             case 523: {       action.builder.
    consumeDeclarationSimple(true);                 break;
             }  
    
             //
-            // Rule 524:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
+            // Rule 524:  exception_declaration ::= type_specifier_seq
             //
             case 524: {       action.builder.
-   consumeDeclarationSimple(true);                 break;
-            }  
-   
-            //
-            // Rule 525:  exception_declaration ::= type_specifier_seq
-            //
-            case 525: {       action.builder.
    consumeDeclarationSimple(false);                 break;
             }  
    
             //
-            // Rule 533:  no_cast_start ::= ERROR_TOKEN
+            // Rule 532:  no_cast_start ::= ERROR_TOKEN
             //
-            case 533: {       action.builder.
+            case 532: {       action.builder.
    consumeExpressionProblem();                 break;
             }  
 

@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
-public class CPPExpressionStatementParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
+public class CPPExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
 {
-    private static ParseTable prs = new CPPExpressionStatementParserprs();
+    private static ParseTable prs = new CPPExpressionParserprs();
     private BacktrackingParser btParser;
 
     public BacktrackingParser getParser() { return btParser; }
@@ -64,13 +64,13 @@ public class CPPExpressionStatementParser extends PrsStream implements RuleActio
         return (ErrorToken) (err instanceof ErrorToken ? err : null);
     }
 
-    public CPPExpressionStatementParser(LexStream lexStream)
+    public CPPExpressionParser(LexStream lexStream)
     {
         super(lexStream);
 
         try
         {
-            super.remapTerminalSymbols(orderedTerminalSymbols(), CPPExpressionStatementParserprs.EOFT_SYMBOL);
+            super.remapTerminalSymbols(orderedTerminalSymbols(), CPPExpressionParserprs.EOFT_SYMBOL);
         }
         catch(NullExportedSymbolsException e) {
         }
@@ -83,7 +83,7 @@ public class CPPExpressionStatementParser extends PrsStream implements RuleActio
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + CPPExpressionStatementParsersym.orderedTerminalSymbols[id.intValue()]);               
+                System.out.println("    " + CPPExpressionParsersym.orderedTerminalSymbols[id.intValue()]);               
             }
             System.out.println();                        
         }
@@ -91,13 +91,13 @@ public class CPPExpressionStatementParser extends PrsStream implements RuleActio
         {
             throw new Error(new UndefinedEofSymbolException
                                 ("The Lexer does not implement the Eof symbol " +
-                                 CPPExpressionStatementParsersym.orderedTerminalSymbols[CPPExpressionStatementParserprs.EOFT_SYMBOL]));
+                                 CPPExpressionParsersym.orderedTerminalSymbols[CPPExpressionParserprs.EOFT_SYMBOL]));
         } 
     }
 
-    public String[] orderedTerminalSymbols() { return CPPExpressionStatementParsersym.orderedTerminalSymbols; }
-    public String getTokenKindName(int kind) { return CPPExpressionStatementParsersym.orderedTerminalSymbols[kind]; }
-    public int getEOFTokenKind() { return CPPExpressionStatementParserprs.EOFT_SYMBOL; }
+    public String[] orderedTerminalSymbols() { return CPPExpressionParsersym.orderedTerminalSymbols; }
+    public String getTokenKindName(int kind) { return CPPExpressionParsersym.orderedTerminalSymbols[kind]; }
+    public int getEOFTokenKind() { return CPPExpressionParserprs.EOFT_SYMBOL; }
     public PrsStream getParseStream() { return (PrsStream) this; }
     
     //
@@ -142,11 +142,11 @@ public class CPPExpressionStatementParser extends PrsStream implements RuleActio
         catch (NotBacktrackParseTableException e)
         {
             throw new Error(new NotBacktrackParseTableException
-                                ("Regenerate CPPExpressionStatementParserprs.java with -BACKTRACK option"));
+                                ("Regenerate CPPExpressionParserprs.java with -BACKTRACK option"));
         }
         catch (BadParseSymFileException e)
         {
-            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- CPPExpressionStatementParsersym.java"));
+            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- CPPExpressionParsersym.java"));
         }
 
         try
@@ -167,7 +167,7 @@ public class CPPExpressionStatementParser extends PrsStream implements RuleActio
 private  CPPParserAction  action;	
 
 // uncomment to use with backtracking parser
-public CPPExpressionStatementParser() {  // constructor
+public CPPExpressionParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu) {
@@ -219,11 +219,11 @@ public IASTNode getSecondaryParseResult() {
 }
 
 public String[] getOrderedTerminalSymbols() {
-	return CPPExpressionStatementParsersym.orderedTerminalSymbols;
+	return CPPExpressionParsersym.orderedTerminalSymbols;
 }
 
 public String getName() {
-	return "CPPExpressionStatementParser"; //$NON-NLS-1$
+	return "CPPExpressionParser"; //$NON-NLS-1$
 }
 
 
@@ -237,11 +237,11 @@ public void setTokens(List<IToken> tokens) {
 		token.setKind(tokenMap.mapKind(token.getKind()));
 		addToken(token);
 	}
-	addToken(new Token(null, 0, 0, CPPExpressionStatementParsersym.TK_EOF_TOKEN));
+	addToken(new Token(null, 0, 0, CPPExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public CPPExpressionStatementParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(CPPExpressionStatementParsersym.orderedTerminalSymbols, mapFrom);
+public CPPExpressionParser(String[] mapFrom) {  // constructor
+	tokenMap = new TokenMap(CPPExpressionParsersym.orderedTerminalSymbols, mapFrom);
 }	
 
 
@@ -2198,65 +2198,72 @@ public CPPExpressionStatementParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 517:  explicit_instantiation ::= template declaration
+            // Rule 515:  template_argument ::= type_id
             //
-            case 517: {       action.builder.
+            case 515: {       action.builder.
+   consumeTemplateArgumentTypeId();                 break;
+            }  
+   
+            //
+            // Rule 516:  explicit_instantiation ::= template declaration
+            //
+            case 516: {       action.builder.
    consumeTemplateExplicitInstantiation();                 break;
             }  
    
             //
-            // Rule 518:  explicit_specialization ::= template < > declaration
+            // Rule 517:  explicit_specialization ::= template < > declaration
             //
-            case 518: {       action.builder.
+            case 517: {       action.builder.
    consumeTemplateExplicitSpecialization();                 break;
             }  
    
             //
-            // Rule 519:  try_block ::= try compound_statement <openscope-ast> handler_seq
+            // Rule 518:  try_block ::= try compound_statement <openscope-ast> handler_seq
             //
-            case 519: {       action.builder.
+            case 518: {       action.builder.
    consumeStatementTryBlock();                 break;
             }  
    
             //
-            // Rule 522:  handler ::= catch ( exception_declaration ) compound_statement
+            // Rule 521:  handler ::= catch ( exception_declaration ) compound_statement
             //
-            case 522: {       action.builder.
+            case 521: {       action.builder.
    consumeStatementCatchHandler(false);                 break;
             }  
    
             //
-            // Rule 523:  handler ::= catch ( ... ) compound_statement
+            // Rule 522:  handler ::= catch ( ... ) compound_statement
             //
-            case 523: {       action.builder.
+            case 522: {       action.builder.
    consumeStatementCatchHandler(true);                 break;
             }  
    
             //
-            // Rule 524:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            // Rule 523:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            //
+            case 523: {       action.builder.
+   consumeDeclarationSimple(true);                 break;
+            }  
+   
+            //
+            // Rule 524:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
             //
             case 524: {       action.builder.
    consumeDeclarationSimple(true);                 break;
             }  
    
             //
-            // Rule 525:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
+            // Rule 525:  exception_declaration ::= type_specifier_seq
             //
             case 525: {       action.builder.
-   consumeDeclarationSimple(true);                 break;
-            }  
-   
-            //
-            // Rule 526:  exception_declaration ::= type_specifier_seq
-            //
-            case 526: {       action.builder.
    consumeDeclarationSimple(false);                 break;
             }  
    
             //
-            // Rule 534:  expression_parser_start ::= ERROR_TOKEN
+            // Rule 533:  expression_parser_start ::= ERROR_TOKEN
             //
-            case 534: {       action.builder.
+            case 533: {       action.builder.
    consumeExpressionProblem();                 break;
             }  
 

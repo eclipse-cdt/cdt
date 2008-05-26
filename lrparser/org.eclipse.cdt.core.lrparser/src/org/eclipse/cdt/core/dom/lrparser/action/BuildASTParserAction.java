@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 
 
 /**
@@ -122,9 +123,9 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
-	 * Get the parser that will recognize expression statements.
+	 * Get the parser that will recognize expressions.
 	 */
-	protected abstract IParser getExpressionStatementParser();
+	protected abstract IParser getExpressionParser();
 	
 	
 	/**
@@ -261,11 +262,18 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
+	 * Runs the given parser on the given token list.
+	 * 
+	 */
+	protected IASTNode runSecondaryParser(IParser secondaryParser) {
+		return runSecondaryParser(secondaryParser, parser.getRuleTokens());
+	}
+	
+	
+	/**
 	 * Runs the given parser on the tokens that make up the current rule.
 	 */
-	protected IASTNode runSecondaryParser(IParser secondaryParser) { 
-		List<IToken> tokens = parser.getRuleTokens();
-		
+	protected IASTNode runSecondaryParser(IParser secondaryParser, List<IToken> tokens) { 
 		// the secondary parser will alter the token kinds, which will need to be undone
 		int[] savedKinds = new int[tokens.size()];
 		
@@ -430,6 +438,9 @@ public abstract class BuildASTParserAction {
 	 */
 	private void resolveAmbiguityNodes() {
 		tu.accept(EMPTY_VISITOR);
+		if (tu instanceof ASTTranslationUnit) {
+			((ASTTranslationUnit)tu).cleanupAfterAmbiguityResolution();
+		}
 	}
 	
 	
@@ -469,8 +480,11 @@ public abstract class BuildASTParserAction {
 		// attempt to also parse the tokens as an expression
 		IASTExpressionStatement expressionStatement = null;
 		if(decl instanceof IASTSimpleDeclaration) {
-			IParser expressionParser = getExpressionStatementParser();
-			IASTExpression expr = (IASTExpression) runSecondaryParser(expressionParser);
+			List<IToken> expressionTokens = parser.getRuleTokens();
+			expressionTokens = expressionTokens.subList(0, expressionTokens.size()-1); // remove the semicolon at the end
+			
+			IParser expressionParser = getExpressionParser();
+			IASTExpression expr = (IASTExpression) runSecondaryParser(expressionParser, expressionTokens);
 			
 			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
 				expressionStatement = nodeFactory.newExpressionStatement(expr);

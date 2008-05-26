@@ -49,7 +49,7 @@
 		</antcall>
 		<!-- Generate parser for disambiguating declarations vs expression statements -->
 		<antcall target="generate_c99">
-            <param name="grammar_name" value="C99ExpressionStatementParser"/>
+            <param name="grammar_name" value="C99ExpressionParser"/>
 		</antcall>
 		<!-- Generate parser for disambiguating cast expressions vs binary expressions-->
 		<antcall target="generate_c99">
@@ -69,7 +69,7 @@
 		</antcall>
 		<!-- Generate parser for disambiguating declarations vs expression statements -->
 		<antcall target="generate_cpp">
-            <param name="grammar_name" value="CPPExpressionStatementParser"/>
+            <param name="grammar_name" value="CPPExpressionParser"/>
 		</antcall>
 		<!-- Generate parser for disambiguating cast expressions vs binary expressions-->
 		<antcall target="generate_cpp">
@@ -79,11 +79,6 @@
 		<antcall target="generate_cpp">
             <param name="grammar_name" value="CPPSizeofExpressionParser"/>
 		</antcall>
-		<!-- Generate parser for disambiguating declarators 
-		<antcall target="generate_cpp">
-            <param name="grammar_name" value="CPPNoConstructorInitializerParser"/>
-		</antcall>
-		-->
 		<!-- Generate parser for disambiguating declarators -->
 		<antcall target="generate_cpp">
             <param name="grammar_name" value="CPPNoFunctionDeclaratorParser"/>

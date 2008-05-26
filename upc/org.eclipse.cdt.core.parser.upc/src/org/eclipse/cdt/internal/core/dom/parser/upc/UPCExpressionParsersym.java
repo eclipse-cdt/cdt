@@ -13,7 +13,7 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.upc;
 
-public interface UPCExpressionStatementParsersym {
+public interface UPCExpressionParsersym {
     public final static int
       TK_auto = 33,
       TK_break = 90,
@@ -81,11 +81,11 @@ public interface UPCExpressionStatementParsersym {
       TK_GT = 65,
       TK_LE = 66,
       TK_GE = 67,
-      TK_EQ = 71,
-      TK_NE = 72,
-      TK_Caret = 73,
-      TK_Or = 74,
-      TK_AndAnd = 75,
+      TK_EQ = 70,
+      TK_NE = 71,
+      TK_Caret = 72,
+      TK_Or = 73,
+      TK_AndAnd = 74,
       TK_OrOr = 77,
       TK_Question = 78,
       TK_Colon = 68,
@@ -105,7 +105,7 @@ public interface UPCExpressionStatementParsersym {
       TK_RightBracket = 59,
       TK_RightParen = 50,
       TK_RightBrace = 55,
-      TK_SemiColon = 70,
+      TK_SemiColon = 75,
       TK_MYTHREAD = 24,
       TK_THREADS = 25,
       TK_UPC_MAX_BLOCKSIZE = 26,
@@ -194,12 +194,12 @@ public interface UPCExpressionStatementParsersym {
                  "GE",
                  "Colon",
                  "Assign",
-                 "SemiColon",
                  "EQ",
                  "NE",
                  "Caret",
                  "Or",
                  "AndAnd",
+                 "SemiColon",
                  "Arrow",
                  "OrOr",
                  "Question",

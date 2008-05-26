@@ -32,9 +32,9 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 
-public class UPCExpressionStatementParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
+public class UPCExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
-    private static ParseTable prs = new UPCExpressionStatementParserprs();
+    private static ParseTable prs = new UPCExpressionParserprs();
     private BacktrackingParser btParser;
 
     public BacktrackingParser getParser() { return btParser; }
@@ -69,13 +69,13 @@ public class UPCExpressionStatementParser extends PrsStream implements RuleActio
         return (ErrorToken) (err instanceof ErrorToken ? err : null);
     }
 
-    public UPCExpressionStatementParser(LexStream lexStream)
+    public UPCExpressionParser(LexStream lexStream)
     {
         super(lexStream);
 
         try
         {
-            super.remapTerminalSymbols(orderedTerminalSymbols(), UPCExpressionStatementParserprs.EOFT_SYMBOL);
+            super.remapTerminalSymbols(orderedTerminalSymbols(), UPCExpressionParserprs.EOFT_SYMBOL);
         }
         catch(NullExportedSymbolsException e) {
         }
@@ -88,7 +88,7 @@ public class UPCExpressionStatementParser extends PrsStream implements RuleActio
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + UPCExpressionStatementParsersym.orderedTerminalSymbols[id.intValue()]);               
+                System.out.println("    " + UPCExpressionParsersym.orderedTerminalSymbols[id.intValue()]);               
             }
             System.out.println();                        
         }
@@ -96,13 +96,13 @@ public class UPCExpressionStatementParser extends PrsStream implements RuleActio
         {
             throw new Error(new UndefinedEofSymbolException
                                 ("The Lexer does not implement the Eof symbol " +
-                                 UPCExpressionStatementParsersym.orderedTerminalSymbols[UPCExpressionStatementParserprs.EOFT_SYMBOL]));
+                                 UPCExpressionParsersym.orderedTerminalSymbols[UPCExpressionParserprs.EOFT_SYMBOL]));
         } 
     }
 
-    public String[] orderedTerminalSymbols() { return UPCExpressionStatementParsersym.orderedTerminalSymbols; }
-    public String getTokenKindName(int kind) { return UPCExpressionStatementParsersym.orderedTerminalSymbols[kind]; }
-    public int getEOFTokenKind() { return UPCExpressionStatementParserprs.EOFT_SYMBOL; }
+    public String[] orderedTerminalSymbols() { return UPCExpressionParsersym.orderedTerminalSymbols; }
+    public String getTokenKindName(int kind) { return UPCExpressionParsersym.orderedTerminalSymbols[kind]; }
+    public int getEOFTokenKind() { return UPCExpressionParserprs.EOFT_SYMBOL; }
     public PrsStream getParseStream() { return (PrsStream) this; }
     
     //
@@ -147,11 +147,11 @@ public class UPCExpressionStatementParser extends PrsStream implements RuleActio
         catch (NotBacktrackParseTableException e)
         {
             throw new Error(new NotBacktrackParseTableException
-                                ("Regenerate UPCExpressionStatementParserprs.java with -BACKTRACK option"));
+                                ("Regenerate UPCExpressionParserprs.java with -BACKTRACK option"));
         }
         catch (BadParseSymFileException e)
         {
-            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- UPCExpressionStatementParsersym.java"));
+            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- UPCExpressionParsersym.java"));
         }
 
         try
@@ -171,7 +171,7 @@ public class UPCExpressionStatementParser extends PrsStream implements RuleActio
 
 private  UPCParserAction  action;
 
-public UPCExpressionStatementParser() {  // constructor
+public UPCExpressionParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu) {
@@ -213,11 +213,11 @@ public IASTNode getSecondaryParseResult() {
 }
 
 public String[] getOrderedTerminalSymbols() {
-	return UPCExpressionStatementParsersym.orderedTerminalSymbols;
+	return UPCExpressionParsersym.orderedTerminalSymbols;
 }
 
 public String getName() {
-	return "UPCExpressionStatementParser"; //$NON-NLS-1$
+	return "UPCExpressionParser"; //$NON-NLS-1$
 }
 
 
@@ -231,11 +231,11 @@ public void setTokens(List<IToken> tokens) {
 		token.setKind(tokenMap.mapKind(token.getKind()));
 		addToken(token);
 	}
-	addToken(new Token(null, 0, 0, UPCExpressionStatementParsersym.TK_EOF_TOKEN));
+	addToken(new Token(null, 0, 0, UPCExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public UPCExpressionStatementParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(UPCExpressionStatementParsersym.orderedTerminalSymbols, mapFrom);
+public UPCExpressionParser(String[] mapFrom) {  // constructor
+	tokenMap = new TokenMap(UPCExpressionParsersym.orderedTerminalSymbols, mapFrom);
 }	
 
 

@@ -13,7 +13,7 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.4M6-200803301350/eclipse-SDK-3.4M6-linux-gtk-ppc.tar.gz"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.4RC2-200805230100/eclipse-SDK-3.4RC2-linux-gtk-ppc.tar.gz"/>
 		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/mylyn-2.3.2-e3.4.zip"/>
 		<property name="branchVersion" value="5.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
@@ -21,7 +21,7 @@
 		<property name="buildingOSGi" value="true"/>
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
-		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build/scripts"/>
+		<property name="pde.build.scripts" value="${eclipse.pdebuild.scripts}"/>
 		<property name="collectingFolder" value="eclipse"/>
 		<property name="archivePrefix" value="eclipse"/>
 		<property name="buildType" value="I" />

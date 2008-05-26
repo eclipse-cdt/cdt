@@ -29,6 +29,7 @@
  * Timur Shipilov   (Xored)      - [224540] [efs] RSEFileStore.mkdir(EFS.NONE, null) doesn't create parent folder
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
+ * Martin Oberhuber (Wind River) - [220300] EFS Size Property not properly updated after saving
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -271,6 +272,9 @@ public class RSEFileStoreImpl extends FileStore
 
 	private void cacheRemoteFile(IRemoteFile remoteFile) {
 		//if (_remoteFile != remoteFile) _remoteFile = remoteFile;
+		if (_remoteFile != null && _remoteFile != remoteFile) {
+			_remoteFile.markStale(true);
+		}
 		_remoteFile = remoteFile;
 	}
 

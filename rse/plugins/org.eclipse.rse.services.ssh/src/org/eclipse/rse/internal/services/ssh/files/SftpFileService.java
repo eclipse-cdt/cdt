@@ -29,6 +29,7 @@
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [190904] Changing read-only attribute throws exception
  * Martin Oberhuber (Wind River) - [218042] Support UNIX permission modification on ssh
+ * Martin Oberhuber (Wind River) - [233651] Make ssh delete throw proper exceptions
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -417,6 +418,9 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			SftpException sftpe = (SftpException)e;
 			if (sftpe.id == ChannelSftp.SSH_FX_PERMISSION_DENIED) {
 				messageException = new RemoteFileSecurityException(e);
+			} else if (sftpe.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+				//TODO better throw SENFE at the place where we know what element and operation is done
+				messageException = new SystemElementNotFoundException("", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				messageException = new RemoteFileIOException(e);
 			}
@@ -911,8 +915,13 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 						//simply try to delete --> if it really doesnt exist, this will throw an exception
 						//FIXME either throw SystemElementNotFoundException here OR add check for
 						//SSH_FX_NO_SUCH_FILE in makeSystemMessageException() and throw SENFE there
+						try {
 							getChannel("SftpFileService.delete.rm").rm(fullPathRecoded); //$NON-NLS-1$
+						} catch (Exception e2) {
+							throw new SystemElementNotFoundException(Activator.PLUGIN_ID, fullPath, "delete");
+						}
 					} else {
+						//Security exception, or similar: will be wrapped in makeSystemMessageException()
 						throw e;
 					}
 				}

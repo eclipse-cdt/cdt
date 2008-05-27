@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,6 +15,7 @@ Contributors:
 Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
 Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+Anna Dushistova  (MontaVista) - [226550] [api] Launch Shell and Launch Terminal actions should be contributed declaratively
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -133,38 +134,52 @@ Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter fro
       </page>
       
    </extension>
-   
-   
-  <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution  
-      		objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
-   			id="org.eclipse.rse.shells.ui.launch">
-            <visibility> 
-            	<and>
-                	<objectState name="isdirectory" value="true"/>
-                	<objectState name="isCommandSubSystemExists" value="true"/>
-                </and> 
-            </visibility>
-         <action
-               label="%Launch_Shell"
-               icon="icons/full/obj16/systemshell.gif"
-               tooltip="%Launch_Shell_Tooltip"
-               class="org.eclipse.rse.internal.shells.ui.actions.LaunchShellActionDelegate"
-               enablesFor="1"
-               id="org.eclipse.rse.shells.ui.actions.LaunchShellActionDelegate">
-         </action>
-         <!--
-                  <action
-               label="test command"
-               icon="icons/full/obj16/systemshell.gif"
-               tooltip="%Launch_Shell_Tooltip"
-               class="org.eclipse.rse.shells.ui.actions.LaunchCommandActionDelegate"
-               enablesFor="1"
-               id="org.eclipse.rse.shells.ui.actions.LaunchCommandActionDelegate">
-         </action>
-         -->
-       </objectContribution>    
-   </extension>
-   
+   <extension
+           point="org.eclipse.ui.menus">
+        <menuContribution
+              locationURI="popup:org.eclipse.rse.ui.view.systemView?after=additions">
+           <command
+                 commandId="org.eclipse.rse.shells.ui.actions.LaunchShellCommand"
+                 icon="icons/full/obj16/systemshell.gif"
+                 label="%Launch_Shell"
+                 tooltip="%Launch_Shell_Tooltip">
+             <visibleWhen>
+               <iterate>
+               <and>
+                  <test
+                        args="shells"
+                        property="org.eclipse.rse.core.hasSubSystemCategory"
+                        value="true">
+                  </test>
+                  <instanceof
+                        value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+                  </instanceof>
+                  <test
+                        property="org.eclipse.rse.subsystems.files.isdirectory"
+                        value="true">
+                  </test>
+                  </and>
+                 </iterate> 
+                 </visibleWhen>
+               </command> 
+             </menuContribution>  
+            </extension>      
+     <extension point="org.eclipse.ui.commands">
+        <category
+              id="org.eclipse.rse.shells.ui.commands.category"
+              name="Shells">
+        </category>
+        <command
+              categoryId="org.eclipse.rse.shells.ui.commands.category"
+              id="org.eclipse.rse.shells.ui.actions.LaunchShellCommand"
+              name="%Launch_Shell">
+        </command>
+     </extension>
+     <extension
+           point="org.eclipse.ui.handlers">
+        <handler
+              class="org.eclipse.rse.internal.shells.ui.handlers.LaunchShellCommandHandler"
+              commandId="org.eclipse.rse.shells.ui.actions.LaunchShellCommand">
+        </handler>
+     </extension>
 </plugin>

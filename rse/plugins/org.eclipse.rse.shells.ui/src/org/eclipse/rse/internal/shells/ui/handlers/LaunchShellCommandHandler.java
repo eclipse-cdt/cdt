@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,42 +12,30 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Anna Dushistova  (MontaVista) - Adopted from LaunchShellActionDelegate
  ********************************************************************************/
+package org.eclipse.rse.internal.shells.ui.handlers;
 
-package org.eclipse.rse.internal.shells.ui.actions;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.shells.ui.actions.SystemCommandAction;
 import org.eclipse.rse.ui.SystemBasePlugin;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.handlers.HandlerUtil;
 
-public class LaunchCommandActionDelegate extends ActionDelegate implements IActionDelegate
-{
+public class LaunchShellCommandHandler extends AbstractHandler {
 	private SystemCommandAction _launchAction;
-	private ISelection _selection;
-	public LaunchCommandActionDelegate()
-	{
-		super();
-	}
-	
-	public void run(IAction action)
-	{
-		if (_launchAction == null)
-		{
-			_launchAction = new SystemCommandAction(SystemBasePlugin.getActiveWorkbenchShell(), false);
+
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		if (_launchAction == null) {
+			_launchAction = new SystemCommandAction(SystemBasePlugin
+					.getActiveWorkbenchShell(), true);
 		}
-		_launchAction.updateSelection((IStructuredSelection)_selection);
+		_launchAction.updateSelection((IStructuredSelection) HandlerUtil
+				.getCurrentSelection(event));
 		_launchAction.run();
+		return null;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection)
-	{
-			_selection = selection;
-	}
 }

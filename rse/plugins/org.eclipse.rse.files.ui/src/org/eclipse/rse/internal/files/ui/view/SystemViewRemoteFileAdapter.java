@@ -55,6 +55,7 @@
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * Rupen Mardirossian (IBM)      - [227213] Copy and pasting to the parent folder will create a "Copy of" that resource
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * Anna Dushistova  (MontaVista) - [226550] [api] Launch Shell and Launch Terminal actions should be contributed declaratively
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -157,7 +158,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileRoot;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
-import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -3452,8 +3452,6 @@ public class SystemViewRemoteFileAdapter
 	 * If the given value is <code>false</code>, then returns <code>true</code> if the target is not an archive file.</li>
 	 * <li>name="isVirtual". If the given value is <code>true</code>, then returns <code>true</code> if the target is a virtual file.
 	 * If the given value is <code>false</code>, then returns <code>true</code> if the target is not a virtual file.</li>
-	 * <li>name="isCommandSubSystemExists". If the given value is <code>true</code>, then returns <code>true</code> if the host contains a command subsystem.
-	 * If the given value is <code>false</code>, then returns <code>true</code> if the host does not contain a command subsystem.</li>
 	 * </ol>
 	 * <p>
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
@@ -3634,32 +3632,6 @@ public class SystemViewRemoteFileAdapter
 					}
 				}
 				return false;
-			}
-			else if (inName.equals("iscommandsubsystemexists")) { //$NON-NLS-1$
-
-				boolean test = value.equals("true"); //$NON-NLS-1$
-
-				ISubSystem subsystem = getSubSystem(tgt);
-
-				if (subsystem != null) {
-					IHost host = subsystem.getHost();
-					ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-
-					ISubSystem[] subsystems = registry.getSubSystems(host);
-
-					for (int i = 0; i < subsystems.length; i++) {
-						ISubSystem temp = subsystems[i];
-
-						if (temp instanceof IRemoteCmdSubSystem) {
-							return test;
-						}
-					}
-
-					return !test;
-				}
-				else {
-					return !test;
-				}
 			}
 		}
 

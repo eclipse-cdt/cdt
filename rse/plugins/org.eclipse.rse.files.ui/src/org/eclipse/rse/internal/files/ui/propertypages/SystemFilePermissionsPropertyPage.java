@@ -12,7 +12,8 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [209703] apply encoding and updating remote file when apply on property page
  * Martin Oberhuber (Wind River) - [234038] Force refresh IRemoteFile after changing permissions
- * ********************************************************************************/
+ * David McKnight   (IBM)        - [234038] [files][refresh] Changing file permissions does not update property sheet or refresh tree
+ *********************************************************************************/
 package org.eclipse.rse.internal.files.ui.propertypages;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -424,7 +425,10 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			remoteFile.markStale(true);
 			// notify views of change
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
+			// refresh the file, since ftp and ssh will need new file objects
+			registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, remoteFile));
+
+			//registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
 		}
 
 

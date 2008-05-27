@@ -17,6 +17,7 @@
  * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
+ * David McKnight   (IBM)        - [234030] SystemCommonDeleteAction should not fire delete event if deleting is failed
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -140,6 +141,7 @@ public class SystemCommonDeleteAction
 					SystemBasePlugin.logError(e.getMessage(), e);
 				}
 			}
+			SystemMessageException exception = null;
 			
 			
 			// remote delete is not as straight-forward
@@ -160,6 +162,16 @@ public class SystemCommonDeleteAction
 				}
 				catch (SystemMessageException e)
 				{
+					exception = e;
+					ok = false;
+				}
+				catch (Exception e)
+				{
+					SystemMessageDialog.displayExceptionMessage(getShell(), e);
+					return Status.CANCEL_STATUS;
+				}				
+				
+				if (!ok){
 					remoteDeletedObjects.clear();
 					if (monitor.isCanceled() && set.size() > 1)
 					{
@@ -193,13 +205,10 @@ public class SystemCommonDeleteAction
 					}
 					else
 					{
-						SystemMessageDialog.displayMessage(e);
+						SystemMessageDialog.displayMessage(exception);
 					}
 				}
-				catch (Exception e)
-				{
-					SystemMessageDialog.displayExceptionMessage(getShell(), e);
-				}
+
 			}
 			
 			// start a runnable to do the action refresh events

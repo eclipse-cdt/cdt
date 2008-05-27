@@ -1,4 +1,4 @@
-feature@org.eclipse.rse.wince=v20080522,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature
+feature@org.eclipse.rse.wince=v20080526,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature
 plugin@org.eclipse.rse.subsystems.wince=v20080526,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.rse.subsystems.wince
 plugin@org.eclipse.tm.rapi=v20080522,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi
 plugin@org.eclipse.tm.rapi.examples=v20080522,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi.examples

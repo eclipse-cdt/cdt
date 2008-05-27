@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.core.runtime.Assert;
@@ -19,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -283,20 +283,35 @@ public final class ASTProvider {
 			return;
 		Assert.isTrue(cElement instanceof ITranslationUnit);
 		fCache.aboutToBeReconciled((ITranslationUnit)cElement);
-		fTimeStamp= getCurrentModificationStamp();
+		updateModificationStamp();
 	}
 
-	private synchronized long getCurrentModificationStamp() {
+	private boolean updateModificationStamp() {
 		long timeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
-		if (fActiveEditor instanceof ITextEditor) {
-			ITextEditor textEditor= (ITextEditor) fActiveEditor;
-			IDocument document= textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
-			if (document instanceof IDocumentExtension4) {
-				IDocumentExtension4 docExt= (IDocumentExtension4) document;
-				timeStamp= docExt.getModificationStamp();
+		ITextEditor textEditor= null;
+		synchronized (this) {
+			if (fActiveEditor instanceof ITextEditor) {
+				textEditor= (ITextEditor) fActiveEditor;
+				timeStamp= fTimeStamp;
 			}
 		}
-		return timeStamp;
+		if (textEditor != null) {
+			IEditorInput editorInput= textEditor.getEditorInput();
+			IDocument document= textEditor.getDocumentProvider().getDocument(editorInput);
+			if (document instanceof IDocumentExtension4) {
+				IDocumentExtension4 docExt= (IDocumentExtension4) document;
+				long newTimeStamp= docExt.getModificationStamp();
+				if (newTimeStamp != timeStamp) {
+					synchronized (this) {
+						if (fActiveEditor == textEditor && fTimeStamp == timeStamp) {
+							fTimeStamp= newTimeStamp;
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -328,10 +343,8 @@ public final class ASTProvider {
 		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return Status.CANCEL_STATUS;
 		}
-		long currentStamp= getCurrentModificationStamp();
-		if (isActive && fTimeStamp != currentStamp) {
+		if (isActive && updateModificationStamp()) {
 			fCache.disposeAST();
-			fTimeStamp= currentStamp;
 		}
 		return fCache.runOnAST((ITranslationUnit)cElement, waitFlag != WAIT_NO, monitor, astRunnable);
 	}

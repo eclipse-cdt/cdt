@@ -513,8 +513,6 @@
 		<mkdir dir="${working}/collector" />
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/scripts/${os}" includes="*"/>
-		</copy>
-		<copy todir="${working}/collector">
 			<fileset dir="${working}/data" includes="*"/>
 		</copy>
 		<replace file="${working}/collector/build.dat">
@@ -524,6 +522,7 @@
 		<fixcrlf srcdir="${working}/collector" eol="${eol}" eof="asis" includes="*"/>
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/jars" includes="*"/>
+			<fileset dir="${builder}/template" includes="notice.html,epl-v10.html" />
 		</copy>
 	</target>
 

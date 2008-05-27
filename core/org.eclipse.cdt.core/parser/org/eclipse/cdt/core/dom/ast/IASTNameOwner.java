@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface repesents a mechanism for a name to discover more information about it's parent.
+ * This interface represents a mechanism for a name to discover more information about it's parent.
  * All interfaces that claim ownership/residence of a name should extend this interface.
  * 
  * @author jcamelon
@@ -39,9 +40,9 @@ public interface IASTNameOwner {
 	/**
 	 * Get the role for the name. 
 	 * 
-	 * @param n <code>IASTName</code>
-	 * @return r_declaration, r_reference or r_unclear.
+	 * @param name the name to determine the role for.
+	 * @return r_definition, r_declaration, r_reference or r_unclear.
 	 */
-	public int getRoleForName( IASTName n );
+	public int getRoleForName(IASTName name);
 
 }

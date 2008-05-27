@@ -30,19 +30,24 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * @author jcamelon
  */
 public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionContext {
+	/**
+	 * For test-purposes, only.
+	 */
+	public static boolean fAllowRecursionBindings= true;
 	final static class RecursionResolvingBinding extends ProblemBinding {
 		public RecursionResolvingBinding(IASTName node) {
 			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, node.toCharArray());
-			if (fShowRecursionProblems)
-				System.out.println(getMessage());
+			Assert.isTrue(fAllowRecursionBindings, getMessage());
 		}
 	}
 
@@ -51,7 +56,6 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 
 	static final int MAX_RESOLUTION_DEPTH = 5;
 
-	private static boolean fShowRecursionProblems = false;
 	
 	private char[] name;
     private IBinding binding = null;
@@ -209,6 +213,17 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
         }
         return true;
     }
+    
+	public int getRoleOfName(boolean allowResolution) {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTInternalNameOwner) {
+        	return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
+        }
+        if (parent instanceof IASTNameOwner) {
+            return ((IASTNameOwner) parent).getRoleForName(this);
+        }
+        return IASTNameOwner.r_unclear;
+	}
 
     public boolean isDeclaration() {
         IASTNode parent = getParent();

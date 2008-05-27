@@ -106,6 +106,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -1653,18 +1654,26 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    friend struct Glob; 
 	// };                     
 	public void testBug84692() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		CPPNameCollector col = new CPPNameCollector();
-		tu.accept(col);
-		
-		assertEquals(col.size(), 9);
-		
-		ICPPClassType Node = (ICPPClassType) col.getName(1).resolveBinding();
-		ICPPClassType Data = (ICPPClassType) col.getName(3).resolveBinding();
-		assertSame(Data.getScope(), tu.getScope());
-		
-		assertInstances(col, Node, 3);
-		assertInstances(col, Data, 2);
+		// also tests bug 234042.
+		boolean old= CPPASTName.fAllowRecursionBindings;
+		CPPASTName.fAllowRecursionBindings= false;
+		try {
+			IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
+			CPPNameCollector col = new CPPNameCollector();
+			tu.accept(col);
+
+			assertEquals(col.size(), 9);
+
+			ICPPClassType Node = (ICPPClassType) col.getName(1).resolveBinding();
+			ICPPClassType Data = (ICPPClassType) col.getName(3).resolveBinding();
+			assertSame(Data.getScope(), tu.getScope());
+
+			assertInstances(col, Node, 3);
+			assertInstances(col, Data, 2);
+		}
+		finally {
+			CPPASTName.fAllowRecursionBindings= old;
+		}
 	}
 	
 	// namespace B { int b; }                        

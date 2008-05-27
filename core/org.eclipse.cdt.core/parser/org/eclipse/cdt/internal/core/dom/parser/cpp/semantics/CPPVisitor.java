@@ -532,10 +532,9 @@ public class CPPVisitor {
 		}
 		while (tmpNode instanceof IASTDeclarator);
 			
-		IASTName name = declarator.getName();
+		IASTName name= declarator.getName();
 		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-			name = ns[ns.length - 1];
+			name= ((ICPPASTQualifiedName)name).getLastName();
 		}
 		
 		ASTNodeProperty prop = parent.getPropertyInParent();
@@ -613,7 +612,13 @@ public class CPPVisitor {
                 }
                 return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
 		    }
-			binding = new CPPTypedef(name);
+		    // if we don't resolve the target type first, we get a problem binding in case the typedef
+		    // redeclares the target type:
+		    // typedef struct S S;
+		    IType targetType= CPPVisitor.createType(declarator);
+		    CPPTypedef td= new CPPTypedef(name);
+		    td.setType(targetType);
+			binding = td;
 		} else if (funcDeclarator != null) {
 			if (binding instanceof ICPPInternalBinding && binding instanceof IFunction) {
 			    IFunction function = (IFunction) binding;

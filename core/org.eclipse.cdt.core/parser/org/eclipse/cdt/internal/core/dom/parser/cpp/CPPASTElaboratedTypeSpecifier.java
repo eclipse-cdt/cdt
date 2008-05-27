@@ -11,20 +11,22 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 
 /**
  * @author jcamelon
  */
 public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
-        implements ICPPASTElaboratedTypeSpecifier {
+        implements ICPPASTElaboratedTypeSpecifier, IASTInternalNameOwner {
 
     private int kind;
     private IASTName name;
@@ -78,24 +80,36 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
 	public int getRoleForName(IASTName n) {
+		return getRoleForName(n, true);
+	}
+	
+	public int getRoleForName(IASTName n, boolean allowResolution) {
 		if (n != name) return r_unclear;
 		
 		IASTNode parent = getParent();
-		if (!(parent instanceof IASTDeclaration))
-			return r_reference;
-		
 		if (parent instanceof IASTSimpleDeclaration) {
 			IASTDeclarator[] dtors = ((IASTSimpleDeclaration)parent).getDeclarators(); 
 			if (dtors.length == 0)
 				return r_declaration;
 		}
 		
-		//can't tell, resolve the binding
-		IBinding binding = name.resolveBinding();
-		if (binding instanceof ICPPInternalBinding) {
-			IASTNode[] decls = ((ICPPInternalBinding)binding).getDeclarations();
-			if (ArrayUtil.contains(decls, name)) 
-				return r_declaration;
+		// 7.1.5.3.2: check for simple form <class-key> <identifier>, then it may be a declaration
+		final int kind= getKind();
+		if (kind == k_class || kind == k_union || kind == k_struct) {
+			if (name instanceof ICPPASTQualifiedName == false 
+					&& name instanceof ICPPASTTemplateId == false) {
+				IBinding binding = allowResolution ? name.resolveBinding() : name.getBinding();
+				if (binding != null) {
+					if (binding instanceof ICPPInternalBinding) {
+						IASTNode[] decls = ((ICPPInternalBinding)binding).getDeclarations();
+						if (ArrayUtil.contains(decls, name)) 
+							return r_declaration;
+					}
+					return r_reference;
+				}
+				// resolution is not allowed.
+				return r_unclear;
+			}
 		}
 		return r_reference;
 	}

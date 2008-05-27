@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
@@ -181,6 +182,17 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		}
 		
 		return true;
+	}
+	
+	public int getRoleOfName(boolean allowResolution) {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTInternalNameOwner) {
+        	return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
+        }
+        if (parent instanceof IASTNameOwner) {
+            return ((IASTNameOwner) parent).getRoleForName(this);
+        }
+        return IASTNameOwner.r_unclear;
 	}
 
 	public boolean isDeclaration() {

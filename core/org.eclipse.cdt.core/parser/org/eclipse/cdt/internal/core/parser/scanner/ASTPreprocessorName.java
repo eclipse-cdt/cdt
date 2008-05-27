@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -66,6 +67,10 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 		return new String(fName);
 	}
 	public void setBinding(IBinding binding) {assert false;}
+
+	public int getRoleOfName(boolean allowResolution) {
+		return IASTNameOwner.r_unclear;
+	}
 }
 
 class ASTPreprocessorDefinition extends ASTPreprocessorName {
@@ -77,6 +82,11 @@ class ASTPreprocessorDefinition extends ASTPreprocessorName {
 	@Override
 	public boolean isDefinition() {
 		return true;
+	}
+	
+	@Override
+	public int getRoleOfName(boolean allowResolution) {
+		return IASTNameOwner.r_definition;
 	}
 }
 
@@ -130,6 +140,11 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 	public ASTMacroReferenceName(IASTNode parent, ASTNodeProperty property, int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
 		super(parent, property, offset, endOffset, macro.getNameCharArray(), macro);
 		fImageLocationInfo= imgLocationInfo;
+	}
+
+	@Override
+	public int getRoleOfName(boolean allowResolution) {
+		return IASTNameOwner.r_unclear;
 	}
 
 	@Override

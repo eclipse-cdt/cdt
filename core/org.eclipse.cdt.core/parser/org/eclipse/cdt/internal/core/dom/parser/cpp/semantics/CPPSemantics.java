@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -1649,7 +1650,7 @@ public class CPPSemantics {
 	        boolean declaredBefore = declaredBefore(o, name, indexBased);
 	        boolean checkResolvedNamesOnly= false;
 	        if (!data.checkWholeClassScope && !declaredBefore) {
-	        	if (!name.isReference()) {
+	        	if (name.getRoleOfName(false) != IASTNameOwner.r_reference) {
 	        		checkResolvedNamesOnly= true;
 	        		declaredBefore= true;
 	        	} else {

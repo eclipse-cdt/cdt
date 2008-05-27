@@ -115,6 +115,10 @@ public class PDOMASTAdapter {
 			return fDelegate.getTranslationUnit();
 		}
 
+		public int getRoleOfName(boolean allowResolution) {
+			return fDelegate.getRoleOfName(allowResolution);
+		}
+
 		public boolean isDeclaration() {
 			return fDelegate.isDeclaration();
 		}

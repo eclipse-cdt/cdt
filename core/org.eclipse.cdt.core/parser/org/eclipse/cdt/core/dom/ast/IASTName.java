@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Bryan Wilkinson (QNX)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -51,6 +51,18 @@ public interface IASTName extends IASTNode, IName {
 	 */
 	public IBinding resolveBinding();
 
+	/**
+	 * Get the role of this name. If the name needs to be resolved to determine that and 
+	 * <code>allowResolution</code> is set to <code>false</code>, then {@link IASTNameOwner#r_unclear}
+	 * is returned.  
+	 * 
+	 * @param allowResolution whether or not resolving the name is allowed.
+	 * @return {@link IASTNameOwner#r_definition}, {@link IASTNameOwner#r_declaration}, 
+	 * 		   {@link IASTNameOwner#r_reference},  {@link IASTNameOwner#r_unclear}.
+	 * @since 5.0
+	 */
+	public int getRoleOfName(boolean allowResolution);
+	
 	/**
 	 * Return the completion context for this name.
 	 * 

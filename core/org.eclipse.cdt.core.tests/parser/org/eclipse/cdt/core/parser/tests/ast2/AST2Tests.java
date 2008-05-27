@@ -4736,4 +4736,23 @@ public class AST2Tests extends AST2BaseTest {
     		assertFalse(t instanceof ITypedef);
 		}    	
     }
+    
+    // int a;
+    // int b= a; // ref
+    // struct S;
+    // typedef struct S S; // td
+    public void testRedefineStructInScopeThatIsFullyResolved() throws Exception {
+    	final boolean[] isCpps= {false, true};
+    	String code= getAboveComment();
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    		ba.assertNonProblem("a; // ref", 1);
+    		// now scope is fully resolved
+    		ICompositeType ct= ba.assertNonProblem("S;", 1, ICompositeType.class);
+    		ITypedef td= ba.assertNonProblem("S; // td", 1, ITypedef.class);
+    		IType t= td.getType();
+    		assertFalse(t instanceof IProblemBinding);
+    		assertSame(t, ct);
+		}    	
+    }
 }

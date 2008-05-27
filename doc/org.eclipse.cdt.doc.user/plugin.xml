@@ -99,16 +99,16 @@
        point="org.eclipse.ui.cheatsheets.cheatSheetContent">
     	<category
     		id="org.eclipse.cdt-doc.category.tutorials"
-    		name="C/C++ Development">
+    		name="%CheatSheet.name">
     	</category>
     	<cheatsheet
     		category="org.eclipse.cdt-doc.category.tutorials"
     		composite="false"
     		contentFile="$nl$/cheatsheets/cs_cdt_basic.xml"
     		id="org.eclipse.cdt-doc.cheatsheet.cdt_basic"
-    		name="Creating C/C++ Projects">
+    		name="%CreateProjectTutorial.name">
        		<description>
-          		Use this tutorial to learn how to create a simple C/C++ project.
+          		%CreateProjectTutorial.description
        		</description>
     	</cheatsheet>
     	<cheatsheet
@@ -116,9 +116,9 @@
     		composite="false"
     		contentFile="$nl$/cheatsheets/cs_cdt_import_project.xml"
     		id="org.eclipse.cdt-doc.cheatsheet.cdt_import_project"
-    		name="Importing C/C++ Projects">
+    		name="%ImportProjectTutorial.name">
        		<description>
-          		Use this tutorial to learn how to successfully import a CDT project.
+          		%ImportProjectTutorial.description
        		</description>
     	</cheatsheet>
 	</extension>

@@ -2784,4 +2784,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
 		assertInstance(args.getAt(0), ICPPTemplateNonTypeParameter.class);
 	}
+	
+	//	template<int x>
+	//	class A {};
+	//
+	//	A<int> aint; // should be an error
+	public void _testTypeArgumentToNonTypeParameter() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("A<int>", 6);
+	}
 }

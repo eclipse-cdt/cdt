@@ -106,8 +106,7 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         IBinding b;
         IASTNode parent = name.getParent();
         if (parent instanceof ICPPASTTemplateId) {
-			IASTNode[] args = ((ICPPASTTemplateId) parent).getTemplateArguments();
-			IType[] arguments = CPPTemplates.createTypeArray(args);
+			IType[] arguments = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) parent);
         	b = new CPPUnknownClassInstance(binding, name, arguments);
         } else {
         	b = new CPPUnknownClass(binding, name);

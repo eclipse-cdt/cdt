@@ -309,8 +309,7 @@ public class CPPTemplates {
 			}
 
 			if (template != null && template instanceof ICPPInternalTemplateInstantiator) {
-				IASTNode[] args = id.getTemplateArguments();
-				IType[] types = CPPTemplates.createTypeArray(args);
+				IType[] types= CPPTemplates.createTemplateArgumentArray(id);
 				template = ((ICPPInternalTemplateInstantiator) template).instantiate(types);
 				return CPPSemantics.postResolution(template, id);
 			}
@@ -338,7 +337,7 @@ public class CPPTemplates {
 			return null;  //TODO: problem?
 
 		ICPPClassTemplate classTemplate = (ICPPClassTemplate) template;
-		IType[] args = createTypeArray(id.getTemplateArguments());
+		IType[] args= createTemplateArgumentArray(id);
 		if (classTemplate instanceof ICPPInternalTemplateInstantiator) {
 		    IBinding binding = ((ICPPInternalTemplateInstantiator) classTemplate).instantiate(args);
 		    return binding;
@@ -377,7 +376,7 @@ public class CPPTemplates {
 			} catch (DOMException e) {
 				return e.getProblem();
 			}
-			IType[] args = createTypeArray(id.getTemplateArguments());
+			IType[] args= createTemplateArgumentArray(id);
 			ObjectMap argMap = new ObjectMap(templateParams.length);
 			if (templateParams.length != args.length) {
 				return null; //TODO problem
@@ -464,7 +463,7 @@ public class CPPTemplates {
 		IASTParameterDeclaration[] ps = ((ICPPASTFunctionDeclarator) parent).getParameters();
 		Object[] map_types;
 		try {
-			map_types = deduceTemplateFunctionArguments(function, ps, data.templateArguments);
+			map_types= deduceTemplateFunctionArguments(function, ps, data.templateId);
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
@@ -531,7 +530,7 @@ public class CPPTemplates {
 		IType[] templateArguments = null;
 
 		if (name instanceof ICPPASTTemplateId) {
-			templateArguments = createTypeArray(((ICPPASTTemplateId) name).getTemplateArguments());
+			templateArguments= createTemplateArgumentArray((ICPPASTTemplateId) name);
 		}
 		int numArgs = (templateArguments != null) ? templateArguments.length : 0;
 
@@ -599,10 +598,10 @@ public class CPPTemplates {
 	 * @throws DOMException
 	 */
 	static protected Object[] deduceTemplateFunctionArguments(ICPPFunctionTemplate primaryTemplate,
-			IASTParameterDeclaration[] ps, IASTNode[] specArgs) throws DOMException
+			IASTParameterDeclaration[] ps, ICPPASTTemplateId id) throws DOMException
 	{
 		ICPPTemplateParameter[] templateParameters = primaryTemplate.getTemplateParameters();
-		IType[] arguments = createTypeArray(specArgs);
+		IType[] arguments= createTemplateArgumentArray(id);
 		IType[] result = new IType[templateParameters.length];
 
 		ObjectMap map = null;
@@ -1108,6 +1107,30 @@ public class CPPTemplates {
 		return argA != null && argB != null && argA.isSameType(argB);
 	}
 	
+	/**
+	 * @param id the template id containing the template arguments
+	 * @return an array of template arguments, currently modeled as IType objects. The
+	 * empty IType array is returned if id is <code>null</code>
+	 */
+	static public IType[] createTemplateArgumentArray(ICPPASTTemplateId id) {
+		IType[] result= IType.EMPTY_TYPE_ARRAY;
+		if(id != null) {
+			IASTNode[] params= id.getTemplateArguments();
+			result = new IType[params.length];
+			for (int i = 0; i < params.length; i++) {
+				IType type= CPPVisitor.createType(params[i]);
+				// prevent null pointer exception when the type cannot be determined
+				// happens when templates with still ambiguous template-ids are accessed during
+				// resolution of other ambiguities.
+				result[i]= type == null ? new CPPBasicType(-1, 0) : type;
+			}
+		}
+		return result;
+	}
+	
+	/*
+	 * aftodo - need to review this
+	 */
 	static public IType[] createTypeArray(Object[] params) {
 		if (params == null)
 			return IType.EMPTY_TYPE_ARRAY;
@@ -1391,7 +1414,9 @@ public class CPPTemplates {
 					ICPPTemplateInstance pInst = (ICPPTemplateInstance) p;
 					ICPPTemplateInstance aInst = (ICPPTemplateInstance) a;
 
-					IType[] pArgs = createTypeArray(pInst.getArguments());
+					IType[] pArgs = pInst.getArguments();
+					pArgs= pArgs == null ? IType.EMPTY_TYPE_ARRAY : pArgs; // aftodo - unnecessary?
+					
 					ObjectMap aMap = aInst.getArgumentMap();
 					if (aMap != null && !(aInst.getTemplateDefinition() instanceof ICPPClassTemplatePartialSpecialization)) {
 						ICPPTemplateParameter[] aParams = aInst.getTemplateDefinition().getTemplateParameters();
@@ -1403,7 +1428,9 @@ public class CPPTemplates {
 								return false;
 						}
 					} else {
-						IType[] aArgs = createTypeArray(aInst.getArguments());
+						IType[] aArgs = aInst.getArguments();
+						aArgs= aArgs == null ? IType.EMPTY_TYPE_ARRAY : aArgs; // aftodo - unnecessary?
+						
 						if (aArgs.length != pArgs.length)
 							return false;
 						for (int i = 0; i < pArgs.length; i++) {

@@ -44,8 +44,8 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 	 */
 	public IType[] getArguments() {
 		if( arguments == null ){
-			ICPPASTTemplateId id = (ICPPASTTemplateId) getTemplateName();
-			arguments = CPPTemplates.createTypeArray( id.getTemplateArguments() );
+			ICPPASTTemplateId id= (ICPPASTTemplateId) getTemplateName();
+			arguments = CPPTemplates.createTemplateArgumentArray(id);
 		}
 		return arguments;
 	}

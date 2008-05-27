@@ -99,7 +99,7 @@ class LookupData {
 	public IBinding unknownBinding= null;
 	public Object foundItems = null;
 	public Object[] functionParameters;
-	public IASTNode[] templateArguments;
+	public ICPPASTTemplateId templateId;
 	public ProblemBinding problem;
 	
 	public LookupData(IASTName n) {

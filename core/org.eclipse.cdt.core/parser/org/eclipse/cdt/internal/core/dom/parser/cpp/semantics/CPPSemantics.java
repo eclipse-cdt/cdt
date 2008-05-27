@@ -280,7 +280,7 @@ public class CPPSemantics {
         	ICPPClassType cls = (ICPPClassType) binding;
         	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPTemplateDefinition) {
         		ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
-        		IType[] args = CPPTemplates.createTypeArray(id.getTemplateArguments());
+        		IType[] args = CPPTemplates.createTemplateArgumentArray(id);
         		IBinding inst = ((ICPPInternalTemplateInstantiator)cls).instantiate(args); 
         		cls = inst instanceof ICPPClassType ? (ICPPClassType)inst : cls; 
         	}
@@ -379,7 +379,7 @@ public class CPPSemantics {
 		IASTNode parent = name.getParent();
 		
 		if (name instanceof ICPPASTTemplateId) {
-			data.templateArguments = ((ICPPASTTemplateId)name).getTemplateArguments();
+			data.templateId= ((ICPPASTTemplateId)name);
 		}
 		
 		if (parent instanceof ICPPASTTemplateId)

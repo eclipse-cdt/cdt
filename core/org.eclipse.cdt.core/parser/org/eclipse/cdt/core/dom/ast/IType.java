@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -14,12 +15,14 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IType extends Cloneable {
-	public static final IType [] EMPTY_TYPE_ARRAY = new IType[0];
+	public static final IType[] EMPTY_TYPE_ARRAY = new IType[0];
+	public static final ASTTypeComparator TYPE_COMPARATOR = new ASTTypeComparator();
+
     public Object clone();
 
     /**
      * is the given type the same as this type?
      * @param type
      */
-    public boolean isSameType( IType type );
+    public boolean isSameType(IType type);
 }

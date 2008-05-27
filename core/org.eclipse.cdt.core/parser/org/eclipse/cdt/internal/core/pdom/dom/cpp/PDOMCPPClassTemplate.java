@@ -67,6 +67,8 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassType.RECORD_SIZE + 16;
 	
+	private ICPPTemplateParameter[] params;  // Cached template parameters.
+	
 	public PDOMCPPClassTemplate(PDOM pdom, PDOMNode parent, ICPPClassTemplate template)	throws CoreException {
 		super(pdom, parent, template);
 	}
@@ -100,16 +102,21 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	}
 	
 	public ICPPTemplateParameter[] getTemplateParameters() {
-		try {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
-			TemplateParameterCollector visitor = new TemplateParameterCollector();
-			list.accept(visitor);
-			
-			return visitor.getTemplateParameters();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new ICPPTemplateParameter[0];
+		if (params == null) {
+			try {
+				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
+				TemplateParameterCollector visitor = new TemplateParameterCollector();
+				list.accept(visitor);
+				params = visitor.getTemplateParameters();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				params = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
+			}
 		}
+		// Copy to a new array for safety.
+		ICPPTemplateParameter[] result = new ICPPTemplateParameter[params.length];
+		System.arraycopy(params, 0, result, 0, params.length);
+		return result;
 	}
 	
 	private PDOMCPPClassTemplatePartialSpecialization getFirstPartial() throws CoreException {
@@ -310,7 +317,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		if (template instanceof IProblemBinding)
 			return template;
 		if (template != null && template instanceof ICPPClassTemplatePartialSpecialization) {
-			return ((PDOMCPPClassTemplate)template).instantiate(arguments);	
+			return ((PDOMCPPClassTemplate) template).instantiate(arguments);	
 		}
 		
 		return CPPTemplates.instantiateTemplate(this, arguments, null);

@@ -144,7 +144,21 @@ public class ObjectMap extends ObjectTable<Object> {
 		System.arraycopy(valueTable, 0, vals, 0, vals.length);
 	    return vals;
 	}
-	
+
+	public boolean isSame(ObjectMap other, IObjectComparator comparator) {
+		if (!super.isSame(other, comparator)) {
+			return false;
+		}
+		for (int i = 0; i < keyTable.length; i++) {
+			Object val1 = valueTable[i];
+			Object val2 = other.valueTable[i];
+			if (val1 != val2 && !comparator.isSame(val1, val2)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("{"); //$NON-NLS-1$

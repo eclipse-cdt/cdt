@@ -34,7 +34,7 @@ public abstract class ObjectTable<T> extends HashTable {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Object clone(){
+	public Object clone() {
 	    ObjectTable<T> newTable = (ObjectTable<T>) super.clone();
         
         int size = capacity();
@@ -44,10 +44,10 @@ public abstract class ObjectTable<T> extends HashTable {
 	    return newTable;
 	}
 	
-	public List<T> toList(){
+	public List<T> toList() {
 	    List<T> list = new ArrayList<T>(size());
 	    int size = size();
-	    for (int i = 0; i < size; i++){
+	    for (int i = 0; i < size; i++) {
 	        list.add(keyAt(i));
 	    }
 	    return list;
@@ -61,14 +61,14 @@ public abstract class ObjectTable<T> extends HashTable {
 	}
 	
 	@Override
-	public void clear(){
+	public void clear() {
 		super.clear();
 	    for (int i = 0; i < keyTable.length; i++)
 	        keyTable[i] = null;
 	}
 	
 	@Override
-	protected final int hash(int pos){
+	protected final int hash(int pos) {
 	    return hash(keyTable[pos]);
 	}
 	
@@ -111,7 +111,7 @@ public abstract class ObjectTable<T> extends HashTable {
 		removeEntry(i, hash);
 	}
 	
-	protected final int lookup(Object buffer){
+	protected final int lookup(Object buffer) {
 		if (hashTable != null) {
 			int hash = hash(buffer);
 			
@@ -137,11 +137,11 @@ public abstract class ObjectTable<T> extends HashTable {
 		return -1;		
 	}
 	
-	public boolean containsKey(T key){
+	public boolean containsKey(T key) {
 	    return lookup(key) != -1; 
 	}
 	
-	public Object[] keyArray(){
+	public Object[] keyArray() {
 	    Object[] keys = new Object[size()];
 	    System.arraycopy(keyTable, 0, keys, 0, keys.length);
 	    return keys;
@@ -152,5 +152,20 @@ public abstract class ObjectTable<T> extends HashTable {
 		X[] keys = (X[]) Array.newInstance(c, size());
         System.arraycopy(keyTable, 0, keys, 0, keys.length);
         return keys;
+	}
+
+	public boolean isSame(ObjectTable<T> other, IObjectComparator comparator) {
+		if (size() != other.size()) {
+			return false;
+		}
+		
+		for (int i = 0; i < keyTable.length; i++) {
+			T key1 = keyTable[i];
+			T key2 = other.keyTable[i];
+			if (key1 != key2 &&  !comparator.isSame(key1, key2)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

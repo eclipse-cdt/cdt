@@ -48,8 +48,11 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
     public IType getType() throws DOMException {
         if (type == null) {
             type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
-            if (type == this) {
-            	// A typedef pointing to itself is a sure recipe for an infinite loop. 
+        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace with
+            // a problem binding.
+            if (type instanceof CPPTypedefSpecialization &&
+            		((CPPTypedefSpecialization) type).getSpecializedBinding().equals(getSpecializedBinding()) &&
+            		((CPPTypedefSpecialization) type).getArgumentMap().isSame(argumentMap, IType.TYPE_COMPARATOR)) {
             	type = new ProblemBinding(getDefinition(), IProblemBinding.SEMANTIC_INVALID_TYPE,
             			getNameCharArray());
             }

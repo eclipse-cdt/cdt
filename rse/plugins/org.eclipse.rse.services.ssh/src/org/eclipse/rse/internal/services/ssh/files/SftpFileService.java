@@ -913,8 +913,6 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 					//bug 154419: test for dangling symbolic link
 					if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
 						//simply try to delete --> if it really doesnt exist, this will throw an exception
-						//FIXME either throw SystemElementNotFoundException here OR add check for
-						//SSH_FX_NO_SUCH_FILE in makeSystemMessageException() and throw SENFE there
 						try {
 							getChannel("SftpFileService.delete.rm").rm(fullPathRecoded); //$NON-NLS-1$
 						} catch (Exception e2) {

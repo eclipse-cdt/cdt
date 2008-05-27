@@ -27,6 +27,7 @@
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  * Xuan Chen        (IBM)        - [228707] get NPE when click ok on the properties page of an I5/OS IFS file
  * David McKnight   (IBM)        - [230001] Property page contains invalid values
+ * David McKnight   (IBM)        - [199596] [refresh][ftp] Changing a file/folder's Read-Only attribute doesn't always update IRemoteFile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -551,11 +552,13 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
            {
         	   if (remoteFile.isDirectory())
         	   {
-        		   sr.fireEvent(new SystemResourceChangeEvent(remoteFile.getParentRemoteFile(),ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+        		   sr.fireEvent(new SystemResourceChangeEvent(remoteFile.getParentRemoteFile(),ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, 
+        				   remoteFile.getParentRemoteFile()
+        				   ));
         	   }
         	   else
         	   {
-        		   sr.fireEvent(new SystemResourceChangeEvent(remoteFile,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+        		   sr.fireEvent(new SystemResourceChangeEvent(remoteFile,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, remoteFile));
         	   }
            }
            else

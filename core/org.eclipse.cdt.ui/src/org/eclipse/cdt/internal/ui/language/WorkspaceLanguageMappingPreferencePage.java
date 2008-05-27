@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -24,9 +25,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
 
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -45,7 +50,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 		try {
 			fetchMappings();
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 		}
 		return fMappingWidget.createContents(parent, PreferencesMessages.WorkspaceLanguagesPreferencePage_description);
 	}
@@ -84,7 +89,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 			fMappingWidget.setChanged(false);
 			return true;
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 			return false;
 		}
 	}
@@ -92,10 +97,29 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
+		Preferences node = CCorePlugin.getDefault().getPluginPreferences();
+		node.setToDefault(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS);
 		try {
+			// remove workspace mappings
+			Map<String,String> currentMappings= fMappings.getWorkspaceMappings();
+			Set<String> keys = currentMappings.keySet();
+			String[] contentTypeIds = keys.toArray(new String[keys.size()]);
+			for (String contentTypeId : contentTypeIds) {
+				fMappings.removeWorkspaceMapping(contentTypeId);
+			}
+			// add default mappings
+			LanguageMappingStore store = new LanguageMappingStore();
+			WorkspaceLanguageConfiguration defaultConfig = store.decodeWorkspaceMappings();
+			Map<String,String> defaultMappings= defaultConfig.getWorkspaceMappings();
+			for (String contentTypeId : defaultMappings.keySet()) {
+				String language= defaultMappings.get(contentTypeId);
+				fMappings.addWorkspaceMapping(contentTypeId, language);
+			}
 			fetchMappings();
+			fMappingWidget.refreshMappings();
+			fMappingWidget.setChanged(false);
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 		}
 	}
 }

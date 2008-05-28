@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 
@@ -29,8 +29,8 @@ public class ExtractFunctionInformation {
 	private VisibilityEnum visibility = VisibilityEnum.v_private;
 	private String methodName;
 	private boolean replaceDuplicates;
-	private Vector<NameInformation> allAfterUsedNames;
-	private Vector<NameInformation> allUsedNames;
+	private ArrayList<NameInformation> allAfterUsedNames;
+	private ArrayList<NameInformation> allUsedNames;
 	private NameInformation inScopeDeclaredVariable; 
 	private NameInformation returnVariable;
 	private ICPPASTFunctionDeclarator declarator;
@@ -66,9 +66,9 @@ public class ExtractFunctionInformation {
 		this.replaceDuplicates = replaceDuplicates;
 	}
 
-	public Vector<NameInformation> getAllAfterUsedNames() {
+	public ArrayList<NameInformation> getAllAfterUsedNames() {
 		if(allAfterUsedNames == null){
-			allAfterUsedNames = new Vector<NameInformation>();
+			allAfterUsedNames = new ArrayList<NameInformation>();
 			for (NameInformation name : getAllUsedNames()) {
 				if(name.isReference()||name.isReturnValue()){
 					allAfterUsedNames.add(name);
@@ -79,7 +79,7 @@ public class ExtractFunctionInformation {
 		return allAfterUsedNames;
 	}
 
-	public void setAllAfterUsedNames(Vector<NameInformation> allAfterUsedNames) {
+	public void setAllAfterUsedNames(ArrayList<NameInformation> allAfterUsedNames) {
 		this.allAfterUsedNames = allAfterUsedNames;
 	}
 
@@ -102,11 +102,11 @@ public class ExtractFunctionInformation {
 		this.inScopeDeclaredVariable = inScopeDeclaredVariable;
 	}
 
-	public Vector<NameInformation> getAllUsedNames() {
+	public ArrayList<NameInformation> getAllUsedNames() {
 		return allUsedNames;
 	}
 
-	public void setAllUsedNames(Vector<NameInformation> allUsedNames) {
+	public void setAllUsedNames(ArrayList<NameInformation> allUsedNames) {
 		this.allUsedNames = allUsedNames;
 	}
 

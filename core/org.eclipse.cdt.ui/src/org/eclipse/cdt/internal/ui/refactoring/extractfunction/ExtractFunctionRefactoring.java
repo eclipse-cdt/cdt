@@ -165,8 +165,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			status
 					.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
 		} else if (container.getAllDeclaredInScope().size() == 1) {
-			info.setInScopeDeclaredVariable(container.getAllDeclaredInScope()
-					.firstElement());
+			info.setInScopeDeclaredVariable(container.getAllDeclaredInScope().get(0));
 		}
 
 		extractedFunctionConstructionHelper = ExtractedFunctionConstructionHelper
@@ -320,18 +319,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			MethodContext context, IASTNode firstNode,
 			final IFile implementationFile, ModificationCollector collector) {
 
-		IASTNode node = firstNode;
-		boolean found = false;
-
-		while (node != null && !found) {
-			node = node.getParent();
-			if (node instanceof IASTFunctionDefinition) {
-				found = true;
-			}
-		}
-
-		if (found && node != null) {
-
+		IASTFunctionDefinition node = NodeHelper.findFunctionDefinitionInAncestors(firstNode); 
+		if (node != null) { 
 			String title;
 			if (context.getType() == MethodContext.ContextType.METHOD) {
 				title = Messages.ExtractFunctionRefactoring_CreateMethodDef;

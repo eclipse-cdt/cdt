@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -78,7 +77,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 public class ExtractConstantRefactoring extends CRefactoring {
 	
 	private IASTLiteralExpression target = null;
-	private final Vector<IASTExpression> literalsToReplace = new Vector<IASTExpression>();
+	private final ArrayList<IASTExpression> literalsToReplace = new ArrayList<IASTExpression>();
 	private final NameNVisibilityInformation info;
 	
 	public ExtractConstantRefactoring(IFile file, ISelection selection, NameNVisibilityInformation info){
@@ -92,8 +91,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		SubMonitor sm = SubMonitor.convert(pm, 9);
 		super.checkInitialConditions(sm.newChild(6));
 
-		Collection<IASTLiteralExpression> literalExpressionVector = findAllLiterals();
-		if(literalExpressionVector.isEmpty()){
+		Collection<IASTLiteralExpression> literalExpressionCollection = findAllLiterals();
+		if(literalExpressionCollection.isEmpty()){
 			initStatus.addFatalError(Messages.ExtractConstantRefactoring_LiteralMustBeSelected); 
 			return initStatus;
 		}
@@ -101,7 +100,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		sm.worked(1);
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 		
-		boolean oneMarked = region != null && isOneMarked(literalExpressionVector, region);
+		boolean oneMarked = region != null && isOneMarked(literalExpressionCollection, region);
 		if(!oneMarked){ 
 			//No or more than one marked
 			if(target == null){
@@ -117,7 +116,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 				
-		findAllNodesForReplacement(literalExpressionVector);
+		findAllNodesForReplacement(literalExpressionCollection);
 		
 		info.addNamesToUsedNames(findAllDeclaredNames());
 		info.setName(getDefaultName(target));
@@ -148,9 +147,9 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		return '_' + nameString;
 	}
 
-	private Vector<String> findAllDeclaredNames() {
-		Vector<String>names = new Vector<String>();
-		IASTFunctionDefinition funcDef = getFunctionDefinition();
+	private ArrayList<String> findAllDeclaredNames() {
+		ArrayList<String>names = new ArrayList<String>();
+		IASTFunctionDefinition funcDef = NodeHelper.findFunctionDefinitionInAncestors(target);
 		ICPPASTCompositeTypeSpecifier comTypeSpec = getCompositeTypeSpecifier(funcDef);
 		if(comTypeSpec != null) {
 			for(IASTDeclaration dec : comTypeSpec.getMembers()) {
@@ -183,23 +182,10 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		return null;
 	}
 
-	private IASTFunctionDefinition getFunctionDefinition() {
-		IASTNode node = target;
-		while((node = node.getParent()) != null){
-			if (node instanceof IASTFunctionDefinition) {
-				IASTFunctionDefinition funcDef = (IASTFunctionDefinition) node;
-				return funcDef;
-			}
-		}
-		return null;
-	}
-
-	private void findAllNodesForReplacement(Collection<IASTLiteralExpression> literalExpressionVector) {
-		
-		
+	private void findAllNodesForReplacement(Collection<IASTLiteralExpression> literalExpressionCollection) {
 		if (target.getParent() instanceof IASTUnaryExpression) {
 			IASTUnaryExpression unary = (IASTUnaryExpression) target.getParent();
-			for (IASTLiteralExpression expression : literalExpressionVector) {
+			for (IASTLiteralExpression expression : literalExpressionCollection) {
 				if( target.getKind() == expression.getKind()
 						&& target.toString().equals( expression.toString() ) 
 						&& expression.getParent() instanceof IASTUnaryExpression
@@ -208,7 +194,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 				}	
 			}
 		} else {
-			for (IASTLiteralExpression expression : literalExpressionVector) {
+			for (IASTLiteralExpression expression : literalExpressionCollection) {
 				if( target.getKind() == expression.getKind()
 						&& target.toString().equals( expression.toString() ) ) {
 					literalsToReplace.add( expression );
@@ -217,9 +203,9 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		}
 	}
 
-	private boolean isOneMarked(Collection<IASTLiteralExpression> literalExpressionVector, Region textSelection) {
+	private boolean isOneMarked(Collection<IASTLiteralExpression> literalExpressionCollection, Region textSelection) {
 		boolean oneMarked = false;
-		for (IASTLiteralExpression expression : literalExpressionVector) {
+		for (IASTLiteralExpression expression : literalExpressionCollection) {
 			boolean isInSameFileSelection = SelectionHelper.isInSameFileSelection(textSelection, expression, file);
 			if(isInSameFileSelection){
 				if(target == null) {

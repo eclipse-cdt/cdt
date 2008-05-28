@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -49,14 +49,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 
 public class NodeContainer {
 
-	private final Vector<IASTNode> vec;
-	private final Vector<NameInformation> names;
+	private final ArrayList<IASTNode> vec;
+	private final ArrayList<NameInformation> names;
 
 	public class NameInformation {
 		private IASTName name;
 		private IASTName declaration;
-		private final Vector<IASTName> references;
-		private Vector<IASTName> referencesAfterCached;
+		private final ArrayList<IASTName> references;
+		private ArrayList<IASTName> referencesAfterCached;
 		private int lastCachedReferencesHash;
 		private boolean isReference;
 		private boolean isReturnValue;
@@ -77,7 +77,7 @@ public class NodeContainer {
 		public NameInformation(IASTName name) {
 			super();
 			this.name = name;
-			references = new Vector<IASTName>();
+			references = new ArrayList<IASTName>();
 		}
 
 		public IASTName getDeclaration() {
@@ -100,12 +100,12 @@ public class NodeContainer {
 			references.add(name);
 		}
 
-		public Vector<IASTName> getReferencesAfterSelection() {
+		public ArrayList<IASTName> getReferencesAfterSelection() {
 			if (referencesAfterCached == null
 					|| lastCachedReferencesHash == references.hashCode()) {
 
 				lastCachedReferencesHash = references.hashCode();
-				referencesAfterCached = new Vector<IASTName>();
+				referencesAfterCached = new ArrayList<IASTName>();
 				for (IASTName ref : references) {
 					IASTFileLocation loc = ref.getFileLocation();
 					if (loc.getNodeOffset() >= getEndOffset()) {
@@ -242,8 +242,8 @@ public class NodeContainer {
 
 	public NodeContainer() {
 		super();
-		vec = new Vector<IASTNode>();
-		names = new Vector<NameInformation>();
+		vec = new ArrayList<IASTNode>();
+		names = new ArrayList<NameInformation>();
 	}
 
 	public int size() {
@@ -308,9 +308,9 @@ public class NodeContainer {
 	 * Returns all local names in the selection which will be used after the
 	 * selection expected the ones which are pointers
 	 */
-	public Vector<NameInformation> getAllAfterUsedNames() {
-		Vector<IASTName> declarations = new Vector<IASTName>();
-		Vector<NameInformation> usedAfter = new Vector<NameInformation>();
+	public ArrayList<NameInformation> getAllAfterUsedNames() {
+		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
+		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
 		if (names.size() <= 0) {
 			findAllNames();
@@ -330,9 +330,9 @@ public class NodeContainer {
 		return usedAfter;
 	}
 
-	public Vector<NameInformation> getAllAfterUsedNamesChoosenByUser() {
-		Vector<IASTName> declarations = new Vector<IASTName>();
-		Vector<NameInformation> usedAfter = new Vector<NameInformation>();
+	public ArrayList<NameInformation> getAllAfterUsedNamesChoosenByUser() {
+		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
+		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
 		for (NameInformation nameInf : names) {
 			if (!declarations.contains(nameInf.getDeclaration())) {
@@ -348,9 +348,9 @@ public class NodeContainer {
 		return usedAfter;
 	}
 
-	public Vector<NameInformation> getUsedNamesUnique() {
-		Vector<IASTName> declarations = new Vector<IASTName>();
-		Vector<NameInformation> usedAfter = new Vector<NameInformation>();
+	public ArrayList<NameInformation> getUsedNamesUnique() {
+		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
+		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
 		if (names.size() <= 0) {
 			findAllNames();
@@ -372,9 +372,9 @@ public class NodeContainer {
 	 * selection expected the ones which are pointers
 	 * XXX Was soll dieser Kommentar aussagen? --Mirko
 	 */
-	public Vector<NameInformation> getAllDeclaredInScope() {
-		Vector<IASTName> declarations = new Vector<IASTName>();
-		Vector<NameInformation> usedAfter = new Vector<NameInformation>();
+	public ArrayList<NameInformation> getAllDeclaredInScope() {
+		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
+		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
 		for (NameInformation nameInf : names) {
 			if (nameInf.isDeclarationInScope()
@@ -480,7 +480,7 @@ public class NodeContainer {
 		return vec.toString();
 	}
 
-	public Vector<NameInformation> getNames() {
+	public ArrayList<NameInformation> getNames() {
 		return names;
 	}
 }

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.ui.refactoring.dialogs.ExtractInputPage;
 
 public class InputPage extends ExtractInputPage {
 
-	private final Vector<String> usedNames;
+	private final ArrayList<String> usedNames;
 
 	public InputPage(String name, NameNVisibilityInformation info) {
 		super(name, info);

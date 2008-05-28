@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -55,8 +55,8 @@ public class ChooserComposite extends Composite {
 			hasNoPredefinedReturnValue = false;
 		}
 
-		final Vector<Button> returnButtons = new Vector<Button>();
-		final Vector<Button> referenceButtons = new Vector<Button>();
+		final ArrayList<Button> returnButtons = new ArrayList<Button>();
+		final ArrayList<Button> referenceButtons = new ArrayList<Button>();
 
 		final Table table = new Table(parent, SWT.BORDER | SWT.MULTI | SWT.FILL);
 		
@@ -188,7 +188,7 @@ public class ChooserComposite extends Composite {
 		column.setWidth(100);
 	}
 	
-	void onVisibilityOrReturnChange(Vector<NameInformation> name){
+	void onVisibilityOrReturnChange(ArrayList<NameInformation> name){
 		String variableUsedAfterBlock = null;
 		for (NameInformation information : name) {
 			if(information.isUsedAfterReferences() 

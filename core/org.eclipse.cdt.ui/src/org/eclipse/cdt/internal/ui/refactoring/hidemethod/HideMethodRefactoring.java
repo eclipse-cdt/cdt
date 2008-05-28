@@ -105,7 +105,7 @@ public class HideMethodRefactoring extends CRefactoring {
 			return initStatus;
 		}
 		if(!(methodToHideDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier)) {
-			methodToHideDecl = NodeHelper.findFunctionDefinition(methodToHide);
+			methodToHideDecl = NodeHelper.findFunctionDefinitionInAncestors(methodToHide);
 		}
 
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
@@ -134,7 +134,7 @@ public class HideMethodRefactoring extends CRefactoring {
 		
 		sm.worked(1);		
 
-		IASTCompositeTypeSpecifier classNode = NodeHelper.findEnclosingClass(methodToHide);
+		IASTCompositeTypeSpecifier classNode = NodeHelper.findClassInAncestors(methodToHide);
 		if(classNode == null) {
 			initStatus.addError(Messages.HideMethodRefactoring_EnclosingClassNotFound);
 		}
@@ -193,13 +193,13 @@ public class HideMethodRefactoring extends CRefactoring {
 			IASTFunctionDeclarator funcDec = findEnclosingFunction(expName);
 			IASTCompositeTypeSpecifier encClass2;
 			if(funcDec == null) {
-				encClass2 = NodeHelper.findEnclosingClass(expName);
+				encClass2 = NodeHelper.findClassInAncestors(expName);
 			}
 			else {
-				encClass2 = NodeHelper.findEnclosingClass(funcDec);
+				encClass2 = NodeHelper.findClassInAncestors(funcDec);
 			}
 			
-			IASTCompositeTypeSpecifier encClass = NodeHelper.findEnclosingClass(methodToHide);
+			IASTCompositeTypeSpecifier encClass = NodeHelper.findClassInAncestors(methodToHide);
 
 			if(!NodeHelper.isSameNode(encClass, encClass2)) {
 				finalConditions.addWarning(Messages.HideMethodRefactoring_HasExternalReferences);
@@ -210,7 +210,7 @@ public class HideMethodRefactoring extends CRefactoring {
 	}
 
 	private IASTFunctionDeclarator findEnclosingFunction(IASTNode node) throws CoreException {
-		IASTCompoundStatement compStat = NodeHelper.findCompoundStatementInParent(node);
+		IASTCompoundStatement compStat = NodeHelper.findCompoundStatementInAncestors(node);
 		if(compStat == null) {
 			return null;
 		}

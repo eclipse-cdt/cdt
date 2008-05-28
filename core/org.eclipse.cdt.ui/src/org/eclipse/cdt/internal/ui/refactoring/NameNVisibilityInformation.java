@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
@@ -23,7 +23,7 @@ public class NameNVisibilityInformation {
 	
 	private String name = "";	 //$NON-NLS-1$
 	private VisibilityEnum visibility = VisibilityEnum.v_public;
-	private final Vector<String> usedNames = new Vector<String>();
+	private final ArrayList<String> usedNames = new ArrayList<String>();
 
 	public String getName() {
 		return name; 
@@ -41,7 +41,7 @@ public class NameNVisibilityInformation {
 		this.visibility = visibility;
 	}
 	
-	public Vector<String> getUsedNames(){
+	public ArrayList<String> getUsedNames(){
 		return usedNames;
 	}
 	
@@ -49,7 +49,7 @@ public class NameNVisibilityInformation {
 		usedNames.add(name);
 	}
 	
-	public void addNamesToUsedNames(Vector<String> names) {
+	public void addNamesToUsedNames(ArrayList<String> names) {
 		usedNames.addAll(names);
 	}
 	

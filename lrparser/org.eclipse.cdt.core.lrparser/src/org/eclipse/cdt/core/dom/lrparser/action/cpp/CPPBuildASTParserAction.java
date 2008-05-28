@@ -1335,6 +1335,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeInitDeclaratorComplete() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 
+		// Don't do disambiguation when parsing for content assist,
+		// trust me this makes things work out a lot better.
+		if(completionNode != null)
+			return;
+		
 		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
 		if(!(declarator instanceof IASTFunctionDeclarator))
 			return;

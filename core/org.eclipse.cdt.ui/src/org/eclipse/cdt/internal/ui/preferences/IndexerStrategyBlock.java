@@ -78,13 +78,14 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 		fImmediateUpdateButton= ControlFactory.createCheckBox(group, DialogsMessages.IndexerStrategyBlock_immediateUpdate);
 		fAutoUpdateButton.addSelectionListener(updateEnablement);
 		
-		group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_buildConfigGroup, 1);
-		gd= (GridData) group.getLayoutData();
-		gd.grabExcessHorizontalSpace= true;
-		gd.horizontalAlignment= GridData.FILL;
-		fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
-		fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_specificBuildConfig, null, null);
-		
+		if (IndexerPreferencePage.showBuildConfiguration()) {
+			group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_buildConfigGroup, 1);
+			gd= (GridData) group.getLayoutData();
+			gd.grabExcessHorizontalSpace= true;
+			gd.horizontalAlignment= GridData.FILL;
+			fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
+			fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_specificBuildConfig, null, null);
+		}		
 		initializeValues();
     }
 
@@ -96,12 +97,13 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
     	int updatePolicy= IndexerPreferences.getUpdatePolicy(null);
     	initUpdatePolicy(updatePolicy);
 
-    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
-    	ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(false);
-    	boolean useActive= prefs.getConfigurationRelations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
-    	fUseActiveBuildButton.setSelection(useActive);
-    	fUseFixedBuildConfig.setSelection(!useActive);
-    	
+    	if (fUseActiveBuildButton != null) {
+    		ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+    		ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(false);
+    		boolean useActive= prefs.getConfigurationRelations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
+    		fUseActiveBuildButton.setSelection(useActive);
+    		fUseFixedBuildConfig.setSelection(!useActive);
+    	}    	
     	updateEnablement();
 	}
 
@@ -124,21 +126,25 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 		}			
 		IndexerPreferences.setUpdatePolicy(null, updatePolicy);
 
-		boolean useActive= fUseActiveBuildButton.getSelection();
-    	int relation=  useActive
-    			? ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE
-    			: ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT;
-    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
-    	ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(true);
-    	prefs.setConfigurationRelations(relation);
-    	prjDescMgr.setProjectDescriptionWorkspacePreferences(prefs, false, new NullProgressMonitor());
+    	if (fUseActiveBuildButton != null) {
+    		boolean useActive= fUseActiveBuildButton.getSelection();
+    		int relation=  useActive
+    		? ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE
+    				: ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT;
+    		ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+    		ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(true);
+    		prefs.setConfigurationRelations(relation);
+    		prjDescMgr.setProjectDescriptionWorkspacePreferences(prefs, false, new NullProgressMonitor());
+    	}
 	}
 
     @Override
 	public void performDefaults() {
     	initUpdatePolicy(IndexerPreferences.getDefaultUpdatePolicy());
-    	fUseActiveBuildButton.setSelection(false);
-    	fUseFixedBuildConfig.setSelection(true);
+    	if (fUseActiveBuildButton != null) {
+    		fUseActiveBuildButton.setSelection(false);
+    		fUseFixedBuildConfig.setSelection(true);
+    	}
     	updateEnablement();
     }
 }

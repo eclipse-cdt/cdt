@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,13 +23,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.CacheSizeBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 
 public class IndexerPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage, ICOptionContainer {
+	// bug 217860, allow to hide build configuration
+	private static final String SHOW_BUILD_SPECIFIC_CONFIG = "show.build.specific.indexer.config"; //$NON-NLS-1$
 
 	private IndexerBlock fOptionBlock;
 	private CacheSizeBlock fCacheBlock;
@@ -102,5 +108,16 @@ public class IndexerPreferencePage extends PreferencePage implements
 		fStrategyBlock.performDefaults();
 		fCacheBlock.performDefaults();
 		updateContainer();
+	}
+
+	/**
+	 * Returns whether the capability for showing build configurations is enabled.
+	 * @since 5.0
+	 */
+	public static boolean showBuildConfiguration() {
+		IWorkbenchActivitySupport activitySupport= PlatformUI.getWorkbench().getActivitySupport();
+		IIdentifier identifier= activitySupport.getActivityManager().getIdentifier(
+				CUIPlugin.getPluginId() + '/' + SHOW_BUILD_SPECIFIC_CONFIG);
+		return identifier.isEnabled();
 	}
 }

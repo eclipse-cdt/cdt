@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -51,9 +51,7 @@ import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
-/**
- * @author Bogdan Gheorghe
- */
+import org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage;
 
 /**
  * This <code>IndexerBlock</code> is used in the <code>MakeProjectWizardOptionPage</code> and
@@ -211,9 +209,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 		}
 		IProject prj= getProject();
 		if (prj != null) {
-			ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
-			if (prjDescMgr.isNewStyleProject(prj)) {
-				return true;
+			if (IndexerPreferencePage.showBuildConfiguration()) {
+				ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+				if (prjDescMgr.isNewStyleProject(prj)) 
+					return true;
 			}
 		}
 		return false;

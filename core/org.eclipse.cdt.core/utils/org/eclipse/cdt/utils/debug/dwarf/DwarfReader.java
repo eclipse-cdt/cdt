@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -72,7 +73,15 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			String name = section.toString();
 			for (String element : DWARF_SectionsToParse) {
 				if (name.equals(element)) {
-					dwarfSections.put(element, section.loadSectionData());
+					// catch out of memory exceptions which might happen trying to
+					// load large sections (like .debug_info).  not a fix for that
+					// problem itself, but will at least continue to load the other
+					// sections.
+					try {
+						dwarfSections.put(element, section.loadSectionData());
+					} catch (OutOfMemoryError e) {
+						CCorePlugin.log(e);
+					}
 				}
 			}
 		}

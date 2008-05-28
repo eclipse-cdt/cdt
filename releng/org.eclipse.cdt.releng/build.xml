@@ -171,8 +171,10 @@
 			<param name="unpackdir" value="${testDirectory}/eclipse/plugins"/>
 		</antcall>
 		<delete>
-			<fileset dir="${testDirectory}">
-			    <include name="*.jar"/>
+			<fileset dir="${testDirectory}/eclipse/features">
+				<includes file="*.jar"/>
+				<includes file="site.xml"/>
+				<includes file="pack.properties"/>
 			</fileset>
 		</delete>
 		<ant antfile="test.xml" dir="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}">

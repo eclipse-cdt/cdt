@@ -100,7 +100,7 @@
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
 		<untar src="${eclipseDist}" dest="${buildDirectory}" compression="gzip"/>
-		<unzip src="${mylynDist}" dest="${buildDirectory}"/>
+		<unzip src="${mylynDist}" dest="${buildDirectory}/eclipse"/>
 	</target>
 	
 	<target name="zips" depends="init,unzip">
@@ -139,16 +139,45 @@
 	<target name="test" depends="init" unless="hasErrors">
 		<record name="${testReports}/testsLog.txt" action="start" loglevel="verbose"/>
 		<untar src="${eclipseDist}" dest="${testDirectory}" compression="gzip"/>
-		<unzip src="${mylynDist}" dest="${testDirectory}"/>
+		<unzip src="${mylynDist}" dest="${testDirectory}/eclipse"/>
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
 			dest="${testDirectory}/eclipse"/>
-		<unjar src="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
-			dest="${testDirectory}/test/cdt"/>
-		<unjar src="${testDirectory}/eclipse/plugins/${eclipseTest}.jar"
-			dest="${testDirectory}/test/eclipse"/>
-		<ant antfile="test.xml" dir="${testDirectory}/test/cdt">
+		<antcall target="unpack-test">
+			<param name="unpackobj" value="org.eclipse.cdt_${branchVersion}.${timestamp}"/>
+			<param name="unpackdir" value="${testDirectory}/eclipse/features"/>
+		</antcall>
+		<antcall target="unpack-test">
+			<param name="unpackobj" value="org.eclipse.cdt.gnu.build_${branchVersion}.${timestamp}"/>
+			<param name="unpackdir" value="${testDirectory}/eclipse/features"/>
+		</antcall>
+		<antcall target="unpack-test">
+			<param name="unpackobj" value="org.eclipse.cdt.gnu.debug_${branchVersion}.${timestamp}"/>
+			<param name="unpackdir" value="${testDirectory}/eclipse/features"/>
+		</antcall>
+		<antcall target="unpack-test">
+			<param name="unpackobj" value="org.eclipse.cdt.platform_${branchVersion}.${timestamp}"/>
+			<param name="unpackdir" value="${testDirectory}/eclipse/features"/>
+		</antcall>
+		<antcall target="unpack-test">
+			<param name="unpackobj" value="org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
+			<param name="unpackdir" value="${testDirectory}/eclipse/features"/>
+		</antcall>
+		<antcall target="unpack-test">
+			<param name="unpackobj" value="org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
+			<param name="unpackdir" value="${testDirectory}/eclipse/plugins"/>
+		</antcall>
+		<antcall target="unpack-test">
+			<param name="unpackobj" value="${eclipseTest}"/>
+			<param name="unpackdir" value="${testDirectory}/eclipse/plugins"/>
+		</antcall>
+		<delete>
+			<fileset dir="${testDirectory}">
+			    <include name="*.jar"/>
+			</fileset>
+		</delete>
+		<ant antfile="test.xml" dir="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}">
 			<property name="eclipse-home" value="${testDirectory}/eclipse"/>
-			<property name="library-file" value="${testDirectory}/test/eclipse/library.xml"/>
+			<property name="library-file" value="${testDirectory}/eclipse/plugins/${eclipseTest}/library.xml"/>
 			<property name="os" value="${baseos}"/>
 			<property name="ws" value="${basews}"/>
 			<property name="arch" value="${basearch}"/>
@@ -162,6 +191,12 @@
 		<record name="${testReports}/testsLog.txt" action="stop"/>
 	</target>
 	
+	<target name="unpack-test">
+		<unzip src="${unpackdir}/${unpackobj}.jar" dest="${unpackdir}/${unpackobj}"/>
+		<delete file="${unpackdir}/${unpackobj}.jar"/>
+	</target>
+	
+
 	<target name="sign" depends="init" unless="hasErrors">
 		<exec executable="sign">
 			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${buildType}.${buildId}/${masterFile}"/>

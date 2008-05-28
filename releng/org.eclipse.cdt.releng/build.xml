@@ -171,9 +171,7 @@
 			<param name="unpackdir" value="${testDirectory}/eclipse/plugins"/>
 		</antcall>
 		<delete>
-			<fileset dir="${testDirectory}/eclipse/features">
-				<includes file="*.jar"/>
-			</fileset>
+			<fileset dir="${testDirectory}/eclipse/features" includes="*.jar"/>
 		</delete>
 		<delete file="${testDirectory}/eclipse/site.xml"/>
 		<delete file="${testDirectory}/eclipse/pack.properties"/>

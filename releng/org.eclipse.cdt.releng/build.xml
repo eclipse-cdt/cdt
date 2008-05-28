@@ -143,12 +143,12 @@
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
 			dest="${testDirectory}/eclipse"/>
 		<unjar src="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
-			dest="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
+			dest="${testDirectory}/test/cdt"/>
 		<unjar src="${testDirectory}/eclipse/plugins/${eclipseTest}.jar"
-			dest="${testDirectory}/eclipse/plugins/${eclipseTest}"/>
-		<ant antfile="test.xml" dir="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${forceContextQualifier}">
+			dest="${testDirectory}/test/eclipse"/>
+		<ant antfile="test.xml" dir="${testDirectory}/test/cdt">
 			<property name="eclipse-home" value="${testDirectory}/eclipse"/>
-			<property name="library-file" value="${testDirectory}/eclipse/plugins/${eclipseTest}/library.xml"/>
+			<property name="library-file" value="${testDirectory}/test/eclipse/library.xml"/>
 			<property name="os" value="${baseos}"/>
 			<property name="ws" value="${basews}"/>
 			<property name="arch" value="${basearch}"/>

@@ -2208,7 +2208,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
             // if the next token is a tSEMI then the declaration was a regular
             // declaration statement i.e. int f(type_def);
-            if (LT(1) == IToken.tSEMI) {
+            final int lt1= LT(1);
+            if (lt1 == IToken.tSEMI || lt1 == IToken.tLBRACE) {
                 backup(mark);
                 return 0;
             }

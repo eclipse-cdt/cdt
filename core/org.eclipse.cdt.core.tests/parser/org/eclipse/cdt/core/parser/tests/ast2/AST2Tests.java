@@ -4765,4 +4765,34 @@ public class AST2Tests extends AST2BaseTest {
     	parseAndCheckBindings(code, ParserLanguage.C, true);
     	parseAndCheckBindings(code, ParserLanguage.CPP, true);
     }
+    
+    //    typedef void VOID;
+    //    VOID func(VOID) {
+    //    }
+    public void testTypedefVoid_Bug221567() throws Exception {
+    	final boolean[] isCpps= {false, true};
+    	String code= getAboveComment();
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    		ITypedef td= ba.assertNonProblem("VOID;", 4, ITypedef.class);
+    		IBinding ref= ba.assertNonProblem("VOID)", 4);
+    		assertSame(td, ref);
+    		
+    		IFunction func= ba.assertNonProblem("func", 4, IFunction.class);
+    		IFunctionType ft= func.getType();
+    		IType rt= ft.getReturnType();
+    		IType[] pts= ft.getParameterTypes();
+    		assertEquals(1, pts.length);
+			IType pt = pts[0];
+			assertInstance(rt, ITypedef.class);
+			assertInstance(pt, ITypedef.class);
+			rt= ((ITypedef)rt).getType();
+			pt= ((ITypedef)pt).getType();
+
+			assertTrue(rt instanceof IBasicType);
+    		assertEquals(IBasicType.t_void, ((IBasicType)rt).getType());
+    		assertTrue(pt instanceof IBasicType);
+    		assertEquals(IBasicType.t_void, ((IBasicType)pt).getType());
+    	}
+    }
 }

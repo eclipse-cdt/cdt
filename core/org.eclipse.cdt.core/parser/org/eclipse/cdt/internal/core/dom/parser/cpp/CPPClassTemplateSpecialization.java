@@ -75,7 +75,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 			if (args.length == arguments.length) {
 				int j = 0;
 				for(; j < args.length; j++) {
-					if (!(args[j].isSameType(arguments[j])))
+					if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j]))
 						break;
 				}
 				if (j == args.length) {

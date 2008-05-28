@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -180,7 +181,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		if (args.length == arguments.length) {
 			int i = 0;
 			for (; i < args.length; i++) {
-				if (args[i] == null || !args[i].isSameType(arguments[i]))
+				if (!CPPTemplates.isSameTemplateArgument(args[i], arguments[i]))
 					break;
 			}
 			return i == args.length;

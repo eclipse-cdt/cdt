@@ -13,7 +13,14 @@ package org.eclipse.cdt.internal.pdom.tests;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -44,6 +51,17 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 			sb.append("  ");
 			PDOMBinding binding= (PDOMBinding) node;
 			sb.append(" "+binding.getRecord());
+		}
+		if(node instanceof ICPPVariable) {
+			try {
+				IType type= SemanticUtil.getUltimateTypeUptoPointers(((ICPPVariable)node).getType());
+				if(type instanceof ICPPBasicType) {
+					IASTExpression e1= ((IBasicType)type).getValue();
+					sb.append(" value="+(e1==null?"null":e1.toString()));
+				}
+			} catch(DOMException de) {
+				sb.append(" "+de.getMessage());
+			}
 		}
 		System.out.println(sb);
 		return true;

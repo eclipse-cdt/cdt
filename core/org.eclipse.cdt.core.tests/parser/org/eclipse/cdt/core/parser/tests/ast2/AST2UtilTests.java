@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author dsteffle
@@ -164,4 +165,34 @@ public class AST2UtilTests extends AST2BaseTest {
 		assertEquals(fooSignature, foo2Signature);
 	}
 	
+	public void testParseIntegral() throws Exception {
+		assertEquals(0, CPPVisitor.parseIntegral("0").intValue());
+		assertEquals(0, CPPVisitor.parseIntegral("+0").intValue());
+		assertEquals(0, CPPVisitor.parseIntegral("-0").intValue());
+		assertEquals(0, CPPVisitor.parseIntegral("0x0").intValue());
+		assertEquals(0, CPPVisitor.parseIntegral("00").intValue());
+		assertEquals(0, CPPVisitor.parseIntegral("000").intValue());
+		assertEquals(0, CPPVisitor.parseIntegral("0L").intValue());
+		assertEquals(0, CPPVisitor.parseIntegral("0LL").intValue());
+		
+		assertEquals(1, CPPVisitor.parseIntegral("1").intValue());
+		assertEquals(1, CPPVisitor.parseIntegral("01").intValue());
+		assertEquals(1, CPPVisitor.parseIntegral("0x1").intValue());
+		
+		assertEquals(1, CPPVisitor.parseIntegral("+1").intValue());
+		assertEquals(1, CPPVisitor.parseIntegral("+01").intValue());
+		assertEquals(1, CPPVisitor.parseIntegral("+0x1").intValue());
+		
+		assertEquals(-1, CPPVisitor.parseIntegral("-1").intValue());
+		assertEquals(-1, CPPVisitor.parseIntegral("-01").intValue());
+		assertEquals(-1, CPPVisitor.parseIntegral("-0x1").intValue());
+		
+		assertEquals(-10, CPPVisitor.parseIntegral("-10").intValue());
+		assertEquals(-8, CPPVisitor.parseIntegral("-010").intValue());
+		assertEquals(-16, CPPVisitor.parseIntegral("-0x10").intValue());
+
+		assertEquals(-10, CPPVisitor.parseIntegral("-10LLL").intValue());
+		assertEquals(-8, CPPVisitor.parseIntegral("-010LLL").intValue());
+		assertEquals(-16, CPPVisitor.parseIntegral("-0x10LLL").intValue());
+	}
 }

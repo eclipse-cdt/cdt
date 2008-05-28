@@ -137,7 +137,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType {
 			for (int i = 0; i < m1.size(); i++) {
 				IType t1 = (IType) m1.getAt(i);
 				IType t2 = (IType) m2.getAt(i);
-				if (t1 == null || !t1.isSameType(t2))
+				if (!CPPTemplates.isSameTemplateArgument(t1, t2))
 					return false;
 			}
 			return true;

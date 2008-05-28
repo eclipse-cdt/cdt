@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -92,7 +93,7 @@ abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements	ICPPTemp
 		if (args.length == arguments.length) {
 			int i = 0;
 			for (; i < args.length; i++) {
-				if (!(args[i].isSameType(arguments[i])))
+				if (!CPPTemplates.isSameTemplateArgument(args[i], arguments[i]))
 					break;
 			}
 			return i == args.length;

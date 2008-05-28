@@ -73,7 +73,7 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 						return false;
 				
 					for (int i= 0; i < lhsArgs.length; i++) {
-						if (!lhsArgs[i].isSameType(rhsArgs[i])) 
+						if (!CPPTemplates.isSameTemplateArgument(lhsArgs[i],rhsArgs[i])) 
 							return false;
 					}
 				}

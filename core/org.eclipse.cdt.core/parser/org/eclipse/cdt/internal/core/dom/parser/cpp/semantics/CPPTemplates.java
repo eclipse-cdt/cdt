@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import java.math.BigInteger;
 import java.util.LinkedList;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -23,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -576,7 +579,7 @@ public class CPPTemplates {
 					IType t = (IType) map.get(param);
 					if (arg == null) {
 						arg = t;
-					} else if (!t.isSameType(arg)) {
+					} else if (!CPPTemplates.isSameTemplateArgument(t, arg)) {
 						continue outer;
 					}
 				} else if (arg == null || !matchTemplateParameterAndArgument(param, arg, map)) {
@@ -1055,15 +1058,13 @@ public class CPPTemplates {
 			if (name instanceof ICPPASTTemplateId) {
 				if (definition instanceof ICPPClassTemplatePartialSpecialization) {
 					ICPPClassTemplatePartialSpecialization spec = (ICPPClassTemplatePartialSpecialization) definition;
-					IASTNode[] args = ((ICPPASTTemplateId) name).getTemplateArguments();
+					IType[] args= createTemplateArgumentArray((ICPPASTTemplateId)name);
 					try {
 						IType[] specArgs = spec.getArguments();
 						if (args.length == specArgs.length) {
 							int i = 0;
 							for (; i < args.length; i++) {
-								IType t1 = specArgs[i];
-								IType t2 = CPPVisitor.createType(args[i]);
-								if (isSameTemplateArgument(t1, t2))
+								if (isSameTemplateArgument(specArgs[i], args[i]))
 									continue;
 								break;
 							}
@@ -1087,19 +1088,24 @@ public class CPPTemplates {
 	}
 
 	/**
-	 * @param argA
-	 * @param argB
+	 * @param argA may be null
+	 * @param argB may be null
 	 * @return whether the two specified template arguments are the same
-	 * @throws DOMException
 	 */
-	private static final boolean isSameTemplateArgument(IType argA, IType argB) throws DOMException {
+	public static final boolean isSameTemplateArgument(IType argA, IType argB) {
 		// special case treatment for non-type integral parameters
 		if(argA instanceof ICPPBasicType && argB instanceof ICPPBasicType) {
-			IASTExpression eA= ((ICPPBasicType) argA).getValue();
-			IASTExpression eB= ((ICPPBasicType) argB).getValue();
-			if(eA != null && eB != null) {
-				return expressionsEquivalent(eA, eB);
-			} else if(eA == null ^ eB == null) {
+			try {
+				IASTExpression eA= ((ICPPBasicType) argA).getValue();
+				IASTExpression eB= ((ICPPBasicType) argB).getValue();				
+				if(eA != null && eB != null) {
+					// TODO - we should normalize template arguments
+					// rather than check their original expressions
+					// are equivalent.
+					return argA.isSameType(argB) && expressionsEquivalent(eA, eB);
+				}
+			} catch(DOMException de) {
+				CCorePlugin.log(de);
 				return false;
 			}
 		}
@@ -1118,7 +1124,17 @@ public class CPPTemplates {
 			IASTNode[] params= id.getTemplateArguments();
 			result = new IType[params.length];
 			for (int i = 0; i < params.length; i++) {
-				IType type= CPPVisitor.createType(params[i]);
+				IASTNode param= params[i];
+				/*
+				 * id-expression's which resolve to const variables can be
+				 * modeled by the type of the initialized expression (which
+				 * will include its value)
+				 */
+				if(param instanceof IASTIdExpression) {
+					param= CPPVisitor.reverseConstantPropogationLookup((IASTIdExpression)param);
+				}
+				
+				IType type= CPPVisitor.createType(param);
 				// prevent null pointer exception when the type cannot be determined
 				// happens when templates with still ambiguous template-ids are accessed during
 				// resolution of other ambiguities.
@@ -1171,13 +1187,13 @@ public class CPPTemplates {
 		int size = templates.size();
 
 		int numTemplateArgs = 0;
-		IASTNode[] templateArguments = null;
+		IType[] templateArguments = null;
 		if (name instanceof ICPPASTTemplateId)	{
-			templateArguments = ((ICPPASTTemplateId) name).getTemplateArguments();
+			templateArguments = createTemplateArgumentArray((ICPPASTTemplateId) name);
 			numTemplateArgs = templateArguments.length;
 		}
 
-		IType[] fnArgs = createTypeArray(functionArguments);
+		IType[] fnArgs= createTypeArray(functionArguments);
 
 		outer: for (int idx = 0; idx < size; idx++) {
 			ICPPFunctionTemplate template = (ICPPFunctionTemplate) templates.keyAt(idx);
@@ -1201,11 +1217,11 @@ public class CPPTemplates {
 
 			IType[] instanceArgs = null;
 			for (int i = 0; i < numTemplateParams; i++) {
-				IType arg = (i < numTemplateArgs && templateArguments != null) ? CPPVisitor.createType(templateArguments[i]) : null;
+				IType arg = (i < numTemplateArgs && templateArguments != null) ? templateArguments[i] : null;
 				IType mapped = (IType) map.get(templateParams[i]);
 
 				if (arg != null && mapped != null) {
-					if (arg.isSameType(mapped))
+					if (arg.isSameType(mapped)) // compare as IType: 'mapped' is not a template argument
 						instanceArgs = (IType[]) ArrayUtil.append(IType.class, instanceArgs, arg);
 					else
 						continue outer;
@@ -1340,12 +1356,26 @@ public class CPPTemplates {
 		return result;
 	}
 
-	static private boolean expressionsEquivalent(IASTExpression p, IASTExpression a) {
-		if (p == null)
+	private static boolean expressionsEquivalent(IASTExpression e1, IASTExpression e2) {
+		if (e1 == null)
 			return true;
 
-		if (p instanceof IASTLiteralExpression && a instanceof IASTLiteralExpression) {
-			return p.toString().equals(a.toString ());
+		e1= CPPVisitor.reverseConstantPropogationLookup(e1);
+		e2= CPPVisitor.reverseConstantPropogationLookup(e2);		
+		
+		if (e1 instanceof IASTLiteralExpression && e2 instanceof IASTLiteralExpression) {
+			IType t1= e1.getExpressionType();
+			IType t2= e2.getExpressionType();
+			try {
+				if(t1 instanceof ICPPBasicType && t2 instanceof ICPPBasicType) {
+					BigInteger i1= CPPVisitor.parseIntegral(e1.toString());
+					BigInteger i2= CPPVisitor.parseIntegral(e2.toString());
+					return i1.equals(i2);
+				}
+			} catch(NumberFormatException nfe) {
+				/* fall through */
+			}
+			return e1.toString().equals(e2.toString());
 		}
 		return false;
 	}

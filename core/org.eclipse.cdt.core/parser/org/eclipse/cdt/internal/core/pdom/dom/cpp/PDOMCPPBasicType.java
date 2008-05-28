@@ -8,6 +8,7 @@
  * Contributors:
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -16,10 +17,15 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -32,12 +38,14 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
-
-	public static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
-	public static final int FLAGS = PDOMNode.RECORD_SIZE + 2;   // short
-
+	
+	private static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
+	private static final int QUALIFIER_FLAGS = PDOMNode.RECORD_SIZE + 2;   // short
+	private static final int INTEGRAL = PDOMNode.RECORD_SIZE + 4; // int
+	private static final int INTERNAL_FLAGS = PDOMNode.RECORD_SIZE + 8;   // byte
+	
 	@SuppressWarnings("hiding")
-	public static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
+	private static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 9;
 
 	protected short fFlags= -1;
 
@@ -55,7 +63,20 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		fFlags= flags;
 		Database db = pdom.getDB();
 		db.putShort(record + TYPE_ID, getTypeCode(type));
-		db.putShort(record + FLAGS, flags);
+		try {
+			if(type.getValue() != null) {
+				IASTExpression e= CPPVisitor.reverseConstantPropogationLookup(type.getValue());
+				if(e != null) {
+					db.putInt(record + INTEGRAL, CPPVisitor.parseIntegral(e.toString()).intValue());
+					db.putByte(record + INTERNAL_FLAGS, (byte)1);
+				}
+			}
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
+		} catch(NumberFormatException nfe) {
+			/* fall-through */
+		}
+		db.putShort(record + QUALIFIER_FLAGS, flags);
 	}
 
 	private short getTypeCode(ICPPBasicType type) {
@@ -103,15 +124,37 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	}
 
 	public IASTExpression getValue() throws DOMException {
-		// Returning null for now, not sure what needs to be here if anything
-		// Values only seem to be used at type resolution time.
+		try {
+			/*
+             * If the expression was an integral we can emulate what would
+             * have been returned in a limited way.
+             */
+			if(pdom.getDB().getByte(record + INTERNAL_FLAGS) != 0) {
+				int integral= pdom.getDB().getInt(record + INTEGRAL);
+				String literal= Integer.toString(integral);
+				int type= getType();
+				if(type == t_char) {
+					return new CPPASTLiteralExpression(IASTLiteralExpression.lk_char_constant, literal);
+				} else if(type == t_int) {
+					return new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, literal);
+				} else if(type == t_bool) {
+					if(integral == 0) {
+						return new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_false, Keywords.FALSE);						
+					} else {
+						return new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_true, Keywords.TRUE);
+					}
+				}
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		}
 		return null;
 	}
 
 	public int getQualifierBits() {
 		if (fFlags == -1) {
 			try {
-				fFlags= pdom.getDB().getShort(record + FLAGS);
+				fFlags= pdom.getDB().getShort(record + QUALIFIER_FLAGS);
 			}
 			catch (CoreException e) {
 				CCorePlugin.log(e);

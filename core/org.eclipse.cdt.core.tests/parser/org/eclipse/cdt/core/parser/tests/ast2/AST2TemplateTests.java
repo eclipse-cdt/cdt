@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -2742,6 +2744,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue(!Z.isSameType(X));
 	}
 	
+	//	template<class T, bool b> class A {public: class X {};};
+	//	template<class T1> class A<T1,true> {public: class Y {};};
+	//
+	//	class B {};
+	//
+	//	A<B, false>::X x; //1
+	//	A<B, true>::Y y; //2
+	//
+	//	A<B, true>::X x; //3 should be an error
+	//	A<B, false>::Y y; //4 should be an error
+	public void testNonTypeBooleanArgumentDisambiguation() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		
+		ICPPClassType X= ba.assertNonProblem("X x; //1", 1, ICPPClassType.class);
+		ICPPClassType Y= ba.assertNonProblem("Y y; //2", 1, ICPPClassType.class);
+		ba.assertProblem("X x; //3", 1);
+		ba.assertProblem("Y y; //4", 1);
+		
+		assertTrue(!X.isSameType(Y));
+	}
+	
 	//	template <int x>
 	//	class C {
 	//	public:
@@ -2762,8 +2785,35 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//		bar(t);
 	//		baz();
 	//	}
-	public void _testBug207871() throws Exception {
+	public void testBug207871() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		
+		ICPPVariable _256= ba.assertNonProblem("_256=0x100", 4, ICPPVariable.class);
+		IQualifierType qt1= assertInstance(_256.getType(), IQualifierType.class);
+		ICPPBasicType bt1= assertInstance(qt1.getType(), ICPPBasicType.class);
+		assertEquals(256, CPPVisitor.parseIntegral(bt1.getValue().toString()).intValue());
+		
+		ICPPVariable t= ba.assertNonProblem("t;", 1, ICPPVariable.class);
+		ICPPTemplateInstance ci1= assertInstance(t.getType(), ICPPTemplateInstance.class, ICPPClassType.class);
+		ObjectMap args1= ci1.getArgumentMap();
+		assertEquals(1, args1.size());
+		assertInstance(args1.keyAt(0), ICPPTemplateNonTypeParameter.class);
+		
+		// non-type arguments are currently modelled as a type with attached expression
+		ICPPBasicType bt0= assertInstance(args1.getAt(0), ICPPBasicType.class);
+		assertEquals(bt0.getType(), IBasicType.t_int);
+		assertEquals(256, CPPVisitor.parseIntegral(bt0.getValue().toString()).intValue());
+		
+		ICPPTemplateInstance ct= ba.assertNonProblem("C<_256> ", 7, ICPPTemplateInstance.class, ICPPClassType.class);
+		ObjectMap args= ct.getArgumentMap();
+		assertEquals(1, args.size());
+		assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
+		
+		// non-type arguments are currently modelled as a type with attached expression
+		ICPPBasicType bt= assertInstance(args.getAt(0), ICPPBasicType.class);
+		assertEquals(bt.getType(), IBasicType.t_int);
+		assertEquals(256, CPPVisitor.parseIntegral(bt.getValue().toString()).intValue());
+		
 		ba.assertNonProblem("foo(t)", 3);
 		ba.assertNonProblem("bar(t)", 3);
 	}

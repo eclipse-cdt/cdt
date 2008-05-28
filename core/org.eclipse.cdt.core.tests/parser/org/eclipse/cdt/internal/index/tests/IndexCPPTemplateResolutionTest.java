@@ -1211,7 +1211,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
 	}
 	
-	
 	//	template<typename _Iterator> struct iterator_traits {
 	//		typedef typename _Iterator::pointer           pointer;
 	//	};
@@ -1286,7 +1285,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		bar(t);
 	//		baz();
 	//	}
-	public void _testClassInstanceWithNonTypeArgument_207871() throws Exception {
+	public void testClassInstanceWithNonTypeArgument_207871() throws Exception {
 		ICPPTemplateInstance c256 = getBindingFromASTName("C<256>", 6, ICPPTemplateInstance.class, ICPPClassType.class);
 		ObjectMap args= c256.getArgumentMap();
 		assertEquals(1, args.size());
@@ -1296,5 +1295,83 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		
 		ICPPFunction foo = getBindingFromASTName("foo(t)", 3, ICPPFunction.class);
 		ICPPFunction bar = getBindingFromASTName("bar(t)", 3, ICPPFunction.class);
+	}
+	
+	//	template<class T, int x> class A {public: class X {};};
+	//	template<class T1> class A<T1,'y'> {public: class Y {};};
+	//	template<class T2> class A<T2,'z'> {public: class Z {};};
+	//
+	//	class B {};
+	
+	//	A<B, 'x'>::X x;
+	//	A<B, 'y'>::Y y;
+	//	A<B, 'z'>::Z z;
+	public void testNonTypeCharArgumentDisambiguation() throws Exception {
+		ICPPClassType b2= getBindingFromASTName("A<B, 'x'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
+		ICPPClassType b3= getBindingFromASTName("A<B, 'y'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
+		ICPPClassType b4= getBindingFromASTName("A<B, 'z'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
+		
+		assertTrue(!b2.isSameType(b3));
+		assertTrue(!b3.isSameType(b4));
+		assertTrue(!b4.isSameType(b2));
+		
+		ICPPClassType X= getBindingFromASTName("X x", 1, ICPPClassType.class);
+		ICPPClassType Y= getBindingFromASTName("Y y", 1, ICPPClassType.class);
+		ICPPClassType Z= getBindingFromASTName("Z z", 1, ICPPClassType.class);
+		
+		assertTrue(!X.isSameType(Y));
+		assertTrue(!Y.isSameType(Z));
+		assertTrue(!Z.isSameType(X));
+	}
+	
+	//	template<class T, bool b> class A {public: class X {};};
+	//	template<class T1> class A<T1,true> {public: class Y {};};
+	//
+	//	class B {};
+	
+	//	A<B, false>::X x; //1
+	//	A<B, true>::Y y; //2
+	//
+	//	A<B, true>::X x; //3 should be an error
+	//	A<B, false>::Y y; //4 should be an error
+	public void testNonTypeBooleanArgumentDisambiguation() throws Exception {
+		ICPPClassType X= getBindingFromASTName("X x; //1", 1, ICPPClassType.class);
+		ICPPClassType Y= getBindingFromASTName("Y y; //2", 1, ICPPClassType.class);
+		getProblemFromASTName("X x; //3", 1);
+		getProblemFromASTName("Y y; //4", 1);
+		
+		assertTrue(!X.isSameType(Y));
+	}
+	
+	// template<int x> class A {};
+	// template<> class A<5> {public: class B{};};
+	//
+	// const int FIVE= 5;
+	// const int CINQ= FIVE;
+
+	// const int FUNF= CINQ;
+	// void refs() {
+	//    A<FIVE> a5a;
+	//    A<CINQ> a5b;
+	//    A<FUNF> a5c;
+	//    A<5> a5d;
+	//    A<1> a1;
+	// }
+	public void testConstantPropogationFromHeader() throws Exception {
+		ICPPClassType a5a= getBindingFromASTName("A<FIVE>", 7, ICPPClassType.class, ICPPSpecialization.class);
+		ICPPClassType a5b= getBindingFromASTName("A<CINQ>", 7, ICPPClassType.class, ICPPSpecialization.class);
+		ICPPClassType a5c= getBindingFromASTName("A<FUNF>", 7, ICPPClassType.class, ICPPSpecialization.class);
+		ICPPClassType a5d= getBindingFromASTName("A<5>", 4, ICPPClassType.class, ICPPSpecialization.class);
+		ICPPClassType a1= getBindingFromASTName("A<1>", 4, ICPPClassType.class, ICPPTemplateInstance.class);
+		
+		assertTrue(a5a.isSameType(a5b));
+		assertTrue(a5b.isSameType(a5c));
+		assertTrue(a5c.isSameType(a5d));
+		assertTrue(a5d.isSameType(a5a));
+		
+		assertTrue(!a1.isSameType(a5a));
+		assertTrue(!a1.isSameType(a5b));
+		assertTrue(!a1.isSameType(a5c));
+		assertTrue(!a1.isSameType(a5d));
 	}
 }

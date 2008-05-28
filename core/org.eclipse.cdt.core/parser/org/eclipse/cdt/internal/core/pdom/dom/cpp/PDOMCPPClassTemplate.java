@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -369,6 +370,12 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 					if (p instanceof IType && op instanceof IType) {
 						same &= (((IType)p).isSameType((IType)op));
 					} else {
+						if(p instanceof ICPPTemplateNonTypeParameter
+						&& op instanceof ICPPTemplateNonTypeParameter) {
+							IType pt= ((ICPPTemplateNonTypeParameter)p).getType();
+							IType opt= ((ICPPTemplateNonTypeParameter)op).getType();
+							return pt!=null && opt!=null ? pt.isSameType(opt) : pt == opt;
+						}
 						return false;
 					}
 				}

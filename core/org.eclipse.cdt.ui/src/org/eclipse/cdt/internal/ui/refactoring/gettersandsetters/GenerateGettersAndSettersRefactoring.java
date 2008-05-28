@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -73,11 +72,11 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	}
 	
 	private IASTName getSelectedName() {
-		Vector<IASTName> names = findAllMarkedNames();
+		ArrayList<IASTName> names = findAllMarkedNames();
 		if (names.size() < 1) {
 			return null;
 		}
-		return names.lastElement();
+		return names.get(names.size()-1);
 	}
 
 	protected void findDeclarations() {

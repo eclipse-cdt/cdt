@@ -128,7 +128,7 @@ public class NodeHelper {
 		 return context;
 	}
 	
-	public static IASTCompoundStatement findCompoundStatementInParent(IASTNode node) {
+	public static IASTCompoundStatement findCompoundStatementInAncestors(IASTNode node) {
 		while(node != null){
 			if (node instanceof IASTCompoundStatement) {
 				return (IASTCompoundStatement) node;
@@ -138,7 +138,7 @@ public class NodeHelper {
 		return null;
 	}
 	
-	public static IASTCompositeTypeSpecifier findEnclosingClass(IASTNode node) {
+	public static IASTCompositeTypeSpecifier findClassInAncestors(IASTNode node) {
 		while(!(node instanceof IASTCompositeTypeSpecifier)){
 			if(node instanceof IASTTranslationUnit) {
 				return null;
@@ -148,7 +148,7 @@ public class NodeHelper {
 		return (IASTCompositeTypeSpecifier) node;
 	}
 
-	public static IASTFunctionDefinition findFunctionDefinition(IASTNode node) {
+	public static IASTFunctionDefinition findFunctionDefinitionInAncestors(IASTNode node) {
 		while(node != null){
 			if (node instanceof IASTFunctionDefinition) {
 				return (IASTFunctionDefinition) node;

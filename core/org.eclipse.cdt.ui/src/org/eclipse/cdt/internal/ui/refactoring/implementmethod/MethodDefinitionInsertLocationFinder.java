@@ -12,8 +12,8 @@
 
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -105,20 +105,20 @@ public class MethodDefinitionInsertLocationFinder {
 	 * @return all declarations, sorted in reverse order
 	 */
 	private static Collection<IASTSimpleDeclaration> getAllPreviousIASTSimpleDeclarationsFromClassInReverseOrder(IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
-		Vector<IASTSimpleDeclaration> allIASTSimpleDeclarations = new Vector<IASTSimpleDeclaration>();
+		ArrayList<IASTSimpleDeclaration> allIASTSimpleDeclarations = new ArrayList<IASTSimpleDeclaration>();
 		for (IASTDeclaration decl : declarations) {
 			if (decl.getFileLocation().getStartingLineNumber() >= methodPosition.getStartingLineNumber()) {
 				return allIASTSimpleDeclarations;
 			}
 			if (isMemberFunctionDeclaration(decl)) {
-				allIASTSimpleDeclarations.insertElementAt((IASTSimpleDeclaration) decl, 0);
+				allIASTSimpleDeclarations.add(0, (IASTSimpleDeclaration) decl);
 			}
 		}
 		return allIASTSimpleDeclarations;
 	}
 
 	private static Collection<IASTSimpleDeclaration> getAllFollowingIASTSimpleDeclarationsFromClass(IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
-		Vector<IASTSimpleDeclaration> allIASTSimpleDeclarations = new Vector<IASTSimpleDeclaration>();
+		ArrayList<IASTSimpleDeclaration> allIASTSimpleDeclarations = new ArrayList<IASTSimpleDeclaration>();
 
 		for (IASTDeclaration decl : declarations) {
 			if (isMemberFunctionDeclaration(decl) && decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber() ) {

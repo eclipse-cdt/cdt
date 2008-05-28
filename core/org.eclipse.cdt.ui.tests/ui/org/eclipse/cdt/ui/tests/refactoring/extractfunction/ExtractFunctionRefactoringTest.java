@@ -73,7 +73,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 		info.setReplaceDuplicates(replaceDuplicates);
 		if(info.getInScopeDeclaredVariable() == null){
 			if(returnValue) {
-				info.setReturnVariable(info.getAllAfterUsedNames().elementAt(returnParameterIndex));
+				info.setReturnVariable(info.getAllAfterUsedNames().get(returnParameterIndex));
 			}
 		} else {
 			info.setReturnVariable( info.getInScopeDeclaredVariable() );

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -326,8 +326,8 @@ public abstract class CRefactoring extends Refactoring {
 		return fIndex;
 	}
 	
-	protected Vector<IASTName> findAllMarkedNames() {
-		final Vector<IASTName> namesVector = new Vector<IASTName>();
+	protected ArrayList<IASTName> findAllMarkedNames() {
+		final ArrayList<IASTName> namesVector = new ArrayList<IASTName>();
 
 		unit.accept(new CPPASTVisitor() {
 

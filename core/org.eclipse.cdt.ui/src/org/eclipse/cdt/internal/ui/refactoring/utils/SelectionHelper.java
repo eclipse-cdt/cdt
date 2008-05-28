@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 
 /**
- * Helper class to suport operations conserning a selection.
+ * Helper class to support operations concerning a selection.
  * 
  * @author Mirko Stocker, Lukas Felber
  *

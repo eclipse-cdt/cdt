@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.hidemethod;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -78,15 +78,12 @@ public class HideMethodRefactoring extends CRefactoring {
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 		
 		IASTName name;
-		Vector<IASTName> names = findAllMarkedNames();
-		if(names.size() > 1) {
-			name = names.lastElement();
-		} else if (names.size() < 1) {
+		ArrayList<IASTName> names = findAllMarkedNames();
+		if (names.size() < 1) {
 			initStatus.addFatalError(Messages.HideMethodRefactoring_NoNameSelected);  
 			return initStatus;
-		}else {
-			name = names.get(0);
 		}
+		name = names.get(names.size()-1);
 		sm.worked(1);
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 		

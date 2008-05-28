@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Helps to generate new unsused names.
+ * Helps to generate new unused names.
  * 
  * @author Mirko Stocker
  *

@@ -9,10 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Jan 19, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -42,8 +38,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod {
     
-    public CPPImplicitMethod( ICPPClassScope scope, char[] name, IType returnType, IParameter[] params ) {
-        super( name, scope, returnType, params, false );
+    public CPPImplicitMethod( ICPPClassScope scope, char[] name, IFunctionType type, IParameter[] params ) {
+        super( name, scope, type, params, false );
     }
    
 	public int getVisibility() throws DOMException {

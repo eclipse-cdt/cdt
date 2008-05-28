@@ -1629,7 +1629,7 @@ public class CPPTemplates {
 		@Override
 		public IFunctionType getType() {
 			if (type == null) {
-				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_void, 0), functionParameters);
+				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_void, 0), functionParameters, null);
 			}
 			return type;
 		}

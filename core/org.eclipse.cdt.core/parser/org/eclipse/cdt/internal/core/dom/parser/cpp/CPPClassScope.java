@@ -31,7 +31,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -123,15 +125,19 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (!ia.hasUserDeclaredCopyAssignmentOperator()) {
 			//copy assignment operator: A& operator = (const A &)
 			IType refType = new CPPReferenceType(clsType);
-			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), refType, ps);
+			IPointerType thisType= new CPPPointerType(clsType);
+			IFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, thisType);
+			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, ps);
 			implicits[i++] = m;
 			addBinding(m);
 		}
 
 		if (!ia.hasUserDeclaredDestructor()) {
 			//destructor: ~A()
+			IPointerType thisType= new CPPPointerType(clsType);
+			IFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_unspecified, 0), voidPs, thisType);
 			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className);  //$NON-NLS-1$
-			ICPPMethod m = new CPPImplicitMethod(this, dtorName, new CPPBasicType(IBasicType.t_unspecified, 0), voidPs);
+			ICPPMethod m = new CPPImplicitMethod(this, dtorName, ft, voidPs);
 			implicits[i++] = m;
 			addBinding(m);
 		}

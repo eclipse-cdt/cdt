@@ -4755,4 +4755,14 @@ public class AST2Tests extends AST2BaseTest {
     		assertSame(t, ct);
 		}    	
     }
+    
+    //    void checkLong(long);
+    //    void test() {
+    //    	checkLong(__builtin_expect(1, 1));
+    //    }
+    public void testReturnTypeOfBuiltin_Bug234309() throws Exception {
+    	String code= getAboveComment();
+    	parseAndCheckBindings(code, ParserLanguage.C, true);
+    	parseAndCheckBindings(code, ParserLanguage.CPP, true);
+    }
 }

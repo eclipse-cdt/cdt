@@ -17,9 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * The CPPImplicitFunction is used to represent implicit functions that exist on the translation
@@ -33,16 +31,15 @@ public class CPPImplicitFunction extends CPPFunction {
 
 	private IParameter[] parms=null;
 	private IScope scope=null;
-	private IType returnType=null;
     private IFunctionType functionType=null;
 	private boolean takesVarArgs=false;
 	private char[] name=null;
 	
-	public CPPImplicitFunction(char[] name, IScope scope, IType type, IParameter[] parms, boolean takesVarArgs) {
+	public CPPImplicitFunction(char[] name, IScope scope, IFunctionType type, IParameter[] parms, boolean takesVarArgs) {
         super( null );
         this.name=name;
 		this.scope=scope;
-		this.returnType=type;
+		this.functionType= type;
 		this.parms=parms;
 		this.takesVarArgs=takesVarArgs;
 	}
@@ -54,28 +51,9 @@ public class CPPImplicitFunction extends CPPFunction {
     
     @Override
 	public IFunctionType getType() {
-        if( functionType == null ){
-            ICPPASTFunctionDeclarator primary = getPrimaryDeclaration();
-            
-            if( primary != null ){
-                functionType = super.getType();
-            } else {
-                functionType = CPPVisitor.createImplicitFunctionType( returnType, parms );
-            }
-        }
-        
-        return functionType;
+    	return functionType;
     }
     
-    private ICPPASTFunctionDeclarator getPrimaryDeclaration() {
-        if (definition != null)
-            return definition;
-        else if (declarations != null && declarations.length > 0)
-            return declarations[0];
-            
-        return null;
-    }
-
     @Override
 	public String getName() {
         return String.valueOf( name );

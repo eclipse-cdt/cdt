@@ -1488,12 +1488,9 @@ public class CPPVisitor {
 
 	/**
 	 * Generate a function type for an implicit function.
-	 * NOTE: This does not currectly handle parameters with typedef types.
-	 * @param returnType
-	 * @param parameters
+	 * NOTE: This does not correctly handle parameters with typedef types.
 	 */
-	
-	public static IFunctionType createImplicitFunctionType(IType returnType, IParameter[] parameters) {
+	public static IFunctionType createImplicitFunctionType(IType returnType, IParameter[] parameters, IPointerType thisType) {
 	    IType[] pTypes = new IType[parameters.length];
 	    IType pt = null;
 	    
@@ -1518,7 +1515,7 @@ public class CPPVisitor {
 	        pTypes[i] = pt; 
 	    }
 	    
-	    return new CPPFunctionType(returnType, pTypes);
+	    return new CPPFunctionType(returnType, pTypes, thisType);
 	}
 	
 	private static IType createType(IType returnType, ICPPASTFunctionDeclarator fnDtor) {

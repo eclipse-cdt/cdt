@@ -472,6 +472,15 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			                    drm.setData(getData());
 			                    drm.done();
 			                }
+			    			@Override
+			    			protected void handleFailure() {
+			    				// Bug234289: If memory read fails, return a block marked as invalid
+			    				MemoryByte[] block = new MemoryByte[fWordSize * (int) length];
+		    					for (int i = 0; i < block.length; i++)
+		    						block[i] = new MemoryByte((byte) 0, (byte) 0);
+			    				drm.setData(block);
+			    				drm.done();
+			    			}
 			            });
 			    }
 				

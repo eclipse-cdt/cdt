@@ -877,13 +877,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	    {
 	    	// Each byte is written individually (GDB power...)
 	    	// so we need to keep track of the count
-	        final CountingRequestMonitor countingRM =
-	        	new CountingRequestMonitor(getExecutor(), rm) { 
-	                @Override
-	                protected void handleSuccess() {
-	                    rm.done();
-	                }
-	            };
+	        final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
 	       	countingRM.setDoneCount(count);
 	
 	    	// We will format the individual bytes in decimal

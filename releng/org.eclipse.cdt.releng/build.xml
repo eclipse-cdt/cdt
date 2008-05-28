@@ -173,10 +173,10 @@
 		<delete>
 			<fileset dir="${testDirectory}/eclipse/features">
 				<includes file="*.jar"/>
-				<includes file="site.xml"/>
-				<includes file="pack.properties"/>
 			</fileset>
 		</delete>
+		<delete file="${testDirectory}/eclipse/site.xml"/>
+		<delete file="${testDirectory}/eclipse/pack.properties"/>
 		<ant antfile="test.xml" dir="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}">
 			<property name="eclipse-home" value="${testDirectory}/eclipse"/>
 			<property name="library-file" value="${testDirectory}/eclipse/plugins/${eclipseTest}/library.xml"/>

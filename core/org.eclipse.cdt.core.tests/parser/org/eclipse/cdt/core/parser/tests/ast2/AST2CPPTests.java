@@ -5604,4 +5604,29 @@ public class AST2CPPTests extends AST2BaseTest {
 			}
 		}
 	}
+	
+	//	class A {
+	//		public:
+	//			void doA() {}
+	//	};
+	//
+	//	class FirstLevelProxy {
+	//		public:
+	//			A* operator->() {A *a = new A(); return a;} // leaky
+	//			void doFLP() {}
+	//	};
+	//
+	//	class SecondLevelProxy {
+	//		public:
+	//			FirstLevelProxy operator->() {FirstLevelProxy p; return p;}
+	//			void doSLP() {}
+	//	};
+	//
+	//	int main(int argc, char **argv) {
+	//		SecondLevelProxy p2;
+	//		p2->doA();
+	//	}
+	public void testRecursiveUserDefinedFieldAccess_Bug205964() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
 }

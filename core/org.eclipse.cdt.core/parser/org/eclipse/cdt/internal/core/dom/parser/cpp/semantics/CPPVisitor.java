@@ -954,10 +954,16 @@ public class CPPVisitor {
 				IType type = getExpressionType(owner);
 				if (fieldReference.isPointerDereference()) {
 					type= getUltimateTypeUptoPointers(type);
-					if (type instanceof ICPPClassType) {
-						ICPPFunction op = CPPSemantics.findOperator(fieldReference, (ICPPClassType) type);
-						if (op != null) {
-							type = op.getType().getReturnType();
+					// bug 205964: as long as the type is a class type, recurse. 
+					// Be defensive and allow a max of 10 levels.
+					for (int j = 0; j < 10; j++) {
+						if (type instanceof ICPPClassType) {
+							ICPPFunction op = CPPSemantics.findOperator(fieldReference, (ICPPClassType) type);
+							if (op != null) {
+								type = op.getType().getReturnType();
+							}
+						} else {
+							break;
 						}
 					}
 				} 

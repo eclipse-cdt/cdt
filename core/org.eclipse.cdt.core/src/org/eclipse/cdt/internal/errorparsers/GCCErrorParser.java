@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,24 +38,23 @@ public class GCCErrorParser extends AbstractErrorParser {
 			@Override
 			public String getVarName(Matcher matcher) {
 				String desc = getDesc(matcher);
-				Matcher varMatcher = null;
+				if (desc == null)
+					return null;
+				
 				for (int i = 0; i < varPatterns.length; ++i) {
-					varMatcher = varPatterns[i].matcher(desc);
+					Matcher varMatcher = varPatterns[i].matcher(desc);
 					if (varMatcher.find())
-						break;
-					else
-						varMatcher = null;
+						return varMatcher.group(1);
 				}
-
-				return varMatcher != null ? varMatcher.group(1) : null;
+				return null;
 			}
 			@Override
 			public int getSeverity(Matcher matcher) {
 				String warningGroup = matcher.group(4);
 				if (warningGroup != null && warningGroup.indexOf("arning") >= 0) //$NON-NLS-1$
 					return IMarkerGenerator.SEVERITY_WARNING;
-				else
-					return IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
+				
+				return IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			}
 		}
 	};

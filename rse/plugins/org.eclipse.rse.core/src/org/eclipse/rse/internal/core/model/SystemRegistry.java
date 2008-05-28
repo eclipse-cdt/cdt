@@ -51,6 +51,7 @@
  * Martin Oberhuber (Wind River) - [228774] Improve ElementComparer Performance
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
+ * David McKnight   (IBM)        - [234057] Wrong or missing model change event
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -122,8 +123,7 @@ public class SystemRegistry implements ISystemRegistry
 	private final SystemPreferenceChangeManager preferenceListManager = new SystemPreferenceChangeManager();
 	private final SystemModelChangeEventManager modelListenerManager = new SystemModelChangeEventManager();
 	private final SystemRemoteChangeEventManager remoteListManager = new SystemRemoteChangeEventManager();
-	private SystemModelChangeEvent modelEvent;
-	private SystemRemoteChangeEvent remoteEvent;
+
 	private int listenerCount = 0;
 	private int modelListenerCount = 0;
 	private int remoteListCount = 0;
@@ -2487,8 +2487,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireModelChangeEvent(int eventType, int resourceType, Object resource, String oldName)
 	{
-		if (modelEvent == null)
-			modelEvent = new SystemModelChangeEvent();
+		SystemModelChangeEvent modelEvent = new SystemModelChangeEvent();
 		modelEvent.setEventType(eventType);
 		modelEvent.setResourceType(resourceType);
 		modelEvent.setResource(resource);
@@ -2581,8 +2580,7 @@ public class SystemRegistry implements ISystemRegistry
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
 
-		if (remoteEvent == null)
-			remoteEvent = new SystemRemoteChangeEvent();
+		SystemRemoteChangeEvent remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
 		remoteEvent.setResourceParent(resourceParent);
@@ -2620,8 +2618,7 @@ public class SystemRegistry implements ISystemRegistry
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
 
-		//if (remoteEvent == null)
-			remoteEvent = new SystemRemoteChangeEvent();
+		SystemRemoteChangeEvent	remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
 		remoteEvent.setResourceParent(resourceParent);
@@ -2659,8 +2656,7 @@ public class SystemRegistry implements ISystemRegistry
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
 
-		if (remoteEvent == null)
-			remoteEvent = new SystemRemoteChangeEvent();
+		SystemRemoteChangeEvent remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setOperation(operation);
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
@@ -2700,8 +2696,7 @@ public class SystemRegistry implements ISystemRegistry
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
 
-		if (remoteEvent == null)
-			remoteEvent = new SystemRemoteChangeEvent();
+		SystemRemoteChangeEvent remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setOperation(operation);
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);

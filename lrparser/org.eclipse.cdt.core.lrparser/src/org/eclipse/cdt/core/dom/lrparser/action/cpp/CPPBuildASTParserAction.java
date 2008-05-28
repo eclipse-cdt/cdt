@@ -637,6 +637,19 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		Object condition = astStack.pop(); // can be an expression or a declaration
 		IASTStatement initializer = (IASTStatement) astStack.pop();
 		
+		// bug 234463, fix for content assist to work in this case
+		int TK_EOC = TK_EndOfCompletion; // TODO: change this in the grammar file
+		List<IToken> tokens = parser.getRuleTokens();
+		if(matchTokens(tokens, tokenMap, 
+				TK_for, TK_LeftParen, TK_Completion, TK_EOC, TK_EOC, TK_EOC, TK_EOC)) {
+			IASTName name = createName(tokens.get(2));
+			IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
+			setOffsetAndLength(idExpression, offset(name), length(name));
+			initializer = nodeFactory.newExpressionStatement(idExpression);
+			setOffsetAndLength(initializer, offset(name), length(name));
+		}
+		
+		
 		IASTForStatement forStat;
 		if(condition instanceof IASTExpression)
 			forStat = nodeFactory.newForStatement(initializer, (IASTExpression)condition, expr, body);

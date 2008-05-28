@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
@@ -666,6 +667,20 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			initializer = nodeFactory.newDeclarationStatement((IASTDeclaration)node);
 		else // its null
 			initializer = nodeFactory.newNullStatement();
+		
+		
+		// bug 234463, fix for content assist to work in this case
+		int TK_EOC = TK_EndOfCompletion; // TODO: change this in the grammar file
+		List<IToken> tokens = parser.getRuleTokens();
+		if(matchTokens(tokens, tokenMap, 
+				TK_for, TK_LeftParen, TK_Completion, TK_EOC, TK_EOC, TK_EOC, TK_EOC)) {
+			IASTName name = createName(tokens.get(2));
+			IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
+			setOffsetAndLength(idExpression, offset(name), length(name));
+			initializer = nodeFactory.newExpressionStatement(idExpression);
+			setOffsetAndLength(initializer, offset(name), length(name));
+		}
+		
 		
 		if(node != null)
 			setOffsetAndLength(initializer, offset(node), length(node));

@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ASTPrinter;
+import org.eclipse.cdt.core.parser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
@@ -44,7 +46,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			
 	
 	private static final boolean DEBUG_PRINT_GCC_AST = false;
-	private static final boolean DEBUG_PRINT_AST = false;
+	private static final boolean DEBUG_PRINT_AST     = false;
 	
 	private ICLanguageKeywords keywords = null;
 	
@@ -169,14 +171,13 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		
 		if(DEBUG_PRINT_GCC_AST) {
-			ILanguage gppLanguage = GPPLanguage.getDefault();
+			ILanguage gppLanguage = GCCLanguage.getDefault();
 			IASTCompletionNode cn = gppLanguage.getCompletionNode(reader, scanInfo, fileCreator, index, log, offset);
 			
 			System.out.println();
 			System.out.println("********************************************************");
 			System.out.println("GPP AST:");
-			ASTPrinter.print(cn.getTranslationUnit());
-			System.out.println();
+			printCompletionNode(cn);
 		}
 		
 		// TODO temporary
@@ -196,12 +197,28 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
-			ASTPrinter.print(tu);
-			System.out.println();
-			System.out.println("Completion Node: " + completionNode);
+			printCompletionNode(completionNode);
 		}
 		
 		return completionNode;
+	}
+	
+	
+	/*
+	 * For debugging.
+	 */
+	@SuppressWarnings("nls")
+	private static void printCompletionNode(IASTCompletionNode cn) {
+		ASTPrinter.print(cn.getTranslationUnit());
+		for(IASTName name : cn.getNames()) {
+			ASTNode context = (ASTNode)name.getCompletionContext();
+			System.out.printf("Name: %s, Context: %s, At: %d", 
+					name, DebugUtil.safeClassName(context), context == null ? null : context.getOffset());
+			if(name.getTranslationUnit() == null) // some name nodes are not hooked up to the AST
+				System.out.print(", not hooked up");
+			System.out.println();
+		}
+		System.out.println();
 	}
 	
 	

@@ -54,7 +54,7 @@ $Terminals
 	-- Special tokens used in content assist
 	
 	Completion
-	EndOfCompletion  ::= 'EOC'
+	EndOfCompletion
 	
 	-- Unrecognized token, not actually used anywhere in the grammar, always leads to syntax error
 	
@@ -64,7 +64,6 @@ $Terminals
 
 	LeftBracket      ::= '['
 	LeftParen        ::= '('
-	LeftBrace        ::= '{'
 	Dot              ::= '.'
 	DotStar          ::= '.*'
 	Arrow            ::= '->'
@@ -112,6 +111,7 @@ $Terminals
     RightParen     
     RightBrace    
     SemiColon
+    LeftBrace
     
 $End
 
@@ -306,6 +306,8 @@ $Rules
 ';' ::=? 'SemiColon'
        | 'EndOfCompletion'
 
+'{' ::=? 'LeftBrace'
+       | 'EndOfCompletion'
 
 
 
@@ -1476,11 +1478,8 @@ class_name
 class_specifier
     ::= class_head '{'   <openscope-ast> member_declaration_list_opt '}'
           /.  $Build  consumeClassSpecifier();  $EndBuild ./
-        -- need this for content assist to work properly for base specifiers
-      | class_head 'EOC' <openscope-ast> member_declaration_list_opt '}'  
-          /.  $Build  consumeClassSpecifier();  $EndBuild ./
-
-
+       
+       
 class_head
     ::= class_keyword identifier_name_opt <openscope-ast> base_clause_opt
           /. $Build  consumeClassHead(false);  $EndBuild ./

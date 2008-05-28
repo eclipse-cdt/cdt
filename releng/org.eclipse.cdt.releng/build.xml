@@ -19,7 +19,8 @@
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildingOSGi" value="true"/>
-		<property name="buildDirectory" value="${basedir}/results" />
+		<property name="buildDirectory" value="${basedir}/results"/>
+		<property name="testDirectory" value="${buildDirectory}/test"/>
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
 		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build/scripts"/>
 		<property name="collectingFolder" value="eclipse"/>
@@ -99,7 +100,7 @@
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
 		<untar src="${eclipseDist}" dest="${buildDirectory}" compression="gzip"/>
-		<unzip src="${mylynDist}" dest="${buildDirectory}/eclipse/dropins"/>
+		<unzip src="${mylynDist}" dest="${buildDirectory}"/>
 	</target>
 	
 	<target name="zips" depends="init,unzip">
@@ -137,23 +138,25 @@
 
 	<target name="test" depends="init" unless="hasErrors">
 		<record name="${testReports}/testsLog.txt" action="start" loglevel="verbose"/>
+		<untar src="${eclipseDist}" dest="${testDirectory}" compression="gzip"/>
+		<unzip src="${mylynDist}" dest="${testDirectory}"/>
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
-			dest="${buildDirectory}/eclipse/dropins"/>
-		<unjar src="${buildDirectory}/eclipse/dropins/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
-			dest="${buildDirectory}/eclipse/dropins/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
-		<unjar src="${buildDirectory}/eclipse/dropins/plugins/${eclipseTest}.jar"
-			dest="${buildDirectory}/eclipse/dropins/plugins/${eclipseTest}"/>
-		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/dropins/plugins/org.eclipse.cdt.testing_${branchVersion}.${forceContextQualifier}">
-			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
-			<property name="library-file" value="${buildDirectory}/eclipse/dropins/plugins/${eclipseTest}/library.xml"/>
+			dest="${testDirectory}/eclipse"/>
+		<unjar src="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
+			dest="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
+		<unjar src="${testDirectory}/eclipse/plugins/${eclipseTest}.jar"
+			dest="${testDirectory}/eclipse/plugins/${eclipseTest}"/>
+		<ant antfile="test.xml" dir="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${forceContextQualifier}">
+			<property name="eclipse-home" value="${testDirectory}/eclipse"/>
+			<property name="library-file" value="${testDirectory}/eclipse/plugins/${eclipseTest}/library.xml"/>
 			<property name="os" value="${baseos}"/>
 			<property name="ws" value="${basews}"/>
 			<property name="arch" value="${basearch}"/>
 		</ant>
 		<xslt style="${basedir}/JUNIT.XSL"
-			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
+			in="${testDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 			out="${zipsdir}/junits.html"/>
-		<copy file="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
+		<copy file="${testDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 		    tofile="${testReports}/org.eclipse.cdt.testing.xml"
 		    failonerror="false"/>
 		<record name="${testReports}/testsLog.txt" action="stop"/>

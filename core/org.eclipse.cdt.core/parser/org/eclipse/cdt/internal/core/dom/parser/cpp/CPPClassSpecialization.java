@@ -85,7 +85,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase)binding).clone();
     		    IBinding base = binding.getBaseClass();
     		    if (base instanceof IType) {
-    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, getScope());
+    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, specScope);
     		    	specBase = SemanticUtil.getUltimateType(specBase, false);
     		    	if (specBase instanceof IBinding && !(specBase instanceof IProblemBinding)) {
     		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
@@ -105,7 +105,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 			bindings[i] = new CPPBaseClause(bases[i]);
 			IBinding base = bindings[i].getBaseClass();
 			if (base instanceof IType) {
-				IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, null);
+				IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, specScope);
 				if (specBase instanceof ICPPClassType) {
 					((CPPBaseClause) bindings[i]).setBaseClass((ICPPClassType) specBase);
 				}

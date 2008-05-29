@@ -165,7 +165,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 					ICPPBase specBase = (ICPPBase) ((ICPPInternalBase)origBase).clone();
 					IBinding origClass = origBase.getBaseClass();
 					if (origClass instanceof IType) {
-						IType specClass = CPPTemplates.instantiateType((IType) origClass, getArgumentMap(), getScope());
+						IType specClass = CPPTemplates.instantiateType((IType) origClass, getArgumentMap(), this);
 						specClass = SemanticUtil.getUltimateType(specClass, true);
 						if (specClass instanceof IBinding) {
 							((ICPPInternalBase)specBase).setBaseClass((IBinding) specClass);

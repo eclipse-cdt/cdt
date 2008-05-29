@@ -54,7 +54,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-class PDOMCPPClassTemplate extends PDOMCPPClassType
+public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		implements ICPPClassTemplate, ICPPInternalTemplateInstantiator, ICPPTemplateScope {
 	
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;

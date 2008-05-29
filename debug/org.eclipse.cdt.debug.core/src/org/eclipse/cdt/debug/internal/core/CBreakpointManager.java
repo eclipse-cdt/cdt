@@ -1014,6 +1014,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				binary, 
 				sourceHandle, 
 				resource, 
+				ICBreakpointType.REGULAR, 
 				line, 
 				address, 
 				cdiBreakpoint.isEnabled(), 

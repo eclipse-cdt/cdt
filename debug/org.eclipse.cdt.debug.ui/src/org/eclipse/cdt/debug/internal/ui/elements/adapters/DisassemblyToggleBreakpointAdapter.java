@@ -15,6 +15,7 @@ import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.IDisassemblyInstruction;
@@ -59,6 +60,7 @@ public class DisassemblyToggleBreakpointAdapter implements IElementToggleBreakpo
                                         null,
                                         "",  //$NON-NLS-1$
                                         ResourcesPlugin.getWorkspace().getRoot(),
+                                        ICBreakpointType.REGULAR,
                                         -1,
                                         address, 
                                         true, 

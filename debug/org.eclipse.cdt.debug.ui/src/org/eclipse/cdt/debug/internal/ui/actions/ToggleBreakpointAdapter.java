@@ -174,6 +174,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 							CDIDebugModel.createAddressBreakpoint( module,
 																   sourceHandle, 
 																   resource,
+																   ICBreakpointType.REGULAR,
 																   ((DisassemblyEditorInput)input).getSourceLine( lineNumber ),
 																   address, 
 																   true, 

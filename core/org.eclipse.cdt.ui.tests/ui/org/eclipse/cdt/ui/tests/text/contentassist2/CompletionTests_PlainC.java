@@ -136,6 +136,12 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//C1* gfC2();
 	//C1 gC1, gC2;
 	//#endif /* STRUCT_C1 */
+	//	struct s206450 {
+	//		struct {int a1; int a2;};
+	//		union {int u1; char u2;};
+	//		struct {int a3;} a4;
+	//		int b;
+	//	};
 	
 	//{DisturbWith.c}
 	// int gTemp;
@@ -937,6 +943,12 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//	static const MYSTRUCT_TYPE myArrayOfStructs[] = {{enum/*cursor*/
 	public void testCompletionInInitializerList_Bug230389() throws Exception {
 		final String[] expected= {"enum0", "enum1", "enum2"};
+		assertCompletionResults(expected);
+	}
+	
+	//  void test() {struct s206450 x; x./*cursor*/
+	public void _testNestedAnonymousStructs_Bug206450() throws Exception {
+		final String[] expected= {"a1", "a2", "u1", "u2", "a4", "b"};
 		assertCompletionResults(expected);
 	}
 }

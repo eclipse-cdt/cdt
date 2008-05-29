@@ -62,98 +62,102 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//    class gnsClass {};
 	// };
 
+	//{CompletionTest.h}
+	//class C1;
+	//class C2;
+	//class C3;
+	//
+	//extern C1* gC1;
+	//C2* gC2 = 0;
+	//
+	//extern C1* gfC1();
+	//C2* gfC2();
+	//
+	//enum E1 {e11, e12};
+	//
+	//class C1 {
+	//public:
+	//		enum E2 {e21, e22};
+	//
+	//		C1* fMySelf;
+	//		void iam1();
+	//
+	//		C1* m123();
+	//		C1* m12();
+	//		C1* m13();
+	//
+	//private:
+	//		void m1private();
+	//};
+	//typedef C1 T1;
+	//
+	//
+	//class C2 : public T1 {
+	//public:
+	//		C2* fMySelf;
+	//		void iam2();
+	//
+	//		C2* m123();
+	//		C2* m12();
+	//		C2* m23();
+	//      C1* operator()(int x);
+	//
+	//private:
+	//		void m2private();
+	//};
+	//typedef C2 T2;
+	//
+	//
+	//class C3 : public C2 {
+	//public:
+	//		C3* fMySelf;
+	//		void iam3();
+	//
+	//		C3* m123();
+	//		C3* m13();
+	//
+	//  	template<typename T> T tConvert();
+	//private:
+	//		void m3private();
+	//};
+	//typedef C3 T3;
+	//
+	//namespace ns {
+	//   const int NSCONST= 1;
+	//   class CNS {
+	//	      void mcns();
+	//   };
+	//};
+	//template <class T> class TClass {
+	//	T fTField;
+	//public:
+	//	TClass(T tArg) : fTField(tArg) {
+	//	}
+	//	T add(T tOther) {
+	//		return fTField + tOther;
+	//	}
+	//};
+	//// bug 109480
+	//class Printer
+	//{
+	//public:
+	//	static void InitPrinter(unsigned char port);
+	//private:
+	//	//Storage for port printer is on
+	//	static unsigned char port;
+	//protected:
+	//};
+	//struct Struct1;
+	//struct Struct2;
+	//union Union1;
+	//union Union2;
+	//	struct s206450 {
+	//		struct {int a1; int a2;};
+	//		union {int u1; char u2;};
+	//		struct {int a3;} a4;
+	//		int b;
+	//	};
 
-
-
-//{CompletionTest.h}
-//class C1;
-//class C2;
-//class C3;
-//
-//extern C1* gC1;
-//C2* gC2 = 0;
-//
-//extern C1* gfC1();
-//C2* gfC2();
-//
-//enum E1 {e11, e12};
-//
-//class C1 {
-//public:
-//		enum E2 {e21, e22};
-//
-//		C1* fMySelf;
-//		void iam1();
-//
-//		C1* m123();
-//		C1* m12();
-//		C1* m13();
-//
-//private:
-//		void m1private();
-//};
-//typedef C1 T1;
-//
-//
-//class C2 : public T1 {
-//public:
-//		C2* fMySelf;
-//		void iam2();
-//
-//		C2* m123();
-//		C2* m12();
-//		C2* m23();
-//      C1* operator()(int x);
-//
-//private:
-//		void m2private();
-//};
-//typedef C2 T2;
-//
-//
-//class C3 : public C2 {
-//public:
-//		C3* fMySelf;
-//		void iam3();
-//
-//		C3* m123();
-//		C3* m13();
-//
-//  	template<typename T> T tConvert();
-//private:
-//		void m3private();
-//};
-//typedef C3 T3;
-//
-//namespace ns {
-//   const int NSCONST= 1;
-//   class CNS {
-//	      void mcns();
-//   };
-//};
-//template <class T> class TClass {
-//	T fTField;
-//public:
-//	TClass(T tArg) : fTField(tArg) {
-//	}
-//	T add(T tOther) {
-//		return fTField + tOther;
-//	}
-//};
-//// bug 109480
-//class Printer
-//{
-//public:
-//	static void InitPrinter(unsigned char port);
-//private:
-//	//Storage for port printer is on
-//	static unsigned char port;
-//protected:
-//};
-//struct Struct1;
-//struct Struct2;
-//union Union1;
-//union Union2;
 
 	public CompletionTests(String name) {
 		super(name, true);
@@ -1154,6 +1158,12 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//    c2(1)->iam/*cursor*/
 	public void testUserdefinedCallOperator_Bug231277() throws Exception {
 		final String[] expected= {"iam1()"};
+		assertCompletionResults(expected);
+	}
+	
+	//  void test() {struct s206450 x; x./*cursor*/
+	public void _testNestedAnonymousStructs_Bug206450() throws Exception {
+		final String[] expected= {"a1", "a2", "u1", "u2", "a4", "b", "s206450"};
 		assertCompletionResults(expected);
 	}
 }

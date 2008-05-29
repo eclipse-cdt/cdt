@@ -7,4 +7,4 @@ plugin@org.eclipse.tm.discovery.model.edit=v20080522,:pserver:anonymous:none@dev
 plugin@org.eclipse.tm.discovery.protocol.dnssd=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.protocol.dnssd
 plugin@org.eclipse.tm.discovery.transport.udp=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.transport.udp
 plugin@org.eclipse.tm.discovery.view=v20080522,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.view
-plugin@org.eclipse.tm.discovery.wizard=v20080522,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.wizard
+plugin@org.eclipse.tm.discovery.wizard=v20080529,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.wizard

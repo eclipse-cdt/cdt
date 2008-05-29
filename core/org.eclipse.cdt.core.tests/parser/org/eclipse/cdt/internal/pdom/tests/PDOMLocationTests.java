@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  * Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Test;
 
@@ -23,10 +27,11 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 /**
- * Tests behaviour related to location representation in the PDOM
+ * Tests behavior related to location representation in the PDOM
  */
 public class PDOMLocationTests extends BaseTestCase {
 	ICProject cproject;
@@ -53,15 +58,25 @@ public class PDOMLocationTests extends BaseTestCase {
 
 	public void testLocationConverter() {
 		PDOMProjectIndexLocationConverter converter = new PDOMProjectIndexLocationConverter(cproject.getProject());
-		String[] externals = new String[] {
+		String[] winExternals= new String[] {
 				"c:/a/b/c/d.foo",
 				"c:\\a\\b\\c\\d\\e.foo",
 				"d:/foo.bar",
-				"d:\\Documents and Settings\\JDoe\\Eclipse Workspaces\\ProjectX\\foo.bar",
+				"d:\\Documents and Settings\\JDoe\\Eclipse Workspaces\\ProjectX\\foo.bar"
+		};
+		String[] linuxExternals = new String[] {
+				"/home/jdoe/workspaces/projectx/foo",
 				"/home/jdoe/eclipse workspaces/projectx/foo.bar"
 		};
-		for(int i=0; i<externals.length; i++) {
-			IIndexFileLocation loc = IndexLocationFactory.getExternalIFL(externals[i]);
+		
+		Set<String> externals= new HashSet();
+		externals.addAll(Arrays.asList(linuxExternals));
+		if(Platform.getOS().equals("win32")) {
+			externals.addAll(Arrays.asList(winExternals));
+		}
+		
+		for(String ext : externals) {
+			IIndexFileLocation loc = IndexLocationFactory.getExternalIFL(ext);
 			String raw = converter.toInternalFormat(loc);
 			IIndexFileLocation roundtrip = converter.fromInternalFormat(raw);
 			assertTrue(roundtrip!=null);

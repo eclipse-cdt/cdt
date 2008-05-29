@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -16,7 +17,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Uwe Stieber (Wind River) - [189426] System File/Folder Dialogs - New Connection Not Added to Drop Down
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
 

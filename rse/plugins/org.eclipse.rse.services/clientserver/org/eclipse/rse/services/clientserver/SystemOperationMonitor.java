@@ -1,14 +1,14 @@
-/********************************************************************************
- * Copyright (c) 2007, 2007 IBM Corporation. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
- * 
  * Xuan Chen (IBM) - initial API and implementation 
- ********************************************************************************/
+ * Martin Oberhuber (Wind River) - [216252] canceled --> cancelled in comments and locals
+ *******************************************************************************/
 
 
 package org.eclipse.rse.services.clientserver;

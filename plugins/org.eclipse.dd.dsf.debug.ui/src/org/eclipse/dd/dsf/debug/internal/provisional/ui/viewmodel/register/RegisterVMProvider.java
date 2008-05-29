@@ -153,19 +153,21 @@ public class RegisterVMProvider extends AbstractDMVMProvider
     	 * specific. If it were to become so then we would need to modify this policy.
     	 */
     	Object element = update.getElement();
-    	IDMContext ctx = ((IDMVMContext) element).getDMContext();
-
-    	IExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
-		if ( execDmc != null ) {
-			/*
-			 * This tells the Flexible Hierarchy that element driving this view has not changed
-			 * and there is no need to redraw the view. Since this is a somewhat fake VMContext
-			 * we provide our Root Layout node as the representative VM node.
-			 */
-			update.setInputElement(new ViewInputElement(RegisterVMProvider.this.getRootVMNode(), execDmc));
-			update.done();
-			return;
-		}
+    	if (element instanceof IDMVMContext) {
+        	IDMContext ctx = ((IDMVMContext) element).getDMContext();
+    
+        	IExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
+    		if ( execDmc != null ) {
+    			/*
+    			 * This tells the Flexible Hierarchy that element driving this view has not changed
+    			 * and there is no need to redraw the view. Since this is a somewhat fake VMContext
+    			 * we provide our Root Layout node as the representative VM node.
+    			 */
+    			update.setInputElement(new ViewInputElement(RegisterVMProvider.this.getRootVMNode(), execDmc));
+    			update.done();
+    			return;
+    		}
+    	}
     	
     	/*
     	 * If we reach here, then we did not override the standard behavior. Invoke the

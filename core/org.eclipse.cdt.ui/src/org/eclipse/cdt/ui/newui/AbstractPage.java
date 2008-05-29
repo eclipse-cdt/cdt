@@ -58,6 +58,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -460,6 +461,40 @@ implements
 		return performSave(SAVE_MODE_OK); 
         	
     }
+
+    /**
+     * Searches in the prj for the config description with the same ID as for given cfg.
+     * If there's no such cfgd, it will be created.
+     *  
+     *  @param prj - project description where we'll search (or create) config description
+     *  @param cfg - config description belonging to another project description, 
+     *               it is a sample for search and base for possile creation
+     *               of resulting configuration description.
+     *                  
+     *  @return the configuration description (found or created) or null in case of error
+     */
+    private ICConfigurationDescription findCfg(ICProjectDescription prj, ICConfigurationDescription cfg) {
+    	String id = cfg.getId();
+    	// find config with the same ID as original one
+		ICConfigurationDescription c = prj.getConfigurationById(id);
+		// if there's no cfg found, try to create it
+		if (c == null) {
+			try {
+				c = prj.createConfiguration(id, cfg.getName(), cfg);
+				c.setDescription(cfg.getDescription());
+			} catch (CoreException e) { 
+				/* do nothing: c is already null */ 
+			}
+		}
+		// if creation failed, report an error and return null
+		if (c == null) {
+			MessageBox mb = new MessageBox(getShell());
+			mb.setMessage(UIMessages.getString("AbstractPage.3")); //$NON-NLS-1$
+			mb.open();
+		}
+    	return c;
+    }
+    
     /**
      * The same code used to perform OK and Apply 
      */
@@ -482,7 +517,9 @@ implements
 				}
 				lc = MultiItemsHolder.createRDescription(rds);
 			} else {
-				ICConfigurationDescription c = local_prjd.getConfigurationById(resd.getConfiguration().getId());
+				ICConfigurationDescription c = findCfg(local_prjd, resd.getConfiguration());
+				if (c == null) 
+					return false; // cannot save: no cfg found
 				lc = getResDesc(c);
 			}
 		}

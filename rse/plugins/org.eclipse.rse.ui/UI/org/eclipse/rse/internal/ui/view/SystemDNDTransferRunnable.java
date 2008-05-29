@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [228587] [dnd] NPE From Refresh on Copy/Paste
  * David McKnight   (IBM)        - [232889] Dragging and dropping files from a remote unix system to a local project does not work
+ * David McKnight   (IBM)        - [234721] [dnd] When dragging a file from windows file explorer into RSE, a refresh error is given.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -58,7 +59,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.internal.model.SystemScratchpad;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
@@ -664,12 +664,22 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				    {
 				        doRefresh = true;
 				    }
-				    ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)src).getAdapter(ISystemViewElementAdapter.class);
+				    ISystemDragDropAdapter adapter = null;
+				    if (src instanceof IAdaptable) {				    					    	
+				    	adapter = (ISystemDragDropAdapter)((IAdaptable)src).getAdapter(ISystemDragDropAdapter.class);
+				    }
+				    else {
+				    	adapter = (ISystemDragDropAdapter)Platform.getAdapterManager().getAdapter(src, ISystemDragDropAdapter.class);		    	
+				    }
+				    
 				    if (adapter != null){
 				    	oldNames[t] = adapter.getAbsoluteName(src);
 				    }
 				    else if (src instanceof IResource){ // could be an eclipse resource
 				    	oldNames[t] = ((IResource)src).getFullPath().toOSString();
+				    }
+				    else if (src instanceof String){ // local os resource
+				    	oldNames[t] = (String)src;
 				    }
 				    else {
 				    	oldNames[t] = ""; // source resource unknown //$NON-NLS-1$

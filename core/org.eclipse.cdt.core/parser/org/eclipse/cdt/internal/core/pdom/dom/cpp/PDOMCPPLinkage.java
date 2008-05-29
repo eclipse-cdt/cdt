@@ -669,7 +669,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (parent instanceof IPDOMMemberOwner) {
 			int localToFileRec= getLocalToFileRec(parent, binding);
-			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec, parent instanceof ICPPSpecialization);
+			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec);
 		}
 		return null;
 	}

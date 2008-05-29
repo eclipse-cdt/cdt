@@ -1878,7 +1878,7 @@ public class CPPTemplates {
 		}
 
 		if (argsContainDependentType) {
-			return ((ICPPInternalTemplateInstantiator) template).deferredInstance(map, arguments);
+			return ((ICPPInternalTemplateInstantiator) template).deferredInstance(map, actualArgs);
 		}
 
 		ICPPSpecialization instance = ((ICPPInternalTemplateInstantiator) template).getInstance(actualArgs);
@@ -1898,9 +1898,12 @@ public class CPPTemplates {
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
-		instance = (ICPPTemplateInstance) CPPTemplates.createInstance(scope, template, map, arguments);
-		if (template instanceof ICPPInternalTemplate)
-			((ICPPInternalTemplate) template).addSpecialization(arguments, instance);
+		instance = (ICPPTemplateInstance) CPPTemplates.createInstance(scope, template, map, actualArgs);
+		if (template instanceof ICPPInternalTemplate) {
+			final ICPPInternalTemplate internalTmpl = (ICPPInternalTemplate) template;
+			internalTmpl.addSpecialization(arguments, instance);
+			internalTmpl.addSpecialization(actualArgs, instance);
+		}
 
 		return instance;
 	}

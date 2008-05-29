@@ -1,13 +1,13 @@
 !***************  PROJECT CONTRIBUTION  ******************************************************** 
 !*** Project's plugins, features and fragments
-feature@org.eclipse.rse=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
-feature@org.eclipse.rse.core=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
+feature@org.eclipse.rse=v20080528,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
+feature@org.eclipse.rse.core=v20080528,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
 feature@org.eclipse.rse.dstore=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
 feature@org.eclipse.rse.examples=v20080411,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/examples/org.eclipse.rse.examples-feature
 feature@org.eclipse.rse.ftp=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature
 feature@org.eclipse.rse.local=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.local-feature
 feature@org.eclipse.rse.remotecdt=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.remotecdt-feature
-feature@org.eclipse.rse.sdk=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.sdk-feature
+feature@org.eclipse.rse.sdk=v20080528,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.sdk-feature
 feature@org.eclipse.rse.ssh=v20080527,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ssh-feature
 feature@org.eclipse.rse.telnet=v20080521,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.telnet-feature
 feature@org.eclipse.rse.terminals=v20080521,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.terminals-feature
@@ -21,7 +21,7 @@ plugin@org.eclipse.rse.connectorservice.dstore=v20080526,:pserver:anonymous:none
 plugin@org.eclipse.rse.connectorservice.local=v20080402,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.connectorservice.local
 plugin@org.eclipse.rse.connectorservice.ssh=v20080411,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.connectorservice.ssh
 plugin@org.eclipse.rse.connectorservice.telnet=v20080411,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.connectorservice.telnet
-plugin@org.eclipse.rse.core=v20080521,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.core
+plugin@org.eclipse.rse.core=v20080528,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.core
 plugin@org.eclipse.rse.doc.isv=v20080521,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/doc/org.eclipse.rse.doc.isv
 plugin@org.eclipse.rse.doc.user=v20080315,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/doc/org.eclipse.rse.doc.user
 plugin@org.eclipse.rse.dstore.security=v20080514,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.dstore.security

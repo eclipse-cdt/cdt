@@ -89,6 +89,11 @@ public class MIDataListRegisterValues extends MICommand<MIDataListRegisterValues
         if (! (command instanceof  MIDataListRegisterValues) ) return null;    
         
         MIDataListRegisterValues  cmd = (MIDataListRegisterValues) command;
+        
+        /*
+         * If the format is different then this cannot be added to the list.
+         */
+        if ( fFmt != cmd.fFmt ) return null;
 
         int[] newregnos = new int[ regnums.length + cmd.regnums.length];
         

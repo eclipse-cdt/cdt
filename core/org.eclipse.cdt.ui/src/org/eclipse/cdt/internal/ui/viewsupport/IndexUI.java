@@ -345,9 +345,9 @@ public class IndexUI {
 			throws CoreException {
 		ITranslationUnit tu= getTranslationUnit(preferProject, macro.getFileLocation());
 		if (tu != null) {
-			IIndexName def= macro.getDefinition();
-			if (def != null) {
-				IRegion region= new Region(def.getNodeOffset(), def.getNodeLength());
+			IIndexName name= macro.getDefinition();
+			if (name != null) {
+				IRegion region= new Region(name.getNodeOffset(), name.getNodeLength());
 				long timestamp= macro.getFile().getTimestamp();
 				return CElementHandleFactory.create(tu, macro, region, timestamp);
 			}

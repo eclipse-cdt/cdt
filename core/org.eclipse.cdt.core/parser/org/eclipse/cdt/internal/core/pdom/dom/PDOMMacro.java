@@ -10,7 +10,6 @@
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.net.URI;
@@ -90,8 +89,6 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 			}
 			db.putInt(fRecord + PARAMETERS, db.newString(buf.toString().toCharArray()).getRecord());
 		}
-		
-		container.addDefinition(this);
 	}
 	
 	public PDOMMacro(PDOM pdom, PDOMMacroContainer container, IASTPreprocessorUndefStatement undef, PDOMFile file) throws CoreException {
@@ -109,6 +106,8 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 		db.putInt(fRecord + FILE, file.getRecord());
 		db.putInt(fRecord + NAME_OFFSET, fileloc.getNodeOffset());
 		db.putShort(fRecord + NAME_LENGTH, (short) fileloc.getNodeLength());
+
+		container.addDefinition(this);
 	}
 
 	public PDOM getPDOM() {

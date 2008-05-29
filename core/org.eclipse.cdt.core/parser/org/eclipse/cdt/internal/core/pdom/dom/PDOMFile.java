@@ -472,12 +472,13 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 
 		}
-		for (PDOMMacro name= getFirstMacro(); name != null; name= name.getNextMacro()) {
-			int nameOffset=  name.getNodeOffset();
+		for (PDOMMacro macro= getFirstMacro(); macro != null; macro= macro.getNextMacro()) {
+			int nameOffset=  macro.getNodeOffset();
 			if (nameOffset >= offset) {
-				if (nameOffset + name.getNodeLength() <= offset+length) {
-					if (name.isMacroDefinition()) {
-						result.add(name.getDefinition());
+				if (nameOffset + macro.getNodeLength() <= offset+length) {
+					IIndexFragmentName name= macro.getDefinition();
+					if (name != null) {
+						result.add(name);
 					}
 				} else { 
 					break;

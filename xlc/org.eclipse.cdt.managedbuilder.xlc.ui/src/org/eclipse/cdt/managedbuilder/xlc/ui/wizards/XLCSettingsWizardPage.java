@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,16 @@ package org.eclipse.cdt.managedbuilder.xlc.ui.wizards;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPage;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.cdt.managedbuilder.xlc.ui.Messages;
+import org.eclipse.cdt.managedbuilder.xlc.ui.PixelConverter;
 import org.eclipse.cdt.managedbuilder.xlc.ui.XLCUIPlugin;
 import org.eclipse.cdt.managedbuilder.xlc.ui.preferences.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -28,10 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 
 /**
  * @author crecoskie
@@ -116,12 +117,12 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		
 		// set the layout data for the first column, which contains labels
 		GridData labelGridData = new GridData();
-		
+		PixelConverter pixelConverter= new PixelConverter(parent);
 		
 		// create the first label
 		Label label1 = new Label(fComposite, SWT.NONE);
 		label1.setText(Messages.XLCSettingsWizardPage_1);
-		labelGridData.widthHint = 120;
+		labelGridData.widthHint = pixelConverter.convertWidthInCharsToPixels(label1.getText().length() + 2);
 		label1.setLayoutData(labelGridData);
 		label1.setVisible(true);
 		

@@ -1322,4 +1322,16 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
+	//	#define hash_hash # ## #
+	//	#define mkstr(a) # a
+	//	#define in_between(a) mkstr(a)
+	//	#define join(c, d) in_between(c hash_hash d)
+	//  join(x, y)
+	public void testC99_6_10_3_3_4_Bug84268() throws Exception {
+		initializeScanner();
+		validateString("x ## y");
+		validateEOF();
+		validateProblemCount(0);
+	}
 }

@@ -30,8 +30,8 @@
          id="org.eclipse.cdt.gnu.debug"
          version="0.0.0"/>
 
-   <requires>
-      <import feature="org.eclipse.cdt.platform" version="5.0.0"/>
-   </requires>
+   <includes
+         id="org.eclipse.cdt.platform"
+         version="0.0.0"/>
 
 </feature>

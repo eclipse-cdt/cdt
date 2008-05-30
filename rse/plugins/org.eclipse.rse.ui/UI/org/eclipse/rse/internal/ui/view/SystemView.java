@@ -56,6 +56,7 @@
  * David McKnight  (IBM)         - [231903] TVT34:TCT198: PLK: problems with "Show prompt" checkbox and "New connection prompt"
  * David McKnight  (IBM)         - [233530] Not Prompted on Promptable Filters after using once by double click
  * David McKnight  (IBM)         - [233570] ClassCastException when moving filter after "go into" action
+ * David Dykstal (IBM)           - [233530] Backing out previous change for this bug
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1286,32 +1287,6 @@ public class SystemView extends SafeTreeViewer
 	 */
 	public void treeCollapsed(TreeExpansionEvent event) {
 		final Object element = event.getElement(); // get parent node being collapsed
-		
-		// for bug 233530 we need to disassociate message objects so they don't get cached in the tree
-		 Widget widget = findItem(element); // find GUI widget for this node		
-	   	    if ((widget!=null) && (widget instanceof Item))
-	   	    {
-	   		  Item ti= (Item) widget;
-	   	      Item[] items= getItems(ti);
-	   	      
-	   	        //D51021 if ((items!=null) && (items.length==1))
-			  if (items!=null) {
-	   		     for (int i= 0; i < items.length; i++)
-		   	     {
-				  Object data = items[i].getData();	   	          	
-		   	        if ((data != null) && (data instanceof ISystemMessageObject)) {
-	        		        if (((ISystemMessageObject) data).isTransient()) {	
-					  	disassociate(items[i]);
-		   	          	      items[i].dispose();
-					  }  
-		   	        }
-		   	     }   
-		   	     // append a dummy so there is a plus
-		   	     if (getItemCount(ti)==0)
-		   	       newItem(ti, SWT.NULL, -1);			
-			 }
-	   	    }
-		
 		// we always allow adapters opportunity to show a different icon depending on collapsed state
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -1352,6 +1327,20 @@ public class SystemView extends SafeTreeViewer
 	 */
 	protected void handleTreeExpand(TreeEvent event) {
 		TreeItem item = (TreeItem) event.item;
+		removeTransientMessages(item);
+		Shell shell = getShell();
+		Object data = item.getData();
+		boolean showBusy = (data instanceof IHost) && ((IHost)data).isOffline();
+		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, busyCursor);
+		super.handleTreeExpand(event);
+		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, null);
+	}
+
+	/**
+	 * Remove the transient messages from this item.
+	 * @param item The tree item whose children should be examined for transient messages.
+	 */
+	private void removeTransientMessages(TreeItem item) {
 		// Remove any transient messages prior to finding children. They will be regenerated if they are needed.
 		Item[] children = getItems(item);
 		if (children != null) {
@@ -1366,12 +1355,6 @@ public class SystemView extends SafeTreeViewer
 				}
 			}
 		}
-		Shell shell = getShell();
-		Object data = item.getData();
-		boolean showBusy = (data instanceof IHost) && ((IHost)data).isOffline();
-		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, busyCursor);
-		super.handleTreeExpand(event);
-		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, null);
 	}
 
 	/**

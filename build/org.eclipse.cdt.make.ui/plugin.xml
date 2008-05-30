@@ -433,7 +433,7 @@
            weight="001"
            helpId="cdt_u_prop_pns_inc"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
-           tooltip="&quot;Includes list&quot;"/>
+           tooltip="%Includes.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.SymbolTab"
            name="%Symbols"
@@ -441,7 +441,7 @@
            weight="002"
            helpId="cdt_u_prop_pns_sym"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
-           tooltip="&quot;Macros list&quot;"/>
+           tooltip="%Symbols.tooltip"/>
 	</extension>
 
      <extension

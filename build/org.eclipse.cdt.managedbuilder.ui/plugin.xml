@@ -273,7 +273,7 @@
            weight="001"
            helpId="cdt_u_prop_pns_inc"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
-           tooltip="&quot;Includes list&quot;"/>
+           tooltip="%Includes.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.SymbolTab"
            icon="icons/obj16/define_obj.gif"
@@ -281,7 +281,7 @@
            weight="002"
            helpId="cdt_u_prop_pns_sym"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
-           tooltip="&quot;Macros list&quot;"/>
+           tooltip="%Symbols.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.LibraryTab"
            icon="icons/obj16/lib_obj.gif"
@@ -289,7 +289,7 @@
            weight="003"
            helpId="cdt_u_prop_pns_lib"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
-           tooltip="&quot;Libraries list&quot;"/>
+           tooltip="%Libraries.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.LibraryPathTab"
            icon="icons/obj16/opentype.gif"
@@ -354,21 +354,21 @@
            name="%Includes"
            helpId="cdt_u_prop_exp"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
-           tooltip="&quot;Includes list&quot;"/>
+           tooltip="%Includes.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpSymbolTab"
            icon="icons/obj16/define_obj.gif"
            name="%Symbols"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
            helpId="cdt_u_prop_exp"
-           tooltip="&quot;Macros list&quot;"/>
+           tooltip="%Symbols.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryTab"
            icon="icons/obj16/lib_obj.gif"
            name="%Libraries"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
            helpId="cdt_u_prop_exp"
-           tooltip="&quot;Libraries list&quot;"/>
+           tooltip="%Libraries.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryPathTab"
            icon="icons/obj16/opentype.gif"

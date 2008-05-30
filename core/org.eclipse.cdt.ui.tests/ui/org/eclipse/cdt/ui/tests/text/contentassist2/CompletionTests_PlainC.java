@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
 import junit.framework.Test;
@@ -142,6 +141,10 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//		struct {int a3;} a4;
 	//		int b;
 	//	};
+	// #ifdef bug204758
+	// typedef enum {__nix} _e204758;
+	// void _f204758(_e204758 x);
+	// #endif
 	
 	//{DisturbWith.c}
 	// int gTemp;
@@ -949,6 +952,14 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//  void test() {struct s206450 x; x./*cursor*/
 	public void _testNestedAnonymousStructs_Bug206450() throws Exception {
 		final String[] expected= {"a1", "a2", "u1", "u2", "a4", "b"};
+		assertCompletionResults(expected);
+	}
+
+	// #define bug204758
+	///*include*/
+	//  void test() {_f204758/*cursor*/
+	public void testTypedefToAnonymous_Bug204758() throws Exception {
+		final String[] expected= {"_f204758(_e204758)"};
 		assertCompletionResults(expected);
 	}
 }

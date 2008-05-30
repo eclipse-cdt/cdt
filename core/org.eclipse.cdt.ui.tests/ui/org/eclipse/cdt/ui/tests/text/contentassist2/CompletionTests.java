@@ -157,6 +157,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//		struct {int a3;} a4;
 	//		int b;
 	//	};
+	// typedef enum {__nix} _e204758;
+	// void _f204758(_e204758 x);
 
 
 	public CompletionTests(String name) {
@@ -1165,5 +1167,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void _testNestedAnonymousStructs_Bug206450() throws Exception {
 		final String[] expected= {"a1", "a2", "u1", "u2", "a4", "b", "s206450"};
 		assertCompletionResults(expected);
+	}
+	
+	//  void test() {_f204758/*cursor*/
+	public void testTypedefToAnonymous_Bug204758() throws Exception {
+		final String[] expected= {"_f204758(_e204758 x) : void"};
+		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
 	}
 }

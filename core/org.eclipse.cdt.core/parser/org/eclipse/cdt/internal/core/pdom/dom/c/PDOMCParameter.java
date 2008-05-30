@@ -8,8 +8,8 @@
  * Contributors:
  *    QNX - Initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
@@ -60,8 +59,6 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 		try {
 			if(!(param instanceof IProblemBinding)) {
 				IType type = param.getType();
-				while(type instanceof ITypedef)
-					type = ((ITypedef)type).getType();
 				if (type != null) {
 					PDOMNode typeNode = getLinkageImpl().addType(this, type);
 					db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);

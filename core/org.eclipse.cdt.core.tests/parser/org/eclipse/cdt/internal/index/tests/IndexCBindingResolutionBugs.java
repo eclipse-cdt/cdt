@@ -110,7 +110,9 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IParameter[] pars= f.getParameters();
 		assertEquals(1, pars.length);
 		IType type= pars[0].getType();
-		assertTrue(type instanceof ICompositeType);
+		assertInstance(type, ITypedef.class);
+		type= ((ITypedef) type).getType();
+		assertInstance(type, ICompositeType.class);
     }
 
     // typedef enum {
@@ -130,9 +132,10 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IParameter[] pars= f.getParameters();
 		assertEquals(1, pars.length);
 		IType type= pars[0].getType();
+		assertInstance(type, ITypedef.class);
+		type= ((ITypedef) type).getType();
+		assertInstance(type, IEnumeration.class);
 		assertTrue(type instanceof IEnumeration);
-//		type= ((ITypedef) type).getType();
-//		assertTrue(type instanceof IEnumeration);
     }
     
     // int globalVar;

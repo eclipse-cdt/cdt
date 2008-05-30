@@ -4795,4 +4795,19 @@ public class AST2Tests extends AST2BaseTest {
     		assertEquals(IBasicType.t_void, ((IBasicType)pt).getType());
     	}
     }
+    
+    //    #define str(s) # s
+    //
+    //    void foo() {
+    //    	printf(str(this is a // this should go away
+    //    	string));	
+    //    }
+    public void testCommentInExpansion_Bug84276() throws Exception {
+    	IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment());
+    	IASTFunctionDefinition func= (IASTFunctionDefinition) tu.getDeclarations()[0];
+    	
+    	IASTFunctionCallExpression fcall= (IASTFunctionCallExpression) ((IASTExpressionStatement)((IASTCompoundStatement) func.getBody()).getStatements()[0]).getExpression();
+    	IASTLiteralExpression lit= (IASTLiteralExpression) fcall.getParameterExpression();
+    	assertEquals("\"this is a string\"", lit.toString());
+    }
 }

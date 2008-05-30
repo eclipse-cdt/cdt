@@ -46,6 +46,7 @@
  * Xuan Chen        (IBM)        - [229093] set charset of the temp file of the text remote file to its remote encoding
  * Rupen Mardirossian (IBM)      - [198728] downloadResourcesToWorkspace now creates empty folders for copying across connections via createEmptyFolders method
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * Kevin Doyle		  (IBM)		 - [227391] Saving file in Eclipse does not update remote file
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1824,8 +1825,15 @@ public class UniversalFileTransferUtility
 
 				if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
 				{
-					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-					targetFS.setLastModified(copiedFile, properties.getRemoteFileTimeStamp(), monitor);
+						SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
+						long timestamp = properties.getRemoteFileTimeStamp();
+						
+						// srcFileOrFolder may not be a file from the RemoteSystemTempFiles folder in which
+						// case there will be no stored property for the remote timestamp.
+						if (timestamp == 0)
+							timestamp = srcFileOrFolder.getLocalTimeStamp();
+						
+						targetFS.setLastModified(copiedFile, timestamp, monitor);
 				}
 
 				return copiedFile;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004-5, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004-5, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -20,6 +21,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -171,6 +174,15 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 			}
 		}
 		fMemorySpaceInput.addModifyListener( this );
+		//234909 - for accessibility
+		fMemorySpaceInput.getAccessible().addAccessibleListener(
+				new AccessibleAdapter() {
+					@Override
+					public void getName(AccessibleEvent e) {
+						e.result = ActionMessages.getString( "AddWatchpointDialog.5" );
+					}
+					
+				});
 	}
 
 	/**
@@ -250,6 +262,15 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 			}
 		});
 		fRangeField.addModifyListener( this );
+		//234909 - for accessibility
+		fRangeField.getAccessible().addAccessibleListener(
+			new AccessibleAdapter() {
+				@Override
+				public void getName(AccessibleEvent e) {
+					e.result = ActionMessages.getString( "AddWatchpointDialog.6" );
+				}
+				
+			});
 	}
 	
 	private void createAccessWidgets( Composite parent ) {

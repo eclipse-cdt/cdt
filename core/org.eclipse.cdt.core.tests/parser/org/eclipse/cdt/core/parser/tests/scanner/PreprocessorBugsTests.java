@@ -121,4 +121,14 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
+	// "unintentionally unbounded
+	// "
+	//
+	public void testUnboundedEmptyStringLiteral_Bug190884() throws Exception {
+		initializeScanner();
+		validateString("unintentionally unbounded");
+		validateEOF();
+		validateProblemCount(2);
+	}
 }

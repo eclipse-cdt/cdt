@@ -532,8 +532,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     private void appendStringContent(StringBuffer buf, Token t1) {
     	final char[] image= t1.getCharImage();
-    	final int start= image[0]=='"' ? 1 : 2;
-    	buf.append(image, start, image.length-start-1);
+    	final int length= image.length;
+    	if (length > 1) {
+    		final int start= image[0]=='"' ? 1 : 2;
+    		final int diff= image[length-1] == '"' ? length-start-1 : length-start;
+    		if (diff > 0) {
+    			buf.append(image, start, diff);
+    		}
+    	}
 	}
 
 	Token internalFetchToken(final boolean expandMacros, final boolean isPPCondition, final boolean stopAtNewline, 

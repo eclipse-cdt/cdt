@@ -89,7 +89,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 	}
 	
 	public String getPrototypeString(boolean namefirst, boolean appendReturnType) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if((!namefirst) && (appendReturnType)) {
 			buffer.append(getReturnType());
 			buffer.append(" "); //$NON-NLS-1$
@@ -104,6 +104,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 			buffer.append(" "); //$NON-NLS-1$
 			buffer.append(getReturnType());
 		}
+		buffer.append(";"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 }

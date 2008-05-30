@@ -30,7 +30,8 @@ import org.eclipse.cdt.internal.ui.refactoring.implementmethod.ImplementMethodRe
  */
 public class ImplementMethodRefactoringTest extends RefactoringTest {
 
-	protected int warnings;
+	protected int finalWarnings;
+	private int initialWarnings;
 
 	public ImplementMethodRefactoringTest(String name,Vector<TestSourceFile> files) {
 		super(name, files);
@@ -46,16 +47,21 @@ public class ImplementMethodRefactoringTest extends RefactoringTest {
 		try {
 			RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 
-			assertConditionsOk(checkInitialConditions);
+			if(initialWarnings == 0) {
+				assertConditionsOk(checkInitialConditions);
+			} else {
+				assertConditionsFatalError(checkInitialConditions, initialWarnings);
+				return;
+			}
 
 			refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
 			RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-			if (warnings == 0) {
+			if (finalWarnings == 0) {
 				Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
 				assertConditionsOk(finalConditions);
 				createChange.perform(NULL_PROGRESS_MONITOR);
 			} else {
-				assertConditionsWarning(finalConditions, warnings);
+				assertConditionsWarning(finalConditions, finalWarnings);
 			}
 			compareFiles(fileMap);
 		}
@@ -66,6 +72,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTest {
 
 	@Override
 	protected void configureRefactoring(Properties refactoringProperties) {
-		warnings = new Integer(refactoringProperties.getProperty("warnings", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
+		finalWarnings = new Integer(refactoringProperties.getProperty("finalWarnings", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
+		initialWarnings = Integer.parseInt(refactoringProperties.getProperty("initialWarnings", "0"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

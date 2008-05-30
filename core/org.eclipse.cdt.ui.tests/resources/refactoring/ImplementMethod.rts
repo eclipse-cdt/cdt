@@ -1,3 +1,101 @@
+//!Param const and reference and pointer
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class X {
+public:
+	bool //$a(int = 100)$// const;
+};
+
+//=
+class X {
+public:
+	bool a(int = 100) const;
+};
+
+inline bool X::a(int int1) const
+{
+}
+
+
+
+//!Param const and reference and pointer two params
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class X {
+public:
+	bool //$xy(int, int i)$// const;
+};
+
+//=
+class X {
+public:
+	bool xy(int, int i) const;
+};
+
+inline bool X::xy(int int1, int i) const
+{
+}
+
+
+
+//!Test if TemplateMethod stays in header
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+template<class T> class A
+{
+public:
+        //$void test();$//
+};
+
+//=
+template<class T> class A
+{
+public:
+        void test();
+};
+
+template<class T> inline void A<T>::test()
+{
+}
+
+
+
+//@A.cpp
+#include "A.h"
+
+//=
+#include "A.h"
+
+//!Test Warning when Method definition in Class selected
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+initialWarnings=1
+//@A.h
+
+struct Test
+{
+	void //$bla$//() {}
+};
+
+//!Test Warning when ClassName selected
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+initialWarnings=1
+//@A.h
+
+struct //$Test$//
+{
+	void bla2();
+};
+
 //!class template member functions
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config

@@ -129,8 +129,11 @@ public class ASTModificationHelper {
 				case REPLACE:
 					if(childModification.getNewNode() instanceof IASTInitializer){
 						return (IASTInitializer)childModification.getNewNode();
+					} else if (childModification.getNewNode() == null) {
+						return null;
 					}
 					throw new UnhandledASTModificationException(childModification);
+					
 					
 				case INSERT_BEFORE:
 					throw new UnhandledASTModificationException(childModification);

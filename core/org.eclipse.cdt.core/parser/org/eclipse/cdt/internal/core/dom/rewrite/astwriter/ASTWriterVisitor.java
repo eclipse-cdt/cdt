@@ -218,13 +218,26 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 		writeLeadingComments((ASTNode) parameterDeclaration);
 		if(!macroHandler.checkisMacroExpansionNode(parameterDeclaration)) {
 			parameterDeclaration.getDeclSpecifier().accept(this);
-			IASTDeclarator declarator = parameterDeclaration.getDeclarator();
-			if(declarator.getName().toString().length() != 0){
+			IASTDeclarator declarator = getParameterDeclarator(parameterDeclaration);
+			
+			if(getParameterName(declarator).toString().length() != 0){
 				scribe.printSpaces(1);
 			}
 			declarator.accept(this);
 		}
 		return ASTVisitor.PROCESS_SKIP;
+	}
+
+
+
+	protected IASTName getParameterName(IASTDeclarator declarator) {
+		return declarator.getName();
+	}
+
+
+	protected IASTDeclarator getParameterDeclarator(
+			IASTParameterDeclaration parameterDeclaration) {
+		return parameterDeclaration.getDeclarator();
 	}
 	
 	@Override

@@ -45,7 +45,7 @@ public class ASTWriter {
 	/**
 	 * Creates a <code>ASTWriter</code> that indents the code.
 	 * 
-	 * @param givenIndentation The indention added to each line
+	 * @param givenIndentation The indentation added to each line
 	 */
 	public ASTWriter(String givenIndentation) {
 		super();
@@ -66,7 +66,7 @@ public class ASTWriter {
 	
 	/**
 	 * 
-	 * Genereates the source code representing this node including comments.
+	 * Generates the source code representing this node including comments.
 	 * 
 	 * @param rootNode Node to write.
 	 * @param fileScope
@@ -83,7 +83,6 @@ public class ASTWriter {
 		transformationVisitor.cleanCache();
 		return str;
 	}
-	
 	
 
 	public void setModificationStore(ASTModificationStore modificationStore) {

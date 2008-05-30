@@ -1,21 +1,44 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Rapperswil, University of applied sciences and others
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *  
+ * Contributors: 
+ * Institute for Software - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MultiTextEdit;
+
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-
-import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.PseudoNameGenerator;
 
+/**
+ * Manages and creates Method Parameter Infos.
+ * 
+ * @author Lukas Felber
+ *
+ */
 public class ParameterHandler {
 	private boolean needsAditionalArgumentNames;
 	private PseudoNameGenerator pseudoNameGenerator;
-	private ArrayList<Parameter> parameters;
+	private ArrayList<ParameterInfo> parameterInfos;
 	private ImplementMethodRefactoring refactoring;
 	
 	public ParameterHandler(ImplementMethodRefactoring refactoring) {
@@ -26,22 +49,21 @@ public class ParameterHandler {
 		return needsAditionalArgumentNames;
 	}
 	
-	public void initAditionalArgumentNames() {
- 		if(parameters != null) {
+	public void initArgumentNames() {
+ 		if(parameterInfos != null) {
 			return;
 		}
 		needsAditionalArgumentNames = false; 
-		parameters = new ArrayList<Parameter>();
+		parameterInfos = new ArrayList<ParameterInfo>();
 		for(IASTParameterDeclaration actParam : getParametersFromMethodNode()) {
 			String actName = actParam.getDeclarator().getName().toString();
 			boolean isChangable = false;
-			String typeName = NameHelper.getTypeName(actParam);
 			if(actName.length() == 0) {
 				needsAditionalArgumentNames = true;
 				isChangable = true;
-				actName = findNameForParameter(typeName);
+				actName = findNameForParameter(NameHelper.getTypeName(actParam));
 			}
-			parameters.add(new Parameter(typeName, actName, isChangable));
+			parameterInfos.add(new ParameterInfo(actParam, actName, isChangable));
 		}
 	}
 	
@@ -66,12 +88,34 @@ public class ParameterHandler {
 	}
 	
 	public String createFunctionDefinitionSignature() {
-		ASTWriter writer = new ASTWriter();
-		IASTNode def = refactoring.createFunctionDefinition();
-		return writer.write(def);
+		try {
+			CompositeChange compositeChange = (CompositeChange) refactoring.createChange(new NullProgressMonitor());
+			InsertEdit insertEdit = getInsertEdit(compositeChange);
+			return insertEdit.getText().trim();
+		} catch (OperationCanceledException e) {
+			return Messages.PreviewGenerationNotPossible;
+		} catch (CoreException e) {
+			return Messages.PreviewGenerationNotPossible;
+		}
 	}
 
-	public Collection<Parameter> getParameters() {
-		return parameters;
+	private InsertEdit getInsertEdit(CompositeChange compositeChange) {
+		for(Change actChange : compositeChange.getChildren()) {
+			if(actChange instanceof CompositeChange) {
+				return getInsertEdit((CompositeChange) actChange);
+			} else if (actChange instanceof CTextFileChange) {
+				CTextFileChange textFileChange = (CTextFileChange) actChange;
+				MultiTextEdit multiEdit = (MultiTextEdit) textFileChange.getEdit();
+				if(multiEdit.getChildrenSize() == 0) {
+					continue;
+				}
+				return (InsertEdit) multiEdit.getChildren()[0];
+			}
+		}
+		return null;
+	}
+
+	public Collection<ParameterInfo> getParameterInfos() {
+		return parameterInfos;
 	}
 }

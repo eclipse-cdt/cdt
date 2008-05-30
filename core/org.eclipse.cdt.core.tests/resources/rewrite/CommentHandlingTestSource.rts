@@ -3098,3 +3098,48 @@ int HideMethod::methode2(){
 return i; = //comment
 =>trailing
 =>freestanding
+
+//!CommentRecognition Bug 234786
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+#ifndef HIDEMETHOD_H_
+#define HIDEMETHOD_H_
+
+class HideMethod {
+public:
+    HideMethod();
+    virtual ~HideMethod();
+    int methode2();
+private:
+	int i;
+};
+
+#endif /* HIDEMETHOD_H_ */
+
+//=
+=>leading
+=>trailing
+=>freestanding
+
+//@test.cpp
+#include "test.h"
+
+HideMethod::HideMethod()
+{
+}
+
+HideMethod::~HideMethod()
+{
+}
+
+int HideMethod::methode2(){
+	i++;     //comment
+	return i;
+}
+
+//=
+=>leading
+=>trailing
+i++; = //comment
+=>freestanding
+

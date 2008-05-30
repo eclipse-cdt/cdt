@@ -102,7 +102,10 @@ public class ModificationScopeStack {
 		}
 		List<ASTModification> modForNodeList = new ArrayList<ASTModification>();
 		for (ASTModification modification : aktModList) {
-			modForNodeList.addAll(modStore.getNestedModifications(modification).getModificationsForNode(node));
+			ASTModificationMap nestedModifications = modStore.getNestedModifications(modification);
+			if(nestedModifications != null) {
+				modForNodeList.addAll(nestedModifications.getModificationsForNode(node));
+			}
 		}
 		return Collections.unmodifiableList(modForNodeList);
 	}

@@ -159,8 +159,13 @@ public class NodeCommenter {
 				int length = OffsetHelper.getNodeOffset(com)-OffsetHelper.getNodeEndPoint(node);
 				byte[] b = new byte[length];
 
-				is.skip(OffsetHelper.getNodeEndPoint(node));
-				is.read(b, 0, length);
+				long count = is.skip(OffsetHelper.getEndOffsetWithoutComments(node));
+				if(count < OffsetHelper.getEndOffsetWithoutComments(node)) {
+					return false;
+				}
+				if(is.read(b, 0, length) == -1) {
+					return false;
+				}
 
 				for(byte bb : b) {
 					if(!Character.isWhitespace(bb)) {

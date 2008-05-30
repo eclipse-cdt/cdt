@@ -32,14 +32,19 @@ public class PseudoNameGenerator {
 		
 		String[] nameParts = typeName.split("::"); //$NON-NLS-1$
 		typeName = nameParts[nameParts.length - 1];
+		if(typeName.length() != 0) {
+			typeName = typeName.substring(0, 1).toLowerCase() + typeName.substring(1);
+		}
 		
-		String newNameCandidate = null;
+		String numberString = ""; //$NON-NLS-1$
+		String newNameCandidate;
 		int index = 0;
 		
 		do {
+			newNameCandidate = typeName + numberString;
 			index++;
-			newNameCandidate = String.format("%s%d", typeName, Integer.valueOf(index)); //$NON-NLS-1$
-		} while(names.contains(newNameCandidate));
+			numberString = Integer.toString(index);
+		} while(names.contains(newNameCandidate) || !NameHelper.isValidLocalVariableName(newNameCandidate) || NameHelper.isKeyword(newNameCandidate));
 		
 		names.add(newNameCandidate);
 		

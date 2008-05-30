@@ -61,6 +61,10 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 		initRefactoring(pm);		
 		
+		if(context.existingFields.size() == 0) {
+			initStatus.addFatalError(Messages.GenerateGettersAndSettersRefactoring_NoFields);
+		}
+		
 		return initStatus;
 	}
 

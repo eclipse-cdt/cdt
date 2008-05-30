@@ -24,7 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -157,5 +159,20 @@ public class NodeHelper {
 		}
 		return null;
 	}
-	
+
+	public static boolean isMethodDeclaration(IASTSimpleDeclaration simpleDeclaration) {
+		if(simpleDeclaration == null) {
+			return false;
+		}
+		return simpleDeclaration.getDeclarators().length == 1 && simpleDeclaration.getDeclarators()[0] instanceof ICPPASTFunctionDeclarator;
+	}
+
+	public static boolean isContainedInTemplateDeclaration(IASTNode node) {
+		if(node == null) {
+			return false;
+		} else if (node instanceof ICPPASTTemplateDeclaration) {
+			return true;
+		}
+		return isContainedInTemplateDeclaration(node.getParent());
+	}
 }

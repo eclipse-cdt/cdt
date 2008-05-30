@@ -21,10 +21,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -44,7 +45,6 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.NodeFactory;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
@@ -60,6 +60,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	private IASTSimpleDeclaration methodDeclaration;
 	private InsertLocation insertLocation;
 	private ParameterHandler parameterHandler;
+	private IASTDeclaration createdMethodDefinition;
+	private CPPASTFunctionDeclarator createdMethodDeclarator;
 	
 	public ImplementMethodRefactoring(IFile file, ISelection selection, ICElement element) {
 		super(file, selection, element);
@@ -73,8 +75,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 
 		methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(region, unit);
 
-		if (methodDeclaration == null) {
-			initStatus.addFatalError("No method selected"); //$NON-NLS-1$
+		if (!NodeHelper.isMethodDeclaration(methodDeclaration)) {
+			initStatus.addFatalError(Messages.ImplementMethodRefactoring_NoMethodSelected);
 			return initStatus;
 		}
 		
@@ -82,13 +84,13 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		sm.worked(1);
 		
 		if (DefinitionFinder.getDefinition(methodDeclaration, file) != null) {
-			initStatus.addFatalError("This method already has an implementation."); //$NON-NLS-1$
+			initStatus.addFatalError(Messages.ImplementMethodRefactoring_MethodHasImpl);
 			return initStatus;
 		}
 		if(isProgressMonitorCanceld(sm, initStatus))return initStatus;
 		sm.worked(1);
 		sm.done();
-		parameterHandler.initAditionalArgumentNames();
+		parameterHandler.initArgumentNames();
 		sm.worked(1);
 		sm.done();
 		findInsertLocation();
@@ -102,34 +104,59 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector) throws CoreException,	OperationCanceledException {
 		IASTTranslationUnit targetUnit = insertLocation.getTargetTranslationUnit();
  		IASTNode parent = insertLocation.getPartenOfNodeToInsertBefore();
-		IASTNode insertNode = createFunctionDefinition(targetUnit);
+ 		createFunctionDefinition(targetUnit);
 		IASTNode nodeToInsertBefore = insertLocation.getNodeToInsertBefore();
-		ASTRewrite rewrite = collector.rewriterForTranslationUnit(targetUnit);
-		rewrite.insertBefore(parent, nodeToInsertBefore, insertNode, null);
+		ASTRewrite translationUnitRewrite = collector.rewriterForTranslationUnit(targetUnit);
+		ASTRewrite methodRewrite = translationUnitRewrite.insertBefore(parent, nodeToInsertBefore, createdMethodDefinition, null);
+		
+		createParameterModifications(methodRewrite);
+	}
+	
+	private void createParameterModifications(ASTRewrite methodRewrite) {
+		for(ParameterInfo actParameterInfo : parameterHandler.getParameterInfos()) {
+			ASTRewrite parameterRewrite = methodRewrite.insertBefore(createdMethodDeclarator, null, actParameterInfo.getParameter(), null);
+			createNewNameInsertModification(actParameterInfo, parameterRewrite);
+			createRemoveDefaultValueModification(actParameterInfo, parameterRewrite);
+		}
+		
+	}
+
+	private void createRemoveDefaultValueModification(ParameterInfo parameterInfo, ASTRewrite parameterRewrite) {
+		if(parameterInfo.hasDefaultValue()) {
+			parameterRewrite.remove(parameterInfo.getDefaultValueNode(), null);
+		}
+	}
+
+	private void createNewNameInsertModification(ParameterInfo parameterInfo, ASTRewrite parameterRewrite) {
+		if(parameterInfo.hasNewName()) {
+			IASTNode insertNode = parameterInfo.getNewNameNode();
+			IASTName replaceNode = parameterInfo.getNameNode();
+			parameterRewrite.replace(replaceNode, insertNode, null);
+		}
 	}
 
 	private void findInsertLocation() throws CoreException {
 		insertLocation = MethodDefinitionInsertLocationFinder.find(methodDeclaration.getFileLocation(), methodDeclaration.getParent(), file);
 
-		if (!insertLocation.hasFile()) {
+		if (!insertLocation.hasFile() || NodeHelper.isContainedInTemplateDeclaration(methodDeclaration)) {
 			insertLocation.setInsertFile(file);
-			insertLocation.setNodeToInsertAfter(NodeHelper
-					.findTopLevelParent(methodDeclaration));
+			insertLocation.setNodeToInsertAfter(NodeHelper.findTopLevelParent(methodDeclaration));
 		}
 	}
 
-	private IASTNode createFunctionDefinition(IASTTranslationUnit unit) {
-		return createFunctionDefinition(
+	private void createFunctionDefinition(IASTTranslationUnit unit) {
+		createFunctionDefinition(
 				methodDeclaration.getDeclSpecifier(), 
 				(ICPPASTFunctionDeclarator) methodDeclaration.getDeclarators()[0], 
 				methodDeclaration.getParent(), unit);
 	}
 	
-	public IASTNode createFunctionDefinition() {
-		return createFunctionDefinition(unit);
+	public IASTDeclaration createFunctionDefinition() {
+		createFunctionDefinition(unit);
+		return createdMethodDefinition;		
 	}
 
-	private IASTNode createFunctionDefinition(IASTDeclSpecifier declSpecifier, ICPPASTFunctionDeclarator functionDeclarator, IASTNode declarationParent, IASTTranslationUnit unit) {
+	private void createFunctionDefinition(IASTDeclSpecifier declSpecifier, ICPPASTFunctionDeclarator functionDeclarator, IASTNode declarationParent, IASTTranslationUnit unit) {
 		
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
 		func.setParent(unit);
@@ -151,20 +178,14 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		
 		ICPPASTQualifiedName qname = createQualifiedNameFor(functionDeclarator, declarationParent);
 		
-		CPPASTFunctionDeclarator newFunctionDeclarator = new CPPASTFunctionDeclarator();
-		newFunctionDeclarator.setName(qname);
-		newFunctionDeclarator.setConst(functionDeclarator.isConst());
+		createdMethodDeclarator = new CPPASTFunctionDeclarator();
+		createdMethodDeclarator.setName(qname);
+		createdMethodDeclarator.setConst(functionDeclarator.isConst());
 	
-		
-		for(Parameter actParameter : parameterHandler.getParameters()) {
-			IASTParameterDeclaration createdParam = NodeFactory.createParameterDeclaration(actParameter.typeName, actParameter.parameterName);
-			newFunctionDeclarator.addParameterDeclaration(createdParam);
-		}
-		
-		func.setDeclarator(newFunctionDeclarator);
+		func.setDeclarator(createdMethodDeclarator);
 		func.setBody(new CPPASTCompoundStatement());
 		
-		if(classHasTemplates(declarationParent)) {
+		if(NodeHelper.isContainedInTemplateDeclaration(declarationParent)) {
 			CPPASTTemplateDeclaration templateDeclaration = new CPPASTTemplateDeclaration();
 			templateDeclaration.setParent(unit);
 			
@@ -173,18 +194,15 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			}
 			
 			templateDeclaration.setDeclaration(func);
-			return templateDeclaration;
+			createdMethodDefinition = templateDeclaration;
+			return;
 		}
-		return func;
+		createdMethodDefinition = func;
 	}
 
 	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator, IASTNode declarationParent) {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), file, region.getOffset(), insertLocation.getInsertFile(), insertOffset);
-	}
-
-	private boolean classHasTemplates(IASTNode declarationParent) {
-		return declarationParent.getParent() != null && declarationParent.getParent().getParent() instanceof ICPPASTTemplateDeclaration;
 	}
 
 	public IASTSimpleDeclaration getMethodDeclaration() {

@@ -97,6 +97,34 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	}
 
 	@Override
+	protected IASTDeclarator getParameterDeclarator(
+			IASTParameterDeclaration parameterDeclaration) {
+		
+		IASTDeclarator newDecl = parameterDeclaration.getDeclarator();
+		if(stack.getModifiedNodes().contains(newDecl)){	
+			for(ASTModification currentModification : stack.getModificationsForNode(newDecl)){
+				if(currentModification.getKind() == ASTModification.ModificationKind.REPLACE && currentModification.getTargetNode() == parameterDeclaration){
+					newDecl = (IASTDeclarator) currentModification.getNewNode();
+				}
+			}
+		}
+		return newDecl;
+	}
+
+	@Override
+	protected IASTName getParameterName(IASTDeclarator declarator) {
+		IASTName newName = declarator.getName();
+		if(stack.getModifiedNodes().contains(newName)){	
+			for(ASTModification currentModification : stack.getModificationsForNode(newName)){
+				if(currentModification.getKind() == ASTModification.ModificationKind.REPLACE && currentModification.getTargetNode() == newName){
+					newName = (IASTName) currentModification.getNewNode();
+				}
+			}
+		}
+		return newName;
+	}
+
+	@Override
 	public int leave(ICPPASTBaseSpecifier specifier) {
 		super.leave(specifier);
 		return PROCESS_SKIP;
@@ -320,6 +348,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 			}
 		}
 		
+		//Check all insert before and append modifications for the current node. If necessary put it onto the stack.
 		for (IASTNode currentModifiedNode : stack.getModifiedNodes()) {
 			for (ASTModification currentMod : stack.getModificationsForNode(currentModifiedNode)) {
 				if(currentMod.getNewNode() == node){
@@ -330,6 +359,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 				}
 			}
 		}
+		//Check all replace modifications for the current node. Visit the replacing node if found.
 		for (IASTNode currentModifiedNode : stack.getModifiedNodes()) {			
 			for (ASTModification currentMod : stack.getModificationsForNode(currentModifiedNode)) {
 				if(currentMod.getTargetNode() == node && currentMod.getKind() == ModificationKind.REPLACE){

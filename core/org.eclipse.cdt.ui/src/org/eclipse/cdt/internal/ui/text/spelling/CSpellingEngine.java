@@ -56,9 +56,9 @@ public class CSpellingEngine extends SpellingEngine {
 			checker.addListener(listener);
 			
 			IDocCommentOwner owner= null;
-			if(document instanceof IDocumentExtension3) {
+			if (document instanceof IDocumentExtension3) {
 				IDocumentPartitioner partitioner= ((IDocumentExtension3)document).getDocumentPartitioner(ICPartitions.C_PARTITIONING);
-					if(partitioner instanceof FastCPartitioner) {
+					if (partitioner instanceof FastCPartitioner) {
 						owner= ((FastCPartitioner)partitioner).getDocCommentOwner();
 					}
 			}
@@ -78,7 +78,7 @@ public class CSpellingEngine extends SpellingEngine {
 						if (isIgnoringStringLiterals && type.equals(ICPartitions.C_STRING))
 							continue;
 
-						if(owner!=null) {
+						if (owner!=null) {
 							IDocCommentDictionary dict= null;
 							
 							if (type.equals(ICPartitions.C_MULTI_LINE_DOC_COMMENT)) {
@@ -87,7 +87,7 @@ public class CSpellingEngine extends SpellingEngine {
 								dict= owner.getSinglelineConfiguration().getSpellingDictionary();
 							}
 							
-							if(dict instanceof IDocCommentSimpleDictionary) {
+							if (dict instanceof IDocCommentSimpleDictionary) {
 								ISpellDictionary sd= new DocCommentSpellDictionary((IDocCommentSimpleDictionary)dict);
 								checker.addDictionary(sd);
 								toRemove= sd;
@@ -139,17 +139,19 @@ public class CSpellingEngine extends SpellingEngine {
 							checker.execute(new SpellCheckIterator(document, partition, checker.getLocale()));
 						}
 						
-						if(toRemove != null) {
+						if (toRemove != null) {
 							checker.removeDictionary(toRemove);
 							toRemove= null;
 						}
 					}
 				}
 			} catch (BadLocationException x) {
-				CUIPlugin.log(x);
+				// Ignore BadLocationException since although it does happen from time to time,
+				// there seems to be not much harm from it.
+//				CUIPlugin.log(x);
 			}
 		} finally {
-			if(toRemove!=null)
+			if (toRemove != null)
 				checker.removeDictionary(toRemove);
 			checker.removeListener(listener);
 		}

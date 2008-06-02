@@ -17,6 +17,7 @@ Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
 Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
 Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
 Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
+Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -502,4 +503,10 @@ Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should 
         </propertyTester>
     </extension>
 
+     <extension point="org.eclipse.ui.commands">
+        <category
+              id="org.eclipse.rse.ui.commands.category"
+              name="%View.Category.RemoteSystems">
+        </category>
+      </extension>  
 </plugin>

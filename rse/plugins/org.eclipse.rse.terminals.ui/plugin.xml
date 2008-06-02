@@ -15,6 +15,7 @@ Contributors:
 Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
 Yu-Fen Kuo (MontaVista) - [170910] Integrate Terminal with RSE
 Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
+Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
 -->
 <?eclipse version="3.2"?>
 <plugin>
@@ -83,12 +84,8 @@ Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should 
              </menuContribution>  
             </extension>      
      <extension point="org.eclipse.ui.commands">
-        <category
-              id="org.eclipse.rse.terminals.ui.commands.category"
-              name="%terminalsCategory.name">
-        </category>
         <command
-              categoryId="org.eclipse.rse.terminals.ui.commands.category"
+              categoryId="org.eclipse.rse.ui.commands.category"
               id="org.eclipse.rse.terminals.ui.actions.LaunchTerminalCommand"
               name="%Launch_Terminal_Label">
         </command>

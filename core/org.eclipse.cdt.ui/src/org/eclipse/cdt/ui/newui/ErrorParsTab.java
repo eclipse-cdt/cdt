@@ -202,7 +202,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			s = sd.getBuildSetting().getErrorParserIDs();
 		}
 		if (dd instanceof ICMultiConfigDescription)
-			((ICMultiConfigDescription)sd).setErrorParserIDs(s);
+			((ICMultiConfigDescription)dd).setErrorParserIDs(s);
 		else	
 			dd.getBuildSetting().setErrorParserIDs(s);
 	}

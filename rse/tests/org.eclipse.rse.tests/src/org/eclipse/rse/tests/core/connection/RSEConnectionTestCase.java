@@ -1,9 +1,9 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Don Yantzi (IBM) - initial contribution.
  * David Dykstal (IBM) - initial contribution.
@@ -17,7 +17,10 @@ package org.eclipse.rse.tests.core.connection;
 import java.util.Properties;
 
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
@@ -30,6 +33,26 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 
 	public RSEConnectionTestCase(String name) {
 		super(name);
+	}
+
+	/**
+	 * Check whether connections are case sensitive
+	 */
+	public void testConnectionCaseInSensitive() throws Exception {
+		// -test-author-:MartinOberhuber
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		ISystemProfile prof = RSECorePlugin.getTheSystemProfileManager().getDefaultPrivateSystemProfile();
+		ISystemProfile testprof = RSECorePlugin.getTheSystemProfileManager().cloneSystemProfile(prof, "testConnectionCaseInSensitive");
+		IHost h1 = sr.createLocalHost(testprof, "TestConn", "mober");
+		assertNotNull(h1);
+		assertEquals(h1.getAliasName(), "TestConn");
+
+		// Case variant of connection is found in profile
+		IHost h2 = sr.getHost(testprof, "testCONN");
+		assertNotNull(h2);
+		assertEquals(h1, h2);
+
+		sr.deleteSystemProfile(testprof);
 	}
 
 	/**
@@ -46,27 +69,27 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		properties.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID, IRSESystemType.SYSTEMTYPE_UNIX_ID);
 		properties.setProperty(IRSEConnectionProperties.ATTR_USERID, "userid"); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, "password"); //$NON-NLS-1$
-		
+
 		IRSEConnectionProperties props = getConnectionManager().loadConnectionProperties(properties, false);
 		IHost	connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
-		
+
 		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "TestHost2"); //$NON-NLS-1$
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
-		
+
 		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "TestHost3"); //$NON-NLS-1$
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
-		
+
 		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "TestHost4"); //$NON-NLS-1$
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
-		
+
 		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "TestHost5"); //$NON-NLS-1$
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
-		
+
 		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "TestHost6"); //$NON-NLS-1$
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
@@ -74,9 +97,9 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "vxsim_128.11.75.12/4_Cores"); //$NON-NLS-1$
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
-	
+
 	}
-	
+
 	/**
 	 * Test removal of connections
 	 */
@@ -85,7 +108,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testConnectionRemoval")) return; //$NON-NLS-1$
 
 		String profileName = "TestProfile"; //$NON-NLS-1$
-		
+
 		getConnectionManager().removeConnection(profileName, "TestHost1"); //$NON-NLS-1$
 		getConnectionManager().removeConnection(profileName, "TestHost2"); //$NON-NLS-1$
 		getConnectionManager().removeConnection(profileName, "TestHost3"); //$NON-NLS-1$
@@ -104,7 +127,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 
 		Exception exception = null;
 		String cause = null;
-		
+
 		IHost connection = getLocalSystemConnection();
 		ISubSystem subsystem = null;
 		try {
@@ -118,10 +141,10 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 
 		RSEUIPlugin.getDefault().getPreferenceStore().setValue(ISystemPreferencesConstants.ALERT_SSL, false);
 		RSEUIPlugin.getDefault().getPreferenceStore().setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-		
+
 		exception = null;
 		cause = null;
-		
+
 		try {
 			subsystem.connect(false, null);
 		} catch(Exception e) {
@@ -130,10 +153,10 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		}
 		assertNull("Failed to connect local.files subsystem! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertTrue("local.files subsystem is not connected!", subsystem.isConnected()); //$NON-NLS-1$
-		
+
 		exception = null;
 		cause = null;
-		
+
 		try {
 			subsystem.disconnect();
 		} catch(Exception e) {
@@ -177,7 +200,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		}
 		assertNull("Failed to connect local.files subsystem! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertTrue("local.files subsystem is not connected!", subsystem.isConnected()); //$NON-NLS-1$
-		
+
 		exception = null;
 		cause = null;
 
@@ -192,5 +215,5 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		}
 		assertNull("Failed to resolve filter string for local.files subsystem! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertNotNull("Unexpected return value null for resolveFilterString!", objects); //$NON-NLS-1$
-	}	
+	}
 }

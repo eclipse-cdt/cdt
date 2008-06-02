@@ -123,6 +123,12 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
+	 * Returns true if the token is an identifier.
+	 */
+	protected abstract boolean isIdentifierToken(IToken token);
+	
+	
+	/**
 	 * Get the parser that will recognize expressions.
 	 */
 	protected abstract IParser getExpressionParser();
@@ -474,19 +480,6 @@ public abstract class BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
-		
-		// handle special case during content assist
-		List<IToken> tokens = parser.getRuleTokens();
-		if(tokens.size() == 2 && isCompletionToken(tokens.get(0))) {
-			IASTName name = createName(tokens.get(0));
-			IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
-			setOffsetAndLength(idExpression, offset(name), length(name));
-			IASTExpressionStatement statement = nodeFactory.newExpressionStatement(idExpression);
-			setOffsetAndLength(statement, offset(name), length(name));
-			astStack.push(statement);
-			return;
-		}
-
 		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
 		setOffsetAndLength(declarationStatement);
 		
@@ -505,9 +498,14 @@ public abstract class BuildASTParserAction {
 			}
 		}
 		
+		
+		List<IToken> tokens = parser.getRuleTokens();
+		
 		IASTNode result;
 		if(expressionStatement == null)
 			result = declarationStatement;
+		else if(tokens.size() == 2 && (isCompletionToken(tokens.get(0)) || isIdentifierToken(tokens.get(0)))) // identifier followed by semicolon
+			result = expressionStatement;
 		else if(isImplicitInt(decl))
 			result = expressionStatement;
 		else {
@@ -555,7 +553,6 @@ public abstract class BuildASTParserAction {
     		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
     		if(declSpec instanceof IASTSimpleDeclSpecifier && 
     		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-    			
     			return true;
     		}
     	}

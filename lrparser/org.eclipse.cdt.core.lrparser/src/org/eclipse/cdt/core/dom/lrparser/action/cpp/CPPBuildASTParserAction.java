@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -101,7 +100,6 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPTemplateTypeParameterParser;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -142,6 +140,10 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		return baseKind(token) == TK_Completion;
 	}
 	
+	@Override
+	protected boolean isIdentifierToken(IToken token) {
+		return baseKind(token) == TK_identifier;
+	}
 	
 	
 	@Override

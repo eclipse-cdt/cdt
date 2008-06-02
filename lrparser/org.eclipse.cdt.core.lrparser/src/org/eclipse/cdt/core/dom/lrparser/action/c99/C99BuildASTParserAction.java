@@ -105,6 +105,11 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 	
 	@Override
+	protected boolean isIdentifierToken(IToken token) {
+		return baseKind(token) == TK_identifier;
+	}
+	
+	@Override
 	protected IParser getExpressionParser() {
 		return new C99ExpressionParser(parser.getOrderedTerminalSymbols()); 
 	}

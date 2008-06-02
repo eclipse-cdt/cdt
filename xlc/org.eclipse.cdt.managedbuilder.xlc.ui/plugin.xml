@@ -973,14 +973,14 @@
 			<enumeratedOptionValue
 				name="%Option.ignprag.disjoint"
 				isDefault="false"
-				command="-qignprag=Disjoint"
+				command="-qignprag=disjoint"
 				id="xlc.c.input.ignprag.disjoint">
 			</enumeratedOptionValue>
 			<enumeratedOptionValue
 				name="%Option.ignprag.isolated"
 				isDefault="false"
 				command="-qignprag=isolated"
-				id="xlc.c.input.ignprag.disjoint">
+				id="xlc.c.input.ignprag.isolated">
 			</enumeratedOptionValue>
 			<enumeratedOptionValue
 				name="%Option.ignprag.all"

@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import org.eclipse.cdt.core.parser.util.IObjectComparator;
+import org.eclipse.cdt.core.parser.util.IObjectMatcher;
 
-public class ASTTypeComparator implements IObjectComparator {
+public class ASTTypeMatcher implements IObjectMatcher {
 
 	/**
 	 * Returns <code>true</code> if the two objects are equal or represent the same type.
 	 */
-	public boolean isSame(Object o1, Object o2) {
+	public boolean isEquivalent(Object o1, Object o2) {
 		if (o1 == o2) {
 			return true;
 		}

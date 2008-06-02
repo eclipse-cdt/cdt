@@ -145,14 +145,14 @@ public class ObjectMap extends ObjectTable<Object> {
 	    return vals;
 	}
 
-	public boolean isSame(ObjectMap other, IObjectComparator comparator) {
-		if (!super.isSame(other, comparator)) {
+	public boolean isEquivalent(ObjectMap other, IObjectMatcher matcher) {
+		if (!super.isEquivalent(other, matcher)) {
 			return false;
 		}
 		for (int i = 0; i < keyTable.length; i++) {
 			Object val1 = valueTable[i];
 			Object val2 = other.valueTable[i];
-			if (val1 != val2 && !comparator.isSame(val1, val2)) {
+			if (val1 != val2 && !matcher.isEquivalent(val1, val2)) {
 				return false;
 			}
 		}

@@ -44,6 +44,7 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 	 * For test-purposes, only.
 	 */
 	public static boolean fAllowRecursionBindings= true;
+	
 	final static class RecursionResolvingBinding extends ProblemBinding {
 		public RecursionResolvingBinding(IASTName node) {
 			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, node.toCharArray());
@@ -55,7 +56,6 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
 
 	static final int MAX_RESOLUTION_DEPTH = 5;
-
 	
 	private char[] name;
     private IBinding binding = null;

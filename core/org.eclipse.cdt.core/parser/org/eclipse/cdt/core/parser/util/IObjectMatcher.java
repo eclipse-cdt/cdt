@@ -10,6 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
-public interface IObjectComparator {
-	boolean isSame(Object o1, Object o2);
+public interface IObjectMatcher {
+	boolean isEquivalent(Object o1, Object o2);
 }

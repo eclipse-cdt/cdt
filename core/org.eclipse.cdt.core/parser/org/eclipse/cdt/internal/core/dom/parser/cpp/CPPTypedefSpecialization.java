@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -22,12 +23,23 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * @author aniefer
  */
 public class CPPTypedefSpecialization extends CPPSpecialization implements ITypedef, ITypeContainer {
-    private IType type;
+	final static class RecursionResolvingBinding extends ProblemBinding {
+		public RecursionResolvingBinding(IASTNode node, char[] arg) {
+			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, arg);
+			Assert.isTrue(CPPASTName.fAllowRecursionBindings, getMessage());
+		}
+	}
+	
+	static final int MAX_RESOLUTION_DEPTH = 5;
+
+	private IType type;
+    private int fResolutionDepth;
 
     /**
      * @param specialized
@@ -47,15 +59,18 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
      */
     public IType getType() throws DOMException {
         if (type == null) {
-            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
-        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace with
-            // a problem binding.
-            if (type instanceof CPPTypedefSpecialization &&
-            		((CPPTypedefSpecialization) type).getSpecializedBinding().equals(getSpecializedBinding()) &&
-            		((CPPTypedefSpecialization) type).getArgumentMap().isSame(argumentMap, IType.TYPE_COMPARATOR)) {
-            	type = new ProblemBinding(getDefinition(), IProblemBinding.SEMANTIC_INVALID_TYPE,
-            			getNameCharArray());
-            }
+        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
+        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
+        	} else {
+	            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
+	        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace
+	            // with a problem binding.
+	            if (type instanceof CPPTypedefSpecialization &&
+	            		((CPPTypedefSpecialization) type).getSpecializedBinding().equals(getSpecializedBinding()) &&
+	            		((CPPTypedefSpecialization) type).getArgumentMap().isEquivalent(argumentMap, IType.TYPE_MATCHER)) {
+	        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
+	            }
+        	}
 	    }
 		return type;
     }

@@ -154,7 +154,7 @@ public abstract class ObjectTable<T> extends HashTable {
         return keys;
 	}
 
-	public boolean isSame(ObjectTable<T> other, IObjectComparator comparator) {
+	public boolean isEquivalent(ObjectTable<T> other, IObjectMatcher matcher) {
 		if (size() != other.size()) {
 			return false;
 		}
@@ -162,7 +162,7 @@ public abstract class ObjectTable<T> extends HashTable {
 		for (int i = 0; i < keyTable.length; i++) {
 			T key1 = keyTable[i];
 			T key2 = other.keyTable[i];
-			if (key1 != key2 &&  !comparator.isSame(key1, key2)) {
+			if (key1 != key2 && !matcher.isEquivalent(key1, key2)) {
 				return false;
 			}
 		}

@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IType extends Cloneable {
 	public static final IType[] EMPTY_TYPE_ARRAY = new IType[0];
-	public static final ASTTypeComparator TYPE_COMPARATOR = new ASTTypeComparator();
+	public static final ASTTypeMatcher TYPE_MATCHER = new ASTTypeMatcher();
 
     public Object clone();
 

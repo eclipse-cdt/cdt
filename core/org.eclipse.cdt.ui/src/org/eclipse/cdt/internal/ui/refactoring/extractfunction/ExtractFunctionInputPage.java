@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  * Institute for Software - initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -101,7 +102,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 			setPageComplete(true);
 		}
 		else{
-			setErrorMessage(Messages.ExtractFunctionInputPage_CheckMethodName + result.getMessage()); 
+			setErrorMessage(Messages.ExtractFunctionInputPage_CheckMethodName + " " + result.getMessage()); 
 			setPageComplete(false);
 		}
 	}

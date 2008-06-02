@@ -30,7 +30,8 @@ public class DsfSourceLookupDirector extends CSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
-	public void initializeParticipants() {
+	@Override
+    public void initializeParticipants() {
 		addParticipants( new ISourceLookupParticipant[]{ new DsfSourceLookupParticipant(fSession) } );
 	}
 	

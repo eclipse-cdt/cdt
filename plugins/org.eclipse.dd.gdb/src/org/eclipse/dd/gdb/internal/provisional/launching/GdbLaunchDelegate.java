@@ -38,19 +38,18 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
-import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
-import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
  
 /**
  * The shared launch configuration delegate for the DSF/GDB debugger.
@@ -197,30 +196,21 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         // because once the launch is created and added to launch manager, 
         // the adapters will be created for the whole session, including 
         // the source lookup adapter.
-        ISourceLocator locator = getSourceLocator(configuration);
         
-        return new GdbLaunch(configuration, mode, locator);
+        GdbLaunch launch = new GdbLaunch(configuration, mode, null);
+        launch.setSourceLocator(getSourceLocator(configuration, launch.getSession()));
+        return launch;
     }
 
-    private ISourceLocator getSourceLocator(ILaunchConfiguration configuration) throws CoreException {
-        String type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
-        if (type == null) {
-            type = configuration.getType().getSourceLocatorId();
+    private ISourceLocator getSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
+        DsfSourceLookupDirector locator = new DsfSourceLookupDirector(session);
+        String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+        if (memento == null) {
+            locator.initializeDefaults(configuration);
+        } else {
+            locator.initializeFromMemento(memento, configuration);
         }
-        if (type != null) {
-            IPersistableSourceLocator locator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(type);
-            String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
-            if (memento == null) {
-                locator.initializeDefaults(configuration);
-            } else {
-                if(locator instanceof IPersistableSourceLocator2)
-                    ((IPersistableSourceLocator2)locator).initializeFromMemento(memento, configuration);
-                else
-                    locator.initializeFromMemento(memento);
-            }
-            return locator;
-        }
-        return null;
+        return locator;
     }
     
 	/**

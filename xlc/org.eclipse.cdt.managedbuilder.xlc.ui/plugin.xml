@@ -900,17 +900,17 @@
      <enumeratedOptionValue
            id="xlc.c.compiler.option.input.asm.default"
            isDefault="true"
-           name="Default">
+           name="%Option.asm.default">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qasm=stdcpp"
            id="xlc.c.compiler.option.input.asm.stdcpp"
-           name="Standard (-qasm=stdcpp)">
+           name="%Option.asm.stdcpp">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qasm=gcc"
            id="xlc.c.compiler.option.input.asm.gcc"
-           name="GCC (-qasm=gcc)">
+           name="%Option.asm.gcc">
      </enumeratedOptionValue>
 		</option> 
 

@@ -18,6 +18,7 @@ package org.eclipse.cdt.core.parser.util;
  * @author Mike Kucera
  *
  */
+@SuppressWarnings("nls")
 public class DebugUtil {
 
 	private DebugUtil() { // class just contains static methods
@@ -36,6 +37,8 @@ public class DebugUtil {
 	/**
 	 * Prints a trace message to stdout that gives info
 	 * about the method that calls this method.
+	 * 
+	 * The output is in a format that will show up as a hyperlink in the eclipse console.
 	 */
 	public static void printMethodTrace(String extraMessage) {
 		StackTraceElement[] trace = Thread.currentThread().getStackTrace();
@@ -46,24 +49,24 @@ public class DebugUtil {
 		StackTraceElement caller = trace[3];
 		
 		String className = caller.getClassName();
-		className = className.substring(className.lastIndexOf(".") + 1);//$NON-NLS-1$
+		className = className.substring(className.lastIndexOf(".") + 1);
 		
-		String message = String.format("%s.%s(%s:%d)",  //$NON-NLS-1$
+		String message = String.format("%s.%s(%s:%d)",
 				className, caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
 		
 		if(extraMessage != null)
-			message += ": " + extraMessage; //$NON-NLS-1$
+			message += ": " + extraMessage;
 		
 		System.out.println(message);
 	}
 
 	public static String safeClassName(Object obj) {
-		return obj != null ? obj.getClass().getSimpleName() : "";  //$NON-NLS-1$
+		return obj != null ? obj.getClass().getSimpleName() : "";
 	}
 	
 	public static String toStringWithClass(Object obj) {
 		return obj != null ?
-				String.valueOf(obj) + " " + obj.getClass().getSimpleName() : //$NON-NLS-1$
-				"null";  //$NON-NLS-1$
+				String.valueOf(obj) + " " + obj.getClass().getSimpleName() :
+				"null";
 	}
 }

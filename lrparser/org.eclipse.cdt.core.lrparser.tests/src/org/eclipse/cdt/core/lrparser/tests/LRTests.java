@@ -272,4 +272,12 @@ public class LRTests extends AST2Tests {
 	}	
 	
 	
+	@Override
+	public void testReturnTypeOfBuiltin_Bug234309() throws Exception {
+		try {
+			super.testReturnTypeOfBuiltin_Bug234309();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
 }

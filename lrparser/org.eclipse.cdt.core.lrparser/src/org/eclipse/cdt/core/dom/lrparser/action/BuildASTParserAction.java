@@ -234,7 +234,7 @@ public abstract class BuildASTParserAction {
 	protected void setOffsetAndLength(IASTNode node) {
 		int ruleOffset = parser.getLeftIToken().getStartOffset();
 		int ruleLength = parser.getRightIToken().getEndOffset() - ruleOffset;
-		((ASTNode)node).setOffsetAndLength(ruleOffset, ruleLength);
+		((ASTNode)node).setOffsetAndLength(ruleOffset, ruleLength < 0 ? 0 : ruleLength);
 	}
 
 	protected static void setOffsetAndLength(IASTNode node, IToken token) {
@@ -474,6 +474,19 @@ public abstract class BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
+		
+		// handle special case during content assist
+		List<IToken> tokens = parser.getRuleTokens();
+		if(tokens.size() == 2 && isCompletionToken(tokens.get(0))) {
+			IASTName name = createName(tokens.get(0));
+			IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
+			setOffsetAndLength(idExpression, offset(name), length(name));
+			IASTExpressionStatement statement = nodeFactory.newExpressionStatement(idExpression);
+			setOffsetAndLength(statement, offset(name), length(name));
+			astStack.push(statement);
+			return;
+		}
+
 		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
 		setOffsetAndLength(declarationStatement);
 		

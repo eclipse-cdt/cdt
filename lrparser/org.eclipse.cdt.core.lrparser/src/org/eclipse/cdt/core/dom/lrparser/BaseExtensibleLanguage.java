@@ -118,9 +118,10 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	@Override
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log) throws CoreException {
+		
 		IASTTranslationUnit gtu = null;
 		if(DEBUG_PRINT_GCC_AST) {
-			ILanguage gppLanguage = GPPLanguage.getDefault();
+			ILanguage gppLanguage = GCCLanguage.getDefault();
 			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
 			
 			System.out.println();
@@ -147,6 +148,9 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		parser.parse(tu); // the parser will fill in the rest of the AST
 		
+		// the TU is marked as either a source file or a header file
+		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
+		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
 			ASTPrinter.print(tu);
@@ -170,9 +174,10 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			IIndex index, IParserLogService log, int offset) throws CoreException {
 		
 		
+		IASTCompletionNode cn;
 		if(DEBUG_PRINT_GCC_AST) {
 			ILanguage gppLanguage = GCCLanguage.getDefault();
-			IASTCompletionNode cn = gppLanguage.getCompletionNode(reader, scanInfo, fileCreator, index, log, offset);
+			cn = gppLanguage.getCompletionNode(reader, scanInfo, fileCreator, index, log, offset);
 			
 			System.out.println();
 			System.out.println("********************************************************");
@@ -200,6 +205,11 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			printCompletionNode(completionNode);
 		}
 		
+//		List<String> messages = ASTComparer.compare(completionNode.getTranslationUnit(), cn.getTranslationUnit());
+//		for(String m : messages) {
+//			System.out.println(m);
+//		}
+		
 		return completionNode;
 	}
 	
@@ -209,6 +219,11 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	 */
 	@SuppressWarnings("nls")
 	private static void printCompletionNode(IASTCompletionNode cn) {
+		if(cn == null) {
+			System.out.println("Completion node is null");
+			return;
+		}
+			
 		ASTPrinter.print(cn.getTranslationUnit());
 		for(IASTName name : cn.getNames()) {
 			ASTNode context = (ASTNode)name.getCompletionContext();

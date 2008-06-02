@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
  * Adapts the CPreprocessor from the CDT core for use with LPG based parsers.
  * 
  * @author Mike Kucera
- *
  */
 class CPreprocessorAdapter {
 	
@@ -53,11 +52,13 @@ class CPreprocessorAdapter {
 		
 		preprocessor.getLocationResolver().setRootNode(tu);
 		
+		org.eclipse.cdt.core.parser.IToken lastToken = null;
 		try {
 			while(true) {
 				// the preprocessor throws EndOfFileException when it reaches the end of input
 				org.eclipse.cdt.core.parser.IToken domToken = preprocessor.nextToken();
 				processDOMToken(domToken, tokenCollector, tokenMap);
+				lastToken = domToken;
 				
 				if(domToken.getType() == tCOMPLETION)
 					break;
@@ -67,12 +68,21 @@ class CPreprocessorAdapter {
 			org.eclipse.cdt.core.parser.IToken domToken = e.getFinalToken();
 			assert domToken.getType() == tCOMPLETION;
 			processDOMToken(domToken, tokenCollector, tokenMap);
+			lastToken = domToken;
 		} catch (EndOfFileException e) { 
 			// use thrown exception to break out of loop
 		} 
 		
+
+		// TODO 
+		// This computation is actually incorrect. The "offset" of the EOF token should
+		// be equal to the size of the file. But since the CPreprocessor throws an exception when it
+		// reaches the end we can't get this info. So we just use the offset of the last real token
+		// that was returned.
+		int eofTokenOffset = lastToken == null ? 0 : lastToken.getOffset();
+		
 		// LPG requires that the token stream end with an EOF token
-		tokenCollector.addToken(createEOFToken(tokenMap));
+		tokenCollector.addToken(createEOFToken(tokenMap, eofTokenOffset));
 	}
 	
 	
@@ -81,22 +91,23 @@ class CPreprocessorAdapter {
 		tokenCollector.addToken(new LPGTokenAdapter(domToken, newKind));
 		
 		if(domToken.getType() == tCOMPLETION) {
+			int offset = domToken.getOffset();
 			for(int i = 0; i < NUM_EOC_TOKENS; i++)
-				tokenCollector.addToken(createEOCToken(tokenMap));
+				tokenCollector.addToken(createEOCToken(tokenMap, offset));
 		}
 	}
 	
 	
-	private static IToken createEOCToken(IDOMTokenMap tokenMap) {
-		return new Token(null, 0, 0, tokenMap.getEOCTokenKind());
+	private static IToken createEOCToken(IDOMTokenMap tokenMap, int offset) {
+		return new Token(null, offset, offset+1, tokenMap.getEOCTokenKind());
 	}
 	
 	private static IToken createDummyToken() {
 		return new Token(null, 0, 0, DUMMY_TOKEN_KIND);
 	}
 	
-	private static IToken createEOFToken(IDOMTokenMap tokenMap) {
-		return new Token(null, 0, 0, tokenMap.getEOFTokenKind());
+	private static IToken createEOFToken(IDOMTokenMap tokenMap, int offset) {
+		return new Token(null, offset, offset+1, tokenMap.getEOFTokenKind());
 	}
 	
 }

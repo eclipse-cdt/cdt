@@ -36,7 +36,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 		}
 	}
 	
-	static final int MAX_RESOLUTION_DEPTH = 5;
+	public static final int MAX_RESOLUTION_DEPTH = 5;
 
 	private IType type;
     private int fResolutionDepth;
@@ -59,21 +59,30 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
      */
     public IType getType() throws DOMException {
         if (type == null) {
-        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
-        	} else {
-	            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
-	        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace
-	            // with a problem binding.
-	            if (type instanceof CPPTypedefSpecialization &&
-	            		((CPPTypedefSpecialization) type).getSpecializedBinding().equals(getSpecializedBinding()) &&
-	            		((CPPTypedefSpecialization) type).getArgumentMap().isEquivalent(argumentMap, IType.TYPE_MATCHER)) {
+        	try {
+	        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
 	        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
-	            }
+	        	} else {
+		            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
+		        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace
+		            // with a problem binding.
+		            if (type instanceof CPPTypedefSpecialization &&
+		            		((CPPTypedefSpecialization) type).getSpecializedBinding().equals(getSpecializedBinding()) &&
+		            		((CPPTypedefSpecialization) type).getArgumentMap().isEquivalent(argumentMap, IType.TYPE_MATCHER)) {
+		        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
+		            }
+	        	}
+        	} finally {
+        		--fResolutionDepth;
         	}
 	    }
 		return type;
     }
+
+	public int incResolutionDepth(int increment) {
+		fResolutionDepth += increment;
+		return fResolutionDepth;
+	}
 
     /* (non-Javadoc)
      * @see java.lang.Object#clone()

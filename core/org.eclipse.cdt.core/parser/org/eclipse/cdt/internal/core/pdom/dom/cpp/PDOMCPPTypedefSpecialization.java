@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -28,11 +29,9 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 		implements ITypedef, ITypeContainer, IIndexType {
-
 
 	private static final int TYPE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	
@@ -44,12 +43,24 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 		super(pdom, parent, (ICPPSpecialization) typedef, specialized);
 
 		try {
+			if (typedef instanceof CPPTypedefSpecialization) {
+				if (((CPPTypedefSpecialization) typedef).incResolutionDepth(1) >
+						CPPTypedefSpecialization.MAX_RESOLUTION_DEPTH) {
+					return;
+				}
+			}
 			IType type = typedef.getType();
+			// The following may try to add the same typedef specialization to the index again.
+			// We protect against infinite recursion using a counter inside typedef.
 			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
 			if (typeNode != null)
 				pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
+		} finally {
+			if (typedef instanceof CPPTypedefSpecialization) {
+				((CPPTypedefSpecialization) typedef).incResolutionDepth(-1);
+			}
 		}
 	}
 

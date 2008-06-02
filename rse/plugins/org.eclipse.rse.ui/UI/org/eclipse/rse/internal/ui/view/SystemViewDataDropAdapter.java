@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight (IBM) - [192704] work around drag&drop issues from Project Explorer
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -48,6 +50,9 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.part.EditorInputTransfer;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.PluginTransferData;
 
 
@@ -178,6 +183,19 @@ extends ViewerDropAdapter
 				{
 					srcObjects.add(resources[i]);
 				}
+				_sourceType = SystemDNDTransferRunnable.SRC_TYPE_ECLIPSE_RESOURCE;
+			}
+			else if (data instanceof EditorInputTransfer.EditorInputData[])
+			{
+				EditorInputTransfer.EditorInputData[] editorInput = (EditorInputTransfer.EditorInputData[])data;
+				for (int i = 0; i < editorInput.length; i++)
+				{
+					IPersistableElement inData = editorInput[i].input.getPersistable();
+					if (inData instanceof FileEditorInput){
+						IFile file = ((FileEditorInput)inData).getFile();
+						srcObjects.add(file);
+					}
+				}	
 				_sourceType = SystemDNDTransferRunnable.SRC_TYPE_ECLIPSE_RESOURCE;
 			}
 			else if (data instanceof String[])

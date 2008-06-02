@@ -47,6 +47,7 @@
  * Rupen Mardirossian (IBM)      - [198728] downloadResourcesToWorkspace now creates empty folders for copying across connections via createEmptyFolders method
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * Kevin Doyle		  (IBM)		 - [227391] Saving file in Eclipse does not update remote file
+ * David McKnight     (IBM)      - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1130,7 +1131,7 @@ public class UniversalFileTransferUtility
 				{
 					return false;
 				}
-				else if (destinationFile != null && file.exists()) {
+				else if (destinationFile != null && file.exists()) {					
 					destinationFile.setLastModified(file.lastModified());
 
 					if (destinationFile.length() != file.length()) {
@@ -1587,7 +1588,13 @@ public class UniversalFileTransferUtility
 						if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
 						{
 							SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-							((FileServiceSubSystem)targetFS).getFileService().setLastModified(newPathBuf.toString(), name, properties.getRemoteFileTimeStamp(), monitor);
+							try {
+								((FileServiceSubSystem)targetFS).getFileService().setLastModified(newPathBuf.toString(), name, properties.getRemoteFileTimeStamp(), monitor);
+							}
+							catch (SystemMessageException e){
+								// service doesn't support setLastModified
+								SystemBasePlugin.logError("Unable to set last modified", e); //$NON-NLS-1$
+							}
 						}
 					}
 
@@ -1825,16 +1832,22 @@ public class UniversalFileTransferUtility
 
 				if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
 				{
-						SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-						long timestamp = properties.getRemoteFileTimeStamp();
+					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
+					long timestamp = properties.getRemoteFileTimeStamp();
+					
+					// srcFileOrFolder may not be a file from the RemoteSystemTempFiles folder in which
+					// case there will be no stored property for the remote timestamp.
+					if (timestamp == 0)
+						timestamp = srcFileOrFolder.getLocalTimeStamp();	
 						
-						// srcFileOrFolder may not be a file from the RemoteSystemTempFiles folder in which
-						// case there will be no stored property for the remote timestamp.
-						if (timestamp == 0)
-							timestamp = srcFileOrFolder.getLocalTimeStamp();
-						
+					try {
 						targetFS.setLastModified(copiedFile, timestamp, monitor);
-				}
+					}
+					catch (SystemMessageException e){
+						// service doesn't support setLastModified
+						SystemBasePlugin.logError("Unable to set last modified", e); //$NON-NLS-1$
+					}
+	  		    }
 
 				return copiedFile;
 			}
@@ -2067,7 +2080,13 @@ public class UniversalFileTransferUtility
 		if (source instanceof IFile)
 		{
 			SystemIFileProperties properties = new SystemIFileProperties(source);
-			target.getParentRemoteFileSubSystem().setLastModified(target, properties.getRemoteFileTimeStamp(), monitor);
+			try {
+				target.getParentRemoteFileSubSystem().setLastModified(target, properties.getRemoteFileTimeStamp(), monitor);
+			}
+			catch (SystemMessageException e){
+				// service doesn't support setLastModified
+				SystemBasePlugin.logError("Unable to set last modified", e); //$NON-NLS-1$
+			}
 		}
 		else if (source instanceof IContainer)
 		{

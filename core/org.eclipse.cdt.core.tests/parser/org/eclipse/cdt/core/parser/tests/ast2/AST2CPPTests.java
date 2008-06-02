@@ -5629,4 +5629,15 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testRecursiveUserDefinedFieldAccess_Bug205964() throws Exception {
 		parseAndCheckBindings(getAboveComment());
 	}
+
+	// namespace ns {
+	// class A {};
+	// }
+	//
+	// using ns::A;
+	//
+	// class B: public A {};
+	public void _testBug235196() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
 }

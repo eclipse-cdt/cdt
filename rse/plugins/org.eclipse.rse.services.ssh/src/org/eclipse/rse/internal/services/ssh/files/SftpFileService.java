@@ -30,6 +30,7 @@
  * Martin Oberhuber (Wind River) - [190904] Changing read-only attribute throws exception
  * Martin Oberhuber (Wind River) - [218042] Support UNIX permission modification on ssh
  * Martin Oberhuber (Wind River) - [233651] Make ssh delete throw proper exceptions
+ * Martin Oberhuber (Wind River) - [235477][ssh] SftpFileService.createFolder() fails for file named "a?*"
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -259,9 +260,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				msg += "Please specify a different encoding in host properties.";  //$NON-NLS-1$
 				throw new UnsupportedEncodingException(msg);
 			}
-			//Quote ? and * characters for Jsch
-			//FIXME bug 204705: this does not work properly for commands like ls(), due to a Jsch bug
-			return quoteForJsch(recoded);
+			return recoded;
 		} catch(UnsupportedEncodingException e) {
 
 			//SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),"Please specify a different encoding in host properties."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -270,6 +269,14 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			throw new SystemMessageException(msg);
 
 		}
+	}
+
+	protected String recodeSafeForJsch(String s) throws SystemMessageException {
+		String recoded = recodeSafe(s);
+		// Quote ? and * characters for Jsch
+		// FIXME bug 204705: this does not work properly for commands like ls(),
+		// due to a Jsch bug
+		return quoteForJsch(recoded);
 	}
 
 	/**
@@ -308,8 +315,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			StringBuffer buf = new StringBuffer(s.length()+8);
 			for(int i=0; i<s.length(); i++) {
 				char c = s.charAt(i);
-				//				if(c=='?' || c=='*' || c=='\\') {
-				if(c=='?' || c=='*') {
+				if (c == '?' || c == '*' || c == '\\') {
+				//if(c=='?' || c=='*') {
 					buf.append('\\');
 				}
 				buf.append(c);
@@ -458,7 +465,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		String fullPath = concat(remoteParent, fileName);
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				attrs = getChannel("SftpFileService.getFile: "+fullPath).stat(recodeSafe(fullPath)); //$NON-NLS-1$
+				attrs = getChannel("SftpFileService.getFile: " + fullPath).stat(recodeSafeForJsch(fullPath)); //$NON-NLS-1$
 				Activator.trace("SftpFileService.getFile <--"); //$NON-NLS-1$
 				node = makeHostFile(remoteParent, fileName, attrs);
 			} catch(Exception e) {
@@ -507,7 +514,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			boolean haveSubMonitor = false;
 			try {
-				Vector vv=getChannel("SftpFileService.internalFetch: "+parentPath).ls(recodeSafe(parentPath)); //$NON-NLS-1$
+				Vector vv = getChannel("SftpFileService.internalFetch: " + parentPath).ls(recodeSafeForJsch(parentPath)); //$NON-NLS-1$
 				progressTick(monitor, 40);
 				if (vv.size()>1 && monitor!=null) {
 					monitor = new SubProgressMonitor(monitor, 40);
@@ -562,9 +569,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		if (attrs.isLink()) {
 			//check if the link points to a directory
 			try {
+				String fullPath = concat(parentPath, fileName);
 				boolean readlinkDone = false;
 				try {
-					linkTarget=decode(getChannel("makeHostFile.readlink").readlink(recode(concat(parentPath, fileName)))); //$NON-NLS-1$
+					linkTarget = decode(getChannel("makeHostFile.readlink").readlink(recode(fullPath))); //$NON-NLS-1$
 					readlinkDone = true;
 				} catch(Throwable t) {
 					//readlink() is only supported on sftpv3 and later servers, and jsch-0.1.29 or higher.
@@ -574,11 +582,11 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 					// * Immediate link target is not available, only the fully resolved link target (might be an advantage too!)
 					// *  -- but clients can also resolve the path with the
 					// * Immediate link target is not available for broken symbolic links
-					getChannel("makeHostFile.chdir").cd(recode(concat(parentPath, fileName))); //$NON-NLS-1$
+					getChannel("makeHostFile.chdir").cd(recode(fullPath)); //$NON-NLS-1$
 					linkTarget=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
 					canonicalPath=linkTarget;
 				}
-				if (linkTarget!=null && !linkTarget.equals(concat(parentPath, fileName))) {
+				if (linkTarget != null && !linkTarget.equals(fullPath)) {
 					if (readlinkDone) {
 						//linkTarget may be a relative path name that needs to be resolved for stat() to work properly
 						String curdir=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
@@ -589,7 +597,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 					attrsTarget = getChannel("SftpFileService.getFile").stat(recode(linkTarget)); //$NON-NLS-1$
 					if (readlinkDone && attrsTarget.isDir()) {
 						//TODO JSch should have realpath() API
-						getChannel("makeHostFile.chdir").cd(recode(concat(parentPath, fileName))); //$NON-NLS-1$
+						getChannel("makeHostFile.chdir").cd(recode(fullPath)); //$NON-NLS-1$
 						canonicalPath=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
 					}
 				} else {
@@ -663,7 +671,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		try {
 			SftpProgressMonitor sftpMonitor=new MyProgressMonitor(monitor);
 			int mode=ChannelSftp.OVERWRITE;
-			dst = recodeSafe(dst);
+			dst = recodeSafeForJsch(dst);
 			getChannel("SftpFileService.upload "+remoteFile); //check the session is healthy //$NON-NLS-1$
 			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 			channel.connect();
@@ -858,7 +866,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		String fullPath = concat(remoteParent, fileName);
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String fullPathRecoded = recodeSafe(concat(remoteParent, fileName));
+				String fullPathRecoded = recodeSafeForJsch(concat(remoteParent, fileName));
 				OutputStream os = getChannel("SftpFileService.createFile").put(fullPathRecoded); //$NON-NLS-1$
 				os.close();
 				SftpATTRS attrs = getChannel("SftpFileService.createFile.stat").stat(fullPathRecoded); //$NON-NLS-1$
@@ -884,7 +892,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			try {
 				String fullPathRecoded = recodeSafe(fullPath);
 				getChannel("SftpFileService.createFolder").mkdir(fullPathRecoded); //$NON-NLS-1$
-				SftpATTRS attrs = getChannel("SftpFileService.createFolder.stat").stat(fullPathRecoded); //$NON-NLS-1$
+				SftpATTRS attrs = getChannel("SftpFileService.createFolder.stat").stat(quoteForJsch(fullPathRecoded)); //$NON-NLS-1$
 				result = makeHostFile(remoteParent, folderName, attrs);
 				Activator.trace("SftpFileService.createFolder ok"); //$NON-NLS-1$
 			} catch (Exception e) {
@@ -905,7 +913,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		Activator.trace("SftpFileService.delete.waitForLock"); //$NON-NLS-1$
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String fullPathRecoded = recodeSafe(fullPath);
+				String fullPathRecoded = recodeSafeForJsch(fullPath);
 				SftpATTRS attrs = null;
 				try {
 					attrs = getChannel("SftpFileService.delete").lstat(fullPathRecoded); //$NON-NLS-1$
@@ -963,7 +971,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		String fullPathNew = concat(remoteParent, newName);
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				getChannel("SftpFileService.rename").rename(recode(fullPathOld), recodeSafe(fullPathNew)); //$NON-NLS-1$
+				getChannel("SftpFileService.rename").rename(recode(fullPathOld), recodeSafeForJsch(fullPathNew)); //$NON-NLS-1$
 				Activator.trace("SftpFileService.rename ok"); //$NON-NLS-1$
 			} catch (Exception e) {
 				Activator.trace("SftpFileService.rename "+fullPathOld+" -> "+fullPathNew+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1223,7 +1231,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
 			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 			channel.connect();
-			stream = new SftpBufferedOutputStream(channel.put(recodeSafe(dst), sftpMonitor, mode), channel);
+			stream = new SftpBufferedOutputStream(channel.put(recodeSafeForJsch(dst), sftpMonitor, mode), channel);
 			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {

@@ -13,6 +13,7 @@
  *
  * Contributors:
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * Martin Oberhuber (Wind River) - [235363][api][breaking] IHostFileToRemoteFileAdapter methods should return AbstractRemoteFile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -20,11 +21,11 @@ package org.eclipse.rse.internal.subsystems.files.dstore;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
 import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.internal.services.dstore.files.DStoreVirtualHostFile;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -47,7 +48,7 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 	}
 
 
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes)
+	public AbstractRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes)
 	{
 		registerFilePropertyChangeListener(ss);
 
@@ -57,7 +58,7 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 		{
 			DStoreHostFile node = (DStoreHostFile)nodes[i];
 
-			IRemoteFile lfile = null;
+			DStoreFile lfile = null;
 
 			if (node instanceof DStoreVirtualHostFile)
 			{
@@ -72,16 +73,15 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 			ss.cacheRemoteFile(lfile);
 		}
 
-		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);
+		return (DStoreFile[]) results.toArray(new DStoreFile[results.size()]);
 	}
 
 
-
-	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile node)
+	public AbstractRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile node)
 	{
 		registerFilePropertyChangeListener(ss);
 
-		IRemoteFile file = null;
+		DStoreFile file = null;
 
 		if (node instanceof DStoreVirtualHostFile)
 		{
@@ -94,34 +94,5 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 		ss.cacheRemoteFile(file);
 		return file;
 	}
-
-
-	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, String name, boolean isDirectory, boolean isRoot)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, Object object)
-	{
-		registerFilePropertyChangeListener(ss);
-		if (object instanceof DataElement)
-		{
-			DStoreHostFile hostFile = new DStoreHostFile((DataElement)object);
-			IRemoteFile file = null;
-
-			{
-				file = new DStoreFile(ss, context, parent, hostFile);
-			}
-			ss.cacheRemoteFile(file);
-			return file;
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-
 
 }

@@ -11,11 +11,15 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.sourcelookup;
 
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -59,6 +63,7 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -137,6 +142,16 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
             } else if (sourceElement instanceof IFile) {
                 editorId = getEditorIdForFilename(((IFile)sourceElement).getName());
                 editorInput = new FileEditorInput((IFile)sourceElement);
+            } else if (sourceElement instanceof ITranslationUnit) {
+            	try {
+                	URI uriLocation = ((ITranslationUnit)sourceElement).getLocationURI();
+            		IFileStore fileStore = EFS.getStore(uriLocation);
+            		editorInput = new FileStoreEditorInput(fileStore);
+            		editorId = getEditorIdForFilename(uriLocation.getPath());
+            	} catch (CoreException e) {
+                    editorInput = new CommonSourceNotFoundEditorInput(fDmc);
+                    editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+            	}
             }
             result.setEditorInput(editorInput);
             result.setEditorId(editorId);

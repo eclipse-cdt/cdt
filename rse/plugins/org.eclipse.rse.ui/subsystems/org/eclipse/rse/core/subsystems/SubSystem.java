@@ -38,6 +38,7 @@
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * David McKnight (IBM)          - [233435] SubSystem.resolveFilterStrings(*) does not prompt for a connection when the subsystem is not connected
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -2177,7 +2178,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 */
 	public Object[] resolveFilterString(String filterString, IProgressMonitor monitor) throws Exception
 	{
-
+		// for bug 233435, implicit connect if the connection is not connected
+		checkIsConnected(monitor);
+		
 		if (isConnected())
 		{
 			if (!supportsConnecting && !_isInitialized) {
@@ -2215,6 +2218,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	public Object[] resolveFilterStrings(String[] filterStrings, IProgressMonitor monitor)
 	throws Exception
 	{
+		// for bug 233435, implicit connect if the connection is not connected
+		checkIsConnected(monitor);
+		
 		if ((filterStrings == null) || (filterStrings.length == 0)) {
 			SystemBasePlugin.logInfo("Filter strings are null"); //$NON-NLS-1$
 			return null;
@@ -2271,6 +2277,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	public Object[] resolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
 	throws Exception
 	{
+		// for bug 233435, implicit connect if the connection is not connected
+		checkIsConnected(monitor);
+		
 		if (isConnected())
 		{
 			if (!supportsConnecting && !_isInitialized) {

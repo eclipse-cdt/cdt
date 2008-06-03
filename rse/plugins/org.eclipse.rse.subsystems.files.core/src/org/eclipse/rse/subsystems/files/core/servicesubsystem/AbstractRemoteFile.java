@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
+ * Martin Oberhuber (Wind River) - [234726] Update IRemoteFile Javadocs
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -25,12 +26,12 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 
 
-public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFile
+public abstract class AbstractRemoteFile extends RemoteFile
 {
 	protected IHostFile _hostFile;
 	protected FileServiceSubSystem _subSystem;
 	protected String _classiciation;
-	
+
 
 	public AbstractRemoteFile(FileServiceSubSystem subSystem, IRemoteFileContext context, IRemoteFile parent, IHostFile hostFile)
 	{
@@ -41,7 +42,7 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 		if (_hostFile.isFile() && !_hostFile.isArchive()) // no need to query this again so marking false for stale
     		markStale(false, false);
 	}
-	
+
 	public IRemoteFileSubSystem getParentRemoteFileSubSystem()
 	{
 		return _subSystem;
@@ -105,7 +106,7 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 		return _hostFile.getSize();
 	}
 
-	public int compareTo(Object other) throws ClassCastException 
+	public int compareTo(Object other) throws ClassCastException
 	{
 		IRemoteFile otherFile = (IRemoteFile)other;
 		if (otherFile.isFile())
@@ -114,7 +115,7 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 			{
 				String otherPath = otherFile.getAbsolutePath();
 				String thisPath = getAbsolutePath();
-		
+
 				return thisPath.compareToIgnoreCase(otherPath);
 			}
 			else
@@ -128,7 +129,7 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 			{
 				String otherPath = otherFile.getAbsolutePath();
 				String thisPath = getAbsolutePath();
-		
+
 				return thisPath.compareToIgnoreCase(otherPath);
 			}
 			else
@@ -199,5 +200,5 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 		return _hostFile;
 	}
 
-	
+
 }

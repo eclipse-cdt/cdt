@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Martin Oberhuber (Wind River) - [234726] Update IRemoteFile Javadocs
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -31,16 +32,16 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.SystemBasePlugin;
 
-public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
+public class DStoreFile extends AbstractRemoteFile
 {
-	
+
 	private DStoreFileService getDStoreFileService()
 	{
 		FileServiceSubSystem ss = (FileServiceSubSystem)_context.getParentRemoteFileSubSystem();
 		return (DStoreFileService)ss.getFileService();
 	}
-	
-	public IRemoteFile getParentRemoteFile() 
+
+	public IRemoteFile getParentRemoteFile()
 	{
 		// because this can get called by eclipse from the main thread, and dstore can have problems with main-thread queries,
 		// this is overridden to provide a parent without doing the actual query
@@ -50,17 +51,17 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
     		{
     			return null;
     		}
-    		
+
 	    	IRemoteFile parentFile = null;
 
 	    	String pathOnly = getParentPath();
 	    	if (pathOnly != null)
-	    	{    	  
+	    	{
 	    	  DStoreFileService fileService = getDStoreFileService();
 	     	  IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
 	    	  if (ss != null)
 	    	  {
-	    		  
+
 	    	  	try {
 		    	  	char sep = getSeparatorChar();
 		    	  	if (pathOnly.length() == 0)
@@ -75,7 +76,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  	{
 		    	  		// parentFile is already null
 		    	  		//parentFile = null;
-		    	  		
+
 		    	  		IHostFile hostParent = fileService.getHostFile(pathOnly);
 		    	  		if (hostParent == null)
 		    	  		{
@@ -111,10 +112,10 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  				parentName = pathOnly.substring(nameSep + 1);
 		    	  				parentPath = "" + sep; //$NON-NLS-1$
 		    	  			}
-		    	  		
+
 		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, parentName);
 		    	  			element.setAttribute(DE.A_VALUE, parentPath);
-		    	  			    	  	
+
 		    	  			hostParent = new DStoreHostFile(element);
 		    	  		}
 		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, (DStoreHostFile)hostParent);
@@ -123,8 +124,8 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		            else
 		            {
 		            	DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
-		            	
-	    	  		
+
+
 		            	IHostFile hostParent = fileService.getHostFile(pathOnly);
 		    	  		if (hostParent == null)
 		    	  		{
@@ -145,13 +146,13 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  				parentName = pathOnly.substring(nameSep + 1);
 		    	  				parentPath = "" + sep; //$NON-NLS-1$
 		    	  			}
-		    	  		
+
 		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, parentName);
 		    	  			element.setAttribute(DE.A_VALUE, parentPath);
 		    	  			hostParent = new DStoreHostFile(element);
 		    	  		}
 		            	parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, (DStoreHostFile)hostParent);
-		            	
+
 		              //parentFile = ss.getRemoteFileObject(pathOnly);
 		            }
 	    	  	} catch (Exception e) {
@@ -178,7 +179,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		super(ss,context, parent, hostFile);
 		_dstoreHostFile = hostFile;
 	}
-	
+
 	public boolean isVirtual()
 	{
 		DataElement element = _dstoreHostFile.getDataElement();

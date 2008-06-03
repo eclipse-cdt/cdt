@@ -13,6 +13,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - [187571] Classification is empty for local directories
+ * Martin Oberhuber (Wind River) - [234726] Update IRemoteFile Javadocs
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.local.model;
@@ -26,7 +27,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 
 
 
-public class LocalFile extends AbstractRemoteFile implements IRemoteFile
+public class LocalFile extends AbstractRemoteFile
 {
 	protected LocalHostFile _localHostFile;
 	protected String _classification;

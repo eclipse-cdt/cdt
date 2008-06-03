@@ -1,78 +1,118 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
+ * Martin Oberhuber (Wind River) - [235360][ftp][ssh] Return proper "Root" IHostFile
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
 import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.Method;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 
 public class FileServiceTest extends RSEBaseConnectionTestCase {
 
+	private String fPropertiesFileName;
+	// For testing the test: verify methods on Local
+	public static String fDefaultPropertiesFile = "local.properties";
+
 	private IFileServiceSubSystem fss;
 	private IFileService fs;
-	private File tempDir;
+	private IRemoteFile fHomeDirectory;
+	private IRemoteFile remoteTempDir;
 	private String tempDirPath;
 	private IProgressMonitor mon = new NullProgressMonitor();
-	
+
+	/**
+	 * Constructor with specific test name.
+	 *
+	 * @param name test to execute
+	 */
+	public FileServiceTest(String name) {
+		this(name, fDefaultPropertiesFile);
+	}
+
+	/**
+	 * Constructor with connection type and specific test name.
+	 *
+	 * @param name test to execute
+	 * @param propertiesFileName file with connection properties to use
+	 */
+	public FileServiceTest(String name, String propertiesFileName) {
+		super(name);
+		fPropertiesFileName = propertiesFileName;
+	}
+
+	public static Test suite() {
+		String baseName = FileServiceTest.class.getName();
+		TestSuite suite = new TestSuite(baseName);
+
+		// // Add a test suite for each connection type
+		String[] connTypes = { "local", "ssh", "ftpWindows", "ftp", "linux", "windows" };
+		//String[] connTypes = { "local" };
+		// String[] connTypes = { "ssh" };
+
+		for (int i = 0; i < connTypes.length; i++) {
+			String suiteName = connTypes[i] == null ? "EFS" : connTypes[i];
+			String propFileName = connTypes[i] == null ? null : connTypes[i] + "Connection.properties";
+			TestSuite subSuite = new TestSuite(baseName + "." + suiteName);
+			Method[] m = FileServiceTest.class.getMethods();
+			for (int j = 0; j < m.length; j++) {
+				String testName = m[j].getName();
+				if (testName.startsWith("test")) {
+					subSuite.addTest(new FileServiceTest(testName, propFileName));
+				}
+			}
+			suite.addTest(subSuite);
+		}
+		return suite;
+	}
+
+
 	public void setUp() throws Exception {
 		super.setUp();
-		IHost localHost = getLocalSystemConnection();
-		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
-		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
-		for (int i=0; i<ss.length; i++) {
-			if (ss[i] instanceof IFileServiceSubSystem) {
-				fss = (IFileServiceSubSystem)ss[i];
-				fs = fss.getFileService();
-			}
-		}
-		try {
-			 tempDir = File.createTempFile("rsetest","dir"); //$NON-NLS-1$ //$NON-NLS-2$
-			 assertTrue(tempDir.delete());
-			 assertTrue(tempDir.mkdir());
-			 tempDirPath = tempDir.getAbsolutePath();
-		} catch(IOException ioe) {
-			assertTrue("Exception creating temp dir", false); //$NON-NLS-1$
-		}
+		IHost host = getHost(fPropertiesFileName);
+		fss = (IFileServiceSubSystem) RemoteFileUtility.getFileSubSystem(host);
+		fs = fss.getFileService();
+		fss.checkIsConnected(getDefaultProgressMonitor());
+		fHomeDirectory = fss.getRemoteFileObject(".", getDefaultProgressMonitor());
+		remoteTempDir = fss.getRemoteFileObject(fHomeDirectory, "rsetest" + System.currentTimeMillis(), getDefaultProgressMonitor());
+		fss.createFolder(remoteTempDir, getDefaultProgressMonitor());
+		tempDirPath = remoteTempDir.getAbsolutePath();
 	}
-	
+
 	public void tearDown() throws Exception {
-		try {
-			fs.delete(tempDir.getParent(), tempDir.getName(), mon);
-		} catch(SystemMessageException msg) {
-			//ensure that super.tearDown() can run
-			System.err.println("Exception on tearDown: "+msg.getLocalizedMessage()); //$NON-NLS-1$
-		}
+		fss.delete(remoteTempDir, getDefaultProgressMonitor());
 		super.tearDown();
 	}
-	
+
 	public boolean isWindows() {
-		return fss.getHost().getSystemType().isWindows(); 
+		return fss.getHost().getSystemType().isWindows();
 	}
-	
+
 	public String getTestFileName() {
 		//Return a filename for testing that exposes all characters valid on the file system
 		if (!isWindows()) {
@@ -80,28 +120,54 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 			return "a !@#${a}\"\' fi\tle\b\\%^&*()?_ =[]~+-'`;:,.|<>"; //$NON-NLS-1$
 		}
 		//Fallback: Windows TODO: test unicode
-		return "a !@#${a}'` file%^&()_ =[]~+-;,."; //$NON-NLS-1$
+		//Note: The trailing dot ('.') is really unfair on Windows because the file
+		//system doesn't seem to ever store trailing dots
+		//return "a !@#${a}'` file%^&()_ =[]~+-;,."; //$NON-NLS-1$
+		return "a !@#${a}'` file%^&()_ =[]~+-;.,"; //$NON-NLS-1$
 	}
-	
+
+	public void testGetRootProperties() throws Exception {
+		//-test-author-:MartinOberhuber
+		IHostFile[] roots = fs.getRoots(new NullProgressMonitor());
+		assertNotNull(roots);
+		assertTrue(roots.length > 0);
+		for (int i = 0; i < roots.length; i++) {
+			assertTrue(roots[i].isRoot());
+			assertTrue(roots[i].exists());
+			assertNull(roots[i].getParentPath());
+			String rootName = roots[i].getName();
+			assertNotNull(rootName);
+			System.out.println(rootName);
+			IHostFile newHf = fs.getFile(null, rootName, new NullProgressMonitor());
+			assertTrue(newHf.isRoot());
+			assertTrue(newHf.exists());
+			assertEquals(newHf.getName(), rootName);
+			newHf = fs.getFile("", rootName, new NullProgressMonitor());
+			assertTrue(newHf.isRoot());
+			assertTrue(newHf.exists());
+			assertEquals(newHf.getName(), rootName);
+		}
+	}
+
 	public void testCaseSensitive() {
 		//-test-author-:MartinOberhuber
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCaseSensitive")) return; //$NON-NLS-1$
-		
+
 		if (isWindows()) {
-			assertFalse(fss.getSubSystemConfiguration().isCaseSensitive());
+			assertFalse(fs.isCaseSensitive());
 			assertFalse(fss.isCaseSensitive());
-			assertFalse(fs.isCaseSensitive()); //FAIL due to bug 168586
+			assertFalse(fss.getSubSystemConfiguration().isCaseSensitive());
 		} else {
-			assertTrue(fss.getSubSystemConfiguration().isCaseSensitive());
-			assertTrue(fss.isCaseSensitive()); //FAIL due to bug 168596
 			assertTrue(fs.isCaseSensitive());
+			assertTrue(fss.isCaseSensitive());
+			assertTrue(fss.getSubSystemConfiguration().isCaseSensitive());
 		}
 	}
-	
+
 	public void testCreateFile() throws SystemMessageException {
 		//-test-author-:MartinOberhuber
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
-		
+
 		String testName = getTestFileName();
 		IHostFile hf = fs.createFile(tempDirPath, testName, mon);
 		assertTrue(hf.exists());
@@ -112,16 +178,17 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 		assertEquals(hf.getSize(), 0);
 		long modDate = hf.getModifiedDate();
 		assertTrue(modDate > 0);
-		
-		File theFile = new File(tempDir, testName); 
-		assertTrue(theFile.exists());
-		assertTrue(modDate == theFile.lastModified());
+		if (fss.getHost().getSystemType().isLocal()) {
+			File theFile = new File(remoteTempDir.getAbsolutePath(), testName);
+			assertTrue(theFile.exists());
+			assertTrue(modDate == theFile.lastModified());
+		}
 	}
-	
+
 	public void testCreateCaseSensitive() throws SystemMessageException {
 		//-test-author-:MartinOberhuber
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateCaseSensitive")) return; //$NON-NLS-1$
-		
+
 		String testName = getTestFileName();
 		String testName2 = testName.toUpperCase();
 		IHostFile hf = fs.createFile(tempDirPath, testName, mon);

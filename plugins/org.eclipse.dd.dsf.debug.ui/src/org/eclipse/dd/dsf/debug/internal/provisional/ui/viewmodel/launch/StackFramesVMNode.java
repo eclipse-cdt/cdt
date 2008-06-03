@@ -45,7 +45,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
@@ -114,6 +113,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }          
         
         if (update.getOffset() == 0 && update.getLength() == 1) {
+            // Requesting top stack frame only
             stackService.getTopFrame(
                 execDmc, 
                 new ViewerDataRequestMonitor<IFrameDMContext>(getSession().getExecutor(), update) { 
@@ -128,8 +128,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
                     }
                 });
             
-            // Requesting top stack frame only
         } else {
+        	// full stack dump
             stackService.getFrames(
                 execDmc, 
                 new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
@@ -266,21 +266,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
     /*
      * (non-Javadoc)
-     * @see org.eclipse.dd.dsf.ui.viewmodel.AbstractVMNode#handleFailedUpdate(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
-     */
-    @Override
-    protected void handleFailedUpdate(IViewerUpdate update) {
-        if (update instanceof ILabelUpdate) {
-            update.done();
-            // Avoid repainting the label if it's not available.  This only slows
-            // down the display.
-        } else {
-            super.handleFailedUpdate(update);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
      * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#getContextsForEvent(org.eclipse.dd.dsf.ui.viewmodel.VMDelta, java.lang.Object, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
      */
     @Override
@@ -318,6 +303,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
         // label has changed.
         if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
+        } else if (e instanceof FullStackRefreshEvent) {
+        	return IModelDelta.CONTENT | IModelDelta.EXPAND;
         } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
         } else if (e instanceof ModelProxyInstalledEvent) {
@@ -341,13 +328,16 @@ public class StackFramesVMNode extends AbstractDMVMNode
             if (parent.getElement() instanceof IDMVMContext) {
                 IExecutionDMContext threadDmc = null;
                 threadDmc = DMContexts.getAncestorOfType( ((IDMVMContext)parent.getElement()).getDMContext(), IExecutionDMContext.class);
-                buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, threadDmc, triggeringCtx, parent, nodeOffset, rm);
+                buildDeltaForSuspendedEvent(threadDmc, triggeringCtx, parent, nodeOffset, rm);
             } else {
                 rm.done();
             }
+        } else if (e instanceof FullStackRefreshEvent) {
+            IExecutionDMContext execDmc = ((FullStackRefreshEvent)e).getDMContext();
+            buildDeltaForFullStackRefreshEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof ISuspendedDMEvent) {
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();
-            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, execDmc, execDmc, parent, nodeOffset, rm);
+            buildDeltaForSuspendedEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
             buildDeltaForSteppingTimedOutEvent((StepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof ModelProxyInstalledEvent) {
@@ -357,7 +347,55 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-    private void buildDeltaForSuspendedEvent(final ISuspendedDMEvent e, final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+	private void buildDeltaForSuspendedEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+        IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
+        IStack stackService = getServicesTracker().getService(IStack.class);
+        if (stackService == null || runControlService == null) {
+            // Required services have not initialized yet.  Ignore the event.
+            rm.done();
+            return;
+        }          
+        
+        // Check if we are building a delta for the thread that triggered the event.
+        // Only then expand the stack frames and select the top one.
+        if (executionCtx.equals(triggeringCtx)) {
+            // Always expand the thread node to show the stack frames.
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.EXPAND);
+    
+            // Retrieve the list of stack frames, and mark the top frame to be selected.
+            getVMProvider().updateNode(
+                this,
+                new VMChildrenUpdate(
+                    parentDelta, getVMProvider().getPresentationContext(), 0, 2,
+                    new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
+                        @Override
+                        public void handleCompleted() {
+                            final List<Object> data= getData();
+							if (data != null && data.size() != 0) {
+								parentDelta.addNode(data.get(0), 0, IModelDelta.SELECT | IModelDelta.STATE);
+								
+						        // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
+						        // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
+						        // refresh the whole stack trace with every step would slow down stepping too much.
+						        IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
+						        if (runControlService != null && 
+                                    triggeringCtx != null && runControlService.isStepping(triggeringCtx) &&
+						            data.size() >= 2)
+						        {
+                                    parentDelta.addNode( data.get(1), 1, IModelDelta.STATE);
+						        }
+                            }
+                            // Even in case of errors, complete the request monitor.
+                            rm.done();
+                        }
+                    })
+                );
+        } else {
+            rm.done();
+        }
+    }
+    
+	private void buildDeltaForFullStackRefreshEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null || runControlService == null) {
@@ -373,38 +411,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         }
         
-        // Check if we are building a delta for the thread that triggered the event.
-        // Only then expand the stack frames and select the top one.
-        if (executionCtx.equals(triggeringCtx)) {
-            // Always expand the thread node to show the stack frames.
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.EXPAND);
-    
-            // Retrieve the list of stack frames, and mark the top frame to be selected.
-            getVMProvider().updateNode(
-                this,
-                new VMChildrenUpdate(
-                    parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                    new DataRequestMonitor<List<Object>>(getExecutor(), rm) { 
-                        @Override
-                        public void handleCompleted() {
-                            if (isSuccess() && getData().size() != 0) {
-                                parentDelta.addNode( getData().get(0), 0, IModelDelta.SELECT | IModelDelta.STATE);
-                                // If second frame is available repaint it, so that a "..." appears.  This gives a better
-                                // impression that the frames are not up-to date.
-                                if (getData().size() >= 2) {
-                                    parentDelta.addNode( getData().get(1), 1, IModelDelta.STATE);
-                                }
-                            }                        
-                            // Even in case of errors, complete the request monitor.
-                            rm.done();
-                        }
-                    })
-                );
-        } else {
-            rm.done();
-        }
-    }
-    
+        rm.done();
+	}
+	
     private void buildDeltaForSteppingTimedOutEvent(final StepQueueManager.ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

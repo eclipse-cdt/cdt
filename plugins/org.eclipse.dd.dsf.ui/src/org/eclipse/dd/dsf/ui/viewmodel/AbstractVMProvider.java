@@ -394,6 +394,7 @@ abstract public class AbstractVMProvider implements IVMProvider
     public void dispose() {
         clearNodes();
         fRootNode = null;
+        fDisposed = true;
     }
     
     public void update(final IHasChildrenUpdate[] updates) {

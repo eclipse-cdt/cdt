@@ -11,22 +11,34 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
+import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.DelayedStackRefreshUpdatePolicy;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.FullStackRefreshEvent;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StandardProcessVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode.LaunchesEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.update.IVMUpdatePolicy;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.GDBExitedEvent;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.GDBStartedEvent;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
@@ -46,8 +58,15 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 public class LaunchVMProvider extends AbstractDMVMProvider 
     implements IDebugEventSetListener, ILaunchesListener2
 {
-    @ThreadSafe
-    public LaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) 
+    /**
+	 * Delay (in milliseconds) before a full stack trace will be requested.
+	 */
+	private static final int FRAME_UPDATE_DELAY= 200;
+	
+    private final Map<IExecutionDMContext,ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<IExecutionDMContext,ScheduledFuture<?>>();
+
+	@ThreadSafe
+    public LaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)
     {
         super(adapter, presentationContext, session);
         
@@ -70,6 +89,10 @@ public class LaunchVMProvider extends AbstractDMVMProvider
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
     
+    @Override
+	protected IVMUpdatePolicy[] createUpdateModes() {
+		return new IVMUpdatePolicy[] { new DelayedStackRefreshUpdatePolicy() };
+    }
     
     public void handleDebugEvents(final DebugEvent[] events) {
         if (isDisposed()) return;
@@ -91,6 +114,61 @@ public class LaunchVMProvider extends AbstractDMVMProvider
         }
     }
 
+    @Override
+    protected void handleEvent(IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {
+    	super.handleEvent(proxyStrategy, event, rm);
+    	
+		if (event instanceof IRunControl.ISuspendedDMEvent) {
+    		final IExecutionDMContext exeContext= ((IRunControl.ISuspendedDMEvent) event).getDMContext();
+    		ScheduledFuture<?> refreshStackFramesFuture = getRefreshFuture(exeContext);
+    		// trigger delayed full stack frame update
+    		if (refreshStackFramesFuture != null) {
+    			// cancel previously scheduled frame update
+    			refreshStackFramesFuture.cancel(false);
+    		}
+
+    		refreshStackFramesFuture = getSession().getExecutor().schedule(
+	            new DsfRunnable() { 
+	                public void run() {
+	                    if (getSession().isActive()) {
+	                        getExecutor().execute(new Runnable() {
+	                            public void run() {
+	                                // trigger full stack frame update
+	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
+	                                if (future != null && !isDisposed()) {
+	                                    fRefreshStackFramesFutures.remove(exeContext);
+	                                    handleEvent(new FullStackRefreshEvent(exeContext));
+	                                }
+	                            }});
+	                    }
+	                }
+	            },
+			    FRAME_UPDATE_DELAY, TimeUnit.MILLISECONDS);
+			fRefreshStackFramesFutures.put(exeContext, refreshStackFramesFuture);
+    	} else if (event instanceof IRunControl.IResumedDMEvent) {
+    		IExecutionDMContext exeContext= ((IRunControl.IResumedDMEvent) event).getDMContext();
+    		ScheduledFuture<?> refreshStackFramesFuture= fRefreshStackFramesFutures.get(exeContext);
+    		if (refreshStackFramesFuture != null) {
+    			// cancel previously scheduled frame update
+    			refreshStackFramesFuture.cancel(false);
+    			fRefreshStackFramesFutures.remove(exeContext);
+    		}
+    	}
+    }
+
+    /**
+     * Returns the future for the given execution context or for any child of the 
+     * given execution context.
+     */
+    private ScheduledFuture<?> getRefreshFuture(IExecutionDMContext execCtx) {
+        for (IExecutionDMContext refreshCtx : fRefreshStackFramesFutures.keySet()) {
+            if (refreshCtx.equals(execCtx) || DMContexts.isAncestorOf(refreshCtx, execCtx)) {
+                return fRefreshStackFramesFutures.remove(refreshCtx);
+            }
+        }
+        return null;
+    }
+    
     @Override
     public void dispose() {
         DebugPlugin.getDefault().removeDebugEventListener(this);

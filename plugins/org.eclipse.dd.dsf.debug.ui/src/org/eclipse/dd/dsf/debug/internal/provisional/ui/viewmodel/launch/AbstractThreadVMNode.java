@@ -119,6 +119,16 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
              // a delta for all the threads.
              rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
              rm.done();
+             return;
+        } else if (e instanceof FullStackRefreshEvent &&
+                ((FullStackRefreshEvent)e).getDMContext() instanceof IContainerDMContext)
+        {
+        	// The step sequence end event occured on a container and not on a thread.  Do not
+        	// return a context for this event, which will force the view model to generate
+        	// a delta for all the threads.
+        	rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+        	rm.done();
+        	return;
         } else if (e instanceof ModelProxyInstalledEvent) {
             getThreadVMCForModelProxyInstallEvent(
                 parentDelta,
@@ -220,6 +230,9 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
         {
             return IModelDelta.CONTENT;            
         } else if (e instanceof ISuspendedDMEvent) {
+        	// no change, update happens on FullStackRefreshEvent
+            return IModelDelta.NO_CHANGE;
+        } else if (e instanceof FullStackRefreshEvent) {
             return IModelDelta.CONTENT;
         } else if (e instanceof ISteppingTimedOutEvent && 
                  !(((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) ) 
@@ -244,8 +257,11 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
             rm.done();
         } else if (e instanceof ISuspendedDMEvent) {
+        	// no change
+        	rm.done();
+        } else if (e instanceof FullStackRefreshEvent) {
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-            rm.done();            
+            rm.done();
         } else if (e instanceof ISteppingTimedOutEvent && 
             !(((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) ) 
         {

@@ -1,0 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch;
+
+import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+
+/**
+ * Indicates the end of a sequence of steps. Should be handled like a suspended
+ * event to trigger a full refresh of stack frames.
+ */
+public class FullStackRefreshEvent extends AbstractDMEvent<IExecutionDMContext> {
+    
+    public FullStackRefreshEvent(IExecutionDMContext execCtx) {
+        super(execCtx);
+    }
+
+}

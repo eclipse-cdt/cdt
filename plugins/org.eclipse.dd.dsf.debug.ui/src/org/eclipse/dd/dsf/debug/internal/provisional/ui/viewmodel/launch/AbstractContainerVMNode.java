@@ -70,8 +70,11 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
         {
             return IModelDelta.CONTENT;            
         } else if (e instanceof IContainerSuspendedDMEvent) {
-            return IModelDelta.CONTENT;
-	    } else if (e instanceof ISteppingTimedOutEvent && 
+        	// no change, update happens on FullStackRefreshEvent
+            return IModelDelta.NO_CHANGE;
+        } else if (e instanceof FullStackRefreshEvent) {
+        	return IModelDelta.CONTENT;
+	    } else if (e instanceof ISteppingTimedOutEvent &&
                    ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext)
 	    {
            return IModelDelta.CONTENT;            
@@ -93,8 +96,10 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
 		{
 	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
 		} else if (e instanceof IContainerSuspendedDMEvent) {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);		
-		} else if (e instanceof ISteppingTimedOutEvent && 
+        	// do nothing
+		} else if (e instanceof FullStackRefreshEvent) {
+			parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+		} else if (e instanceof ISteppingTimedOutEvent &&
                    ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext)
 		{
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);

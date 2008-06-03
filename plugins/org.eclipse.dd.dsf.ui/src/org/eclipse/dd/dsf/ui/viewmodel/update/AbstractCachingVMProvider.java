@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
@@ -286,13 +287,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     public void refresh() {
         IElementUpdateTester elementTester =  getActiveUpdatePolicy().getElementUpdateTester(ManualUpdatePolicy.REFRESH_EVENT);
         
-        List<FlushMarkerKey> flushKeys = new LinkedList<FlushMarkerKey>();
-
         for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
-            flushKeys.add(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
+            flush(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
         }
-        
-        flush(flushKeys);
         
         for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
             if (!proxyStrategy.isDisposed()) {
@@ -492,97 +489,84 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
      * parameter is null, then all entries are flushed. 
      * @param archive
      */
-    private void flush(List<FlushMarkerKey> flushKeys) {
-        // To flush the cache data for given context, we have to iterate through all the contexts 
-        // in cache.  For each entry that has the given context as a parent, perform the flush.
-        List<FlushMarkerKey> flushKeysCopy = new ArrayList<FlushMarkerKey>(flushKeys.size());
-        flushKeysCopy.addAll(flushKeys);
-        
-        // Iterate through the cache entries backwards.  This means that we will be 
+    private void flush(FlushMarkerKey flushKey) {
+        // For each entry that has the given context as a parent, perform the flush.
+        // Iterate through the cache entries backwards.  This means that we will be
         // iterating in order of most-recently-used to least-recently-used.
         Entry entry = fCacheListHead.fPrevious;
-        while (entry != fCacheListHead && flushKeysCopy.size() != 0) {
-            for (Iterator<FlushMarkerKey> flushKeyItr = flushKeysCopy.iterator(); flushKeyItr.hasNext();) {
-                FlushMarkerKey flushKey = flushKeyItr.next();
-                
-                if (entry.fKey instanceof FlushMarkerKey) {
-                    FlushMarkerKey entryFlushKey = (FlushMarkerKey)entry.fKey;
-                    // If the context currently being flushed includes the flush 
-                    // context in current entry, remove the current entry since it will
-                    // be replaced with one at the end of the list.
-                    // Use special handling for null contexts, which we treat like it's an 
-                    // ancestor of all other contexts.
-                    if (flushKey.includes(entryFlushKey)) {
-                        fCacheData.remove(entryFlushKey);
-                        entry.remove();
-                    }
-                    
-                    // If the flush context in current entry includes the current context
-                    // being flushed, we can stop iterating through the cache entries
-                    // now.
-                    if (entryFlushKey.includes(flushKey)) {
-                        flushKeyItr.remove();
-                    }
+        while (entry != fCacheListHead) {
+            if (entry.fKey instanceof FlushMarkerKey) {
+                FlushMarkerKey entryFlushKey = (FlushMarkerKey)entry.fKey;
+                // If the context currently being flushed includes the flush
+                // context in current entry, remove the current entry since it will
+                // be replaced with one at the end of the list.
+                // Use special handling for null contexts, which we treat like it's an
+                // ancestor of all other contexts.
+                if (flushKey.includes(entryFlushKey)) {
+                    fCacheData.remove(entryFlushKey);
+                    entry.remove();
                 }
-                else if (entry instanceof ElementDataEntry) {
-                    ElementDataEntry elementDataEntry = (ElementDataEntry)entry;
-                    int updateFlags = flushKey.getUpdateFlags((ElementDataKey)elementDataEntry.fKey);
-                    if ((updateFlags & IVMUpdatePolicy.FLUSH) != 0) {
-                        if ((updateFlags & IVMUpdatePolicy.ARCHIVE) != 0) {
-                            // We are saving current data for change history, check if the data is valid. 
-                            // If it valid, save it for archive, if it's not valid old archive data will be used 
-                            // if there is any.  And if there is no old archive data, just remove the cache entry.
-                            for (Iterator<Map.Entry<IDMContext, Object>> itr = elementDataEntry.fDataOrStatus.entrySet().iterator(); 
-                                 itr.hasNext();) 
-                            {
-                                Map.Entry<IDMContext, Object> dataOrStatusEntry = itr.next();
-                                if (dataOrStatusEntry.getValue() instanceof IDMData) {
-                                    elementDataEntry.fArchiveData.put(dataOrStatusEntry.getKey(), (IDMData)dataOrStatusEntry.getValue());
-                                } 
-                            }
-                            elementDataEntry.fDataOrStatus.clear();
-                            if (elementDataEntry.fArchiveData.isEmpty()) {
-                                fCacheData.remove(entry.fKey);
-                                entry.remove();
-                            }
-                        } else {
-                            // We are not changing the archived data.  If archive data exists in the entry, leave it.
-                            // Otherwise remove the whole entry.
-                            if (!elementDataEntry.fArchiveData.isEmpty()) {
-                                elementDataEntry.fDataOrStatus.clear();
-                            } else {
-                                fCacheData.remove(entry.fKey);
-                                entry.remove();
+                
+                // If the flush context in current entry includes the current context
+                // being flushed, we can stop iterating through the cache entries
+                // now.
+                if (entryFlushKey.includes(flushKey)) {
+                    break;
+                }
+            }
+            else if (entry instanceof ElementDataEntry) {
+                ElementDataEntry elementDataEntry = (ElementDataEntry)entry;
+                int updateFlags = flushKey.getUpdateFlags((ElementDataKey)elementDataEntry.fKey);
+                if ((updateFlags & IVMUpdatePolicy.FLUSH) != 0) {
+                    if ((updateFlags & IVMUpdatePolicy.ARCHIVE) == IVMUpdatePolicy.ARCHIVE) {
+                        // We are saving current data for change history, check if the data is valid.
+                        // If it valid, save it for archive, if it's not valid old archive data will be used
+                        // if there is any.  And if there is no old archive data, just remove the cache entry.
+                        for (Iterator<Map.Entry<IDMContext, Object>> itr = elementDataEntry.fDataOrStatus.entrySet().iterator();
+                             itr.hasNext();)
+                        {
+                            Map.Entry<IDMContext, Object> dataOrStatusEntry = itr.next();
+                            if (dataOrStatusEntry.getValue() instanceof IDMData) {
+                                elementDataEntry.fArchiveData.put(dataOrStatusEntry.getKey(), (IDMData)dataOrStatusEntry.getValue());
                             }
                         }
-                        elementDataEntry.fHasChildren = null;
-                        elementDataEntry.fChildrenCount = null;
-                        elementDataEntry.fChildren = null;
-                    } else if ((updateFlags & IVMUpdatePolicy.DIRTY) != 0) {
-                        elementDataEntry.fDirty = true;
+                        elementDataEntry.fDataOrStatus.clear();
+                        if (elementDataEntry.fArchiveData.isEmpty()) {
+                            fCacheData.remove(entry.fKey);
+                            entry.remove();
+                        }
+                    } else {
+                        // We are not changing the archived data.  If archive data exists in the entry, leave it.
+                        // Otherwise remove the whole entry.
+                        if (!elementDataEntry.fArchiveData.isEmpty()) {
+                            elementDataEntry.fDataOrStatus.clear();
+                        } else {
+                            fCacheData.remove(entry.fKey);
+                            entry.remove();
+                        }
                     }
+                    elementDataEntry.fHasChildren = null;
+                    elementDataEntry.fChildrenCount = null;
+                    elementDataEntry.fChildren = null;
+                    elementDataEntry.fDirty = false;
+                } else if ((updateFlags & IVMUpdatePolicy.DIRTY) != 0) {
+                    elementDataEntry.fDirty = true;
                 }
             }
             entry = entry.fPrevious;
         }
         
-        for (FlushMarkerKey flushKey : flushKeys) {
-            // Insert a marker for this flush operation.  
-            Entry flushMarkerEntry = new Entry(flushKey);
-            fCacheData.put(flushKey, flushMarkerEntry);
-            flushMarkerEntry.insert(fCacheListHead);
-        }
+        // Insert a marker for this flush operation.
+        Entry flushMarkerEntry = new Entry(flushKey);
+        fCacheData.put(flushKey, flushMarkerEntry);
+        flushMarkerEntry.insert(fCacheListHead);
     }
 
     @Override
     protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {   
         IElementUpdateTester elementTester =  getActiveUpdatePolicy().getElementUpdateTester(event);
         
-        List<FlushMarkerKey> flushKeys = new LinkedList<FlushMarkerKey>();
-
-        flushKeys.add(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
-        
-        flush(flushKeys);
+        flush(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
         
         super.handleEvent(proxyStrategy, event, rm);
     }
@@ -650,7 +634,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             }
         }
         
-        return new ElementDataKey(rootElement, node, update.getElement(), update.getElementPath());
+        return new ElementDataKey(rootElement, node, update.getViewerInput(), update.getElementPath());
     }
     
     /**
@@ -671,7 +655,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             entry.insert(fCacheListHead);
         }
         
-        // Update they root element marker: 
+        // Update the root element marker:
         // - ensure that the root marker is root markers' map,
         // - ensure that the root marker is in the cache map,
         // - and ensure that it's at the end of the cache. 
@@ -719,33 +703,38 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 
                 ElementDataKey key = makeEntryKey(node, update);
                 final ElementDataEntry entry = getElementDataEntry(key);
-                Object dataOrStatus = entry.fDataOrStatus.get(dmc);
-                if(dataOrStatus != null) {
-                    if (dataOrStatus instanceof IDMData) {  
-                        rm.setData( (IDMData)dataOrStatus );
-                    } else {
-                        rm.setStatus((IStatus)dataOrStatus );
-                    }
+                if (entry.fDirty) {
+                    rm.setStatus(Status.CANCEL_STATUS);
                     rm.done();
                 } else {
-                    service.getExecutor().execute(new DsfRunnable() {
-                        public void run() {
-                            service.getModelData(dmc, 
-                                new ViewerDataRequestMonitor<IDMData>(executor, update) {
-                                    @Override
-                                    protected void handleCompleted() {
-                                        if (isSuccess()) {
-                                            entry.fDataOrStatus.put(dmc, getData());
-                                            rm.setData(getData());
-                                        } else {
-                                            entry.fDataOrStatus.put(dmc, getStatus());
-                                            rm.setStatus(getStatus());
-                                        }
-                                        rm.done();
-                                    }
-                                });
-                        }
-                    });
+	                Object dataOrStatus = entry.fDataOrStatus.get(dmc);
+	                if(dataOrStatus != null) {
+	                    if (dataOrStatus instanceof IDMData) {
+	                        rm.setData( dataOrStatus );
+	                    } else {
+	                        rm.setStatus((IStatus)dataOrStatus );
+	                    }
+	                    rm.done();
+	                } else {
+	                	service.getExecutor().execute(new DsfRunnable() {
+	                		public void run() {
+	                			service.getModelData(dmc,
+	                					new ViewerDataRequestMonitor<IDMData>(executor, update) {
+	                				@Override
+	                				protected void handleCompleted() {
+	                					if (isSuccess()) {
+	                						entry.fDataOrStatus.put(dmc, getData());
+	                						rm.setData(getData());
+	                					} else {
+	                						entry.fDataOrStatus.put(dmc, getStatus());
+	                						rm.setStatus(getStatus());
+	                					}
+	                					rm.done();
+	                				}
+	                			});
+	                		}
+	                	});
+	                }
                 }
             }
         });

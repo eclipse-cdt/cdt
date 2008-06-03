@@ -18,6 +18,8 @@ package org.eclipse.rse.tests.core.connection;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
@@ -190,5 +192,9 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 		assertNotNull("Failed to find and create remote system connection! Cause unknown!", connection); //$NON-NLS-1$
 
 		return connection;
+	}
+
+	protected IProgressMonitor getDefaultProgressMonitor() {
+		return new NullProgressMonitor();
 	}
 }

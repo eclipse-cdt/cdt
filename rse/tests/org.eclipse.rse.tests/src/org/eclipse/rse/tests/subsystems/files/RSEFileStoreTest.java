@@ -27,8 +27,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -103,10 +101,6 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		return suite;
 	}
 
-
-	protected IProgressMonitor getDefaultProgressMonitor() {
-		return new NullProgressMonitor();
-	}
 
 	protected IShellServiceSubSystem getShellServiceSubSystem() {
 		if (fPropertiesFileName == null) {

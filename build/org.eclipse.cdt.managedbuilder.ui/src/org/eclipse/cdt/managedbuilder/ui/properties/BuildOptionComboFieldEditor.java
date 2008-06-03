@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -212,6 +213,10 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
     * Set the list of enum values for this combo field editor
     */
     public void setOptions(String[] options){
+    	//bug 235327
+    	for (int i = 0; i < options.length; i++) {
+    		options[i] = TextProcessor.process(options[i]);
+    	}
     	this.options = options;
     }
     /**

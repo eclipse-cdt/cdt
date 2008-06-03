@@ -76,6 +76,7 @@
  * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [218040] FTP should support permission modification
  * Martin Oberhuber (Wind River) - [234045] FTP Permission Error Handling
+ * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -137,6 +138,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	private Mutex _commandMutex = new Mutex();
 
 	private String    _userHome;
+	private boolean   _caseSensitive = true;
 	private transient String _hostName;
 	private transient String _userId;
 	private transient String _password;
@@ -572,7 +574,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	 */
 	protected FTPHostFile getFileInternal(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
-    	remoteParent = checkEncoding(remoteParent);
+		remoteParent = checkEncoding(remoteParent);
     	fileName = checkEncoding(fileName);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
@@ -603,41 +605,38 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		FTPHostFile file = null;
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-
-			try{
-
+			try {
 				//try to retrieve the file
 				_ftpClient = getFTPClient();
 
 				if(!_ftpClient.changeWorkingDirectory(remoteParent))
 				{
-					throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
-				}
+						throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
+					}
 
 				if(!listFiles(monitor))
 				{
-					throw new SystemOperationCancelledException();
-				}
+						throw new SystemOperationCancelledException();
+					}
 
-				synchronized(_fCachePreviousFiles) {
-					cacheFiles(remoteParent);
+					synchronized (_fCachePreviousFiles) {
+						cacheFiles(remoteParent);
 
-					//Bug 198645: try exact match first
-					Object o = _fCachePreviousFiles.get(fileName);
+						//Bug 198645: try exact match first
+						Object o = _fCachePreviousFiles.get(fileName);
 					if (o!=null) return (FTPHostFile)o;
 
-					//try case insensitive match (usually never executed)
-					if (!isCaseSensitive()) {
-						for (int i = 0; i < _ftpFiles.length; i++) {
-							String tempName = _ftpFiles[i].getName();
-							if(tempName.equalsIgnoreCase(fileName)) {
-								file = (FTPHostFile)_fCachePreviousFiles.get(tempName);
-								break;
+						//try case insensitive match (usually never executed)
+						if (!isCaseSensitive()) {
+							for (int i = 0; i < _ftpFiles.length; i++) {
+								String tempName = _ftpFiles[i].getName();
+								if (tempName.equalsIgnoreCase(fileName)) {
+									file = (FTPHostFile) _fCachePreviousFiles.get(tempName);
+									break;
+								}
 							}
 						}
 					}
-
-				}
 
 				// if not found, create new object with non-existing flag
 				if(file == null)
@@ -645,8 +644,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 					file = new FTPHostFile(remoteParent,fileName, false, false, 0, 0, false);
 				}
 
-
-			}catch (Exception e){
+			} catch (Exception e) {
 				throw new RemoteFileIOException(e);
 			} finally {
 				_commandMutex.release();
@@ -1362,10 +1360,13 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		}
 	}
 
+	public void setIsCaseSensitive(boolean b) {
+		_caseSensitive = b;
+	}
+	
 	public boolean isCaseSensitive()
 	{
-		//TODO find out whether remote is case sensitive or not
-		return true;
+		return _caseSensitive;
 	}
 
 	/**

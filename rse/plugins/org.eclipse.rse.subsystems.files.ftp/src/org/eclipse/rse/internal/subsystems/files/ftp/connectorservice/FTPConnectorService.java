@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  * Javier Montalvo Orus (Symbian) - Bug 161209 - Need a Log of ftp commands
@@ -23,6 +23,7 @@
  * David McKnight (IBM) - [196632] [ftp] Passive mode setting does not work
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Martin Oberhuber (Wind River) - [203500] Support encodings for FTP paths
+ * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -50,41 +51,45 @@ import org.eclipse.ui.console.MessageConsole;
 
 
 
-public class FTPConnectorService extends StandardConnectorService 
+public class FTPConnectorService extends StandardConnectorService
 {
 	protected FTPService _ftpService;
 
 	/** Indicates the default string encoding on this platform */
 	private static String _defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
-	
+
 	public FTPConnectorService(IHost host, int port)
-	{		
+	{
 		super(FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_NAME,FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
 		_ftpService = new FTPService();
+		if (getHost().getSystemType().isWindows()) {
+			// Configured against a Windows-specific system type
+			_ftpService.setIsCaseSensitive(false);
+		}
 		getPropertySet();
 	}
-	
+
 	private IPropertySet getPropertySet()
 	{
 		IPropertySet propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
-		
+
 		if(propertySet==null)
 		{
-			
+
 			//Active - passive mode
 			propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
 			propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			
+
 			// FTP List parser
 			String[] keys = FTPClientConfigFactory.getParserFactory().getKeySet();
 			String[] keysArray = new String[keys.length+1];
-			
+
 			System.arraycopy(keys, 0, keysArray, 0, keys.length);
-			
+
 			keysArray[keysArray.length-1]="AUTO"; //$NON-NLS-1$
-			
+
 			Arrays.sort(keysArray);
-			
+
 			propertySet.addProperty("parser","AUTO",PropertyType.getEnumPropertyType(keysArray)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (propertySet instanceof ILabeledObject) {
@@ -93,7 +98,7 @@ public class FTPConnectorService extends StandardConnectorService
 		}
 		return propertySet;
 	}
-	
+
 	protected void internalConnect(IProgressMonitor monitor)  throws RemoteFileException, IOException
 	{
 		internalConnect();
@@ -119,7 +124,7 @@ public class FTPConnectorService extends StandardConnectorService
 		if (encoding==null) encoding = _defaultEncoding;
 		//</code to be in IHost>
 		_ftpService.setControlEncoding(encoding);
-		
+
 		_ftpService.connect();
 	}
 
@@ -140,36 +145,36 @@ public class FTPConnectorService extends StandardConnectorService
 	private OutputStream getLoggingStream(String hostName,int portNumber)
 	{
 		MessageConsole messageConsole=null;
-		
+
 		IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
 		for (int i = 0; i < consoles.length; i++) {
 			if(consoles[i].getName().equals("FTP log: "+hostName+":"+portNumber)) { //$NON-NLS-1$ //$NON-NLS-2$
 				messageConsole = (MessageConsole)consoles[i];
 				break;
-			}	
+			}
 		}
-		
+
 		if(messageConsole==null){
 			messageConsole = new MessageConsole("FTP log: "+hostName+":"+portNumber, null); //$NON-NLS-1$ //$NON-NLS-2$
 			ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{ messageConsole });
 		}
-		
+
 		ConsolePlugin.getDefault().getConsoleManager().showConsoleView(messageConsole);
-		
+
 		return messageConsole.newOutputStream();
 	}
-	
+
 	public IFileService getFileService()
 	{
 		return _ftpService;
 	}
-	
+
 	protected void internalDisconnect(IProgressMonitor monitor)
 	{
 		_ftpService.disconnect();
 	}
-	
-		public boolean isConnected() 
+
+		public boolean isConnected()
 	{
 		return (_ftpService != null && _ftpService.isConnected());
 	}

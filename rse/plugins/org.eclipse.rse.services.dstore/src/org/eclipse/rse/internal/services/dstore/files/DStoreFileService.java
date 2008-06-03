@@ -45,6 +45,7 @@
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight     (IBM)      - [221211] [api][breaking][files] need batch operations to indicate which operations were successful
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
+ * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -2023,7 +2024,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	public boolean isCaseSensitive()
 	{
-		return true;
+		return this.unixStyle;
 	}
 
 	public void setLastModified(String parent, String name,

@@ -7,13 +7,14 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
+ * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
@@ -28,13 +29,19 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystemConfiguration
 {
 
+	public DStoreWindowsFileSubSystemConfiguration() {
+		super();
+		_isWindows = true;
+		setIsUnixStyle(!_isWindows);
+	}
+
 	protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr)
 	{
 		ISystemFilterPool pool = null;
 		try {
 		  // -----------------------------------------------------
 		  // create a pool named filters
-		  // -----------------------------------------------------      			  
+		  // -----------------------------------------------------
 		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
 		  if (pool == null) // hmmm, why would this happen?
 		  {
@@ -53,7 +60,7 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_MYHOME,filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);
-		      
+
 		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
 		      filterStrings = new String[] {defaultFilterString.toString()};
 		      String filterName = SystemFileResources.RESID_FILTER_DRIVES;
@@ -86,6 +93,6 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 		return '\\';
 	}
 
-	
+
 
 }

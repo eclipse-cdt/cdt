@@ -31,13 +31,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 
-
-/**
- * @author mjberger
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 {
 

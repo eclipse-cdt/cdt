@@ -59,6 +59,19 @@
 			icon="icons/systemconnection.gif"
 			priority="2000">
 		</configuration>
+
+      <configuration
+            id="org.eclipse.rse.tests.subsystems.ftp.windows"
+            systemTypeIds="org.eclipse.rse.tests.systemType.ftp.windows"
+            name="FTP Windows"
+            description="FTP Windows Description"
+            category="files"
+            class="org.eclipse.rse.tests.subsystems.files.FTPWindowsFileSubSystemConfiguration"
+            priority="100"
+            vendor="Tests"
+            serviceType="_ftp._tcp">
+      </configuration>
+
 	</extension>
 	
  <extension
@@ -69,6 +82,16 @@
           enableOffline="false"
           id="org.eclipse.rse.tests.testSystemType"
           name="Tests Only">
+    </systemType>
+    <systemType
+          enableOffline="false"
+          id="org.eclipse.rse.tests.systemType.ftp.windows"
+          label="FTP Windows"
+          name="FTP Windows">
+       <property
+             name="isWindows"
+             value="true">
+       </property>
     </systemType>
  </extension>
  

@@ -272,7 +272,7 @@ public class FinalLaunchSequence extends Sequence {
         				@Override
         				protected IStatus run(IProgressMonitor monitor) {
         					try {
-        						Object result = prompter.handleStatus(processPromptStatus, FinalLaunchSequence.this);
+        						Object result = prompter.handleStatus(processPromptStatus, fProcessList);
         						if (result instanceof Integer) {
         							rm.setData((Integer)result);
         						} else {
@@ -389,8 +389,5 @@ public class FinalLaunchSequence extends Sequence {
     public Step[] getSteps() {
         return fSteps;
     }
-
-	public IProcessInfo[] getProcessList() { return fProcessList; }
-
 }
 

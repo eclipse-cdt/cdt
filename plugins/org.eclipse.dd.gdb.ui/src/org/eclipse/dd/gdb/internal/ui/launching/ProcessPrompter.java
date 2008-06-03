@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.gdb.internal.provisional.launching.FinalLaunchSequence;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.debug.core.IStatusHandler;
@@ -39,7 +38,7 @@ public class ProcessPrompter implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */
-	public Object handleStatus(IStatus status, Object source) throws CoreException {
+	public Object handleStatus(IStatus status, Object processList) throws CoreException {
 		Shell shell = GdbUIPlugin.getShell();
 		if (shell == null) {
 			IStatus error = new Status(IStatus.ERROR, GdbUIPlugin.getUniqueIdentifier(),
@@ -48,8 +47,7 @@ public class ProcessPrompter implements IStatusHandler {
 			throw new CoreException(error);
 		}
 
-		// Get the process list from the FinalLaunchSequence
-		IProcessInfo[] plist = ((FinalLaunchSequence)source).getProcessList();		
+		IProcessInfo[] plist = (IProcessInfo[])processList;		
 		if (plist == null) {
 			MessageDialog.openError(
 					shell,

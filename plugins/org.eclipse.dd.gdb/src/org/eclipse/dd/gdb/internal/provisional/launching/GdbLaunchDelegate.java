@@ -37,6 +37,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -131,8 +133,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         launch.addInferiorProcess(exePath.lastSegment());
 
         // Create and invoke the final launch sequence to setup GDB
-        final FinalLaunchSequence finalLaunchSequence = 
-        	new FinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType, attach);
+        final Sequence finalLaunchSequence = 
+        	getFinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType, attach);
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
         	finalLaunchSequence.get();
@@ -143,6 +145,14 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         }
 	}
 
+	/*
+	 * This method can be overridden by subclasses to allow to change the final launch sequence without
+	 * having to change the entire GdbLaunchDelegate
+	 */
+	protected Sequence getFinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType type, boolean attach) {
+		return new FinalLaunchSequence(executor, launch, type, attach);
+	}
+	
 	private SessionType getSessionType(ILaunchConfiguration config) {
     	try {
     		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );

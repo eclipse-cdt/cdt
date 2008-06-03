@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -137,15 +138,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							// browse button of the appropriate type.
 							switch (opt.getBrowseType()) {
 								case IOption.BROWSE_DIR: {
-									stringField = new DirectoryFieldEditor(optId, opt.getName(), fieldEditorParent);
+									stringField = new DirectoryFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent);
 								} break;
 		
 								case IOption.BROWSE_FILE: {
-									stringField = new FileFieldEditor(optId, opt.getName(), fieldEditorParent);
+									stringField = new FileFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent);
 								} break;
 		
 								case IOption.BROWSE_NONE: {
-									final StringFieldEditorM local = new StringFieldEditorM(optId, opt.getName(), fieldEditorParent);
+									final StringFieldEditorM local = new StringFieldEditorM(optId, TextProcessor.process(opt.getName()), fieldEditorParent);
 									stringField = local;
 									local.getTextControl().addModifyListener(new ModifyListener() {
 							            public void modifyText(ModifyEvent e) {
@@ -159,8 +160,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								}
 							}
 
-							stringField.getTextControl(fieldEditorParent).setToolTipText(opt.getToolTip());
-							stringField.getLabelControl(fieldEditorParent).setToolTipText(opt.getToolTip());
+							stringField.getTextControl(fieldEditorParent).setToolTipText(TextProcessor.process(opt.getToolTip()));
+							stringField.getLabelControl(fieldEditorParent).setToolTipText(TextProcessor.process(opt.getToolTip()));
 							PlatformUI.getWorkbench().getHelpSystem().setHelp(stringField.getTextControl(fieldEditorParent), opt.getContextId());
 							fieldEditor = stringField;
 						} break;
@@ -168,7 +169,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						case IOption.BOOLEAN: {
 							fieldEditor = new TriStateBooleanFieldEditor(
 									optId, 
-									opt.getName(), 
+									TextProcessor.process(opt.getName()), 
 									opt.getToolTip(), 
 									fieldEditorParent, 
 									opt.getContextId(), 
@@ -195,7 +196,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String[] enumValidNames = new String[enumValidList.size()];
 							enumValidList.copyInto(enumValidNames);
 	
-							fieldEditor = new BuildOptionComboFieldEditor(optId, opt.getName(), opt.getToolTip(), opt.getContextId(), enumValidNames, sel, fieldEditorParent);
+							fieldEditor = new BuildOptionComboFieldEditor(optId, TextProcessor.process(opt.getName()), TextProcessor.process(opt.getToolTip()), opt.getContextId(), enumValidNames, sel, fieldEditorParent);
 						} break;
 						
 						case IOption.INCLUDE_PATH:
@@ -213,7 +214,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						case IOption.UNDEF_LIBRARY_PATHS:
 						case IOption.UNDEF_LIBRARY_FILES:
 						case IOption.UNDEF_MACRO_FILES:						{
-							fieldEditor = new FileListControlFieldEditor(optId, opt.getName(), opt.getToolTip(), opt.getContextId(), fieldEditorParent, opt.getBrowseType());
+							fieldEditor = new FileListControlFieldEditor(optId, TextProcessor.process(opt.getName()), TextProcessor.process(opt.getToolTip()), opt.getContextId(), fieldEditorParent, opt.getBrowseType());
 						} break;
 						
 						default:

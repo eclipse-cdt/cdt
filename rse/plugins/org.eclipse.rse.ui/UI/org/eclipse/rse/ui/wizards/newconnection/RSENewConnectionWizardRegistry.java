@@ -10,6 +10,7 @@
  * Javier Montalvo Orus (Symbian) - [174992] default wizard hides special ones
  * David McKnight (IBM) - [216252] MessageFormat.format -> NLS.bind
  * Martin Oberhuber (Wind River) - [235148] get rid of dead code for caching
+ * Martin Oberhuber (Wind River) - [235197][api] Unusable wizard after cancelling on first page
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
@@ -27,8 +28,14 @@ import org.eclipse.rse.ui.wizards.registries.RSEAbstractWizardRegistry;
 /**
  * RSE New connection wizard registry implementation.
  *
+ * Gives access to the new connection wizards contributed by users, by looking
+ * up and creating wizard instances based on search criteria like system type or
+ * wizard id. Clients should create a new wizard registry instance for each UI
+ * "session" using the registry. For instance, an invocation of the new
+ * connection wizard (which delegates to sub-wizards) should always create a new
+ * registry instance.
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 
@@ -40,7 +47,16 @@ public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 	}
 
 	/**
-	 * Return the parser instance.
+	 * Return the global new connection wizard registry instance. Note that
+	 * using a global registry is problematic because sub-wizard state (and thus
+	 * wizard instances) should not be re-used between separate invocations of a
+	 * wizard by the user.
+	 *
+	 * @deprecated Instantiate a wizard registry yourself using
+	 *             {@link #RSENewConnectionWizardRegistry()} in order to control
+	 *             the lifetime of your wizard registry. Lifetime should be
+	 *             limited to the time a wizard is active. Each new wizard
+	 *             invocation should create a new wizard registry.
 	 */
 	public static RSENewConnectionWizardRegistry getInstance() {
 		return LazyInstanceHolder.instance;
@@ -48,8 +64,10 @@ public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 
 	/**
 	 * Constructor.
+	 *
+	 * @since org.eclipse.rse.ui 3.0
 	 */
-	protected RSENewConnectionWizardRegistry() {
+	public RSENewConnectionWizardRegistry() {
 		super();
 	}
 

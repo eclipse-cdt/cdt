@@ -1,14 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Uwe Stieber      (Wind River) - [209193] RSE new connection wizard shows empty categories if typing something into the filter
+ * Martin Oberhuber (Wind River) - [235197][api] Unusable wizard after cancelling on first page
  *******************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -67,23 +68,24 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 public class RSENewConnectionWizardSelectionPage extends WizardPage {
 	private final String helpId = RSEUIPlugin.HELPPREFIX + "wncc0000"; //$NON-NLS-1$;
-	
+
 	private static final String EXPANDED_CATEGORIES_SETTINGS_ID = "filteredTree.expandedCatogryIds"; //$NON-NLS-1$
 	private static final String[] DEFAULT_EXPANDED_CATEGORY_IDS = new String[] { "org.eclipse.rse.ui.wizards.newconnection.default.category" }; //$NON-NLS-1$
-	
+
 	private IRSESystemType[] restrictedSystemTypes;
 
+	private RSENewConnectionWizardRegistry wizardRegistry;
 	private FilteredTree filteredTree;
 	private PatternFilter filteredTreeFilter;
 	private ViewerFilter filteredTreeWizardStateFilter;
 	private RSENewConnectionWizardSelectionTreeDataManager filteredTreeDataManager;
-	
+
 	/**
 	 * Internal class. The wizard state filter is responsible to filter
-	 * out any not enabled or filtered wizard from the tree. 
+	 * out any not enabled or filtered wizard from the tree.
 	 */
 	private class NewConnectionWizardStateFilter extends ViewerFilter {
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
@@ -92,18 +94,18 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 			if (children.length > 0) {
 				return filter(viewer, element, children).length > 0;
 			}
-			
+
 			if (element instanceof RSENewConnectionWizardSelectionTreeElement) {
 				// the system type must be enabled, otherwise it is filtered out
 				IRSESystemType systemType = ((RSENewConnectionWizardSelectionTreeElement)element).getSystemType();
 				if (systemType == null) return false;
-				
+
 				// if the page is restricted to a set of system types, check on them first
 				IRSESystemType[] restricted = getRestrictToSystemTypes();
 				if (restricted != null && restricted.length > 0) {
 					if (!Arrays.asList(restricted).contains(systemType)) return false;
 				}
-				
+
 				// First, adapt the system type to a viewer filter and pass on the select request
 				// to the viewer filter adapter if available
 				ViewerFilter filter = (ViewerFilter)(systemType.getAdapter(ViewerFilter.class));
@@ -114,19 +116,19 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				// Second, double check if the system type passed the viewer filter but is disabled.
 				if (!systemType.isEnabled()) return false;
 			}
-			
+
 			// In all other cases, the element passes the filter
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Internal class. The wizard viewer comparator is responsible for
 	 * the sorting in the tree. Current implementation is not prioritizing
 	 * categories.
 	 */
 	private class NewConnectionWizardViewerComparator extends ViewerComparator {
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerComparator#isSorterProperty(java.lang.Object, java.lang.String)
 		 */
@@ -135,28 +137,41 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
       return property.equals(IBasicPropertyConstants.P_TEXT);
 		}
 	}
-	
+
  	/**
 	 * Constructor.
+     * @since org.eclipse.rse.ui 3.0
 	 */
-	public RSENewConnectionWizardSelectionPage() {
+	public RSENewConnectionWizardSelectionPage(RSENewConnectionWizardRegistry wizardRegistry) {
 		super("RSENewConnectionWizardSelectionPage"); //$NON-NLS-1$
 		setTitle(getDefaultTitle());
 		setDescription(getDefaultDescription());
+		this.wizardRegistry = wizardRegistry;
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @deprecated Use
+	 *             {@link #RSENewConnectionWizardSelectionPage(RSENewConnectionWizardRegistry)}
+	 *             to control the lifetime of the wizard registry
+	 */
+	public RSENewConnectionWizardSelectionPage() {
+		this(RSENewConnectionWizardRegistry.getInstance());
 	}
 
 	/**
 	 * Returns the default page title.
-	 * 
+	 *
 	 * @return The default page title. Must be never <code>null</code>.
 	 */
 	protected String getDefaultTitle() {
 		return SystemResources.RESID_NEWCONN_MAIN_PAGE_TITLE;
 	}
-	
+
 	/**
 	 * Returns the default page description.
-	 * 
+	 *
 	 * @return The default page description. Must be never <code>null</code>.
 	 */
 	protected String getDefaultDescription() {
@@ -165,16 +180,16 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 
 	/**
 	 * Restrict the selectable wizards to the given set of system types.
-	 * 
+	 *
 	 * @param systemTypes The list of the system types to restrict the page to or <code>null</code>.
 	 */
 	public void restrictToSystemTypes(IRSESystemType[] systemTypes) {
 		this.restrictedSystemTypes = systemTypes;
 	}
-	
+
 	/**
 	 * Returns the list of system types the page is restricted to.
-	 * 
+	 *
 	 * @return The list of system types the page is restricted to or <code>null</code>.
 	 */
 	public IRSESystemType[] getRestrictToSystemTypes() {
@@ -188,22 +203,22 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-    Label label = new Label(composite, SWT.NONE);
-    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    label.setText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL + ":"); //$NON-NLS-1$    
-    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-    filteredTreeFilter = new RSEWizardSelectionTreePatternFilter();
-    filteredTree = new FilteredTree(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter);
+		Label label = new Label(composite, SWT.NONE);
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		label.setText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL + ":"); //$NON-NLS-1$
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		filteredTreeFilter = new RSEWizardSelectionTreePatternFilter();
+		filteredTree = new FilteredTree(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.heightHint = 325; layoutData.widthHint = 450;
 		filteredTree.setLayoutData(layoutData);
-		
-    final TreeViewer treeViewer = filteredTree.getViewer();
-    treeViewer.setContentProvider(new RSEWizardSelectionTreeContentProvider());
-    // Explicitly allow the tree items to get decorated!!!
+
+		final TreeViewer treeViewer = filteredTree.getViewer();
+		treeViewer.setContentProvider(new RSEWizardSelectionTreeContentProvider());
+		// Explicitly allow the tree items to get decorated!!!
 		treeViewer.setLabelProvider(new DecoratingLabelProvider(new RSEWizardSelectionTreeLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		treeViewer.setComparator(new NewConnectionWizardViewerComparator());
 
@@ -234,19 +249,19 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				}
 			}
 		});
-		
-		filteredTreeDataManager = new RSENewConnectionWizardSelectionTreeDataManager();
+
+		filteredTreeDataManager = new RSENewConnectionWizardSelectionTreeDataManager(wizardRegistry);
 		treeViewer.setInput(filteredTreeDataManager);
-		
+
 		// apply the standard dialog font
 		Dialog.applyDialogFont(composite);
-		
+
 		setControl(composite);
-		
+
 		// Restore the expanded state of the category items within the tree
 		// before initializing the selection.
 		restoreWidgetValues();
-		
+
 		// Initialize the selection in the tree
 		if (getWizard() instanceof ISelectionProvider) {
 			ISelectionProvider selectionProvider = (ISelectionProvider)getWizard();
@@ -259,10 +274,10 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				}
 			}
 		}
-		
+
 		// we put the initial focus into the filter field
 		filteredTree.getFilterControl().setFocus();
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), helpId);
 
 	}
@@ -288,7 +303,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				selectionProvider.setSelection(null);
 			}
 		}
-		
+
 		// Update the wizard container UI elements
 		IWizardContainer container = getContainer();
 		if (container != null && container.getCurrentPage() != null) {
@@ -313,7 +328,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 
 		return settings;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
 	 */
@@ -338,36 +353,36 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				for (int i = 0; i < expandedCategories.length; i++) {
 					String categoryId = expandedCategories[i];
 					if (categoryId != null && !"".equals(categoryId.trim())) { //$NON-NLS-1$
-						IRSEWizardRegistryElement registryElement = RSENewConnectionWizardRegistry.getInstance().findElementById(categoryId);
+						IRSEWizardRegistryElement registryElement = wizardRegistry.findElementById(categoryId);
 						if (registryElement instanceof IRSEWizardCategory) {
 							RSEWizardSelectionTreeElement treeElement = filteredTreeDataManager.getTreeElementForCategory((IRSEWizardCategory)registryElement);
 							if (treeElement != null) expanded.add(treeElement);
 						}
 					}
 				}
-				
+
 				if (expanded.size() > 0) filteredTree.getViewer().setExpandedElements(expanded.toArray());
 			}
 		}
 	}
-	
+
 	/**
 	 * Saves the tree state to the dialog settings.
 	 */
 	public void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-      List expandedCategories = new ArrayList();
+			List expandedCategories = new ArrayList();
 			Object[] expanded = filteredTree.getViewer().getVisibleExpandedElements();
-      for (int i = 0; i < expanded.length; i++) {
-          if (expanded[i] instanceof RSEWizardSelectionTreeElement) {
-          	IRSEWizardRegistryElement registryElement = ((RSEWizardSelectionTreeElement)expanded[i]).getWizardRegistryElement();
-          	if (registryElement instanceof IRSEWizardCategory) {
-          		expandedCategories.add(((IRSEWizardCategory)registryElement).getId());
-          	}
-          }
-      }
-      settings.put(EXPANDED_CATEGORIES_SETTINGS_ID, (String[])expandedCategories.toArray(new String[expandedCategories.size()]));
+			for (int i = 0; i < expanded.length; i++) {
+				if (expanded[i] instanceof RSEWizardSelectionTreeElement) {
+					IRSEWizardRegistryElement registryElement = ((RSEWizardSelectionTreeElement)expanded[i]).getWizardRegistryElement();
+					if (registryElement instanceof IRSEWizardCategory) {
+						expandedCategories.add(((IRSEWizardCategory)registryElement).getId());
+					}
+				}
+			}
+			settings.put(EXPANDED_CATEGORIES_SETTINGS_ID, (String[])expandedCategories.toArray(new String[expandedCategories.size()]));
 		}
 	}
 }

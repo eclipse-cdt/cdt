@@ -134,7 +134,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 		for (int i = 0; i < roots.length; i++) {
 			assertTrue(roots[i].isRoot());
 			assertTrue(roots[i].exists());
-			assertNull(roots[i].getParentPath());
+			assertNull(roots[i].getParentPath()); //dstore: bug 235471
 			String rootName = roots[i].getName();
 			assertNotNull(rootName);
 			System.out.println(rootName);
@@ -169,7 +169,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 
 		String testName = getTestFileName();
-		IHostFile hf = fs.createFile(tempDirPath, testName, mon);
+		IHostFile hf = fs.createFile(tempDirPath, testName, mon); //dstore-linux: bug 235492
 		assertTrue(hf.exists());
 		assertTrue(hf.canRead());
 		assertTrue(hf.canWrite());
@@ -217,7 +217,11 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 			//Different abstract path names but denote the same file
 			//Should be equal since java.io.File treats them as equal
 			assertEquals(new File(tempDirPath, testName), new File(tempDirPath, testName2));
-			assertEquals(hf, hf2); //bug 168591: should be equal
+			////While the file handles were created with different names,
+			////resolving them should return the same name (the one that's on disk)
+			////But Local and java.io.File do not work that way
+			//assertEquals(hf.getName(), hf2.getName());
+			assertEquals(hf, hf2); //bug 168591, bug 235489: no equals() for IHostFile
 		}
 	}
 

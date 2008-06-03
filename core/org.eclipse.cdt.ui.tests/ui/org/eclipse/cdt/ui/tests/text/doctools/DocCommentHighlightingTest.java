@@ -17,6 +17,7 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -35,6 +36,8 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.tests.text.Accessor;
 import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
@@ -92,11 +95,12 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
-
+		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, false);
 		AbstractTextEditor fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		// source positions depend on Windows line separator
 		adjustLineSeparator(fSourceViewer.getDocument(), "\r\n");
+		fEditor.doSave(new NullProgressMonitor());
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 	}
 
@@ -107,6 +111,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		if (fCProject != null)
 			CProjectHelper.delete(fCProject);
 
+		CUIPlugin.getDefault().getPreferenceStore().setToDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
 		super.tearDown();
 	}
 

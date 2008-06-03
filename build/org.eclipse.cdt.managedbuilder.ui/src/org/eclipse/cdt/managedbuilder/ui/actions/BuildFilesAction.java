@@ -14,7 +14,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
@@ -28,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -37,6 +40,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
  * @author crecoskie
@@ -209,7 +213,7 @@ public class BuildFilesAction extends ActionDelegate implements
 			boolean isFirstFile = true;
 
 			while (iterator.hasNext()) {
-				IFile file = (IFile) iterator.next();
+				IFile file = iterator.next();
 
 				IManagedBuildInfo buildInfo = ManagedBuildManager
 						.getBuildInfo(file.getProject());
@@ -254,6 +258,12 @@ public class BuildFilesAction extends ActionDelegate implements
 		List<IFile> selectedFiles = getSelectedBuildableFiles();
 
 		Job buildFilesJob = new BuildFilesJob(selectedFiles);
+
+		List<IProject> projects = getProjectsToBuild(selectedFiles);
+		if (projects != null && !projects.isEmpty()) {
+			// Save all resources prior to doing build
+			BuildUtilities.saveEditors(projects);
+		}
 
 		buildFilesJob.schedule();
 
@@ -355,5 +365,51 @@ public class BuildFilesAction extends ActionDelegate implements
 		// update state
 		update();
 	}
+	
+
+    /*
+     * Returns the projects to build.
+     * This contains the set of projects which have builders, across all selected resources.
+     */
+    private List<IProject> getProjectsToBuild(List<IFile> selectedFiles) {
+    	List<IProject> projectsToBuild = new LinkedList<IProject>();
+            for (Iterator<IFile> i = selectedFiles.iterator(); i.hasNext();) {
+                IFile file = i.next();
+                IProject project = file.getProject();
+                if (project != null) {
+                    if (!projectsToBuild.contains(project)) {
+                        if (hasBuilder(project)) {
+                            projectsToBuild.add(project);
+                        }
+                    }
+                }
+            }
+        
+        return projectsToBuild;
+    }
+
+    /*
+     * Returns whether there are builders configured on the given project.
+     *
+     * @return <code>true</code> if it has builders,
+     *   <code>false</code> if not, or if this couldn't be determined
+     */
+    private boolean hasBuilder(IProject project) {
+    	if (!project.isAccessible())
+    		return false;
+        try {
+            ICommand[] commands = project.getDescription().getBuildSpec();
+            if (commands.length > 0) {
+                return true;
+            }
+        } catch (CoreException e) {
+            // this method is called when selection changes, so
+            // just fall through if it fails.
+            // this shouldn't happen anyway, since the list of selected resources
+            // has already been checked for accessibility before this is called
+        }
+        return false;
+    }
+
 
 }

@@ -102,6 +102,7 @@ import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
@@ -1589,9 +1590,10 @@ public class UniversalFileTransferUtility
 						{
 							SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
 							try {
-								((FileServiceSubSystem)targetFS).getFileService().setLastModified(newPathBuf.toString(), name, properties.getRemoteFileTimeStamp(), monitor);
+								IRemoteFile newFile = targetFS.getRemoteFileObject(newPath, monitor);
+								targetFS.setLastModified(newFile, properties.getRemoteFileTimeStamp(), monitor);
 							}
-							catch (SystemMessageException e){
+							catch (SystemUnsupportedOperationException e){
 								// service doesn't support setLastModified
 								SystemBasePlugin.logError("Unable to set last modified", e); //$NON-NLS-1$
 							}
@@ -1843,7 +1845,7 @@ public class UniversalFileTransferUtility
 					try {
 						targetFS.setLastModified(copiedFile, timestamp, monitor);
 					}
-					catch (SystemMessageException e){
+					catch (SystemUnsupportedOperationException e){
 						// service doesn't support setLastModified
 						SystemBasePlugin.logError("Unable to set last modified", e); //$NON-NLS-1$
 					}
@@ -2083,7 +2085,7 @@ public class UniversalFileTransferUtility
 			try {
 				target.getParentRemoteFileSubSystem().setLastModified(target, properties.getRemoteFileTimeStamp(), monitor);
 			}
-			catch (SystemMessageException e){
+			catch (SystemUnsupportedOperationException e){
 				// service doesn't support setLastModified
 				SystemBasePlugin.logError("Unable to set last modified", e); //$NON-NLS-1$
 			}

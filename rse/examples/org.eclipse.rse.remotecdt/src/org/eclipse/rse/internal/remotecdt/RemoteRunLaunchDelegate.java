@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
+ * Anna Dushistova  (MontaVista) - [234490][remotecdt] Launching with disconnected target fails
  *******************************************************************************/
 
 
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -53,7 +55,6 @@ import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
-import org.eclipse.swt.widgets.Display;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -78,8 +79,13 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 		String arguments = getProgramArguments(config);
 		String remoteExePath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH, ""); //$NON-NLS-1$
+		
+		if(monitor==null) 
+			monitor = new NullProgressMonitor();
 
+		
 		if(mode.equals(ILaunchManager.DEBUG_MODE)){
+			monitor.beginTask("Launching", 100); //$NON-NLS-1$
 			setDefaultSourceLocator(launch, config);
 			String debugMode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
@@ -88,7 +94,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				ICDISession dsession = null;
 				try {
 					// Download the binary to the remote before debugging.
-					remoteFileDownload(config, launch, exePath.toString(), remoteExePath);
+					remoteFileDownload(config, launch, exePath.toString(), remoteExePath, new SubProgressMonitor(monitor, 80));
 
 					// Automatically start up the gdbserver.  In the future this should be expanded to launch
 					// an arbitrary remote damon.
@@ -101,7 +107,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 					if(arguments != null && !arguments.equals("")) //$NON-NLS-1$
 						command_arguments += " " + arguments; //$NON-NLS-1$
 					remoteShellProcess = remoteShellExec(config, gdbserver_command,
-														 command_arguments);
+														 command_arguments, new SubProgressMonitor(monitor, 5));
 					DebugPlugin.newProcess(launch, remoteShellProcess, Messages.RemoteRunLaunchDelegate_RemoteShell);
 
 					// Pre-set configuration constants for the GDBSERVERCDIDebugger to indicate how the gdbserver
@@ -117,7 +123,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 					// Default to using the GDBServerCDIDebugger.
 					GDBServerCDIDebugger2 debugger = new GDBServerCDIDebugger2();
 					dsession = ((ICDIDebugger2)debugger).createSession(launch, exePath.toFile(),
-																	   new SubProgressMonitor(monitor, 8));
+																	   new SubProgressMonitor(monitor, 15));
 
 					boolean stopInMain = config
 					.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
@@ -149,21 +155,26 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 						// ignore
 					}
 					throw e;
+				} finally {
+					monitor.done();
 				}
 			}
 
 		} else if(mode.equals(ILaunchManager.RUN_MODE)) {
+			monitor.beginTask("Launching", 100); //$NON-NLS-1$
 			Process remoteProcess = null;
 			try {
 				// Download the binary to the remote before debugging.
-				remoteFileDownload(config, launch, exePath.toString(),remoteExePath );
+				remoteFileDownload(config, launch, exePath.toString(),remoteExePath, new SubProgressMonitor(monitor,80));
 				// Use a remote shell to launch the binary.
-				remoteProcess = remoteShellExec(config, remoteExePath, arguments);
+				remoteProcess = remoteShellExec(config, remoteExePath, arguments, new SubProgressMonitor(monitor,20));
 				DebugPlugin.newProcess(launch, remoteProcess, renderProcessLabel(exePath.toOSString()));
 			} catch (CoreException e) {
 				if(remoteProcess != null)
 					remoteProcess.destroy();
 				throw e;
+			} finally {
+				monitor.done();
 			}
 
 		} else {
@@ -171,6 +182,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 								 IStatus.OK, NLS.bind(Messages.RemoteRunLaunchDelegate_1, mode), null);
 			throw new CoreException(status);
 		}
+		
 	}
 
 	private String spaceEscapify(String inputString) {
@@ -194,7 +206,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		return connections[i];
 	}
 
-	protected IService getConnectedRemoteService(ILaunchConfiguration config, String kindOfService)
+	protected IService getConnectedRemoteService(ILaunchConfiguration config, String kindOfService, IProgressMonitor monitor)
 		throws CoreException {
 
 		// Check that the service requested is file or shell.
@@ -214,20 +226,18 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		if(i >= subSystems.length)
 			abort(Messages.RemoteRunLaunchDelegate_4, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 
-		// Need to run this in the UI thread
-
 		final ISubSystem  subsystem = subSystems[i];
-		Display.getDefault().syncExec(new Runnable()
-		{
-			public void run()
-			{	try {
-				subsystem.connect(false, null);
-				} catch (Exception e) {
-					// Ignore
-				}
-			}
-		});
-
+        try {
+			subsystem.connect(monitor, false);
+		} catch (CoreException e) {
+            throw e;	
+		} catch (OperationCanceledException e) {
+			throw new CoreException(Status.CANCEL_STATUS);
+		} catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, getPluginID() ,IStatus.OK, 
+			         e.getLocalizedMessage(), e));
+		}
+		
 		if(!subsystem.isConnected())
 			abort(Messages.RemoteRunLaunchDelegate_5, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 
@@ -238,27 +248,29 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	}
 
 	protected Process remoteFileDownload(ILaunchConfiguration config,  ILaunch launch,
-			String localExePath, String remoteExePath) throws CoreException {
+			String localExePath, String remoteExePath, IProgressMonitor monitor) throws CoreException {
 
 		boolean skipDownload = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET, false);
 
 		if(skipDownload)
 			// Nothing to do.  Download is skipped.
 			return null;
-
-		IFileService fileService = (IFileService) getConnectedRemoteService(config, FILE_SERVICE);
+		monitor.beginTask("Downloading remote file", 100); //$NON-NLS-1$
+		IFileService fileService = (IFileService) getConnectedRemoteService(config, FILE_SERVICE, new SubProgressMonitor(monitor, 10));
 		File file = new File(localExePath);
 		Path remotePath = new Path(remoteExePath);
 		try {
 			fileService.upload(file, remotePath.removeLastSegments(1).toString(), remotePath.lastSegment(),
-					true, null, null, new NullProgressMonitor());
+					true, null, null, new SubProgressMonitor(monitor, 85));				
 			// Need to change the permissions to match the original file permissions because of a bug in upload
-			Process p = remoteShellExec(config, "chmod", "+x " + spaceEscapify(remotePath.toString())); //$NON-NLS-1$ //$NON-NLS-2$
+			Process p = remoteShellExec(config, "chmod", "+x " + spaceEscapify(remotePath.toString()), new SubProgressMonitor(monitor, 5)); //$NON-NLS-1$ //$NON-NLS-2$
 			Thread.sleep(500);
 			p.destroy();
 		} catch (Exception e) {
 			abort(Messages.RemoteRunLaunchDelegate_6, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR );
-		}
+		} finally {
+		    monitor.done();
+		}	
 		return null;
 	}
 
@@ -268,7 +280,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	}
 
 	protected Process remoteShellExec(ILaunchConfiguration config, String remoteCommandPath,
-			String arguments) throws CoreException {
+			String arguments, IProgressMonitor monitor) throws CoreException {
 		// The exit command is called to force the remote shell to close after our command
 		// is executed. This is to prevent a running process at the end of the debug session.
 		// See Bug 158786.
@@ -276,7 +288,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 												    spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
 		String remote_command = real_remote_command + CMD_DELIMITER + EXIT_CMD;
 
-		IShellService shellService = (IShellService) getConnectedRemoteService(config, SHELL_SERVICE);
+		
+		IShellService shellService = (IShellService) getConnectedRemoteService(config, SHELL_SERVICE, monitor);
 
 		// This is necessary because runCommand does not actually run the command right now.
 		String env[] = new String[0];

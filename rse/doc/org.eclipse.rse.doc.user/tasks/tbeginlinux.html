@@ -86,12 +86,18 @@ range given:<pre>
 perl ./daemon.pl 4075 10000-10010</pre>
 
 <p><b>To start the server manually</b></p>
-<div class="p">If you do not have root access on a remote machine, you can
-start the server manually for your particular user id only. Run
-the following commands:<pre>cd /opt/rseserver
-perl ./server.pl [port]</pre>
-These commands run the server.pl
-script located in the /opt/rseserver directory. The port parameter to the server.pl script is
+<div class="p">
+<div class="note">
+Note: In the following discussion we assume that the RSE server has been installed on Linux.
+If you are running on a UNIX system the script name is "server.sh" rather than "server.pl".
+</div>
+If you do not have root access on a remote machine, you can start the server manually for your particular user id only.
+Run the following commands:
+<pre>
+cd /opt/rseserver
+perl ./server.pl [port]
+</pre>
+These commands run the server.pl script located in the /opt/rseserver directory. The port parameter to the server.pl script is
 optional. If you do not specify a port, then the server will pick the first
 one available and print the port number to standard out. By default, it is
 usually 4033. If you would like to use a different port, you will then have

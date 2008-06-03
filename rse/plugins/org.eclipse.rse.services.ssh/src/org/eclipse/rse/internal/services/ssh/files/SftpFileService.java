@@ -31,6 +31,7 @@
  * Martin Oberhuber (Wind River) - [218042] Support UNIX permission modification on ssh
  * Martin Oberhuber (Wind River) - [233651] Make ssh delete throw proper exceptions
  * Martin Oberhuber (Wind River) - [235477][ssh] SftpFileService.createFolder() fails for file named "a?*"
+ * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -446,6 +447,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	 */
 	protected String concat(String parentDir, String fileName) {
 		// See also {@link SftpHostFile#getAbsolutePath()}
+		if (parentDir == null || parentDir.length() == 0) {
+			// Looking at a Root
+			return fileName;
+		}
 		StringBuffer path = new StringBuffer(parentDir);
 		if (!parentDir.endsWith("/")) //$NON-NLS-1$
 		{
@@ -483,7 +488,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			throw new SystemLockTimeoutException(Activator.PLUGIN_ID);
 		}
 		if (node==null) {
-			node = new SftpHostFile(remoteParent, fileName, false, false, false, 0, 0);
+			boolean isRoot = (remoteParent == null || remoteParent.length() == 0);
+			node = new SftpHostFile(remoteParent, fileName, false, isRoot, false, 0, 0);
 			node.setExists(false);
 		}
 		return node;
@@ -566,8 +572,9 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		SftpATTRS attrsTarget = attrs;
 		String linkTarget=null;
 		String canonicalPath = null;
-		if (attrs.isLink()) {
-			//check if the link points to a directory
+		boolean isRoot = (parentPath == null || parentPath.length() == 0);
+		if (attrs.isLink() && !isRoot) {
+			//check if the link points to a directory. Roots cannot be Links.
 			try {
 				String fullPath = concat(parentPath, fileName);
 				boolean readlinkDone = false;
@@ -615,8 +622,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			}
 		}
 
-
-		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrsTarget.isDir(), false, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
+		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrsTarget.isDir(), isRoot, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
 		if (linkTarget!=null) {
 			node.setLinkTarget(linkTarget);
 		}
@@ -848,7 +854,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				//Returning the home path as a Root is the safest we can do, since it will
 				//let users know what the home path is, and the "My Home" filter will be
 				//set to correct target. See also bug 204710.
-				return new SftpHostFile("", fUserHome, true, true, false, 0, 0); //$NON-NLS-1$
+				return new SftpHostFile(null, fUserHome, true, true, false, 0, 0);
 			}
 		}
 		//Bug 203490, bug 204710: Could not determine user home
@@ -856,7 +862,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	}
 
 	public IHostFile[] getRoots(IProgressMonitor monitor) {
-		IHostFile root = new SftpHostFile("/", "/", true, true, false, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
+		IHostFile root = new SftpHostFile(null, "/", true, true, false, 0, 0); //$NON-NLS-1$
 		return new IHostFile[] { root };
 	}
 

@@ -39,6 +39,7 @@
  * Martin Oberhuber (Wind River) - [221211] Fix markStale() for delete() operation with exceptions
  * David Dykstal (IBM) - [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Martin Oberhuber (Wind River) - [234038] Mark IRemoteFile stale when changing permissions
+ * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -326,8 +327,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 
 		IRemoteFile parent = null;
-		if (!userHome.getParentPath().equals(".")) //$NON-NLS-1$
+		if (!".".equals(userHome.getParentPath())) //$NON-NLS-1$
 		{
+			//note: parent path can be "null" if userHome is a Root
 			try
 			{
 				//parent = getRemoteFileObject(userHome.getParentPath());

@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [231211] Local xml file not opened when workspace encoding is different from local system encoding
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
+ * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -782,7 +783,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	{
 		String userHome  =System.getProperty("user.home"); //$NON-NLS-1$
 		File userHomeFile = new File(userHome);
-		return new LocalHostFile(userHomeFile);
+		return new LocalHostFile(userHomeFile, (userHomeFile.getParent() == null));
 	}
 
 
@@ -831,7 +832,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 		boolean isVirtualParent = false;
 		boolean isArchiveParent = false;
-		if (remoteParent != null) {
+		boolean isRoot = (remoteParent == null || remoteParent.length() == 0);
+		if (!isRoot) {
 			File remoteParentFile = new File(remoteParent);
 			if (!remoteParentFile.exists()) {
 				isVirtualParent = ArchiveHandlerManager.isVirtual(remoteParent);
@@ -841,8 +843,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		}
 		if (!isVirtualParent && !isArchiveParent)
 		{
-			File file = remoteParent==null ? new File(name) : new File(remoteParent, name);
-			return new LocalHostFile(file);
+			File file = isRoot ? new File(name) : new File(remoteParent, name);
+			return new LocalHostFile(file, isRoot);
 		}
 		else
 		{

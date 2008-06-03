@@ -77,6 +77,7 @@
  * Martin Oberhuber (Wind River) - [218040] FTP should support permission modification
  * Martin Oberhuber (Wind River) - [234045] FTP Permission Error Handling
  * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
+ * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -321,6 +322,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	 * @throws SystemMessageException if information is lost
 	 */
 	protected String checkEncoding(String s) throws SystemMessageException {
+		if (s == null || s.length() == 0)
+			return s;
 		String encoding = _controlEncoding!=null ? _controlEncoding : getFTPClient().getControlEncoding();
 		try {
 			byte[] bytes = s.getBytes(encoding);
@@ -574,6 +577,12 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	 */
 	protected FTPHostFile getFileInternal(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
+		boolean isRoot = (remoteParent == null || remoteParent.length() == 0);
+		if (isRoot) {
+			// FTP doesn't really support getting properties of Roots yet. For
+			// now, return the root and claim it's existing.
+			return new FTPHostFile(remoteParent, fileName, true, true, 0, 0, true);
+		}
 		remoteParent = checkEncoding(remoteParent);
     	fileName = checkEncoding(fileName);
 		if (monitor!=null){
@@ -999,7 +1008,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			//Returning null in this case is safest, see also SftpFileService.
 			return null;
 		}
-		return new FTPHostFile("",_userHome,true,true,0,0,true); //$NON-NLS-1$
+		return new FTPHostFile(null, _userHome, true, true, 0, 0, true);
 	}
 
 	/*

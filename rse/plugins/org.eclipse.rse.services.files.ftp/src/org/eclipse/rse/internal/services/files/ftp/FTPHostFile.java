@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Javier Montalvo Orus (Symbian) - [198692] FTP should mark files starting with "." as hidden
  * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -39,7 +40,7 @@ import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 
 public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 {
-	
+
 	private String _name;
 	private String _parentPath;
 	private boolean _isDirectory;
@@ -53,11 +54,14 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 	private boolean _exists;
 	private IHostFilePermissions _permissions;
 	private FTPFile _ftpFile;
-		
+
 	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size, boolean exists)
 	{
 		_parentPath = parentPath;
 		_name = name;
+		if (name == null || name.length() == 0) {
+			throw new IllegalArgumentException();
+		}
 		_isDirectory = isDirectory;
 		_lastModified = lastModified;
 		_size = size;
@@ -72,52 +76,52 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 	{
 		_parentPath = parentPath;
 		_ftpFile = ftpFile;
-		
+
 		_name = ftpFile.getName();
-		
+
 		_isDirectory = ftpFile.isDirectory();
 		_isLink = ftpFile.isSymbolicLink();
 		_lastModified = ftpFile.getTimestamp().getTimeInMillis();
 		_size = ftpFile.getSize();
 		_isArchive = internalIsArchive();
-		
+
 		_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
 		_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
-		
+
 		_isRoot = false;
 		_exists = true;
-		
+
 		initPermissions(ftpFile);
 	}
-	
 
-	
-	
+
+
+
 	public long getSize()
 	{
 		return _size;
 	}
-	
+
 	public boolean isDirectory()
 	{
 		return _isDirectory;
 	}
-	
+
 	public boolean isFile()
 	{
 		return !(_isDirectory || _isRoot);
 	}
-	
+
 	public boolean isLink()
 	{
 		return _isLink;
 	}
-	
+
 	public String getName()
 	{
 		return _name;
 	}
-	
+
 	public boolean canRead() {
 		return _canRead;
 	}
@@ -170,35 +174,46 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 
 	public boolean isRoot() {
 		return _isRoot;
-		
+
 	}
 
 	public String getParentPath() {
 		return _parentPath;
 	}
 
-	public void renameTo(String newAbsolutePath) 
+	public void renameTo(String newAbsolutePath)
 	{
 		int i = newAbsolutePath.lastIndexOf("/"); //$NON-NLS-1$
-		if (i == -1)
-		{
+		if (i == -1) {
+			//Rename inside the same parent folder.
+			//FIXME is this really what was desired here? Or would we rename Roots?
+			//Renaming Roots isn't possible, I'd think.
 			_name = newAbsolutePath;
 		}
-		else
-		{
+		else if (i == 0) {
+			// Renaming a root folder
+			if (newAbsolutePath.length()==1) {
+				//rename to root "/" -- should this work?
+				_parentPath = null;
+				_isRoot = true;
+				_name = newAbsolutePath;
+			} else {
+				_parentPath = "/"; //$NON-NLS-1$
+				_name = newAbsolutePath.substring(i + 1);
+			}
+		} else {
 			_parentPath = newAbsolutePath.substring(0, i);
 			_name = newAbsolutePath.substring(i+1);
 		}
-		
 		_isArchive = internalIsArchive();
 	}
-	
+
 	public int getUserPermissions()
 	{
 		int userRead = 0;
 		int userWrite = 0;
 		int userExec = 0;
-		
+
 		//user
 		if(_ftpFile!=null)
 		{
@@ -211,18 +226,18 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 			userRead = _canRead ? 1 : 0;
 			userWrite = _canWrite ? 1 : 0;
 			userExec = 0;
-			
+
 		}
-		
+
 		return userRead << 2  | userWrite << 1  | userExec;
 	}
-	
+
 	public int getGroupPermissions()
-	{	
+	{
 		int groupRead = 0;
 		int groupWrite = 0;
 		int groupExec = 0;
-		
+
 		//group
 		if(_ftpFile!=null)
 		{
@@ -230,16 +245,16 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 			groupWrite = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
 			groupExec = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
 		}
-		
+
 		return groupRead << 2 | groupWrite << 1 | groupExec;
 	}
-		
+
 	public int getOtherPermissions()
 	{
 		int otherRead = 0;
 		int otherWrite = 0;
 		int otherExec = 0;
-		
+
 		//other
 		if(_ftpFile!=null)
 		{
@@ -247,28 +262,28 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 			otherWrite = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
 			otherExec = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
 		}
-		
+
 		return otherRead << 2 | otherWrite << 1 | otherExec;
 	}
-	
-	
-	
-	
+
+
+
+
 	protected boolean internalIsArchive()
 	{
-		return ArchiveHandlerManager.getInstance().isArchive(new File(getAbsolutePath())) 
+		return ArchiveHandlerManager.getInstance().isArchive(new File(getAbsolutePath()))
 		&& !ArchiveHandlerManager.isVirtual(getAbsolutePath());
 	}
-	
+
 	public void setIsDirectory(boolean isDirectory)
 	{
 		_isDirectory = isDirectory;
 	}
-	
+
 	public String getClassification() {
 		String result;
 		String linkTarget;
-		
+
 		if (isLink()) {
 			result = "symbolic link"; //$NON-NLS-1$
 			if ((linkTarget = _ftpFile.getLink()) !=null) {
@@ -304,13 +319,13 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 		_permissions.setPermission(IHostFilePermissions.PERM_GROUP_EXECUTE, ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION));
 		_permissions.setPermission(IHostFilePermissions.PERM_OTHER_READ, ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.READ_PERMISSION));
 		_permissions.setPermission(IHostFilePermissions.PERM_OTHER_WRITE, ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION));
-		_permissions.setPermission(IHostFilePermissions.PERM_OTHER_EXECUTE, ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION));		
+		_permissions.setPermission(IHostFilePermissions.PERM_OTHER_EXECUTE, ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION));
 
 
 		_permissions.setUserOwner(ftpFile.getUser());
 		_permissions.setGroupOwner(ftpFile.getGroup());
 	}
-	
+
 	public IHostFilePermissions getPermissions() {
 		return _permissions;
 	}
@@ -318,5 +333,5 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 	public void setPermissions(IHostFilePermissions permissions) {
 		_permissions = permissions;
 	}
-	
+
 }

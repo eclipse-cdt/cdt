@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - [189483] add notification when canceling password prompting
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight (IBM)          - [231964] [ssh] SSH login dialog appears twice after cancel, when doing Refresh on a node
+ * David McKnight (IBM)          - [235164] SystemView should allow to create filter in disconnected mode
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -230,9 +231,11 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	protected void execute(IProgressMonitor monitor) throws Exception, InterruptedException
 	{
 		SubSystem ss = null;
+		Object actualRemoteObj = _remoteObject;
 		if (_remoteObject instanceof IContextObject)
 		{
 			ss = (SubSystem)((IContextObject)_remoteObject).getSubSystem();
+			actualRemoteObj = ((IContextObject)_remoteObject).getModelObject();
 		}
 		else
 		{
@@ -241,9 +244,19 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		if (ss.isOffline() ){
 			return;
 		}
+		
+		boolean isPromptable = false;
+
+		if (actualRemoteObj instanceof IAdaptable){
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)actualRemoteObj).getAdapter(ISystemViewElementAdapter.class);
+			if (adapter != null){
+				isPromptable = adapter.isPromptable(actualRemoteObj);
+			}
+		}
+		
 		synchronized (ss.getConnectorService())
 		{
-		if (!ss.isConnected())
+		if (!ss.isConnected() && !isPromptable)
 		{
 
 			Display dis = Display.getDefault();

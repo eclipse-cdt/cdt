@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Michael Berger (IBM) - 146326 fixed erroneously disconnected dstore elements.
  * Michael Berger (IBM) - 145799 added refresh() method with depth parameter.
@@ -66,19 +66,19 @@ import org.eclipse.dstore.internal.core.util.XMLparser;
 
 /**
  * <code>DataStore</code> is the heart of the <code>DataStore</code> Distributed Tooling Framework.
- * This class is used for creating, deleting and accessing <code>DataElement</code>s and for communicating commands 
- * to miners (tools).  
+ * This class is used for creating, deleting and accessing <code>DataElement</code>s and for communicating commands
+ * to miners (tools).
  *
  * <p>
- * Every <code>DataStore</code> has both a command handler and an update handler.  The command 
+ * Every <code>DataStore</code> has both a command handler and an update handler.  The command
  * handler is responsible for sending commands, in the form of <code>DataElement</code> trees, to the appropriate
- * implementer, either directly to the miner, or indirectly over the communication layer through a server 
- * <code>DataStore</code>.  The update handler is responsible for notifying listeners about changes in the 
+ * implementer, either directly to the miner, or indirectly over the communication layer through a server
+ * <code>DataStore</code>.  The update handler is responsible for notifying listeners about changes in the
  * <code>DataStore</code>, either directly via a <code>IDomainNotifier</code> or indirectly over the communication
- * layer through a client <code>DataStore</code>.  
+ * layer through a client <code>DataStore</code>.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients. 
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class DataStore
 {
@@ -87,7 +87,7 @@ public final class DataStore
 	private DataStoreAttributes _dataStoreAttributes;
 
 	private RemoteClassLoader _remoteLoader;
-	
+
 	private DataElement _root;
 	private DataElement _descriptorRoot;
 	private DataElement _logRoot;
@@ -103,7 +103,7 @@ public final class DataStore
 	private DataStoreSchema _dataStoreSchema;
 	private CommandHandler _commandHandler;
 	private UpdateHandler _updateHandler;
-	
+
 	private IByteConverter _byteConverter;
 	private ByteStreamHandlerRegistry _byteStreamHandlerRegistry;
 	private ClassByteStreamHandlerRegistry _classbyteStreamHandlerRegistry;
@@ -114,10 +114,10 @@ public final class DataStore
 	private ArrayList _minersLocations;
 	private ArrayList _localClassLoaders;
 	private HashMap _dataStorePreferences;
-	
+
 	private List _dataStorePreferenceListeners;
 
-	
+
 	private ISSLProperties _sslProperties;
 
 	private boolean _autoRefresh;
@@ -127,12 +127,12 @@ public final class DataStore
 	private int _timeout;
 
 	private int _serverIdleShutdownTimeout = 0;
-	
+
 	private HashMap _hashMap;
 	private HashMap _objDescriptorMap;
 	private HashMap _cmdDescriptorMap;
 	private HashMap _relDescriptorMap;
-	
+
 	private ArrayList _recycled;
 
 	private Random _random;
@@ -141,7 +141,7 @@ public final class DataStore
 	private File _traceFileHandle;
 	private RandomAccessFile _traceFile;
 	private boolean _tracingOn;
-	
+
 	private boolean _spiritModeOn = false;
 	private boolean _spiritCommandReceived = false;
 	private File _memLoggingFileHandle;
@@ -149,11 +149,11 @@ public final class DataStore
 	private boolean _memLoggingOn;
 
 	private ArrayList _waitingStatuses = null;
-	
+
 	private String _userPreferencesDirectory = null;
 	private IDataStoreCompatibilityHandler _compatibilityHandler;
-	
-	
+
+
 	private HashMap _classReqRepository;
 	private File _cacheJar;
 	public static final String REMOTE_CLASS_CACHE_JARFILE_NAME = "rmt_classloader_cache"; //$NON-NLS-1$
@@ -161,10 +161,10 @@ public final class DataStore
 	private DataElementRemover _deRemover;
 	public static final int SPIRIT_ON_INITIAL_SIZE = 1000;
 	private String referenceTag = null;
-	
+
 	private int _serverVersion;
 	private int _serverMinor;
-	
+
 	private List _lastCreatedElements;
 	private Client _client;
 
@@ -211,7 +211,8 @@ public final class DataStore
 	 * @param attributes the default attributes of the <code>DataStore</code>
 	 * @param commandHandler the DataStore's handler for sending commands
 	 * @param updateHandler the DataStore's handler for doing updates
-	 * @param domainNotifier the domain notifier 
+	 * @param domainNotifier the domain notifier
+	 * @since 3.0 replaced DomainNotifier with IDomainNotifier
 	 */
 	public DataStore(DataStoreAttributes attributes, CommandHandler commandHandler, UpdateHandler updateHandler, IDomainNotifier domainNotifier)
 	{
@@ -233,8 +234,10 @@ public final class DataStore
 	 * @param attributes the default attributes of the <code>DataStore</code>
 	 * @param commandHandler the DataStore's handler for sending commands
 	 * @param updateHandler the DataStore's handler for doing updates
-	 * @param domainNotifier the domain notifier 
-	 * @param initialSize the initialNumber of preallocated <code>DataElement</code>s 
+	 * @param domainNotifier the domain notifier
+	 * @param initialSize the initialNumber of preallocated
+	 *            <code>DataElement</code>s
+	 * @since 3.0 replaced DomainNotifier with IDomainNotifier
 	 */
 	public DataStore(DataStoreAttributes attributes, CommandHandler commandHandler, UpdateHandler updateHandler, IDomainNotifier domainNotifier, int initialSize)
 	{
@@ -259,27 +262,27 @@ public final class DataStore
 			_spiritModeOn = (doSpirit != null && doSpirit.equals("true")); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void setServerVersion(int version)
 	{
 		_serverVersion = version;
 	}
-	
+
 	public void setServerMinor(int minor)
 	{
 		_serverMinor = minor;
 	}
-	
+
 	public int getServerVersion()
 	{
 		return _serverVersion;
 	}
-	
+
 	public int getServerMinor()
 	{
 		return _serverMinor;
 	}
-	
+
 	/**
 	 * Sets the ticket for this <code>DataStore</code>.  A ticket is used to prevent unauthorized users
 	 * from accessing the <code>DataStore</code>
@@ -292,7 +295,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets the loaders for this <code>DataStore</code>.  The loaders are used to load miners (extension tools). 
+	 * Sets the loaders for this <code>DataStore</code>.  The loaders are used to load miners (extension tools).
 	 *
 	 * @param loaders the loaders for the miners this <code>DataStore</code> will be using
 	 */
@@ -302,9 +305,10 @@ public final class DataStore
 	}
 
 	/**
-	 * Adds a loader for this <code>DataStore</code>.  The loader is used to load miners (extension tools). 
+	 * Adds a loader for this <code>DataStore</code>.  The loader is used to load miners (extension tools).
 	 *
 	 * @param loader the loader for the miners this <code>DataStore</code> will be using
+	 * @since 3.0 replaced ExternalLoader by IExternalLoader
 	 */
 	public void addLoader(IExternalLoader loader)
 	{
@@ -316,7 +320,7 @@ public final class DataStore
 	}
 
 
-	
+
 	public boolean usingSSL()
 	{
 		if (_sslProperties != null)
@@ -335,7 +339,7 @@ public final class DataStore
 	{
 		_sslProperties = properties;
 	}
-	
+
 	/*
 	 * Returns the location for the keystore associated with the DataStore.
 	 * The keystore is used when using SSL for remote communications.  On the
@@ -350,7 +354,7 @@ public final class DataStore
 		}
 		return null;
 	}
-	
+
 	/*
 	 *  Returns the password to use when accessing the DataStore keystore.
 	 */
@@ -364,7 +368,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Tells the <code>DataStore</code> where to find the miners which it needs to load. 
+	 * Tells the <code>DataStore</code> where to find the miners which it needs to load.
 	 *
 	 * @param minersLocation a string representing the location of the miners
 	 */
@@ -392,7 +396,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Tells the <code>DataStore</code> where to find the miners which it needs to load. 
+	 * Tells the <code>DataStore</code> where to find the miners which it needs to load.
 	 *
 	 * @param location a <code>DataElement</code> representing the location of the miners
 	 */
@@ -411,7 +415,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Tells the <code>DataStore</code> that it is connected to it's tools 
+	 * Tells the <code>DataStore</code> that it is connected to it's tools
 	 *
 	 * @param isConnected indicates whether it is connected or not
 	 */
@@ -421,9 +425,10 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets the <code>DataStore</code>'s IDomainNotifier 
+	 * Sets the <code>DataStore</code>'s IDomainNotifier
 	 *
 	 * @param domainNotifier the domainNotifier
+	 * @since 3.0 replaced DomainNotifier by IDomainNotifier
 	 */
 	public void setDomainNotifier(IDomainNotifier domainNotifier)
 	{
@@ -431,7 +436,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets the <code>DataStore</code>'s handler for doing updates 
+	 * Sets the <code>DataStore</code>'s handler for doing updates
 	 *
 	 * @param updateHandler the handler for doing updates
 	 */
@@ -441,7 +446,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets the <code>DataStore</code>'s handler for sending commands to miners 
+	 * Sets the <code>DataStore</code>'s handler for sending commands to miners
 	 *
 	 * @param commandHandler the handler for sending commands to miners
 	 */
@@ -451,18 +456,22 @@ public final class DataStore
 	}
 
 	/**
-	 * Set the compatibility handler for the client.  This is used when potential compatibility
-	 * problems are run into - i.e. localDescriptorQuery fails
+	 * Set the compatibility handler for the client. This is used when potential
+	 * compatibility problems are run into - i.e. localDescriptorQuery fails
+	 *
 	 * @param handler the compatibilityHandler to use
+	 * @since 3.0
 	 */
 	public void setCompatibilityHandler(IDataStoreCompatibilityHandler handler){
 		_compatibilityHandler = handler;
 	}
 
 	/**
-	 * Get the compatibility handler for the client.  This is used when potential compatibility
-	 * problems are run into - i.e. localDescriptorQuery fails
+	 * Get the compatibility handler for the client. This is used when potential
+	 * compatibility problems are run into - i.e. localDescriptorQuery fails
+	 *
 	 * @return the compatibilityHandler
+	 * @since 3.0
 	 */
 	public IDataStoreCompatibilityHandler getCompatibilityHandler(){
 		if (_compatibilityHandler == null){
@@ -470,10 +479,10 @@ public final class DataStore
 		}
 		return _compatibilityHandler;
 	}
-	
-	
+
+
 	/**
-	 * Sets the time the update handler sleeps in between update requests 
+	 * Sets the time the update handler sleeps in between update requests
 	 *
 	 * @param time interval to wait
 	 */
@@ -483,7 +492,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets the time the command handler sleeps in between command requests 
+	 * Sets the time the command handler sleeps in between command requests
 	 *
 	 * @param time interval to wait
 	 */
@@ -502,15 +511,17 @@ public final class DataStore
 	{
 		_timeout = time;
 	}
-	
+
 	public int getTimeoutValue()
 	{
 		return _timeout;
 	}
-	
+
 	/**
 	 * Gets the time the server may remain idle before shutting down
+	 *
 	 * @return the idle time before shutdown
+	 * @since 3.0
 	 */
 	public int getServerIdleShutdownTimeout()
 	{
@@ -518,7 +529,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets an attribute of the <code>DataStore</code>  
+	 * Sets an attribute of the <code>DataStore</code>
 	 *
 	 * @param attribute index of the attribute to set
 	 * @param value value to set the attribute at the give index
@@ -529,7 +540,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Tells the <code>DataStore</code> to log durations of commands  
+	 * Tells the <code>DataStore</code> to log durations of commands
 	 *
 	 * @param flag whether to log times or not
 	 */
@@ -539,7 +550,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Indicates whether this <code>DataStore</code> is virtual or not.  A virtual <code>DataStore</code>  
+	 * Indicates whether this <code>DataStore</code> is virtual or not.  A virtual <code>DataStore</code>
 	 * is one that does not have it's own tools, but rather communicates with a non-virtual
 	 * <code>DataStore</code> that does.
 	 *
@@ -636,7 +647,7 @@ public final class DataStore
 	{
 		return _root;
 	}
-	
+
 	public DataElement getDummy()
 	{
 	    return _dummy;
@@ -672,7 +683,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Returns the status of the <code>DataStore</code>.  
+	 * Returns the status of the <code>DataStore</code>.
 	 *
 	 * @return the status of the <code>DataStore</code>
 	 */
@@ -743,7 +754,7 @@ public final class DataStore
 	{
 		return _loaders;
 	}
-	
+
 	/**
 	 * Returns registered local classloaders.
 	 */
@@ -751,12 +762,12 @@ public final class DataStore
 	{
 		return _localClassLoaders;
 	}
-	
+
 	/**
 	 * Registers a local class loader. On the client, each subsystem
 	 * must register its local class loader using this method so that
 	 * if the subsystem's classes cannot be found on the server, they can
-	 * be requested from the client, loaded using <code>loader</code>, 
+	 * be requested from the client, loaded using <code>loader</code>,
 	 * transferred to the server, and then loaded on the server.
 	 */
 	public void registerLocalClassLoader(ClassLoader loader)
@@ -802,6 +813,7 @@ public final class DataStore
 	 * Returns the domain notifier.
 	 *
 	 * @return the domain notifier
+	 * @since 3.0 replaced DomainNotifier by IDomainNotifier
 	 */
 	public IDomainNotifier getDomainNotifier()
 	{
@@ -861,7 +873,7 @@ public final class DataStore
 				_dataStoreAttributes.getAttribute(DataStoreAttributes.A_ROOT_NAME),
 				_dataStoreAttributes.getAttribute(DataStoreAttributes.A_ROOT_PATH),
 				"rootID"); //$NON-NLS-1$
-	
+
 
 		_descriptorRoot = createObject(_root, DE.T_OBJECT_DESCRIPTOR, DataStoreResources.model_descriptors, "", "schemaID"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -928,7 +940,7 @@ public final class DataStore
 	{
 	    return createReference(parent, realObject, relationType, true);
 	}
-	
+
 	/**
 	 * Creates a relationship between two <code>DataElement</code>s given a type of relationship
 	 *
@@ -1014,7 +1026,7 @@ public final class DataStore
 	 * Creates a two-way relationship between two elements
 	 *
 	 * @param parent an element that references the other element
-	 * @param realObject an element that references the other element 
+	 * @param realObject an element that references the other element
 	 * @param toRelation the descriptor element that represents the type of relationship between parent and realObject
 	 * @param fromRelation the descriptor element that represents the type of relationship between realObject and parent
 	 * @return the new reference
@@ -1042,7 +1054,7 @@ public final class DataStore
 			String fromId = fromReference.getId();
 			_hashMap.put(fromId, fromReference);
 			refresh(parent);
-			
+
 
 			return toReference;
 		}
@@ -1053,7 +1065,7 @@ public final class DataStore
 	 * Creates a two-way relationship between two elements
 	 *
 	 * @param parent an element that references the other element
-	 * @param realObject an element that references the other element 
+	 * @param realObject an element that references the other element
 	 * @param toRelation the string that represents the type of relationship between parent and realObject
 	 * @param fromRelation the string that represents the type of relationship between realObject and parent
 	 * @return the new reference
@@ -1098,7 +1110,7 @@ public final class DataStore
 			_hashMap.put(fromId, fromReference);
 
 			 refresh(parent);
-			
+
 
 			return toReference;
 		}
@@ -1109,7 +1121,7 @@ public final class DataStore
 	 * Creates a set of two-way relationship between a <code>DataElement</code> and a list of elements
 	 *
 	 * @param from an element that references the other elements
-	 * @param to a list of elements that reference from 
+	 * @param to a list of elements that reference from
 	 * @param toRel the descriptor element that represents the type of relationship between from and to
 	 * @param fromRel the descriptor element that represents the type of relationship between to and from
 	 */
@@ -1126,7 +1138,7 @@ public final class DataStore
 	 * Creates a set of two-way relationship between a DataElement and a list of elements
 	 *
 	 * @param from an element that references the other elements
-	 * @param to a list of elements that reference from 
+	 * @param to a list of elements that reference from
 	 * @param toRel the string that represents the type of relationship between from and to
 	 * @param fromRel the string that represents the type of relationship between to and from
 	 */
@@ -1156,12 +1168,12 @@ public final class DataStore
 		newObject.reInitAsTransient(attributes);
 		return newObject;
 	}
-	
+
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the descriptor representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the descriptor representing the type of the new element
 	 * @param name the name of the new element
 	 * @return the new element
 	 */
@@ -1173,8 +1185,8 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the string representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the string representing the type of the new element
 	 * @param name the name of the new element
 	 * @return the new element
 	 */
@@ -1186,8 +1198,8 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the descriptor element representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the descriptor element representing the type of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @return the new element
@@ -1201,8 +1213,8 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the string representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the string representing the type of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @return the new element
@@ -1221,8 +1233,8 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the descriptor element representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the descriptor element representing the type of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @param sugId the suggested ID for the new element
@@ -1236,8 +1248,8 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the string representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the string representing the type of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @param sugId the suggested ID for the new element
@@ -1251,8 +1263,8 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the descriptor element representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the descriptor element representing the type of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @param sugId the suggested ID for the new element
@@ -1289,8 +1301,8 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
-	 * @param type the string representing the type of the new element 
+	 * @param parent the parent of the new element
+	 * @param type the string representing the type of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @param sugId the suggested ID for the new element
@@ -1306,7 +1318,7 @@ public final class DataStore
 		{
 			parent = _tempRoot;
 		}
-		
+
 
 		DataElement descriptor = findDescriptor(DE.T_OBJECT_DESCRIPTOR, type);
 		if (descriptor != null && (parent != _descriptorRoot))
@@ -1327,7 +1339,7 @@ public final class DataStore
 		{
 			_hashMap.put(id, newObject);
 		}
-		
+
 		if (_autoRefresh)
 			refresh(parent);
 		return newObject;
@@ -1336,7 +1348,7 @@ public final class DataStore
 	/**
 	 * Creates a new <code>DataElement</code>.  This is normally called on client side via xml parser
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param attributes the attributes to use in this new element
 	 * @return the new element
 	 */
@@ -1364,7 +1376,7 @@ public final class DataStore
 		{
 			parent.addNestedData(newObject, false);
 		}
-		
+
 		// cache descriptors in map for faster access
 		if (descriptor == _dataStoreSchema.getObjectDescriptor() || descriptor == _dataStoreSchema.getAbstractObjectDescriptor())
 		{
@@ -1389,7 +1401,7 @@ public final class DataStore
 	/**
 	 * Creates a new abstract object descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @return the new descriptor element
 	 */
@@ -1403,7 +1415,7 @@ public final class DataStore
 	/**
 	 * Creates a new abstract object descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @return the new descriptor element
@@ -1418,7 +1430,7 @@ public final class DataStore
 	/**
 	 * Creates a new object descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @return the new descriptor element
 	 */
@@ -1441,7 +1453,7 @@ public final class DataStore
 	/**
 	 * Creates a new object descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param source the name of the new element
 	 * @return the new descriptor element
@@ -1465,7 +1477,7 @@ public final class DataStore
 	/**
 	 * Creates a new abstract relation descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @return the new descriptor element
 	 */
@@ -1479,7 +1491,7 @@ public final class DataStore
 	/**
 	 * Creates a new abstract relation descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @return the new descriptor element
@@ -1494,7 +1506,7 @@ public final class DataStore
 	/**
 	 * Creates a new relation descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @return the new descriptor element
 	 */
@@ -1508,7 +1520,7 @@ public final class DataStore
 	/**
 	 * Creates a new relation descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @return the new descriptor element
@@ -1523,7 +1535,7 @@ public final class DataStore
 	/**
 	 * Creates a new abstract command descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @return the new descriptor element
 	 */
@@ -1537,7 +1549,7 @@ public final class DataStore
 	/**
 	 * Creates a new abstract command descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param value the value used to identify the command
 	 * @return the new descriptor element
@@ -1553,7 +1565,7 @@ public final class DataStore
 	/**
 	 * Creates a new abstract command descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @param value the value used to identify the command
@@ -1570,7 +1582,7 @@ public final class DataStore
 	/**
 	 * Creates a new command descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @return the new descriptor element
 	 */
@@ -1584,7 +1596,7 @@ public final class DataStore
 	/**
 	 * Creates a new command descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param value the value used to identify the command
 	 * @return the new descriptor element
@@ -1609,7 +1621,7 @@ public final class DataStore
 	/**
 	 * Creates a new command descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @param value the value used to identify the command
@@ -1635,7 +1647,7 @@ public final class DataStore
 	/**
 	 * Creates a new command descriptor <code>DataElement</code>
 	 *
-	 * @param parent the parent of the new element 
+	 * @param parent the parent of the new element
 	 * @param name the name of the new element
 	 * @param source the source location of the new element
 	 * @param value the value used to identify the command
@@ -1667,7 +1679,7 @@ public final class DataStore
 	/**
 	 * Moves a element from one location in the <code>DataStore</code> tree to another
 	 *
-	 * @param source the element to move 
+	 * @param source the element to move
 	 * @param target the element to move source to
 	 */
 	public void moveObject(DataElement source, DataElement target)
@@ -1688,7 +1700,7 @@ public final class DataStore
 	/**
 	 * Deletes all the elements contained in from
 	 *
-	 * @param from the element from which to delete objects from  
+	 * @param from the element from which to delete objects from
 	 */
 	public void deleteObjects(DataElement from)
 	{
@@ -1706,7 +1718,7 @@ public final class DataStore
 			//			refresh(from);
 		}
 	}
-	
+
 	/**
 	 * Disconnect all the elements contained in from
 	 *
@@ -1736,8 +1748,8 @@ public final class DataStore
 	/**
 	 * Deletes an element from another element
 	 *
-	 * @param from the element from which to delete an object from  
-	 * @param toDelete the element to remove  
+	 * @param from the element from which to delete an object from
+	 * @param toDelete the element to remove
 	 */
 	public void deleteObject(DataElement from, DataElement toDelete)
 	{
@@ -1748,11 +1760,11 @@ public final class DataStore
 			//			refresh(from);
 		}
 	}
-	
+
 	/**
 	 * Disconnects an element and makes it a "spirit"
 	 *
-	 * @param toDisconnect the element to disconnect  
+	 * @param toDisconnect the element to disconnect
 	 */
 	public void disconnectObject(DataElement toDisconnect)
 	{
@@ -1806,8 +1818,8 @@ public final class DataStore
 	/**
 	 * Checks if a <code>DataElement</code> with a given ID exists in the <code>DataStore</code>
 	 *
-	 * @param id the id to look for  
-	 * @return whether it exists or not  
+	 * @param id the id to look for
+	 * @return whether it exists or not
 	 */
 	public boolean contains(String id)
 	{
@@ -1855,14 +1867,14 @@ public final class DataStore
 	{
 		if ((_updateHandler != null) && (element != null))
 		{
-			//element = findLastUpdatedAncestor(element, 5);			
-			
+			//element = findLastUpdatedAncestor(element, 5);
+
 			// update either client or ui
-			//element.setUpdated(false);	
+			//element.setUpdated(false);
 			_updateHandler.update(element, immediate);
 		}
 	}
-	
+
 	/**
 	 * Refresh a <code>DataElement</code> and its children to a certain depth - immediately if indicated
 	 *
@@ -1876,9 +1888,9 @@ public final class DataStore
 	public void refresh(DataElement element, int depth, boolean immediate)
 	{
 		if (depth < 0) return;
-		
+
 		if (depth == 0) refresh(element, immediate);
-		
+
 		if (depth > 0)
 		{
 			if (element.getNestedSize() > 0)
@@ -1911,14 +1923,14 @@ public final class DataStore
 	{
 		getUpdateHandler().updateClassInstance(instance, byteStreamHandlerId);
 	}
-	
+
 	/**
 	 * Transfers a file from a server to a client.  This should only be called from
 	 * a miner on a different machine from the client.  If a file exists on the client
 	 * side that the server file maps to then the existing client file will be replaced.
 	 *
-	 * @param remotePath the path of the file on the client side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the client side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 */
@@ -1932,8 +1944,8 @@ public final class DataStore
 	 * a miner on a different machine from the client.  If a file exists on the client
 	 * side that the server file maps to then the existing client file will be replaced.
 	 *
-	 * @param remotePath the path of the file on the client side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the client side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 * @param byteStreamHandlerId indicates the client byte stream handler to receive the bytes
@@ -1947,14 +1959,14 @@ public final class DataStore
 			_updateHandler.updateFile(remotePath, bytes, size, binary, byteStreamHandlerId);
 		}
 	}
-	
+
 	/**
 	 * Transfers and appends a file from a server to a client.  This should only be called from
 	 * a miner on a different machine from the client.  If a file exists on the client
 	 * side that the server file maps to then the existing client file will be appended to
 	 *
-	 * @param remotePath the path of the file on the client side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the client side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 */
@@ -1962,14 +1974,14 @@ public final class DataStore
 	{
 		updateAppendFile(remotePath, bytes, size, binary, DataStoreResources.DEFAULT_BYTESTREAMHANDLER);
 	}
-	
+
 	/**
 	 * Transfers and appends a file from a server to a client.  This should only be called from
 	 * a miner on a different machine from the client.  If a file exists on the client
 	 * side that the server file maps to then the existing client file will be appended to
 	 *
-	 * @param remotePath the path of the file on the client side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the client side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 * @param byteStreamHandlerId indicates the client byte stream handler to receive the bytes
@@ -1985,14 +1997,14 @@ public final class DataStore
 	}
 
 
-	
+
 	/**
 	 * Transfers a file from a client to a server.  The should only be called from
 	 * a client on a different machine from the server.  If a file exists on the server
 	 * side that the client file maps to then the existing server file will be replaced.
 	*
-	 * @param remotePath the path of the file on the server side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the server side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 * @param byteStreamHandlerId indicates which byteStreamHandler to use to receive the bytes
@@ -2003,15 +2015,15 @@ public final class DataStore
 
 		_commandHandler.sendFile(remotePath, bytes, size, binary, byteStreamHandlerId);
 	}
-	
-	
+
+
 	/**
 	 * Transfers a file from a client to a server.  The should only be called from
 	 * a client on a different machine from the server.  If a file exists on the server
 	 * side that the client file maps to then the existing server file will be replaced.
 	*
-	 * @param remotePath the path of the file on the server side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the server side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 */
@@ -2025,8 +2037,8 @@ public final class DataStore
 	 * a client on a different machine from the server.  If a file exists on the server
 	 * side that the client file maps to then the existing server file will be appended to.
 	 *
-	 * @param remotePath the path of the file on the server side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the server side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 * @param byteStreamHandlerId indicates which byte stream handler to use to receive the bytes
@@ -2043,8 +2055,8 @@ public final class DataStore
 	 * a client on a different machine from the server.  If a file exists on the server
 	 * side that the client file maps to then the existing server file will be appended to.
 	 *
-	 * @param remotePath the path of the file on the server side 
-	 * @param bytes an array of bytes representing a file 
+	 * @param remotePath the path of the file on the server side
+	 * @param bytes an array of bytes representing a file
 	 * @param size the number of bytes to transfer
 	 * @param binary indicates whether to send the bytes as binary or text
 	 */
@@ -2072,7 +2084,7 @@ public final class DataStore
 	public void setObject(DataElement localObject, boolean noRef)
 	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_SET);
-		    //localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_SET, 1);		
+		    //localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_SET, 1);
 		command(cmd, localObject, noRef);
 	}
 
@@ -2086,7 +2098,7 @@ public final class DataStore
 	/**
 	 * Used at <code>DataStore</code> initialization time to indicate where to point the host root
 	 *
-	 * @param localHostObject the client host element to transfer to the server site 
+	 * @param localHostObject the client host element to transfer to the server site
 	 */
 	public DataElement setHost(DataElement localHostObject)
 	{
@@ -2095,7 +2107,7 @@ public final class DataStore
 		waitUntil(status, DataStoreResources.model_done);
 		return status;
 	}
-		
+
 	/**
 	 * Used at <code>DataStore</code> initialization time to setup the schema
 	 *
@@ -2105,7 +2117,7 @@ public final class DataStore
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_SCHEMA);//localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_SCHEMA, 1);
 		return command(cmd, _dummy);
 	}
-	
+
 	/**
 	 * Sets a property value preference on the client and server datastore
 	 * @param property the property to set
@@ -2117,16 +2129,19 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets a property value preference on the client datastore.  If remoteAndLocal is set
-	 * then the property get set on the server side as well as the client.
+	 * Sets a property value preference on the client datastore. If
+	 * remoteAndLocal is set then the property get set on the server side as
+	 * well as the client.
+	 * 
 	 * @param property the property to set
 	 * @param value the value of the property
-	 * @param remoteAndLocal whether to propagate the change to the server 
+	 * @param remoteAndLocal whether to propagate the change to the server
+	 * @since 3.0
 	 */
 	public void setPreference(String property, String value, boolean remoteAndLocal)
 	{
 		_dataStorePreferences.put(property, value);
-		if (isVirtual() && remoteAndLocal) 
+		if (isVirtual() && remoteAndLocal)
 		{
 			DataElement cmd = findCommandDescriptor(DataStoreSchema.C_SET_PREFERENCE);
 			if (cmd != null)
@@ -2135,7 +2150,7 @@ public final class DataStore
 				prefObj.setAttribute(DE.A_VALUE, value);
 				command(cmd, prefObj, true);
 			}
-		} 
+		}
 
 		// notify that preferences have changed
 		for (int i = 0; i < _dataStorePreferenceListeners.size(); i++){
@@ -2143,12 +2158,12 @@ public final class DataStore
 			listener.preferenceChanged(property, value);
 		}
 	}
-	
+
 	public String getPreference(String property)
 	{
 		return (String)_dataStorePreferences.get(property);
 	}
-	
+
 	/**
 	 * Adds a preference change listener to the DataStore
 	 * @param listener
@@ -2157,22 +2172,24 @@ public final class DataStore
 	public void addDataStorePreferenceListener(IDataStorePreferenceListener listener){
 		_dataStorePreferenceListeners.add(listener);
 	}
-	
+
 	/**
 	 * Removes a specific preference change listener from the Datastore
 	 * @param listener
+	 * @since 3.0
 	 */
 	public void removeDataStorePreferenceListener(IDataStorePreferenceListener listener){
 		_dataStorePreferenceListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Removes all the preference change listeners
+	 * @since 3.0
 	 */
 	public void removeAllDataStorePreferenceListeners(){
 		_dataStorePreferenceListeners.clear();
 	}
-	
+
 	/**
 	 * Used to load and initialize a new miner on the host
 	 * @param minerId the qualified classname of the miner to load
@@ -2191,12 +2208,12 @@ public final class DataStore
 				return command(cmd, minerObj, true);
 			}
 			else
-			{				
+			{
 			}
 		}
 		return null;
 	}
-	
+
 
 
 	/**
@@ -2207,48 +2224,48 @@ public final class DataStore
 	public DataElement initMiners()
 	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_INIT_MINERS);//localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_INIT_MINERS, 1);
-		
+
 		return command(cmd, _dummy);
 	}
 
-	
+
 	public DataElement queryInstall()
 	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_QUERY_INSTALL);//localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_QUERY_INSTALL, 1);
 		return synchronizedCommand(cmd, _dummy);
 	}
-	
+
 	public DataElement queryClientIP()
 	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_QUERY_CLIENT_IP);//localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_QUERY_INSTALL, 1);
 		return synchronizedCommand(cmd, _dummy);
 	}
-	
+
 	public boolean queryServerSpiritState()
 	{
 		DataElement spirittype = findObjectDescriptor(IDataStoreConstants.DATASTORE_SPIRIT_DESCRIPTOR);
 		if (spirittype == null) return false;
 		DataElement cmd = localDescriptorQuery(spirittype, IDataStoreConstants.C_START_SPIRIT, 2);
 		if (cmd == null) return false;
-		
+
 		DataElement status = synchronizedCommand(cmd, _dummy);
 		if ((status != null) && status.getName().equals(DataStoreResources.model_done))
 			return true;
 		else return false;
 	}
-	
+
 	public DataElement queryHostJVM()
 	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_QUERY_JVM);
 		return synchronizedCommand(cmd, _dummy);
 	}
-	
+
 
 	public void runRemoteClassInstance(IRemoteClassInstance runnable)
 	{
 		getCommandHandler().sendClassInstance(runnable, ClassByteStreamHandler.class.getName());
 	}
-	
+
 	/**
 	 * Used at <code>DataStore</code> initialization validate access to the <code>DataStore</code>
 	 *
@@ -2259,7 +2276,7 @@ public final class DataStore
 	{
 		DataElement ticket = createTicket(ticketStr);
 		DataElement status = queryShowTicket(ticket);
-		
+
 		if (status != null)
 		{
 			waitUntil(status, DataStoreResources.model_done);
@@ -2271,7 +2288,7 @@ public final class DataStore
 
 		return ticketValid(ticket);
 	}
-	
+
 	public boolean ticketValid(DataElement ticket)
 	{
 		return ticket.getAttribute(DE.A_VALUE).equals(DataStoreResources.model_valid);
@@ -2285,9 +2302,9 @@ public final class DataStore
 		}
 		return createObject(_tempRoot, DataStoreResources.model_ticket, ticketStr);
 	}
-	
+
 	public DataElement queryShowTicket(DataElement ticket)
-	{		
+	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_VALIDATE_TICKET);
 		DataElement status = _commandHandler.command(cmd, ticket, false);
 
@@ -2297,7 +2314,7 @@ public final class DataStore
 		}
 		return status;
 	}
-	
+
 	/**
 	 * Indicates whether a client has permission to access the <code>DataStore</code>
 	 *
@@ -2318,11 +2335,11 @@ public final class DataStore
 
 
 	/**
-	 * Wait until a given status element reached the specified state.  
+	 * Wait until a given status element reached the specified state.
 	 * This is used for issuing synchronized commands
 	 *
-	 * @param status the status element 
-	 * @param state the state to wait until 
+	 * @param status the status element
+	 * @param state the state to wait until
 	 */
 	public void waitUntil(DataElement status, String state)
 	{
@@ -2365,7 +2382,7 @@ public final class DataStore
 			}
 
 			status.waitForUpdate(timeToWait);
-			
+
 
 			timeWaited += timeToWait;
 
@@ -2391,7 +2408,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Tells the command handler to cancel all pending commands.  
+	 * Tells the command handler to cancel all pending commands.
 	 */
 	public void cancelAllCommands()
 	{
@@ -2399,7 +2416,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a synchronized command.  
+	 * Creates and issues a synchronized command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param dataObject the subject of the command
@@ -2411,7 +2428,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a synchronized command.  
+	 * Creates and issues a synchronized command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param dataObject the subject of the command
@@ -2427,7 +2444,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a synchronized command.  
+	 * Creates and issues a synchronized command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param arguments the arguments for the command
@@ -2443,7 +2460,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a command.  
+	 * Creates and issues a command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param arguments the arguments for the command
@@ -2456,12 +2473,12 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a command.  
+	 * Creates and issues a command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param arguments the arguments for the command
 	 * @param dataObject the subject of the command
-	 * @param immediate indicates whether the command should be placed first on the request queue 
+	 * @param immediate indicates whether the command should be placed first on the request queue
 	 * @return the status of the command
 	 */
 	public DataElement command(DataElement commandDescriptor, ArrayList arguments, DataElement dataObject, boolean immediate)
@@ -2474,7 +2491,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a command.  
+	 * Creates and issues a command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param arg an argument for the command
@@ -2487,12 +2504,12 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a command.  
+	 * Creates and issues a command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param arg an argument for the command
 	 * @param dataObject the subject of the command
-	 * @param immediate indicates whether the command should be placed first on the request queue 
+	 * @param immediate indicates whether the command should be placed first on the request queue
 	 * @return the status of the command
 	 */
 	public DataElement command(DataElement commandDescriptor, DataElement arg, DataElement dataObject, boolean immediate)
@@ -2505,7 +2522,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a command.  
+	 * Creates and issues a command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param dataObject the subject of the command
@@ -2517,7 +2534,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a command.  
+	 * Creates and issues a command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param dataObject the subject of the command
@@ -2530,7 +2547,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Creates and issues a command.  
+	 * Creates and issues a command.
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
 	 * @param dataObject the subject of the command
@@ -2549,7 +2566,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Issues a command.  
+	 * Issues a command.
 	 *
 	 * @param commandObject an instance of a command
 	 * @return the status of the command
@@ -2560,7 +2577,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Delete information from the <code>DataStore</code>.  
+	 * Delete information from the <code>DataStore</code>.
 	 *
 	 */
 	public void flush()
@@ -2577,7 +2594,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Delete information from the <code>DataStore</code> contained by an element.  
+	 * Delete information from the <code>DataStore</code> contained by an element.
 	 *
 	 * @param element the element from which to delete
 	 */
@@ -2590,7 +2607,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Find a command descriptor element in the schema with the given value.  
+	 * Find a command descriptor element in the schema with the given value.
 	 *
 	 * @param object the object descriptor representing the type of object that can issue such a command
 	 * @param keyName the value of the command to search for
@@ -2602,11 +2619,11 @@ public final class DataStore
 	}
 
 	/**
-	 * Find a command descriptor element in the schema with the given value.  
+	 * Find a command descriptor element in the schema with the given value.
 	 *
 	 * @param descriptor the object descriptor representing the type of object that can issue such a command
 	 * @param keyName the value of the command to search for
-	 * @param depth the depth of abstraction to search 
+	 * @param depth the depth of abstraction to search
 	 * @return the command descriptor for the specified command
 	 */
 	public DataElement localDescriptorQuery(DataElement descriptor, String keyName, int depth)
@@ -2659,7 +2676,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds the element that represents the miner that implements a particular command.  
+	 * Finds the element that represents the miner that implements a particular command.
 	 *
 	 * @param commandDescriptor a command descriptor
 	 * @return the element representing a miner
@@ -2672,10 +2689,10 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds all the elements that are of a given type from a specified element.  
+	 * Finds all the elements that are of a given type from a specified element.
 	 *
-	 * @param root where to search from 
-	 * @param type the descriptor representing the type of the objects to search for 
+	 * @param root where to search from
+	 * @param type the descriptor representing the type of the objects to search for
 	 * @return a list of elements
 	 */
 	public List findObjectsOfType(DataElement root, DataElement type)
@@ -2704,10 +2721,10 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds all the elements that are of a given type from a specified element.  
+	 * Finds all the elements that are of a given type from a specified element.
 	 *
-	 * @param root where to search from 
-	 * @param type the descriptor representing the type of the objects to search for 
+	 * @param root where to search from
+	 * @param type the descriptor representing the type of the objects to search for
 	 * @return a list of elements
 	 */
 	public List findObjectsOfType(DataElement root, String type)
@@ -2738,7 +2755,7 @@ public final class DataStore
 	/**
 	 * Finds all the deleted elements
 	 *
-	 * @param root where to search from 
+	 * @param root where to search from
 	 * @return a list of elements
 	 */
 	public List findDeleted(DataElement root)
@@ -2749,7 +2766,7 @@ public final class DataStore
 	/**
 	 * Finds all the deleted elements
 	 *
-	 * @param root where to search from 
+	 * @param root where to search from
 	 * @param depth the depth to search
 	 * @return a list of elements
 	 */
@@ -2772,7 +2789,7 @@ public final class DataStore
 					results.add(root);
 				}
 
-				
+
 				List searchList = root.getNestedData();
 
 				if (searchList != null)
@@ -2811,11 +2828,11 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds all relationship descriptor types that can be applied to a particular element.  
+	 * Finds all relationship descriptor types that can be applied to a particular element.
 	 *
-	 * @param descriptor the object descriptor that uses relationships 
-	 * @param fixateOn a filter for the type of relationships to look for 
-	 * @return a list of relationship descriptor elements 
+	 * @param descriptor the object descriptor that uses relationships
+	 * @param fixateOn a filter for the type of relationships to look for
+	 * @return a list of relationship descriptor elements
 	 */
 	public ArrayList getRelationItems(DataElement descriptor, String fixateOn)
 	{
@@ -2864,19 +2881,19 @@ public final class DataStore
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
-	
+
 
 	/**
-	 * Find all elements from a given element that match a certain attribute.  
+	 * Find all elements from a given element that match a certain attribute.
 	 *
-	 * @param root the element to search from 
-	 * @param attribute the index of the attribute to match 
-	 * @param pattern the value to compare with the attribute 
-	 * @param ignoreCase an indication whether to ignore case for the attribute or not 
+	 * @param root the element to search from
+	 * @param attribute the index of the attribute to match
+	 * @param pattern the value to compare with the attribute
+	 * @param ignoreCase an indication whether to ignore case for the attribute or not
 	 * @return the list of matches
 	 */
 	public ArrayList searchForPattern(DataElement root, int attribute, String pattern, boolean ignoreCase)
@@ -2887,12 +2904,12 @@ public final class DataStore
 	}
 
 	/**
-	 * Find all elements from a given element that match a certain set of attributes.  
+	 * Find all elements from a given element that match a certain set of attributes.
 	 *
-	 * @param root the element to search from 
-	 * @param attributes a list of attributes to match 
-	 * @param patterns a list of values to compare with the attributes 
-	 * @param ignoreCase an indication whether to ignore case for the attributes or not 
+	 * @param root the element to search from
+	 * @param attributes a list of attributes to match
+	 * @param patterns a list of values to compare with the attributes
+	 * @param ignoreCase an indication whether to ignore case for the attributes or not
 	 * @return the list of matches
 	 */
 	public ArrayList searchForPattern(DataElement root, ArrayList attributes, ArrayList patterns, boolean ignoreCase)
@@ -2909,13 +2926,13 @@ public final class DataStore
 	}
 
 	/**
-	 * Find all elements from a given element that match a certain set of attributes.  
+	 * Find all elements from a given element that match a certain set of attributes.
 	 *
-	 * @param root the element to search from 
-	 * @param attributes a list of attribute indexes to match 
-	 * @param patterns a list of values to compare with the attributes 
-	 * @param numAttributes the number of attributes to match 
-	 * @param ignoreCase an indication whether to ignore case for the attributes or not 
+	 * @param root the element to search from
+	 * @param attributes a list of attribute indexes to match
+	 * @param patterns a list of values to compare with the attributes
+	 * @param numAttributes the number of attributes to match
+	 * @param ignoreCase an indication whether to ignore case for the attributes or not
 	 * @return the list of matches
 	 */
 	public ArrayList searchForPattern(DataElement root, int attributes[], String patterns[], int numAttributes, boolean ignoreCase)
@@ -2924,14 +2941,14 @@ public final class DataStore
 	}
 
 	/**
-	 * Find all elements from a given element that match a certain set of attributes.  
+	 * Find all elements from a given element that match a certain set of attributes.
 	 *
-	 * @param root the element to search from 
-	 * @param attributes a list of attribute indexes to match 
-	 * @param patterns a list of values to compare with the attributes 
-	 * @param numAttributes the number of attributes to match 
-	 * @param ignoreCase an indication whether to ignore case for the attributes or not 
-	 * @param depth how deep to search 
+	 * @param root the element to search from
+	 * @param attributes a list of attribute indexes to match
+	 * @param patterns a list of values to compare with the attributes
+	 * @param numAttributes the number of attributes to match
+	 * @param ignoreCase an indication whether to ignore case for the attributes or not
+	 * @param depth how deep to search
 	 * @return the list of matches
 	 */
 	public ArrayList searchForPattern(DataElement root, int attributes[], String patterns[], int numAttributes, boolean ignoreCase, int depth)
@@ -2941,15 +2958,15 @@ public final class DataStore
 	}
 
 	/**
-	 * Find all elements from a given element that match a certain set of attributes.  
+	 * Find all elements from a given element that match a certain set of attributes.
 	 *
-	 * @param root the element to search from 
-	 * @param attributes a list of attribute indexes to match 
-	 * @param patterns a list of values to compare with the attributes 
-	 * @param numAttributes the number of attributes to match 
-	 * @param ignoreCase an indication whether to ignore case for the attributes or not 
-	 * @param depth how deep to search 
-	 * @param searched a list of objects already searched 
+	 * @param root the element to search from
+	 * @param attributes a list of attribute indexes to match
+	 * @param patterns a list of values to compare with the attributes
+	 * @param numAttributes the number of attributes to match
+	 * @param ignoreCase an indication whether to ignore case for the attributes or not
+	 * @param depth how deep to search
+	 * @param searched a list of objects already searched
 	 * @return the list of matches
 	 */
 	public ArrayList searchForPattern(DataElement root, int attributes[], String patterns[], int numAttributes, boolean ignoreCase, int depth, ArrayList searched)
@@ -2982,7 +2999,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Returns the element that represents the specified miner's data.  
+	 * Returns the element that represents the specified miner's data.
 	 *
 	 * @param minerName the qualified name of the miner
 	 * @return the element representing the miner information
@@ -3000,7 +3017,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds a descriptor element with a specified type and name.  
+	 * Finds a descriptor element with a specified type and name.
 	 *
 	 * @param type the type of the descriptor
 	 * @param name the name of the descriptor
@@ -3011,7 +3028,7 @@ public final class DataStore
 		if (_descriptorRoot != null)
 		{
 			synchronized (_descriptorRoot)
-			{			    			    
+			{
 			    if (type.equals(DE.T_OBJECT_DESCRIPTOR))
 			    {
 			        return (DataElement)_objDescriptorMap.get(name);
@@ -3019,18 +3036,18 @@ public final class DataStore
 			    else if (type.equals(DE.T_COMMAND_DESCRIPTOR))
 			    {
 			        return (DataElement)_cmdDescriptorMap.get(name);
-			    	 
+
 			    }
 			    else if (type.equals(DE.T_RELATION_DESCRIPTOR))
 			    {
-			        return (DataElement)_relDescriptorMap.get(name);			    	
+			        return (DataElement)_relDescriptorMap.get(name);
 			    }
 			    else
 			    {
 					for (int i = 0; i < _descriptorRoot.getNestedSize(); i++)
 					{
 						DataElement descriptor = _descriptorRoot.get(i);
-	
+
 						if (descriptor.getName().equals(name) && descriptor.getType().equals(type))
 						{
 							return descriptor;
@@ -3044,18 +3061,18 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds an object descriptor element with a specified name.  
+	 * Finds an object descriptor element with a specified name.
 	 *
 	 * @param name the name of the descriptor
 	 * @return the found descriptor
 	 */
 	public DataElement findObjectDescriptor(String name)
 	{
-	    return (DataElement)_objDescriptorMap.get(name);	    
+	    return (DataElement)_objDescriptorMap.get(name);
 	}
-	
+
 	/**
-	 * Finds an relation descriptor element with a specified name.  
+	 * Finds an relation descriptor element with a specified name.
 	 *
 	 * @param name the name of the descriptor
 	 * @return the found descriptor
@@ -3064,9 +3081,9 @@ public final class DataStore
 	{
 	    return (DataElement)_relDescriptorMap.get(name);
 	}
-	
+
 	/**
-	 * Finds an command descriptor element with a specified name.  
+	 * Finds an command descriptor element with a specified name.
 	 *
 	 * @param name the name of the descriptor
 	 * @return the found descriptor
@@ -3077,7 +3094,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds an element with the specified ID.  
+	 * Finds an element with the specified ID.
 	 *
 	 * @param id the ID of the descriptor
 	 * @return the found element
@@ -3089,7 +3106,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds an element matching a specified attribute and name.  
+	 * Finds an element matching a specified attribute and name.
 	 *
 	 * @param root the element to search from
 	 * @param attribute the index of the attribute to compare
@@ -3102,7 +3119,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Finds an element matching a specified attribute and name.  
+	 * Finds an element matching a specified attribute and name.
 	 *
 	 * @param root the element to search from
 	 * @param attribute the index of the attribute to compare
@@ -3150,7 +3167,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Get the mapping from a remote path to a local path.  
+	 * Get the mapping from a remote path to a local path.
 	 *
 	 * @param aPath the remote path
 	 * @return the local path
@@ -3189,16 +3206,16 @@ public final class DataStore
 
 			result = new String(localRoot + remotePath);
 		}
-		
+
 		return result;
 		*/
-		
+
 		// no more mapping here - expect actual paths
 		return aPath;
 	}
 
 	/**
-	 * Persist the <code>DataStore</code> tree from a given root   
+	 * Persist the <code>DataStore</code> tree from a given root
 	 *
 	 * @param root the element to persist from
 	 * @param remotePath the path where the persisted file should be saved
@@ -3253,7 +3270,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Save a file in the specified location   
+	 * Save a file in the specified location
 	 *
 	 * @param remotePath the path where to save the file
 	 * @param buffer the buffer to save in the file
@@ -3262,9 +3279,9 @@ public final class DataStore
 	{
 		getDefaultByteStreamHandler().receiveBytes(remotePath, buffer, size, binary);
 	}
-	
+
 	/**
-	 * Save a file in the specified location   
+	 * Save a file in the specified location
 	 *
 	 * @param remotePath the path where to save the file
 	 * @param buffer the buffer to save in the file
@@ -3275,7 +3292,7 @@ public final class DataStore
 
 		getByteStreamHandler(byteStreamHandlerId).receiveBytes(remotePath, buffer, size, binary);
 	}
-	
+
 	/**
 	 * Saves a class to memory (but not to disk) where it can then be loaded by
 	 * the RemoteClassLoaders. The class will be saved in a new thread, so this method
@@ -3289,11 +3306,11 @@ public final class DataStore
 	{
 		getDefaultClassByteStreamHandler().receiveBytes(className, buffer, size);
 	}
-	
+
 
 	/**
-	 * Saves a class instance 
-	 * 
+	 * Saves a class instance
+	 *
 	 * @param buffer the contents of the class
 	 * @param size the size of the buffer
 	 * @param classbyteStreamHandlerId the id for the byte stream handler
@@ -3302,13 +3319,13 @@ public final class DataStore
 	{
 		getDefaultClassByteStreamHandler().receiveInstanceBytes(buffer, size);
 	}
-	
-	
+
+
 	/**
 	 * Saves a class to memory (but not to disk) where it can then be loaded by
 	 * the RemoteClassLoaders. The class will be saved in a new thread, so this method
 	 * will potentially return before the class has been saved.
-	 * 
+	 *
 	 * @param className the fully qualified name of the class
 	 * @param buffer the contents of the class
 	 * @param size the size of the buffer
@@ -3320,7 +3337,7 @@ public final class DataStore
 	}
 
 	/**
-	 * Append a file to the specified location   
+	 * Append a file to the specified location
 	 *
 	 * @param remotePath the path where to save the file
 	 * @param buffer the buffer to append into the file
@@ -3329,9 +3346,9 @@ public final class DataStore
 	{
 		getDefaultByteStreamHandler().receiveAppendedBytes(remotePath, buffer, size, binary);
 	}
-	
+
 	/**
-	 * Append a file to the specified location   
+	 * Append a file to the specified location
 	 *
 	 * @param remotePath the path where to save the file
 	 * @param buffer the buffer to append into the file
@@ -3343,9 +3360,9 @@ public final class DataStore
 	}
 
 	/**
-	 * Load a persisted <code>DataStore</code> tree into the specified <code>DataElement</code>   
+	 * Load a persisted <code>DataStore</code> tree into the specified <code>DataElement</code>
 	 *
-	 * @param root the root element of the persisted tree 
+	 * @param root the root element of the persisted tree
 	 * @param pathName the location of the persisted file
 	 */
 	public void load(DataElement root, String pathName)
@@ -3401,9 +3418,9 @@ public final class DataStore
 	}
 
 	/**
-	 * Indicate whether a given descriptor can contain the specified element   
+	 * Indicate whether a given descriptor can contain the specified element
 	 *
-	 * @param descriptor the object descriptor to test 
+	 * @param descriptor the object descriptor to test
 	 * @param dataElement the object to test against
 	 * @return and indication whether dataElement can be in an object of type descriptor
 	 */
@@ -3413,9 +3430,9 @@ public final class DataStore
 	}
 
 	/**
-	 * Indicate whether a given descriptor can contain the specified element   
+	 * Indicate whether a given descriptor can contain the specified element
 	 *
-	 * @param descriptor the object descriptor to test 
+	 * @param descriptor the object descriptor to test
 	 * @param dataElement the object to test against
 	 * @param depth how far to search
 	 * @return and indication whether dataElement can be in an object of type descriptor
@@ -3451,9 +3468,9 @@ public final class DataStore
 	}
 
 	/**
-	 * Indicate whether a given set of descriptors can contain the specified element   
+	 * Indicate whether a given set of descriptors can contain the specified element
 	 *
-	 * @param descriptors the object descriptors to test 
+	 * @param descriptors the object descriptors to test
 	 * @param dataElement the object to test against
 	 * @return and indication whether dataElement can be in an object of type descriptor
 	 */
@@ -3470,9 +3487,9 @@ public final class DataStore
 	}
 
 	/**
-	 * Indicate whether an command is specified as transient   
+	 * Indicate whether an command is specified as transient
 	 *
-	 * @param commandObject the object descriptors to test 
+	 * @param commandObject the object descriptors to test
 	 * @return and indication whether the command is transient
 	 */
 	public boolean isTransient(DataElement commandObject)
@@ -3510,28 +3527,28 @@ public final class DataStore
 	{
 		_autoRefresh = flag;
 	}
-	
+
 	public boolean isAutoRefreshOn()
 	{
 		return _autoRefresh;
 	}
-	/** 
+	/**
 	 * getUserPreferencesDirectory() - returns directory on IFS where to store user settings
 	 */
 	public String getUserPreferencesDirectory()
 	{
 		if (_userPreferencesDirectory == null) {
-			
+
 			String clientUserID;
 			if (_client != null){
 				_userPreferencesDirectory = _client.getProperty("user.home"); //$NON-NLS-1$
 				clientUserID = _client.getProperty("client.username"); //$NON-NLS-1$
-			} 
+			}
 			else {
 				_userPreferencesDirectory = System.getProperty("user.home"); //$NON-NLS-1$
 				clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
 			}
-			
+
 			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
 			{
 				clientUserID = ""; //$NON-NLS-1$
@@ -3540,14 +3557,14 @@ public final class DataStore
 			{
 				clientUserID += File.separator;
 			}
-			
+
  			// append a '/' if not there
-  			if ( _userPreferencesDirectory.length() == 0 || 
+  			if ( _userPreferencesDirectory.length() == 0 ||
   			     _userPreferencesDirectory.charAt( _userPreferencesDirectory.length() -1 ) != File.separatorChar ) {
-  			     
+
 				_userPreferencesDirectory = _userPreferencesDirectory + File.separator;
 		    }
-  		
+
   			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
   			         												"RSE" + File.separator + clientUserID; //$NON-NLS-1$
 	  		File dirFile = new File(_userPreferencesDirectory);
@@ -3571,14 +3588,14 @@ public final class DataStore
 		_relDescriptorMap = new HashMap(100);
 		_dataStorePreferences = new HashMap(10);
 		_dataStorePreferenceListeners = new ArrayList();
-		
+
 		_hashMap = new HashMap(2 * _initialSize);
 		_recycled = new ArrayList(_initialSize);
 		initElements(_initialSize);
 
 		_timeout = 20000;
 		_autoRefresh = false;//true;
-	
+
 
 		_dataStoreSchema = new DataStoreSchema(this);
 
@@ -3595,8 +3612,8 @@ public final class DataStore
 			}
 
 		}
-		
-		
+
+
 		String tracingProperty = System.getProperty("DSTORE_TRACING_ON"); //$NON-NLS-1$
 		if (tracingProperty != null && tracingProperty.equals("true")) //$NON-NLS-1$
 		{
@@ -3606,7 +3623,7 @@ public final class DataStore
 		{
 			_tracingOn = false;
 		}
-		if (_tracingOn)		
+		if (_tracingOn)
 		{
 			// only start tracing now if we're in one process per server mode
 			if (SystemServiceManager.getInstance().getSystemService() == null){
@@ -3623,34 +3640,34 @@ public final class DataStore
 				}
 			}
 		}
-		
+
 		//_remoteClassLoader = new RemoteClassLoader(this);
 		_classReqRepository = new HashMap();
-		
+
 		_waitingStatuses = new ArrayList();
-		
+
 		_byteStreamHandlerRegistry = new ByteStreamHandlerRegistry();
 		_classbyteStreamHandlerRegistry = new ClassByteStreamHandlerRegistry();
 		setDefaultByteStreamHandler();
 		setDefaultClassByteStreamHandler();
-		
+
 		assignCacheJar();
-		
+
 		registerLocalClassLoader(this.getClass().getClassLoader());
 	}
-	
+
 	public void startDataElementRemoverThread()
 	{
 		if (!isVirtual() && _deRemover == null)
 		{
 			String memLogging = System.getProperty("DSTORE_MEMLOGGING_ON"); //$NON-NLS-1$
 			_memLoggingOn = (memLogging != null && memLogging.equals("true")); //$NON-NLS-1$
-			
+
 			if (_memLoggingOn)
 			{
 				String logDir = getUserPreferencesDirectory();
 				_memLoggingFileHandle = new File(logDir, ".dstoreMemLogging"); //$NON-NLS-1$
-	
+
 				try
 				{
 					_memLogFile = new RandomAccessFile(_memLoggingFileHandle, "rw"); //$NON-NLS-1$
@@ -3670,37 +3687,37 @@ public final class DataStore
 		if (isVirtual()) return _spiritModeOn;
 		else return _spiritModeOn && _spiritCommandReceived;
 	}
-	
+
 	public void receiveStartSpiritCommand()
 	{
 		_spiritCommandReceived = true;
 	}
-	
+
 	public IByteStreamHandler getDefaultByteStreamHandler()
 	{
 	    return _byteStreamHandlerRegistry.getDefault();
 	}
-	
+
 	public IClassByteStreamHandler getDefaultClassByteStreamHandler()
 	{
 	    return _classbyteStreamHandlerRegistry.getDefault();
 	}
-	
+
 	public IByteStreamHandler getByteStreamHandler(String id)
 	{
 		return _byteStreamHandlerRegistry.getByteStreamHandler(id);
 	}
-	
+
 	public IClassByteStreamHandler getClassByteStreamHandler(String id)
 	{
 		return _classbyteStreamHandlerRegistry.getClassByteStreamHandler(id);
 	}
-	
+
 	public void setRemoteIP(String remoteIP)
 	{
 		_remoteIP = remoteIP;
 	}
-	
+
 	public String getRemoteIP()
 	{
 		return _remoteIP;
@@ -3713,7 +3730,7 @@ public final class DataStore
 	{
 		setDefaultByteStreamHandler(null);
 	}
-	
+
 	/**
 	 * Sets the current <code>ClassByteStreamHandler</code> to be the default.
 	 */
@@ -3721,7 +3738,7 @@ public final class DataStore
 	{
 		setDefaultClassByteStreamHandler(null);
 	}
-	
+
 	/**
 	 * Sets the current <code>ByteStreamHandler</code> to use for sending and receiving
 	 * files.
@@ -3729,24 +3746,24 @@ public final class DataStore
 	 */
 	public void setDefaultByteStreamHandler(IByteStreamHandler handler)
 	{
-		if (handler == null) 
+		if (handler == null)
 		{
 			DataElement log = null;
 			handler = new ByteStreamHandler(this, log);
 		}
 		_byteStreamHandlerRegistry.setDefaultByteStreamHandler(handler);
 	}
-	
+
 	public RemoteClassLoader getRemoteClassLoader()
 	{
 		if (_remoteLoader == null)
 		{
-			
+
 			_remoteLoader = new RemoteClassLoader(this);
 		}
-		return _remoteLoader;	
+		return _remoteLoader;
 	}
-	
+
 	/**
 	 * Sets the current <code>ClassByteStreamHandler</code> to use for sending and receiving
 	 * classes.
@@ -3754,37 +3771,37 @@ public final class DataStore
 	 */
 	public void setDefaultClassByteStreamHandler(IClassByteStreamHandler handler)
 	{
-		if (handler == null) 
+		if (handler == null)
 		{
 			DataElement log = null;
 			handler = new ClassByteStreamHandler(this, log);
 		}
 		_classbyteStreamHandlerRegistry.setDefaultClassByteStreamHandler(handler);
 	}
-	
+
 	/**
-	 * Registers a byte stream handler. 
+	 * Registers a byte stream handler.
 	 * @param handler the handler to register
 	 */
 	public void registerByteStreamHandler(IByteStreamHandler handler)
 	{
 		_byteStreamHandlerRegistry.registerByteStreamHandler(handler);
 	}
-	
+
 	/**
-	 * Registers a class byte stream handler. 
+	 * Registers a class byte stream handler.
 	 * @param handler the handler to register
 	 */
 	public void registerClassByteStreamHandler(IClassByteStreamHandler handler)
 	{
 		_classbyteStreamHandlerRegistry.registerClassByteStreamHandler(handler);
 	}
-	
+
 	public void setByteConverter(IByteConverter converter)
 	{
 		_byteConverter = converter;
 	}
-	
+
 	public IByteConverter getByteConverter()
 	{
 		if (_byteConverter == null)
@@ -3793,7 +3810,7 @@ public final class DataStore
 		}
 		return _byteConverter;
 	}
-	
+
 
 	/**
 	 * Preallocates a set of <code>DataElement</code>s.
@@ -3849,7 +3866,7 @@ public final class DataStore
 		updateLastCreated(newObject);
 		return newObject;
 	}
-	
+
 	private void updateLastCreated(DataElement element)
 	{
 		_lastCreatedElements.add(0, element);
@@ -3861,7 +3878,7 @@ public final class DataStore
 			}
 		}
 	}
-	
+
 	public List getLastCreatedElements()
 	{
 		return _lastCreatedElements;
@@ -3907,11 +3924,11 @@ public final class DataStore
 			{
 				_hashMap.remove(id);
 			}
-			
+
 			if (!isConnected())
 			{
 				from.removeNestedData(toDelete);
-			}			
+			}
 		}
 	}
 
@@ -3931,10 +3948,10 @@ public final class DataStore
 			}
 		}
 	}
-	
+
 	private String makeIdUnique(String id)
 	{
-		
+
 		if (!_hashMap.containsKey(id))
 		{
 			return id;
@@ -3952,8 +3969,8 @@ public final class DataStore
 			return newId;
 			*/
 		}
-		
-		
+
+
 	}
 
 	private String generateId(DataElement parent, String type, String name)
@@ -3966,7 +3983,7 @@ public final class DataStore
 	/**
 	 * Generates a new unique ID to be used by a <code>DataElement</code>
 	 *
-	 * @return the new id  
+	 * @return the new id
 	 */
 	protected String generateId()
 	{
@@ -3998,7 +4015,7 @@ public final class DataStore
 			trace("Start Tracing at " + System.currentTimeMillis()); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void startMemLogging()
 	{
 		if (_memLoggingOn && _memLogFile != null && _memLoggingFileHandle != null)
@@ -4015,7 +4032,7 @@ public final class DataStore
 			memLog("Start Memory Logging at " + System.currentTimeMillis()); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void memLog(String str)
 	{
 		internalMemLog(str);
@@ -4031,7 +4048,7 @@ public final class DataStore
 		internalTrace(e.getMessage());
 		internalTrace(e);
 	}
-	
+
 	private void internalTrace(Throwable e)
 	{
 		if (_tracingOn && _traceFile != null && e != null)
@@ -4066,7 +4083,7 @@ public final class DataStore
 			}
 		}
 	}
-	
+
 	private void internalMemLog(String message)
 	{
 		if (_memLoggingOn && _memLogFile != null && message != null)
@@ -4123,7 +4140,7 @@ public final class DataStore
 			_updateHandler.requestClass(className);
 		}
 	}
-	
+
 	/**
 	 * On the server, sends a keepalive request through the ServerUpdateHandler
 	 * to the client.
@@ -4139,7 +4156,7 @@ public final class DataStore
 			_updateHandler.sendKeepAliveRequest();
 		}
 	}
-	
+
 	/**
 	 * On the server, sends a class through the ServerCommandHandler
 	 * to the client.
@@ -4157,8 +4174,8 @@ public final class DataStore
 			_updateHandler.sendClass(className);
 		}
 	}
-	
-	
+
+
 	/**
 	 * @return the central repository for all class requests initiated by
 	 * this server and its RemoteClassLoaders.
@@ -4167,8 +4184,8 @@ public final class DataStore
 	{
 		return _classReqRepository;
 	}
-	
-	
+
+
 	/**
 	 * Saves a class to disk (caches it) so that it can be loaded by the classloader without needing to
 	 * download it again
@@ -4176,11 +4193,11 @@ public final class DataStore
 	public synchronized void cacheClass(String className, byte[] bytes, int size)
 	{
 		if (_cacheJar == null) return;
-			
+
 		// get the entries from the old cache file
 		Enumeration oldEntries;
 		JarFile oldJarFile = null;
-		
+
 		try
 		{
 			oldJarFile = new JarFile(_cacheJar);
@@ -4195,11 +4212,11 @@ public final class DataStore
 			return;
 		}
 		oldEntries = oldJarFile.entries();
-			
+
 		// create a new cache file to store the new class in
 		File newJarFile = new File(getCacheDirectory() + REMOTE_CLASS_CACHE_JARFILE_NAME + "_next" + JARFILE_EXTENSION); //$NON-NLS-1$
 		JarOutputStream newJarOutput = null;
-		
+
 		try
 		{
 			newJarOutput = createNewCacheJar(newJarFile);
@@ -4209,7 +4226,7 @@ public final class DataStore
 			System.out.println("Class caching failed. Could not create new cache jarfile."); //$NON-NLS-1$
 			return;
 		}
-			
+
 		// transfer the old entries to the new cache file
 		while (oldEntries.hasMoreElements())
 		{
@@ -4225,20 +4242,20 @@ public final class DataStore
 			}
 			nextEntry.setCompressedSize(-1);
 			try
-			{	
+			{
 				newJarOutput.putNextEntry(nextEntry);
-				
+
 				byte[] buf = new byte[1024];
 				int numRead = source.read(buf);
 
 				while (numRead > 0)
 				{
 					newJarOutput.write(buf, 0, numRead);
-					numRead = source.read(buf);	
+					numRead = source.read(buf);
 				}
-				
+
 				newJarOutput.closeEntry();
-				source.close();	
+				source.close();
 			}
 			catch (IOException e)
 			{
@@ -4247,11 +4264,11 @@ public final class DataStore
 				if (!newJarFile.delete()) System.out.println("Couldn't erase new jarfile!"); //$NON-NLS-1$
 			}
 		}
-			
+
 		// add the new class file
 		JarEntry newEntry = new JarEntry(className.replace('.', '/') + ".class"); //$NON-NLS-1$
 		newEntry.setCompressedSize(-1);
-		
+
 		try
 		{
 			newJarOutput.putNextEntry(newEntry);
@@ -4270,10 +4287,10 @@ public final class DataStore
 		try { oldJarFile.close(); } catch (IOException ee) { }
 		if (!_cacheJar.delete()) System.out.println("Could not delete old cache jar."); //$NON-NLS-1$
 		if (!newJarFile.renameTo(_cacheJar)) System.out.println("Could not rename new cache jar."); //$NON-NLS-1$
-		
+
 		System.out.println(className + " cached in " + _cacheJar.getAbsolutePath()); //$NON-NLS-1$
 	}
-	
+
 	protected JarOutputStream createNewCacheJar(File newJar) throws IOException
 	{
 		newJar.createNewFile();
@@ -4282,7 +4299,7 @@ public final class DataStore
 		dest.setMethod(ZipOutputStream.DEFLATED);
 		return dest;
 	}
-	
+
 	protected void assignCacheJar()
 	{
 		String cacheDirectory = getCacheDirectory();
@@ -4307,7 +4324,7 @@ public final class DataStore
 		}
 		_cacheJar = cacheJar;
 	}
-	
+
 	protected String getCacheDirectory()
 	{
 		String cacheDirectory = getUserPreferencesDirectory();
@@ -4317,13 +4334,13 @@ public final class DataStore
 		}
 		return cacheDirectory;
 	}
-	
+
 	public File getRemoteClassLoaderCache()
 	{
-		return _cacheJar;		
+		return _cacheJar;
 	}
 
-	public void sendKeepAliveConfirmation() 
+	public void sendKeepAliveConfirmation()
 	{
 		if (isVirtual())
 		{
@@ -4334,7 +4351,7 @@ public final class DataStore
 			_updateHandler.sendKeepAliveConfirmation();
 		}
 	}
-	
+
 	/**
 	 * @return what type of attribute tag is used on the peer DataStore to indicate whether dataelements
 	 * are references, values, or spirit elements. If the peer DataStore is an older one, this will return
@@ -4354,7 +4371,7 @@ public final class DataStore
 	{
 		referenceTag = tag;
 	}
-	
+
 	public int printTree(String indent, DataElement root)
 	{
 		return printTree(indent, 0, root);
@@ -4373,12 +4390,12 @@ public final class DataStore
 				prefix += "<spirit>"; //$NON-NLS-1$
 			if (isDeleted)
 				prefix += "<deleted>"; //$NON-NLS-1$
-			
+
 			String msg = indent + prefix + "["+ total + "]("+root.getType()+", "+root.getName()+")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			System.out.println(msg);
 			for (int i = 0; i < root.getNestedSize(); i++)
 			{
-				DataElement currentElement = root.get(i);				
+				DataElement currentElement = root.get(i);
 				total = printTree(indent + " ", total, currentElement); //$NON-NLS-1$
 			}
 		}
@@ -4403,17 +4420,17 @@ public final class DataStore
 			((ServerUpdateHandler)_updateHandler).setGenerateBuffer(flag);
 		}
 	}
-	
+
 	/**
      * This method is used to set the Client object for each user.
      * The _client variable is null until setClient() is called.  After
      * _client is set, it can not be changed.
-     * 
-     * This method should only be called once to associate a particular 
-     * client with a DataStore.  By default, the client for the user of 
+     *
+     * This method should only be called once to associate a particular
+     * client with a DataStore.  By default, the client for the user of
      * the DataStore process is set but, when there is an ISystemService,
      * the daemon sets the client.
-     * 
+     *
      * @param client the object of the Client class
      */
 	public void setClient(Client client)
@@ -4424,7 +4441,7 @@ public final class DataStore
 			_client = client;
 			_userPreferencesDirectory = null;
 			String logDir = getUserPreferencesDirectory();
-			
+
 			// single process server?
 			if (SystemServiceManager.getInstance().getSystemService() != null)
 			{
@@ -4442,16 +4459,16 @@ public final class DataStore
 			}
 		}
 	}
-	
+
 	/**
      * This method is used to get the object of the Client stored for each user.
-     * 
+     *
      * @return the object of the Client stored for each user
      */
 	public Client getClient()
 	{
 		return _client;
 	}
-	
-	
+
+
 }

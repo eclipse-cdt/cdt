@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [222003] Client remains connected after server terminates
@@ -33,10 +33,11 @@ import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.dstore.internal.core.util.XMLparser;
 
 /**
- * This class is used for receiving data from a socket in the DataStore 
+ * This class is used for receiving data from a socket in the DataStore
  * communication layer.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
+ * @since 3.0 Moved from non-API to API
  */
 public abstract class Receiver extends SecuredThread implements IDataStorePreferenceListener
 {
@@ -74,8 +75,8 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 		{
 			//System.out.println("Receiver:" + ioe);
 		}
-		
-		// keepalive preferences	
+
+		// keepalive preferences
 		String keepAliveResponseTimeout = System.getProperty(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE);
 		if (keepAliveResponseTimeout != null){
 			preferenceChanged(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE, keepAliveResponseTimeout);
@@ -119,7 +120,7 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 			{
 				handleInput();
 			}
-			
+
 			if (_canExit){
 				// is this an unexpected exit?
 				if (_dataStore.isConnected()){
@@ -186,7 +187,7 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 
 	/**
 	 * Implemented to provide a means of handling received input
-	 * @param documentObject the root object of the received data 
+	 * @param documentObject the root object of the received data
 	 */
 	public abstract void handleDocument(DataElement documentObject);
 
@@ -195,8 +196,8 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 	 * @param e an exception that occurred
 	 */
 	public abstract void handleError(Throwable e);
-	
-	
+
+
 	public void preferenceChanged(String property, String value)
 	{
 		//System.out.println("setting preference: "+property + "="+value);
@@ -215,5 +216,5 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 			_xmlParser.setEnableKeepalive(enable);
 		}
 	}
-	
+
 }

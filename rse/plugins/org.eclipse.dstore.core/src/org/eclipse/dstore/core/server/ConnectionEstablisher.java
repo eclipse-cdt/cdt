@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [220892][dstore] Backward compatibility: Server and Daemon should support old clients
@@ -56,11 +56,13 @@ import org.eclipse.dstore.internal.core.util.Sender;
 import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
 
 /**
- * ConnectionEstablisher is responsible for managing the server DataStore and 
+ * ConnectionEstablisher is responsible for managing the server DataStore and
  * facilitating the communication between client and server DataStores.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ *
+ * @since 3.0 moved from non-API to API
  */
 public class ConnectionEstablisher
 {
@@ -81,12 +83,12 @@ public class ConnectionEstablisher
 	private int _timeout;
 	private String _msg;
 
-	
+
 	/**
 	 * Creates the default ConnectionEstablisher.  Communication occurs
 	 * on a default port, there is no timeout and no ticket is required
 	 * for a client to work with the DataStore.
-	 * 
+	 *
 	 */
 	public ConnectionEstablisher()
 	{
@@ -98,7 +100,7 @@ public class ConnectionEstablisher
 	 * Creates a ConnectionEstablisher.  Communication occurs
 	 * on the specified port, there is no timeout and no ticket is required
 	 * for a client to work with the DataStore.
-	 * 
+	 *
 	 * @param port the number of the socket port
 	 */
 	public ConnectionEstablisher(String port)
@@ -111,7 +113,7 @@ public class ConnectionEstablisher
 	 * on the specified port, a timeout value indicates the idle wait
 	 * time before shutting down, and no ticket is required
 	 * for a client to work with the DataStore.
-	 * 
+	 *
 	 * @param port the number of the socket port
 	 * @param timeout the idle duration to wait before shutting down
 	 */
@@ -119,7 +121,7 @@ public class ConnectionEstablisher
 	{
 		setup(port, timeout, null);
 	}
-	
+
 	/**
 	 * Creates a ConnectionEstablisher.  Communication occurs
 	 * on the specified port, a timeout value indicates the idle wait
@@ -135,7 +137,7 @@ public class ConnectionEstablisher
 		setup(port, timeout, ticket);
 	}
 
-	
+
 	/**
 	 * Starts the run loop for the ConnectionEstablisher.
 	 */
@@ -155,10 +157,10 @@ public class ConnectionEstablisher
 	{
 		return _dataStore;
 	}
-	
+
 	/**
 	 * Return the Server port opened for this client
-	 * 
+	 *
 	 * @return the Server port opened for this client
 	 */
 	public int getServerPort()
@@ -167,13 +169,13 @@ public class ConnectionEstablisher
 		{
 			return _serverSocket.getLocalPort();
 		}
-		
+
 		return -1;
 	}
-	
+
 	/**
 	 * Return the connection status for this client
-	 * 
+	 *
 	 * * @return the connection status for this client
 	 */
 	public String getStatus()
@@ -196,7 +198,7 @@ public class ConnectionEstablisher
 			_updateHandler.finish();
 			_dataStore.finish();
 			System.out.println(ServerReturnCodes.RC_FINISHED);
-			
+
 			if (SystemServiceManager.getInstance().getSystemService() == null)
 				System.exit(0);
 		}
@@ -211,7 +213,7 @@ public class ConnectionEstablisher
 				Socket newSocket = _serverSocket.accept();
 				if (_dataStore.usingSSL())
 				{
-				
+
 					// wait for connection
 					SSLSocket sslSocket = (SSLSocket)newSocket;
 					sslSocket.setUseClientMode(false);
@@ -225,16 +227,16 @@ public class ConnectionEstablisher
 						return;
 					}
 				}
-				
+
 				doHandShake(newSocket);
 				newSocket.setKeepAlive(true);
 
 				ServerReceiver receiver = new ServerReceiver(newSocket, this);
 				_dataStore.addDataStorePreferenceListener(receiver);
-				
+
 				if (_dataStore.getClient() != null)
 				     _dataStore.getClient().setServerReceiver(receiver);
-				    			
+
 				Sender sender = new Sender(newSocket, _dataStore);
 
 				// add this connection to list of elements
@@ -244,7 +246,7 @@ public class ConnectionEstablisher
 				receiver.start();
 
 				if (_receivers.size() == 1)
-				{					
+				{
 					_updateHandler.start();
 					_commandHandler.start();
 				}
@@ -265,28 +267,28 @@ public class ConnectionEstablisher
 		}
 	}
 
-	
-	
-	
+
+
+
 	private ServerSocket createSocket(String portStr) throws UnknownHostException
 	{
 		ServerSocket serverSocket = null;
 		SSLContext sslContext = null;
-		// port	
+		// port
 		int port = 0;
-		
+
 		if (_dataStore.usingSSL())
 		{
 			String keyStoreFileName = _dataStore.getKeyStoreLocation();
 			String keyStorePassword = _dataStore.getKeyStorePassword();
-							
+
 			try
 			{
 				sslContext = DStoreSSLContext.getServerSSLContext(keyStoreFileName, keyStorePassword);
 			}
 			catch (Exception e)
 			{
-				
+
 			}
 		}
 
@@ -299,14 +301,14 @@ public class ConnectionEstablisher
 			try
 			{
 				lPort = Integer.parseInt(range[0]);
-				hPort = Integer.parseInt(range[1]);		
+				hPort = Integer.parseInt(range[1]);
 			}
 			catch (Exception e)
 			{
 			}
-		
+
 			for (int i = lPort; i < hPort; i++)
-			{							
+			{
 				// create server socket from port
 				try
 				{
@@ -314,7 +316,7 @@ public class ConnectionEstablisher
 					{
 						try
 						{
-							serverSocket = sslContext.getServerSocketFactory().createServerSocket(i);		
+							serverSocket = sslContext.getServerSocketFactory().createServerSocket(i);
 						}
 						catch (Exception e)
 						{
@@ -328,7 +330,7 @@ public class ConnectionEstablisher
 				}
 				catch (Exception e)
 				{
-					_dataStore.trace(e);					
+					_dataStore.trace(e);
 				}
 				if (serverSocket != null && serverSocket.getLocalPort() > 0)
 				{
@@ -339,14 +341,14 @@ public class ConnectionEstablisher
 		else
 		{
 			port = Integer.parseInt(portStr);
-	
-			
+
+
 			// create server socket from port
 			if (_dataStore.usingSSL() && sslContext != null)
 			{
 				try
 				{
-					serverSocket = sslContext.getServerSocketFactory().createServerSocket(port);		
+					serverSocket = sslContext.getServerSocketFactory().createServerSocket(port);
 				}
 				catch (Exception e)
 				{
@@ -367,7 +369,7 @@ public class ConnectionEstablisher
 		}
 		return serverSocket;
 	}
-	
+
 	/**
 	 * Create the DataStore and initializes it's handlers and communications.
 	 *
@@ -386,16 +388,16 @@ public class ConnectionEstablisher
 		_updateHandler = new ServerUpdateHandler();
 
 		ISSLProperties sslProperties = new ServerSSLProperties();
-		
+
 		_dataStore = new DataStore(_serverAttributes, _commandHandler, _updateHandler, null);
 		_dataStore.setSSLProperties(sslProperties);
-		
+
 		DataElement ticket = _dataStore.getTicket();
 		ticket.setAttribute(DE.A_NAME, ticketStr);
 
 		_updateHandler.setDataStore(_dataStore);
 		_commandHandler.setDataStore(_dataStore);
-		
+
 		if (SystemServiceManager.getInstance().getSystemService() == null)
 		{
 			Client client = new Client();
@@ -409,14 +411,14 @@ public class ConnectionEstablisher
 
 		try
 		{
-			
+
 			_serverSocket = createSocket(portStr);
 			if (_serverSocket == null)
 			{
 				System.err.println(ServerReturnCodes.RC_BIND_ERROR);
 				_msg = ServerReturnCodes.RC_BIND_ERROR;
 				_continue = false;
-			}			
+			}
 			else
 			{
 				// timeout
@@ -428,12 +430,12 @@ public class ConnectionEstablisher
 				{
 					_timeout = 120000;
 				}
-				
+
 				if (_timeout > 0)
 				{
 					_serverSocket.setSoTimeout(_timeout);
 				}
-	
+
 				System.err.println(ServerReturnCodes.RC_SUCCESS);
 				System.err.println(_serverSocket.getLocalPort());
 				try
@@ -478,7 +480,7 @@ public class ConnectionEstablisher
 	}
 
 	private void doHandShake(Socket socket)
-	{ 
+	{
 	   	try
 	   	{
 		BufferedWriter bwriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), DE.ENCODING_UTF_8));
@@ -488,7 +490,7 @@ public class ConnectionEstablisher
 	   		String preferenceVersion = System.getProperty("DSTORE_VERSION"); //$NON-NLS-1$
 	   		if (preferenceVersion != null && preferenceVersion.length() > 0){
 	   			version = preferenceVersion;
-	   		}	   		
+	   		}
 			writer.println(version);
 			writer.flush();
 	   	}
@@ -496,6 +498,6 @@ public class ConnectionEstablisher
 	   	{
 	   		System.out.println(e);
 	   	}
-	   	
+
 	}
 }

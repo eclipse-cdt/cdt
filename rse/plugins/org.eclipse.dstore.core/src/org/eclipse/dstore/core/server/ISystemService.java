@@ -8,7 +8,7 @@
  * Initial Contributors:
  *  The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: Noriaki Takatsu and Masao Nishimoto
- * 
+ *
  * Contributors:
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
@@ -18,19 +18,22 @@ package org.eclipse.dstore.core.server;
 
 import org.eclipse.dstore.core.model.Client;
 
-public interface ISystemService 
+/**
+ * @since 3.0
+ */
+public interface ISystemService
 {
 	/**
      * This method is used to establish a thread-level security.
-     * 
+     *
      * @param client the object of the client
      */
-    public void setThreadSecurity(Client client); 
-    
+    public void setThreadSecurity(Client client);
+
     /**
      * This method is used to execute run() in a thread assigned
      * from thread pools.
-     * 
+     *
      * @param securedThread the securedThread object that implements
      *        Runnable.
      */

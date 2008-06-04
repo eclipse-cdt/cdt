@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
@@ -26,13 +26,16 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
 
 /**
- * This class is used to generate command object instances from command descriptors and arguments to commands.
- * Command instances are instances of command descriptors.  Each command instance contains a set of data arguments
- * and a status object, that represents the current state of a command.  After a command instance is created,
- * it is referenced in the command log for the DataStore.
- * 
+ * This class is used to generate command object instances from command
+ * descriptors and arguments to commands. Command instances are instances of
+ * command descriptors. Each command instance contains a set of data arguments
+ * and a status object, that represents the current state of a command. After a
+ * command instance is created, it is referenced in the command log for the
+ * DataStore.
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 3.0 moved from non-API to API
  */
 public class CommandGenerator
 {
@@ -67,7 +70,7 @@ public class CommandGenerator
     public DataElement logCommand(DataElement commandObject)
     {
         try
-        { 
+        {
             // create time and status objects
         	StringBuffer id = new StringBuffer(commandObject.getId());
         	id.append(DataStoreResources.model_status);
@@ -77,7 +80,7 @@ public class CommandGenerator
                    DataStoreResources.model_start,
                     "", //$NON-NLS-1$
                    	id.toString());
-            
+
             _log.addNestedData(commandObject, false);
 
         }
@@ -115,7 +118,7 @@ public class CommandGenerator
             return null;
         }
     }
-    
+
     private void clearDeleted(DataElement element)
     {
     	for (int i = 0; i < element.getNestedSize(); i++)
@@ -123,18 +126,18 @@ public class CommandGenerator
     		DataElement child = element.get(i).dereference();
     		if (child.isDeleted())
     		{
-    			element.removeNestedData(child);	
-    		}	
-    	}	
+    			element.removeNestedData(child);
+    		}
+    	}
     }
 
 	/**
 	 * Creates a new command from a command descriptor and it's arguments.
-	 * 
+	 *
 	 * @param commandDescriptor the command type of the new command
 	 * @param arguments the arguments for the command, besides the subject
 	 * @param dataObject the subject of the command
-	 * @param refArg indicates whether the subject should be represented as a reference or directly  
+	 * @param refArg indicates whether the subject should be represented as a reference or directly
 	 * @return the status object of the command
 	 */
     public DataElement generateCommand(DataElement commandDescriptor, ArrayList arguments, DataElement dataObject, boolean refArg)
@@ -187,11 +190,11 @@ public class CommandGenerator
 
 	/**
 	 * Creates a new command from a command descriptor and it's arguments.
-	 * 
+	 *
 	 * @param commandDescriptor the command type of the new command
 	 * @param arg the arguement for the command, besides the subject
 	 * @param dataObject the subject of the command
-	 * @param refArg indicates whether the subject should be represented as a reference or directly  
+	 * @param refArg indicates whether the subject should be represented as a reference or directly
 	 * @return the status object of the command
 	 */
     public DataElement generateCommand(DataElement commandDescriptor, DataElement arg, DataElement dataObject, boolean refArg)
@@ -221,7 +224,7 @@ public class CommandGenerator
             {
                 _dataStore.createReference(commandObject, arg, "argument"); //$NON-NLS-1$
             }
-     
+
 
             return logCommand(commandObject);
         }
@@ -233,10 +236,10 @@ public class CommandGenerator
 
 	/**
 	 * Creates a new command from a command descriptor and it's arguments.
-	 * 
+	 *
 	 * @param commandDescriptor the command type of the new command
 	 * @param dataObject the subject of the command
-	 * @param refArg indicates whether the subject should be represented as a reference or directly  
+	 * @param refArg indicates whether the subject should be represented as a reference or directly
 	 * @return the status object of the command
 	 */
     public DataElement generateCommand(DataElement commandDescriptor, DataElement dataObject, boolean refArg)
@@ -269,7 +272,7 @@ public class CommandGenerator
 
 	/**
 	 * Creates a response tree for transmitting a set of data from a server to a client.
-	 * 
+	 *
 	 * @param document the root of the response
 	 * @param objects the data contained in the response
 	 * @return the response tree root
@@ -282,7 +285,7 @@ public class CommandGenerator
 
 	/**
 	 * Creates a response tree for transmitting a set of data from a server to a client.
-	 * 
+	 *
 	 * @param responseType the type of data to respond with
 	 * @param dataObject the child object in the response tree
 	 * @return the response tree root
@@ -303,7 +306,7 @@ public class CommandGenerator
 
 	/**
 	 * Creates a simple response object of the specified type
-	 * 
+	 *
 	 * @param responseType the type of data to respond with
 	 * @return the response object
 	 */

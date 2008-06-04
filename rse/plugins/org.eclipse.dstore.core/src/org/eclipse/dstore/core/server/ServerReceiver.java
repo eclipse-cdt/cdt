@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * Noriaki Takatsu  (IBM) - [227905] prevent double invocations of finished in ConncetionEstablisher
@@ -25,11 +25,11 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.util.Receiver;
 
 /**
- * The ServerReciever is responsible for recieving data from
- * the client side.
- * 
+ * The ServerReciever is responsible for recieving data from the client side.
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 3.0 moved from non-API to API
  */
 public class ServerReceiver extends Receiver
 {
@@ -38,21 +38,21 @@ public class ServerReceiver extends Receiver
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param socket the socket to receive from
 	 * @param connection the connection establisher
 	 */
 	public ServerReceiver(Socket socket, ConnectionEstablisher connection)
 	{
 		super(socket, connection.getDataStore());
-		_connection = connection;		
+		_connection = connection;
 	}
 
 
 	/**
-	 * Implementation for handling the receiving on documents on 
+	 * Implementation for handling the receiving on documents on
 	 * the server side.
-	 * 
+	 *
 	 * @param documentObject to tree root of received data.
 	 */
 	public void handleDocument(DataElement documentObject)
@@ -68,7 +68,7 @@ public class ServerReceiver extends Receiver
 			if (rootOutput.getName().equals("C_EXIT")) //$NON-NLS-1$
 			{
 				finish();
-				
+
 			}
 			else
 			{
@@ -76,7 +76,7 @@ public class ServerReceiver extends Receiver
 			}
 		}
 	}
-	
+
 	public void finish()
 	{
 		_dataStore.setConnected(false);

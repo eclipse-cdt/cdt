@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
@@ -28,7 +28,7 @@ import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
  * Server is the standard way of instantiating and controlling a remote DataStore.
  * The server runs a ConnectionEstablisher which manages client connections to
  * the DataStore.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class Server implements Runnable
@@ -39,7 +39,7 @@ public class Server implements Runnable
 	/**
 	 * The startup interface to run the Server.
 	 *
-	 * @param args a list of arguments for running the server.  These consist of 
+	 * @param args a list of arguments for running the server.  These consist of
 	 * the socket port to wait on, the timeout value, and the the ticket
 	 */
 	public static void main(String[] args)
@@ -55,7 +55,7 @@ public class Server implements Runnable
 			String[] vers = new String[3];
 			vers[0] = tokenizer.nextToken();
 			vers[1] = tokenizer.nextToken();
-			
+
 			int version = Integer.parseInt(vers[0]);
 			int major = Integer.parseInt(vers[1]);
 
@@ -73,13 +73,13 @@ public class Server implements Runnable
 			}
 		}
 		catch (Exception e)
-		{			
+		{
 			// version is bad
 			System.err.println(ServerReturnCodes.RC_JRE_VERSION_ERROR);
 			if (SystemServiceManager.getInstance().getSystemService() == null)
 				System.exit(-1);
 		}
-		
+
 		try
 		{
 			Server theServer = null;
@@ -101,7 +101,7 @@ public class Server implements Runnable
 					break;
 			}
 
-			
+
 			if (theServer != null)
 			{
 				theServer.run();
@@ -138,7 +138,7 @@ public class Server implements Runnable
 	 * the specified time interval before shutting down.
 	 *
 	 * @param port the number of the socket port to wait on
-	 * @param timeout the idle time to wait before shutting down 
+	 * @param timeout the idle time to wait before shutting down
 	 */
 	public Server(String port, String timeout)
 	{
@@ -147,30 +147,33 @@ public class Server implements Runnable
 
 	/**
 	 * Creates a new Server that waits on the specified socket port for
-	 * the specified time interval before shutting down.  
+	 * the specified time interval before shutting down.
 	 *
 	 * @param port the number of the socket port to wait on
-	 * @param timeout the idle time to wait before shutting down 
-	 * @param ticket the ticket that the client needs to interact with the DataStore 
+	 * @param timeout the idle time to wait before shutting down
+	 * @param ticket the ticket that the client needs to interact with the DataStore
 	 */
 	public Server(String port, String timeout, String ticket)
 	{
 		_establisher = new ConnectionEstablisher(port, timeout, ticket);
 	}
-	
-  
+
+
 	/**
-	 * Runs the server by starting the ConnectionEstablisher  
+	 * Runs the server by starting the ConnectionEstablisher
 	 */
 	public void run()
 	{
 		_establisher.start();
 	}
+
 	
 	/**
 	 * Return the reference for the ConnectionEstablisher for this client
-	 * 
-	 * * @return the the reference for the ConnectionEstablisher instance for this client
+	 *
+	 * @return the the reference for the ConnectionEstablisher instance for this
+	 *         client
+	 * @since 3.0
 	 */
 	public ConnectionEstablisher getEstablisher()
 	{

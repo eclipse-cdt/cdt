@@ -500,8 +500,9 @@ public class ArchiveHandlerManager
 
 	/**
 	 * Create an empty archive
-	 *
+	 * 
 	 * @throws SystemMessageException in case of an error
+	 * @since 3.0 returns void but throws SystemMessageException
 	 */
 	public void createEmptyArchive(File newFile) throws SystemMessageException
 	{

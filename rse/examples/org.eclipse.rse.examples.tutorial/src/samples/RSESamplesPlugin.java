@@ -1,23 +1,21 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Martin Oberhuber (Wind River) - [235626] Convert examples to MessageBundle format
  ********************************************************************************/
 
 package samples;
-
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,9 +35,8 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	//The shared instance.
 	private static RSESamplesPlugin plugin;
 	//Resource bundle.
-	private ResourceBundle resourceBundle;
 	private static SystemMessageFile 	messageFile = null;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -63,7 +60,6 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 
 	    DeveloperSubSystemConfigurationAdapterFactory sscaf = new DeveloperSubSystemConfigurationAdapterFactory();
 	    sscaf.registerWithManager(manager);
-
 	}
 
 	/*
@@ -73,12 +69,11 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
-		resourceBundle = null;
 	}
 
 	/**
 	 * Returns the shared instance.
-	 * @return the shared instance 
+	 * @return the shared instance
 	 */
 	public static RSESamplesPlugin getDefault() {
 		return plugin;
@@ -92,46 +87,6 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 * @see java.util.ResourceBundle#getString(String)
-	 * 
-     * @param key the key for the desired string
-     * @return the string for the given key
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle= RSESamplesPlugin.getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	/**
-	 * Return the plugin's Resource bundle.
-	 * @return the Resource bundle
-	 */
-	public ResourceBundle getResourceBundle() {
-		try {
-			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("samples.rseSamplesResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-		return resourceBundle;
-	}
-
-	/**
-	 * @see AbstractUIPlugin#initializeDefaultPreferences
-	 */
-	//protected void initializeDefaultPreferences(IPreferenceStore store) 
-	//{
-	//	super.initializeDefaultPreferences(store);
-	//	//RSESamplesPreferencePage.initDefaults(store);
-	//}
-	
 	/**
 	 * Initialize the image registry by declaring all of the required graphics.
 	 */
@@ -151,25 +106,25 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	 */
     public SystemMessageFile getMessageFile(String messageFileName)
     {
-       return loadMessageFile(getBundle(), messageFileName);  	
-    }	
+       return loadMessageFile(getBundle(), messageFileName);
+    }
 
 	/**
 	 * Return our message file.
-	 * 
+	 *
 	 * @return the RSE message file
 	 */
 	public static SystemMessageFile getPluginMessageFile()
 	{
 		return messageFile;
-	}  
+	}
 
 	/**
 	 * Retrieve a message from this plugin's message file,
 	 * or <code>null</code> if the message cannot be found.
 	 * @see SystemMessageFile#getMessage(String)
-	 * 
-	 * @param msgId message id 
+	 *
+	 * @param msgId message id
 	 * @return the message object referenced by the given id
 	 */
 	public static SystemMessage getPluginMessage(String msgId)

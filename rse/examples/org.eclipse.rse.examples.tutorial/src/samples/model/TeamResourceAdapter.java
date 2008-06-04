@@ -7,14 +7,15 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
  * Xuan Chen (IBM) - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * Martin Oberhuber (Wind River) - [235626] Convert examples to MessageBundle format
  *******************************************************************************/
 
 package samples.model;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import samples.RSESamplesPlugin;
+import samples.RSESamplesResources;
 import samples.subsystems.DeveloperSubSystem;
 
 /**
@@ -84,7 +86,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 */
 	public String getType(Object element)
 	{
-		return RSESamplesPlugin.getResourceString("property.team_resource.type"); //$NON-NLS-1$
+		return RSESamplesResources.property_team_resource_type;
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +96,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	{
 		return null; // not really used, which is good because it is ambiguous
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#hasChildren(java.lang.Object)
 	 */
@@ -126,22 +128,22 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	{
 		return null;
 	}
-	
+
 	/**
 	 * Intercept of parent method to indicate these objects
 	 * can be renamed using the RSE-supplied rename action.
-	 * 
+	 *
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#canRename(java.lang.Object)
 	 */
 	public boolean canRename(Object element)
 	{
 		return true;
 	}
-	
+
 	/**
-	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but 
+	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but
 	 * defers the action work of renaming to this adapter method.
-	 *  
+	 *
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#doRename(Shell, Object, String, IProgressMonitor)
 	 */
 	public boolean doRename(Shell shell, Object element, String newName, IProgressMonitor monitor)
@@ -149,7 +151,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 		((TeamResource)element).setName(newName);
 		return true;
 	}
-	
+
 	// --------------------------------------
 	// ISystemRemoteElementAdapter methods...
 	// --------------------------------------
@@ -167,7 +169,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 */
 	public String getSubSystemConfigurationId(Object element)
 	{
-		return "samples.subsystems.factory"; // as declared in extension in plugin.xml //$NON-NLS-1$ 
+		return "samples.subsystems.factory"; // as declared in extension in plugin.xml //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -210,7 +212,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 */
 	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
 	{
-		return null; // maybe this would be a Project or Roster object, or leave as null if this is the root 
+		return null; // maybe this would be a Project or Roster object, or leave as null if this is the root
 	}
 
 	/* (non-Javadoc)
@@ -224,6 +226,6 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 		String[] allNames = new String[allTeams.length];
 		for (int idx=0; idx<allTeams.length; idx++)
 		  allNames[idx] = allTeams[idx].getName();
-		return allNames; // Return list of all team names 	
+		return allNames; // Return list of all team names
 	}
 }

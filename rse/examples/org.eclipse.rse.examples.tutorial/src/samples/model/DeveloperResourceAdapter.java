@@ -7,13 +7,14 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
  * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * Martin Oberhuber (Wind River) - [235626] Convert examples to MessageBundle format
  *******************************************************************************/
 
 package samples.model;
@@ -30,6 +31,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import samples.RSESamplesPlugin;
+import samples.RSESamplesResources;
 
 /**
  * This is the adapter which enables us to work with our remote developer resources.
@@ -39,7 +41,7 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 {
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	public DeveloperResourceAdapter() {
 		super();
@@ -84,7 +86,7 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 	 */
 	public String getType(Object element)
 	{
-		return RSESamplesPlugin.getResourceString("property.devr_resource.type"); //$NON-NLS-1$
+		return RSESamplesResources.property_devr_resource_type;
 	}
 
 	/**
@@ -114,32 +116,32 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 	 */
 	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
 	{
-		// the following array should be made static to it isn't created every time		
+		// the following array should be made static to it isn't created every time
 		PropertyDescriptor[] ourPDs = new PropertyDescriptor[2];
 		ourPDs[0] = new PropertyDescriptor("devr_id", //$NON-NLS-1$
-				RSESamplesPlugin.getResourceString("property.devr_id.name")); //$NON-NLS-1$
+				RSESamplesResources.property_devr_id_name);
 		ourPDs[0].setDescription(
-				RSESamplesPlugin.getResourceString("property.devr_id.desc")); //$NON-NLS-1$
+				RSESamplesResources.property_devr_id_desc);
 		ourPDs[1] = new PropertyDescriptor("devr_dept", //$NON-NLS-1$
-				RSESamplesPlugin.getResourceString("property.devr_dept.name")); //$NON-NLS-1$
+				RSESamplesResources.property_devr_dept_name);
 		ourPDs[1].setDescription(
-				RSESamplesPlugin.getResourceString("property.devr_dept.desc")); //$NON-NLS-1$
+				RSESamplesResources.property_devr_dept_desc);
 		return ourPDs;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#internalGetPropertyValue(java.lang.Object)
 	 */
 	protected Object internalGetPropertyValue(Object key)
 	{
 		// propertySourceInput holds the currently selected object
-		DeveloperResource devr = (DeveloperResource)propertySourceInput; 
+		DeveloperResource devr = (DeveloperResource)propertySourceInput;
 		if (key.equals("devr_id")) //$NON-NLS-1$
 			return devr.getId();
 		else if (key.equals("devr_dept")) //$NON-NLS-1$
 		  return devr.getDeptNbr();
 		return null;
-	}		
+	}
 	// --------------------------------------
 	// ISystemRemoteElementAdapter methods...
 	// --------------------------------------
@@ -157,7 +159,7 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 	 */
 	public String getSubSystemConfigurationId(Object element)
 	{
-		return "samples.subsystems.factory"; // as declared in extension in plugin.xml //$NON-NLS-1$ 
+		return "samples.subsystems.factory"; // as declared in extension in plugin.xml //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

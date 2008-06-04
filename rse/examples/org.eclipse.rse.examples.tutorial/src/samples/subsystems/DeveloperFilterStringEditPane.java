@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Martin Oberhuber (Wind River) - [235626] Convert examples to MessageBundle format
  *******************************************************************************/
 
 package samples.subsystems;
@@ -28,7 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import samples.RSESamplesPlugin;
+import samples.RSESamplesResources;
 
 /**
  * Our specialized filter string edit pane for developer filters.
@@ -52,75 +53,75 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 	 * This is where we populate the client area.
 	 * @param parent - the composite that will be the parent of the returned client area composite
 	 * @return Control - a client-area composite populated with widgets.
-	 * 
+	 *
 	 * @see org.eclipse.rse.ui.SystemWidgetHelpers
 	 */
-	public Control createContents(Composite parent) 
-	{		
+	public Control createContents(Composite parent)
+	{
 		// Inner composite
 		int nbrColumns = 1;
-		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);	
+		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 		((GridLayout)composite_prompts.getLayout()).marginWidth = 0;
-		
+
 		// CREATE TEAM-PARENT PROMPT
 		textTeam = SystemWidgetHelpers.createLabeledTextField(
 			composite_prompts,
 			null,
-			RSESamplesPlugin.getResourceString("filter.devr.teamprompt.label"), //$NON-NLS-1$
-			RSESamplesPlugin.getResourceString("filter.devr.teamprompt.tooltip") //$NON-NLS-1$
-		); 
+			RSESamplesResources.filter_devr_teamprompt_label,
+				RSESamplesResources.filter_devr_teamprompt_tooltip
+		);
 
 		// CREATE DEVELOPER PROMPT
 		textDevr = SystemWidgetHelpers.createLabeledTextField(
 			composite_prompts,
 			null,
-			RSESamplesPlugin.getResourceString("filter.devr.devrprompt.label"), //$NON-NLS-1$
-			RSESamplesPlugin.getResourceString("filter.devr.devrprompt.tooltip") //$NON-NLS-1$
-		); 
-		
+			RSESamplesResources.filter_devr_devrprompt_label,
+				RSESamplesResources.filter_devr_devrprompt_tooltip
+		);
+
 		resetFields();
 		doInitializeFields();
-		  		  
+
 		// add keystroke listeners...
 		textTeam.addModifyListener(
-			new ModifyListener() 
+			new ModifyListener()
 			{
-				public void modifyText(ModifyEvent e) 
+				public void modifyText(ModifyEvent e)
 				{
 					validateStringInput();
 				}
 			}
-		);		
+		);
 		textDevr.addModifyListener(
-			new ModifyListener() 
+			new ModifyListener()
 			{
-				public void modifyText(ModifyEvent e) 
+				public void modifyText(ModifyEvent e)
 				{
 					validateStringInput();
 				}
 			}
-		);		
+		);
 		setEditable(editable);
 		return composite_prompts;
 	}
-	
+
 	/**
 	 * Override of parent method.
 	 * Return the control to recieve initial focus.
-	 *  
+	 *
 	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#getInitialFocusControl()
 	 */
 	public Control getInitialFocusControl()
 	{
 		return textTeam;
-	}	
+	}
 
 	/**
 	 * Override of parent method.
 	 * Initialize the input fields based on the inputFilterString, and perhaps refProvider.
 	 * This can be called before createContents, so test for null widgets first!
 	 * Prior to this being called, resetFields is called to set the initial default state prior to input
-	 */		
+	 */
 	protected void doInitializeFields()
 	{
 		if (textTeam == null)
@@ -137,7 +138,7 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 		    }
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#setEditable(boolean)
 	 */
@@ -146,19 +147,19 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 		enable(textDevr, editable);
 		enable(textTeam, editable);
 	}
-	
+
 	/**
 	 * Override of parent method.
 	 * This is called in the change filter dialog when the user selects "new", or selects another string.
 	 */
 	protected void resetFields()
 	{
-	    textTeam.setText(""); //$NON-NLS-1$		
+	    textTeam.setText(""); //$NON-NLS-1$
 	    textDevr.setText("*"); //$NON-NLS-1$
 	}
 	/**
 	 * Override of parent method.
-	 * Called by parent to decide if information is complete enough to enable finish. 
+	 * Called by parent to decide if information is complete enough to enable finish.
 	 */
 	protected boolean areFieldsComplete()
 	{
@@ -167,13 +168,13 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 		else
 		  return (textTeam.getText().trim().length()>0) && (textDevr.getText().trim().length()>0);
 	}
-	
+
 	/**
 	 * Override of parent method.
-	 * Get the filter string in its current form. 
+	 * Get the filter string in its current form.
 	 * Functional opposite of doInitializeFields, which tears apart the input string in update mode,
 	 * to populate the GUIs. This method creates the filter string from the information in the GUI.
-	 *  
+	 *
 	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#getFilterString()
 	 */
 	public String getFilterString()
@@ -186,19 +187,19 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 			String devrName = textDevr.getText().trim();
 			return teamName + "/" + devrName; //$NON-NLS-1$
 		}
-	}	
+	}
 
 	/**
 	 * Override of parent method.
-	 * Does complete verification of input fields. If this 
+	 * Does complete verification of input fields. If this
 	 * method returns null, there are no errors and the dialog or wizard can close.
 	 *
 	 * @return error message if there is one, else null if ok
 	 */
-	public SystemMessage verify() 
+	public SystemMessage verify()
 	{
 		errorMessage = null;
-		
+
 		/*
 		Control controlInError = null;
 		errorMessage = validateTeamInput(); // todo: implement if we want to syntax check input
@@ -210,14 +211,14 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 		   if (errorMessage != null)
 		     controlInError = textDevr;
 		}
-		
+
 		if (errorMessage != null)
 		{
 			if (controlInError != null)
 		      controlInError.setFocus();
 		}
 		*/
-		return errorMessage;		
-	}	
+		return errorMessage;
+	}
 
 }

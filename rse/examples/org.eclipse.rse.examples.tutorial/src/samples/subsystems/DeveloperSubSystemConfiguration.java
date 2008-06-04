@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Martin Oberhuber (Wind River) - [235626] Convert examples to MessageBundle format
  *******************************************************************************/
 
 package samples.subsystems;
@@ -25,7 +26,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 
-import samples.RSESamplesPlugin;
+import samples.RSESamplesResources;
 
 /**
  * This is our subsystem factory, which creates instances of our subsystems,
@@ -71,33 +72,37 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 			//--tutorial part 1
 			//mgr.createSystemFilter(defaultPool, "All teams", strings);
 			//--tutorial part 2
-			ISystemFilter filter = mgr.createSystemFilter(defaultPool, 
-					RSESamplesPlugin.getResourceString("filter.default.name"), //$NON-NLS-1$
+			ISystemFilter filter = mgr.createSystemFilter(defaultPool,
+					RSESamplesResources.filter_default_name,
 					strings );
 			filter.setType("team"); //$NON-NLS-1$
 		} catch (Exception exc) {}
 		return defaultPool;
 	}
-	
+
+
 	/**
-	 * Intercept of parent method so we can supply our own value shown in the property
-	 * sheet for the "type" property when a filter is selected within our subsystem.
+	 * Intercept of parent method so we can supply our own value shown in the
+	 * property sheet for the "type" property when a filter is selected within
+	 * our subsystem.
 	 *
-	 * Requires this line in rseSamplesResources.properties: property.type.teamfilter=Team filter
+	 * Requires this line in rseSamplesResources.properties:
+	 * property_type_teamfilter=Team filter
+	 *
 	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getTranslatedFilterTypeProperty(org.eclipse.rse.core.filters.ISystemFilter)
 	 */
 	public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter)
 	{
 		//--tutorial part 1
-	   	//return RSESamplesPlugin.getResourceString("property.type.teamfilter"); //$NON-NLS-1$
+	   	//return RSESamplesResources.property_type_teamfilter;
 		//--tutorial part 2
 	   	String type = selectedFilter.getType();
 	   	if (type == null)
 	   	  type = "team"; //$NON-NLS-1$
 	   	if (type.equals("team")) //$NON-NLS-1$
-	   	  return RSESamplesPlugin.getResourceString("property.type.teamfilter"); //$NON-NLS-1$ 
+	   	  return RSESamplesResources.property_type_teamfilter;
 	   	else
-	   	  return RSESamplesPlugin.getResourceString("property.type.devrfilter"); //$NON-NLS-1$
+	   	  return RSESamplesResources.property_type_devrfilter;
 	}
 
 }

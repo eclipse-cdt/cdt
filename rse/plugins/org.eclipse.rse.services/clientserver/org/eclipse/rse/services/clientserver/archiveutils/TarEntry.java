@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
@@ -27,12 +27,13 @@ import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants
 
 /**
  * This class represents a tar file entry.
+ * @since 3.0
  */
 public class TarEntry implements Cloneable {
-	
+
 	// NOTE: Read the GNU tar specification to understand what each of the fields mean.
 	// http://www.gnu.org/software/tar/manual/html_mono/tar.html#SEC118
-	
+
 	// TODO (KM): Do we need to worry about ASCII? I think we do. We are constantly
 	// switching between bytes and String assuming local encoding. However, the tar specification states
 	// local ASCII variant must always be used. I think our code will probably fail on non-ASCII machines
@@ -41,7 +42,7 @@ public class TarEntry implements Cloneable {
 	// local variant of ASCII? Can we just use US-ASCII everywhere and get away with it. I think
 	// that should work. Local variant of ASCII possibly means slightly different versions of ASCII used
 	// on different machines, but not between locales.
-	
+
 	// block header fields
 	public byte[] name = new byte[ITarConstants.NAME_LENGTH];
 	public byte[] mode = new byte[ITarConstants.MODE_LENGTH];
@@ -70,7 +71,7 @@ public class TarEntry implements Cloneable {
 	public TarEntry(String name) {
 		setName(name);
 	}
-	
+
 	/**
 	 * Creates a new tar entry from the given block data. Fills in all the fields from the
 	 * block data.
@@ -81,26 +82,26 @@ public class TarEntry implements Cloneable {
 	 */
 	TarEntry(byte[] blockData) throws IOException {
 		checkNull(blockData);
-		
+
 		if (blockData.length != ITarConstants.BLOCK_SIZE) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		populateFields(blockData);
 	}
-	
+
 	/**
 	 * Fills in the fields of the entry from block data.
 	 * @param blockData data in a header block.
 	 * @throws IOException if an I/O error occurs.
 	 */
 	private void populateFields(byte[] blockData) throws IOException {
-		
+
 		InputStream byteStream = new ByteArrayInputStream(blockData);
 
 		// read the name
 		byteStream.read(name);
-		
+
 		// if the name is an empty string, then don't fill in other fields,
 		// since this indicates that we have reached end of file
 		if (getName().equals("")) { //$NON-NLS-1$
@@ -123,7 +124,7 @@ public class TarEntry implements Cloneable {
 		byteStream.read(devminor);
 		byteStream.read(prefix);
 	}
-	
+
 	/**
 	 * Checks whether the given object is null, and throws a <code>NullPointerException</code> if the
 	 * obect is <code>null</code>.
@@ -131,12 +132,12 @@ public class TarEntry implements Cloneable {
 	 * @throws NullPointerException if the given object is <code>null</code>.
 	 */
 	private void checkNull(Object o) {
-		
+
 		if (o == null) {
 			throw new NullPointerException();
 		}
 	}
-	
+
 	/**
 	 * Sets the name of the tar entry.
 	 * @param fileName the name for the tar entry.
@@ -144,17 +145,17 @@ public class TarEntry implements Cloneable {
 	 */
 	public void setName(String fileName) {
 		checkNull(fileName);
-		
+
 		int length = ITarConstants.NAME_LENGTH - fileName.length();
-		
+
 		// append null characters to the name
 		for (int i = 0; i < length; i++) {
 			fileName = fileName + "\0"; //$NON-NLS-1$
 		}
-		
+
 		name = fileName.getBytes();
 	}
-	
+
 	/**
 	 * Gets the name.
 	 * @return the name.
@@ -162,7 +163,7 @@ public class TarEntry implements Cloneable {
 	public String getName() {
 		return (new String(name)).trim();
 	}
-	
+
 	/**
 	 * Sets the user mod.
 	 * @param canRead <code>true</code> if the user has read permission, <code>false</code> otherwise.
@@ -170,27 +171,27 @@ public class TarEntry implements Cloneable {
 	 * @param canExecute <code>true</code> if the user has execute permission, <code>false</code> otherwise.
 	 */
 	public void setUserMode(boolean canRead, boolean canWrite, boolean canExecute) {
-		
+
 		int mod = 00;
-		
+
 		if (canRead) {
 			mod += 04;
 		}
-		
+
 		if (canWrite) {
 			mod += 02;
 		}
-		
+
 		if (canExecute) {
 			mod += 01;
 		}
-		
+
 		String modString = "0100" + Integer.toString(mod, 8) + "44"; //$NON-NLS-1$ //$NON-NLS-2$
 		modString = modString + "\0"; //$NON-NLS-1$
-		
+
 		mode = modString.getBytes();
 	}
-	
+
 	/**
 	 * Gets the mode in octal.
 	 * @return the mode.
@@ -198,7 +199,7 @@ public class TarEntry implements Cloneable {
 	public String getMode() {
 		return (new String(mode)).trim();
 	}
-	
+
 	/**
 	 * Gets the uid in octal.
 	 * @return the uid.
@@ -206,7 +207,7 @@ public class TarEntry implements Cloneable {
 	public String getUID() {
 		return (new String(uid)).trim();
 	}
-	
+
 	/**
 	 * Gets the gid in octal.
 	 * @return the gid.
@@ -214,32 +215,32 @@ public class TarEntry implements Cloneable {
 	public String getGID() {
 		return (new String(gid)).trim();
 	}
-	
+
 	/**
 	 * Sets the file size in bytes.
 	 * @param fileSize the file size.
 	 */
 	public void setSize(long fileSize) {
-		
+
 		// get the octal representation of the file size as a string
 		String sizeString = Long.toString(fileSize, 8).trim();
-		
+
 		// get the length of the string
 		int length = sizeString.length();
-		
+
 		int diff = ITarConstants.SIZE_LENGTH - length - 1;
-		
+
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
 			sizeString = "0" + sizeString; //$NON-NLS-1$
 		}
-		
+
 		// append a space at the end
 		sizeString = sizeString + " "; //$NON-NLS-1$
-		
+
 		size = sizeString.getBytes();
 	}
-	
+
 	/**
 	 * Gets the size in bytes.
 	 * @return the size.
@@ -247,32 +248,32 @@ public class TarEntry implements Cloneable {
 	public long getSize() {
 		return Long.parseLong((new String(size)).trim(), 8);
 	}
-	
+
 	/**
 	 * Sets the modification time.
 	 * @param modTime the modification time, in milliseconds since 00:00:00 GMT, January 1, 1970.
 	 */
 	public void setModificationTime(long modTime) {
-		
+
 		// get the octal representation of the modification time as a string
 		String mtimeString = Long.toString(modTime/1000, 8).trim();
-		
+
 		// get the length of the string
 		int length = mtimeString.length();
-		
+
 		int diff = ITarConstants.MTIME_LENGTH - length - 1;
-		
+
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
 			mtimeString = "0" + mtimeString; //$NON-NLS-1$
 		}
-		
+
 		// append a space at the end
 		mtimeString = mtimeString + " "; //$NON-NLS-1$
-		
+
 		mtime = mtimeString.getBytes();
 	}
-	
+
 	/**
 	 * Gets the modification time, in milliseconds since 00:00:00 GMT, January 1, 1970.
 	 * @return the modification time.
@@ -280,7 +281,7 @@ public class TarEntry implements Cloneable {
 	public long getModificationTime() {
 		return Long.parseLong((new String(mtime)).trim(), 8) * 1000;
 	}
-	
+
 	/**
 	 * Gets the checksum.
 	 * @return the checksum.
@@ -307,13 +308,13 @@ public class TarEntry implements Cloneable {
 
 	/**
 	 * Returns whether the archive was output in the P1003 archive format.
-	 * This is not used. 
+	 * This is not used.
 	 * @return the magic field.
 	 */
 	public String getMagic() {
 		return (new String(magic)).trim();
 	}
-	
+
 	/**
 	 * Gets the version in octal.
 	 * @return the version.
@@ -321,7 +322,7 @@ public class TarEntry implements Cloneable {
 	public String getVersion() {
 		return (new String(version)).trim();
 	}
-	
+
 	/**
 	 * Sets the user name of the tar entry.
 	 * @param userName the user name for the tar entry.
@@ -329,14 +330,14 @@ public class TarEntry implements Cloneable {
 	 */
 	public void setUserName(String userName) {
 		checkNull(userName);
-		
+
 		int length = ITarConstants.UNAME_LENGTH - userName.length();
-		
+
 		// append null characters to the user name
 		for (int i = 0; i < length; i++) {
 			userName = userName + "\0"; //$NON-NLS-1$
 		}
-		
+
 		uname = userName.getBytes();
 	}
 
@@ -371,7 +372,7 @@ public class TarEntry implements Cloneable {
 	public String getDevMinor() {
 		return (new String(devminor)).trim();
 	}
-	
+
 	/**
 	 * Gets the prefix in octal.
 	 * @return the prefix.
@@ -379,15 +380,15 @@ public class TarEntry implements Cloneable {
 	public String getPrefix() {
 		return (new String(prefix)).trim();
 	}
-	
+
 	/**
 	 * Returns whether the entry represents a directory.
 	 * @return <code>true</code> if the entry represents a directory, <code>false</code> otherwise.
 	 */
 	public boolean isDirectory() {
-		
+
 		String entryName = getName();
-		
+
 		if (entryName.endsWith("/")) { //$NON-NLS-1$
 			return true;
 		}
@@ -395,7 +396,7 @@ public class TarEntry implements Cloneable {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Write the fields to the given output stream.
 	 * @param outStream the output stream to write to.
@@ -418,113 +419,113 @@ public class TarEntry implements Cloneable {
 		outStream.write(devminor);
 		outStream.write(prefix);
 	}
-	
+
 	/**
 	 * Calculates the checksum of the entry.
 	 */
 	public void calculateChecksum() {
 		int sum = 0;
-		
+
 		// add name bytes
 		for (int i = 0; i < name.length; i++) {
 			sum += name[i];
 		}
-		
+
 		// add mode bytes
 		for (int i = 0; i < mode.length; i++) {
 			sum += mode[i];
 		}
-		
+
 		// add uid bytes
 		for (int i = 0; i < uid.length; i++) {
 			sum += uid[i];
 		}
-		
+
 		// add gid bytes
 		for (int i = 0; i < gid.length; i++) {
 			sum += gid[i];
 		}
-		
+
 		// add size bytes
 		for (int i = 0; i < size.length; i++) {
 			sum += size[i];
 		}
-		
+
 		// add mtime bytes
 		for (int i = 0; i < mtime.length; i++) {
 			sum += mtime[i];
 		}
-		
+
 		// add checksum bytes assuming check sum is blank spaces
 		char space = ' ';
 		byte spaceByte = (byte)space;
-		
+
 		for (int i = 0; i < chksum.length; i++) {
 			sum += spaceByte;
 		}
-		
+
 		// add typeflag byte
 		sum += typeflag;
-		
+
 		// add linkname bytes
 		for (int i = 0; i < linkname.length; i++) {
 			sum += linkname[i];
 		}
-		
+
 		// add magic bytes
 		for (int i = 0; i < magic.length; i++) {
 			sum += magic[i];
 		}
-		
+
 		// add version bytes
 		for (int i = 0; i < version.length; i++) {
 			sum += version[i];
 		}
-		
+
 		// add uname bytes
 		for (int i = 0; i < uname.length; i++) {
 			sum += uname[i];
 		}
-		
+
 		// add gname bytes
 		for (int i = 0; i < gname.length; i++) {
 			sum += gname[i];
 		}
-		
+
 		// add devmajor bytes
 		for (int i = 0; i < devmajor.length; i++) {
 			sum += devmajor[i];
 		}
-		
+
 		// add devminor bytes
 		for (int i = 0; i < devminor.length; i++) {
 			sum += devminor[i];
 		}
-		
+
 		// add prefix bytes
 		for (int i = 0; i < prefix.length; i++) {
 			sum += prefix[i];
 		}
-		
+
 		// get the octal representation of the sum as a string
 		String sumString = Long.toString(sum, 8).trim();
-		
+
 		// get the length of the string
 		int length = sumString.length();
-		
+
 		int diff = ITarConstants.CHKSUM_LENGTH - length - 2;
-		
+
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
 			sumString = "0" + sumString; //$NON-NLS-1$
 		}
-		
+
 		// append a null character
 		sumString = sumString + "\0"; //$NON-NLS-1$
-		
+
 		// append a space
 		sumString = sumString + " "; //$NON-NLS-1$
-		
+
 		// set the checksum
 		chksum = sumString.getBytes();
 	}

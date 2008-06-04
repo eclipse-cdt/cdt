@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
  * Martin Oberhuber (Wind River) - [cleanup] Move from internal to fix API leakage
@@ -24,8 +24,9 @@ import java.io.OutputStream;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants;
 
 /**
- * This class implements an output stream filter for writing files in the
- * tar file format.
+ * This class implements an output stream filter for writing files in the tar
+ * file format.
+ * @since 3.0
  */
 public class TarOutputStream extends OutputStream {
 

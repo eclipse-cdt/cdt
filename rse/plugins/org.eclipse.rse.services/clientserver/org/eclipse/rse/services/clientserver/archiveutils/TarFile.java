@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
  * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
@@ -30,18 +30,19 @@ import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants
 
 /**
  * This class is used to read entries from a tar file.
+ * @since 3.0
  */
 public class TarFile {
-	
+
 	private File file;
 	private Vector blockHeaders;
-	
+
 	private class TarEntryInputStream extends InputStream {
-		
+
 		private long size;
 		private InputStream stream;
 		private long numRead;
-		
+
 		/**
 		 * Creates a tar entry input stream.
 		 * @param size the size of the data in the tar entry.
@@ -52,12 +53,12 @@ public class TarFile {
 			this.stream = stream;
 			numRead = 0;
 		}
-	
+
 		/**
 		 * @see java.io.InputStream#read()
 		 */
 		public int read() throws IOException {
-			
+
 			if (numRead >= size) {
 				return -1;
 			}
@@ -66,18 +67,18 @@ public class TarFile {
 				return stream.read();
 			}
 		}
-		
+
 		/**
 		 * @see java.io.InputStream#available()
 		 */
 		public int available() throws IOException {
-			
+
 			// get difference between file size and how much we have already read
 			long diff = size - numRead;
-			
+
 			// get how much we can read from underlying stream.
 			int av = stream.available();
-			
+
 			// return the smaller of the two
 			// note although diff is a long, if it's smaller than av, we know it must fit
 			// in an integer.
@@ -124,7 +125,7 @@ public class TarFile {
 		this.file = file;
 		loadTarEntries();
 	}
-	
+
 	/**
 	 * Opens a tar file for reading given the file name.
 	 * @param name the name of the tar file to be opened for reading.
@@ -134,7 +135,7 @@ public class TarFile {
 	public TarFile(String name) throws FileNotFoundException, IOException {
 		this(new File(name));
 	}
-	
+
 	/**
 	 * Loads tar entries.
 	 * @throws FileNotFoundException if the file does not exist.
@@ -143,13 +144,13 @@ public class TarFile {
 	private void loadTarEntries() throws FileNotFoundException, IOException {
 		InputStream stream = getInputStream();
 		blockHeaders = new Vector();
-		
+
 		// now read all the block headers
 		byte[] blockData = readBlock(stream);
 
 		// while end of stream is not reached, extract block headers
 		while (blockData.length != 0) {
-			
+
 			// extract the header from the block
 			TarEntry header = extractBlockHeader(blockData);
 
@@ -158,7 +159,7 @@ public class TarFile {
 
 				// determine how many blocks make up the contents of the file
 				long fileSize = 0;
-				
+
 				// Bug 139207: Browsing into some tar archives failed
 				// The reason was that the last entry in the file did not necessarily have an empty string as the name
 				// of the entry and so the header is not null. The tar format does not guarantee an empty name.
@@ -170,10 +171,10 @@ public class TarFile {
 				catch (NumberFormatException e) {
 					break;
 				}
-				
+
 				// add header only if the size is valid
 				blockHeaders.add(header);
-				
+
 				int numFileBlocks = (int)(fileSize / ITarConstants.BLOCK_SIZE);
 				numFileBlocks += (fileSize % ITarConstants.BLOCK_SIZE) > 0 ? 1 : 0;
 
@@ -192,7 +193,7 @@ public class TarFile {
 
 		stream.close();
 	}
-	
+
 	/**
 	 * Gets the input stream for the tar file.
 	 * @return the input stream for the tar file.
@@ -203,7 +204,7 @@ public class TarFile {
 		FileInputStream stream = new FileInputStream(file);
 		return stream;
 	}
-	
+
 	/**
 	 * Reads the next block.
 	 * @param stream the input stream of the tar file.
@@ -218,7 +219,7 @@ public class TarFile {
 
 		for (int i = 0; i < ITarConstants.BLOCK_SIZE; i++) {
 			byteRead = stream.read();
-			
+
 			if (byteRead != -1) {
 				blockData[i] = (byte)byteRead;
 			}
@@ -234,16 +235,16 @@ public class TarFile {
 
 		return blockData;
 	}
-	
+
 	/**
 	 * Extracts the header of a block given the block data.
 	 * @param blockData the block data.
 	 * @return the header of the block, or <code>null</code> if the block indicates end of file.
 	 */
 	private TarEntry extractBlockHeader(byte[] blockData) throws IOException {
-		
+
 		TarEntry entry = new TarEntry(blockData);
-		
+
 		// if the name of the entry is an empty string, it means we have reached end of file
 		// so just return null
 		if (entry.getName().equals("")) { //$NON-NLS-1$
@@ -253,7 +254,7 @@ public class TarFile {
 			return entry;
 		}
 	}
-	
+
 	/**
 	 * Returns an enumeration of the tar file entries.
 	 * @return an enumeration of the tar file entries.
@@ -261,7 +262,7 @@ public class TarFile {
 	public Enumeration entries() {
 		return blockHeaders.elements();
 	}
-	
+
 	/**
 	 * Returns the number of entries in the tar file.
 	 * @return the number of entries in the tar file.
@@ -269,33 +270,33 @@ public class TarFile {
 	public int size() {
 		return blockHeaders.size();
 	}
-	
+
 	/**
 	 * Returns the tar file entry with that name, or <code>null</code> if not found.
 	 * @param name the name of the entry.
 	 * @return the tar file entry, or <code>null</code> if not found.
 	 */
 	public TarEntry getEntry(String name) {
-		
+
 		// TODO: could we maybe keep a hash instead to make it faster?
 		// The hash could be keyed by names. But tars do allow headers with the same name.
 		// Research this.
 		Enumeration headers = entries();
-		
-		// go through all block headers 
+
+		// go through all block headers
 		while (headers.hasMoreElements()) {
 			TarEntry entry = (TarEntry)(headers.nextElement());
 			String entryName = entry.getName();
-			
+
 			// if name of entry matches the given name, then that is the entry we are looking for
 			if (entryName.equals(name) || entryName.equals(name + "/")) { //$NON-NLS-1$
 				return entry;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns the input stream of the data in the given entry.
 	 * @param entry the entry.
@@ -304,21 +305,21 @@ public class TarFile {
 	 */
 	public InputStream getInputStream(TarEntry entry) throws IOException {
 		InputStream stream = getInputStream();
-		
+
 		// now read all the block headers
 		byte[] blockData = readBlock(stream);
 
 		// while end of stream is not reached, extract block headers
 		while (blockData.length != 0) {
-			
+
 			// extract the header from the block
 			TarEntry header = extractBlockHeader(blockData);
 
 			// if header is not null, we add it to our list of headers
 			if (header != null) {
-				
+
 				long fileSize = 0;
-				
+
 				// Bug 139207: Browsing into some tar archives failed
 				// The reason was that the last entry in the file did not necessarily have an empty string as the name
 				// of the entry and so the header is not null. The tar format does not guarantee an empty name.
@@ -333,7 +334,7 @@ public class TarFile {
 
 				// if the header name does not match the entry name
 				if (!header.getName().equals(entry.getName())) {
-					
+
 					// determine how many blocks make up the contents of the file
 					int numFileBlocks = (int)(fileSize / ITarConstants.BLOCK_SIZE);
 					numFileBlocks += (fileSize % ITarConstants.BLOCK_SIZE) > 0 ? 1 : 0;
@@ -356,7 +357,7 @@ public class TarFile {
 			// now read the next block
 			blockData = readBlock(stream);
 		}
-		
+
 		return null;
 	}
 }

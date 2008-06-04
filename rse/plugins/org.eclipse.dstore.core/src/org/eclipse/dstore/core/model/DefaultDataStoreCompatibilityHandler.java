@@ -1,35 +1,37 @@
 /********************************************************************************
  * Copyright (c) 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM) - [220892][dstore] Backward compatibility: Server and Daemon should support old clients
  ********************************************************************************/
 package org.eclipse.dstore.core.model;
 
-
+/**
+ * @since 3.0
+ */
 public class DefaultDataStoreCompatibilityHandler implements
 		IDataStoreCompatibilityHandler {
 	private DataStore _dataStore;
-	
+
 	public DefaultDataStoreCompatibilityHandler(DataStore dataStore){
 		_dataStore = dataStore;
 	}
-	
+
 	public int checkCompatibility(String handshake){
-	
+
 		String[] clientVersionStr = DataStoreAttributes.DATASTORE_VERSION.split("\\.");	 //$NON-NLS-1$
 		String[] serverVersionStr = handshake.split("\\."); //$NON-NLS-1$
-		
-		int clientVersion = Integer.parseInt(clientVersionStr[VERSION_INDEX_VERSION]);		
-		int serverVersion = Integer.parseInt(serverVersionStr[VERSION_INDEX_VERSION]);				
-		
+
+		int clientVersion = Integer.parseInt(clientVersionStr[VERSION_INDEX_VERSION]);
+		int serverVersion = Integer.parseInt(serverVersionStr[VERSION_INDEX_VERSION]);
+
 		if (handshake.equals(DataStoreAttributes.DATASTORE_VERSION))
 		{
 			return HANDSHAKE_CORRECT;
@@ -75,7 +77,7 @@ public class DefaultDataStoreCompatibilityHandler implements
 							return HANDSHAKE_SERVER_RECENT_OLDER;
 						}
 						else
-						{							
+						{
 							return HANDSHAKE_SERVER_OLDER;
 						}
 					}
@@ -87,7 +89,7 @@ public class DefaultDataStoreCompatibilityHandler implements
 			}
 		}
 	}
-	
+
 	public void handleMissingCommand(DataElement descriptor, String keyName){
 		// default does nothing in this situation
 	//	System.out.println("missing command:"+keyName);

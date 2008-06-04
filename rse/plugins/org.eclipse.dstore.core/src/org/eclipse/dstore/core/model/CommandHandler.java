@@ -206,6 +206,9 @@ public abstract class CommandHandler extends Handler
 		_commands.clear();
 	}
 
+	/**
+	 * @since 3.0 CommandGenerator moved from "internal" to API
+	 */
 	public CommandGenerator getCommandGenerator()
 	{
 		return _commandGenerator;

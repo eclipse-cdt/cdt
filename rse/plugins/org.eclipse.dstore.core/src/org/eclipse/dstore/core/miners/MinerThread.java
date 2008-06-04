@@ -7,21 +7,21 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  *   Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
 
-import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.server.SecuredThread;
 
 /**
- * MinerThread is a utility class used for doing threaded operations in a miner. 
+ * MinerThread is a utility class used for doing threaded operations in a miner.
  */
 public abstract class MinerThread extends SecuredThread
 {
@@ -36,9 +36,12 @@ public abstract class MinerThread extends SecuredThread
 	{
 		_isCancelled = false;
 	}
+
 	
 	/**
-	 * Constructor with dataStore
+	 * Constructor with dataStore.
+	 * 
+	 * @since 3.0
 	 */
 	public MinerThread(DataStore dataStore)
 	{
@@ -85,7 +88,7 @@ public abstract class MinerThread extends SecuredThread
 		{
 			try
 			{
-				sleep(100); 
+				sleep(100);
 				// yield();
 			}
 			catch (InterruptedException e)
@@ -119,14 +122,14 @@ public abstract class MinerThread extends SecuredThread
 	/**
 	 * Implement this method to provide the work implementation of this thread.
 	 * This method gets called periodically by the miner thread so te work done
-	 * here must be atomic.  Each time this is called a incremental unit of 
+	 * here must be atomic.  Each time this is called a incremental unit of
 	 * work should be done.  Once all the work is done, <b>true</b> should be
-	 * returned. 
-	 * 
+	 * returned.
+	 *
 	 * @return <b>true</b> if all the work is done.
 	 */
 	public abstract boolean doThreadedWork();
-	
+
 	/**
 	 * Implement this method to provide any cleanup that is required after
 	 * all the work is done.

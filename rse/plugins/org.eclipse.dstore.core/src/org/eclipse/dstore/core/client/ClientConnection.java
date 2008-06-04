@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight  (IBM) - [205986] daemon handshake needs a timeout
  * David McKnight  (IBM) - [218685] [dstore] Unable to connect when using SSL.
@@ -73,7 +73,7 @@ import org.eclipse.dstore.internal.extra.DomainNotifier;
  * If a connection is local, then a DataStore is instantiated
  * in the same process to be used by the client to communicate with miners (tools).
  * </li>
- * 
+ *
  * <li>
  * If a connection is not local, then a virtual DataStore is instantiated in the
  * current process to communicate with the remote DataStore.  If the client wishes
@@ -82,9 +82,9 @@ import org.eclipse.dstore.internal.extra.DomainNotifier;
  * newly launched DataStore.  Otherwise, a DataStore is expected to be running on
  * the remote machine under the same port that the client tries to connect to.
  * </li>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  */
 public class ClientConnection
 {
@@ -151,7 +151,9 @@ public class ClientConnection
 	 * Creates a new ClientConnection instance
 	 *
 	 * @param name an identifier for this connection
-	 * @param notifier the notifier used to keep the user interface in synch with the DataStore
+	 * @param notifier the notifier used to keep the user interface in synch
+	 *            with the DataStore
+	 * @since 3.0 changed DomainNotifier into IDomainNotifier
 	 */
 	public ClientConnection(String name, IDomainNotifier notifier)
 	{
@@ -164,8 +166,10 @@ public class ClientConnection
 	 * Creates a new ClientConnection instance
 	 *
 	 * @param name an identifier for this connection
-	 * @param notifier the notifier used to keep the user interface in synch with the DataStore
+	 * @param notifier the notifier used to keep the user interface in synch
+	 *            with the DataStore
 	 * @param initialSize the number of elements to preallocate in the DataStore
+	 * @since 3.0 changed DomainNotifier into IDomainNotifier
 	 */
 	public ClientConnection(String name, IDomainNotifier notifier, int initialSize)
 	{
@@ -200,10 +204,18 @@ public class ClientConnection
 		_dataStore.setSSLProperties(properties);
 	}
 
+	/**
+	 * @since 3.0 changed DataStoreCompatibilityHandler into
+	 *        IDataStoreCompatibilityHandler
+	 */
 	public void setCompatibilityHandler(IDataStoreCompatibilityHandler handler){
 		_dataStore.setCompatibilityHandler(handler);
 	}
 
+	/**
+	 * @since 3.0 changed DataStoreCompatibilityHandler into
+	 *        IDataStoreCompatibilityHandler
+	 */
 	public IDataStoreCompatibilityHandler getCompatibilityHandler(){
 		return _dataStore.getCompatibilityHandler();
 	}
@@ -222,6 +234,7 @@ public class ClientConnection
 	 * Adds a loader to be used to instantiate the miners
 	 *
 	 * @param loader the loader
+	 * @since 3.0 changed ExternalLoader into IExternalLoader
 	 */
 	public void addLoader(IExternalLoader loader)
 	{
@@ -429,6 +442,9 @@ public class ClientConnection
 		return connect(launchStatus.getTicket());
 	}
 
+	/**
+	 * @since 3.0 changed DataStoreTrustManager into IDataStoreTrustManager
+	 */
 	public IDataStoreTrustManager getTrustManager()
 	{
 		if (_trustManager == null)
@@ -725,7 +741,7 @@ public class ClientConnection
 
 	/**
 	 * Connect to a remote daemon
-	 * 
+	 *
 	 * @param daemonPort the port of the daemon
 	 * @return the status of the connection
 	 * @since 3.0
@@ -811,7 +827,7 @@ public class ClientConnection
 
 	/**
 	 * Reeturns the launch socket
-	 * 
+	 *
 	 * @return the launch socket
 	 */
 	public Socket getLaunchSocket() {

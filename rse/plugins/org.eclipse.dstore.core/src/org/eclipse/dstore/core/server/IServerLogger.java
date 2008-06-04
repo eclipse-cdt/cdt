@@ -15,33 +15,36 @@
 
 package org.eclipse.dstore.core.server;
 
-public interface IServerLogger 
+/**
+ * @since 3.0
+ */
+public interface IServerLogger
 {
 	/**
 	 * logInfo
-	 * 
+	 *
 	 * @param minerName
 	 * @param message Message text to be logged.
 	 */
 	public void logInfo(String minerName, String message);
-	
+
 	/**
 	 * logWarning
-	 * 
+	 *
 	 * @param minerName
 	 * @param message Message text to be logged.
 	 */
 	public void logWarning(String minerName, String message);
-	
+
 	/**
 	 * logError
-	 * 
+	 *
 	 * @param minerName
 	 * @param message Message text to be logged.
 	 * @param exception Exception that generated the error.  Used to print a stack trace.
 	 */
 	public void logError(String minerName, String message, Throwable exception);
-	
+
 	/**
 	 * logDebugMessage
 	 * @param minerName

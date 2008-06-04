@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,18 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [235626] Convert dstore.security to MessageBundle format
  *******************************************************************************/
 
 
 package org.eclipse.rse.internal.dstore.security.preference;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.rse.internal.dstore.security.UniversalSecurityPlugin;
 import org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.internal.dstore.security.util.GridUtil;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -35,23 +34,23 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class RenameCertDialog extends SystemPromptDialog implements Listener{
-	
+
 
 	private Text txtName;
 	String newAlias;
 	private String oldAlias;
-	
+
 	public RenameCertDialog(UniversalSecurityPreferencePage page, Shell shell, String oldValue)
 	{
-		super(shell, UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_RENAME_CERT_DLG_TITLE));
+		super(shell, UniversalSecurityProperties.RESID_SECURITY_RENAME_CERT_DLG_TITLE);
 		oldAlias = oldValue;
 	}
-	
+
 	public Control getInitialFocusControl()
 	{
 		return txtName;
 	}
-	
+
 	protected Control createInner(Composite parent)
 	{
 
@@ -64,44 +63,44 @@ public class RenameCertDialog extends SystemPromptDialog implements Listener{
 		content.setLayoutData(data);
 
 		Label lblName = new Label(content, SWT.NONE);
-		lblName.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_ALIAS));
-		
+		lblName.setText(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_ALIAS);
+
 		txtName = new Text(content, SWT.BORDER);
 		txtName.setText(oldAlias);
 		txtName.selectAll();
 		txtName.addListener(SWT.Modify, this);
-		
+
 		data = GridUtil.createHorizontalFill();
 		data.widthHint = 200;
 		txtName.setLayoutData(data);
 
 		return content;
 	}
-	
+
 	private void validateDialog(){
 		if(txtName.getText().trim().length()==0)
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		else
 			getButton(IDialogConstants.OK_ID).setEnabled(true);
 	}
-	
+
 	public void handleEvent(Event e){
 		if(e.widget.equals(txtName))
 			validateDialog();
 	}
-	
+
 	protected Control createButtonBar(Composite parent) {
-		Control control = super.createButtonBar(parent);			
+		Control control = super.createButtonBar(parent);
 		validateDialog();
 		return control;
-		
+
 	}
 
 	public String getNewAlias()
 	{
 		return newAlias;
 	}
-	
+
 	protected boolean processOK()
 	{
 		newAlias = txtName.getText();

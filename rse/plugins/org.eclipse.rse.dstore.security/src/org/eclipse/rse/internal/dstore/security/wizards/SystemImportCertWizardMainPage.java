@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [235626] Convert dstore.security to MessageBundle format
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.wizards;
@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.internal.dstore.security.UniversalSecurityPlugin;
 import org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.internal.dstore.security.preference.CertTableContentProvider;
 import org.eclipse.rse.internal.dstore.security.preference.X509CertificateElement;
@@ -48,26 +47,26 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
-public class SystemImportCertWizardMainPage 
+public class SystemImportCertWizardMainPage
  	   extends AbstractSystemWizardPage
- 	   implements  Listener        
-{  
+ 	   implements  Listener
+{
 	protected SystemMessage errorMessage;
 	protected ISystemValidator nameValidator;
 	protected ISystemMessageLine msgLine;
-	
+
     private List _certificates;
 	private Button _propertiesButton;
 
 	private TableViewer _viewer;
-		  
+
 	/**
 	 * Constructor.
 	 */
 	public SystemImportCertWizardMainPage(Wizard wizard, List certs)
 	{
 		super(wizard, "NewCertificate",  //$NON-NLS-1$
-  		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_CERTIFICATE_TITLE, 
+  		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_CERTIFICATE_TITLE,
 		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_CERTIFICATE_DESC);
 		_certificates = certs;
 	}
@@ -89,18 +88,18 @@ public class SystemImportCertWizardMainPage
 
 		SystemWidgetHelpers.createLabel(verbiage, UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_INFORMATION);
 		createTableViewer(verbiage);
-		
+
 		Composite b = new Composite(parent, SWT.NULL);
 		GridLayout blayout = new GridLayout();
 		GridData bdata = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.END);
 		blayout.numColumns = 3;
 		b.setLayout(blayout);
 		b.setLayoutData(bdata);
-		_propertiesButton = SystemWidgetHelpers.createPushButton(b, UniversalSecurityProperties.RESID_SECURITY_PROPERTIES_LBL, this);	
-		
+		_propertiesButton = SystemWidgetHelpers.createPushButton(b, UniversalSecurityProperties.RESID_SECURITY_PROPERTIES_LBL, this);
+
 		return _propertiesButton;
 	}
-	
+
 
 	private void createTableViewer(Composite parent)
 	{
@@ -119,15 +118,15 @@ public class SystemImportCertWizardMainPage
 		TableLayout tableLayout = new TableLayout();
 
 		TableColumn toColumn = new TableColumn(table, SWT.LEFT);
-		toColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_TO));
+		toColumn.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_TO);
 		tableLayout.addColumnData(new ColumnPixelData(90));
-		
+
 		TableColumn frmColumn = new TableColumn(table, SWT.LEFT);
-		frmColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_FROM));
+		frmColumn.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_FROM);
 		tableLayout.addColumnData(new ColumnPixelData(90));
-		
+
 		TableColumn expColumn = new TableColumn(table, SWT.RIGHT);
-		expColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_EXPIRES));
+		expColumn.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_EXPIRES);
 		tableLayout.addColumnData(new ColumnPixelData(180));
 		table.setLayout(tableLayout);
 
@@ -136,9 +135,9 @@ public class SystemImportCertWizardMainPage
 		_viewer.setColumnProperties(properties);
 		_viewer.setContentProvider(new CertTableContentProvider());
 		_viewer.setLabelProvider(new NewCertTableLabelProvider());
-		
+
 		if (_certificates != null)
-		{	
+		{
 			for (int i = 0; i < _certificates.size(); i++)
 			{
 				_viewer.add(getElement(_certificates.get(i)));
@@ -146,31 +145,31 @@ public class SystemImportCertWizardMainPage
 		}
 	}
 
-	
-	
+
+
 	public void handleEvent(Event e)
 	{
 		if (e.widget == _propertiesButton)
 		{
 			IStructuredSelection sel = (IStructuredSelection)_viewer.getSelection();
 			sel.getFirstElement();
-			
+
 			X509CertificatePropertiesDialog dlg = new X509CertificatePropertiesDialog(getShell(), (X509CertificateElement)sel.getFirstElement());
 			dlg.open();
 		}
 	}
-	
+
 	public X509CertificateElement getElement(Object cert)
 	{
 		if (cert instanceof X509Certificate)
 		{
-			return new X509CertificateElement(null, 
-					UniversalSecurityProperties.RESID_SECURITY_TRUSTED_CERTIFICATE, 
+			return new X509CertificateElement(null,
+					UniversalSecurityProperties.RESID_SECURITY_TRUSTED_CERTIFICATE,
 					(X509Certificate)cert);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return the Control to be given initial focus.
 	 * Override from parent. Return control to be given initial focus.
@@ -179,31 +178,31 @@ public class SystemImportCertWizardMainPage
 	{
         return _propertiesButton;
 	}
-	
+
 	/**
 	 * Init values using input data
 	 */
 	protected void initializeInput()
 	{
 	}
-	
-  
-	
+
+
+
 	/**
-	 * Completes processing of the wizard. If this 
-	 * method returns true, the wizard will close; 
+	 * Completes processing of the wizard. If this
+	 * method returns true, the wizard will close;
 	 * otherwise, it will stay active.
-	 * This method is an override from the parent Wizard class. 
+	 * This method is an override from the parent Wizard class.
 	 *
 	 * @return whether the wizard finished successfully
 	 */
-	public boolean performFinish() 
+	public boolean performFinish()
 	{
-		
+
 	    return true;
 	}
-    
-  
+
+
 
 	/**
 	 * Return true if the page is complete, so to enable Finish.
@@ -213,6 +212,6 @@ public class SystemImportCertWizardMainPage
 	{
 		return true;
 	}
-	
+
 
 }

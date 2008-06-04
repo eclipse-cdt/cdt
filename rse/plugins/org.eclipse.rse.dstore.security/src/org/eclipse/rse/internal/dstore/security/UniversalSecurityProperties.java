@@ -7,28 +7,25 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [181112] NLS missing messages
+ * Martin Oberhuber (Wind River) - [235626] Convert dstore.security to MessageBundle format
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security;
 
-
 import org.eclipse.osgi.util.NLS;
-
-
 
 public class UniversalSecurityProperties extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties"; //$NON-NLS-1$
 
-	
 	public static String RESID_SECURITY_CERTIFICATE_PROP_TITLE;
-	public static String RESID_SECURITY_VALIDITY_PERIOD;       
+	public static String RESID_SECURITY_VALIDITY_PERIOD;
 	public static String RESID_SECURITY_CERTIF_VERSION_LBL;
 	public static String RESID_SECURITY_PROP_ALIAS_LBL;
 	public static String RESID_SECURITY_ISSUED_TO_LBL;
@@ -56,27 +53,32 @@ public class UniversalSecurityProperties extends NLS
 	public static String RESID_SECURITY_IO_SAVE_ERROR_;
 	public static String RESID_SECURITY_CERTIFICATE_STORE_ERROR_;
 	public static String RESID_SECURITY_UNINIT_KEYSTORE_ERROR_;
+	public static String RESID_SECURITY_ALGORITHM_ERROR_;
+	public static String RESID_SECURITY_LOAD_KEYSTORE_ERROR_;
+	public static String RESID_SECURITY_KEY_LOAD_ERROR_;
+	public static String RESID_SECURITY_INITIALIZE_ERROR_;
+	public static String RESID_SECURITY_SECURITY_PROVIDER_ERROR_;
 	public static String RESID_SECURITY_CERTIFICATE_EXC_;
 	public static String RESID_SECURITY_LOAD_IO_EXC_;
 	public static String RESID_SECURITY_CERTIFICATE_LOAD_EXC_;
 	public static String RESID_SECURITY_PREF_SEC_DESCRIPTION;
 	public static String RESID_SECURITY_PROPERTIES_LBL;
-	
+
 	public static String RESID_SECURITY_TRUST_WIZ_ALIAS_TITLE;
 	public static String RESID_SECURITY_TRUST_WIZ_ALIAS_DESC;
-	
+
 	public static String RESID_SECURITY_TRUST_WIZ_CERTIFICATE_TITLE;
-	public static String RESID_SECURITY_TRUST_WIZ_CERTIFICATE_DESC; 
+	public static String RESID_SECURITY_TRUST_WIZ_CERTIFICATE_DESC;
 
 	public static String RESID_SECURITY_TRUST_IMPORT_CERTIFICATE_WIZARD;
 	public static String RESID_SECURITY_CERTIFICATE_INFORMATION;
-	
+
 	public static String RESID_SECURITY_VALIDITY_LBL;
-	
-	static 
+
+	static
 	{
 		// load message values from bundle file
 		initializeMessages(BUNDLE_NAME, UniversalSecurityProperties.class);
 	}
-	
+
 }

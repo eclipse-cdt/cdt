@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [232131] fix minor layout problems along with date formats
+ * Martin Oberhuber (Wind River) - [235626] Convert dstore.security to MessageBundle format
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.preference;
@@ -103,7 +104,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 
 		Text label = new Text(composite, SWT.READ_ONLY);
 		label.setBackground(composite.getBackground());
-		label.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_SEC_DESCRIPTION));
+		label.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_SEC_DESCRIPTION);
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -142,19 +143,19 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 
 
 		TableColumn aliasColumn = new TableColumn(table, SWT.LEFT);
-		aliasColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_ALIAS_NAME));
+		aliasColumn.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_ALIAS_NAME);
 		tableLayout.addColumnData(new ColumnPixelData(100));
-		
+
 		TableColumn toColumn = new TableColumn(table, SWT.LEFT);
-		toColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_TO));
+		toColumn.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_TO);
 		tableLayout.addColumnData(new ColumnPixelData(150));
-		
+
 		TableColumn frmColumn = new TableColumn(table, SWT.LEFT);
-		frmColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_FROM));
+		frmColumn.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_ISSUED_FROM);
 		tableLayout.addColumnData(new ColumnPixelData(150));
-		
+
 		TableColumn expColumn = new TableColumn(table, SWT.LEFT);
-		expColumn.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_EXPIRES));
+		expColumn.setText(UniversalSecurityProperties.RESID_SECURITY_PREF_EXPIRES);
 		tableLayout.addColumnData(new ColumnPixelData(150));
 		table.setLayout(tableLayout);
 
@@ -171,17 +172,17 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 	private void createButtons(Composite parent)
 	{
 		Composite buttonComposite = SystemWidgetHelpers.createComposite(parent, 4);
-		
-		_addButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_ADD_LBL),this); 
+
+		_addButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityProperties.RESID_SECURITY_ADD_LBL, this);
 
 
-		_removeButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_REMOVE_LBL), this);
+		_removeButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityProperties.RESID_SECURITY_REMOVE_LBL, this);
 		_removeButton.setEnabled(false);
 
-		_renameButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_RENAME_LBL), this);
+		_renameButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityProperties.RESID_SECURITY_RENAME_LBL, this);
 		_renameButton.setEnabled(false);
 
-		_propertiesButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PROPERTIES_LBL), this);
+		_propertiesButton = SystemWidgetHelpers.createPushButton(buttonComposite, UniversalSecurityProperties.RESID_SECURITY_PROPERTIES_LBL, this);
 		_propertiesButton.setEnabled(false);
 	}
 
@@ -219,64 +220,55 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		catch (IOException e)
 		{
 
-			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_IO_SAVE_ERROR_);
+			String text = UniversalSecurityProperties.RESID_SECURITY_IO_SAVE_ERROR_;
 			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
 
 			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_);
+			String msg = UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, e);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
 
 		}
 		catch (CertificateException exc)
 		{
 
-			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_STORE_ERROR_);
+			String text = UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_STORE_ERROR_;
 			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_);
+			String msg = UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc);
 			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_SEC_MSG), msg, err);
+					.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
 
 		}
 		catch (KeyStoreException exc)
 		{
-			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_UNINIT_KEYSTORE_ERROR_);
+			String text = UniversalSecurityProperties.RESID_SECURITY_UNINIT_KEYSTORE_ERROR_;
 			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
-			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_KEYSTORE_SAVE_ERROR_"); //$NON-NLS-1$
+			String msg = UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
 
 		}
 		catch (NoSuchAlgorithmException exc2)
 		{
-			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_ALGORITHM_ERROR_"); //$NON-NLS-1$
+			String text = UniversalSecurityProperties.RESID_SECURITY_ALGORITHM_ERROR_;
 			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
-			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_KEYSTORE_SAVE_ERROR_"); //$NON-NLS-1$
+			String msg = UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc2);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
 
 		}
@@ -323,8 +315,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 					{
 						Key key = _keyStore.getKey(alias, passw.toCharArray());
 						KeyElement elem = new KeyElement(alias,
-								UniversalSecurityPlugin
-										.getString("RESID_SECURITY_KEY_ENTRY"), //$NON-NLS-1$
+								UniversalSecurityProperties.RESID_SECURITY_KEY_ENTRY,
 								key);
 						_tableItems.add(elem);
 					}
@@ -339,82 +330,62 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		catch (IOException e)
 		{
 
-			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_IO_EXC_"); //$NON-NLS-1$
+			String text = UniversalSecurityProperties.RESID_SECURITY_LOAD_IO_EXC_;
 			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
+			String msg = UniversalSecurityProperties.RESID_SECURITY_LOAD_KEYSTORE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, e);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 
 		}
 		catch (CertificateException exc)
 		{
 
-			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_KEY_LOAD_ERROR_"); //$NON-NLS-1$
+			String text = UniversalSecurityProperties.RESID_SECURITY_KEY_LOAD_ERROR_;
 			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
+			String msg = UniversalSecurityProperties.RESID_SECURITY_LOAD_KEYSTORE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 
 		}
 		catch (KeyStoreException exc)
 		{
 
-			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_INITIALIZE_ERROR_"); //$NON-NLS-1$
+			String text = UniversalSecurityProperties.RESID_SECURITY_INITIALIZE_ERROR_;
 			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
-			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
+			String msg = UniversalSecurityProperties.RESID_SECURITY_LOAD_KEYSTORE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 
 		}
 		catch (NoSuchProviderException exc2)
 		{
 
-			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_SECURITY_PROVIDER_ERROR_"); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_INITIALIZE_ERROR_"); //$NON-NLS-1$
+			String text = UniversalSecurityProperties.RESID_SECURITY_SECURITY_PROVIDER_ERROR_;
+			String msg = UniversalSecurityProperties.RESID_SECURITY_INITIALIZE_ERROR_;
 			msg = StringModifier.change(msg, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc2);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 
 		}
 		catch (NoSuchAlgorithmException exc2)
 		{
-			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_ALGORITHM_ERROR_"); //$NON-NLS-1$
+			String text = UniversalSecurityProperties.RESID_SECURITY_ALGORITHM_ERROR_;
 			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
-			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
+			String msg = UniversalSecurityProperties.RESID_SECURITY_LOAD_KEYSTORE_ERROR_;
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc2);
-			ErrorDialog.openError(UniversalSecurityPlugin
-					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 
 		}
 
@@ -513,7 +484,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		boolean sel = _viewer.getSelection().isEmpty();
 		_renameButton.setEnabled(!sel);
 		_removeButton.setEnabled(!sel);
-		_propertiesButton.setEnabled(!sel);		
+		_propertiesButton.setEnabled(!sel);
 	}
 
 	public void widgetSelected(SelectionEvent e)
@@ -522,12 +493,12 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		boolean sel = _viewer.getSelection().isEmpty();
 		_renameButton.setEnabled(!sel);
 		_removeButton.setEnabled(!sel);
-		_propertiesButton.setEnabled(!sel);		
+		_propertiesButton.setEnabled(!sel);
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e)
 	{
-		widgetSelected(e);		
+		widgetSelected(e);
 	}
 
 }

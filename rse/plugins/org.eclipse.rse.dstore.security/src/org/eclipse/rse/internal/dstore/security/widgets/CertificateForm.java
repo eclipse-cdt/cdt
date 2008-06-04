@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [230815] fix layout problems with long labels
+ * Martin Oberhuber (Wind River) - [235626] Convert dstore.security to MessageBundle format
  *******************************************************************************/
 
 
@@ -27,7 +28,6 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
-import org.eclipse.rse.internal.dstore.security.UniversalSecurityPlugin;
 import org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.internal.dstore.security.util.GridUtil;
 import org.eclipse.rse.ui.SystemBaseForm;
@@ -53,23 +53,23 @@ public class CertificateForm extends SystemBaseForm
     private String _aliasStr;
     private String _pathStr;
     private ArrayList listenerList;
-	
+
 	private Button _browseButton;
 	public Shell _shell;
-	
+
 	public CertificateForm(Shell shell, ISystemMessageLine msgLine)
 	{
 		super(shell, msgLine);
-        listenerList = new ArrayList();			
+        listenerList = new ArrayList();
 		_shell = shell;
 	}
-	
+
 	public Control getInitialFocusControl()
 	{
 		return _pathField;
 	}
-	
-	public Control createContents(Composite c){ 
+
+	public Control createContents(Composite c){
 
             GridData data;
 			Composite nameGroup = new Composite(c, SWT.NONE);
@@ -78,29 +78,29 @@ public class CertificateForm extends SystemBaseForm
 			data = GridUtil.createFill();
 			nameGroup.setLayoutData(data);
 			nameGroup.setLayout(layout);
-			
+
 			Label lblPath = new Label(nameGroup, SWT.NONE);
-			lblPath.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_FILE));
-			_pathField = new Text(nameGroup, SWT.BORDER);				
+			lblPath.setText(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_FILE);
+			_pathField = new Text(nameGroup, SWT.BORDER);
 			_pathField.setLayoutData(GridUtil.createHorizontalFill());
 			((GridData)_pathField.getLayoutData()).widthHint = 150;
 			_pathField.setText(""); //$NON-NLS-1$
-			
+
 			_browseButton = new Button(nameGroup, SWT.PUSH);
-			_browseButton.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_BROWSE));
-			
+			_browseButton.setText(UniversalSecurityProperties.RESID_SECURITY_BROWSE);
+
 			_browseButton.addListener(SWT.Selection, this);
 
 			Label lblName = new Label(nameGroup, SWT.NONE);
-			lblName.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_ALIAS));
+			lblName.setText(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_ALIAS);
 			_aliasField = new Text(nameGroup, SWT.BORDER);
 			_aliasField.setText(""); //$NON-NLS-1$
 
 			_aliasField.setLayoutData(GridUtil.createHorizontalFill());
-						
+
 			_aliasField.addListener(SWT.Modify, this);
 			_pathField.addListener(SWT.Modify, this);
-			
+
 			return _pathField;
 
 	}
@@ -120,29 +120,29 @@ public class CertificateForm extends SystemBaseForm
 			//setButtonState();
 			_pathStr = _pathField.getText();
 			_aliasStr = _aliasField.getText();
-			NotifyListeners(event);			
+			NotifyListeners(event);
 		}
 
 	}
-	
+
 	public void NotifyListeners(Event event){
 		for(int i=0;i<listenerList.size();i++){
 			((Listener)listenerList.get(i)).handleEvent(event);
-		}	
+		}
 	}
-	
+
 	public boolean validateDialog(){
 		return (_aliasField.getText().trim().length()>0 && _pathField.getText().trim().length()>0);
 	}
-	
+
 	private void showFileDialog(){
 		String currentSource = _pathField.getText();
 
 		FileDialog dlg = new FileDialog(_shell, SWT.OPEN);
-		
+
 		dlg.setFileName(currentSource);
 		dlg.setFilterExtensions(new String[]{"*.cer", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		String source = dlg.open();
 
 		if(source!=null)
@@ -157,30 +157,30 @@ public class CertificateForm extends SystemBaseForm
 			}
 			_aliasField.setText(alias);
 		}
-			
+
 	}
 
 	public Certificate loadCertificate(KeyStore ks) throws IOException, CertificateException, KeyStoreException {
 
-			
+
 		Certificate fCertificate = DStoreKeyStore.loadCertificate(getPath());
 		DStoreKeyStore.addCertificateToKeyStore(ks, fCertificate, getAliasName());
 		return fCertificate;
 
-	}		
+	}
 
 	public void registerListener(Listener listener){
 		listenerList.add(listener);
-		
+
 	}
     public String getAliasName()
     {
     	return _aliasStr;
     }
-    
+
     public String getPath()
     {
     	return _pathStr;
     }
- 
+
 }

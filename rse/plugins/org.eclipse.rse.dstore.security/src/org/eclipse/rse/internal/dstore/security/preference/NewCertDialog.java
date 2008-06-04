@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [235626] Convert dstore.security to MessageBundle format
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.preference;
@@ -49,26 +49,26 @@ public class NewCertDialog extends SystemPromptDialog implements Listener
 {
 
     /**
-	 * 
+	 *
 	 */
 	private final UniversalSecurityPreferencePage	page;
 	private CertificateForm _certForm;
     private Certificate _certificate;
 	private Shell _shell;
-	
+
 	public NewCertDialog(UniversalSecurityPreferencePage page, Shell shell){
-		super(shell,UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_ADD_CERT_DLG_TITLE) );
+		super(shell, UniversalSecurityProperties.RESID_SECURITY_ADD_CERT_DLG_TITLE);
 		this.page = page;
 		_shell = shell;
 	}
-	
+
 	public Control getInitialFocusControl()
 	{
 		return _certForm.getInitialFocusControl();
 	}
-	
+
 	protected Control createInner(Composite parent)
-	{ 
+	{
 		Composite content = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		GridData data = GridUtil.createFill();
@@ -82,81 +82,82 @@ public class NewCertDialog extends SystemPromptDialog implements Listener
 		return content;
 	}
 
-	protected Control createButtonBar(Composite parent) 
+	protected Control createButtonBar(Composite parent)
 	{
 		Control control = super.createButtonBar(parent);
 
-		getOkButton().setEnabled(false);		
-		return control;	
+		getOkButton().setEnabled(false);
+		return control;
 	}
-	
+
 	protected boolean processOK(){
 
-		try{	
+		try{
 			_certificate = _certForm.loadCertificate(this.page._keyStore);
 		}
 		catch(FileNotFoundException e){
 
-			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEY_IO_ERROR_);
+			String text = UniversalSecurityProperties.RESID_SECURITY_KEY_IO_ERROR_;
 			text = StringModifier.change(text, "%1", _certForm.getPath()); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
-			
+			String msg = UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_;
+
 			Status err = new Status(IStatus.ERROR,ResourcesPlugin.PI_RESOURCES,IStatus.ERROR,text,e);
-			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(),UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_SEC_MSG), msg,err);
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
-			
+
 		}
 		catch(IOException e){
 
-			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_LOAD_IO_EXC_);
+			String text = UniversalSecurityProperties.RESID_SECURITY_LOAD_IO_EXC_;
 			text = StringModifier.change(text, "%1", _certForm.getPath()); //$NON-NLS-1$
 
 			text = StringModifier.change(text, "%1", UniversalSecurityPlugin.getKeyStoreLocation()); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
-			
+			String msg = UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_;
+
 			Status err = new Status(IStatus.ERROR,ResourcesPlugin.PI_RESOURCES,IStatus.ERROR,text,e);
-			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(),UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_SEC_MSG), msg,err);
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
-										
+
 		}
 		catch(CertificateException exc){
 
-			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_EXC_);
+			String text = UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_EXC_;
 			text = StringModifier.change(text, "%1", _certForm.getPath()); //$NON-NLS-1$
 
-			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
-			
+			String msg = UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_;
+
 			Status err = new Status(IStatus.ERROR,ResourcesPlugin.PI_RESOURCES,IStatus.ERROR,text,exc);
-			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(),UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_SEC_MSG), msg,err);
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
 
 		}
 		catch(KeyStoreException exc){
-			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEY_STORE_ERROR_);
+			String text = UniversalSecurityProperties.RESID_SECURITY_KEY_STORE_ERROR_;
 			text = StringModifier.change(text, "%1", UniversalSecurityPlugin.getKeyStoreLocation()); //$NON-NLS-1$
-			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
-			
+			String msg = UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_;
+
 			Status err = new Status(IStatus.ERROR,ResourcesPlugin.PI_RESOURCES,IStatus.ERROR,text,exc);
-			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(),UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_SEC_MSG), msg,err);
+			ErrorDialog.openError(UniversalSecurityPlugin.getActiveWorkbenchShell(), UniversalSecurityProperties.RESID_SECURITY_SEC_MSG, msg, err);
 			return false;
 		}
-		
+
 		if (_certificate instanceof X509Certificate)
 		{
-			X509CertificateElement elem = new X509CertificateElement(_certForm.getAliasName(), UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_TRUSTED_CERTIFICATE), (X509Certificate)_certificate);
+			X509CertificateElement elem = new X509CertificateElement(_certForm.getAliasName(), UniversalSecurityProperties.RESID_SECURITY_TRUSTED_CERTIFICATE,
+					(X509Certificate) _certificate);
 			this.page._tableItems.add(elem);
 		}
-					
+
 		return true;
 	}
-	
+
 	public void handleEvent(Event e){
 		getButton(IDialogConstants.OK_ID).setEnabled(_certForm.validateDialog());
 	}
-	
-	
+
+
 	public Certificate getCertificate(){
 		return _certificate;
 	}
-	
+
 }

@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
@@ -33,7 +33,10 @@ public class Activator extends SystemBasePlugin {
 
 	//The shared instance.
 	private static Activator plugin;
+
+	/** @since 2.1 */
 	public static String PLUGIN_ID = "org.eclipse.rse.examples.daytime"; //$NON-NLS-1$
+
 	/**
 	 * The constructor.
 	 */
@@ -71,7 +74,7 @@ public class Activator extends SystemBasePlugin {
 	}
 
 	public static final String ICON_ID_DAYTIME = "ICON_ID_DAYTIME"; //$NON-NLS-1$
-	
+
 	protected void initializeImageRegistry() {
 		String path = getIconPath();
 		putImageInRegistry(ICON_ID_DAYTIME, path+"full/obj16/daytime.gif"); //$NON-NLS-1$

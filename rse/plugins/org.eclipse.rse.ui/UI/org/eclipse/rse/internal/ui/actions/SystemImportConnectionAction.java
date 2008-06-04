@@ -6,6 +6,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [216858] provide ability to import and export connections
+ * David Dykstal (IBM) - [233876] filters lost after restart
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -26,6 +27,8 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.internal.core.model.ISystemProfileOperation;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.persistence.RSEEnvelope;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -56,24 +59,33 @@ public class SystemImportConnectionAction extends SystemBaseAction {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		protected IStatus run(IProgressMonitor monitor) {
+		protected IStatus run(final IProgressMonitor monitor) {
 			IStatus status = Status.OK_STATUS;
-			RSEEnvelope envelope = new RSEEnvelope();
 			try {
-				FileInputStream in = new FileInputStream(inFile);
-				envelope.get(in, monitor);
-				envelope.mergeWith(profile);
+				final FileInputStream in = new FileInputStream(inFile);
+				// run inside an ISystemProfileOperation to ensure that the changes are committed
+				status = SystemProfileManager.run(new ISystemProfileOperation() {
+					public IStatus run() {
+						IStatus operationStatus = Status.OK_STATUS;
+						try {
+							final RSEEnvelope envelope = new RSEEnvelope();
+							envelope.get(in, monitor);
+							envelope.mergeWith(profile);
+						} catch (CoreException e) {
+							// log the exception and return the status code
+							operationStatus = e.getStatus();
+							String message = operationStatus.getMessage();
+							if (message == null) {
+								message = SystemResources.SystemImportConnectionAction_CoreExceptionFound;
+							}
+							SystemBasePlugin.logError(message, e);
+						}
+						return operationStatus;
+					}
+				});
 			} catch (FileNotFoundException e) {
 				// should not happen, log as unexpected
 				SystemBasePlugin.logError(SystemResources.SystemImportConnectionAction_UnexpectedException, e);
-			} catch (CoreException e) {
-				// log the exception and return the status code
-				status = e.getStatus();
-				String message = status.getMessage();
-				if (message == null) {
-					message = SystemResources.SystemImportConnectionAction_CoreExceptionFound;
-				}
-				SystemBasePlugin.logError(message, e);
 			}
 			return status;
 		}

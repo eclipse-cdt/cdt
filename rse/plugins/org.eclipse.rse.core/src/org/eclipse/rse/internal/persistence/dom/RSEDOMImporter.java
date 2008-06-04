@@ -21,6 +21,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  * David Dykstal (IBM) - [232126] retrieve persisted filter type attribute
+ * David Dykstal (IBM) - [233876] filters lost after restart
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -49,6 +50,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.core.filters.HostOwnedFilterPoolPattern;
 import org.eclipse.rse.internal.core.model.SystemProfile;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
@@ -463,17 +465,28 @@ public class RSEDOMImporter {
 	public ISystemFilterPoolReference restoreFilterPoolReference(ISubSystem subsystem, RSEDOMNode node) {
 		ISystemFilterPoolReference filterPoolReference = null;
 		String filterPoolName = node.getName();
+		ISystemProfile profile = subsystem.getSystemProfile();
+		String profileName = profile.getName();
+		String baseFilterPoolName = filterPoolName;
 		String[] part = filterPoolName.split("___", 2); //$NON-NLS-1$
-		if (part.length == 1) { // name is unqualified and refers to a filter pool in the current profile, ensure it is qualified
-			ISystemProfile profile = subsystem.getSystemProfile();
-			String profileName = profile.getName();
-			filterPoolName = profileName + "___" + filterPoolName; //$NON-NLS-1$
+		if (part.length == 2) { // name is qualified and refers to a filter pool in a specific profile
+			profileName = part[0];
+			baseFilterPoolName = part[1];
 		}
+		// special processing for host owned pool references
+		String configurationId = subsystem.getConfigurationId();
+		HostOwnedFilterPoolPattern pattern = new HostOwnedFilterPoolPattern(configurationId);
+		if (pattern.matches(baseFilterPoolName)) { // if this is a host owned pool then fix up this reference
+			String hostName = subsystem.getHostAliasName();
+			baseFilterPoolName = pattern.make(hostName);
+		}
+		// qualify the name and construct the reference
+		filterPoolName = profileName + "___" + baseFilterPoolName; //$NON-NLS-1$
 		ISystemFilterPoolReferenceManager referenceManager = subsystem.getFilterPoolReferenceManager();
 		filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolName);
 		return filterPoolReference;
 	}
-
+	
 	public ISystemFilterString restoreFilterString(ISystemFilter filter, RSEDOMNode node) {
 		/*
 		 String string = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_STRING).getValue();

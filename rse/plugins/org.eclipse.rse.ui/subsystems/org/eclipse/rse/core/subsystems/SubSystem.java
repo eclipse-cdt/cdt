@@ -39,6 +39,7 @@
  * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight (IBM)          - [233435] SubSystem.resolveFilterStrings(*) does not prompt for a connection when the subsystem is not connected
+ * David Dykstal (IBM) - [233876] filters lost after restart
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -89,6 +90,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.core.SystemResourceConstants;
+import org.eclipse.rse.internal.core.filters.HostOwnedFilterPoolPattern;
 import org.eclipse.rse.internal.core.model.ISystemProfileOperation;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
@@ -680,9 +682,17 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		String hostName = host.getAliasName();
 		if (allPoolsInProfile != null) {
 			for (int idx = 0; idx < allPoolsInProfile.length; idx++) {
-				String poolOwnerName = allPoolsInProfile[idx].getOwningParentName();
-				if ((poolOwnerName != null) && (poolOwnerName.equals(hostName))) {
-					pool = allPoolsInProfile[idx];
+				ISystemFilterPool currentPool = allPoolsInProfile[idx];
+				String poolOwnerName = currentPool.getOwningParentName();
+				if (poolOwnerName == null) {
+					HostOwnedFilterPoolPattern pattern = new HostOwnedFilterPoolPattern(config.getId());
+					if (pattern.matches(currentPool.getName())) {
+						currentPool.setOwningParentName(hostName); // TODO these pools should have been created with the owner set properly
+						poolOwnerName = hostName;
+					}
+				}
+				if (hostName.equals(poolOwnerName)) {
+					pool = currentPool;
 				}
 			}
 		}
@@ -718,10 +728,11 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		 * since it names a team sharable resource. Not qualified by the profile
 		 * name since that is implicit by being in a profile.
 		 */
-		String name = "CN-" + connectionName;  //$NON-NLS-1$
+		HostOwnedFilterPoolPattern pattern = new HostOwnedFilterPoolPattern(getConfigurationId());
+		String name = pattern.make(connectionName);
 		return name;
 	}
-
+	
 	// -------------------------
 	// Filter Testing Methods...
 	// -------------------------

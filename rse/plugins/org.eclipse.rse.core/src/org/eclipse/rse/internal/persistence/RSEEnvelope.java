@@ -8,6 +8,7 @@
  * David Dykstal (IBM) - initial contribution.
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
+ * David Dykstal (IBM) - [233876] Filters lost after restart
  *********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -49,6 +50,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.RSECoreMessages;
+import org.eclipse.rse.internal.core.filters.HostOwnedFilterPoolPattern;
 import org.eclipse.rse.internal.persistence.dom.RSEDOMExporter;
 import org.eclipse.rse.internal.persistence.dom.RSEDOMImporter;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
@@ -255,9 +257,11 @@ public class RSEEnvelope {
 			// create the filter pools
 			for (Iterator z = filterPoolNodes.iterator(); z.hasNext();) {
 				RSEDOMNode filterPoolNode = (RSEDOMNode) z.next();
-				String name = filterPoolNode.getName();
-				if (name.startsWith("CN-")) { //$NON-NLS-1$
-					String hostName = name.substring(3);
+				String filterPoolName = filterPoolNode.getName();
+				String configurationId = filterPoolNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_ID).getValue();
+				HostOwnedFilterPoolPattern pattern = new HostOwnedFilterPoolPattern(configurationId);
+				String hostName = pattern.extract(filterPoolName);
+				if (hostName != null) {
 					IHost host = (IHost) hostMap.get(hostName);
 					if (host != null) {
 						mergeHostFilterPool(profile, host, filterPoolNode);
@@ -291,12 +295,16 @@ public class RSEEnvelope {
 	}
 	
 	private void mergeHostFilterPool(ISystemProfile profile, IHost host, RSEDOMNode filterPoolNode) {
+		String configurationId = filterPoolNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_ID).getValue();
+		HostOwnedFilterPoolPattern pattern = new HostOwnedFilterPoolPattern(configurationId);
 		String hostName = host.getAliasName();
-		String filterPoolName = "CN-" + hostName; //$NON-NLS-1$
+		String filterPoolName = pattern.make(hostName);
 		filterPoolNode.setName(filterPoolName);
-		mergeFilterPool(profile, filterPoolNode);
+		RSEDOMImporter importer = RSEDOMImporter.getInstance();
+		ISystemFilterPool filterPool = importer.restoreFilterPool(profile, filterPoolNode);
+		filterPool.setOwningParentName(hostName);
 	}
-	
+		
 	private ISystemFilterPool mergeFilterPool(ISystemProfile profile, RSEDOMNode filterPoolNode) {
 		ISystemFilterPool filterPool = getMatchingFilterPool(profile, filterPoolNode);
 		if (filterPool != null) {

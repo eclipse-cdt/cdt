@@ -21,7 +21,7 @@
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [227881] [dstore][threaded] There is no chance to set client object for getUserPreferencesDirectory()
- * Norikai Takatsu  (IBM) - [228156] [dstore] DataElementRemover thread doesn't terminate after a client disconnects the server
+ * Noriaki Takatsu  (IBM) - [228156] [dstore] DataElementRemover thread doesn't terminate after a client disconnects the server
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [231639] [dstore] in single-process multi-client mode tracing shouldn't start until the client is set
  *******************************************************************************/
@@ -330,10 +330,10 @@ public final class DataStore
 		return false;
 	}
 	/**
-	 * Specifies the security properties of this DataStore.
-	 * These properties indicate whether or not to use ssl,
-	 * the keystore location and password.
-	 * @param properties
+	 * Specifies the security properties of this DataStore. These properties
+	 * indicate whether or not to use SSL, the keystore location and password.
+	 * 
+	 * @param properties the properties to set
 	 */
 	public void setSSLProperties(ISSLProperties properties)
 	{
@@ -2132,7 +2132,7 @@ public final class DataStore
 	 * Sets a property value preference on the client datastore. If
 	 * remoteAndLocal is set then the property get set on the server side as
 	 * well as the client.
-	 * 
+	 *
 	 * @param property the property to set
 	 * @param value the value of the property
 	 * @param remoteAndLocal whether to propagate the change to the server
@@ -2166,7 +2166,8 @@ public final class DataStore
 
 	/**
 	 * Adds a preference change listener to the DataStore
-	 * @param listener
+	 * 
+	 * @param listener the listener to add
 	 * @since 3.0
 	 */
 	public void addDataStorePreferenceListener(IDataStorePreferenceListener listener){
@@ -2175,7 +2176,8 @@ public final class DataStore
 
 	/**
 	 * Removes a specific preference change listener from the Datastore
-	 * @param listener
+	 * 
+	 * @param listener the listener to remove
 	 * @since 3.0
 	 */
 	public void removeDataStorePreferenceListener(IDataStorePreferenceListener listener){
@@ -4372,11 +4374,17 @@ public final class DataStore
 		referenceTag = tag;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public int printTree(String indent, DataElement root)
 	{
 		return printTree(indent, 0, root);
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public int printTree(String indent, int number, DataElement root)
 	{
 		int total = number;
@@ -4403,9 +4411,11 @@ public final class DataStore
 	}
 
 	/**
-	 * Indicates that the datastore should transfer a DataElement's buffer attribute
-	 * in the communication layer
+	 * Indicates that the datastore should transfer a DataElement's buffer
+	 * attribute in the communication layer
+	 * 
 	 * @param flag true if the DataElement buffer attribute should be transfered
+	 * @since 3.0
 	 */
 	public void setGenerateBuffer(boolean flag)
 	{
@@ -4422,17 +4432,18 @@ public final class DataStore
 	}
 
 	/**
-     * This method is used to set the Client object for each user.
-     * The _client variable is null until setClient() is called.  After
-     * _client is set, it can not be changed.
-     *
-     * This method should only be called once to associate a particular
-     * client with a DataStore.  By default, the client for the user of
-     * the DataStore process is set but, when there is an ISystemService,
-     * the daemon sets the client.
-     *
-     * @param client the object of the Client class
-     */
+	 * This method is used to set the Client object for each user. The _client
+	 * variable is null until setClient() is called. After _client is set, it
+	 * can not be changed.
+	 * 
+	 * This method should only be called once to associate a particular client
+	 * with a DataStore. By default, the client for the user of the DataStore
+	 * process is set but, when there is an ISystemService, the daemon sets the
+	 * client.
+	 * 
+	 * @param client the object of the Client class
+	 * @since 3.0
+	 */
 	public void setClient(Client client)
 	{
 		// if client is not null, then this method gets called once.
@@ -4461,10 +4472,11 @@ public final class DataStore
 	}
 
 	/**
-     * This method is used to get the object of the Client stored for each user.
-     *
-     * @return the object of the Client stored for each user
-     */
+	 * This method is used to get the object of the Client stored for each user.
+	 * 
+	 * @return the object of the Client stored for each user
+	 * @since 3.0
+	 */
 	public Client getClient()
 	{
 		return _client;

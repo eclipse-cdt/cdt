@@ -16,6 +16,7 @@
  * Xuan Chen        (IBM)   - [189041] incorrect file name after rename a file inside a zip file - DStore Windows
  * Xuan Chen        (IBM)   - [187548] Editor shows incorrect file name after renaming file on Linux dstore
  * Kevin Doyle 		(IBM) 	- [191548] Various NPE fixes 
+ * David McKnight   (IBM)   - [235471] DStoreHostFile.getParentPath() breaks API contract for Root files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -143,6 +144,10 @@ public class DStoreHostFile implements IHostFile, IHostFilePermissionsContainer
 		}
 		else
 		{
+			if (isRoot()){ // IFileService.getParentPath() contract states a root must return null
+				return null;
+			}
+			
 			if (_element.getName().length() == 0)
 			{
 				// derive from value

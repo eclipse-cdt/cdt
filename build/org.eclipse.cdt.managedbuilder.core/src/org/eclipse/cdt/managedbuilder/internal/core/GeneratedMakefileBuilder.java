@@ -1633,43 +1633,46 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			IBuildResource buildResource = des.getBuildResource(file);
 
-			// step collector
-			Set dependentSteps = new HashSet();
+			
+			if (buildResource != null) {
 
-			// get dependent IO types
-			IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
+				// step collector
+				Set dependentSteps = new HashSet();
 
-			// iterate through each type and add the step the type belongs to to
-			// the collector
-			for (int j = 0; j < depTypes.length; j++) {
-				IBuildIOType type = depTypes[j];
-				if (type != null && type.getStep() != null)
-					dependentSteps.add(type.getStep());
-			}
+				// get dependent IO types
+				IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
 
-			// iterate through all build steps
-			Iterator stepIter = dependentSteps.iterator();
-
-			while (stepIter.hasNext()) {
-				IBuildStep step = (IBuildStep) stepIter.next();
-
-				// Delete the output resources
-				IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
-
-				for (int j = 0; j < outputIOTypes.length; j++) {
-					IBuildResource[] resources = outputIOTypes[j]
-							.getResources();
-
-					for (int i = 0; i < resources.length; i++) {
-						IResource outputFile = currentProject
-								.findMember(resources[i].getFullPath().removeFirstSegments(1)); // strip project name
-
-						if (outputFile != null)
-							outputFile.delete(true, new SubProgressMonitor(
-									monitor, 1));
-					}
+				// iterate through each type and add the step the type belongs
+				// to to
+				// the collector
+				for (int j = 0; j < depTypes.length; j++) {
+					IBuildIOType type = depTypes[j];
+					if (type != null && type.getStep() != null)
+						dependentSteps.add(type.getStep());
 				}
 
+				// iterate through all build steps
+				Iterator stepIter = dependentSteps.iterator();
+
+				while (stepIter.hasNext()) {
+					IBuildStep step = (IBuildStep) stepIter.next();
+
+					// Delete the output resources
+					IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
+
+					for (int j = 0; j < outputIOTypes.length; j++) {
+						IBuildResource[] resources = outputIOTypes[j].getResources();
+
+						for (int i = 0; i < resources.length; i++) {
+							IResource outputFile = currentProject.findMember(resources[i]
+									.getFullPath().removeFirstSegments(1)); // strip project name
+
+							if (outputFile != null)
+								outputFile.delete(true, new SubProgressMonitor(monitor, 1));
+						}
+					}
+
+				}
 			}
 
 		} catch (CoreException e) {

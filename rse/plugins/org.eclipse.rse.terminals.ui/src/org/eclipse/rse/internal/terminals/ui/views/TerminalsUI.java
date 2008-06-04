@@ -14,11 +14,12 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Yu-Fen Kuo       (MontaVista) - Adapted from SystemCommandsUI
  * Anna Dushistova  (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
+ * Martin Oberhuber (Wind River) - [235626] Convert terminals.ui to MessageBundle format
  ********************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui.views;
 
-import org.eclipse.rse.internal.terminals.ui.Activator;
+import org.eclipse.rse.internal.terminals.ui.TerminalUIResources;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -57,8 +58,7 @@ public class TerminalsUI {
             viewer = (TerminalViewer) page.showView(TerminalViewer.VIEW_ID);
             page.bringToTop(viewer);
         } catch (PartInitException e) {
-            SystemBasePlugin.logError(Activator
-                    .getResourceString("TerminalsUI.cannotOpenView.error"), e); //$NON-NLS-1$
+            SystemBasePlugin.logError(TerminalUIResources.TerminalsUI_cannotOpenView_error, e);
         }
 
         return viewer;

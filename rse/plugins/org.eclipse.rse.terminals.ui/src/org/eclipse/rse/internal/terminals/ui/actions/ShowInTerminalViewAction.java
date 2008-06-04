@@ -14,11 +14,13 @@
  * Contributors:
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  * Anna Dushistova  (MontaVista) - Adapted from SystemShowInShellViewAction
+ * Martin Oberhuber (Wind River) - [235626] Convert terminals.ui to MessageBundle format
  *******************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui.actions;
 
 import org.eclipse.rse.internal.terminals.ui.Activator;
+import org.eclipse.rse.internal.terminals.ui.TerminalUIResources;
 import org.eclipse.rse.internal.terminals.ui.views.TerminalViewer;
 import org.eclipse.rse.internal.terminals.ui.views.TerminalsUI;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
@@ -27,11 +29,8 @@ import org.eclipse.swt.widgets.Shell;
 public class ShowInTerminalViewAction extends TerminalElementBaseAction {
 
     public ShowInTerminalViewAction(Shell parent) {
-        super(
-                Activator.getResourceString("ShowInTerminalViewAction.label"), //$NON-NLS-1$
-                Activator.getResourceString("ShowInTerminalViewAction.tooltip"), //$NON-NLS-1$
-                Activator.getDefault().getImageDescriptor(
-                        Activator.ICON_ID_LAUNCH_TERMINAL), parent);
+        super(TerminalUIResources.ShowInTerminalViewAction_label, TerminalUIResources.ShowInTerminalViewAction_tooltip,
+        		Activator.getDefault().getImageDescriptor(Activator.ICON_ID_LAUNCH_TERMINAL), parent);
         allowOnMultipleSelection(false);
     }
 

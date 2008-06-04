@@ -15,11 +15,13 @@
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  * Anna Dushistova  (MontaVista) - Adapted from SystemShowInShellViewAction
  * Anna Dushistova  (MontaVista) - Adapted from ShowInTerminalViewAction
+ * Martin Oberhuber (Wind River) - [235626] Convert terminals.ui to MessageBundle format
  *******************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.actions;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.internal.terminals.ui.Activator;
+import org.eclipse.rse.internal.terminals.ui.TerminalUIResources;
 import org.eclipse.rse.internal.terminals.ui.views.TerminalViewer;
 import org.eclipse.rse.internal.terminals.ui.views.TerminalsUI;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
@@ -27,8 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class RemoveTerminalAction extends TerminalElementBaseAction {
     public RemoveTerminalAction(Shell parent) {
-        this(Activator.getResourceString("RemoveTerminalAction.label"), //$NON-NLS-1$
-                Activator.getResourceString("RemoveTerminalAction.tooltip"), //$NON-NLS-1$
+        this(TerminalUIResources.RemoveTerminalAction_label, TerminalUIResources.RemoveTerminalAction_tooltip,
                 Activator.getDefault().getImageDescriptor(
                         Activator.ICON_ID_REMOVE_TERMINAL), parent);
     }

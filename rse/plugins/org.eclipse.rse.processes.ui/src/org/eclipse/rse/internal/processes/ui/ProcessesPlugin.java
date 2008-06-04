@@ -19,9 +19,6 @@
 
 package org.eclipse.rse.internal.processes.ui;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
@@ -39,8 +36,6 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	
 	//The shared instance.
 	private static ProcessesPlugin plugin;
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
 
 	private static SystemMessageFile messageFile = null;    
     private static SystemMessageFile defaultMessageFile = null;    
@@ -71,7 +66,6 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
-		resourceBundle = null;
 	}
 
 	/**
@@ -81,32 +75,6 @@ public class ProcessesPlugin extends SystemBasePlugin {
 		return plugin;
 	}
 
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = ProcessesPlugin.getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		try {
-			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.rse.processes.ui.SystemProcessesResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-		return resourceBundle;
-	}
-	
 	/**
 	 * Retrieve a message from this plugin's message file
 	 * @param msgId - the ID of the message to retrieve. This is the concatenation of the

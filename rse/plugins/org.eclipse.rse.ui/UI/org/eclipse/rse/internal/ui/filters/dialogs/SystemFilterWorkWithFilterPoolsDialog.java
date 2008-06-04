@@ -447,9 +447,6 @@ public class SystemFilterWorkWithFilterPoolsDialog
    	      tree.refresh(parent);             
         } catch (Exception exc) 
         {
-			//SystemMessage.displayExceptionMessage(getShell(),RSEUIPlugin.getResourceBundle(),
-			//                                      ISystemMessages.MSG_EXCEPTION_DELETING,exc,
-			//                                      pool.getName()); 
     	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), 
     	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(pool.getName(),exc));
     	    msgDlg.open(); 
@@ -517,9 +514,6 @@ public class SystemFilterWorkWithFilterPoolsDialog
         }
         catch (Exception exc) 
         {
-			//SystemMessage.displayExceptionMessage(getShell(),RSEUIPlugin.getResourceBundle(),
-			//                                      ISystemMessages.MSG_EXCEPTION_RENAMING,exc,
-			//                                      pool.getName()); 
     	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), 
     	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(pool.getName(),exc));
     	    msgDlg.open(); 

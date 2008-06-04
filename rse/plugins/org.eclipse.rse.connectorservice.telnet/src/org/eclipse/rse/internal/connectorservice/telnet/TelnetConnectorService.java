@@ -484,10 +484,6 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		 */
 		protected void showDisconnectErrorMessage(Shell shell, String hostName,
 				int port, Exception exc) {
-			// SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
-			// ISystemMessages.MSG_DISCONNECT_FAILED,
-			// hostName, exc.getMessage());
-			// RSEUIPlugin.logError("Disconnect failed",exc); // temporary
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
 					ICommonMessageIds.MSG_DISCONNECT_FAILED,
 					IStatus.ERROR,
@@ -504,9 +500,6 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		 */
 		protected void showDisconnectCancelledMessage(Shell shell,
 				String hostName, int port) {
-			// SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell,
-			// RSEUIPlugin.getResourceBundle(),
-			// ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
 					ICommonMessageIds.MSG_DISCONNECT_CANCELLED,
 					IStatus.CANCEL,

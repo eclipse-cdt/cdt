@@ -438,9 +438,6 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 		 */
 		protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
 		{
-			//SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
-			//                             ISystemMessages.MSG_DISCONNECT_FAILED,
-			//                             hostName, exc.getMessage());
 			//RSEUIPlugin.logError("Disconnect failed",exc); // temporary
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_FAILED, IStatus.ERROR, NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, hostName), exc);
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
@@ -455,8 +452,6 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 		 */
 		protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
 		{
-			//SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-			//                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName)
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELLED, IStatus.CANCEL, NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELLED, hostName));
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 			msgDlg.open();

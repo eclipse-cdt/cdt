@@ -208,7 +208,6 @@ public class SystemNewFilterWizardNamePage
         else if (poolWrapperInformation != null)
         {
 		 	poolVerbiage = SystemWidgetHelpers.createVerbiage(composite_prompts, poolWrapperInformation.getVerbiageLabel(), nbrColumns, false, 200);
-		   	//poolWrapperCombo = SystemWidgetHelpers.createLabeledCombo(composite_prompts, null, poolWrapperInformation.getResourceBundle(), poolWrapperInformation.getPromptRBKey()); // d47323
 		   	poolWrapperCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, poolWrapperInformation.getPromptLabel(), poolWrapperInformation.getPromptTooltip());
 			poolComboLabel = SystemWidgetHelpers.getLastLabel();
 		   	poolWrappers = poolWrapperInformation.getWrappers();

@@ -172,7 +172,6 @@ public class SystemSelectRemoteFileOrFolderForm
 		this.fileMode = fileMode;
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);
-		//rb = RSEUIPlugin.getResourceBundle();
 		sr = RSECorePlugin.getTheSystemRegistry();
 
 		// set default GUI

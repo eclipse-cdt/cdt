@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [199561][efs][dstore] Eclipse hangs when manipulating empty file
+ * David McKnight   (IBM)        - [234637] [dstore][efs] RSE EFS provider seems to truncate files
  ********************************************************************************/
 package org.eclipse.rse.internal.services.dstore.files;
 
@@ -101,15 +102,21 @@ public class DStoreInputStream extends InputStream
 	{
 		if (_localFile != null)
 		{
-			while (_localFile.length() == 0 && !_cmdStatus.getValue().equals("done")) //$NON-NLS-1$)
+			long lastLength = 0;
+			
+			// TODO cleanup how we wait for the temp file creation
+			// keep waiting until temp file is populated and no new bytes appear to 
+			// be coming in
+			while (((_localFile.length() == 0) || (_localFile.length() > lastLength)) &&
+					!_cmdStatus.getValue().equals("done")) //$NON-NLS-1$)				
 			{
+				lastLength = _localFile.length();
 				try
 				{
 					Thread.sleep(100);
 				}
 				catch (Exception e)
-				{
-					
+				{					
 				}
 			}
 		}

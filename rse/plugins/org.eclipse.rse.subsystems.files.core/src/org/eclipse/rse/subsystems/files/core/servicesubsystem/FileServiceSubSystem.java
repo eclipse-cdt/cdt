@@ -84,6 +84,7 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -343,12 +344,17 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		_userHome = root;
 		return root;
 	}
+
+	/**
+     * Return a list of children from the given parent path in service layer format.
+     * Was unified from the previous methods getFolders(), getFiles() and getFilesAndFolders()
+     * in RSE 3.0
+     * @since 3.0
+     */
 	protected IHostFile[] internalList(String parentPath, String fileNameFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return getFileService().list(parentPath, fileNameFilter, fileType, monitor);
 	}
-
-
 
 	protected IHostFile getFile(String parentPath, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -401,12 +407,8 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 
 	/**
-	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
-	 * by the given file name filter. It can be null for no subsetting.
-	 * @param parents The parent folders to list folders and files in
-	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.
-	 * @param fileTypes - indicates whether to query files, folders, both or some other type
-	 * @param monitor the progress monitor
+	 * {@inheritDoc}
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, String[] fileNameFilters, int[] fileTypes,  IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -454,12 +456,8 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 
 	/**
-	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
-	 * by the given file name filter. It can be null for no subsetting.
-	 * @param parents The parent folders to list folders and files in
-	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.
-	 * @param fileType - indicates whether to query files, folders, both or some other type
-	 * @param monitor the progress monitor
+	 * {@inheritDoc}
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, String[] fileNameFilters, int fileType,  IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -507,16 +505,8 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 
 	/**
-	 * Return a list of remote folders and/or files in the given folder.
-	 * <p>
-	 * The files part of the list is filtered by the given file name filter.
-	 * It can be null for no filtering.
-	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s).
-	 * @param parent The parent folder to list folders and files in
-	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
-	 * @param context The holder of state information
-	 * @param fileType indicates whether to filter files, folders, both or something else
-	 * @param monitor the progress monitor
+	 * {@inheritDoc}
+	 * @since 3.0
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -624,6 +614,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, destination, destination.getParentRemoteFile(), this));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
+	 */
 	public void uploadMultiple(String[] sources, String[] srcEncodings,
 			String[] remotePaths, String[] rmtEncodings,
 			IProgressMonitor monitor) throws SystemMessageException
@@ -673,6 +667,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
+	 */
 	public void uploadMultiple(String[] sources, IRemoteFile[] destinations,
 			String[] encodings, IProgressMonitor monitor)
 			throws SystemMessageException
@@ -751,6 +749,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
+	 */
 	public void downloadMultiple(IRemoteFile[] sources, String[] destinations,
 			String[] encodings, IProgressMonitor monitor)
 			throws SystemMessageException
@@ -797,9 +799,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#copy(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0 returns void
 	 */
 	public void copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -807,6 +810,11 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		service.copy(sourceFolderOrFile.getParentPath(), sourceFolderOrFile.getName(), targetFolder.getAbsolutePath(), newName, monitor);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0 returns void
+	 */
 	public void copyBatch(IRemoteFile[] sourceFolderOrFiles, IRemoteFile targetFolder, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IFileService service = getFileService();
@@ -856,6 +864,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		return createFolder(folderToCreate, monitor);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 returns void
+	 */
 	public void delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IFileService service = getFileService();
@@ -868,6 +880,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 returns void
+	 */
 	public void deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws SystemMessageException
 	{
 
@@ -885,6 +901,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		service.deleteBatch(parents, names, monitor);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 returns void
+	 */
 	public void rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		removeCachedRemoteFile(folderOrFile);
@@ -896,6 +916,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		folderOrFile.getHostFile().renameTo(newPath);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 returns void
+	 */
 	public void move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IFileService service = getFileService();
@@ -911,6 +935,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 returns void
+	 */
 	public void setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String name = folderOrFile.getName();
@@ -920,6 +948,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		_hostFileService.setLastModified(parent, name, newDate, monitor);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 returns void
+	 */
 	public void setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String name = folderOrFile.getName();
@@ -953,6 +985,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see IRemoteFileSubSystem#cancelSearch(IHostSearchResultConfiguration)
+	 */
 	public void cancelSearch(IHostSearchResultConfiguration searchConfig)
 	{
 		ISearchService searchService = getSearchService();
@@ -1057,27 +1093,38 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 	}
 
 	/**
-	 * Defers to the file service.  The method is basically another way to do download.
-	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getInputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 * {@inheritDoc} Defers to the file service. The method is basically another
+	 * way to do download.
+	 *
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getInputStream(java.lang.String,
+	 *      java.lang.String, boolean,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return new FileSubSystemInputStream(getFileService().getInputStream(remoteParent, remoteFile, isBinary, monitor), remoteParent, remoteFile, this);
 	}
 
 	/**
-	 * Defers to the file service.  The method is basically another way to do upload.
-	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 * {@inheritDoc}
+	 * @deprecated Use
+	 *             {@link #getOutputStream(String, String, int, IProgressMonitor)}
+	 *             instead
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, isBinary, monitor), remoteParent, remoteFile, this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 uses int options argument
+	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
 		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, options, monitor), remoteParent, remoteFile, this);
 	}
 
 	/**
-	 * Defers to the file service.
+	 * {@inheritDoc} Defers to the file service.
+	 * @since 3.0
 	 */
 	public boolean supportsEncodingConversion(){
 		return getFileService().supportsEncodingConversion();

@@ -1038,7 +1038,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * Given a set of fully qualified file or folder names, return an
 	 * ISystemResourceSet object for it. <b>Overrideable</b> Override this
 	 * method to provide optimized implementation
-	 * 
+	 *
 	 * @param folderOrFileNames Fully qualified folder or file names
 	 * @since 3.0
 	 */
@@ -1458,7 +1458,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
     }
 
 	/**
-	 * @deprecated
+	 * {@inheritDoc}
+	 * @deprecated Do not call this method directly since it is not implemented.
 	 */
 	public void cancelSearch(IHostSearchResultConfiguration searchConfig)
 	{

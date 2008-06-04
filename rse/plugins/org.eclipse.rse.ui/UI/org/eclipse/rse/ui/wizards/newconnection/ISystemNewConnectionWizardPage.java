@@ -17,13 +17,13 @@ import org.eclipse.rse.core.model.ISubSystemConfigurator;
 /**
  * Interface that all subsystem configuration supplied pages contributed to the
  * New Connection wizard must implement. Moved from Core to UI in RSE 3.0
- * 
+ *
  * @see org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage
  * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#
- * 	getNewConnectionWizardPages
- * 	(org.eclipse.rse.core.subsystems.ISubSystemConfiguration,
- * 	org.eclipse.jface.wizard.IWizard)
- * @since 3.0
+ *      getNewConnectionWizardPages
+ *      (org.eclipse.rse.core.subsystems.ISubSystemConfiguration,
+ *      org.eclipse.jface.wizard.IWizard)
+ * @since 3.0 moved from Core to UI and extends ISubSystemConfigurator
  */
 public interface ISystemNewConnectionWizardPage extends ISubSystemConfigurator {
 

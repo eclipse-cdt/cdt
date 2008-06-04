@@ -56,6 +56,7 @@ import org.eclipse.ui.IWorkbench;
 public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, ISelectionProvider {
 	/**
 	 * Dialog settings slot id: Last selected system type id within the wizard.
+	 * @since 3.0 made protected String public
 	 */
 	public static final String LAST_SELECTED_SYSTEM_TYPE_ID = "lastSelectedSystemTypeId"; //$NON-NLS-1$
 

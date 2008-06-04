@@ -1,18 +1,18 @@
 /********************************************************************************
  * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Javier Montalvo Orus (Symbian) - [188146] Incorrect "FTP Settings" node in Property Sheet for Linux connection
@@ -59,7 +59,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 	private ISubSystemConfiguration _selectedConfiguration;
 	private ServiceElement _root;
 	private ServiceElement[] _serviceElements;
-	
+
 	public SubSystemServiceWizardPage(IWizard wizard, ISubSystemConfiguration parentFactory, String pageName, String pageTitle, String pageDescription)
 	{
 		super(wizard, parentFactory, pageName, pageTitle, pageDescription);
@@ -80,26 +80,26 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		SystemWidgetHelpers.setHelp(parent, "org.eclipse.rse.ui.ServiceSubsystemWizardPage"); //$NON-NLS-1$
 		_form = new ServicesForm(parent.getShell(), getMessageLine());
 		Control control = _form.createContents(parent);
-		
+
 		ServiceElement[] elements = getServiceElements();
 		_root = new RootServiceElement(elements);
 		_form.init(_root);
-		
+
 		return control;
 	}
-	
+
 
 	protected ServiceElement[] getServiceElements()
 	{
 		if (_serviceElements == null)
 		{
 
-			
+
 			ISubSystemConfiguration currentFactory = getSubSystemConfiguration();
-			
+
 			IRSESystemType systemType = getMainPage() != null && getMainPage().getWizard() instanceof RSEDefaultNewConnectionWizard ? ((RSEDefaultNewConnectionWizard)getMainPage().getWizard()).getSystemType() : null;
 			ISubSystemConfiguration[] factories = getServiceSubSystemConfigurations(systemType, currentFactory.getServiceType());
-			
+
 			IHost dummyHost = null;
 			if (getWizard() instanceof RSEDefaultNewConnectionWizard)
 			{
@@ -109,32 +109,39 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 																		 wizard.getSystemType());
 				}
 			}
-			
-			// create elements for each 
+
+			// create elements for each
 			_serviceElements = new ServiceElement[factories.length];
 			for (int i = 0; i < factories.length; i++)
-			{	
+			{
 				ISubSystemConfiguration factory = factories[i];
 				_serviceElements[i] = new FactoryServiceElement(dummyHost, factory);
-			
-			
+
+
 				//if (factory == currentFactory)
 				if (i == 0) // use first
 				{
 					_serviceElements[i].setSelected(true);
 				}
-				
+
 			}
-		}		
+		}
 		return _serviceElements;
 	}
-	
+
+	/**
+	 * @param systemType
+	 * @param serviceType
+	 * @return
+	 * @since 3.0 returning ISubSystemConfiguration instead of
+	 *        IServiceSubSystemConfiguration
+	 */
 	protected ISubSystemConfiguration[] getServiceSubSystemConfigurations(IRSESystemType systemType, Class serviceType)
 	{
 		List results = new ArrayList();
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystemConfiguration[] configs = sr.getSubSystemConfigurationsBySystemType(systemType, false);
-		
+
 		for (int i = 0; i < configs.length; i++)
 		{
 			ISubSystemConfiguration config = configs[i];
@@ -143,10 +150,10 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 				results.add(config);
 			}
 		}
-		
+
 		return (ISubSystemConfiguration[])results.toArray(new ISubSystemConfiguration[results.size()]);
 	}
-	
+
 	public boolean isPageComplete()
 	{
 		return true;
@@ -157,12 +164,12 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		if (_root != null)
 		{
 			_root.commit();
-			
+
 			_selectedConfiguration = ((FactoryServiceElement)_form.getSelectedService()).getFactory();
 		}
 		return true;
 	}
-	
+
 	protected ServerLauncherPropertiesServiceElement[] getPropertiesServiceElement()
 	{
 		List results = new ArrayList();
@@ -181,7 +188,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 							if (child instanceof ConnectorServiceElement)
 							{
 								ServiceElement[] cch = child.getChildren();
-								if (cch != null && cch.length > 0) 
+								if (cch != null && cch.length > 0)
 								{
 									if(cch[0] instanceof ServerLauncherPropertiesServiceElement)
 									{
@@ -238,11 +245,11 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the list of connector service elements from a given service element.
 	 * @param root The root element from which to search
-	 * @return A list of all found connector service elements. The list will be empty if non 
+	 * @return A list of all found connector service elements. The list will be empty if non
 	 * are found.
 	 */
 	private List getConnectorServiceElements(ServiceElement root) {
@@ -252,7 +259,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			if (root instanceof ConnectorServiceElement) {
 				result.add(root);
 			}
-			
+
 			ServiceElement[] children = root.getChildren();
 			if (children != null) {
 				for (int i = 0; i < children.length; i++) {
@@ -263,7 +270,11 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		}
 		return result;
 	}
-	
+
+	/**
+	 * @since 3.0 taking ISubSystemConfiguration instead of
+	 *        IServiceSubSystemConfiguration
+	 */
 	protected IConnectorService getCustomConnectorService(ISubSystemConfiguration config)
 	{
 		ServiceElement[] children = _root.getChildren();
@@ -279,13 +290,13 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
-	public void handleVerifyComplete() 
+	public void handleVerifyComplete()
 	{
 		boolean complete = isPageComplete();
 		clearErrorMessage();

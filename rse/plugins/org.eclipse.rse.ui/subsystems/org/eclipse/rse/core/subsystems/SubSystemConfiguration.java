@@ -553,7 +553,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * from static declaration in the
 	 * <tt>org.eclipse.rse.core.subsystemConfigurations</tt> and
 	 * <tt>org.eclipse.rse.core.systemTypes</tt> extension points.
-	 * 
+	 *
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 * 	by clients. It will likely be declared <tt>final</tt> in the next
 	 * 	release in order to ensure consistency with static xml markup in the
@@ -1605,8 +1605,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return getFilterPoolManager(profile, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getFilterPoolManager(org.eclipse.rse.core.model.ISystemProfile, boolean)
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 added boolean argument
 	 */
 	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile, boolean force) {
 		// it is important to key by profile object not profile name, since that name can change but the object never should for any one session.

@@ -19,8 +19,10 @@ package org.eclipse.rse.ui;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
- * Abstract base class with basic implementations of the <code>IRSEAdapter</code> interface.
- * Intended to be subclassed.
+ * Abstract base class with basic implementations of the
+ * <code>IRSEAdapter</code> interface. Intended to be subclassed.
+ *
+ * @since org.eclipse.rse.ui 3.0
  */
 public abstract class RSEAdapter extends WorkbenchAdapter implements IRSEAdapter {
 

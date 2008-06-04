@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
@@ -45,9 +45,12 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	//private IHost _outputConnection;
 	private SystemActionViewerFilter _customViewerFilter;
 	private String _message, _tip;
-	
 
-	public SystemRemoteResourceDialog(Shell shell, String title, 
+	/**
+	 * @since 3.0 replaced SystemResourceSelectionInputProvider by
+	 *        ISystemResourceSelectionInputProvider
+	 */
+	public SystemRemoteResourceDialog(Shell shell, String title,
 			ISystemResourceSelectionInputProvider inputProvider)
 	{
 		super(shell, title);
@@ -55,14 +58,14 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	}
 
 	protected Control createInner(Composite parent)
-	{		
+	{
 		_form = new SystemResourceSelectionForm(getShell(), parent, this, _inputProvider, getVerbiage(), _multipleSelectionMode, getMessageLine());
 		initForm();
 		_form.setPreSelection(_preSelection);
 		createMessageLine(parent);
 		return _form.getInitialFocusControl();
 	}
-	
+
 	/**
 	 * Create message line. Intercept so we can set msg line of form.
 	 */
@@ -72,10 +75,10 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		_form.setMessageLine(msgLine);
 		return fMessageLine;
 	}
-	
+
 	public void initForm()
 	{
-			
+
 		if (_customViewerFilter != null)
 		{
 			_form.applyViewerFilter(_customViewerFilter);
@@ -85,7 +88,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 			_form.applyViewerFilter(getViewerFilter());
 		}
 		_form.setSelectionValidator(_selectionValidator);
-		_form.setPreSelection(_preSelection);	
+		_form.setPreSelection(_preSelection);
 	 	_form.setShowPropertySheet(_showPropertySheet);
 	 	_form.setSelectionTreeToolTipText(getTreeTip());
 	 	if (_message != null)
@@ -98,17 +101,17 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	{
 		_inputProvider.setSystemConnection(connection, onlyConnection);
 	}
-	
+
 	public void setSystemTypes(IRSESystemType[] types)
 	{
 		_inputProvider.setSystemTypes(types);
 	}
-	
+
 	protected Control getInitialFocusControl()
 	{
 		return _form.getInitialFocusControl();
 	}
-	
+
 	public void setPreSelection(Object selection)
 	{
 		_preSelection = selection;
@@ -117,17 +120,17 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 			_form.setPreSelection(selection);
 		}
 	}
-	
+
 	public void setSelectionValidator(IValidatorRemoteSelection validator)
 	{
 		_selectionValidator = validator;
 	}
-	
+
 	public void setCustomViewerFilter(SystemActionViewerFilter viewerFilter)
 	{
 		_customViewerFilter = viewerFilter;
 	}
-	
+
     /**
      * Set multiple selection mode. Default is single selection mode
      * <p>
@@ -137,16 +140,16 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
      * Further, if you turn this on, it has the side effect of allowing the user
      *  to select any remote object. The assumption being if you are prompting for
      *  files, you also want to allow the user to select a folder, with the meaning
-     *  being that all files within the folder are implicitly selected. 
+     *  being that all files within the folder are implicitly selected.
      *
      * @see #getSelectedObjects()
      */
     public void setMultipleSelectionMode(boolean multiple)
     {
     	_multipleSelectionMode = multiple;
-   
+
     }
-    
+
     /**
      * Set the message shown at the top of the form
      */
@@ -169,7 +172,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
     		_form.setSelectionTreeToolTipText(tip);
     	}
     }
-    
+
     /**
      * Show the property sheet on the right hand side, to show the properties of the
      * selected object.
@@ -187,7 +190,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
      * selected object.
      * <p>
      * This overload shows a Details>>> button so the user can decide if they want to see the
-     * property sheet. 
+     * property sheet.
      * <p>
      * @param show True if show the property sheet within the dialog
      * @param initialState True if the property is to be initially displayed, false if it is not
@@ -201,10 +204,10 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
     	  setShowDetailsButton(true, !initialState);
     	}
     }
-    
+
     /**
      * Return selected file or folder
-     */	
+     */
     public Object getSelectedObject()
     {
     	if (getOutputObject() instanceof Object[])
@@ -216,7 +219,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
      * Return all selected objects. This method will return an array of one
      *  unless you have called setMultipleSelectionMode(true)!
      * @see #setMultipleSelectionMode(boolean)
-     */	
+     */
     public Object[] getSelectedObjects()
     {
     	if (getOutputObject() instanceof Object[])
@@ -226,20 +229,20 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
     	else
     	  return null;
     }
-    
+
     public IHost getSelectedConnection()
     {
     	return _form.getSelectedConnection();
     }
-    
+
     /**
-     * Private method. 
+     * Private method.
      * <p>
-	 * Called when user presses OK button. 
+	 * Called when user presses OK button.
 	 * Return true to close dialog.
 	 * Return false to not close dialog.
 	 */
-	protected boolean processOK() 
+	protected boolean processOK()
 	{
 		boolean closeDialog = _form.verify();
 		if (closeDialog)
@@ -254,49 +257,54 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		  setOutputObject(null);
 		return closeDialog;
 	}
-	
+
+	/** @since 3.0 */
 	public void setShowNewConnectionPrompt(boolean showNewConnectionPrompt)
 	{
 		_inputProvider.setAllowNewConnection(showNewConnectionPrompt);
 	}
-	
+
 	/**
 	 * Private method.
 	 * <p>
-	 * Called when user presses DETAILS button. 
+	 * Called when user presses DETAILS button.
 	 * <p>
 	 * Note the text is automatically toggled for us! We need only
 	 * do whatever the functionality is that we desire
-	 * 
+	 *
 	 * @param hideMode the current state of the details toggle, prior to this request. If we return true from
 	 *   this method, this state and the button text will be toggled.
-	 * 
+	 *
 	 * @return true if the details state toggle was successful, false if it failed.
 	 */
-	protected boolean processDetails(boolean hideMode) 
+	protected boolean processDetails(boolean hideMode)
 	{
 		_form.toggleShowPropertySheet(getShell(), getContents());
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * Returns the system tree
+	 * 
 	 * @return the system tree
+	 * @since 3.0
 	 */
 	public ISystemTree getSystemTree()
 	{
 		return _form.getSystemTree();
 	}
-    
+
 	/**
 	 * Indicates whether the page for the form is complete or not.
+	 * 
 	 * @return true if the page associated with the form is complete
+	 * @since 3.0
 	 */
 	public boolean isPageComplete()
 	{
 		return _form.isPageComplete();
 	}
-	
+
 	public abstract SystemActionViewerFilter getViewerFilter();
 	public abstract String getVerbiage();
 	public abstract String getTreeTip();

@@ -1,10 +1,10 @@
 /********************************************************************************
  * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  * Uwe Stieber (Wind River) - initial API and implementation.
  ********************************************************************************/
@@ -21,24 +21,24 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * The SafeTreeViewer wraps an SWT TreeViewer in order to avoid
  * exceptions due to accessing already disposed items.
- * 
+ *
  * The main reason for this wrapping is that delayed label providers
- * (i.e. instances of {@link IDelayedLabelDecorator}) can trigger tree 
- * item updates called in the viewer after the tree item itself got 
- * disposed already. This happens especially if items appear and 
- * disappear very fast within the tree which then will lead to nasty 
+ * (i.e. instances of {@link IDelayedLabelDecorator}) can trigger tree
+ * item updates called in the viewer after the tree item itself got
+ * disposed already. This happens especially if items appear and
+ * disappear very fast within the tree which then will lead to nasty
  * SWT Widget already disposed exceptions.
- * 
+ *
  * Clients may subclass this class.
- * 
+ *
  * @since RSE 2.0
  */
 public class SafeTreeViewer extends TreeViewer {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param parent The parant control.
+	 *
+	 * @param parent The parent control.
 	 */
 	public SafeTreeViewer(Composite parent) {
 		super(parent);
@@ -46,7 +46,7 @@ public class SafeTreeViewer extends TreeViewer {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param tree The tree control.
 	 */
 	public SafeTreeViewer(Tree tree) {
@@ -55,7 +55,7 @@ public class SafeTreeViewer extends TreeViewer {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param parent The parent control.
 	 * @param style The SWT style bits passed to the tree creation.
 	 */

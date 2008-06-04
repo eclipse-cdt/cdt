@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
@@ -34,19 +34,19 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Our framework is designed to allow actions to be added to popup menus.
- * Sometimes, we want an expandable or cascading menu item for an action. 
+ * Sometimes, we want an expandable or cascading menu item for an action.
  * That is what this class is designed for. It represents a populated submenu.
  */
 public abstract class SystemBaseSubMenuAction
 	extends SystemBaseAction
 
 {
-	
+
     private SystemSubMenuManager subMenu = null;
     protected String actionLabel;
     protected String menuID;
     protected boolean createMenuEachTime = true;
-    protected boolean populateMenuEachTime = true;    
+    protected boolean populateMenuEachTime = true;
     private boolean dontCascade = false;
     private boolean test;
     private static final IAction[] EMPTY_ACTION_ARRAY = new IAction[0];
@@ -57,14 +57,14 @@ public abstract class SystemBaseSubMenuAction
 	 * @param tooltip
 	 * @param image The image to display for this action
 	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
-	 * 
+	 *
 	 * @deprecated use fields from resource class directly now instead of via ResourceBundle
-	 */	
+	 */
 	protected SystemBaseSubMenuAction(ResourceBundle rb, String label, String tooltip,ImageDescriptor image,Shell shell)
 	{
 		super(label, tooltip, image, shell);
 		actionLabel = label;
-		//setTracing(true);		
+		//setTracing(true);
 	}
 
 
@@ -73,7 +73,7 @@ public abstract class SystemBaseSubMenuAction
 	 * @param label the label to display.
 	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
-	protected SystemBaseSubMenuAction(String label, Shell shell) 
+	protected SystemBaseSubMenuAction(String label, Shell shell)
 	{
 		super(label, shell);
 		actionLabel = label;
@@ -85,7 +85,7 @@ public abstract class SystemBaseSubMenuAction
 	 * @param tooltip the tooltip to display.
 	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
-	protected SystemBaseSubMenuAction(String label, String tooltip, Shell shell) 
+	protected SystemBaseSubMenuAction(String label, String tooltip, Shell shell)
 	{
 		super(label, tooltip, shell);
 		actionLabel = label;
@@ -97,13 +97,13 @@ public abstract class SystemBaseSubMenuAction
 	 * @param image the image descriptor for the action.
 	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
-	protected SystemBaseSubMenuAction(String label, ImageDescriptor image, Shell shell) 
+	protected SystemBaseSubMenuAction(String label, ImageDescriptor image, Shell shell)
 	{
 		super(label, image, shell);
 		actionLabel = label;
 		//setTracing(true);
 	}
-	
+
 	/**
 	 * Constructor for SystemBaseSubMenuAction when there is just a string and image
 	 * @param label the label to display.
@@ -111,7 +111,7 @@ public abstract class SystemBaseSubMenuAction
 	 * @param image the image descriptor for the action.
 	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
-	protected SystemBaseSubMenuAction(String label, String tooltip, ImageDescriptor image, Shell shell) 
+	protected SystemBaseSubMenuAction(String label, String tooltip, ImageDescriptor image, Shell shell)
 	{
 		super(label, tooltip, image, shell);
 		actionLabel = label;
@@ -142,7 +142,7 @@ public abstract class SystemBaseSubMenuAction
     {
     	this.populateMenuEachTime = eachTime;
     }
-    
+
     /**
      * Set test mode on
      */
@@ -151,7 +151,7 @@ public abstract class SystemBaseSubMenuAction
     	this.test = testMode;
     }
 
-    	
+
 	/**
 	 * <i>Must be overridden</i>
 	 * <p>Example of this:<p>
@@ -209,32 +209,32 @@ public abstract class SystemBaseSubMenuAction
 		  //System.out.println("SubMenu's menu null? " + (m==null));
 		  //if (m != null)
 		    //m.addMenuListener(new SystemViewMenuListener());
-    	} 
+    	}
     	else if (traceSelections)
     	{
     	  issueTraceMessage("*** INSIDE GETSUBMENU for "+actionLabel+". SUBMENU ALREADY CREATED. "); //$NON-NLS-1$ //$NON-NLS-2$
     	}
-    	
+
     	return subMenu;
     }
 	/**
 	 * Creates the standard groups for the context sub-menu.
 	 */
-	protected void createStandardGroups(IMenuManager menu) 
+	protected void createStandardGroups(IMenuManager menu)
 	{
 		if (!menu.isEmpty())
-			return;			
+			return;
 	    // simply sets partitions in the menu, into which actions can be directed.
 	    // Each partition can be delimited by a separator (new Separator) or not (new GroupMarker).
 	    // Deleted groups are not used yet.
 	    //... decided it is better to let this get created when needed, else will be at the top of the menu.
 		//menu.add(new Separator(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
-		
+
 	}
-	
+
 	/**
 	 * Return the actions currently in the menu.
-	 * Never returns null, but may return an empty array. 
+	 * Never returns null, but may return an empty array.
 	 */
 	public IAction[] getActions()
 	{
@@ -264,17 +264,21 @@ public abstract class SystemBaseSubMenuAction
 	}
 
 
-    
-    /**
-     * Overridable method that instantiates the menu listener who job is to add mnemonics.
-     * @param setMnemonicsOnlyOnce true if the menu is static and so mnemonics need only be set once. False if it is dynamic
-     */
+
+   	/**
+	 * Overridable method that instantiates the menu listener who job is to add
+	 * mnemonics.
+	 *
+	 * @param setMnemonicsOnlyOnce true if the menu is static and so mnemonics
+	 *            need only be set once. False if it is dynamic
+	 * @since 3.0 replaced SystemViewMenuListener by ISystemViewMenuListener
+	 */
     protected ISystemViewMenuListener createMnemonicsListener(boolean setMnemonicsOnlyOnce)
     {
     	return new SystemViewMenuListener(setMnemonicsOnlyOnce);
     }
-        
-	/**  
+
+	/**
 	 * Sets the parent shell for this action. This is an override of our parent's method so we can
 	 * cascade it to each sub-action.
 	 */
@@ -284,29 +288,29 @@ public abstract class SystemBaseSubMenuAction
 		if (!dontCascade)
 		  cascadeShell();
 	}
-	
-	/**
-	 * This is called by the framework to set the selection input, just prior to showing the popup menu.
-	 * We cascade this down to all of the actions added to this submenu.
-	 */
-	public void setSelection(ISelection selection) 
-	{	
-        super.setSelection(selection);
-		if (!dontCascade)
-          cascadeSelection(selection);
-	}	
 
 	/**
 	 * This is called by the framework to set the selection input, just prior to showing the popup menu.
 	 * We cascade this down to all of the actions added to this submenu.
 	 */
-	public void setViewer(Viewer v) 
-	{	
+	public void setSelection(ISelection selection)
+	{
+        super.setSelection(selection);
+		if (!dontCascade)
+          cascadeSelection(selection);
+	}
+
+	/**
+	 * This is called by the framework to set the selection input, just prior to showing the popup menu.
+	 * We cascade this down to all of the actions added to this submenu.
+	 */
+	public void setViewer(Viewer v)
+	{
         super.setViewer(v);
 		if (!dontCascade)
           cascadeViewer();
-	}	
-	
+	}
+
 	/**
 	 * Return the shell. If not set locally, queries it from the submenu, which is where it is set by the RSE framework
 	 */
@@ -343,7 +347,7 @@ public abstract class SystemBaseSubMenuAction
 		else
 		  return null;
 	}
-	
+
 	/**
 	 * Special method called by our submenu manager when from its setInputs method. No need to
 	 *  cascade as the menu manager will do it for us.
@@ -352,9 +356,9 @@ public abstract class SystemBaseSubMenuAction
 	{
     	dontCascade = true; // so we don't redundantly do cascading. Phil
     	super.setInputs(shell, v, selection); // calls setSelection+Shell+Viewer
-    	dontCascade = false;		
+    	dontCascade = false;
 	}
-	
+
     /**
      * An optimization for performance reasons that allows all inputs to be set in one call.
      * Intercept of parent so we can cascade to sub-actions. Note however this won't really ever
@@ -370,7 +374,7 @@ public abstract class SystemBaseSubMenuAction
 		  issueTraceMessage(" INSIDE SETINPUTS IN BASE ACTION CLASS"); //$NON-NLS-1$
 		cascadeAllInputs();
     }
-	
+
     /**
      * Cascade the current selection to all actions
      */
@@ -391,12 +395,12 @@ public abstract class SystemBaseSubMenuAction
 		{
 		   if (actions[idx] instanceof ISystemAction)
 		   {
-		     ((ISystemAction)actions[idx]).setSelection(selection);		   	 
+		     ((ISystemAction)actions[idx]).setSelection(selection);
 		   }
 		}
 		*/
     }
- 
+
     /**
      * Cascade the current shell to all actions
      */
@@ -411,7 +415,7 @@ public abstract class SystemBaseSubMenuAction
           /*
           IAction[] items = subMenu.getActions();
           for (int idx=0; idx<items.length; idx++)
-             if (items[idx] instanceof ISystemAction)   		
+             if (items[idx] instanceof ISystemAction)
                ((ISystemAction)items[idx]).setShell(shell);
           */
     	}
@@ -430,7 +434,7 @@ public abstract class SystemBaseSubMenuAction
     		/*
           IAction[] items = subMenu.getActions();
           for (int idx=0; idx<items.length; idx++)
-             if (items[idx] instanceof ISystemAction)   		
+             if (items[idx] instanceof ISystemAction)
                ((ISystemAction)items[idx]).setViewer(viewer);
             */
     	}
@@ -461,10 +465,10 @@ public abstract class SystemBaseSubMenuAction
 		   	 ISystemAction action = (ISystemAction)actions[idx];
 		   	 action.setInputs(shell, viewer, selection);
 		   }
-	    }    	
+	    }
 	    */
     }
-    
+
     /**
      * Enable/disable this menu action. This amounts to enabling/disabling the associated sub menu.
      * Unfortunately, there is no way to do this!
@@ -475,6 +479,6 @@ public abstract class SystemBaseSubMenuAction
     	if (subMenu!=null)
     	{
     		//subMenu.setEnabled(enable);
-    	}    	
+    	}
     }
 }

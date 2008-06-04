@@ -277,6 +277,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 	/**
 	 * Called after all the copy/move operations end, be it successfully or not.
 	 * Your opportunity to display completion or do post-copy selections/refreshes
+	 * @since 3.0 taking String argument
 	 */
 	public void copyComplete(String operation) {}
 	

@@ -22,15 +22,21 @@ public class DisplayHidableSystemMessageAction extends
 {
 	protected IPreferenceStore _store;
 	protected String _prefID;
+	/**
+	 * @since 3.0
+	 */
 	protected boolean _showYesNo = true;
-	
+
 	public DisplayHidableSystemMessageAction(SystemMessage message, IPreferenceStore prefStore, String prefID)
 	{
 		super(message);
 		_store = prefStore;
 		_prefID = prefID;
 	}
-	
+
+	/**
+	 * @since 3.0
+	 */
 	public DisplayHidableSystemMessageAction(SystemMessage message, IPreferenceStore prefStore, String prefID, boolean showYesNo)
 	{
 		super(message);
@@ -53,7 +59,7 @@ public class DisplayHidableSystemMessageAction extends
 				dialog.openQuestionNoException(_showYesNo);
 				rc = dialog.getButtonPressedId();
 				finished = true;
-			} 
+			}
 		}
 	}
 }

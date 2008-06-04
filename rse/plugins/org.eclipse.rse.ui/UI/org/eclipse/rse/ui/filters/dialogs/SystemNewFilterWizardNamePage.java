@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [160403] filters should be connection private by default
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
@@ -42,16 +42,18 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Second page of the New Filter wizard that prompts for the name of the filter.
+ * 
+ * @since 3.0 moved from internal to API
  */
-public class SystemNewFilterWizardNamePage 
+public class SystemNewFilterWizardNamePage
 	   extends AbstractSystemWizardPage
 	   implements SelectionListener
 {
-	
+
 	protected Text  nameText;
 	protected Button uniqueCB;
 	protected Label poolVerbiage;
-	protected Label poolComboLabel;	
+	protected Label poolComboLabel;
 	protected Combo poolWrapperCombo;
 	protected Combo poolCombo;
 	protected SystemMessage errorMessage;
@@ -66,8 +68,8 @@ public class SystemNewFilterWizardNamePage
     protected ISystemFilterPoolWrapper[] poolWrappers = null;
     protected ISystemFilterPoolWrapperInformation poolWrapperInformation;
 	protected ISystemFilterPool parentPool = null;
-  	private ISystemNewFilterWizardConfigurator configurator;  
-  	
+  	private ISystemNewFilterWizardConfigurator configurator;
+
 	/**
 	 * Constructor.
 	 */
@@ -106,42 +108,42 @@ public class SystemNewFilterWizardNamePage
     {
     	this.poolsToSelectFrom = poolsToSelectFrom;
     	this.nameValidators = nameValidators;
-    	if ((poolsToSelectFrom != null) && (poolsToSelectFrom.length>0))    	
+    	if ((poolsToSelectFrom != null) && (poolsToSelectFrom.length>0))
     	{
-    	  if (parentPool == null) 
+    	  if (parentPool == null)
     	     parentPool = poolsToSelectFrom[0];
     	}
-    }    
+    }
     /**
      * This is an alternative to {@link #setAllowFilterPoolSelection(ISystemFilterPool[], ISystemValidator[])}
      * <p>
-     * If you want to prompt the user for the parent filter pool to create this filter in, 
+     * If you want to prompt the user for the parent filter pool to create this filter in,
      *  but want to not use the term "pool" say, you can use an array of euphamisms. That is,
-     *  you can pass an array of objects that map to filter pools, but have a different 
+     *  you can pass an array of objects that map to filter pools, but have a different
      *  display name that is shown in the dropdown.
      * <p>
      * Of course, if you want to do this, then you will likely want to offer a different
-     *  label and tooltip for the prompt, and different verbiage above the prompt. The 
+     *  label and tooltip for the prompt, and different verbiage above the prompt. The
      *  object this method accepts as a parameter encapsulates all that information, and
      *  there is a default class you can use for this.
      */
     public void setAllowFilterPoolSelection(ISystemFilterPoolWrapperInformation poolWrappersToSelectFrom,
-                                             ISystemValidator[] nameValidators)    
+                                             ISystemValidator[] nameValidators)
     {
     	this.poolWrapperInformation = poolWrappersToSelectFrom;
     	this.nameValidators = nameValidators;
-    	if (parentPool == null) 
+    	if (parentPool == null)
     	  parentPool = poolWrappersToSelectFrom.getPreSelectWrapper().getSystemFilterPool();
-    }    
+    }
 	/**
 	 * Set the validator to call when the user selects a filter pool. Optional.
 	 */
 	public void setFilterPoolSelectionValidator(ISystemFilterPoolSelectionValidator validator)
 	{
-	     filterPoolSelectionValidator = validator;	
+	     filterPoolSelectionValidator = validator;
 	     //System.out.println("Inside setFilterPoolSelectionValidator. Non null? " + (validator != null));
 	}
-	
+
 	// ---------------------------------
 	// LIFECYCLE METHODS...
 	// ---------------------------------
@@ -154,13 +156,13 @@ public class SystemNewFilterWizardNamePage
 
 		int nbrColumns = 2;
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
-				
+
 		SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2NameVerbiage(), nbrColumns, false, 200);
 		nameText = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, configurator.getPage2NamePromptLabel(), configurator.getPage2NamePromptTooltip());
-		
+
         addSeparatorLine(composite_prompts, nbrColumns);
         addFillerLine(composite_prompts, nbrColumns);
-        
+
         // allow the user to create this filter uniquely for this connection, which means putting it in a
         //  special filter pool we will create, just for this connection. This option is not shown if we are
         //  already told which filter pool to create the filter in, such as in Show Filter Pools mode, when
@@ -169,13 +171,13 @@ public class SystemNewFilterWizardNamePage
         if ((poolsToSelectFrom!=null) || (poolWrapperInformation!=null))
         {
 			uniqueCB = SystemWidgetHelpers.createCheckBox(composite_prompts, nbrColumns, configurator.getPage2UniqueToConnectionLabel(), null);
-			uniqueCB.setToolTipText(configurator.getPage2UniqueToConnectionToolTip()); 
+			uniqueCB.setToolTipText(configurator.getPage2UniqueToConnectionToolTip());
 			uniqueCB.addSelectionListener(this);
 			uniqueCB.setSelection(true); // [160403] filters should be connection private by default
         }
-		        
+
         addFillerLine(composite_prompts, nbrColumns);
-        
+
         if (poolsToSelectFrom != null)
         {
 		   	poolVerbiage = SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2PoolVerbiage(), nbrColumns, false, 200);
@@ -193,7 +195,7 @@ public class SystemNewFilterWizardNamePage
            	}
            	if ((nameValidator == null) && (nameValidators!=null))
              	nameValidator = nameValidators[filterPoolSelectionIndex];
-           	poolCombo.setItems(poolNames);         
+           	poolCombo.setItems(poolNames);
            	poolCombo.select(filterPoolSelectionIndex);
            	poolCombo.addSelectionListener(this);
            	if ((uniqueCB!=null) && uniqueCB.getSelection())
@@ -220,7 +222,7 @@ public class SystemNewFilterWizardNamePage
            	}
            	if ((nameValidator == null) && (nameValidators!=null))
              	nameValidator = nameValidators[filterPoolSelectionIndex];
-           	poolWrapperCombo.setItems(poolNames);           
+           	poolWrapperCombo.setItems(poolNames);
            	poolWrapperCombo.select(filterPoolSelectionIndex);
            	poolWrapperCombo.addSelectionListener(this);
 			if ((uniqueCB!=null) && uniqueCB.getSelection())
@@ -230,7 +232,7 @@ public class SystemNewFilterWizardNamePage
 				poolWrapperCombo.setEnabled(false);
 			}
         }
-		
+
 		// initialize inputs
         if (nameValidator != null)
         {
@@ -240,7 +242,7 @@ public class SystemNewFilterWizardNamePage
         }
 		if (inputFilterName != null)
 		  nameText.setText(inputFilterName);
-		  
+
 		// add keystroke listeners...
 		nameText.addModifyListener(
 			new ModifyListener() {
@@ -251,12 +253,12 @@ public class SystemNewFilterWizardNamePage
 					validateNameInput();
 				}
 			}
-		);		
-		
-		setPageComplete();		        
+		);
+
+		setPageComplete();
 		contentsCreated = true;
 		return composite_prompts;
-	}	
+	}
 	/**
 	 * Return the Control to be given initial focus.
 	 * Override from parent. Return control to be given initial focus.
@@ -265,16 +267,16 @@ public class SystemNewFilterWizardNamePage
 	{
         return nameText;
 	}
-	
+
 	/**
-	 * Completes processing of the wizard. If this 
-	 * method returns true, the wizard will close; 
+	 * Completes processing of the wizard. If this
+	 * method returns true, the wizard will close;
 	 * otherwise, it will stay active.
-	 * This method is an override from the parent Wizard class. 
+	 * This method is an override from the parent Wizard class.
 	 *
 	 * @return whether the wizard finished successfully
 	 */
-	public boolean performFinish() 
+	public boolean performFinish()
 	{
 		if (!contentsCreated)
 		  return true;
@@ -292,14 +294,14 @@ public class SystemNewFilterWizardNamePage
 		  pageComplete = (nameText.getText().trim().length() > 0);
 		return pageComplete;
 	}
-	
+
 	/**
 	 * Inform caller of page-complete status of this page
 	 */
 	public void setPageComplete()
 	{
 		setPageComplete(isPageComplete());
-	}	
+	}
 	/**
 	 * User has selected something
 	 */
@@ -308,13 +310,13 @@ public class SystemNewFilterWizardNamePage
 		Object src = e.getSource();
 		if (src == poolCombo)
 		{
-		  	int selection = poolCombo.getSelectionIndex();	
+		  	int selection = poolCombo.getSelectionIndex();
 		  	if ((selection >= 0) && (nameValidators!=null))
 		    	nameValidator = nameValidators[selection];
 		}
 		else if (src == poolWrapperCombo)
 		{
-		  	int selection = poolWrapperCombo.getSelectionIndex();	
+		  	int selection = poolWrapperCombo.getSelectionIndex();
 		  	if ((selection >= 0) && (nameValidators!=null))
 		    	nameValidator = nameValidators[selection];
 		}
@@ -344,7 +346,7 @@ public class SystemNewFilterWizardNamePage
 	// ---------------------------------
 	/**
 	 * Verify all contents
-	 */	    
+	 */
 	public SystemMessage verify()
 	{
 		errorMessage = null;
@@ -357,12 +359,12 @@ public class SystemNewFilterWizardNamePage
 			  controlInError = poolCombo;
 			else if (poolWrapperCombo != null)
 			  controlInError = poolCombo;
-		}		
+		}
 		if ((errorMessage == null) && (nameValidator != null))
 		{
 	        errorMessage = nameValidator.validate(nameText.getText().trim());
 			controlInError = nameText;
-		}		
+		}
 
 		if (errorMessage != null)
 		{
@@ -373,40 +375,40 @@ public class SystemNewFilterWizardNamePage
 		else
 		    clearErrorMessage();
 		return errorMessage;
-	}    	
+	}
   	/**
 	 * This hook method is called whenever the text changes in the filter name input field.
 	 */
-	protected SystemMessage validateNameInput() 
-	{			
-	    errorMessage= null;			
+	protected SystemMessage validateNameInput()
+	{
+	    errorMessage= null;
 		if (nameValidator != null)
 	      errorMessage = nameValidator.validate(nameText.getText().trim());
 		if ((errorMessage == null) && (filterPoolSelectionValidator != null))
 			errorMessage = filterPoolSelectionValidator.validate(getParentSystemFilterPool());
 		setPageComplete();
 		if (errorMessage != null)
-		  setErrorMessage(errorMessage);		
+		  setErrorMessage(errorMessage);
 		else
 		  clearErrorMessage();
 		return errorMessage;
 	}
 
-    
+
 	// ---------------------------------
-	// METHODS FOR EXTRACTING USER DATA 
+	// METHODS FOR EXTRACTING USER DATA
 	// ---------------------------------
 	/**
 	 * Return name of filter
 	 * Call this after finish ends successfully.
-	 */	    
+	 */
 	public String getFilterName()
 	{
 		if (nameText != null)
 		  return nameText.getText().trim();
 		else
 		  return inputFilterName;
-	}    	
+	}
 	/**
 	 * Return the filter pool that was explicitly chosen by the user,
 	 *  or implicitly set by the caller.
@@ -438,8 +440,8 @@ public class SystemNewFilterWizardNamePage
 		  pool = parentPool;
 		//System.out.println("Inside getParentSystemFilterPool. returning " + pool.getName());
 	    return pool;
-	}	
-	
+	}
+
 	/**
 	 * Return the user's decision whether to create this filter uniquely
 	 *  for this connection, or for all applicable connections.
@@ -452,7 +454,7 @@ public class SystemNewFilterWizardNamePage
 		 	return false;
 	}
 
-	// -------------------------------	
+	// -------------------------------
 	// INTERCEPT OF WIZARDPAGE METHODS
 	// -------------------------------
 	/**
@@ -478,8 +480,8 @@ public class SystemNewFilterWizardNamePage
 		}
 	}
 
-	// --------------------------------------------------------------	
-	// ALL THE MRI ON THIS PAGE IS CONFIGURABLE. CALL HERE TO SET IT. 		
 	// --------------------------------------------------------------
-	
+	// ALL THE MRI ON THIS PAGE IS CONFIGURABLE. CALL HERE TO SET IT.
+	// --------------------------------------------------------------
+
 }

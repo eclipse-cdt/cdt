@@ -366,6 +366,10 @@ public class SystemTableView
         _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_DOWN_ID);
 	}
 
+	/**
+	 * @since 3.0 Moved SystemTableViewProvider from internal to API
+	 * @return
+	 */
 	protected SystemTableViewProvider getProvider()
 	{
 		if (_provider == null)
@@ -495,6 +499,11 @@ public class SystemTableView
 			return new IPropertyDescriptor[0];
 	}
 
+	/**
+	 * @since 3.0 replaced SystemTableViewColumnManager by
+	 *        ISystemTableViewColumnManager
+	 * @return
+	 */
 	public ISystemTableViewColumnManager getColumnManager()
 	{
 	    return _columnManager;
@@ -1412,10 +1421,13 @@ public class SystemTableView
 			_refreshAction = new SystemRefreshAction(getShell());
 		return _refreshAction;
 	}
-	
+
+
 	/**
-	 * Rather than pre-defining this common action we wait until it is first needed,
-	 *  for performance reasons.
+	 * Rather than pre-defining this common action we wait until it is first
+	 * needed, for performance reasons.
+	 *
+	 * @since 3.0
 	 */
 	public IAction getNewConnectionAction() {
 		if (_newConnectionAction == null) _newConnectionAction = new SystemNewConnectionAction(getShell(), true, this); // true=>from popup menu
@@ -1432,10 +1444,10 @@ public class SystemTableView
 			_importConnectionAction.setShell(getShell());
 			_importConnectionAction.setText(SystemResources.RESID_IMPORT_CONNECTION_LABEL_LONG);
 		}
-		return _importConnectionAction; 
+		return _importConnectionAction;
 	}
-	
-	
+
+
 	/*
 	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
@@ -1700,6 +1712,8 @@ public class SystemTableView
 
 	/**
 	 * Get the specific "Renaming %1..."
+	 *
+	 * @since 3.0
 	 */
     protected SystemMessage getRenamingMessage(String oldName)
     {
@@ -1829,7 +1843,7 @@ public class SystemTableView
 			menu.add(getImportConnectionAction());
 			menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
 		}
-		else 
+		else
 		{
 			SystemView.createStandardGroups(menu);
 			// ADD COMMON ACTIONS...

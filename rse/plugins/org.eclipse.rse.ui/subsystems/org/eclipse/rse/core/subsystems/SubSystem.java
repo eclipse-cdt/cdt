@@ -541,10 +541,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			system.clearCredentials();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.rse.core.subsystems.ISubSystem#checkIsConnected(org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * @{inheritDoc
+	 * @since 3.0
 	 */
 	public void checkIsConnected(IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -2180,7 +2179,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	{
 		// for bug 233435, implicit connect if the connection is not connected
 		checkIsConnected(monitor);
-		
+
 		if (isConnected())
 		{
 			if (!supportsConnecting && !_isInitialized) {
@@ -3237,7 +3236,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * the subsystem is compatible with the suggested configuration. If it is
 	 * the switch will be performed and internalSwitchSubSystemConfiguration
 	 * will be called.
-	 * 
+	 *
 	 * @see ISubSystem#switchServiceFactory(ISubSystemConfiguration)
 	 * @see #internalSwitchSubSystemConfiguration(ISubSystemConfiguration)
 	 * @since 3.0

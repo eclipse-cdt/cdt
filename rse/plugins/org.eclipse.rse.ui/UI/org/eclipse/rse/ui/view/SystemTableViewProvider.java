@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [216161] table view needs to handle context when filter reference is input
@@ -46,10 +46,11 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
 /**
- * This is the content and label provider for the SystemTableView.
- * This class is used both to populate the SystemTableView but also
- * to resolve the icon and labels for the cells in the table.
+ * This is the content and label provider for the SystemTableView. This class is
+ * used both to populate the SystemTableView but also to resolve the icon and
+ * labels for the cells in the table.
  * 
+ * @since 3.0 Moved from internal to API
  */
 public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvider, ITreeContentProvider
 {
@@ -135,11 +136,11 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	protected ISystemViewElementAdapter getAdapterFor(Object object)
 	{
 	    ISystemViewElementAdapter result = null;
-	    if (_viewer != null) 
+	    if (_viewer != null)
 	    {
 	        result = SystemAdapterHelpers.getViewAdapter(object, _viewer);
 	    }
-	    else 
+	    else
 	    {
 	        result = SystemAdapterHelpers.getViewAdapter(object);
 	    }
@@ -164,17 +165,17 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 				if (adapter != null)
 				{
 				    adapter.setViewer(_viewer);
-								    
+
 				    // do we have context?
 				    if (object instanceof ISystemFilterReference) {
 				    	ISubSystem ss = adapter.getSubSystem(object);
-				    	
+
 				    	ContextObject context = new ContextObject(object, ss, (ISystemFilterReference)object);
 				    	results = adapter.getChildren(context, new NullProgressMonitor());
 				    }
 				    else {
 				    	results = adapter.getChildren((IAdaptable)object, new NullProgressMonitor());
-				    	
+
 				    }
 					if (adapter instanceof SystemViewRootInputAdapter)
 					{
@@ -185,12 +186,12 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 							ISystemViewElementAdapter cadapter = getAdapterFor(result);
 							if (!(cadapter instanceof SystemViewPromptableAdapter))
 							{
-								filterredResults.add(result);	
-							}							
+								filterredResults.add(result);
+							}
 						}
 						results = filterredResults.toArray();
 					}
-					
+
 					_lastResults = results;
 					_lastObject = object;
 				}
@@ -204,7 +205,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	}
 
 	public String getText(Object object)
-	{		
+	{
 		String result = getAdapterFor(object).getText(object);
 		int len = result.length();
 		if (len > _maxCharsInColumnZero)
@@ -213,7 +214,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 		}
 		return result;
 	}
-	
+
 	public int getMaxCharsInColumnZero()
 	{
 		return _maxCharsInColumnZero;
@@ -239,7 +240,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 		}
 		return image;
 	}
-	
+
 	public String getColumnText(Object obj, int index)
 	{
 		if (index == 0)
@@ -256,7 +257,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 			IPropertyDescriptor[] descriptors = null;
 			if (_columnManager != null)
 			{
-			    descriptors = _columnManager.getVisibleDescriptors(adapter); 
+			    descriptors = _columnManager.getVisibleDescriptors(adapter);
 			}
 			else
 			{
@@ -279,7 +280,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 					}
 					else if (propertyValue instanceof Date)
 					{
-						return _dateFormat.format((Date)propertyValue);	
+						return _dateFormat.format((Date)propertyValue);
 					}
 					else
 						if (propertyValue != null)
@@ -324,7 +325,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	{
 		listeners.remove(listener);
 	}
-	
+
 	/**
 	 * Cache the objects for the given parent.
 	 * @param parent the parent object.
@@ -333,7 +334,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	public void setCachedObjects(Object parent, Object[] children) {
 		cache.put(parent, children);
 	}
-	
+
 	/**
 	 * Returns the cached objects for the given parent.
 	 * @param parent the parent object.
@@ -342,7 +343,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	public Object[] getCachedObjects(Object parent) {
 		return (Object[])(cache.get(parent));
 	}
-	
+
 
 	public void setCache(Object[] newCache)
 	{
@@ -364,7 +365,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 		{
 		//	((ISystemContainer)_lastObject).markStale(true);
 		}
-		
+
 		_lastResults = null;
 		return true;
 	}
@@ -372,6 +373,6 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	public void dispose()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 }

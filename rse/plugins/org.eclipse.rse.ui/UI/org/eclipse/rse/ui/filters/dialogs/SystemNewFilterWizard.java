@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Shell;
  * Base Wizard for users to define a new system filter.
  * While subsystem providers are free to offer their own wizards, this
  * abstracts out much of it and makes it easy to simply override and
- * supply a couple classes to offer a totally unique presentation to the 
+ * supply a couple classes to offer a totally unique presentation to the
  * user.
  * <p>
  * Some guiding design rules for this wizard:
@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.Shell;
  *       is created, only after via the change action. The wizard basically
  *       prompts for the creation of a single new filter string.
  *  <li>Users are confused about "naming" a filter, so the name is not asked
- *       for until the second page, and it is possible for subclasses to 
+ *       for until the second page, and it is possible for subclasses to
  *       default that name to something intelligent based on the contents of
  *       the first page, such that users can press Finish and not think about
  *       the name.
@@ -74,12 +74,12 @@ import org.eclipse.swt.widgets.Shell;
  * While this class can be subclassed, you should find all attributes can be
  * configured via setters.
  */
-public class SystemNewFilterWizard 
-	    extends AbstractSystemWizard 
+public class SystemNewFilterWizard
+	    extends AbstractSystemWizard
 {
-	protected SystemNewFilterWizardMainPage mainPage;	
-	private SystemNewFilterWizardNamePage namePage;	
-	protected SystemNewFilterWizardInfoPage infoPage;	
+	protected SystemNewFilterWizardMainPage mainPage;
+	private SystemNewFilterWizardNamePage namePage;
+	protected SystemNewFilterWizardInfoPage infoPage;
 	protected ISystemFilterContainer         filterContainer;
 	protected ISystemFilterPool              parentPool;
 	protected ISystemFilterPool[]            poolsToSelectFrom;
@@ -93,13 +93,13 @@ public class SystemNewFilterWizard
 	protected boolean                      fromRSE = false;
 	protected boolean                      page1DescriptionSet = false;
 	protected ISystemFilter                  newFilter = null;
-	protected SystemFilterStringEditPane    editPane;	
+	protected SystemFilterStringEditPane    editPane;
     protected ISystemFilterPoolReferenceManagerProvider provider;
     protected ISystemFilterPoolWrapperInformation      poolWrapperInformation;
-	protected ISystemFilterPoolSelectionValidator      filterPoolSelectionValidator; 
+	protected ISystemFilterPoolSelectionValidator      filterPoolSelectionValidator;
 	protected ISystemNewFilterWizardConfigurator       configurator;
 
-	    
+
 	/**
 	 * Constructor when you want to supply your own title and image
 	 * @param title - title to show for this wizard. This is used as the page title! The title is always "New"!
@@ -111,16 +111,16 @@ public class SystemNewFilterWizard
 		this(new SystemNewFilterWizardConfigurator(title), wizardImage, parentPool);
 	}
     /**
-     * Constructor when you want to use the default page title and image, or want to 
+     * Constructor when you want to use the default page title and image, or want to
      *  supply it via setWizardTitle and setWizardImage.
 	 * @param parentPool - the filter pool we are to create this filter in.
-     */	
+     */
 	public SystemNewFilterWizard(ISystemFilterPool parentPool)
 	{
 		this(new SystemNewFilterWizardConfigurator(),
 	  	      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERWIZARD_ID),
-	  	      parentPool);		      
-	}	
+	  	      parentPool);
+	}
 	/**
 	 * Constructor when you want to supply all your own configuration data
 	 * @param data - configuration data
@@ -137,36 +137,36 @@ public class SystemNewFilterWizard
 		setOutputObject(null);
 	}
 
-	// -----------------------------------	
+	// -----------------------------------
 	// INPUT/CONFIGURATION METHODS...
 	// -----------------------------------
 
     /**
-     * If you want to prompt the user for the parent filter pool to create this filter in, 
+     * If you want to prompt the user for the parent filter pool to create this filter in,
      *  call this with the list of filter pools. In this case, the filter pool passed into
      *  the constructor will be used as the initial selection.
      */
     public void setAllowFilterPoolSelection(ISystemFilterPool[] poolsToSelectFrom)
     {
     	this.poolsToSelectFrom = poolsToSelectFrom;
-    }    
+    }
     /**
      * This is an alternative to {@link #setAllowFilterPoolSelection(ISystemFilterPool[])}
      * <p>
-     * If you want to prompt the user for the parent filter pool to create this filter in, 
+     * If you want to prompt the user for the parent filter pool to create this filter in,
      *  but want to not use the term "pool" say, you can use an array of euphamisms. That is,
-     *  you can pass an array of objects that map to filter pools, but have a different 
+     *  you can pass an array of objects that map to filter pools, but have a different
      *  display name that is shown in the dropdown.
      * <p>
      * Of course, if you want to do this, then you will likely want to offer a different
-     *  label and tooltip for the prompt, and different verbiage above the prompt. The 
+     *  label and tooltip for the prompt, and different verbiage above the prompt. The
      *  object this method accepts as a parameter encapsulates all that information, and
      *  there is a default class you can use for this.
      */
     public void setAllowFilterPoolSelection(ISystemFilterPoolWrapperInformation poolsToSelectFrom)
     {
     	this.poolWrapperInformation = poolsToSelectFrom;
-    }    
+    }
     /**
      * Set the type of filter we are creating. Results in a call to setType on the new filter.
      * Types are not used by the base filter framework but are a way for tools to create typed
@@ -192,7 +192,7 @@ public class SystemNewFilterWizard
 		showFilterStrings = show;
 	}
 	/**
-	 * Call in order to not prompt the user for a filter name. This also implies we will not 
+	 * Call in order to not prompt the user for a filter name. This also implies we will not
 	 *  be prompting for a parent filter pool! Default is true.
 	 * <p>
 	 * This is used when creating temporary filters that won't be saved. In this case, on
@@ -231,7 +231,7 @@ public class SystemNewFilterWizard
 		this.defaultFilterStrings = defaultFilterStrings;
 	}
 	/**
-	 * Set if we are creating a filter for use in the RSE or not. This affects the 
+	 * Set if we are creating a filter for use in the RSE or not. This affects the
 	 *  tips and help.
 	 * <p>
 	 * This is set to true automatically by the subsystem factory base class in the RSE,
@@ -247,19 +247,19 @@ public class SystemNewFilterWizard
 	 */
 	public void setFilterPoolSelectionValidator(ISystemFilterPoolSelectionValidator validator)
 	{
-	     this.filterPoolSelectionValidator = validator;	
-	}    
+	     this.filterPoolSelectionValidator = validator;
+	}
 
     /**
      * Set the contextual system filter pool reference manager provider. Eg, in the RSE, this
      *  will be the selected subsystem if the New Filter action is launched from there, or if
      *  launched from a filter pool reference under there.
      * <p>
-     * Will be non-null if the current selection is a reference to a filter pool or filter, 
-     *  or a reference manager provider. 
+     * Will be non-null if the current selection is a reference to a filter pool or filter,
+     *  or a reference manager provider.
      * <p>
      * This is passed into the filter and filter string wizards and dialogs in case it is needed
-     *  for context. 
+     *  for context.
      */
     public void setSystemFilterPoolReferenceManagerProvider(ISystemFilterPoolReferenceManagerProvider provider)
     {
@@ -287,7 +287,7 @@ public class SystemNewFilterWizard
 	{
 		super.setWizardPageTitle(pageTitle);
 		if (configurator instanceof SystemNewFilterWizardConfigurator)
-		  ((SystemNewFilterWizardConfigurator)configurator).setPageTitle(pageTitle);		
+		  ((SystemNewFilterWizardConfigurator)configurator).setPageTitle(pageTitle);
 	}
 	/**
 	 * Set the description to display on the first page of the wizard
@@ -298,7 +298,7 @@ public class SystemNewFilterWizard
 		  ((SystemNewFilterWizardConfigurator)configurator).setPage1Description(description);
 		page1DescriptionSet = true;
 	}
-	
+
 	/**
 	 * Specify an edit pane that prompts the user for the contents of a filter string.
 	 */
@@ -307,15 +307,15 @@ public class SystemNewFilterWizard
 		this.editPane = editPane;
 	}
 
-	// -----------------------------------	
+	// -----------------------------------
 	// INTERNAL BUT OVERRIDABLE METHODS...
 	// -----------------------------------
 	/**
 	 * Extendable point for child classes. You don't need to override typically though... rather
-	 *  you can simply supply your own filter string edit pane. 
+	 *  you can simply supply your own filter string edit pane.
 	 * <p>
 	 * By default, this page uses the wizard page title as set in setWizardPageTitle(...) or the constructor.
-	 * @return the primary page prompting for a single filter string. 
+	 * @return the primary page prompting for a single filter string.
 	 */
 	protected SystemNewFilterWizardMainPage createMainPage()
 	{
@@ -327,8 +327,12 @@ public class SystemNewFilterWizard
 	    return mainPage;
 	}
 	/**
-	 * By default, this page uses the wizard page title as set in setWizardPageTitle(...) or the constructor.
-	 * @return the wizard page prompting for the filter name and parent filter pool
+	 * By default, this page uses the wizard page title as set in
+	 * setWizardPageTitle(...) or the constructor.
+	 * 
+	 * @return the wizard page prompting for the filter name and parent filter
+	 *         pool
+	 * @since 3.0 moved SystemNewFilterWizardNamePage from internal to API
 	 */
 	protected SystemNewFilterWizardNamePage createNamePage()
 	{
@@ -346,17 +350,17 @@ public class SystemNewFilterWizard
 		boolean showFilterPoolsTip = ((poolsToSelectFrom != null) || (poolWrapperInformation != null));
 		infoPage = new SystemNewFilterWizardInfoPage(this, showFilterPoolsTip, configurator);
 	    return infoPage;
-	}	
+	}
 	/**
 	 * Override of parent to do nothing
 	 */
 	public void addPages() {}
-	
+
 	/**
-	 * Creates the wizard pages. 
+	 * Creates the wizard pages.
 	 * This method is an override from the parent Wizard class.
 	 */
-	public void createPageControls(Composite c) 
+	public void createPageControls(Composite c)
 	{
 		try {
 		   // MAIN PAGE...
@@ -381,7 +385,7 @@ public class SystemNewFilterWizard
 		   	      ISystemValidator[] validators = new ISystemValidator[poolsToSelectFrom.length];
 		   	      for (int idx=0; idx<validators.length; idx++)
 		   	 	     validators[idx] = getFilterNameValidator(poolsToSelectFrom[idx]);
-		          namePage.setAllowFilterPoolSelection(poolsToSelectFrom, validators);		     
+		          namePage.setAllowFilterPoolSelection(poolsToSelectFrom, validators);
 		      }
 		      else if (poolWrapperInformation != null)
 		      {
@@ -389,19 +393,19 @@ public class SystemNewFilterWizard
 		   	      ISystemValidator[] validators = new ISystemValidator[wrappers.length];
 		   	      for (int idx=0; idx<validators.length; idx++)
 		   	 	     validators[idx] = getFilterNameValidator(wrappers[idx].getSystemFilterPool());
-		          namePage.setAllowFilterPoolSelection(poolWrapperInformation, validators);		     
+		          namePage.setAllowFilterPoolSelection(poolWrapperInformation, validators);
 		      }
 		      else
 		      {
 	              ISystemValidator validator = getFilterNameValidator(getFilterContainer());
-		          namePage.setFilterNameValidator(validator);		   		     
+		          namePage.setFilterNameValidator(validator);
 		      }
 	          if (!showFilterStrings && page1DescriptionSet)
 	            	namePage.setDescription(configurator.getPage1Description());
 	          addPage(namePage);
 		   }
-	         		   	       
-		   // INFO PAGE...		   
+
+		   // INFO PAGE...
 		   if (showInfoPage)
 		   {
 	          infoPage = createInfoPage();
@@ -435,7 +439,7 @@ public class SystemNewFilterWizard
 	 * @return a name validator
 	 */
 	public static ISystemValidator getFilterNameValidator(ISystemFilterContainer container, ISystemFilter filter) {
-		String[] names = container.getSystemFilterNames(); 
+		String[] names = container.getSystemFilterNames();
 		Vector v = new Vector(names.length);
 		v.addAll(Arrays.asList(names));
 		if (filter != null) {
@@ -443,7 +447,7 @@ public class SystemNewFilterWizard
 		}
 		ValidatorFilterName filterNameValidator = new ValidatorFilterName(v);
 		return filterNameValidator;
-	}	
+	}
 
 	/**
 	 * Override if necessary.
@@ -458,12 +462,12 @@ public class SystemNewFilterWizard
 		  return fc.areStringsCaseSensitive();
 		return false;
 	}
-		
+
 	/**
-	 * Completes processing of the wizard. If this 
-	 * method returns true, the wizard will close; 
+	 * Completes processing of the wizard. If this
+	 * method returns true, the wizard will close;
 	 * otherwise, it will stay active.
-	 * This method is an override from the parent Wizard class. 
+	 * This method is an override from the parent Wizard class.
 	 *
 	 * @return whether the wizard finished successfully
 	 */
@@ -486,7 +490,7 @@ public class SystemNewFilterWizard
 					filterParent = namePage.getParentSystemFilterPool();
 					if (namePage.getUniqueToThisConnection()) {
 						/*
-						 * this means the user selected to create this filter in the filter pool that is unique to this connection. So now we 
+						 * this means the user selected to create this filter in the filter pool that is unique to this connection. So now we
 						 * must find, or create, that filter pool.
 						 */
 						filterParent = provider.getUniqueOwningSystemFilterPool(true); // true -> create if not found
@@ -500,7 +504,7 @@ public class SystemNewFilterWizard
 					newFilter = createNewFilter(getShell(), filterParent, filterName, filterStrings, type);
 					if (newFilter == null) return false;
 					/*
-					 * We allow users to select a profile to create their filter in. From this we 
+					 * We allow users to select a profile to create their filter in. From this we
 					 * select the default filter pool for the particular subsystem in that profile.
 					 * It is possible for the user to pick a profile that this subsystem does not yet reference.
 					 * To solve this we need to add a reference for them. This is only a possibility when called
@@ -538,7 +542,7 @@ public class SystemNewFilterWizard
 					}
 				}
 				ok = (newFilter != null);
-			} // end if showNamePrompt	
+			} // end if showNamePrompt
 			else {
 				ok = true;
 				setOutputObject(filterStrings);
@@ -547,7 +551,7 @@ public class SystemNewFilterWizard
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Return the parent into which we are creating a filter. If filterContainer has been set,
 	 *  returns that, else returns getInputObject() which is set by the calling action.
@@ -564,7 +568,7 @@ public class SystemNewFilterWizard
 	 */
 	protected ISystemFilterContainer getFilterContainer()
 	{
-		//System.out.println("Old. inside getFilterContainer. " + filterContainer + ", " + getInputObject());				
+		//System.out.println("Old. inside getFilterContainer. " + filterContainer + ", " + getInputObject());
 
 		if (filterContainer == null)
 		{
@@ -583,9 +587,9 @@ public class SystemNewFilterWizard
 		    else if (input instanceof ISystemFilterContainer)
 		  	  return (ISystemFilterContainer)input;
 		  	else if (input instanceof ISystemFilterContainerReference)
-		  	  return ((ISystemFilterContainerReference)input).getReferencedSystemFilterContainer();  
+		  	  return ((ISystemFilterContainerReference)input).getReferencedSystemFilterContainer();
 		  	else if (input instanceof ISystemFilterPoolReference)
-              return ((ISystemFilterPoolReference)input).getReferencedFilterPool();		  		
+              return ((ISystemFilterPoolReference)input).getReferencedFilterPool();
 		  	else if (parentPool != null)
 		  	  return parentPool;
 		  	else if ((poolsToSelectFrom != null) && (poolsToSelectFrom.length>0))
@@ -615,7 +619,7 @@ public class SystemNewFilterWizard
 	{
 		this.filterContainer = containerRef.getReferencedSystemFilterContainer();
 	}
-	
+
 	/**
 	 * Extendable point for child classes.
 	 * Override to create unique SystemFilter object.
@@ -637,7 +641,7 @@ public class SystemNewFilterWizard
 			newFilter = fpMgr.createSystemFilter(filterParent, aliasName, filterStringsVector, type);
 		return newFilter;
 	}
-	
+
 	// -----------------------
 	// CALLBACKS FROM PAGES...
 	// -----------------------
@@ -649,7 +653,7 @@ public class SystemNewFilterWizard
 		return fromRSE;
 	}
 	/**
-	 * For page 2 of the New Filter wizard, if it is possible to 
+	 * For page 2 of the New Filter wizard, if it is possible to
 	 *  deduce a reasonable default name from the user input here,
 	 *  then return it here. Else, just return null.
 	 * <b>
@@ -658,7 +662,7 @@ public class SystemNewFilterWizard
 	public String getDefaultFilterName()
 	{
 		return mainPage.getEditPane(null).getDefaultFilterName();
-	}	
+	}
 	// ------
 	// OUTPUT
 	// ------

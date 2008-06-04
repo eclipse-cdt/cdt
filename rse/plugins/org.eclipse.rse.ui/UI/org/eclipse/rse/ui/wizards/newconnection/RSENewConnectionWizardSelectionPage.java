@@ -191,6 +191,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 	 * Returns the list of system types the page is restricted to.
 	 *
 	 * @return The list of system types the page is restricted to or <code>null</code>.
+	 * @since 3.0 made protected method public
 	 */
 	public IRSESystemType[] getRestrictToSystemTypes() {
 		return restrictedSystemTypes;

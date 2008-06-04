@@ -124,6 +124,7 @@ public final class VirtualChild {
 
 	/**
 	 * @param value the time stamp value
+	 * @since 3.0
 	 */
 	public void setTimeStamp(long value)
 	{
@@ -145,6 +146,7 @@ public final class VirtualChild {
 
 	/**
 	 * @param value the size value
+	 * @since 3.0
 	 */
 	public void setSize(long value)
 	{
@@ -165,6 +167,7 @@ public final class VirtualChild {
 
 	/**
 	 * @param value the comment value
+	 * @since 3.0
 	 */
 	public void setComment(String value)
 	{
@@ -193,6 +196,7 @@ public final class VirtualChild {
 
 	/**
 	 * @param value the compressedSize value
+	 * @since 3.0
 	 */
 	public void setCompressedSize(long value)
 	{
@@ -213,6 +217,7 @@ public final class VirtualChild {
 
 	/**
 	 * @param value the compression method value
+	 * @since 3.0
 	 */
 	public void setCompressionMethod(String value)
 	{
@@ -263,11 +268,13 @@ public final class VirtualChild {
 	}
 
 	/**
-	 * @return The extracted file or directory represented by this VirtualChild from the archive.
-	 * Assumes that the file has been encoded in the encoding specified.
-	 * Note that the extracted file is cached after it is extracted once, but if the
-	 * timestamps on the cached and archived files do not match, the cached file is erased,
-	 * and reextracted from the archive.
+	 * @return The extracted file or directory represented by this VirtualChild
+	 *         from the archive. Assumes that the file has been encoded in the
+	 *         encoding specified. Note that the extracted file is cached after
+	 *         it is extracted once, but if the timestamps on the cached and
+	 *         archived files do not match, the cached file is erased, and
+	 *         re-extracted from the archive.
+	 * @since 3.0 throws SystemMessageException
 	 */
 	public File getExtractedFile(String sourceEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -341,10 +348,11 @@ public final class VirtualChild {
 	 * <code>destination</code> with that extracted file or directory. Note that
 	 * the extracted file is cached after it is extracted once, but if the
 	 * timestamps on the cached and archived files do not match, the cached file
-	 * is erased, and reextracted from the archive. <code>destination</code> is
+	 * is erased, and re-extracted from the archive. <code>destination</code> is
 	 * always overwritten with either what is cached, or what is in the archive.
 	 *
 	 * @throws SystemMessageException in case of an error
+	 * @since 3.0 throws SystemMessageException
 	 */
 	public void getExtractedFile(File destination, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -362,6 +370,7 @@ public final class VirtualChild {
 	 * always overwritten with either what is cached, or what is in the archive.
 	 *
 	 * @throws SystemMessageException in case of an error
+	 * @since 3.0 throws SystemMessageException
 	 */
 	public void getExtractedFile(File destination, String sourceEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor)
 			throws SystemMessageException

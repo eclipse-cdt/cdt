@@ -3,13 +3,13 @@
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Michael Scharf (Wind River) - Fix 163844: InvalidThreadAccess in checkForCollision
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
@@ -124,7 +124,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Utility class for doing file transfers on universal systems.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -141,7 +141,7 @@ public class UniversalFileTransferUtility
 		/**
 		 * Creates a new RenameStatus object. The created status has no
 		 * children.
-		 * 
+		 *
 		 * @param severity the severity; one of <code>OK</code>,
 		 *            <code>ERROR</code>, <code>INFO</code>,
 		 *            <code>WARNING</code>, or <code>CANCEL</code>
@@ -220,7 +220,7 @@ public class UniversalFileTransferUtility
 
 	/**
 	 * replicates a remote file to the temp files project in the workspace
-	 * 
+	 *
 	 * @param srcFileOrFolder the file to copy
 	 * @param monitor the progress monitor
 	 * @return the resulting local replica
@@ -268,7 +268,7 @@ public class UniversalFileTransferUtility
 					setReadOnly(tempFile, srcFileOrFolder.canWrite());
 				}
 
-				if (remoteEncoding != null) 
+				if (remoteEncoding != null)
 				{
 					if (srcFileOrFolder.isBinary())
 					{
@@ -281,15 +281,15 @@ public class UniversalFileTransferUtility
 							tempFile.setCharset(remoteEncoding, null);
 						}
 					}
-					else 
+					else
 					{
 						// using text mode so the char set needs to be local
 						SystemIFileProperties properties = new SystemIFileProperties(tempFile);
 						if (properties.getLocalEncoding() != null){
 							String localEncoding = properties.getLocalEncoding();
 							tempFile.setCharset(localEncoding, null);
-						}					
-						// otherwise, the default charset is inherited so no need to set					
+						}
+						// otherwise, the default charset is inherited so no need to set
 					}
 				}
 			}
@@ -397,7 +397,7 @@ public class UniversalFileTransferUtility
 	 * This method downloads a set of remote resources to the workspace.  It uses
 	 * the downloadMultiple() API of the remote file subsystem and service layers so
 	 * for some service implementations, this is a big optimization
-	 * 
+	 *
 	 * @param remoteSet the set of resources to download
 	 * @param monitor the progress monitor
 	 * @return the set of temporary files created as a result of the download.
@@ -471,7 +471,7 @@ public class UniversalFileTransferUtility
 				{
 					IResource tempFolder = getTempFileFor(srcFileOrFolder);
 					try
-					{	
+					{
 						//get contents of folder
 						IRemoteFile[] children = srcFS.list(srcFileOrFolder,IFileService.FILE_TYPE_FILES_AND_FOLDERS,monitor);
 						//check for empty folder and add to set
@@ -479,7 +479,7 @@ public class UniversalFileTransferUtility
 						{
 							emptyFolders.add(tempFolder);
 						}
-						//get all subfolders 
+						//get all subfolders
 						children=srcFS.list(srcFileOrFolder, IFileService.FILE_TYPE_FOLDERS, monitor);
 						if(!(children==null) && !(children.length==0))
 						{
@@ -544,7 +544,7 @@ public class UniversalFileTransferUtility
 					IStatus.ERROR, FileResources.FILEMSG_CREATE_FILE_FAILED, e);
 			resultSet.setMessage(errorMessage);
 		}
-		
+
 		// step 3: post download processing
 		if (!resultSet.hasMessage())
 		{
@@ -573,10 +573,10 @@ public class UniversalFileTransferUtility
 						{
 							setReadOnly(tempFile, srcFileOrFolder.canWrite());
 						}
-						
+
 						try
 						{
-							if (remoteEncoding != null) 
+							if (remoteEncoding != null)
 							{
 								if (srcFileOrFolder.isBinary())
 								{
@@ -589,23 +589,23 @@ public class UniversalFileTransferUtility
 										tempFile.setCharset(remoteEncoding, null);
 									}
 								}
-								else 
+								else
 								{
 									// using text mode so the char set needs to be local
 									if (properties.getLocalEncoding() != null){
 										String localEncoding = properties.getLocalEncoding();
 										tempFile.setCharset(localEncoding, null);
-									}					
-									// otherwise, the default charset is inherited so no need to set					
+									}
+									// otherwise, the default charset is inherited so no need to set
 								}
 							}
 						}
 						catch (Exception e)
 						{
-							SimpleSystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-											ICommonMessageIds.MSG_OPERATION_FAILED, 
+							SimpleSystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
+											ICommonMessageIds.MSG_OPERATION_FAILED,
 											IStatus.ERROR, "", e);  //$NON-NLS-1$
-							resultSet.setMessage(errorMessage);		
+							resultSet.setMessage(errorMessage);
 							return null;
 						}
 
@@ -625,7 +625,7 @@ public class UniversalFileTransferUtility
 		return resultSet;
 	}
 
-	private static void createEmptyFolders(IProgressMonitor monitor, List emptyFolders) throws CoreException 
+	private static void createEmptyFolders(IProgressMonitor monitor, List emptyFolders) throws CoreException
 	{
 		IContainer empty;
 		IFolder emptyFolder;
@@ -680,7 +680,7 @@ public class UniversalFileTransferUtility
 		boolean ok = true;
 		SystemWorkspaceResourceSet resultSet = new SystemWorkspaceResourceSet();
 		IRemoteFileSubSystem srcFS = (IRemoteFileSubSystem)remoteSet.getSubSystem();
-		
+
 		if (!srcFS.isConnected())
 		{
 			return null;
@@ -690,7 +690,7 @@ public class UniversalFileTransferUtility
 
 		List set = remoteSet.getResourceSet();
 		List emptyFolders = new ArrayList();
-		
+
 		for (int i = 0; i < set.size() && !resultSet.hasMessage(); i++)
 		{
 			if (monitor != null && monitor.isCanceled())
@@ -751,7 +751,7 @@ public class UniversalFileTransferUtility
 							{
 								emptyFolders.add(tempFolder);
 							}
-							
+
 							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
 							SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspace(childSet, monitor);
 							if (childResults.hasMessage())
@@ -781,7 +781,7 @@ public class UniversalFileTransferUtility
 					IStatus.ERROR, FileResources.FILEMSG_CREATE_FILE_FAILED, e);
 			resultSet.setMessage(errorMessage);
 		}
-		
+
 		// refresh and set IFile properties
 		for (int r = 0; r < resultSet.size(); r++)
 		{
@@ -1132,7 +1132,7 @@ public class UniversalFileTransferUtility
 				{
 					return false;
 				}
-				else if (destinationFile != null && file.exists()) {					
+				else if (destinationFile != null && file.exists()) {
 					destinationFile.setLastModified(file.lastModified());
 
 					if (destinationFile.length() != file.length()) {
@@ -1150,9 +1150,11 @@ public class UniversalFileTransferUtility
 
 	/**
 	 * Replicates a remote file or folder to the workspace
+	 *
 	 * @param srcFileOrFolder the object which is being copied
 	 * @param monitor a progress monitor
 	 * @return the temporary object that was created after the download
+	 * @since 3.0
 	 */
 	public static Object downloadResourceToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
 	{
@@ -1836,12 +1838,12 @@ public class UniversalFileTransferUtility
 				{
 					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
 					long timestamp = properties.getRemoteFileTimeStamp();
-					
+
 					// srcFileOrFolder may not be a file from the RemoteSystemTempFiles folder in which
 					// case there will be no stored property for the remote timestamp.
 					if (timestamp == 0)
-						timestamp = srcFileOrFolder.getLocalTimeStamp();	
-						
+						timestamp = srcFileOrFolder.getLocalTimeStamp();
+
 					try {
 						targetFS.setLastModified(copiedFile, timestamp, monitor);
 					}
@@ -2346,7 +2348,7 @@ public class UniversalFileTransferUtility
 			arc2.delete();
 	}
 	/**
-	 * 
+	 *
 	 */
 	protected static String useLocalSeparator(String virtualPath)
 	{
@@ -2726,6 +2728,10 @@ public class UniversalFileTransferUtility
 			_targetFileOrFolder = targetFileOrFolder;
 			cancelStatus = RENAME_DIALOG_NOT_CANCELLED;
 		}
+
+		/**
+		 * @since 3.0
+		 */
 		public RenameRunnable(IRemoteFile targetFileOrFolder, List namesInUse)
 		{
 			_targetFileOrFolder = targetFileOrFolder;
@@ -2830,11 +2836,11 @@ public class UniversalFileTransferUtility
 
 	/**
 	 * replicates a remote file to the temp files project in the workspace
-	 * 
+	 *
 	 * @param srcFileOrFolder the file to copy
 	 * @param monitor the progress monitor
 	 * @return the resulting local replica
-	 * 
+	 *
 	 * @deprecated use downloadFileToWorkspace
 	 */
 	protected static IFile copyRemoteFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
@@ -2849,11 +2855,11 @@ public class UniversalFileTransferUtility
 	 * This method downloads a set of remote resources to the workspace.  It uses
 	 * the downloadMultiple() API of the remote file subsystem and service layers so
 	 * for some service implementations, this is a big optimization
-	 * 
+	 *
 	 * @param remoteSet the set of resources to download
 	 * @param monitor the progress monitor
 	 * @return the set of temp files created as a result of the download.
-	 * 
+	 *
 	 * @deprecated use downloadResourcesToWorkspaceMultiple
 	 * @since 3.0
 	 */
@@ -2868,7 +2874,7 @@ public class UniversalFileTransferUtility
 	 * @param remoteSet the objects which are being copied
 	 * @param monitor a progress monitor
 	 * @return the temporary objects that was created after the download
-	 * 
+	 *
 	 * @deprecated use downloadResourcesToWorkspace
 	 */
 	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspace(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
@@ -2877,7 +2883,7 @@ public class UniversalFileTransferUtility
 	}
 
 	/**
-	 * 
+	 *
 	 * @deprecated use downloadResourceToWorkspace
 	 */
 	public static Object copyRemoteResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {
@@ -2889,7 +2895,7 @@ public class UniversalFileTransferUtility
 	 * @param srcFileOrFolder the file to copy.
 	 * @param monitor the progress monitor.
 	 * @return the resulting local replica.
-	 * 
+	 *
 	 * @deprecated use downloadFileToWorkspace
 	 */
 	protected static IFile copyRemoteFileToWorkspace(File srcFileOrFolder, IProgressMonitor monitor)
@@ -2904,7 +2910,7 @@ public class UniversalFileTransferUtility
 	 * @param srcFileOrFolder the object which is being copied
 	 * @param monitor a progress monitor
 	 * @return the temporary object that was created after the download
-	 * 
+	 *
 	 * @deprecated use downloadResourceToWorkspace
 	 */
 	public static Object copyRemoteResourceToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
@@ -2918,7 +2924,7 @@ public class UniversalFileTransferUtility
 	 * @param targetFolder the object to be copied to.
 	 * @param monitor the progress monitor
 	 * @return the resulting remote object
-	 * 
+	 *
 	 * @deprecated use uploadResourceFromWorkspace
 	 */
 	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor)
@@ -2934,7 +2940,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor
 	 * @param checkForCollisions indicates whether to check for collisions or not
 	 * @return the resulting remote objects
-	 * 
+	 *
 	 * @deprecated use uploadResourcesFromWorkspace
 	 */
 	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
@@ -2950,7 +2956,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor
 	 * @param checkForCollisions indicates whether to check for collisions or not
 	 * @return the result remote object
-	 * 
+	 *
 	 * @deprecated use uploadResourceFromWorkspace
 	 */
 	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
@@ -2963,7 +2969,7 @@ public class UniversalFileTransferUtility
 	 * @param newTargetFolder
 	 * @param monitor
 	 * @throws Exception
-	 * 
+	 *
 	 * @deprecated use compressedUploadFromWorkspace
 	 */
 	public static void compressedCopyWorkspaceResourceToRemote(IContainer directory, IRemoteFile newTargetFolder, IProgressMonitor monitor) throws Exception
@@ -2972,12 +2978,12 @@ public class UniversalFileTransferUtility
 	}
 
 	/**
-	 * 
+	 *
 	 * @param directory
 	 * @param monitor
 	 * @return
 	 * @throws Exception
-	 * 
+	 *
 	 * @deprecated use compressedDownloadToWorkspace
 	 */
 	public static IResource compressedCopyRemoteResourceToWorkspace(IRemoteFile directory, IProgressMonitor monitor) throws Exception

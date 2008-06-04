@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
@@ -83,7 +83,7 @@ import org.eclipse.swt.widgets.Text;
  *   <li>{@link #setSystemTypes(IRSESystemType[])}
  *   <li>{@link #setRootFolder(IHost, String)} or {@link #setRootFolder(IRemoteFile)}
  *   <li>{@link #setPreSelection(IRemoteFile)}
- *   <li>{@link #setFileTypes(String[])} or {@link #setFileTypes(String)} 
+ *   <li>{@link #setFileTypes(String[])} or {@link #setFileTypes(String)}
  *   <li>{@link #setAutoExpandDepth(int)}
  *   <li>{@link #setShowPropertySheet(boolean)}
  *   <li>{@link #enableAddMode(org.eclipse.rse.files.ui.ISystemAddFileListener)}
@@ -102,28 +102,28 @@ import org.eclipse.swt.widgets.Text;
  *   <li>{@link #getSelectedConnection()}
  * </ul>
  */
-public class SystemSelectRemoteFileOrFolderForm 
+public class SystemSelectRemoteFileOrFolderForm
  	   implements ISelectionChangedListener
-{	
+{
 	protected static final int PROMPT_WIDTH = 400; // The maximum width of the dialog's prompt, in pixels.
-	
+
 	// GUI widgets
     protected Label                   verbiageLabel, spacer1, spacer2;
 	protected Text                    nameEntryValue;
 	private SystemViewForm          tree;
     private SystemPropertySheetForm ps;
-	protected ISystemMessageLine      msgLine;	
-	protected Composite               outerParent, ps_composite;	
+	protected ISystemMessageLine      msgLine;
+	protected Composite               outerParent, ps_composite;
 	// inputs
 	protected ISystemRegistry sr = null;
 	protected String    verbiage = null;
-	protected String    treeTip = null;	
+	protected String    treeTip = null;
 	protected String 	locationPrompt = ""; //$NON-NLS-1$
 	protected String    fileTypes;
 	protected boolean   fileMode;
 	protected boolean   valid = true;
 	protected boolean   filesOnlyMode;
-	protected boolean   showRootFilter = true;	
+	protected boolean   showRootFilter = true;
 	protected boolean   alwaysEnableOK = false;
 	protected boolean   multipleSelectionMode;
 	protected boolean   allowForMultipleParents = false;
@@ -134,8 +134,8 @@ public class SystemSelectRemoteFileOrFolderForm
 	protected ISystemAddFileListener    addButtonCallback = null;
 	protected Vector    listeners = new Vector();
 	protected IValidatorRemoteSelection selectionValidator;
-	// outputs 
-	protected Object[]         outputObjects = null;	
+	// outputs
+	protected Object[]         outputObjects = null;
 	protected IHost outputConnection = null;
 	// state
 	//protected ResourceBundle rb;
@@ -145,10 +145,10 @@ public class SystemSelectRemoteFileOrFolderForm
     protected boolean      preSelectRoot;
 	protected boolean      initDone;
 	protected boolean      contentsCreated;
-	
+
 	//protected String  errorMessage;
 	protected Object  caller;
-	protected boolean callerInstanceOfWizardPage, callerInstanceOfSystemPromptDialog;	
+	protected boolean callerInstanceOfWizardPage, callerInstanceOfSystemPromptDialog;
 	protected int     autoExpandDepth = 0;
 
 	protected Object previousSelection = null;
@@ -165,13 +165,13 @@ public class SystemSelectRemoteFileOrFolderForm
 	 * @see #setSystemTypes(IRSESystemType[])
      * @see #setSelectionTreeToolTipText(String)
 	 */
-	public SystemSelectRemoteFileOrFolderForm(ISystemMessageLine msgLine, Object caller, boolean fileMode) 
+	public SystemSelectRemoteFileOrFolderForm(ISystemMessageLine msgLine, Object caller, boolean fileMode)
 	{
 		this.msgLine = msgLine;
 		this.caller = caller;
 		this.fileMode = fileMode;
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
-		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);				
+		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);
 		//rb = RSEUIPlugin.getResourceBundle();
 		sr = RSECorePlugin.getTheSystemRegistry();
 
@@ -181,14 +181,14 @@ public class SystemSelectRemoteFileOrFolderForm
 
         // create the input provider that drives the contents of the tree
         inputProvider = getInputProvider();
-        
+
          String initialFilterString = "*"; // change to "*" for defect 43492 //$NON-NLS-1$
         inputProvider.setFilterString(fileMode ? initialFilterString : initialFilterString+" /nf"); //$NON-NLS-1$
-        
+
         // create object matcher
         if (fileMode)
           objectMatcher = SystemRemoteFileMatcher.getFileOnlyMatcher();
-        else 
+        else
           objectMatcher = SystemRemoteFileMatcher.getFolderOnlyMatcher();
 	}
 
@@ -198,19 +198,22 @@ public class SystemSelectRemoteFileOrFolderForm
 	/**
 	 * Returns the input provider that drives the contents of the tree
 	 * Subclasses can override to provide custom tree contents
+	 *
+	 * @since 3.0 replaced SystemSelectRemoteObjectAPIProvider by
+	 *        ISystemSelectRemoteObjectAPIProvider
 	 */
 	protected ISystemSelectRemoteObjectAPIProvider getInputProvider()
 	{
 		if (inputProvider == null)
 		{
 		    // create the input provider that drives the contents of the tree
-			inputProvider = new SystemSelectRemoteObjectAPIProviderImpl(null, ISystemFileRemoteTypes.TYPECATEGORY, 
+			inputProvider = new SystemSelectRemoteObjectAPIProviderImpl(null, ISystemFileRemoteTypes.TYPECATEGORY,
 					true, null); // show new connection prompt, no system type restrictions
-	        
+
 		}
 		return inputProvider;
 	}
-	
+
 	/**
 	 * Indicate whether the form should allow selection of objects from different parents
 	 */
@@ -218,7 +221,7 @@ public class SystemSelectRemoteFileOrFolderForm
     {
         allowForMultipleParents = flag;
     }
-	
+
     /**
      * Set the connection to restrict the user to seeing
      */
@@ -246,11 +249,11 @@ public class SystemSelectRemoteFileOrFolderForm
     {
     	inputProvider.setShowNewConnectionPrompt(show);
     }
-    
+
     /**
      * Set the system types to restrict what connections the user sees,
      * and what types of connections they can create.
-     * 
+     *
      * @param systemTypes An array of system types, or
      *     <code>null</code> to allow all registered valid system types.
      *     A system type is valid if at least one subsystem configuration
@@ -260,7 +263,7 @@ public class SystemSelectRemoteFileOrFolderForm
     {
     	inputProvider.setSystemTypes(systemTypes);
     }
-    
+
     /**
      * Set the message shown as the text at the top of the form. Eg, "Select a file"
      */
@@ -284,17 +287,17 @@ public class SystemSelectRemoteFileOrFolderForm
      * Set the root folder from which to start listing folders or files.
      * This version identifies the folder via a connection object and absolute path.
      * There is another overload that identifies the folder via a single IRemoteFile object.
-     * 
+     *
      * @param connection The connection to the remote system containing the root folder
      * @param folderAbsolutePath The fully qualified folder to start listing from (eg: "\folder1\folder2")
-     * 
+     *
      * @see org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString
 	 */
 	public void setRootFolder(IHost connection, String folderAbsolutePath)
 	{
         setSystemConnection(connection);
         setShowNewConnectionPrompt(false);
-        setAutoExpandDepth(1);        
+        setAutoExpandDepth(1);
 		//ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
 		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemConfiguration();
@@ -303,7 +306,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		rffs.setShowSubDirs(!fileMode || !filesOnlyMode); // yes folders, always, for now
 		if (fileTypes != null)
 		  rffs.setFile(fileTypes);
-				
+
         // set the default filters we will show when the user expands a connection...
         String filterName = null;
         ISystemFilter filter = null;
@@ -312,7 +315,7 @@ public class SystemSelectRemoteFileOrFolderForm
           filterCount = 1;
         ISystemFilter[] filters = new ISystemFilter[filterCount];
         int idx = 0;
-        
+
         // filter one: "Root files"/"Root folders" or "Drives"
         if (showRootFilter)
         {
@@ -331,7 +334,7 @@ public class SystemSelectRemoteFileOrFolderForm
           }
           else
             filterName = fileMode ? SystemFileResources.RESID_FILTER_DRIVES : SystemFileResources.RESID_FILTER_DRIVES;
-          filter = SystemFilterUtil.makeSimpleFilter(filterName);       
+          filter = SystemFilterUtil.makeSimpleFilter(filterName);
           filter.setSubSystem(ss);
           filter.setFilterStrings(new String[] {rffs.toString()});
           filters[idx++] = filter;
@@ -343,20 +346,20 @@ public class SystemSelectRemoteFileOrFolderForm
 		    //RSEUIPlugin.logInfo("in setRootFolder. Given: " + folderAbsolutePath);
     	  }
         }
-        
+
         if (!preSelectRoot)
         {
-        
+
           // filter two: "\folder1\folder2"
-		  rffs.setPath(folderAbsolutePath); 
+		  rffs.setPath(folderAbsolutePath);
 
           filter = SystemFilterUtil.makeSimpleFilter(rffs.toStringNoSwitches());
           filter.setSubSystem(ss);
           filter.setFilterStrings(new String[] {rffs.toString()});
           filters[idx] = filter;
-        
+
           preSelectFilter = filter;
-          //RSEUIPlugin.logInfo("FILTER 2: " + filter.getFilterString());        
+          //RSEUIPlugin.logInfo("FILTER 2: " + filter.getFilterString());
         }
         inputProvider.setFilterString(null); // undo what ctor did
         inputProvider.setQuickFilters(filters);
@@ -365,9 +368,9 @@ public class SystemSelectRemoteFileOrFolderForm
      * Set the root folder from which to start listing folders.
      * This version identifies the folder via an IRemoteFile object.
      * There is another overload that identifies the folder via a connection and folder path.
-     * 
+     *
      * @param rootFolder The IRemoteFile object representing the remote folder to start the list from
-     * 
+     *
      * @see org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString
 	 */
 	public void setRootFolder(IRemoteFile rootFolder)
@@ -377,7 +380,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	/**
 	 * Set a file or folder to preselect. This will:
 	 * <ul>
-	 *   <li>Set the parent folder as the root folder 
+	 *   <li>Set the parent folder as the root folder
 	 *   <li>Pre-expand the parent folder
 	 *   <li>Pre-select the given file or folder after expansion
 	 * </ul>
@@ -399,16 +402,16 @@ public class SystemSelectRemoteFileOrFolderForm
 		  SystemBasePlugin.logInfo("parent of given is null"); //$NON-NLS-1$
 		/**/
 		// it might be a bug, bug when asking for the parent of '/', I get back '/'!!!
-		if ((parentFolder != null) && 
+		if ((parentFolder != null) &&
 		    (selection.getAbsolutePath().equals("/") && //$NON-NLS-1$
 		     (parentFolder.getAbsolutePath()!=null) &&
 		     parentFolder.getAbsolutePath().equals("/"))) //$NON-NLS-1$
-          parentFolder = null;		
+          parentFolder = null;
 		if (parentFolder != null)
 		{
 		   IRemoteFileSubSystemConfiguration ssf = selection.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration();
 		   boolean isUnix = ssf.isUnixStyle();
-		   if (isUnix)  
+		   if (isUnix)
 		     setRestrictFolders(parentFolder.isRoot());
 		   setRootFolder(parentFolder);
 		   preSelectFilterChild = selection.getName();
@@ -421,9 +424,9 @@ public class SystemSelectRemoteFileOrFolderForm
 		   setRestrictFolders(false);
 		   setRootFolder(selection);
 		}
-		inputProvider.setPreSelectFilterChild(preSelectFilterChild);		
+		inputProvider.setPreSelectFilterChild(preSelectFilterChild);
 	}
-	
+
 	/**
 	 * For files mode, restrict the files list by an array of file types
 	 * <p>
@@ -456,7 +459,7 @@ public class SystemSelectRemoteFileOrFolderForm
     	this.autoExpandDepth = depth+1;
     }
     /**
-     * Specify whether setRootFolder should prevent the user from being able to see or select 
+     * Specify whether setRootFolder should prevent the user from being able to see or select
      *  any other folder. This causes two effects:
      * <ol>
      *   <li>The special filter for root/drives is not shown
@@ -491,7 +494,7 @@ public class SystemSelectRemoteFileOrFolderForm
     {
     	this.showPropertySheet = show;
     }
- 
+
     /**
      * Set multiple selection mode. Default is single selection mode
      * <p>
@@ -501,8 +504,8 @@ public class SystemSelectRemoteFileOrFolderForm
      * Further, if you turn this on, it has the side effect of allowing the user
      *  to select any remote object. The assumption being if you are prompting for
      *  files, you also want to allow the user to select a folder, with the meaning
-     *  being that all files within the folder are implicitly selected. 
-     * 
+     *  being that all files within the folder are implicitly selected.
+     *
      * @see #getSelectedObjects()
      */
     public void setMultipleSelectionMode(boolean multiple)
@@ -511,7 +514,7 @@ public class SystemSelectRemoteFileOrFolderForm
     	if (multiple)
     	  objectMatcher = null;
     }
-    
+
     /**
      * Add a listener to selection change events in the tree
      */
@@ -532,7 +535,7 @@ public class SystemSelectRemoteFileOrFolderForm
     	else
     	  listeners.removeElement(l);
     }
-    
+
     /**
      * Specify a validator to use when the user selects a remote file or folder.
      * This allows you to decide if OK should be enabled or not for that remote file or folder.
@@ -541,14 +544,14 @@ public class SystemSelectRemoteFileOrFolderForm
     {
     	this.selectionValidator = selectionValidator;
     }
-    
+
 
     // ---------------------------------
     // OUTPUT METHODS...
     // ---------------------------------
     /**
      * Return first selected object
-     */	
+     */
     public Object getSelectedObject()
     {
     	if ((outputObjects != null) && (outputObjects.length>=1))
@@ -557,22 +560,22 @@ public class SystemSelectRemoteFileOrFolderForm
     	  return null;
     }
     /**
-     * Return all selected objects. 
+     * Return all selected objects.
      * @see #setMultipleSelectionMode(boolean)
-     */	
+     */
     public Object[] getSelectedObjects()
     {
     	return outputObjects;
     }
     /**
      * Return selected connection
-     */	
+     */
     public IHost getSelectedConnection()
     {
     	return outputConnection;
     }
 
-	
+
     /**
      * Return the multiple selection mode current setting
      */
@@ -599,8 +602,8 @@ public class SystemSelectRemoteFileOrFolderForm
 	public Control getInitialFocusControl()
 	{
 		return tree.getTreeControl();
-	}	
-	
+	}
+
 	/**
 	 * Show or hide the property sheet. This is called after the contents are created when the user
 	 *  toggles the Details button.
@@ -608,7 +611,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	 * @param contents Use getContents() in your dialog or wizard page
 	 * @return new state -> true if showing, false if hiding
 	 */
-	public boolean toggleShowPropertySheet(Shell shell, Control contents) 
+	public boolean toggleShowPropertySheet(Shell shell, Control contents)
 	{
 	    Point windowSize = shell.getSize();
 	    Point oldSize = contents.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -631,24 +634,24 @@ public class SystemSelectRemoteFileOrFolderForm
 
 	    Point newSize = contents.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	    shell.setSize(new Point(windowSize.x + (newSize.x - oldSize.x), windowSize.y));
-	    
+
 		if (ps != null)
 		{
 		  ISelection s = tree.getSelection();
 		  if (s != null)
-		    ps.selectionChanged(s);		  
+		    ps.selectionChanged(s);
 		}
-	    
+
 		showPropertySheet = !showPropertySheet;
 		return showPropertySheet;
 	}
-	
+
 	/**
 	 * Create the property sheet viewer
 	 */
 	private void createPropertySheet(Composite outerParent, Shell shell)
 	{
-		ps_composite = SystemWidgetHelpers.createFlushComposite(outerParent, 1);	
+		ps_composite = SystemWidgetHelpers.createFlushComposite(outerParent, 1);
 		((GridData)ps_composite.getLayoutData()).grabExcessVerticalSpace = true;
 		((GridData)ps_composite.getLayoutData()).verticalAlignment = GridData.FILL;
 
@@ -656,39 +659,39 @@ public class SystemSelectRemoteFileOrFolderForm
         spacer1 = SystemWidgetHelpers.createLabel(ps_composite, "", 1); //$NON-NLS-1$
         spacer2 = SystemWidgetHelpers.createLabel(ps_composite, "", 1); //$NON-NLS-1$
         // PROPERTY SHEET VIEWER
-        ps = new SystemPropertySheetForm(shell, ps_composite, SWT.BORDER, msgLine);			
+        ps = new SystemPropertySheetForm(shell, ps_composite, SWT.BORDER, msgLine);
 	}
-		
+
 	public void dispose()
 	{
 		if (tree != null)
 		{
-			tree.removeSelectionChangedListener(this);	
+			tree.removeSelectionChangedListener(this);
 			for (int i = 0; i < listeners.size(); i++)
 			{
-				tree.removeSelectionChangedListener((ISelectionChangedListener)listeners.get(i));	
+				tree.removeSelectionChangedListener((ISelectionChangedListener)listeners.get(i));
 			}
-		}	
-	}	
+		}
+	}
 	/**
 	 * In this method, we populate the given SWT container with widgets and return the container
-	 *  to the caller. 
+	 *  to the caller.
 	 * @param parent The parent composite
 	 */
 	public Control createContents(Shell shell, Composite parent)
 	{
 		contentsCreated = true;
-		
-		outerParent = parent;		
+
+		outerParent = parent;
 		// OUTER COMPOSITE
 		//if (showPropertySheet)
         {
-        	outerParent = SystemWidgetHelpers.createComposite(parent, showPropertySheet ? 2 : 1);        	
+        	outerParent = SystemWidgetHelpers.createComposite(parent, showPropertySheet ? 2 : 1);
         }
 
 		// INNER COMPOSITE
 		int gridColumns = 2;
-		Composite composite_prompts = SystemWidgetHelpers.createFlushComposite(outerParent, gridColumns);	
+		Composite composite_prompts = SystemWidgetHelpers.createFlushComposite(outerParent, gridColumns);
 
         // PROPERTY SHEET COMPOSITE
 		if (showPropertySheet)
@@ -706,22 +709,22 @@ public class SystemSelectRemoteFileOrFolderForm
 
         // SPACER LINE
         SystemWidgetHelpers.createLabel(composite_prompts, "", gridColumns); //$NON-NLS-1$
-       
+
         // LOCATION PROMPT
         if (showLocationPrompt)
         {
         	SystemWidgetHelpers.createLabel(composite_prompts, locationPrompt, gridColumns);
         }
-        
+
         // SELECT OBJECT READONLY TEXT FIELD
         Composite nameComposite = composite_prompts;
         int       nameSpan = gridColumns;
 	    nameEntryValue = SystemWidgetHelpers.createReadonlyTextField(nameComposite);
 		((GridData)nameEntryValue.getLayoutData()).horizontalSpan = nameSpan;
-		
+
 		// create an array of viewer filters from our list of viewer filters
 		ViewerFilter[] initViewerFilters = null;
-		
+
 		// if we don't have a viewer filter list, then create an empty array
 		if (viewerFilters == null) {
 			initViewerFilters = new ViewerFilter[0];
@@ -729,11 +732,11 @@ public class SystemSelectRemoteFileOrFolderForm
 		// otherwise copy from list to array
 		else {
 			initViewerFilters = new ViewerFilter[viewerFilters.size()];
-			
+
 			Iterator iter = viewerFilters.iterator();
-			
+
 			int idx = 0;
-			
+
 			// copy from list to array
 			while (iter.hasNext()) {
 				ViewerFilter filter = (ViewerFilter)(iter.next());
@@ -742,9 +745,9 @@ public class SystemSelectRemoteFileOrFolderForm
 			}
 		}
 
-		// TREE        
+		// TREE
 		tree = new SystemViewForm(shell, composite_prompts, SWT.NULL, inputProvider, !multipleSelectionMode, msgLine, gridColumns, 1, initViewerFilters);
-		
+
 		if (treeTip != null)
 		  //tree.setToolTipText(treeTip); //EXTREMELY ANNOYING!
 		if (autoExpandDepth != 0)
@@ -755,10 +758,10 @@ public class SystemSelectRemoteFileOrFolderForm
 
         // initialize fields
 	    if (!initDone)
-	      doInitializeFields();		  		
+	      doInitializeFields();
 
 	    // add selection listeners
-		tree.addSelectionChangedListener(this);				  
+		tree.addSelectionChangedListener(this);
 		if (listeners.size() > 0)
 		  for (int idx=0; idx<listeners.size(); idx++)
 		     tree.addSelectionChangedListener((ISelectionChangedListener)listeners.elementAt(idx));
@@ -770,21 +773,21 @@ public class SystemSelectRemoteFileOrFolderForm
 		  Object preSelectFilterChildObject = inputProvider.getPreSelectFilterChildObject();
 		  if (preSelectFilterChildObject != null)
 		    tree.select(preSelectFilterChildObject, false);
-		}		  
-        
+		}
+
 		return composite_prompts;
 	}
 
 	/**
-	 * Completes processing of the wizard page or dialog. If this 
-	 * method returns true, the wizard/dialog will close; 
+	 * Completes processing of the wizard page or dialog. If this
+	 * method returns true, the wizard/dialog will close;
 	 * otherwise, it will stay active.
 	 *
 	 * @return true if no errors
 	 */
-	public boolean verify() 
+	public boolean verify()
 	{
-		msgLine.clearErrorMessage();    		
+		msgLine.clearErrorMessage();
         outputConnection = internalGetConnection();
 		return true;
 	}
@@ -793,7 +796,7 @@ public class SystemSelectRemoteFileOrFolderForm
     // -----------------------------------------------------
     // PRIVATE METHODS USED BY US...
     // -----------------------------------------------------
-    
+
     /**
      * Return the current connection
      */
@@ -806,7 +809,7 @@ public class SystemSelectRemoteFileOrFolderForm
     	}
     	return null;
     }
-    
+
     protected void setNameText(String text)
     {
     	nameEntryValue.setText(text);
@@ -819,20 +822,20 @@ public class SystemSelectRemoteFileOrFolderForm
 	{
 		  setPageComplete();
 		  initDone = true;
-		  return; 
+		  return;
 	}
-	
+
     /**
      * Returns the implementation of ISystemRemoteElement for the given
      * object.  Returns null if this object does not adaptable to this.
      */
-    private ISystemRemoteElementAdapter getRemoteAdapter(Object o) 
+    private ISystemRemoteElementAdapter getRemoteAdapter(Object o)
     {
     	return SystemAdapterHelpers.getRemoteAdapter(o);
     }
-		
+
 	// ---------------------------------------------------
-	// METHODS FOR SELECTION CHANGED LISTENER INTERFACE... 
+	// METHODS FOR SELECTION CHANGED LISTENER INTERFACE...
 	// ---------------------------------------------------
 	/**
 	 * User selected something in the tree.
@@ -841,10 +844,10 @@ public class SystemSelectRemoteFileOrFolderForm
 	{
 		valid = true;
 		ISelection selection = e.getSelection();
-			
+
 		if (ps != null)
 		  ps.selectionChanged(selection);
-		  				
+
 		outputObjects = null;
 		int selectionSize = ((IStructuredSelection)selection).size();
 		if ((selectionSize > 1) && !tree.sameParent() && !allowForMultipleParents)
@@ -854,19 +857,19 @@ public class SystemSelectRemoteFileOrFolderForm
 			setPageComplete();
 		    return; // don't enable OK/Add if selections from different parents
 		}
-		
+
         Object errMsg = null;
 		Object selectedObject = getFirstSelection(selection);
 		if (selectedObject == previousSelection && selectionSize == 1)
 		{
 			// DKM we null set this before, so we need to reset it
 			outputObjects = getSelections(selection);
-			return;	
+			return;
 		}
 		clearErrorMessage();
 		setNameText(""); //$NON-NLS-1$
 		setPageComplete();
-		previousSelection = selectedObject;  
+		previousSelection = selectedObject;
 		if (selectedObject != null)
 		{
 
@@ -874,7 +877,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		  if (remoteAdapter != null)
 		  {
 			setNameTextFromSelection(selection, selectedObject, remoteAdapter);
-			
+
 		  	outputConnection = internalGetConnection();
 		  	if ((addButtonCallback != null) && (selectedObject instanceof IRemoteFile))
 		  	{
@@ -886,12 +889,12 @@ public class SystemSelectRemoteFileOrFolderForm
 		  		  setErrorMessage((String)errMsg);
 		  		else
 		  		  setErrorMessage((SystemMessage)errMsg);
-		  	  }		     
+		  	  }
 		  	}
 		  	else if ((objectMatcher == null) || objectMatcher.appliesTo(remoteAdapter, selectedObject))
 		  	{
 		  	  SystemMessage selectionMsg = null;
-		  	  if (selectionValidator != null) 
+		  	  if (selectionValidator != null)
 		  	  	selectionMsg = selectionValidator.isValid(outputConnection, getSelections(selection), getRemoteAdapters(selection));
 
 		  	  if (selectionMsg != null)
@@ -903,13 +906,13 @@ public class SystemSelectRemoteFileOrFolderForm
 		  	}
 		  	// if we're in file mode and folder selection is not allowed, then mark as invlaid selection
 		  	else if (fileMode && !allowFolderSelection) {
-		  	    
+
 		  	    if (remoteAdapter.getRemoteType(selectedObject).equals(ISystemFileRemoteTypes.TYPE_FOLDER)) {
 		  	        valid = false;
 		  	        setPageComplete();
 		  	    }
 		  	}
-		  }	
+		  }
 		}
 	}
 
@@ -923,8 +926,8 @@ public class SystemSelectRemoteFileOrFolderForm
 		}
 		return adapters;
 	}
-	
-	
+
+
 	private void setNameTextFromSelection(ISelection selection, Object selectedObject,ISystemRemoteElementAdapter remoteAdapter)
 	{
 		setNameText(remoteAdapter.getAbsoluteName(selectedObject));
@@ -945,9 +948,9 @@ public class SystemSelectRemoteFileOrFolderForm
 	        return selectionIterator.next();
 	      else
 	        return null;
-		}		
+		}
 		return null;
-	}	
+	}
 	/**
 	 * Return all items currently selected.
 	 */
@@ -956,16 +959,16 @@ public class SystemSelectRemoteFileOrFolderForm
 		IStructuredSelection sSelection = (IStructuredSelection)selection;
 		if (sSelection != null)
 		{
-		  Object[] selectedObjects = new Object[sSelection.size()]; 
+		  Object[] selectedObjects = new Object[sSelection.size()];
 	      Iterator selectionIterator = sSelection.iterator();
 	      int idx = 0;
 	      while (selectionIterator.hasNext())
 	      	selectedObjects[idx++] = selectionIterator.next();
 	      return selectedObjects;
-		}		
+		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * This method can be called by the dialog or wizard page host, to decide whether to enable
 	 * or disable the next, final or ok buttons. It returns true if the minimal information is
@@ -975,7 +978,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	{
 		return ( (getNameText().length() > 0) ) && valid;
 	}
-	
+
 	/**
 	 * Inform caller of page-complete status of this form
 	 */
@@ -988,7 +991,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		else if (callerInstanceOfSystemPromptDialog)
 		{
 		  ((SystemPromptDialog)caller).setPageComplete(isPageComplete());
-		}		
+		}
 	}
 
 
@@ -1026,17 +1029,17 @@ public class SystemSelectRemoteFileOrFolderForm
 		else
 		  return null;
 	}
-	
+
 	public void setShowLocationPrompt(boolean show)
 	{
 		showLocationPrompt = show;
 	}
-	
+
 	public void setLocationPrompt(String prompt)
 	{
 		locationPrompt = prompt;
 	}
-	
+
 	/**
 	 * Add viewer filter.
 	 * @param filter a viewer filter.
@@ -1044,7 +1047,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	public void addViewerFilter(ViewerFilter filter) {
 		viewerFilters.add(filter);
 	}
-	
+
 	/**
 	 * Sets whether to allow folder selection. The default selection validator will use this to
 	 * determine whether the OK button will be enabled when a folder is selected. The default
@@ -1054,16 +1057,21 @@ public class SystemSelectRemoteFileOrFolderForm
 	public void setAllowFolderSelection(boolean allow) {
 	    allowFolderSelection = allow;
 	}
-	
+
 	/**
 	 * Returns the system tree
+	 * 
 	 * @return the system tree
+	 * @since 3.0 replacing the previous getSystemViewForm method
 	 */
 	public ISystemTree getSystemTree()
 	{
 		return tree.getSystemTree();
 	}
-	
+
+	/**
+	 * @since 3.0
+	 */
 	public Object getSelectedParent()
 	{
 		return tree.getSelectedParent();

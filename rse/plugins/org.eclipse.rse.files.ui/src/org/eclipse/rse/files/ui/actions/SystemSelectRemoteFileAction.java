@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
@@ -70,13 +70,13 @@ import org.eclipse.swt.widgets.Shell;
  *   <li>{@link #getSelectedConnection()}
  * </ul>
  */
-public class SystemSelectRemoteFileAction extends SystemBaseDialogAction 
+public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 {
     private IRSESystemType[] systemTypes;
     private IHost systemConnection, outputConnection;
     private IHost rootFolderConnection;
     private IRemoteFile preSelection;
-    private String   rootFolderAbsPath;   
+    private String   rootFolderAbsPath;
     private String   message, treeTip, dlgTitle;
     private boolean  showNewConnectionPrompt = true;
 	private boolean  showPropertySheet = false;
@@ -99,7 +99,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 			this.allowFolderSelect = allowFolderSelection;
 			this.previousInChain = previousInChain;
 		}
-		
+
 		/**
 		 * The user has selected a remote object. Return null if OK is to be enabled, or a SystemMessage
 		 *  if it is not to be enabled. The message will be displayed on the message line.
@@ -108,15 +108,15 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		{
 			//if (selectedConnection != sourceConnection) {} // someday, but can't happen today.
 			SimpleSystemMessage msg = null;
-			
+
 			if (selectedObjects == null || selectedObjects.length == 0)
 			{
-				msg =  new SimpleSystemMessage(Activator.PLUGIN_ID, 
-						IStatus.INFO, 
+				msg =  new SimpleSystemMessage(Activator.PLUGIN_ID,
+						IStatus.INFO,
 						FileResources.MSG_MAKE_SELECTION);
 				return msg;
 			}
-			
+
 			if (allowFolderSelect == true)
 			{
 				if (previousInChain != null)
@@ -128,57 +128,57 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 					return null;
 				}
 			}
-			
-			for (int i = 0; i < selectedObjects.length; i++) 
+
+			for (int i = 0; i < selectedObjects.length; i++)
 			{
 				if (selectedObjects[i] instanceof IRemoteFile)
 				{
 					IRemoteFile selectedFile = (IRemoteFile)selectedObjects[i];
 					if (selectedFile != null && selectedFile.isDirectory()) {
-						msg =  new SimpleSystemMessage(Activator.PLUGIN_ID, 
-								IStatus.INFO, 
+						msg =  new SimpleSystemMessage(Activator.PLUGIN_ID,
+								IStatus.INFO,
 								FileResources.MSG_SELECT_FOLDER_NOT_VALID);
 						return msg;
 					}
 				}
 			}
-			
+
 			if (previousInChain != null)
 			{
 				return previousInChain.isValid(selectedConnection, selectedObjects, remoteAdaptersForSelectedObjects);
 			}
-			
+
 			return null;
 		}
-		
+
 	}
 	/**
 	 * Constructor that uses default action label and tooltip
-	 * 
-	 * @param shell The shell to hang the dialog off of	 
+	 *
+	 * @param shell The shell to hang the dialog off of
 	 */
 	public SystemSelectRemoteFileAction(Shell shell)
 	{
 		this(shell, FileResources.ACTION_SELECT_FILE_LABEL, FileResources.ACTION_SELECT_FILE_TOOLTIP);
-		
-	}	
+
+	}
 	/**
 	 * Constructor when you have your own action label and tooltip
-	 * 
-	 * @param shell The shell to hang the dialog off of	 
+	 *
+	 * @param shell The shell to hang the dialog off of
 	* @param label string to display in menu or toolbar
 	 * @param tooltip string to display when user hovers mouse over action.
 	 */
 	public SystemSelectRemoteFileAction(Shell shell, String label, String tooltip)
 	{
 		super(label, tooltip, null, shell);
-		super.setNeedsProgressMonitor(true); // the default is to include a monitor. Caller can override				
-	}	
+		super.setNeedsProgressMonitor(true); // the default is to include a monitor. Caller can override
+	}
 
 
     // ------------------------
 	// CONFIGURATION METHODS...
-    // ------------------------	
+    // ------------------------
     /**
      * Set the system connection to restrict the user to seeing in the tree.
      *
@@ -201,8 +201,8 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     /**
      * Set the system types to restrict what connections the user sees,
      * and what types of connections they can create.
-     * 
-     * @param systemTypes An array of system types, or 
+     *
+     * @param systemTypes An array of system types, or
      *     <code>null</code> to allow all registered valid system types.
      *     A system type is valid if at least one subsystem configuration
      *     is registered against it.
@@ -211,9 +211,9 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     {
     	this.systemTypes = systemTypes;
     }
-    
+
     /**
-     * Convenience method to restrict to a single system type. 
+     * Convenience method to restrict to a single system type.
      * Same as setSystemTypes(new IRSESystemType[] {systemType})
      *
      * @param systemType The name of the system type to restrict to, or
@@ -241,7 +241,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
      * Set the root folder from which to start listing files.
      * This version identifies the folder via a connection object and absolute path.
      * There is another overload that identifies the folder via a single IRemoteFile object.
-     * 
+     *
      * @param connection The connection to the remote system containing the root folder
      * @param folderAbsolutePath The fully qualified folder to start listing from (eg: "\folder1\folder2")
 	 */
@@ -249,8 +249,8 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	{
 		rootFolderConnection = connection;
 		rootFolderAbsPath = folderAbsolutePath;
-		
-		IRemoteFileSubSystem ss  =	RemoteFileUtility.getFileSubSystem(rootFolderConnection);	
+
+		IRemoteFileSubSystem ss  =	RemoteFileUtility.getFileSubSystem(rootFolderConnection);
 		if (ss != null)
 		{
 			try
@@ -272,7 +272,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
      * Set the root folder from which to start listing files.
      * This version identifies the folder via an IRemoteFile object.
      * There is another overload that identifies the folder via a connection and folder path.
-     * 
+     *
      * @param rootFolder The IRemoteFile object representing the remote folder to start the list from
 	 */
 	public void setRootFolder(IRemoteFile rootFolder)
@@ -282,7 +282,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	/**
 	 * Set a file or folder to preselect. This will:
 	 * <ul>
-	 *   <li>Set the parent folder as the root folder 
+	 *   <li>Set the parent folder as the root folder
 	 *   <li>Pre-expand the parent folder
 	 *   <li>Pre-select the given file or folder after expansion
 	 * </ul>
@@ -313,7 +313,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
      * selected object.
      * <p>
      * This overload shows a Details>>> button so the user can decide if they want to see the
-     * property sheet. 
+     * property sheet.
      * <p>
      * @param show True if to show the property sheet within the dialog
      * @param initialState True if the property is to be initially displayed, false if it is not
@@ -338,7 +338,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
      * Further, if you turn this on, it has the side effect of allowing the user
      *  to select any remote object. The assumption being if you are prompting for
      *  files, you also want to allow the user to select a folder, with the meaning
-     *  being that all files within the folder are implicitly selected. 
+     *  being that all files within the folder are implicitly selected.
      *
      * @see #getSelectedObjects()
      */
@@ -354,10 +354,10 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     {
     	this.clientProvidedSelectionValidator = selectionValidator;
     }
-    
+
 
     // -----------------------------------------------
-    // MRI METHODS. THESE ONLY NEED BE 
+    // MRI METHODS. THESE ONLY NEED BE
     // CALLED IF YOU WISH TO CHANGE THE DEFAULT MRI...
     // -----------------------------------------------
     /**
@@ -383,7 +383,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     }
 
 
-    // -----------------    
+    // -----------------
     // OUTPUT METHODS...
     // -----------------
 
@@ -408,14 +408,14 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     {
     	Object o = getValue();
     	if (o instanceof Object[]) {
-    		
+
     		Object[] temp = (Object[])o;
-    			
+
     		IRemoteFile[] files = new IRemoteFile[temp.length];
-    		
+
     		// ensure all objects are IRemoteFiles
     		for (int i = 0; i < temp.length; i++) {
-    			
+
     			if (temp[i] instanceof IRemoteFile) {
     				files[i] = (IRemoteFile)temp[i];
     			}
@@ -424,17 +424,17 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     				return new IRemoteFile[0];
     			}
     		}
-    			
+
     		return files;
     	}
     	return null;
     }
 
     /**
-     * Return all selected objects. This method will return an array of one 
+     * Return all selected objects. This method will return an array of one
      *  unless you have called setMultipleSelectionMode(true)!
      * @see #setMultipleSelectionMode(boolean)
-     */	
+     */
     public Object[] getSelectedObjects()
     {
     	Object remoteObject = getValue();
@@ -450,21 +450,24 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 
     /**
      * Return selected connection
-     */	
+     */
     public IHost getSelectedConnection()
     {
     	return outputConnection;
     }
 
+    /**
+	 * @since 3.0
+	 */
     public void setCustomViewerFilter(SystemActionViewerFilter filter)
 	{
 		customViewerFilter = filter;
 	}
-    
+
     // -------------------
     // INTERNAL METHODS...
     // -------------------
-        
+
 	/**
 	 * Called by eclipse when user selects this action
 	 */
@@ -472,20 +475,20 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	{
 		SystemRemoteFileDialog dlg = null;
 		if (dlgTitle == null)
-		  dlg = new SystemRemoteFileDialog(shell); 
+		  dlg = new SystemRemoteFileDialog(shell);
 		else
-		  dlg = new SystemRemoteFileDialog(shell, dlgTitle); 
-		
-		
+		  dlg = new SystemRemoteFileDialog(shell, dlgTitle);
+
+
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
 		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
-		
+
 		if (systemConnection != null)
 		{
 			dlg.setDefaultSystemConnection(systemConnection, onlyConnection);
 		}
 		dlg.setCustomViewerFilter(customViewerFilter);
-		
+
 		if (message != null)
 		  dlg.setMessage(message);
 		if (treeTip != null)
@@ -493,19 +496,19 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		/*
 		if (systemConnection != null)
 		{
-			if (onlyConnection)			   
+			if (onlyConnection)
 		      dlg.setSystemConnection(systemConnection);
 		    else
 		      dlg.setDefaultConnection(systemConnection);
 		}
 		*/
-		
+
 		if (systemTypes != null)
 		  dlg.setSystemTypes(systemTypes);
-		
+
 		if (preSelection != null)
-		  dlg.setPreSelection(preSelection);		  
-		
+		  dlg.setPreSelection(preSelection);
+
 		if (showPropertySheet)
 		  if (showPropertySheetDetailsButton)
 		    dlg.setShowPropertySheet(true, showPropertySheetDetailsButtonInitialState);
@@ -519,19 +522,19 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
             dlg.enableAddMode(addButtonCallback);
          */
 		IValidatorRemoteSelection selectionValidator = new RemoteFileSelectionValidator(allowFolderSelection, clientProvidedSelectionValidator);
-       
+
         dlg.setSelectionValidator(selectionValidator);
         /*
         if (!allowFolderSelection) {
             dlg.setAllowFolderSelection(allowFolderSelection);
         }
         */
-        
+
 		/*
         // add viewer filters if any
         if (viewerFilters != null) {
         	Iterator iter = viewerFilters.iterator();
-        	
+
         	while (iter.hasNext()) {
         		ViewerFilter filter = (ViewerFilter)(iter.next());
         		dlg.addViewerFilter(filter);
@@ -540,7 +543,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
         */
 
 		return dlg;
-	}    
+	}
 
 	/**
 	 * Required by parent. We return the selected object
@@ -555,12 +558,12 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		    if (multipleSelectionMode)
 			  outputObject = ourDlg.getSelectedObjects();
 			else
-			  outputObject = ourDlg.getSelectedObject();		  
+			  outputObject = ourDlg.getSelectedObject();
 		    outputConnection = ourDlg.getSelectedConnection();
 		}
 		return outputObject; // parent class calls setValue on what we return
 	}
-	
+
 	/**
 	 * Add viewer filter.
 	 * @param filter a viewer filter.
@@ -568,7 +571,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	public void addViewerFilter(ViewerFilter filter) {
 		viewerFilters.add(filter);
 	}
-	
+
 	/**
 	 * Sets whether to allow folder selection. The default selection validator will use this to
 	 * determine whether the OK button will be enabled when a folder is selected. The default
@@ -578,5 +581,5 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	public void setAllowFolderSelection(boolean allow) {
 	    allowFolderSelection = allow;
 	}
-	
+
 }

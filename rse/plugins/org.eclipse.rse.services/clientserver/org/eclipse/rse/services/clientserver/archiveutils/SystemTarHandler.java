@@ -73,6 +73,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	protected File file;
 	protected long modTimeDuringCache;
 	protected VirtualFileSystem vfs;
+	/** @since 3.0 */
 	protected SystemReentrantMutex _mutex;
 
 	/**
@@ -607,9 +608,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * Update the virtual file system tree.
-	 * If newOldName HashMap is input, use the old name in the HashMap
-	 * to do the search in virtual file system tree.
+	 * Update the virtual file system tree. If newOldName HashMap is input, use
+	 * the old name in the HashMap to do the search in virtual file system tree.
+	 *
+	 * @since 3.0
 	 */
 	protected void updateTree(HashMap newOldNames)
 	{
@@ -648,7 +650,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 	/**
 	 * Gets a tar file from the underlying file.
-	 * @return the tar file, or <code>null</code> if the tar file does not exist.
+	 *
+	 * @return the tar file, or <code>null</code> if the tar file does not
+	 *         exist.
+	 * @since 3.0 TarFile moved to API
 	 */
 	protected TarFile getTarFile() {
 
@@ -684,9 +689,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList(org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildrenList(ISystemOperationMonitor archiveOperationMonitor) {
 
@@ -714,9 +719,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return children;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildrenList(String parent, ISystemOperationMonitor archiveOperationMonitor) {
 		parent = ArchiveHandlerManager.cleanUpVirtualPath(parent);
@@ -753,9 +759,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return children;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildren(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildren(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 
@@ -771,9 +778,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return vfs.getChildren(fullVirtualName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildFolders(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildFolders(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 
@@ -789,9 +797,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return vfs.getChildrenFolders(fullVirtualName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualFile(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild getVirtualFile(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 
@@ -820,9 +829,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return entry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#exists(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public boolean exists(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 
@@ -899,8 +909,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualFile(java.lang.String, java.io.File)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualFile(String fullVirtualName, File destination, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
@@ -991,16 +1003,19 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, ISystemOperationMonitor)
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String fullVirtualName, File destinationParent, ISystemOperationMonitor archiveOperationMonitor)
 			throws SystemMessageException {
 		extractVirtualDirectory(fullVirtualName, destinationParent, (File) null, archiveOperationMonitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.io.File, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String fullVirtualName, File destinationParent, File destination, ISystemOperationMonitor archiveOperationMonitor)
 			throws SystemMessageException {
@@ -1100,9 +1115,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void add(File file, String virtualPath, String name, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
@@ -1179,6 +1195,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * Helper method. Populates given List <code>found</code> with a collapsed
 	 * list of all nodes in the subtree of the file system rooted at
 	 * <code>parent</code>.
+	 *
+	 * @since 3.0 Vector changed into List
 	 */
 	public void listAllFiles(File parent, List found) {
 
@@ -1194,9 +1212,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File[], java.lang.String, java.lang.String[], org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void add(File[] files, String virtualPath, String[] names, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 
@@ -1406,11 +1425,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * Appends a file to a tar output stream, using the given entry that represents the file.
+	 * Appends a file to a tar output stream, using the given entry that
+	 * represents the file.
+	 *
 	 * @param file the file to be appended to the tar output stream.
 	 * @param entry the entry which represents the file.
 	 * @param outStream the tar output stream.
 	 * @throws IOException if an I/O error occurs.
+	 * @since 3.0 TarEntry moved into API
 	 */
 	protected void appendFile(File file, TarEntry entry, TarOutputStream outStream) throws IOException {
 
@@ -1442,9 +1464,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * Creates a tar entry for a file with the given virtual path. The entry
 	 * will contain the size and last modified time of the file. The entry's
 	 * checksum will be calculated.
+	 *
 	 * @param file the file for which to create a tar entry.
 	 * @param virtualPath the virtual path for the entry.
 	 * @return the tar entry representing the given file.
+	 * @since 3.0 TarEntry moved into API
 	 */
 	protected TarEntry createTarEntry(File file, String virtualPath) {
 
@@ -1528,13 +1552,16 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * Changes a tar entry according to the file information and given path. The given path
-	 * will be the new name of the entry. The size and last modified fields will be changed
-	 * to the file's size and last modified time. The entry's checksum will be calculated.
+	 * Changes a tar entry according to the file information and given path. The
+	 * given path will be the new name of the entry. The size and last modified
+	 * fields will be changed to the file's size and last modified time. The
+	 * entry's checksum will be calculated.
+	 *
 	 * @param entry the entry that needs to be changed.
 	 * @param file the file for which the tar entry is being changed.
 	 * @param virtualPath the virtual path for the entry.
 	 * @return the changed entry.
+	 * @since 3.0 TarEntry moved into API
 	 */
 	protected TarEntry changeTarEntry(TarEntry entry, File file, String virtualPath) {
 
@@ -1582,8 +1609,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 	/**
 	 * Returns a virtual child given a tar entry.
+	 *
 	 * @param entry a tar entry.
 	 * @return the virtual child that represents the tar entry.
+	 * @since 3.0 TarEntry moved into API
 	 */
 	protected VirtualChild getVirtualChild(TarEntry entry) {
 		VirtualChild child = new VirtualChild(this, entry.getName());
@@ -1598,8 +1627,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 	/**
 	 * update a virtual child given a tar entry.
+	 *
 	 * @param entry a tar entry.
 	 * @return the virtual child that represents the tar entry.
+	 * @since 3.0 TarEntry moved into API
 	 */
 	protected VirtualChild updateVirtualChild(TarEntry entry, VirtualChild child) {
 		child.renameTo(entry.getName());
@@ -1651,9 +1682,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#replace(java.lang.String, java.io.File, java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void replace(String fullVirtualName, File file, String name, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 
@@ -1750,9 +1782,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#delete(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public boolean delete(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -1851,9 +1884,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#rename(java.lang.String, java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void rename(String fullVirtualName, String newName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
@@ -1873,9 +1907,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#move(java.lang.String, java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void move(String fullVirtualName, String destinationVirtualPath, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
@@ -1894,9 +1929,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#fullRename(java.lang.String, java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void fullRename(String fullVirtualName, String newFullVirtualName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 
@@ -2109,10 +2145,13 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * Changes the name of a tar entry. Also calculates the new checksum for the entry.
+	 * Changes the name of a tar entry. Also calculates the new checksum for the
+	 * entry.
+	 *
 	 * @param entry the entry for which the name has to be changed.
 	 * @param newName the new name for the entry.
 	 * @return the changed entry.
+	 * @since 3.0 TarEntry moved into API
 	 */
 	protected TarEntry changeTarEntryName(TarEntry entry, String newName) {
 
@@ -2125,9 +2164,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return entry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getFiles(java.lang.String[], org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public File[] getFiles(String[] fullNames, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 
@@ -2159,9 +2199,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return files;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFolder(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void createFolder(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
@@ -2173,9 +2214,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFile(java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void createFile(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
@@ -2280,11 +2322,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * Creates a new tar entry and appends it to the tar output stream with the given name.
+	 * Creates a new tar entry and appends it to the tar output stream with the
+	 * given name.
+	 * 
 	 * @param outStream the tar output stream.
 	 * @param name the name of the new tar entry.
 	 * @return the newly created tar entry.
 	 * @throws IOException if an I/O error occurs.
+	 * @since 3.0 TarEntry moved into API
 	 */
 	protected TarEntry appendEmptyFile(TarOutputStream outStream, String name) throws IOException {
 
@@ -2359,9 +2404,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return vc.fullName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#create()
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void create() throws SystemMessageException {
 
@@ -2384,6 +2430,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
+	 */
 	public SystemSearchLineMatch[] search(String fullVirtualName, SystemSearchStringMatcher matcher, ISystemOperationMonitor archiveOperationMonitor)
 			throws SystemMessageException {
 		// if the search string is empty or if it is "*", then return no matches
@@ -2494,8 +2545,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		add(file, virtualPath, name, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void add(File file, String virtualPath, String name,
 			String sourceEncoding, String targetEncoding, boolean isText,
@@ -2503,8 +2556,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		add(file, virtualPath, name, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File[], java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], boolean[])
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void add(File[] files, String virtualPath, String[] names,
 			String[] sourceEncodings, String[] targetEncodings, boolean[] isTexts,
@@ -2512,8 +2567,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		add(files, virtualPath, names, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.io.File, java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String dir, File destinationParent,
 			File destination, String sourceEncoding, boolean isText,
@@ -2521,16 +2578,20 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		extractVirtualDirectory(dir, destinationParent, destination, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String dir, File destinationParent, String sourceEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		extractVirtualDirectory(dir, destinationParent, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualFile(java.lang.String, java.io.File, java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualFile(String fullVirtualName, File destination, String sourceEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
@@ -2596,16 +2657,31 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return type;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
+	 */
 	public void add(InputStream stream, String virtualPath, String name, String sourceEncoding, String targetEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		throw new SystemUnsupportedOperationException(IClientServerConstants.PLUGIN_ID, "add"); //$NON-NLS-1$
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
+	 */
 	public void add(File file, String virtualPath, String name, String sourceEncoding, String targetEncoding, ISystemFileTypes typeRegistery,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		add(file, virtualPath, name, archiveOperationMonitor);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
+	 */
 	public void replace(String fullVirtualName, InputStream stream, String name, String sourceEncoding, String targetEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException {
 		throw new SystemUnsupportedOperationException(IClientServerConstants.PLUGIN_ID, "replace"); //$NON-NLS-1$

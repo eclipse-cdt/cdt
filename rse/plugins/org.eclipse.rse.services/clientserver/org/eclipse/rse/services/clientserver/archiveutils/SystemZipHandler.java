@@ -509,8 +509,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList()
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildrenList(ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -571,8 +572,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return new VirtualChild[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildrenList(String parent, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -641,8 +644,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildren(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildren(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor)
 	{
@@ -665,8 +670,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return values;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildFolders(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild[] getVirtualChildFolders(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor)
 	{
@@ -692,8 +699,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return values;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualFile(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public VirtualChild getVirtualFile(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor)
 	{
@@ -722,8 +731,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return vc;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#exists(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public boolean exists(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -859,16 +870,20 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualFile(java.lang.String, java.io.File)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualFile(String fullVirtualName, File destination, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		extractVirtualFile(fullVirtualName, destination, true, SystemEncodingUtil.ENCODING_UTF_8, false, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualFile(java.lang.String, java.io.File, java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualFile(String fullVirtualName, File destination, String sourceEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
@@ -974,16 +989,20 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String dir, File destinationParent, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		extractVirtualDirectory(dir, destinationParent, (File) null, SystemEncodingUtil.ENCODING_UTF_8, false, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String dir, File destinationParent, String sourceEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
@@ -991,8 +1010,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		extractVirtualDirectory(dir, destinationParent, (File) null, sourceEncoding, isText, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.io.File)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String dir, File destinationParent, File destination, ISystemOperationMonitor archiveOperationMonitor)
 			throws SystemMessageException
@@ -1000,9 +1021,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		extractVirtualDirectory(dir, destinationParent, destination, SystemEncodingUtil.ENCODING_UTF_8, false, archiveOperationMonitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.io.File, java.lang.String, boolean, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0
 	 */
 	public void extractVirtualDirectory(String dir, File destinationParent, File destination, String sourceEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
@@ -1134,6 +1156,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 *
 	 * @param file An abstract file handle to create physically.
 	 * @throws SystemMessageException in case of an error otherwise.
+	 * @since 3.0 throws SystemMessageException
 	 */
 	protected void createFile(File file) throws SystemMessageException
 	{
@@ -1161,17 +1184,20 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void add(File file, String virtualPath, String name, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
 		add(file, virtualPath, name, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false, archiveOperationMonitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.InputStream, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void add(InputStream stream, String virtualPath, String name, String sourceEncoding, String targetEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
@@ -1253,8 +1279,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File[], java.lang.String, java.lang.String[])
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void add(File[] files, String virtualPath, String[] names, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -1268,9 +1296,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		add(files, virtualPath, names, encodings, encodings, isTexts, true, archiveOperationMonitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File[], java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], boolean[], org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void add(File[] files, String virtualPath, String[] names, String[] sourceEncodings, String[] targetEncodings, boolean[] isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
@@ -1701,8 +1730,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		oldFile.delete();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#delete(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public boolean delete(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -1835,8 +1866,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#replace(java.lang.String, java.io.File, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void replace(String fullVirtualName, File file, String name, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -1920,9 +1953,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#replace(java.lang.String, java.io.InputStream, java.lang.String, java.lang.String, java.lang.String, boolean, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void replace(String fullVirtualName, InputStream stream, String name, String sourceEncoding, String targetEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
@@ -1985,8 +2019,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#fullRename(java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void fullRename(String fullVirtualName, String newFullVirtualName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -2104,8 +2140,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#move(java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void move(String fullVirtualName, String destinationVirtualPath, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -2120,8 +2158,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		fullRename(fullVirtualName, destinationVirtualPath + name, archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#rename(java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void rename(String fullVirtualName, String newName, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -2138,8 +2178,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getFiles(java.lang.String[])
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public File[] getFiles(String[] fullNames, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -2174,8 +2216,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return files;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFolder(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void createFolder(String name, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -2185,8 +2229,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFile(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void createFile(String name, ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
 	{
@@ -2409,9 +2455,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return entry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#create()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void create() throws SystemMessageException
 	{
@@ -2440,9 +2487,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		_exists = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#search(java.lang.String, org.eclipse.rse.services.clientserver.search.SystemSearchStringMatcher, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public SystemSearchLineMatch[] search(String fullVirtualName, SystemSearchStringMatcher matcher, ISystemOperationMonitor archiveOperationMonitor)
 			throws SystemMessageException
@@ -2686,9 +2734,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.rse.services.clientserver.ISystemFileTypes, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void add(File file, String virtualPath, String name, String sourceEncoding, String targetEncoding, ISystemFileTypes registry,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException
@@ -2767,9 +2816,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void add(File file, String virtualPath, String name, String sourceEncoding, String targetEncoding, boolean isText,
 			ISystemOperationMonitor archiveOperationMonitor) throws SystemMessageException

@@ -7,16 +7,16 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [187130] New Folder/File, Move and Rename should be available for read-only folders
@@ -128,7 +128,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		private Exception e;
 		private boolean completed = false;
 		private boolean failed = false;
-		
+
 		/**
 		 * Constructor for InternalDownloadFileRunnable
 		 */
@@ -138,7 +138,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException
 		{
@@ -174,7 +174,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		{
 			return completed;
 		}
-		
+
 		public boolean didFail()
 		{
 			return failed;
@@ -191,7 +191,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				throw e;
 			}
 		}
-		
+
 		public IStatus run(IProgressMonitor monitor) {
 			try
 			{
@@ -212,20 +212,22 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 	/**
 	 * Constructor for SystemEditableRemoteFile
+	 *
+	 * @since 3.0 changed String editorId into IEditorDescriptor
 	 */
 	public SystemEditableRemoteFile(IWorkbenchPage page, IRemoteFile remoteFile, IEditorDescriptor editorDescriptor)
 	{
 		super();
 		this.page = page;
 		this.remoteFile = remoteFile;
-		this.remotePath = remoteFile.getAbsolutePath();		
+		this.remotePath = remoteFile.getAbsolutePath();
 		this.subsystem = remoteFile.getParentRemoteFileSubSystem();
 		SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
-		
+
 		// if remote edit project doesn't exist, create it
 		if (!mgr.doesRemoteEditProjectExist())
 			mgr.getRemoteEditProject();
-		
+
 		this.root = mgr.getRemoteEditProjectLocation().makeAbsolute().toOSString();
 		this.localPath = getDownloadPath();
 		this._editorDescriptor = editorDescriptor;
@@ -233,6 +235,8 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 	/**
 	 * Constructor for SystemEditableRemoteFile
+	 * 
+	 * @since 3.0 changed String editorId into IEditorDescriptor
 	 */
 	public SystemEditableRemoteFile(IRemoteFile remoteFile, IEditorDescriptor editorDescriptor)
 	{
@@ -253,17 +257,17 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		// dkm - use registered
 		String fileName = remoteFile.getName();
-	
+
 		IEditorRegistry registry = getEditorRegistry();
-		
+
 		IEditorDescriptor descriptor = registry.getDefaultEditor(fileName);
 		if (descriptor == null)
 		{
-			descriptor = getDefaultTextEditor();		
+			descriptor = getDefaultTextEditor();
 		}
 		this._editorDescriptor = descriptor;
 	}
-	
+
 	protected IEditorRegistry getEditorRegistry()
 	{
 		if (PlatformUI.isWorkbenchRunning())
@@ -272,34 +276,34 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 		return null;
 	}
-	
+
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
 		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
-	
-	
+
+
 	/**
 	 * Returns an instance of this class given a local copy of a remote file.
 	 * @param file the local file to create it from.
 	 */
 	public static SystemEditableRemoteFile getInstance(IFile file) {
-		
+
 		// first determine associated remote file
 		IPath path = file.getFullPath();
 		int numSegments = path.segmentCount();
 
 		// first we need to find the right RemoteFileSubSystem for the remote file
 		SystemIFileProperties properties = new SystemIFileProperties(file);
-		
+
 		ISubSystem fs = null;
 
 		// get the subsystem ID property from the temporary file
 		String subsystemId = properties.getRemoteFileSubSystem();
 
 		// the subsystem ID may not exist if the temporary file existed before this feature
-		// to handle migration of this smoothly, we can use another method to determine the subsystem                         
+		// to handle migration of this smoothly, we can use another method to determine the subsystem
 		if (subsystemId != null)
 		{
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
@@ -308,7 +312,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		if (fs != null)
 		{
-			// use the remote file path property of the temp file to determine the path of the remote file 
+			// use the remote file path property of the temp file to determine the path of the remote file
 			// on the remote system
 			String remotePath = properties.getRemoteFilePath();
 
@@ -352,11 +356,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 				remotePath = tempRemotePath.toString();
 			}
-			
+
 			try {
 				if (remotePath != null && fs instanceof IRemoteFileSubSystem) {
 					IRemoteFile remoteFile = ((IRemoteFileSubSystem)fs).getRemoteFileObject(remotePath, new NullProgressMonitor());
-					
+
 					if (remoteFile != null) {
 						return new SystemEditableRemoteFile(remoteFile);
 					}
@@ -372,7 +376,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				SystemBasePlugin.logError("Error getting remote file object " + remotePath, e); //$NON-NLS-1$
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -380,9 +384,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 * Set the remote file
 	 */
 	public void setRemoteFile(IRemoteFile remoteFile)
-	{	
+	{
 		this.remoteFile = remoteFile;
-		this.remotePath = remoteFile.getAbsolutePath();		
+		this.remotePath = remoteFile.getAbsolutePath();
 		this.subsystem = remoteFile.getParentRemoteFileSubSystem();
 		this.localPath = getDownloadPath();
 		this.localFile = null;
@@ -484,14 +488,14 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		if (shell != null)
 		{
-				
-			
+
+
 			InternalDownloadFileRunnable downloadFileRunnable = new InternalDownloadFileRunnable();
 			//ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			IFile localFile = getLocalResource();
 			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
 			listener.addIgnoreFile(localFile);
-			
+
 			//pmd.run(false, true, downloadFileRunnable);
 			downloadFileRunnable.setRule(getRemoteFile());
 			downloadFileRunnable.schedule();
@@ -507,7 +511,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			} catch(InterruptedException e) {
 				/*stop waiting*/
 			}
-			
+
 			listener.removeIgnoreFile(localFile);
 			downloadFileRunnable.throwException();
 			return !downloadFileRunnable.didFail();
@@ -517,7 +521,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			return download(new NullProgressMonitor());
 		}
 	}
-	
+
 	protected void setReadOnly(IFile file, boolean flag)
 	{
 		ResourceAttributes attrs = file.getResourceAttributes();
@@ -527,7 +531,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			file.setResourceAttributes(attrs);
 		}
 		catch (CoreException e)
-		{			
+		{
 		}
 	}
 
@@ -557,7 +561,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 			// get stored modification stamp
 			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
- 
+
 			// get updated remoteFile so we get the current remote timestamp
 			//remoteFile.markStale(true);
 			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
@@ -608,7 +612,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					}
 					else
 					{
-						// we transferred a different way last time, so we need to transfer again	
+						// we transferred a different way last time, so we need to transfer again
 						return doDownload(properties, monitor);
 					}
 				}
@@ -633,9 +637,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		if (!subsystem.isConnected())
 		{
 			// don't try to download file if not connected
-			return false;	
+			return false;
 		}
-		
+
 		try
 		{
 			subsystem.download(remoteFile, localPath, remoteFile.getEncoding(), monitor);
@@ -659,10 +663,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		properties.setDownloadFileTimeStamp(file.getLocalTimeStamp());
 		properties.setDirty(false);
 		properties.setUsedBinaryTransfer(remoteFile.isBinary());
-		
+
 		boolean readOnly = !remoteFile.canWrite();
 		properties.setReadOnly(readOnly);
-		
+
 	    // get the modified timestamp from the File, not the IFile
 		// for some reason, the modified timestamp from the IFile does not always return
 		// the right value. There is a Javadoc comment saying the value from IFile might be a
@@ -703,7 +707,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		listener.upload(fs, remoteFile, tempFile, properties, properties.getRemoteFileTimeStamp(), this, null);
 
 		listener.setEnabled(true);
-		
+
 		return !properties.getDirty();
 		//return true;
 	}
@@ -728,7 +732,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// update timestamp
 		IFile file = getLocalResource();
 		SystemIFileProperties properties = new SystemIFileProperties(file);
-		
+
 		//DKM- saveAS fix
 		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 		properties.setRemoteFileTimeStamp(remoteFile.getLastModified());
@@ -758,7 +762,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			IPath path = getLocalPathObject();
 			localFile = SystemBasePlugin.getWorkspaceRoot().getFileForLocation(path);
 		}
-		
+
 		return localFile;
 	}
 
@@ -785,7 +789,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					for (int r = 0; r < resources.length && match == null; r++)
 					{
 						IResource resource = resources[r];
-						
+
 						if (resource instanceof IContainer)
 						{
 							String resName = resource.getName().toLowerCase();
@@ -926,7 +930,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		if (!os.startsWith("win")) //$NON-NLS-1$
 			absolutePath = absolutePath.replace('\\', '/');
-		
+
 		// DY:  We should only be escaping the remote portion of the path
 		IPath remote = new Path(absolutePath);
 		absolutePath = SystemFileNameHelper.getEscapedPath(remote.toOSString());
@@ -942,7 +946,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 * Gets the path to use in the workspace for saving the local replica remote file.  In most cases
 	 * this path will be the same thing as the remote path however, this mechanism exists so that 3rd parties
 	 * can customize where temp files are saved.
-	 * 
+	 *
 	 * @param remotePath the absolute path to the resource on the host
 	 * @return the workspace mapping of the remote path
 	 */
@@ -958,7 +962,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	public String getActualHostFor(String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem != null 
+		if (subsystem != null
 		//DKM		&& subsystem.getHost().getSystemType().isLocal()
 				)
 		{
@@ -969,9 +973,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 			return result;
 		}
-		return hostname;	
+		return hostname;
 	}
-	
+
 
 	/**
 	 * Returns the open IEditorPart for this remote object if there is one.
@@ -1026,7 +1030,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			// i.e. whether the argument to the getEditor() should be true
 			part = activeReferences[k].getEditor(false);
 
-			//DKM***if (part instanceof SystemTextEditor) 
+			//DKM***if (part instanceof SystemTextEditor)
 			if (part != null)
 			{
 
@@ -1101,10 +1105,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public void open(Shell shell, boolean readOnly)
 	{
-		
+
 		try
 		{
-			
+
 
 			// first check if file is already open in an editor
 			int result = checkOpenInEditor();
@@ -1113,19 +1117,19 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			{
 				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 			}
-			
+
 			if (!remoteFile.exists())
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, remotePath, subsystem.getHost().getHostName());
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
-						IStatus.ERROR, msgTxt);		
-				
+						IStatus.ERROR, msgTxt);
+
 				SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 				dialog.open();
 				return;
 			}
-			
+
 			if (result == NOT_OPEN)
 			{
 				if (readOnly)
@@ -1157,9 +1161,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 					String msgTxt = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE, remotePath, subsystem.getHost().getHostName());
 					String msgDetails = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE_DETAILS, remotePath, subsystem.getHost().getHostName());
-					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
 							ISystemFileConstants.MSG_DOWNLOAD_NO_WRITE,
-							IStatus.WARNING, msgTxt, msgDetails);		
+							IStatus.WARNING, msgTxt, msgDetails);
 					SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 
 					boolean answer = dialog.openQuestion();
@@ -1184,9 +1188,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR, remotePath, subsystem.getHost().getHostName());
 				String msgDetails = NLS.bind(FileResources.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR_DETAILS, remotePath, subsystem.getHost().getHostName());
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ISystemFileConstants.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR,
-						IStatus.WARNING, msgTxt, msgDetails);		
+						IStatus.WARNING, msgTxt, msgDetails);
 
 				SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 
@@ -1220,7 +1224,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 	}
 
-	
+
 	/**
 	 * Open in editor
 	 */
@@ -1234,28 +1238,28 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public void open(boolean readOnly, IProgressMonitor monitor)
 	{
-		
+
 		try
 		{
 
-			// ensure the file is stale 
+			// ensure the file is stale
 			remoteFile.markStale(true, false);
 			{
 				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 			}
-			
+
 			if (!remoteFile.exists())
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, remotePath, subsystem.getHost().getHostName());
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
-						IStatus.ERROR, msgTxt);		
-				
+						IStatus.ERROR, msgTxt);
+
 				DisplayMessageDialog dd = new DisplayMessageDialog(message);
 				Display.getDefault().syncExec(dd);
 				return;
 			}
-			
+
 			// assumption is that editor is not open
 
 				if (readOnly)
@@ -1284,10 +1288,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					{ // this could be because file doesn't exist
 						download(monitor);
 					}
-					
+
 					String msgTxt = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE, remotePath, subsystem.getHost().getHostName());
 					String msgDetails = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE_DETAILS, remotePath, subsystem.getHost().getHostName());
-					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
 							ISystemFileConstants.MSG_DOWNLOAD_NO_WRITE,
 							IStatus.WARNING, msgTxt, msgDetails);
 
@@ -1329,23 +1333,23 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 		}
-	
-	
+
+
 	public class DisplayMessageDialog implements Runnable
 	{
 		protected SystemMessage _msg;
 		public DisplayMessageDialog(SystemMessage msg)
 		{
-			_msg = msg;			
+			_msg = msg;
 		}
-		
+
 		public void run()
 		{
 			SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), _msg);
 			dialog.open();
 		}
 	}
-	
+
 	public class DisplayQuestionDialog implements Runnable
 	{
 		protected SystemMessage _msg;
@@ -1354,26 +1358,26 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		{
 			_msg = msg;
 		}
-		
+
 		public boolean getResponse()
 		{
 			return _responce;
 		}
-		
+
 		public void run()
 		{
 			SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), _msg);
 			try
 			{
-				_responce = dialog.openQuestion(); 
+				_responce = dialog.openQuestion();
 			}
 			catch (Exception e)
 			{
-				
+
 			}
 		}
 	}
-	
+
 	/**
 	 * Open in system editor
 	 */
@@ -1384,7 +1388,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		{
 			if (remoteFile.getHost().getSystemType().isLocal())
 			{
-				// Open local files "in-place", i.e. don't copy them to the 
+				// Open local files "in-place", i.e. don't copy them to the
 				// RemoteSystemsTempFiles project first
 				if (remoteFile instanceof IVirtualRemoteFile)
 				{
@@ -1394,7 +1398,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				{
 					Program.launch(remotePath);
 				}
-				
+
 			}
 			else
 			{
@@ -1424,7 +1428,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 	}
-	
+
 		/**
 	 * Open in in place editor
 	 */
@@ -1441,7 +1445,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				// push changes back to the server.
 				setReadOnly(file, true);
 				openInPlaceEditor();
-			
+
 		}
 		catch (Exception e)
 		{
@@ -1481,23 +1485,23 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		String subSystemId = registry.getAbsoluteNameForSubSystem(subsystem);
 		properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remoteFile.getAbsolutePath());
-		
+
 		properties.setRemoteFileMounted(_isRemoteFileMounted);
 		if (_isRemoteFileMounted)
 		{
 			properties.setResolvedMountedRemoteFileHost(_actualRemoteHost);
 			properties.setResolvedMountedRemoteFilePath(_actualRemotePath);
 		}
-		
+
 		// if we have an xml file, find the local encoding of the file
 		SystemEncodingUtil util = SystemEncodingUtil.getInstance();
 		String encoding = remoteFile.getEncoding();
 		properties.setEncoding(encoding);
-		
+
 		String tempPath = file.getLocation().toOSString();
-		
+
 		if (util.isXML(tempPath)) {
-			
+
 			try {
 				encoding = util.getXMLFileEncoding(tempPath);
 			}
@@ -1507,10 +1511,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 
-		
+
 		try
 		{
-			if (encoding != null) 
+			if (encoding != null)
 			{
 				if (remoteFile.isBinary()){
 					if (!file.isSynchronized(IResource.DEPTH_ZERO))
@@ -1527,14 +1531,14 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					if (properties.getLocalEncoding() != null){
 						String localEncoding = properties.getLocalEncoding();
 						file.setCharset(localEncoding, null);
-					}			
-					
-					// otherwise, the default charset is inherited so no need to set					
+					}
+
+					// otherwise, the default charset is inherited so no need to set
 				}
 			}
 		}
 		catch (Exception e)
-		{			
+		{
 		}
 	}
 
@@ -1570,11 +1574,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		IWorkbenchPage activePage = this.page;
 		IWorkbench wb = PlatformUI.getWorkbench();
 		if (activePage == null)
-		{			
+		{
 			activePage = wb.getActiveWorkbenchWindow().getActivePage();
 		}
 		IFile file = getLocalResource();
-		
+
 		// get fresh remote file object
 		remoteFile.markStale(true); // make sure we get the latest remote file (with proper permissions and all)
 		if (!remoteFile.getParentRemoteFileSubSystem().isOffline()){
@@ -1598,33 +1602,33 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 			catch (Exception e)
 			{
-					
+
 			}
 		}
-		
+
 		// set editor as preferred editor for this file
-		
+
 		String editorId = null;
 		if (_editorDescriptor != null)
 			_editorDescriptor.getId();
-		
+
 		IDE.setDefaultEditor(file, editorId);
 
 		FileEditorInput finput = new FileEditorInput(file);
-		
+
 		// check for files already open
 
 		// DKM - when _editorId is not lpex, this causes problem
 		// DY - changed editor from SystemTextEditor to IEditorPart
 		//editor = (SystemTextEditor)activePage.openEditor(file, _editorId);
-		if (_editorDescriptor != null && _editorDescriptor.isOpenExternal()){		
+		if (_editorDescriptor != null && _editorDescriptor.isOpenExternal()){
 			editor = ((WorkbenchPage)activePage).openEditorFromDescriptor(new FileEditorInput(file), _editorDescriptor, true, null);
 		}
 		else {
 			editor =  activePage.openEditor(finput, _editorDescriptor.getId());
 		}
 
-		
+
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		properties.setRemoteFileObject(this);
 	}
@@ -1636,24 +1640,24 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	{
 		IWorkbenchPage activePage = this.page;
 		if (activePage == null)
-		{			
+		{
 			activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
 		}
 		IFile file = getLocalResource();
-		
+
 		// set editor as preferred editor for this file
 		String editorId = null;
 		if (_editorDescriptor != null)
 			editorId = _editorDescriptor.getId();
 		IDE.setDefaultEditor(file, editorId);
-	
+
 		FileEditorInput fileInput = new FileEditorInput(file);
 		activePage.openEditor(fileInput, IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-		
+
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		properties.setRemoteFileObject(this);
 	}
-	
+
 	/**
 	 * Open the in place editor
 	 */
@@ -1661,7 +1665,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	{
 		IWorkbenchPage activePage = this.page;
 		if (activePage == null)
-		{			
+		{
 			activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
 		}
 		IFile file = getLocalResource();
@@ -1681,7 +1685,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 		IFile file = getLocalResource();
 		setReadOnly(file, true);
-		
+
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		properties.setReadOnly(true);
 	}
@@ -1751,9 +1755,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	{
 		/*
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
-			
+
 			IResourceDelta delta = event.getDelta();
-			
+
 			try {
 				delta.accept(this);
 			}
@@ -1880,13 +1884,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			{
 				SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
 				String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;
-				
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ICommonMessageIds.MSG_ERROR_UNEXPECTED,
 						IStatus.ERROR, msgTxt);
 				SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
 				dialog.open();
-				
+
 				return true;
 			}
 			finally
@@ -1915,13 +1919,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					{
 						SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
 						String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;
-						
-						SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+
+						SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
 								ICommonMessageIds.MSG_ERROR_UNEXPECTED,
 								IStatus.ERROR, msgTxt);
 						SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
 						dialog.open();
-						
+
 						return true;
 					}
 				}
@@ -1954,7 +1958,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			return editor.isDirty();
 		return false;
 	}
-	
+
 
 	public String getAbsolutePath() {
 		return remotePath;
@@ -1963,7 +1967,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	public ISubSystem getSubSystem() {
 		return subsystem;
 	}
-	
+
 	public boolean exists()
 	{
 		return remoteFile.exists();

@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Xuan Chen (IBM) - [220995] [api] Need to add setCustomViewFilter API to SystemSelectRemoteFileAction
@@ -78,30 +78,30 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 	private boolean  onlyConnection = false;
 	private IValidatorRemoteSelection selectionValidator;
 	private SystemActionViewerFilter customViewerFilter = null;
-	
+
 	/**
 	 * Constructor that uses default action label and tooltip
-	 * 
-	 * @param shell The shell to hang the dialog off of	 
+	 *
+	 * @param shell The shell to hang the dialog off of
 	 */
 	public SystemSelectRemoteFolderAction(Shell shell)
 	{
 		this(shell, FileResources.ACTION_SELECT_DIRECTORY_LABEL, FileResources.ACTION_SELECT_DIRECTORY_TOOLTIP);
-	}	
+	}
 	/**
 	 * Constructor when you have your own action label and tooltip
-	 * 
-	 * @param shell The shell to hang the dialog off of	 
+	 *
+	 * @param shell The shell to hang the dialog off of
 	 * @param label string to display in menu or toolbar
 	 * @param tooltip string to display when user hovers mouse over action.
 	 */
 	public SystemSelectRemoteFolderAction(Shell shell, String label, String tooltip)
 	{
 		super(label, tooltip, null, shell);
-		super.setNeedsProgressMonitor(true); // the default is to include a monitor. Caller can override		
-	}	
+		super.setNeedsProgressMonitor(true); // the default is to include a monitor. Caller can override
+	}
 
-	
+
     // ------------------------
 	// CONFIGURATION METHODS...
     // ------------------------
@@ -117,7 +117,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     {
     	this.foldersOnly = flag;
     }
-    
+
     /**
      * Set the message shown at the top of the form
      */
@@ -132,7 +132,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     {
     	this.treeTip = tip;
     }
-	
+
     /**
      * Set the system connection to restrict the user to seeing in the tree.
      *
@@ -152,10 +152,10 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     	onlyConnection = false;
     }
     /**
-     * Set the system types to restrict what connections the user sees, and what types of 
+     * Set the system types to restrict what connections the user sees, and what types of
      * connections they can create.
      * @param systemTypes An array of system type names
-     * 
+     *
      * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemTypes(IRSESystemType[] systemTypes)
@@ -163,12 +163,12 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     	this.systemTypes = systemTypes;
     }
     /**
-     * Convenience method to restrict to a single system type. 
+     * Convenience method to restrict to a single system type.
      * Same as setSystemTypes(new String[] {systemType})
      *
      * @param systemType The name of the system type to restrict to,
      *     or <code>null</code> to allow all valid system types.
-     *     A system type is valid if at least one subsystem 
+     *     A system type is valid if at least one subsystem
      *     configuration is registered against it.
      */
     public void setSystemType(IRSESystemType systemType)
@@ -178,7 +178,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     	else
     	  setSystemTypes(new IRSESystemType[] {systemType});
     }
-    
+
     /**
      * Set to true if a "New Connection..." special connection is to be shown for creating new connections
      */
@@ -186,7 +186,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     {
     	this.showNewConnectionPrompt = show;
     }
-	
+
 	/**
      * Set the root folder from which to start listing files.
      * This version identifies the folder via a connection object and absolute path.
@@ -197,18 +197,18 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
      *  <li>Preventing the user from selecting other connections
      *  <li>Preventing the user from selecting other filter strings
      * </ul>
-     * 
+     *
      * @param connection The connection to the remote system containing the root folder
      * @param folderAbsolutePath The fully qualified folder to start listing from (eg: "\folder1\folder2")
-     * 
+     *
      * @see org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString
 	 */
 	public void setRootFolder(IHost connection, String folderAbsolutePath)
 	{
 		rootFolderConnection = connection;
 		rootFolderAbsPath = folderAbsolutePath;
-		
-		IRemoteFileSubSystem ss  =	RemoteFileUtility.getFileSubSystem(rootFolderConnection);	
+
+		IRemoteFileSubSystem ss  =	RemoteFileUtility.getFileSubSystem(rootFolderConnection);
 		if (ss != null)
 		{
 			try
@@ -236,9 +236,9 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
      *  <li>Preventing the user from selecting other connections
      *  <li>Preventing the user from selecting other filter strings
      * </ul>
-     * 
+     *
      * @param rootFolder The IRemoteFile object representing the remote folder to start the list from
-     * 
+     *
      * @see org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString
 	 */
 	public void setRootFolder(IRemoteFile rootFolder)
@@ -248,7 +248,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 	/**
 	 * Set a file or folder to preselect. This will:
 	 * <ul>
-	 *   <li>Set the parent folder as the root folder 
+	 *   <li>Set the parent folder as the root folder
 	 *   <li>Pre-expand the parent folder
 	 *   <li>Pre-select the given file or folder after expansion
 	 * </ul>
@@ -279,7 +279,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
      * selected object.
      * <p>
      * This overload shows a Details>>> button so the user can decide if they want to see the
-     * property sheet. 
+     * property sheet.
      * <p>
      * @param show True if to show the property sheet within the dialog
      * @param initialState True if the property is to be initially displayed, false if it is not
@@ -307,7 +307,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     {
     	this.multipleSelectionMode = multiple;
     }
-    
+
     /**
      * Specify a validator to use when the user selects a remote file or folder.
      * This allows you to decide if OK should be enabled or not for that remote file or folder.
@@ -317,7 +317,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     	this.selectionValidator = selectionValidator;
     }
 
-    // -----------------    
+    // -----------------
     // OUTPUT METHODS...
     // -----------------
 
@@ -343,14 +343,14 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     {
     	Object o = getValue();
     	if (o instanceof Object[]) {
-    		
+
     		Object[] temp = (Object[])o;
-    			
+
     		IRemoteFile[] files = new IRemoteFile[temp.length];
-    		
+
     		// ensure all objects are IRemoteFiles
     		for (int i = 0; i < temp.length; i++) {
-    			
+
     			if (temp[i] instanceof IRemoteFile) {
     				files[i] = (IRemoteFile)temp[i];
     			}
@@ -359,7 +359,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     				return new IRemoteFile[0];
     			}
     		}
-    			
+
     		return files;
     	}
     	if (o instanceof IRemoteFile[])
@@ -371,13 +371,13 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     }
 
     /**
-     * Return all selected objects. This method will return an array of one 
+     * Return all selected objects. This method will return an array of one
      *  unless you have called setMultipleSelectionMode(true)!
      * <p>
      * It will always return null if the user cancelled the dialog.
-     * 
+     *
      * @see #setMultipleSelectionMode(boolean)
-     */	
+     */
     public Object[] getSelectedObjects()
     {
     	Object remoteObject = getValue();
@@ -393,21 +393,24 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 
     /**
      * Return selected connection
-     */	
+     */
     public IHost getSelectedConnection()
     {
     	return outputConnection;
     }
-    
+
+    /**
+	 * @since 3.0
+	 */
     public void setCustomViewerFilter(SystemActionViewerFilter filter)
 	{
 		customViewerFilter = filter;
 	}
-    
+
     // -------------------
     // INTERNAL METHODS...
     // -------------------
-        
+
 	/**
 	 * Called by eclipse when user selects this action
 	 */
@@ -442,7 +445,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 			dlg.setDefaultSystemConnection(systemConnection, onlyConnection);
 		}
 		dlg.setCustomViewerFilter(customViewerFilter);
-		
+
 		/*
 		SystemSelectRemoteFileOrFolderDialog dlg = null;
 		if (dlgTitle == null)
@@ -450,26 +453,26 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 		else
 		  dlg = new SystemSelectRemoteFileOrFolderDialog(shell, dlgTitle, false); // false => folder vs file mode
 		*/
-		
-		
+
+
 		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
-		
+
 		/*
 		dlg.setAllowForMultipleParents(allowForMultipleParents);
 		if (restrictFolders)
 		  dlg.setRestrictFolders(true);
-		
-		
+
+
 		if (systemConnection != null)
 		{
-			if (onlyConnection)			   
+			if (onlyConnection)
 		      dlg.setSystemConnection(systemConnection);
 		    else
 		      dlg.setDefaultConnection(systemConnection);
 		}
 		*/
-		
+
 		if (message != null)
 		  dlg.setMessage(message);
 		if (treeTip != null)
@@ -479,22 +482,22 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 		  dlg.setSystemTypes(systemTypes);
 		/*
 		if (expandDepth != 0)
-		  dlg.setAutoExpandDepth(expandDepth);		
+		  dlg.setAutoExpandDepth(expandDepth);
 		  */
 		if (preSelection != null)
-		  dlg.setPreSelection(preSelection);		 
-		
+		  dlg.setPreSelection(preSelection);
+
 		/*
 		else if (rootFolderConnection != null)
 		  dlg.setRootFolder(rootFolderConnection, rootFolderAbsPath);
 		*/
-		
+
 		if (showPropertySheet)
 		  if (showPropertySheetDetailsButton)
 		    dlg.setShowPropertySheet(true, showPropertySheetDetailsButtonInitialState);
 		  else
 		    dlg.setShowPropertySheet(true);
-		
+
 		/*
 		if (addButtonCallback != null)
           if ((addLabel!=null) || (addToolTipText!=null))
@@ -506,7 +509,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
           dlg.setSelectionValidator(selectionValidator);
 
 		return dlg;
-	}    
+	}
 
 	/**
 	 * Required by parent. We return the selected object
@@ -521,7 +524,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 		    if (multipleSelectionMode)
 			  outputObject = ourDlg.getSelectedObjects();
 			else
-			  outputObject = ourDlg.getSelectedObject();		  
+			  outputObject = ourDlg.getSelectedObject();
 		    outputConnection = ourDlg.getSelectedConnection();
 		}
 		return outputObject; // parent class calls setValue on what we return

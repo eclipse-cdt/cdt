@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Martin Oberhuber (Wind River) - initial API and implementation
  * Xuan Chen        (IBM)        - [160775] Derive from org.eclipse.rse.services.Mutex
  * Xuan Chen        (IBM)        - [209825] add some info of printing the lock status
  *******************************************************************************/
@@ -18,36 +18,36 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A SystemMutex Exclusion Lock for Threads that need to access a resource
- * in a serialized manner.
- * If the request for the lock is running on the same thread who is currently holding the lock,
- * it will "borrow" the lock, and the call to waitForLock() will go through.
- * An SystemOperationMonitor is accepted
- * in order to support cancellation when waiting for the SystemMutex.
- * This is a clone for org.eclipse.rse.services.Mutex with some modification to make sure the
- * sequential calls to waitForLock() method in the same thread will not be blocked.
- *
- * Usage Example:
- * <code>
- *    private SystemMutex fooMutex = new SystemMutex();
+ * A reentrant Exclusion Lock for Threads that need to access a resource in a
+ * serialized manner. If the request for the lock is running on the same thread
+ * who is currently holding the lock, it will "borrow" the lock, and the call to
+ * waitForLock() will go through. A SystemOperationMonitor is accepted in order
+ * to support cancellation when waiting for the Mutex. This is a clone of
+ * {@link org.eclipse.rse.services.Mutex} with some modification to make sure the
+ * sequential calls to waitForLock() method in the same thread will not be
+ * blocked.
+ * 
+ * Usage Example: <code>
+ *    private SystemReentrantMutex fooMutex = new SystemReentrantMutex();
  *    boolean doFooSerialized()(ISystemOperationMonitor monitor) {
- *    	  int mutexLockStatus = SystemMutex.LOCK_STATUS_NOLOCK;
+ *    	  int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
  *        mutexLockStatus = fooMutex.waitForLock(monitor, 1000);
- *        if (SystemMutex.LOCK_STATUS_NOLOCK != mutexLockStatus) {
+ *        if (mutexLockStatus != SystemReentrantMutex.LOCK_STATUS_NOLOCK) {
  *            try {
  *                return doFoo();
  *            } finally {
  *                //We only release the mutex if we acquire it, not borrowed it.
- *   	          if (SystemMutex.LOCK_STATUS_AQUIRED == mutexLockStatus)
- *		          {
- *			          fooMutex.release();
- *		          }
+ *   	          if (mutexLockStatus == SystemReentrantMutex.LOCK_STATUS_AQUIRED)
+ * 		          {
+ * 			          fooMutex.release();
+ * 		          }
  *            }
  *        }
  *        return false;
  *    }
  * </code>
- *
+ * 
+ * @since 3.0
  */
 public class SystemReentrantMutex {
 

@@ -21,7 +21,11 @@ import java.io.StringWriter;
 
 import org.eclipse.core.runtime.IStatus;
 
-
+/**
+ * An RSE SystemMessage that can be created from Strings (without XML parsing).
+ * 
+ * @since 3.0
+ */
 public class SimpleSystemMessage extends SystemMessage {
 
 	private String _pluginId;
@@ -47,13 +51,13 @@ public class SimpleSystemMessage extends SystemMessage {
 	/**
 	 * Creates a String based System Message with severity, ID and String
 	 * message details.
-	 * 
+	 *
 	 * This allows using the RSE Messaging Framework based on simple String
 	 * messages and IDs, rather than using XML Message files from
 	 * {@link SystemMessageFile} along with the
 	 * <code>org.eclipse.rse.ui.SystemBasePlugin#loadMessageFile()</code> and
 	 * <code>org.eclipse.rse.ui.SystemBasePlugin#getMessage()</code> methods.
-	 * 
+	 *
 	 * Clients can use either globally unique RSE message IDs or plugin-specific
 	 * local IDs. <b>RSE-global message IDs</b> are of the form:
 	 * RSE&lt;subcomponent&gt;&lt;number&gt;, where the subcomponent is a single
@@ -65,17 +69,17 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * <li>"C" for Communications</li>
 	 * </ul>
 	 * and the number is a four digit number.
-	 * 
+	 *
 	 * Some RSE-global message IDs are predefined in {@link ICommonMessageIds}.
 	 * When used in a SimpleSystemMessage, these common message IDs must be used
 	 * along with the matching message Strings from {@link CommonMessages}, in
 	 * order to be consistent to the user. For example:
-	 * 
+	 *
 	 * <pre>
 	 * msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_COMM_AUTH_FAILED, IStatus.ERROR, CommonMessages.MSG_COMM_AUTH_FAILED, NLS.bind(
 	 * 		CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHost().getAliasName()));
 	 * </pre>
-	 * 
+	 *
 	 * <b>Plugin-specific local IDs</b> are totally free to be defined by the
 	 * plugin that creates a specific message, as long as they are not prefixed
 	 * by "RSE". It is recommended that plugins define unique IDs for various
@@ -83,7 +87,7 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * users; but it is not a requirement. Local ID's are specific to the plugin
 	 * ID: relative IDs are qualified by the specified plugin ID, so they live
 	 * in the plugin ID namespace.
-	 * 
+	 *
 	 * @param pluginId the id of the originating plugin
 	 * @param messageId the RSE-global unique ID or plugin-specific local ID of
 	 *            the message

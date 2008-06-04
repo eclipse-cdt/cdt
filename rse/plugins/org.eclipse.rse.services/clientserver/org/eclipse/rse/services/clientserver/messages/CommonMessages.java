@@ -17,7 +17,10 @@ package org.eclipse.rse.services.clientserver.messages;
 
 import org.eclipse.osgi.util.NLS;
 
-
+/**
+ * Externalized Strings for common messages that all clients can use.
+ * @since 3.0
+ */
 public class CommonMessages extends NLS {
 	private static String BUNDLE_NAME = "org.eclipse.rse.services.clientserver.messages.CommonMessages";//$NON-NLS-1$
 

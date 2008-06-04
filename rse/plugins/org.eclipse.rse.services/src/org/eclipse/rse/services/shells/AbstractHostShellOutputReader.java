@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [197848] Fix shell terminated state when remote dies
  * Martin Oberhuber (Wind River) - [217429] Make registering multiple output listeners thread-safe
@@ -27,16 +27,16 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 	protected List _listeners;
 	protected int _waitIncrement = 2;
 	protected boolean _keepRunning = true;
-	
+
 	protected List _linesOfOutput;
 	protected int  _consumerOffset;
 	protected IHostShell _hostShell;
 	protected boolean _isErrorReader = false;
-	
-	
+
+
 	protected long _timeOfLastEvent = 0;
 	protected int _sizeAtLastEvent = 0;
-	
+
 	public AbstractHostShellOutputReader(IHostShell hostShell, boolean isErrorReader)
 	{
 		_hostShell = hostShell;
@@ -46,17 +46,17 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		_isErrorReader = isErrorReader;
 		_timeOfLastEvent = System.currentTimeMillis();
 	}
-	
+
 	public boolean isErrorReader()
 	{
 		return _isErrorReader;
 	}
-	
+
 	public IHostShell getHostShell()
 	{
 		return _hostShell;
 	}
-	
+
 	public void setWaitTime(int value)
 	{
 		_waitIncrement = value;
@@ -82,20 +82,20 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 			finish();
 			_keepRunning = false;
 		}
-	
+
 	}
-	
+
 	protected void addLine(IHostOutput line)
-	{	
+	{
 		_linesOfOutput.add(line);
 		int sizenow = _linesOfOutput.size();
 		int deltaSize = sizenow - _sizeAtLastEvent;
-		
+
 		long timenow = System.currentTimeMillis();
 		//if ((timenow - _timeOfLastEvent) > 10 || deltaSize > 2)
 		{
-		
-			
+
+
 			// notify listeners
 			HostShellChangeEvent event = new HostShellChangeEvent(_hostShell, this, _sizeAtLastEvent, deltaSize);
 			fireOutputChanged(event);
@@ -103,30 +103,31 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 			_sizeAtLastEvent = sizenow;
 		}
 	}
-	
+
+	/** @since 3.0 */
 	protected final synchronized void startIfNotAlive() {
 		if (!isAlive()) {
 			start();
 		}
 	}
-	
+
 	public IHostOutput readLine()
 	{
 		if (!isAlive())
 		{
 			internalReadLine();
-			startIfNotAlive();			
+			startIfNotAlive();
 		}
-		return (IHostOutput)_linesOfOutput.get(_consumerOffset++);		
+		return (IHostOutput)_linesOfOutput.get(_consumerOffset++);
 	}
-	
+
 	public IHostOutput readLine(int lineNumber)
 	{
-		return (IHostOutput)_linesOfOutput.get(lineNumber);		
+		return (IHostOutput)_linesOfOutput.get(lineNumber);
 	}
-	
-	
-	
+
+
+
 	public void setLineOffset(int lineNumber)
 	{
 		_consumerOffset = lineNumber;
@@ -147,12 +148,12 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		if (!_keepRunning)
 			dispose();
 	}
-	
+
 	public void dispose()
 	{
 		_listeners.clear();
 	}
-	
+
 	public boolean isFinished()
 	{
 		return !_keepRunning;
@@ -166,7 +167,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 			//dispose();
 		}
 	}
-	
+
 	public void run()
 	{
 		while (_keepRunning)
@@ -189,7 +190,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 			fireOutputChanged(event);
 		}
 	}
-	
+
 	protected abstract IHostOutput internalReadLine();
 
 }

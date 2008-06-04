@@ -513,7 +513,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 		// Neg: Create deep folder with EFS.SHALLOW
 		exceptionThrown = false;
-		IFileStore store = treeStore.getFileStore(new Path("foo/bar/baz"));
+		//IFileStore store = treeStore.getFileStore(new Path("foo/bar/baz"));
+		IFileStore store = treeStore.getChild("foo").getChild("bar").getChild("baz");
 		try {
 			store.mkdir(EFS.SHALLOW, getDefaultProgressMonitor());
 		} catch (CoreException ce) {

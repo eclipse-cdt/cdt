@@ -76,6 +76,10 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
+	 */
 	public void getFileMultiple(String remoteParents[], String names[], List hostFiles, IProgressMonitor monitor)
 								throws SystemMessageException
 	{
@@ -89,12 +93,20 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 using int fileTYpe
+	 */
 	public IHostFile[] list(String remoteParent, String fileFilter,
 			int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return internalFetch(remoteParent, fileFilter, fileType, monitor);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
+	 */
 	public void listMultiple(String[] remoteParents,
 			String[] fileFilters, int fileTypes[], List hostFiles, IProgressMonitor monitor)
 			throws SystemMessageException {
@@ -114,6 +126,10 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
+	 */
 	public void listMultiple(String[] remoteParents,
 			String[] fileFilters, int fileType, List hostFiles, IProgressMonitor monitor)
 			throws SystemMessageException {
@@ -163,6 +179,10 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	}
 
 
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0 returning void
+	 */
 	public void deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (monitor != null)
@@ -176,7 +196,8 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	}
 
 	/**
-	 * Default implementation - just iterate through each file
+	 * {@inheritDoc} Default implementation - just iterate through each file
+	 * @since 3.0 returning void
 	 */
 	public void downloadMultiple(String[] remoteParents, String[] remoteFiles,
 			File[] localFiles, boolean[] isBinaries, String[] hostEncodings,
@@ -198,7 +219,8 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	}
 
 	/**
-	 * Default implementation - just iterate through each file
+	 * {@inheritDoc} Default implementation - just iterate through each file
+	 * @since 3.0
 	 */
 	public void uploadMultiple(File[] localFiles, String[] remoteParents,
 			String[] remoteFiles, boolean[] isBinaries, String[] srcEncodings,
@@ -253,10 +275,13 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	}
 
 	/**
-	 * Gets the output stream to write/append to a remote file.
-	 * The default implementation returns <code>null</code>.
-	 * Clients can override to return an output stream to the file.
-	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String, String, int, IProgressMonitor)
+	 * Gets the output stream to write/append to a remote file. The default
+	 * implementation returns <code>null</code>. Clients can override to return
+	 * an output stream to the file.
+	 *
+	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String,
+	 *      String, int, IProgressMonitor)
+	 * @since 3.0 using int options
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
 		if ((options & IFileService.APPEND) == 0) {
@@ -268,8 +293,10 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	}
 
 	/**
-	 * The default implementation returns false.  Clients should override this method if they make use
-	 * of IFileServiceCodePageConverter to do conversion during download and upload.
+	 * The default implementation returns false. Clients should override this
+	 * method if they make use of IFileServiceCodePageConverter to do conversion
+	 * during download and upload.
+	 * @since 3.0
 	 */
 	public boolean supportsEncodingConversion(){
 		return false;

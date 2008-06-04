@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.rse.services.files.IHostFilePermissions;
  * takes a root which should return a single IRemoteFile object in the initial
  * getChildren query.
  */
-public class RemoteFileRoot extends RemoteFile 
+public class RemoteFileRoot extends RemoteFile
 {
 	private IRemoteFile rootFile;
 	private IRemoteFile[] rootFiles;
@@ -33,18 +33,18 @@ public class RemoteFileRoot extends RemoteFile
 	/**
 	 * Constructor when root is known
 	 */
-	public RemoteFileRoot(IRemoteFile rootFile) 
+	public RemoteFileRoot(IRemoteFile rootFile)
 	{
 		super(new RemoteFileContext(null,null,null));
 		setRootFile(rootFile);
 	}
-	
+
 	/**
 	 * Constructor when root is not known.
 	 * Client must call {@link #setRootFile(IRemoteFile)} before any
 	 * get.. calls in this class are actually used.
 	 */
-	public RemoteFileRoot() 
+	public RemoteFileRoot()
 	{
 		super(new RemoteFileContext(null,null,null));
 	}
@@ -56,7 +56,7 @@ public class RemoteFileRoot extends RemoteFile
     {
     	return rootFile;
     }
-    
+
     /**
      * Reset the root file node
      */
@@ -74,12 +74,12 @@ public class RemoteFileRoot extends RemoteFile
     {
     	return rootFiles;
     }
-    
+
 	public String getName()
 	{
 		return "dummy"; //$NON-NLS-1$
 	}
-	
+
 	public int compareTo(Object o)
 	{
 		// TODO Auto-generated method stub
@@ -126,57 +126,60 @@ public class RemoteFileRoot extends RemoteFile
 	{
 		return false;
 	}
-	
+
 	public boolean isHidden()
 	{
 		return false;
 	}
-	
+
 	public boolean canRead()
 	{
 		return rootFile.canRead();
 	}
-	
+
 	public boolean canWrite()
 	{
 		return rootFile.canWrite();
 	}
-	
+
 	public boolean exists()
 	{
 		return rootFile.exists();
 	}
-	
+
 	public long getLastModified()
 	{
 		return rootFile.getLastModified();
 	}
-	
+
 	public long getLength()
 	{
 		return rootFile.getLength();
 	}
-	
+
 	public boolean showReadOnlyProperty()
 	{
 		return rootFile.showReadOnlyProperty();
 	}
-	
+
 	public String getClassification()
 	{
 		return rootFile.getClassification();
 	}
-	
+
+	/**
+	 * @since 3.0
+	 */
 	public String getAbsolutePath()
 	{
 		return rootFile.getAbsolutePath();
 	}
-	
+
 	public String getCanonicalPath()
 	{
 		return rootFile.getCanonicalPath();
 	}
-	
+
 	public IHostFile getHostFile()
 	{
 		return rootFile.getHostFile();

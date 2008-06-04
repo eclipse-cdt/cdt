@@ -44,6 +44,10 @@ public abstract class AbstractDStoreService extends AbstractService implements I
 	protected Map _cmdDescriptorMap;
 	protected DataElement _initializeStatus;
 
+	/**
+	 * @since 3.0 got rid of ISystemMessageProvider argument
+	 * @param dataStoreProvider
+	 */
 	public AbstractDStoreService(IDataStoreProvider dataStoreProvider)
 	{
 		_dataStoreProvider = dataStoreProvider;
@@ -148,6 +152,7 @@ public abstract class AbstractDStoreService extends AbstractService implements I
 		return new DataElement[0];
 	}
 
+	/** @since 3.0 */
 	protected List dsQueryCommandMulti(DataElement[] subjects, String[] commands, IProgressMonitor monitor)
 	{
 		return dsQueryCommandMulti(subjects, null, commands, monitor);
@@ -155,11 +160,13 @@ public abstract class AbstractDStoreService extends AbstractService implements I
 
 	/**
 	 * Query multiple subjects in one shot
+	 * 
 	 * @param subjects the subjects to query
 	 * @param commands the query commands
 	 * @param argses arguments for the command - may be null
 	 * @param monitor the progress monitor
 	 * @return a list of DataElement[]s containing the results of each query
+	 * @since 3.0
 	 */
 	protected List dsQueryCommandMulti(DataElement[] subjects, ArrayList[] argses, String[] commands, IProgressMonitor monitor)
 	{

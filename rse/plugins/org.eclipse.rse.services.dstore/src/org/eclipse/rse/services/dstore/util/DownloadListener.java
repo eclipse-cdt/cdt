@@ -1,18 +1,18 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
- * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi 
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [197480] eliminating UI dependencies
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * Martin Oberhuber (Wind River) - [219952] Use MessageFormat for download progress message
@@ -61,10 +61,10 @@ public class DownloadListener implements IDomainListener
 		{
 		    System.out.println("Status is null!"); //$NON-NLS-1$
 		}
-		
+
 		_dataStore = _status.getDataStore();
 		_dataStore.getDomainNotifier().addDomainListener(this);
-		
+
 		_localFile = localFile;
 
 		if (monitor != null)
@@ -79,19 +79,21 @@ public class DownloadListener implements IDomainListener
 		{
 			updateDownloadState();
 			setDone(true);
-		}	
+		}
 	}
-	
+
+	/** @since 3.0 */
 	public long getTotalLength()
 	{
 		return _totalLength;
 	}
-	
+
 	public boolean isCancelled()
 	{
 		return _isCancelled;
 	}
-	
+
+	/** @since 3.0 */
 	public boolean isDone()
 	{
 		return _isDone;
@@ -149,20 +151,20 @@ public class DownloadListener implements IDomainListener
 			{
 				//System.out.println(_status.getAttribute(DE.A_SOURCE));
 				_monitor.worked((int)delta);
-				
+
 				try
 				{
 					double percent = (currentLength * 1.0) / _totalLength;
 					String str = MessageFormat.format(
 						ServiceResources.DStore_Service_Percent_Complete_Message,
 						new Object[] {
-							new Long(currentLength/1024), 
+							new Long(currentLength/1024),
 							new Long(_totalLength/1024),
 							new Double(percent)
 						});
-					
+
 					_monitor.subTask(str);
-					
+
 					/* DKM - DO WE NEED THIS?!!
 					while (_display != null && _display.readAndDispatch()) {
 						//Process everything on event queue
@@ -175,7 +177,7 @@ public class DownloadListener implements IDomainListener
 				_totalBytesNotified = currentLength;
 			}
 		}
-		
+
 		if (!_status.getDataStore().getStatus().getName().equals("okay")) //$NON-NLS-1$
 		{
 			_networkDown = true;
@@ -199,7 +201,7 @@ public class DownloadListener implements IDomainListener
 
 
 	/**
-	 * 
+	 *
 	 */
 	public boolean wasCancelled()
 	{
@@ -225,7 +227,7 @@ public class DownloadListener implements IDomainListener
 	 * Wait for the the status DataElement to be refreshed
 	 *
 	 * @param wait threshold for starting diagnostic. Default is 60 seconds; a zero means to use the default.
-	 *             -1 means to force a timeout; mainly for testing purpose.  
+	 *             -1 means to force a timeout; mainly for testing purpose.
 	 *
 	 * @return The status DataElement after it has been updated, or the user
 	 *         has pressed cancel
@@ -234,15 +236,15 @@ public class DownloadListener implements IDomainListener
 	 */
 	public DataElement waitForUpdate(int wait) throws InterruptedException
 	{
-		// Prevent infinite looping by introducing a threshold for wait 
-		
-		int WaitThreshold = 50; 		
-		
+		// Prevent infinite looping by introducing a threshold for wait
+
+		int WaitThreshold = 50;
+
 		if (wait > 0)
 			WaitThreshold = wait * 10; // 1 second means 10 sleep(100ms)
 		else if (wait == -1) // force a diagnostic
 			WaitThreshold = -1;
-		
+
 		int initialWaitTheshold = WaitThreshold;
 		{
 			// Current thread is not UI thread
@@ -262,13 +264,13 @@ public class DownloadListener implements IDomainListener
 				}
 				if (getStatus().getAttribute(DE.A_NAME).equals("done")) //$NON-NLS-1$
 				{
-					setDone(true); 
+					setDone(true);
 				}
 				else
 				{
 				    Thread.sleep(100);
 					updateDownloadState();
-					
+
 					if (WaitThreshold > 0) // update timer count if
 					 {
 	                        // threshold not reached
@@ -285,14 +287,14 @@ public class DownloadListener implements IDomainListener
 		}
 		return _status;
 	}
-	
-	
+
+
 	private void wakeupServer(DataElement status)
 	{
 		if (status != null)
-		{		
+		{
 			// token command to wake up update handler
-			DataElement cmdDescriptor = _dataStore.findCommandDescriptor(DataStoreSchema.C_NOTIFICATION); 
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor(DataStoreSchema.C_NOTIFICATION);
 			DataElement subject = status.getParent().get(0);
 			if (cmdDescriptor != null)
 			{

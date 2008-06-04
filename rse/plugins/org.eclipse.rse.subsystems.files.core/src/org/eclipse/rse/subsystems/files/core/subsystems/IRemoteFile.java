@@ -108,6 +108,7 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
 
     /**
      * Return the connection this remote file is from.
+     * @since 3.0 renamed getSystemConnection() to getHost()
      */
     public IHost getHost();
 

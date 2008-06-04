@@ -1601,6 +1601,9 @@ public class UniversalFileSystemMiner extends Miner {
 	}
 
 
+	/**
+	 * @since 3.0 made private method public
+	 */
 	public AbsoluteVirtualPath getAbsoluteVirtualPath(DataElement subject) {
 		StringBuffer path = new StringBuffer(subject.getAttribute(DE.A_VALUE));
 		if (ArchiveHandlerManager.getInstance().isArchive(

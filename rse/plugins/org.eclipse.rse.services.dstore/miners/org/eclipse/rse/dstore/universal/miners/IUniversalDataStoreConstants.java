@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
  * David McKnight   (IBM) - [196624] dstore miner IDs should be String constants rather than dynamic lookup
@@ -35,28 +35,28 @@ public interface IUniversalDataStoreConstants
 	/**
 	 * Universal Filesystem miner ID. Value =
 	 * "org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner".
-	 * 
+	 *
 	 * @since org.eclipse.rse.services.dstore 3.0
 	 */
 	public static final String UNIVERSAL_FILESYSTEM_MINER_ID = "org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner"; //$NON-NLS-1$
 	/**
 	 * Universal Command miner ID. Value =
 	 * "org.eclipse.rse.dstore.universal.miners.CommandMiner".
-	 * 
+	 *
 	 * @since org.eclipse.rse.services.dstore 3.0
 	 */
 	public static final String UNIVERSAL_COMMAND_MINER_ID = "org.eclipse.rse.dstore.universal.miners.CommandMiner"; //$NON-NLS-1$
 	/**
 	 * Universal Environment miner ID. Value =
 	 * "org.eclipse.rse.dstore.universal.miners.EnvironmentMiner".
-	 * 
+	 *
 	 * @since org.eclipse.rse.services.dstore 3.0
 	 */
 	public static final String UNIVERSAL_ENVIRONMENT_MINER_ID = "org.eclipse.rse.dstore.universal.miners.EnvironmentMiner"; //$NON-NLS-1$
 	/**
 	 * Universal Process miner ID. Value =
 	 * "org.eclipse.rse.dstore.universal.miners.UniversalProcessMiner".
-	 * 
+	 *
 	 * @since org.eclipse.rse.services.dstore 3.0
 	 */
 	public static final String UNIVERSAL_PROCESS_MINER_ID = "org.eclipse.rse.dstore.universal.miners.UniversalProcessMiner"; //$NON-NLS-1$
@@ -123,6 +123,7 @@ public interface IUniversalDataStoreConstants
 	public static final String TYPE_QUALIFIED_CLASSNAME = "fullClassName"; //$NON-NLS-1$
 
 	// permissions commands
+	/** @since org.eclipse.rse.services.dstore 3.0 */
 	public static final String C_QUERY_FILE_PERMISSIONS = "C_QUERY_FILE_PERMISSIONS"; //$NON-NLS-1$
 	/** @since org.eclipse.rse.services.dstore 3.0 */
 	public static final String C_SET_FILE_PERMISSIONS = "C_SET_FILE_PERMISSIONS"; //$NON-NLS-1$

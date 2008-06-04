@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
@@ -24,22 +24,25 @@ import org.eclipse.rse.services.files.IHostFilePermissions;
 /**
  * A "dummy" node to use as a place holder
  */
-public class RemoteFileEmpty extends RemoteFile 
+public class RemoteFileEmpty extends RemoteFile
 {
 	/**
 	 * Constructor for RemoteFileEmpty
 	 */
-	public RemoteFileEmpty() 
+	public RemoteFileEmpty()
 	{
 		super(new RemoteFileContext(null,null,null));
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public String getAbsolutePath()
 	{
 		return ""; //$NON-NLS-1$
 	}
 
-	
+
 	public String getName()
 	{
 		return "dummy"; //$NON-NLS-1$

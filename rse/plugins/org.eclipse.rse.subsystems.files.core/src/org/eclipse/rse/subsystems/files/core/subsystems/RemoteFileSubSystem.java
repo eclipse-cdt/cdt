@@ -881,11 +881,15 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	}
 
 
-	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+		/**
+	 * Return a list of all remote folders and files in the given folder. The
+	 * list is not subsetted.
+	 *
 	 * @param parents The parent folders to list folders and files in
-	 * @param fileTypes - indicates whether to query files, folders, both or some other type
+	 * @param fileTypes - indicates whether to query files, folders, both or
+	 *            some other type
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -899,10 +903,14 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	}
 
 	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+	 * Return a list of all remote folders and files in the given folder. The
+	 * list is not subsetted.
+	 *
 	 * @param parents The parent folders to list folders and files in
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param fileType - indicates whether to query files, folders, both or some
+	 *            other type
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -916,9 +924,12 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	}
 
 	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+	 * Return a list of all remote folders and files in the given folder. The
+	 * list is not subsetted.
+	 *
 	 * @param parent The parent folder to list folders and files in
 	 * @param monitor the progress monitor
+	 * @since 3.0 renamed from listFoldersAndFiles()
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -926,10 +937,13 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	}
 
 	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+	 * Return a list of all remote folders and files in the given folder. The
+	 * list is not subsetted.
+	 *
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileType the type of file
 	 * @param monitor the monitor
+	 * @since 3.0 using int fileType parameter
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -939,12 +953,15 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	/**
 	 * Return a list of remote folders and files in the given folder.
 	 * <p>
-	 * The files part of the list is subsetted by the given file name filter. It can be null for no subsetting.
+	 * The files part of the list is subsetted by the given file name filter. It
+	 * can be null for no subsetting.
 	 *
 	 * @param parent The parent folder to list folders and files in
-	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
+	 * @param fileNameFilter The name pattern to subset the file list by, or
+	 *            null to return all files.
 	 * @param fileType the type of file
 	 * @param monitor the monitor
+	 * @since 3.0 using int fileType parameter
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -1018,9 +1035,12 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
     }
 
 	/**
-	 * <b>Overrideable</b> Override this method to provide optimized implementation
-	 * Given a set of fully qualified file or folder names, return an ISystemResourceSet object for it.
+	 * Given a set of fully qualified file or folder names, return an
+	 * ISystemResourceSet object for it. <b>Overrideable</b> Override this
+	 * method to provide optimized implementation
+	 * 
 	 * @param folderOrFileNames Fully qualified folder or file names
+	 * @since 3.0
 	 */
 	public IRemoteFile[] getRemoteFileObjects(String[] folderOrFileNames, IProgressMonitor monitor) throws SystemMessageException
 	{

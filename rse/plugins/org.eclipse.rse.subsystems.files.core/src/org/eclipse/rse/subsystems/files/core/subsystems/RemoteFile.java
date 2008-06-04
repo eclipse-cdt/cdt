@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David McKnight   (IBM)        - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
@@ -56,14 +56,14 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * A remote file represents a named file on a remote file system. This class 
+ * A remote file represents a named file on a remote file system. This class
  * works with remote file names that do not include the preceding "<connectionName/subsystemName>"
- * prefix. Such ultimately-qualified names are known as IRemoteFilePath names. 
+ * prefix. Such ultimately-qualified names are known as IRemoteFilePath names.
  * <p>
  * Base parent class that supplies all of the
  *  functionality required by the IRemoteFile interface.
  * <p>
- * This base functionality is possible because this is a 
+ * This base functionality is possible because this is a
  * read-only representation of a remote file ... all actions
  * like delete and rename are handled by the subsystem.
  * <p>
@@ -80,34 +80,34 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 {
-	protected IRemoteFileContext _context;    
+	protected IRemoteFileContext _context;
 
     protected String _label;
     protected Object remoteObj;
     protected IRemoteFile _parentFile;
-    
+
     /* Archived file properties */
     // DKM - let's get rid of these fields
     //  - they should now be in IHostfile
     protected boolean isContainer = false;
-    
+
     // master hash map
     protected HashMap _contents = new HashMap();
-    
+
     /* container properties */
     protected boolean _isStale = true;
-    
+
     // properties
     protected HashMap properties = new HashMap();
     protected HashMap propertyStates = new HashMap();
-    
 
-  
+
+
     /**
      * Constructor that takes a context object containing important information.
      * @param context An object holding contextual information about this object
      * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext
-     */ 
+     */
     public RemoteFile(IRemoteFileContext context)
     {
     	this._context = context;
@@ -117,13 +117,13 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	  {
     	  	// deduce active shell from display
     	    IRemoteFileSubSystem ss = context.getParentRemoteFileSubSystem();
-    	    
+
 			if (Display.getCurrent() == null) {
 				ss.connect(new NullProgressMonitor(), false);
 			} else {
 				ss.connect(false, null);
 			}
-    	  } catch (Exception exc) {}    	  
+    	  } catch (Exception exc) {}
     }
 
 
@@ -135,17 +135,17 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	_context.setFilterString(filterString);
     }
 
-    
+
     public void setLabel(String newLabel)
     {
-    	_label = newLabel;	
+    	_label = newLabel;
     }
-       
-    
+
+
     // ------------------------------------------------------------------------
     // GETTER METHODS. ALL FULLY IMPLEMENTED ASSUMING SETTERS HAVE BEEN CALLED.
     // ------------------------------------------------------------------------
-    
+
     /**
      * Return the context associated with this remote file
      */
@@ -153,7 +153,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     {
     	return _context;
     }
-    
+
     /**
      * Return the parent subsystem
      */
@@ -172,12 +172,12 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	else
     	  return ss.getParentRemoteFileSubSystemConfiguration();
     }
-    
+
     public void setParentRemoteFile(IRemoteFile parentFile)
     {
     	this._parentFile = parentFile;
     }
-    
+
     /**
      * Return the parent remote file object expanded to get this object, or null if no such parent
      */
@@ -189,18 +189,18 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     		{
     			return null;
     		}
-    		
+
 	    	IRemoteFile parentFile = null;
-	    		
+
 //	    		_context.getParentRemoteFile();
 
 	    	String pathOnly = getParentPath();
 	    	if (pathOnly != null)
-	    	{    	  
+	    	{
 	     	  IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
 	    	  if (ss != null)
 	    	  {
-	    		 IProgressMonitor monitor = new NullProgressMonitor(); 
+	    		 IProgressMonitor monitor = new NullProgressMonitor();
 	    	  	try {
 		    	  	char sep = getSeparatorChar();
 		    	  	if (pathOnly.length() == 0)
@@ -237,11 +237,11 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     }
     /**
      * If this is a folder, it is possible that it is listed as part of a multiple filter string
-     *  filter. In this case, when the folder is expanded, we want to filter the file names to 
-     *  show all the files that match any of the filter strings that have the same parent path. 
+     *  filter. In this case, when the folder is expanded, we want to filter the file names to
+     *  show all the files that match any of the filter strings that have the same parent path.
      * <p>
      * This method supports that by returning all the filter strings in the filter which have the
-     *  same parent path as was used to produce this file. 
+     *  same parent path as was used to produce this file.
      */
     public RemoteFileFilterString[] getAllFilterStrings()
     {
@@ -298,7 +298,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     public boolean isLink()
     {
     	String classifyString = getClassification();
-    	
+
         if (classifyString == null)
         {
             return false;
@@ -307,14 +307,14 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	{
     		return true;
     	}
-    	return false; 
+    	return false;
     }
-    
-    
+
+
     public boolean isExecutable()
     {
     	String classifyString = getClassification();
-    		
+
         if (classifyString == null)
         {
             return false;
@@ -325,17 +325,19 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	}
     	return false;
     }
-    
-    
+
+
 	public boolean isArchive()
 	{
 		File file = new File(getAbsolutePath());
 		return ArchiveHandlerManager.getInstance().isArchive(file);
 	}
 
-    /**
-     * Return the connection this remote file is from.
-     */
+   	/**
+	 * Return the connection this remote file is from.
+	 *
+	 * @since 3.0 renamed getSystemConnection() to getHost()
+	 */
     public IHost getHost()
     {
     	IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
@@ -344,7 +346,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	else
     	  return ss.getHost();
     }
-          
+
     /**
      * Get fully qualified connection and file name: connection:\path\file
      * Note the separator character between the profile name and the connection name is always '.'
@@ -366,41 +368,41 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	{
 		if (_label != null)
 		{
-			return _label;	
+			return _label;
 		}
-		return getName();	
+		return getName();
 	}
 
 
 	/**
 	 * @see IRemoteFile#isBinary()
 	 */
-	public boolean isBinary() 
+	public boolean isBinary()
 	{
 		if (isDirectory())
-		  return false; 
-		else 
+		  return false;
+		else
 		  return RemoteFileUtility.getSystemFileTransferModeRegistry().isBinary(this);
 	}
-	
+
 	/**
 	 * @see IRemoteFile#isText()
 	 */
-	public boolean isText() 
+	public boolean isText()
 	{
 		if (isDirectory())
-		  return false; 
-		else 
+		  return false;
+		else
 		  return RemoteFileUtility.getSystemFileTransferModeRegistry().isText(this);
 	}
- 
- 
+
+
 
 
 	/**
 	 * @see IRemoteFile#getLastModifiedDate()
 	 */
-	public Date getLastModifiedDate() 
+	public Date getLastModifiedDate()
 	{
 		return new Date(getLastModified());
 	}
@@ -420,14 +422,14 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		  return nameOnly.substring(idx+1);
         return null; // TODO - why null?
 	}
-  
+
 
 	/**
 	 * Return the cached copy of this remote file.  The returned IFile must be used for read-only
 	 * purposes since no locks are acquired on the remote file.
-	 * 
+	 *
 	 * @return IFile The cached copy of this file if it exists AND it is upto date.  null is returned if a local
-	 * cached copy of this file is not available or the local cached copy is not upto date (last modified 
+	 * cached copy of this file is not available or the local cached copy is not upto date (last modified
 	 * timestamp comparison.)
 	 */
 // FIXME - core and ui separate now (editor is ui)
@@ -443,7 +445,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 //		}
 //		return null;
 //	}
-		
+
     // -----------------------
     // HOUSEKEEPING METHODS...
     // -----------------------
@@ -451,7 +453,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     {
     	return getName();
     }
-    
+
     /**
 	 * This is the method required by the IAdaptable interface.
 	 * Given an adapter class type, return an object castable to the type, or
@@ -459,12 +461,12 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	 * <p>
 	 * By default this returns Platform.getAdapterManager().getAdapter(this, adapterType);
 	 * This in turn results in the default subsystem adapter SystemViewSubSystemAdapter,
-	 * in package org.eclipse.rse.ui.view. 
+	 * in package org.eclipse.rse.ui.view.
 	 */
     public Object getAdapter(Class adapterType)
     {
-   	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
-    }    
+   	    return Platform.getAdapterManager().getAdapter(this, adapterType);
+    }
 
     // -------------------------------
     // java.util.Comparable methods...
@@ -481,10 +483,10 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
         else if (!isDirectory() && otherFile.isDirectory())
           return 1; // we are a file so we are more than a folder
     	String comp1 = getName();
-   
+
         String comp2 = otherFile.getName();
         if (comp2 == null)
-          comp2 = otherFile.getParentPath();        
+          comp2 = otherFile.getParentPath();
     	return comp1.toLowerCase().compareTo(comp2.toLowerCase());
     }
 
@@ -495,14 +497,14 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     public void setFile (Object obj)
     {
     	remoteObj = obj;
-    }	
+    }
 
     public Object getFile()
     {
     	return remoteObj;
     }
-	
-	public boolean isAncestorOf(IRemoteFile file) 
+
+	public boolean isAncestorOf(IRemoteFile file)
 	{
 		String separator = this.getSeparator();
 		if (this instanceof IVirtualRemoteFile) separator = "/"; //$NON-NLS-1$
@@ -511,23 +513,23 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return file.getAbsolutePathPlusConnection().startsWith(this.getAbsolutePathPlusConnection() + separator);
 	}
 
-	public boolean isDescendantOf(IRemoteFile file) 
+	public boolean isDescendantOf(IRemoteFile file)
 	{
 		String separator = file.getSeparator();
 		if (this instanceof IVirtualRemoteFile) separator = "/"; //$NON-NLS-1$
 		if (file.isArchive()) separator = ArchiveHandlerManager.VIRTUAL_SEPARATOR;
-		
+
 		return this.getAbsolutePathPlusConnection().startsWith(file.getAbsolutePathPlusConnection() + separator);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemContainer#hasContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
-	public boolean hasContents(ISystemContentsType contentsType) 
+	public boolean hasContents(ISystemContentsType contentsType)
 	{
 		boolean result = _contents.containsKey(contentsType);
-		
+
 // 		KM: comment out this code to prevent us picking up wrong cache
 //		KM: defect 45072
 //		if (!result)
@@ -541,27 +543,27 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 //				return hasContents(RemoteChildrenContentsType.getInstance());
 //			}
 //		}
-		
+
 		return result;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#hasContents(org.eclipse.rse.core.model.ISystemContentsType, java.lang.String)
 	 */
 	public boolean hasContents(ISystemContentsType contentsType, String filter) {
 		HashMap filters = (HashMap)(_contents.get(contentsType));
-		
+
 		if (filters == null) {
 			return false;
 		}
-		
+
 		if (filter == null) {
 			filter = "*"; //$NON-NLS-1$
 		}
-		
+
 		boolean result = containsFilterKey(filters, filter);
-		
+
 // 		KM: comment out this code to prevent us picking up wrong cache
 //		KM: defect 45072
 //		if (!result)
@@ -575,10 +577,10 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 //				return hasContents(RemoteChildrenContentsType.getInstance(), filter);
 //			}
 //		}
-		
+
 		return result;
 	}
-	
+
 	protected boolean containsFilterKey(HashMap filters, String filter)
 	{
 		if (filters.containsKey(filter))
@@ -587,7 +589,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		}
 		else
 		{
-			
+
 			Set keySet = filters.keySet();
 			Object[] keyArray = keySet.toArray();
 			for (int i = 0; i < keyArray.length; i++)
@@ -609,33 +611,33 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		}
 		return false;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemContainer#getContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
-	public Object[] getContents(ISystemContentsType contentsType) 
+	public Object[] getContents(ISystemContentsType contentsType)
 	{
 		return getContents(contentsType, "*"); //$NON-NLS-1$
-	}	  
-	
+	}
+
 	private Object[] combine(Object[] set1, Object[] set2)
 	{
 		ArrayList result = new ArrayList(set1.length + set2.length);
-		
+
 		for (int i = 0; i < set1.length; i++)
 		{
 			result.add(set1[i]);
 		}
-		
+
 		for (int j = 0; j < set2.length; j++)
 		{
 			result.add(set2[j]);
 		}
-		
+
 		return result.toArray(new IRemoteFile[result.size()]);
 	}
-	
+
 	/*
 	private Object[] getFiles(Object[] filesAndFolders)
 	{
@@ -652,7 +654,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return results.toArray();
 	}
 	*/
-	
+
 	private Object[] getFolders(Object[] filesAndFolders)
 	{
 		List results = new ArrayList();
@@ -668,17 +670,17 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return results.toArray();
 	}
 
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#getContents(org.eclipse.rse.core.model.ISystemContentsType, java.lang.String)
 	 */
-	public Object[] getContents(ISystemContentsType contentsType, String filter) 
-	{	
+	public Object[] getContents(ISystemContentsType contentsType, String filter)
+	{
 		HashMap filters = (HashMap)(_contents.get(contentsType));
-					
-		if (filters == null || filters.isEmpty()) 
-		{			
+
+		if (filters == null || filters.isEmpty())
+		{
 			if (contentsType == RemoteChildrenContentsType.getInstance())
 			{
 				if (hasContents(RemoteFileChildrenContentsType.getInstance()) && hasContents(RemoteFolderChildrenContentsType.getInstance()))
@@ -686,7 +688,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 					// implies both files and folders
 					Object[] folders = getContents(RemoteFolderChildrenContentsType.getInstance(), filter);
 					Object[] files = getContents(RemoteFileChildrenContentsType.getInstance(), filter);
-					
+
 					return combine(folders, files);
 				}
 			}
@@ -708,12 +710,12 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			}
 			return null;
 		}
-		
+
 		if (filter == null) {
 			filter = "*"; //$NON-NLS-1$
 		}
-		
-		if (filters.containsKey(filter)) 
+
+		if (filters.containsKey(filter))
 		{
 			Object[] filterResults = (Object[])filters.get(filter);
 			if (contentsType == RemoteChildrenContentsType.getInstance() ||
@@ -728,21 +730,21 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 				return filterResults;
 			}
 		}
-		
+
 		ArrayList calculatedResults = new ArrayList();
-	
+
 		StringComparePatternMatcher fmatcher = new StringComparePatternMatcher(filter);
-		
+
 		// the filter may be a subset of existing filters
 		Object[] keySet = filters.keySet().toArray();
-		
+
 		for (int i = 0; i < keySet.length; i++) {
-			
+
 			String key = (String)keySet[i];
-			
+
 			// KM: we need to match with the key to ensure that the filter is a subset
 			StringComparePatternMatcher matcher = new StringComparePatternMatcher(key);
-			
+
 			if (matcher.stringMatches(filter)) {
 				// get all children, i.e. the superset
 				Object[] all = (Object[]) filters.get(key);
@@ -754,7 +756,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 						Object subContent = all[s];
 
 						if (!calculatedResults.contains(subContent)) {
-							
+
 							if (subContent instanceof IRemoteFile) {
 
 								IRemoteFile temp = (IRemoteFile) subContent;
@@ -788,17 +790,17 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 				}
 			}
 		}
-		
+
 		return calculatedResults.toArray();
-	}	  
+	}
 
 	/**
-	 * Returns whether filter is for file types. 
+	 * Returns whether filter is for file types.
 	 * @param filter the filter.
 	 * @return <code>true</code> if filter is for file types, <code>false</code> otherwise.
 	 */
 	private boolean isFilterForFileTypes(String filter) {
-		
+
 		if (filter.endsWith(",")) { //$NON-NLS-1$
 			return true;
 		}
@@ -806,11 +808,11 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			return false;
 		}
 	}
-	
+
 	public void setIsContainer(boolean con) {
 		isContainer = con;
-	}  
-	
+	}
+
 	 /*
      * Replace occurrences of cached object with new object
      */
@@ -834,39 +836,39 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	    	}
     	}
     }
-    
-  
-	
+
+
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#setContents(org.eclipse.rse.core.model.ISystemContentsType, java.lang.String, java.lang.Object[])
 	 */
 	public void setContents(ISystemContentsType contentsType, String filter, Object[] con) {
-		
+
 		if (filter == null) {
 			filter = "*"; //$NON-NLS-1$
 		}
-	
+
 	// DKM - consider all containers so that we can tell if an empty one
-	// has been queried before (i.e. via IRemoteFile[0] as it's contents vs null)	
-//		if (con != null && con.length > 0) 
+	// has been queried before (i.e. via IRemoteFile[0] as it's contents vs null)
+//		if (con != null && con.length > 0)
 		{
 			isContainer = true;
 		}
-		
+
 		HashMap filters = (HashMap)(_contents.get(contentsType));
-		
-		if (filters == null) 
+
+		if (filters == null)
 		{
 			filters = new HashMap();
 		}
 
-		if (isContainer) 
-		{			
+		if (isContainer)
+		{
 			filters.put(filter, con);
 			_contents.put(contentsType, filters);
-		}		
-		
+		}
+
 		// set parent folders
 		if (isContainer && con != null)
 		{
@@ -884,33 +886,33 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#isStale()
 	 */
-	public boolean isStale() 
+	public boolean isStale()
 	{
 		return _isStale || !exists();
 	}
-	
-	
-	
+
+
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#markStale(boolean)
 	 */
-	public void markStale(boolean isStale) 
+	public void markStale(boolean isStale)
 	{
 		markStale(isStale, true);
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#markStale(boolean)
 	 */
-	public void markStale(boolean isStale, boolean clearCache) 
+	public void markStale(boolean isStale, boolean clearCache)
 	{
 		_isStale = isStale;
-		
-		if (isStale && clearCache) 
-		{		
-			
+
+		if (isStale && clearCache)
+		{
+
 			Iterator iter = _contents.keySet().iterator();
-			
+
 			while (iter.hasNext()) {
 				Object contentsType = iter.next();
 				if (contentsType instanceof ISystemContentsType)
@@ -918,29 +920,29 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 				    if (!((ISystemContentsType)contentsType).isPersistent())
 				    {
 						HashMap filters = (HashMap)(_contents.get(contentsType));
-						
-						if (filters != null) 
+
+						if (filters != null)
 						{
 							filters.clear();
 						}
 				    }
 				}
 			}
-			
+
 			if (_parentFile != null)
 			{
 				_parentFile.markStale(true, false);
 			}
-			
-			
+
+
 		}
 	}
-	
+
 	public void copyContentsTo(IRemoteContainer target)
 	{
 	    Iterator iter = _contents.keySet().iterator();
-		
-		while (iter.hasNext()) 
+
+		while (iter.hasNext())
 		{
 			Object contentsType = iter.next();
 			if (contentsType instanceof ISystemContentsType)
@@ -949,12 +951,12 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			    if (ct.isPersistent())
 			    {
 			        HashMap filters = (HashMap)(_contents.get(ct));
-			        
+
 			        Iterator fiter = filters.keySet().iterator();
-					
-					while (fiter.hasNext()) 
+
+					while (fiter.hasNext())
 					{
-					    Object filter = fiter.next(); 
+					    Object filter = fiter.next();
 					    Object fcontents = filters.get(filter);
 					    if (fcontents != null && fcontents instanceof Object[])
 					    {
@@ -965,35 +967,35 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			}
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemotePropertyHolder#getProperties(java.lang.String[])
 	 */
 	public Object[] getProperties(String[] keys) {
-		
+
 		Object[] values = new Object[keys.length];
-		
+
 		for (int i = 0; i < keys.length; i++) {
 			values[i] = properties.get(keys[i]);
 		}
-		
+
 		return values;
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemotePropertyHolder#getProperty(java.lang.String)
 	 */
 	public Object getProperty(String key) {
 		return properties.get(key);
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemotePropertyHolder#isPropertyStale(java.lang.String)
 	 */
 	public boolean isPropertyStale(String key) {
-		
+
 		Boolean b = (Boolean)(propertyStates.get(key));
-		
+
 		if (b == null) {
 			return false;
 		}
@@ -1001,36 +1003,36 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			return b.booleanValue();
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemotePropertyHolder#markAllPropertiesStale()
 	 */
 	public void markAllPropertiesStale() {
 		Iterator iter = propertyStates.keySet().iterator();
-		
+
 		while (iter.hasNext()) {
 			String key = (String)(iter.next());
 			markPropertyStale(key);
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemotePropertyHolder#markPropertyStale(java.lang.String)
 	 */
 	public void markPropertyStale(String key) {
 		propertyStates.put(key, Boolean.FALSE);
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemotePropertyHolder#setProperties(java.lang.String[], java.lang.Object[])
 	 */
 	public void setProperties(String[] keys, Object[] values) {
-		
+
 		for (int i = 0; i < keys.length; i++) {
 			setProperty(keys[i], values[i]);
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IRemotePropertyHolder#setProperty(java.lang.String, java.lang.Object)
 	 */
@@ -1038,12 +1040,12 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		properties.put(key, value);
 		propertyStates.put(key, Boolean.TRUE);
 	}
-	
+
 	public String getComment()
 	{
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see ISchedulingRule#contains(ISchedulingRule)
@@ -1064,14 +1066,14 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		if (rule instanceof IRemoteFile)
 		{
 			RemoteFile rf = (RemoteFile)rule;
-			return getHostName().equals(rf.getHostName()) && 
+			return getHostName().equals(rf.getHostName()) &&
 		       rf.getAbsolutePath().startsWith(getAbsolutePath());
 		}
 		//if (!(rule instanceof RemoteFileSchedulingRule))
 		//	return false;
 		if (rule instanceof RemoteFileSchedulingRule)
 		{
-		return getHostName().equals(((RemoteFileSchedulingRule) rule).getHostName()) && 
+		return getHostName().equals(((RemoteFileSchedulingRule) rule).getHostName()) &&
 		       ((RemoteFileSchedulingRule) rule).getAbsolutePath().startsWith(getAbsolutePath());
 		}
 		return false;
@@ -1080,17 +1082,17 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	/* (non-Javadoc)
 	 * @see ISchedulingRule#isConflicting(ISchedulingRule)
 	 */
-	public boolean isConflicting(ISchedulingRule rule) 
-	{	
+	public boolean isConflicting(ISchedulingRule rule)
+	{
 		if (rule instanceof RemoteFile)
 		{
 			String otherPath = ((RemoteFile)rule).getAbsolutePath();
 			String path = this.getAbsolutePath();
 			String otherHost = ((RemoteFile)rule).getHostName();
-			return getHostName().equals(otherHost) && path.startsWith(otherPath) || otherPath.startsWith(path);	
+			return getHostName().equals(otherHost) && path.startsWith(otherPath) || otherPath.startsWith(path);
 		}
 		else if (rule instanceof RemoteFileSchedulingRule)
-		{	
+		{
 			String otherPath = ((RemoteFileSchedulingRule) rule).getAbsolutePath();
 			String path = this.getAbsolutePath();
 			String otherHost = ((RemoteFileSchedulingRule) rule).getHostName();
@@ -1101,22 +1103,22 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			return false;
 		}
 	}
-	
+
 	public boolean equals(Object otherObj)
 	{
 		if (otherObj instanceof RemoteFile)
 		{
 			RemoteFile other = (RemoteFile)otherObj;
 			if  (this == other) return true;
-		
+
 			String otherPath = other.getAbsolutePath();
 			String path = this.getAbsolutePath();
 			//String otherHost = other.getHostName();
-			
+
 			String alias1 = this.getParentRemoteFileSubSystem().getHostAliasName();
 			String alias2 = other.getParentRemoteFileSubSystem().getHostAliasName();
-			
-			//return getHostName().equals(otherHost) && path.equals(otherPath);				
+
+			//return getHostName().equals(otherHost) && path.equals(otherPath);
 			return alias1.equals(alias2) && path.equals(otherPath);
 		}
 		else
@@ -1124,27 +1126,27 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			return false;
 		}
 	}
-	
+
 	public String getHostName()
 	{
 		return getHost().getHostName();
 	}
 
 
-	
+
 	private String getParentPathFor(String path)
-	{		
+	{
 		boolean isUnix = getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().isUnixStyle();
-		
+
 		String separator = getSeparator();
-		
+
 		if (isUnix && path.equals(separator))
 		{
 			return null; // no parent of root
 		}
-		
-		int lastSep = path.lastIndexOf(separator);		
-		
+
+		int lastSep = path.lastIndexOf(separator);
+
 		if (lastSep == 0) // root is the parent (on unix)
 		{
 			return separator;
@@ -1158,7 +1160,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the encoding of the remote file. If a user specified value does not exist, then we check
 	 * it's ancestry for an encoding.  Otherwise the encoding of the parent subsystem is returned.
@@ -1168,7 +1170,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		String hostName = getParentRemoteFileSubSystem().getHost().getHostName();
 		String path = getAbsolutePath();
 		String encoding = RemoteFileEncodingManager.getInstance().getEncoding(hostName, path);
-		
+
 		// ask the parent folder
 		if (encoding == null) {
 			if (_parentFile != null)
@@ -1177,22 +1179,22 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			}
 			else
 			{
-				
-				// manually extra parents				
+
+				// manually extra parents
 				String parentPath = getParentPathFor(path);
 				while (parentPath != null && encoding == null)
 				{
 					encoding = RemoteFileEncodingManager.getInstance().getEncoding(hostName, parentPath);
 					parentPath = getParentPathFor(parentPath);
 				}
-				
+
 				if (encoding == null) // no encoding found - fall back to system
 				{
 					encoding = getParentRemoteFileSubSystem().getRemoteEncoding();
 				}
 			}
 		}
-		
+
 		return encoding;
 	}
 	/**
@@ -1203,6 +1205,11 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		RemoteFileEncodingManager.getInstance().setEncoding(getHostName(), getAbsolutePath(), encoding);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
+	 */
 	public IHostFilePermissions getPermissions() {
 		IHostFile hostFile = getHostFile();
 		if (hostFile instanceof IHostFilePermissionsContainer){

@@ -226,6 +226,27 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_function_calls;
 	public static String LineWrappingTabPage_expressions;
 //	public static String LineWrappingTabPage_statements;
+	
+	public static String LineWrappingTabPage_base_clause_lowercase;
+//	public static String LineWrappingTabPage_compact_if_else_lowercase;
+	public static String LineWrappingTabPage_parameters_lowercase;
+	public static String LineWrappingTabPage_arguments_lowercase;
+	public static String LineWrappingTabPage_throws_clause_lowercase;
+	public static String LineWrappingTabPage_enum_decls_lowercase;
+	public static String LineWrappingTabPage_enumerator_list_lowercase;
+	public static String LineWrappingTabPage_initializer_list_lowercase;
+	public static String LineWrappingTabPage_conditionals_lowercase;
+//	public static String LineWrappingTabPage_binary_exprs_lowercase;
+	public static String LineWrappingTabPage_indentation_default_lowercase;
+	public static String LineWrappingTabPage_indentation_on_column_lowercase;
+	public static String LineWrappingTabPage_indentation_by_one_lowercase;
+	public static String LineWrappingTabPage_class_decls_lowercase;
+	public static String LineWrappingTabPage_method_decls_lowercase;
+//	public static String LineWrappingTabPage_constructor_decls_lowercase;
+	public static String LineWrappingTabPage_function_calls_lowercase;
+	public static String LineWrappingTabPage_expressions_lowercase;
+//	public static String LineWrappingTabPage_statements_lowercase;
+		
 	public static String LineWrappingTabPage_wrapping_policy_label_text;
 	public static String LineWrappingTabPage_indentation_policy_label_text;
 	public static String LineWrappingTabPage_force_split_checkbox_text;

@@ -51,8 +51,8 @@ public class XLCompilerPreferencePage
 		addField(new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, 
 				Messages.XLCompilerPreferencePage_1, getFieldEditorParent()));
 		
-		String[][] versionEntries = {{PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, "v8.0"},  //$NON-NLS-1$
-									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, "v9.0"}};  //$NON-NLS-1$
+		String[][] versionEntries = {{PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, Messages.XLCompiler_v8},
+									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, Messages.XLCompiler_v9}};
 		
 		addField(new ComboFieldEditor(PreferenceConstants.P_XLC_COMPILER_VERSION,
 				Messages.XLCompilerPreferencePage_2, versionEntries, getFieldEditorParent()));

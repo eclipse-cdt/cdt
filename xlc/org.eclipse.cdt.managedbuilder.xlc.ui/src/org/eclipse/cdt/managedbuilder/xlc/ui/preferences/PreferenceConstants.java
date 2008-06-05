@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.managedbuilder.xlc.ui.preferences;
 
+import org.eclipse.cdt.managedbuilder.xlc.ui.Messages;
+
 /**
  * Constant definitions for plug-in preferences
  */
@@ -20,7 +22,7 @@ public class PreferenceConstants {
 
 	public static final String P_XLC_COMPILER_VERSION = "XLC_compilerVersion";  //$NON-NLS-1$
 	
-	public static final String P_XL_COMPILER_VERSION_8_NAME = "v8.0";  //$NON-NLS-1$
-	public static final String P_XL_COMPILER_VERSION_9_NAME = "v9.0";  //$NON-NLS-1$
+	public static final String P_XL_COMPILER_VERSION_8_NAME = Messages.XLCompiler_v8;
+	public static final String P_XL_COMPILER_VERSION_9_NAME = Messages.XLCompiler_v9;
 
 }

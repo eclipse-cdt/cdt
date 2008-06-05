@@ -252,6 +252,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_force_split_checkbox_text;
 	public static String LineWrappingTabPage_force_split_checkbox_multi_text;
 	public static String LineWrappingTabPage_line_width_for_preview_label_text;
+	public static String LineWrappingTabPage_line_width_for_preview_label_unit_text;
 	public static String LineWrappingTabPage_group;
 	public static String LineWrappingTabPage_multi_group;
 	public static String LineWrappingTabPage_multiple_selections;

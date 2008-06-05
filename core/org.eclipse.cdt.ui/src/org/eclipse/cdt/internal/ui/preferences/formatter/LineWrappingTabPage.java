@@ -700,6 +700,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 				fDialogSettings.put(PREF_PREVIEW_LINE_WIDTH, fPreviewPreferences.get(LINE_SPLIT));
 			}
 		});
+		Label label = new Label(composite, SWT.WRAP);
+        label.setText(FormatterMessages.LineWrappingTabPage_line_width_for_preview_label_unit_text);
 		
 		return composite;
 	}

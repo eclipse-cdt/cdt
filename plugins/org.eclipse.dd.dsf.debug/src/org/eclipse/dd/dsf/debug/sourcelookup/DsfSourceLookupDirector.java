@@ -32,6 +32,7 @@ public class DsfSourceLookupDirector extends CSourceLookupDirector {
 	 */
 	@Override
     public void initializeParticipants() {
+	    super.initializeParticipants();
 		addParticipants( new ISourceLookupParticipant[]{ new DsfSourceLookupParticipant(fSession) } );
 	}
 	

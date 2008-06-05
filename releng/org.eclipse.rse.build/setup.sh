@@ -135,11 +135,13 @@ if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   unzip -o eclipse-test-framework-${ep_ver}.zip
   rm eclipse-test-framework-${ep_ver}.zip
 fi
-if [ ! -f eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
+if [ ! -f eclipse/dropins/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   echo "Getting RXTX..."
+  cd eclipse/dropins
   wget "http://rxtx.qbang.org/eclipse/downloads/RXTX-SDK-I20071016-1945.zip"
   unzip -o RXTX-SDK-I20071016-1945.zip
   rm RXTX-SDK-I20071016-1945.zip
+  cd ../..
 fi
 
 # checkout the basebuilder

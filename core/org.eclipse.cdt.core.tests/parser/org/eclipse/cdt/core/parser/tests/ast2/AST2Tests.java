@@ -4810,4 +4810,76 @@ public class AST2Tests extends AST2BaseTest {
     	IASTLiteralExpression lit= (IASTLiteralExpression) fcall.getParameterExpression();
     	assertEquals("\"this is a string\"", lit.toString());
     }
+    
+    // typedef int tint;
+    // tint f1(tint (tint));
+    // int f2(int (int));
+    // int f3(int (tint));
+    // int f4(int (identifier));
+    // int f5(int *(tint[10])); 
+    public void _testParamWithFunctionType_Bug84242() throws Exception {
+    	// works for plain-c, see testcase below.
+    	// mstodo also check related failure AST2CPPSpecFailingTest._test8_2s7a()
+    	final String comment= getAboveComment();
+    	final boolean[] isCpps= {false, true};
+    	for (boolean isCpp : isCpps) {
+        	BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+
+        	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
+        	isTypeEqual(f.getType(), "int (int (int) *)");
+
+        	f= ba.assertNonProblem("f2", 2, IFunction.class);
+        	isTypeEqual(f.getType(), "int (int (int) *)");
+
+        	f= ba.assertNonProblem("f3", 2, IFunction.class);
+        	isTypeEqual(f.getType(), "int (int (int) *)");
+
+        	f= ba.assertNonProblem("f4", 2, IFunction.class);
+        	isTypeEqual(f.getType(), "int (int)");
+        	
+        	f= ba.assertNonProblem("f5", 2, IFunction.class);
+        	isTypeEqual(f.getType(), "int (int * (int *) *)");
+    	}
+    }
+
+    // class C { };
+    // void f1(int(C)) { }     
+    public void _testParamWithFunctionTypeCpp_Bug84242() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), false);
+
+    	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
+    	isTypeEqual(f.getType(), "void (int (C) *)");
+    }
+
+    // int (*f1(int par))[5] {};
+    public void _testFunctionReturningPtrToArray_Bug216609() throws Exception {
+    	// works for plain-c, see testcase below.
+    	final String comment= getAboveComment();
+    	final boolean[] isCpps= {false, true};
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+
+    		IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
+    		isTypeEqual(f.getType(), "int [] * (int)");
+    	}
+    }
+    
+    //  void f() {                    
+    //    int a,b;                     
+    //    { b; a; int a; }              
+    //  }
+    public void _testLocalVariableResolution_Bug235831() throws Exception {
+    	final String comment= getAboveComment();
+    	final boolean[] isCpps= {false, true};
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+
+    		ba.assertNonProblem("b; a", 1, IVariable.class);	// fill cache of inner block
+    		IVariable v3= ba.assertNonProblem("a; }", 1, IVariable.class);
+    		IVariable v2= ba.assertNonProblem("a; int", 1, IVariable.class);
+    		IVariable v1= ba.assertNonProblem("a,", 1, IVariable.class);
+    		assertSame(v1, v2);
+    		assertNotSame(v2, v3);
+    	}
+    }
 }

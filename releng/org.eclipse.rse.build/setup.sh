@@ -43,7 +43,7 @@ esac
 # prepare the base Eclipse installation in folder "eclipse"
 ep_ver=3.4RC3
 ep_date=200805301730
-P2_disabled=true
+P2_disabled=false
 if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
@@ -116,6 +116,12 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
   unzip ../cdt-master-5.0.0-I${CDTVER}.zip
   cd ..
   #java -jar eclipse/startup.jar \
+  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
+    -application org.eclipse.update.core.standaloneUpdate \
+    -command install \
+    -from file://${CDTTMP} \
+    -featureId org.eclipse.cdt.platform \
+    -version 5.0.0.${CDTVER}
   java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \

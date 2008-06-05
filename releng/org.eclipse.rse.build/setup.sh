@@ -41,9 +41,9 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-ep_ver=3.4RC1
-ep_date=200805161333
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3445c.jar ]; then
+ep_ver=3.4RC3
+ep_date=200805301730
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then

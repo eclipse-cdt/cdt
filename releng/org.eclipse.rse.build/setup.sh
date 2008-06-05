@@ -93,14 +93,16 @@ if [ ! -f eclipse/startup.jar ]; then
   fi
   cd ${curdir2}
 fi
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.200804020801.jar ]; then
-  # CDT 5.0M6 Runtime
+
+# CDT 5.0RC3 Runtime
+CDTVER=200805300802
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I200804020801/cdt-master-5.0.0-I200804020801.zip"
+  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I${CDTVER}/cdt-master-5.0.0-I${CDTVER}.zip"
   CDTTMP=`pwd`/tmp.$$
   mkdir ${CDTTMP}
   cd ${CDTTMP}
-  unzip ../cdt-master-5.0.0-I200804020801.zip
+  unzip ../cdt-master-5.0.0-I${CDTVER}.zip
   cd ..
   #java -jar eclipse/startup.jar \
   java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
@@ -108,16 +110,23 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.200804020801.jar ]; then
     -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt \
-    -version 5.0.0.200804020801
+    -version 5.0.0.${CDTVER}
   rm -rf ${CDTTMP}
-  rm cdt-master-5.0.0-I200804020801.zip
+  rm cdt-master-5.0.0-I${CDTVER}.zip
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf.doc_2.4.0.v200804012208.jar ]; then
+
+# EMF 2.4.0RC3
+EMFBRANCH=2.4.0
+EMFDATE=200806021643
+EMFVER=2.4.0RC3
+if [ ! -f eclipse/dropins/eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.4.0/S200804012208/emf-sdo-xsd-SDK-2.4.0M6.zip"
-  unzip -o emf-sdo-xsd-SDK-2.4.0M6.zip
-  rm emf-sdo-xsd-SDK-2.4.0M6.zip 
+  cd eclipse/dropins
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/${EMFBRANCH}/S${EMFDATE}/emf-sdo-xsd-SDK-${EMFVER}.zip"
+  unzip -o emf-sdo-xsd-SDK-${EMFVER}.zip
+  rm emf-sdo-xsd-SDK-${EMFVER}.zip
+  cd ../.. 
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   # Eclipse Test Framework
@@ -135,10 +144,10 @@ fi
 
 # checkout the basebuilder
 #baseBuilderTag=vI20080502-0100
-baseBuilderTag=M7_34
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080430-1001.jar \
+baseBuilderTag=RC2_34
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080515-2000.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.4.0.v20080430/pdebuild.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.0.v20080501-1238.jar ]; then
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.0.v20080523-0001.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

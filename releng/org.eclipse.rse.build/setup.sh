@@ -97,11 +97,11 @@ fi
 
 if ${P2_disabled} ; then
   #P2 disabled?
-  DROPIN=""
+  DROPIN=.
   DROPUP=.
 else
   #P2 enabled
-  DROPIN=eclipse/dropins/
+  DROPIN=eclipse/dropins
   DROPUP=../..
 fi
 
@@ -136,7 +136,7 @@ fi
 EMFBRANCH=2.4.0
 EMFDATE=200806021643
 EMFVER=2.4.0RC3
-if [ ! -f ${DROPIN}eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ]; then
+if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
   cd ${DROPIN}
@@ -152,7 +152,7 @@ if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   unzip -o eclipse-test-framework-${ep_ver}.zip
   rm eclipse-test-framework-${ep_ver}.zip
 fi
-if [ ! -f ${DROPIN}eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
+if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   echo "Getting RXTX..."
   cd ${DROPIN}
   wget "http://rxtx.qbang.org/eclipse/downloads/RXTX-SDK-I20071016-1945.zip"

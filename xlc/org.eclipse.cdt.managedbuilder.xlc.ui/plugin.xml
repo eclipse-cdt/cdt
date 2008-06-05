@@ -1836,7 +1836,7 @@
      <enumeratedOptionValue
            command="-qtune=auto"
            id="xlc.c.compiler.option.optimization.tune.auto"
-           name="auto">
+           name="%Option.optimization.tune.auto">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qtune=403"
@@ -1963,7 +1963,7 @@
      <enumeratedOptionValue
            command="-qtune=auto"
            id="xlc.c.compiler.option.optimization.tune.auto"
-           name="auto">
+           name="%Option.optimization.tune.auto">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qtune=403"

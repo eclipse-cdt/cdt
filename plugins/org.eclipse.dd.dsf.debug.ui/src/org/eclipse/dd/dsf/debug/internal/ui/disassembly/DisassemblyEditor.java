@@ -31,9 +31,6 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 		super();
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyPart#getActionBars()
-	 */
 	@Override
 	protected IActionBars getActionBars() {
 		return getEditorSite().getActionBars();
@@ -106,9 +103,6 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 		// TLETODO [disassembly] initialization based on input
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyPart#closePart()
-	 */
 	@Override
 	protected void closePart() {
 		getEditorSite().getPage().closeEditor(this, false);

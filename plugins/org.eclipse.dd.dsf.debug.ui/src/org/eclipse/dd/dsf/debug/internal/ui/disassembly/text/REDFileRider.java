@@ -32,8 +32,8 @@ public final class REDFileRider implements IFileRider {
 		set(f, 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.windriver.ide.editor.model.IFileRider#seek(int)
+	/*
+	 * @see org.eclipse.dd.dsf.debug.internal.ui.disassembly.text.IFileRider#seek(int)
 	 */
 	public void seek(int pos) throws IOException {
 		fFile.seek(pos);

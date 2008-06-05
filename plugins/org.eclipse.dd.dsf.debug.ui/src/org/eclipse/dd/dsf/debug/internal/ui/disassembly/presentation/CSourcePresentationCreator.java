@@ -240,7 +240,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	}
 
 	/*
-	 * @see com.windriver.ide.disassembly.model.ISourcePresentationCreator#dispose()
+	 * @see org.eclipse.dd.dsf.debug.internal.ui.disassembly.presentation.ISourcePresentationCreator#dispose()
 	 */
 	public void dispose() {
 		fViewer= null;
@@ -263,7 +263,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	}
 
 	/*
-	 * @see com.windriver.ide.disassembly.model.ISourcePresentationCreator#getPresentation(org.eclipse.jface.text.IRegion, org.eclipse.jface.text.IDocument)
+	 * @see org.eclipse.dd.dsf.debug.internal.ui.disassembly.presentation.ISourcePresentationCreator#getPresentation(org.eclipse.jface.text.IRegion, org.eclipse.jface.text.IDocument)
 	 */
 	public TextPresentation getPresentation(IRegion region, IDocument document) {
 		assert fViewer != null;

@@ -86,7 +86,7 @@ public class CSourceTagProvider implements ISourceTagProvider {
 	}
 
 	/*
-	 * @see com.windriver.ide.editor.IWrsSourceTagProvider#removeSourceTagListener(com.windriver.ide.editor.IWrsSourceTagListener)
+	 * @see org.eclipse.dd.dsf.debug.internal.ui.disassembly.presentation.ISourceTagProvider#removeSourceTagListener(org.eclipse.dd.dsf.debug.internal.ui.disassembly.presentation.ISourceTagListener)
 	 */
 	public void removeSourceTagListener(ISourceTagListener listener) {
 		fListenerList.remove(listener);

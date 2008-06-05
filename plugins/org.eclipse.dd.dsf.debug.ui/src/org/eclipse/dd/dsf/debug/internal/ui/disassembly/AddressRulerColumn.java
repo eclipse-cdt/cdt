@@ -46,9 +46,6 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 		setRadix(16);
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyRulerColumn#createDisplayString(int)
-	 */
 	@Override
 	protected String createDisplayString(int line) {
 		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
@@ -86,9 +83,6 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyRulerColumn#computeNumberOfCharacters()
-	 */
 	@Override
 	protected int computeNumberOfCharacters() {
 		return fNumberOfDigits + (fRadixPrefix != null ? fRadixPrefix.length() : 0) + 1;

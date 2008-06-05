@@ -33,17 +33,11 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 		fLine = lineNr;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.windriver.ide.disassembly.model.DisassemblyPosition#getFile()
-	 */
 	@Override
 	public String getFile() {
 		return fFile;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.windriver.ide.disassembly.model.DisassemblyPosition#getLine()
-	 */
 	@Override
 	public int getLine() {
 		return fLine;

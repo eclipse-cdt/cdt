@@ -49,9 +49,6 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyRulerColumn#computeNumberOfCharacters()
-	 */
 	@Override
 	protected int computeNumberOfCharacters() {
 		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();

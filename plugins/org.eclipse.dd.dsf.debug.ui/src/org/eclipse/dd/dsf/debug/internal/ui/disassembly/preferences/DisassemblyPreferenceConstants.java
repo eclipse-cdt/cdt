@@ -25,22 +25,22 @@ import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
  */
 public class DisassemblyPreferenceConstants {
 
-	public static final String START_ADDRESS = "startAddress"; //$NON-NLS-1$
-	public static final String END_ADDRESS = "endAddress"; //$NON-NLS-1$
-	public static final String PC_HISTORY_SIZE = "pcHistorySize"; //$NON-NLS-1$
-	public static final String SHOW_SOURCE = "showSource"; //$NON-NLS-1$
-	public static final String SHOW_LABELS = "showLabels"; //$NON-NLS-1$
-	public static final String SHOW_SYMBOLS = "showSymbols"; //$NON-NLS-1$
-	public static final String SIMPLIFIED = "simplified"; //$NON-NLS-1$
-	public static final String INSTRUCTION_RADIX = "instructionRadix"; //$NON-NLS-1$
-	public static final String ADDRESS_RADIX = "addressRadix"; //$NON-NLS-1$
-	public static final String SHOW_ADDRESS_RADIX = "showAddressRadix"; //$NON-NLS-1$
-	public static final String SHOW_ADDRESS_RULER = "showAddressRuler"; //$NON-NLS-1$
-	public static final String ADDRESS_COLOR = "addressColor"; //$NON-NLS-1$
-	public static final String SHOW_FUNCTION_OFFSETS = "showOpcodeRuler"; //$NON-NLS-1$
-	public static final String OPCODE_COLOR = "opcodeColor"; //$NON-NLS-1$
-	public static final String USE_SOURCE_ONLY_MODE = "useSourceOnlyMode"; //$NON-NLS-1$
-	public static final String AVOID_READ_BEFORE_PC = "avoidReadBeforePC"; //$NON-NLS-1$
+	public static final String START_ADDRESS = "disassembly.startAddress"; //$NON-NLS-1$
+	public static final String END_ADDRESS = "disassembly.endAddress"; //$NON-NLS-1$
+	public static final String PC_HISTORY_SIZE = "disassembly.pcHistorySize"; //$NON-NLS-1$
+	public static final String SHOW_SOURCE = "disassembly.showSource"; //$NON-NLS-1$
+	public static final String SHOW_LABELS = "disassembly.showLabels"; //$NON-NLS-1$
+	public static final String SHOW_SYMBOLS = "disassembly.showSymbols"; //$NON-NLS-1$
+	public static final String SIMPLIFIED = "disassembly.simplified"; //$NON-NLS-1$
+	public static final String INSTRUCTION_RADIX = "disassembly.instructionRadix"; //$NON-NLS-1$
+	public static final String ADDRESS_RADIX = "disassembly.addressRadix"; //$NON-NLS-1$
+	public static final String SHOW_ADDRESS_RADIX = "disassembly.showAddressRadix"; //$NON-NLS-1$
+	public static final String SHOW_ADDRESS_RULER = "disassembly.showAddressRuler"; //$NON-NLS-1$
+	public static final String ADDRESS_COLOR = "disassembly.addressColor"; //$NON-NLS-1$
+	public static final String SHOW_FUNCTION_OFFSETS = "disassembly.showFunctionOffsetRuler"; //$NON-NLS-1$
+	public static final String OPCODE_COLOR = "disassembly.opcodeColor"; //$NON-NLS-1$
+	public static final String USE_SOURCE_ONLY_MODE = "disassembly.useSourceOnlyMode"; //$NON-NLS-1$
+	public static final String AVOID_READ_BEFORE_PC = "disassembly.avoidReadBeforePC"; //$NON-NLS-1$
 
 	/**
 	 * 

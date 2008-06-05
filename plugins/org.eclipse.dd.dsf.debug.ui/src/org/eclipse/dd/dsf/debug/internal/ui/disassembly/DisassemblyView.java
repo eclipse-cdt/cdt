@@ -36,9 +36,6 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 		super();
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyPart#getActionBars()
-	 */
 	@Override
 	protected IActionBars getActionBars() {
 		return getViewSite().getActionBars();
@@ -75,9 +72,6 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	public void saveState(IMemento memento) {
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyPart#contributeToActionBars()
-	 */
 	@Override
 	protected void contributeToActionBars(IActionBars bars) {
 		super.contributeToActionBars(bars);
@@ -91,17 +85,11 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 		manager.add(new Separator());
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyPart#closePart()
-	 */
 	@Override
 	protected void closePart() {
 		getViewSite().getPage().hideView(this);
 	}
 
-	/*
-	 * @see com.windriver.ide.disassembly.views.DisassemblyPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		getSite().getPage().removeSelectionListener(fDebugViewListener);

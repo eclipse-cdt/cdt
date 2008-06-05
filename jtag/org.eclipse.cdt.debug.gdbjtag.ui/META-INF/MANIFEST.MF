@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.debug.core
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
+Export-Package: org.eclipse.cdt.debug.gdbjtag.ui

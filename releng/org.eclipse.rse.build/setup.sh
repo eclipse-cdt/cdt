@@ -43,6 +43,7 @@ esac
 # prepare the base Eclipse installation in folder "eclipse"
 ep_ver=3.4RC3
 ep_date=200805301730
+P2_disabled=true
 if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
@@ -59,7 +60,7 @@ if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448.jar ]; then
   wget "http://download.eclipse.org/eclipse/downloads/drops/S-${ep_ver}-${ep_date}/eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz"
   tar xfvz eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
   rm eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
-  if false ; then
+  if ${P2_disabled} ; then
     # Remove P2 due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=225537
     # See http://wiki.eclipse.org/Equinox_p2_Removal
     rm -rf eclipse/configuration/* eclipse/configuration/.settings
@@ -94,6 +95,16 @@ if [ ! -f eclipse/startup.jar ]; then
   cd ${curdir2}
 fi
 
+if ${P2_disabled} ; then
+  #P2 disabled?
+  DROPIN=""
+  DROPUP=.
+else
+  #P2 enabled
+  DROPIN=eclipse/dropins/
+  DROPUP=../..
+fi
+
 # CDT 5.0RC3 Runtime
 CDTVER=200805300802
 if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
@@ -119,14 +130,14 @@ fi
 EMFBRANCH=2.4.0
 EMFDATE=200806021643
 EMFVER=2.4.0RC3
-if [ ! -f eclipse/dropins/eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ]; then
+if [ ! -f ${DROPIN}eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
-  cd eclipse/dropins
+  cd ${DROPIN}
   wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/${EMFBRANCH}/S${EMFDATE}/emf-sdo-xsd-SDK-${EMFVER}.zip"
   unzip -o emf-sdo-xsd-SDK-${EMFVER}.zip
   rm emf-sdo-xsd-SDK-${EMFVER}.zip
-  cd ../.. 
+  cd ${DROPUP}
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   # Eclipse Test Framework
@@ -135,20 +146,20 @@ if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   unzip -o eclipse-test-framework-${ep_ver}.zip
   rm eclipse-test-framework-${ep_ver}.zip
 fi
-if [ ! -f eclipse/dropins/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
+if [ ! -f ${DROPIN}eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   echo "Getting RXTX..."
-  cd eclipse/dropins
+  cd ${DROPIN}
   wget "http://rxtx.qbang.org/eclipse/downloads/RXTX-SDK-I20071016-1945.zip"
   unzip -o RXTX-SDK-I20071016-1945.zip
   rm RXTX-SDK-I20071016-1945.zip
-  cd ../..
+  cd ${DROPUP}
 fi
 
 # checkout the basebuilder
 #baseBuilderTag=vI20080502-0100
 baseBuilderTag=RC2_34
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080515-2000.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.4.0.v20080430/pdebuild.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.4.0.v20080522/pdebuild.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.0.v20080523-0001.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."

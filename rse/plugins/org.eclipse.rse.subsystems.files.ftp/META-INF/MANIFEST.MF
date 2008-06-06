@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.ui.console,
- org.eclipse.rse.services.files.ftp;bundle-version="[2.1.0,3.0.0)",
+ org.eclipse.rse.services.files.ftp;bundle-version="[3.0.0,4.0.0)",
  org.apache.commons.net;bundle-version="[1.4.1,2.0.0)" 
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

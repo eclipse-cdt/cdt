@@ -16,6 +16,7 @@ Martin Oberhuber (Wind River) - [180519] declaratively register adapter factorie
 Yu-Fen Kuo (MontaVista) - [170910] Integrate Terminal with RSE
 Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
+Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled when selection is empty
 -->
 <?eclipse version="3.2"?>
 <plugin>
@@ -58,6 +59,8 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
                  label="%Launch_Terminal_Label"
                  tooltip="%Launch_Terminal_Tooltip">
              <visibleWhen>
+               <with variable="selection">
+			     <count value="1" />
                <iterate>
                <or>
                <and>
@@ -78,7 +81,8 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
                         value="org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem">
                   </instanceof>
                </or>
-                 </iterate> 
+                 </iterate>
+                 </with> 
                  </visibleWhen>
                </command> 
              </menuContribution>  

@@ -17,6 +17,7 @@ Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
 Anna Dushistova  (MontaVista) - [226550] [api] Launch Shell and Launch Terminal actions should be contributed declaratively
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
+Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled when selection is empty
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -145,6 +146,8 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
                  label="%Launch_Shell"
                  tooltip="%Launch_Shell_Tooltip">
              <visibleWhen>
+               <with variable="selection">
+			     <count value="1" />
                <iterate>
                <and>
                   <test
@@ -161,6 +164,7 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
                   </test>
                   </and>
                  </iterate> 
+                 </with> 
                  </visibleWhen>
                </command> 
              </menuContribution>  

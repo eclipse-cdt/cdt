@@ -23,7 +23,7 @@
             class="org.eclipse.dd.gdb.internal.provisional.launching.GDBDebugger"
             cpu="native"
             id="org.eclipse.dd.gdb.GdbDebugger"
-            modes="run,core,attach"
+            modes="dsf"
             name="gdb/mi"
             platform="*">
       </debugger>
@@ -31,7 +31,7 @@
             class="org.eclipse.dd.gdb.internal.provisional.launching.GDBServerDebugger"
             cpu="*"
             id="org.eclipse.dd.gdb.GdbServerDebugger"
-            modes="run"
+            modes="dsf"
             name="gdbserver Debugger"
             platform="*">
       </debugger>

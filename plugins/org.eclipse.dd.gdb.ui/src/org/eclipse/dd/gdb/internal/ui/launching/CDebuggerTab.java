@@ -15,7 +15,6 @@ package org.eclipse.dd.gdb.internal.ui.launching;
 
 import java.io.IOException;
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -337,7 +336,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (!validateDebuggerConfig(config)) {
 			return false;
 		}
-		ICDebugConfiguration debugConfig = getDebugConfig();
+//		ICDebugConfiguration debugConfig = getDebugConfig();
 //		if (fAttachMode && !debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 //			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), //$NON-NLS-1$
 //					                            (Object[]) new String[]{ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH})); 
@@ -348,11 +347,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 //					                            (Object[]) new String[]{IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE})); 
 //			return false;			
 //		}
-		if (!fAttachMode && !fRemoteMode && !debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), //$NON-NLS-1$
-                    (Object[]) new String[]{ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN}));
-			return false;
-		}
+//		if (!fAttachMode && !fRemoteMode && !debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+//			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), //$NON-NLS-1$
+//                    (Object[]) new String[]{ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN}));
+//			return false;
+//		}
 		if (fStopInMain != null && fStopInMainSymbol != null) {
 			// The "Stop on startup at" field must not be empty
 			String mainSymbol = fStopInMainSymbol.getText().trim();

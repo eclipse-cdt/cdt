@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -38,6 +39,7 @@ import org.eclipse.dd.mi.service.MIBreakpointsManager;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
+import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
@@ -111,6 +113,28 @@ public class FinalLaunchSequence extends Sequence {
         	} else {
         		requestMonitor.done();
         	}
+        }},        
+    	/*
+    	 * Specify the arguments to the executable file
+    	 */
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+    		try {
+    			String args = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+    					                                                    (String)null);
+        		if (args != null) {
+        			args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
+
+        			fCommandControl.queueCommand(
+        					new MIGDBSetArgs(fCommandControl.getControlDMContext(), args), 
+        					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        		} else {
+        			requestMonitor.done();
+        		}
+    		} catch (CoreException e) {
+    			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get inferior arguments", e)); //$NON-NLS-1$
+    			requestMonitor.done();
+    		}    		
         }},
         /*
          * Tell GDB to automatically load or not the shared library symbols

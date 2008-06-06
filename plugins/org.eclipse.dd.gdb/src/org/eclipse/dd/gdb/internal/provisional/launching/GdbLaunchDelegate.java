@@ -317,7 +317,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		return false;
 	}
 
-    private static class LaunchUtils {
+    public static class LaunchUtils {
        	/**
     	 * Verify the following things about the project:
     	 * - is a valid project name given
@@ -444,7 +444,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     	 * Returns an ICProject based on the project name provided in the configuration.
     	 * First look for a project by name, and then confirm it is a C/C++ project.
     	 */
-    	private static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
+    	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
     		String projectName = getProjectName(configuration);
     		if (projectName != null) {
     			projectName = projectName.trim();

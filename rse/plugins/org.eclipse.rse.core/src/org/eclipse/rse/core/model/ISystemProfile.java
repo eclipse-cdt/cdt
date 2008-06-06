@@ -59,6 +59,9 @@ public interface ISystemProfile extends IRSEModelObject {
 	String getName();
 
 	/**
+	 * Sets the name of the profile.
+	 * Profile names must not contain three consecutive underscores "___", since these are used
+	 * to separate a profile name from a filter pool name in a filter pool reference.
 	 * @param value The new value of the Name attribute
 	 */
 	void setName(String value);

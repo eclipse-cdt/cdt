@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
+ * David Dykstal (IBM) - [235840] externalizing dialog title
  ********************************************************************************/
 
 
@@ -46,7 +47,7 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 
 	public URI browseFileSystem(String initialPath, Shell shell) {
 		
-		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell, "Select Folder"); //$NON-NLS-1$
+		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell);
 		
 		if (!initialPath.equals("")) { //$NON-NLS-1$
 			

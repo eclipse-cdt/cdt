@@ -2,7 +2,8 @@
 <html>
 
 <head>
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2005, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2005, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.">
+<!-- David Dykstal (IBM) - [208953] document how to disable system types -->
 <meta name="Author" content="IBM">
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -52,6 +53,25 @@ for a description of plugin preference customization.
 The id of the default persistence provider.
 This provider is used when new profiles are created and an explicit persistence provider is not set for them.
 The default value is <code>org.eclipse.rse.persistence.MetadataPropertyFileProvider</code>
+</dd>
+<dl>
+<dt>org.eclipse.rse.core/{systemTypeID}.systemType.enabled</dt>
+<dd>
+<p>
+This preference allows you to disable installed system types on a product basis.
+Values may be true or false.
+</p>
+<dl>
+<dt>true</dt>
+<dd>The system type is enabled. Connections of this system type may be created.</dd>
+<dt>false</dt>
+<dd>The system type is disabled. Connections of this system type may not be created. The system type will be unavailable in the user interface.</dd>
+</dl>
+<p>The default value is true for each installed system type.</p>
+<p>The following example shows how to disable the "telnet" system type.</p>
+<xmp>
+org.eclipse.rse.core/org.eclipse.rse.systemtype.telnet.systemType.enabled = false
+</xmp>
 </dd>
 </dl>
 

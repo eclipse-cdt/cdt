@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 Contributors:
 Kushal Munir (IBM) - Changed paths to reflect internal packages
 Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+Martin Oberhuber (Wind River) - [235145] Add comments how to hide "Create Remote Project" action by means of Activity 
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -44,5 +45,37 @@ Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.ecl
          </action>
       </objectContribution>
       </extension>
+
+    <!-- Here is some sample XML code that shows how Eclipse Activities -->
+    <!-- can be used to hide the "Create Remote Project" action in a    -->
+    <!-- product built on top of TM. Just copy that XML code to a       -->
+    <!-- product's plugin.xml (can be any other plugin) and uncomment.  -->
+    <!--
+	<!- - Hide the "Create Remote Project" popupMenu by default - ->
+	<extension point="org.eclipse.ui.activities">
+  	<activity id="org.eclipse.rse.CreateRemoteProject"
+		description="Filters EFS Create Remote Project menu in the RSE Views"
+		name="RSE Create Remote Project" />
+
+	<!- - put the activity in the category: By means of not putting it
+	     in any category, the Activity is invisible in the Prefspage UI.
+	     Products can add categories, or define trigger points to enable it.
+	<category id="org.eclipse.rse.Category"
+		description="Remote System Explorer (RSE) Activities"
+		name="Remote System Explorer" />
+	<categoryActivityBinding activityId="org.eclipse.rse.CreateRemoteProject"
+		categoryId="org.eclipse.rse.Category" />
+	- ->
+   
+	<!- - bind all contributions from plugin org.eclipse.rse.efs.ui - -> 
+	<activityPatternBinding
+       activityId="org.eclipse.rse.CreateRemoteProject"
+       pattern="org\.eclipse\.rse\.efs\.ui/createRemoteProject"/>
+  
+	<!- - our activity should NOT be enabled by default
+	<defaultEnablement id="org.eclipse.rse.CreateRemoteProject" />  
+	 - ->
+	</extension>
+	-->
     
 </plugin>

@@ -10,18 +10,26 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -39,8 +47,9 @@ import org.eclipse.dd.mi.service.MIBreakpointsManager;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
-import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
+import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
+import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
@@ -135,6 +144,68 @@ public class FinalLaunchSequence extends Sequence {
     			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get inferior arguments", e)); //$NON-NLS-1$
     			requestMonitor.done();
     		}    		
+        }},
+    	/*
+    	 * Specify GDB's working directory
+    	 */
+        new Step() {
+        	
+        	private File getWorkingDirectory(RequestMonitor requestMonitor) {
+       			IPath path = null;
+           		try {
+        			String location = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, 
+        																		    (String)null);
+            		if (location != null) {
+            			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
+            			if (expandedLocation.length() > 0) {
+            				path = new Path(expandedLocation);
+            			}
+            		}
+
+            		if (path == null) {
+            			// default working dir is the project if this config has a project
+            			ICProject cp = LaunchUtils.getCProject(fLaunch.getLaunchConfiguration());
+            			if (cp != null) {
+            				IProject p = cp.getProject();
+            				return p.getLocation().toFile();
+            			}
+            		} else {
+            			if (path.isAbsolute()) {
+            				File dir = new File(path.toOSString());
+            				if (dir.isDirectory()) {
+            					return dir;
+            				}
+            			} else {
+            				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+            				if (res instanceof IContainer && res.exists()) {
+            					return res.getLocation().toFile();
+            				}
+            			}
+
+            			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, 
+        						LaunchMessages.getString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+        						new FileNotFoundException(LaunchMessages.getFormattedString(
+        								"AbstractCLaunchDelegate.WORKINGDIRECTORY_PATH_not_found", path.toOSString())))); //$NON-NLS-1$
+        				requestMonitor.done();
+            		}
+           		} catch (CoreException e) {
+           			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
+           			requestMonitor.done();
+           		}
+
+        		return null;
+        	}
+
+        @Override
+        public void execute(final RequestMonitor requestMonitor) {
+        	File dir = getWorkingDirectory(requestMonitor);
+        	if (dir != null) {
+        		fCommandControl.queueCommand(
+        				new MIEnvironmentCD(fCommandControl.getControlDMContext(), dir.getAbsolutePath()), 
+        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        	} else {
+        		requestMonitor.done();
+        	}
         }},
         /*
          * Tell GDB to automatically load or not the shared library symbols

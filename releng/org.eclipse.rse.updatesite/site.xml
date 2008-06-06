@@ -301,7 +301,7 @@
    <feature url="features/org.eclipse.rse.dstore_3.0.0.qualifier.jar" id="org.eclipse.rse.dstore" version="3.0.0.qualifier">
       <category name="TM and RSE 3.0"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_2.1.0.qualifier.jar" id="org.eclipse.rse.ftp" version="2.1.0.qualifier">
+   <feature url="features/org.eclipse.rse.ftp_3.0.0.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.0.qualifier">
       <category name="TM and RSE 3.0"/>
    </feature>
    <feature url="features/org.eclipse.rse.local_2.1.0.qualifier.jar" id="org.eclipse.rse.local" version="2.1.0.qualifier">

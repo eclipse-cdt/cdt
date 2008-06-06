@@ -60,6 +60,8 @@
    <topic label="Accessing Remote System Explorer preferences" href="ref/rrsepref.html"/>
    <topic label="Saving User IDs and passwords" href="tasks/tbeginpass.html"/>
    <topic label="Working with SSL" href="tasks/tworkssl.html"/>
+   <topic href="tasks/tusingefs.html" label="Using RSE and EFS">
+   </topic>
    <anchor id="rse_user_extensions" />
 <topic label="Legal" href="notices.html"/>
 </toc>

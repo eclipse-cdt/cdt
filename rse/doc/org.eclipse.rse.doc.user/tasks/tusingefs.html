@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page."/>
+<!-- David Dykstal (IBM) - [236082] Add documentation on using RSE and EFS -->
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Using RSE and EFS</title>
+</head>
+
+<body>
+
+<h1>Using RSE and EFS</h1>
+<p>
+The Eclipse File System (EFS) is an interface supported by Eclipse that allows Eclipse to use non-local file systems.
+Many Eclipse components are <strong>EFS-aware</strong>, that is, they can use resources supplied by EFS as if they were located on a local file system.
+An <strong>EFS Provider</strong> is an implementer of this EFS interface and provides a file system support for the resources it exposes.
+RSE is an EFS provider that allows you to access remote resources from any EFS-aware Eclipse component such as the Java Development Tools.
+</p><p>
+EFS can take any remote file system available through RSE and its various protocols (like the ssh, ftp and dstore connections) and make it visible as resources in the workspace. By sitting at the heart of the Eclipse resource system, the full power of Eclipse - including source parsers, outline views, content assist and the like - comes to remote files as well.
+</p><p>
+Since RSE's <em>raison d'etre</em> is remote access, it solves the problem of logging in to remote systems and keeping credentials in a usable UI.
+</p><p>
+There are issues, however, with treating remote resources as local ones.
+</p><p>
+EFS makes the Eclipse workspace more flexible, but components and plugins need to be aware that the resources they work on can now be remote.
+Work is going on throughout Eclipse to improve their EFS integration and hopefully their performance.
+For now, however, working with remote resources through RSE and EFS is best done on a fast network with low latency.
+</p><p>
+Pure RSE/EFS projects (i.e. where the .project file is on the remote system) are currently not supported due to low-level interactions between EFS, the Eclipse platform, and the RSE caching mechanism.
+Purely remote projects will not open automatically on Eclipse startup.
+However, one can link lower-level folders of a project to an EFS provider, allowing a project to contain a mix of remote and local resources.
+Note that team support (such as that provided by CVS) will not synchronize resources linked through an EFS provider at this time.
+</p><p>
+Using this support you could, for example, set up a Java project from a machine at home and link to files on an account at work. If you makes changes at work, you can come home, refresh the project and everything will be updated and compiled.
+</p><p>
+The advantages of using linked resources and an RSE-supplied EFS are that the tools that the workbench provides are available directly on the remote source. In addition, since you can edit directly on the remote system there will be no immediate synchronization/merge issues. However, this can lead to problems with update conflicts if the directories on the remote system are shared with others and are quite active. The disadvantages are what you would expect: that you can run into quite slow refreshes of the workspace. Since EFS maps the remote directory tree anytime Eclipse wants to do a refresh it may take several hours. Tools that are not EFS-aware may force these refreshes to happen at odd times which can lead to unpredictable performance.
+</p>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ericsson        - Updated for DSF
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.ui.launching;
 
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate;
+import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -253,7 +254,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		try {
 			ILaunchConfiguration config = getLaunchConfiguration();
 			if (config != null) {
-				ICProject cProject = GdbLaunchDelegate.LaunchUtils.getCProject(config);
+				ICProject cProject = LaunchUtils.getCProject(config);
 				if (cProject != null) {
 					fWorkingDirText.setText("${workspace_loc:" + cProject.getPath().makeRelative().toOSString() + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;

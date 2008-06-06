@@ -44,6 +44,7 @@ esac
 ep_ver=3.4RC3
 ep_date=200805301730
 P2_disabled=false
+P2_no_dropins=false
 if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
@@ -95,7 +96,7 @@ if [ ! -f eclipse/startup.jar ]; then
   cd ${curdir2}
 fi
 
-if ${P2_disabled} ; then
+if ${P2_no_dropins} ; then
   #P2 disabled?
   DROPIN=.
   DROPUP=.
@@ -103,33 +104,6 @@ else
   #P2 enabled
   DROPIN=eclipse/dropins
   DROPUP=../..
-fi
-
-# CDT 5.0RC3 Runtime
-CDTVER=200805300802
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
-  echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I${CDTVER}/cdt-master-5.0.0-I${CDTVER}.zip"
-  CDTTMP=`pwd`/tmp.$$
-  mkdir ${CDTTMP}
-  cd ${CDTTMP}
-  unzip ../cdt-master-5.0.0-I${CDTVER}.zip
-  cd ..
-  #java -jar eclipse/startup.jar \
-  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
-    -application org.eclipse.update.core.standaloneUpdate \
-    -command install \
-    -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt.platform \
-    -version 5.0.0.${CDTVER}
-  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
-    -application org.eclipse.update.core.standaloneUpdate \
-    -command install \
-    -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt \
-    -version 5.0.0.${CDTVER}
-  rm -rf ${CDTTMP}
-  rm cdt-master-5.0.0-I${CDTVER}.zip
 fi
 
 # EMF 2.4.0RC3
@@ -159,6 +133,33 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   unzip -o RXTX-SDK-I20071016-1945.zip
   rm RXTX-SDK-I20071016-1945.zip
   cd ${DROPUP}
+fi
+
+# CDT 5.0RC3 Runtime
+CDTVER=200805300802
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
+  echo "Getting CDT Runtime..."
+  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I${CDTVER}/cdt-master-5.0.0-I${CDTVER}.zip"
+  CDTTMP=`pwd`/tmp.$$
+  mkdir ${CDTTMP}
+  cd ${CDTTMP}
+  unzip ../cdt-master-5.0.0-I${CDTVER}.zip
+  cd ..
+  #java -jar eclipse/startup.jar \
+  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
+    -application org.eclipse.update.core.standaloneUpdate \
+    -command install \
+    -from file://${CDTTMP} \
+    -featureId org.eclipse.cdt.platform \
+    -version 5.0.0.${CDTVER}
+  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
+    -application org.eclipse.update.core.standaloneUpdate \
+    -command install \
+    -from file://${CDTTMP} \
+    -featureId org.eclipse.cdt \
+    -version 5.0.0.${CDTVER}
+  rm -rf ${CDTTMP}
+  rm cdt-master-5.0.0-I${CDTVER}.zip
 fi
 
 # checkout the basebuilder

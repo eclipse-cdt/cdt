@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
  * Martin Oberhuber (Wind River) - [234726] Update IRemoteFile Javadocs
+ * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -199,6 +200,16 @@ public abstract class AbstractRemoteFile extends RemoteFile
 	{
 		return _hostFile;
 	}
-
+	
+	/**
+	 * Replacing the current associated IHostFile with a new one
+	 * 
+	 * @param hostFile the new host file 
+	 * 
+	 * @since 3.0
+	 */
+	public void setHostFile(IHostFile hostFile) {
+		_hostFile = hostFile;
+	}
 
 }

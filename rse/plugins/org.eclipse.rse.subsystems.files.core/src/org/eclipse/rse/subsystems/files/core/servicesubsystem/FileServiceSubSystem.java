@@ -40,6 +40,7 @@
  * David Dykstal (IBM) - [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Martin Oberhuber (Wind River) - [234038] Mark IRemoteFile stale when changing permissions
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
+ * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -419,14 +420,17 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 
 		List hostFiles = new ArrayList(10);
+		
+		// query children via the service
 		getFileService().listMultiple(parentPaths, fileNameFilters, fileTypes, hostFiles, monitor);
-		IHostFile[] results = new IHostFile[hostFiles.size()];
-		hostFiles.toArray(results);
 		RemoteFileContext context = getDefaultContext();
 
-		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
+		IHostFile[] results = (IHostFile[])hostFiles.toArray(new IHostFile[hostFiles.size()]);	
 
-		// caching
+		// convert the IHostFiles into AbstractRemoteFiles
+		AbstractRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
+		
+		// cache the results corresponding to each parent under each parent
 		for (int i = 0; i < parents.length; i++)
 		{
 			IRemoteFile parent = parents[i];
@@ -445,9 +449,15 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 					underParent.add(child);
 				}
 			}
+			
+			// update the parent with it's latest properties
+			// null is passed for the second argument because we currently don't get the parent in our results query
+			updateRemoteFile(parent, null, monitor);	
+			
 			if (underParent.size() > 0)
 			{
-				parent.setContents(RemoteChildrenContentsType.getInstance(), filter, underParent.toArray());
+				Object[] qresults = underParent.toArray();				
+				parent.setContents(RemoteChildrenContentsType.getInstance(), filter, qresults);
 			}
 		}
 
@@ -467,15 +477,18 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 			parentPaths[i] = parents[i].getAbsolutePath();
 		}
 
+
 		List hostFiles = new ArrayList(10);
+		// query children via the service
 		getFileService().listMultiple(parentPaths, fileNameFilters, fileType, hostFiles, monitor);
-		IHostFile[] results = new IHostFile[hostFiles.size()];
-		hostFiles.toArray(results);
 		RemoteFileContext context = getDefaultContext();
 
-		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
-
-		// caching
+		IHostFile[] results = (IHostFile[])hostFiles.toArray(new IHostFile[hostFiles.size()]);			
+		
+		// convert the IHostFiles into AbstractRemoteFiles
+		AbstractRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
+		
+		// cache the results corresponding to each parent under each parent
 		for (int i = 0; i < parents.length; i++)
 		{
 			IRemoteFile parent = parents[i];
@@ -486,7 +499,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 			// what files are under this one?
 			for (int j = 0; j < farr.length; j++)
 			{
-				IRemoteFile child = farr[j];
+				AbstractRemoteFile child = farr[j];
 				String childParentPath = child.getParentPath();
 
 				if (parentPath.equals(childParentPath))
@@ -494,9 +507,15 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 					underParent.add(child);
 				}
 			}
+
+			// update the parent with it's latest properties
+			// null is passed for the second argument because we currently don't get the parent in our results query
+			updateRemoteFile(parent, null, monitor);	
+			
 			if (underParent.size() > 0)
 			{
-				parent.setContents(RemoteChildrenContentsType.getInstance(), filter, underParent.toArray());
+				Object[] qresults = underParent.toArray();			
+				parent.setContents(RemoteChildrenContentsType.getInstance(), filter, qresults);
 			}
 		}
 
@@ -525,17 +544,44 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 					IStatus.INFO, msgTxt);
 			throw new SystemMessageException(msg);
 		}
-
-		IHostFile[] results = internalList(parentPath, fileNameFilter, fileType, monitor);
-
-		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
+				
+		// query children of the parent
+		IHostFile[] results = internalList(parentPath, fileNameFilter, fileType, monitor);		
+		
+		// update the parent with it's latest properties
+		// null is passed for the second argument because we currently don't get the parent in our results query
+		updateRemoteFile(parent, null, monitor);
+				
+		// convert the IHostFiles to AbstractRemoteFile[]
+		AbstractRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
 		if (parent != null)
 			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
 		return farr;
 	}
 
+	
+	
+	private void updateRemoteFile(IRemoteFile parent, IHostFile newHostParent, IProgressMonitor monitor) throws SystemMessageException
+	{		
+		// now newHostParent file passed in so we'll assume it wasn't returned and explicitly get it
+		if (newHostParent == null){			
+			String parentParentPath = parent.getParentPath();
+			if (parentParentPath == null){
+				parentParentPath = ""; //$NON-NLS-1$
+			}
+			newHostParent = getFileService().getFile(parentParentPath, parent.getName(), monitor);
+		}
+		
+		if (newHostParent != null){
+			IHostFile oldHostParent = parent.getHostFile();
+			if (!newHostParent.equals(oldHostParent)){
+				((AbstractRemoteFile)parent).setHostFile(newHostParent);
+				parent.markStale(false);
+			}
+		}
+	}
 
-
+	
 	public IRemoteFile[] listRoots(IRemoteFileContext context, IProgressMonitor monitor) throws InterruptedException
 	{
 		IHostFile[] roots = null;

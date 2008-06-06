@@ -57,6 +57,7 @@
  * David McKnight  (IBM)         - [233530] Not Prompted on Promptable Filters after using once by double click
  * David McKnight  (IBM)         - [233570] ClassCastException when moving filter after "go into" action
  * David Dykstal (IBM)           - [233530] Backing out previous change for this bug
+ * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1357,6 +1358,7 @@ public class SystemView extends SafeTreeViewer
 		}
 	}
 
+	
 	/**
 	 * Clear current selection. Ignore widget disposed message.
 	 */
@@ -1366,6 +1368,8 @@ public class SystemView extends SafeTreeViewer
 		} catch (Exception exc) {
 		}
 	}
+			
+
 
 	/**
 	 * Returns the implementation of ISystemViewElementAdapter for the given
@@ -2226,6 +2230,11 @@ public class SystemView extends SafeTreeViewer
 			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = " + src); //$NON-NLS-1$
 				
+				// Fake expanded is set to the item for the src object if the object is in a collapsed state and
+				// resides directly under a filter.  The item is artificially expanded in order to allow 
+				// refreshRemoteObject() to go through with a query of the item.  After the query is kicked off, 
+				// fakeExpanded is contracted in order to retain the original tree expand state.
+				TreeItem fakeExpanded = null;
 				
 				ISystemViewElementAdapter adapter = getViewAdapter(src);
 				if (adapter != null)
@@ -2233,17 +2242,15 @@ public class SystemView extends SafeTreeViewer
 					// we need to refresh filters
 					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 					
+					// if this is a filter reference, we just need to refresh it
+					if (src instanceof ISystemFilterReference)
+					{
+						refresh(src);
+						break;
+					}
+					
+					// need to find filter references contain this object
 		        	List filterReferences = sr.findFilterReferencesFor(src, adapter.getSubSystem(src), false);
-		        	// if filters reference this resource we need them refreshed
-		        	for (int f = 0; f < filterReferences.size(); f++)
-		        	{
-		        		ISystemFilterReference ref = (ISystemFilterReference)filterReferences.get(f);
-		        		if (!ref.isStale())
-		        		{
-		        			ref.markStale(true);
-		        			smartRefresh(ref, true);
-		        		}
-		        	}	
 		        	
 					// first, find out if src is a container or not
 					// if it's a container, just pass into refreshRemoteObject
@@ -2255,7 +2262,17 @@ public class SystemView extends SafeTreeViewer
 						Object srcParent = adapter.getParent(src);
 						if (srcParent != null)
 						{
-							src = srcParent;
+							if (filterReferences.size() > 0){
+								for (int r = 0; r < filterReferences.size(); r++){
+									ISystemFilterReference ref = (ISystemFilterReference)filterReferences.get(r);
+									refresh(ref);
+								}
+								break;
+							}								
+							else {
+								src = srcParent;
+							}
+								
 						}
 					}
 					else
@@ -2280,45 +2297,24 @@ public class SystemView extends SafeTreeViewer
 									TreeItem[] titems = titem.getItems();
 									if (titems.length >  0 && !titem.getExpanded())
 									{
-										src = adapter.getParent(src);
+										// the item is artificially expanded in order to allow the query to go through in
+										// refreshRemoteObject()
+										titem.setExpanded(true);
+											
+										// we set this so that after calling refreshRemoteObject(), the item can be re-collapsed
+										fakeExpanded = titem;									
 									}
 								}
-									
-								/* old code - issue in 196662
-								String key = adapter.getAbsoluteName(src);
-								if (key != null)
-								{
-									try
-									{
-										Object srcParent = adapter.getParent(src); // get parent before we query 
-										                                           // because if after query src doesn't exist, 
-																			  	   // we can't get parent
-										if (srcParent != null)
-										{	
-											src = ss.getObjectWithAbsoluteName(key);
-											hasChildren = adapter.hasChildren((IAdaptable)src);
-											if (!hasChildren)
-											{
-												// make the src the parent of the src
-												src = srcParent;
-											}
-										}
-									}
-									catch (Exception e)
-									{
-										e.printStackTrace();
-									}
-								}
-								*/
 							}
 						}
 					}
 				}
 				
 				refreshRemoteObject(src, parent, originatedHere);
-		
-	        		
-	        	
+				if (fakeExpanded != null){
+					fakeExpanded.setExpanded(false);
+				}
+	        			        	
 				break;
 			case ISystemResourceChangeEvents.EVENT_SELECT_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = " + src); //$NON-NLS-1$
@@ -6382,5 +6378,10 @@ public class SystemView extends SafeTreeViewer
 			internalUpdate((Widget)matches.get(i), element, properties);
 		}		
 	}
+	
+	/** commented out - this is workaround for performance problem
+	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
+		//System.out.println("handleLableProviderChanged");
+	}*/
 	
 }

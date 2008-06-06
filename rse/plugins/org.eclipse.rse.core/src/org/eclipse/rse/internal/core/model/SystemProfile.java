@@ -42,6 +42,7 @@ import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.RSECoreMessages;
+import org.eclipse.rse.internal.core.filters.SystemFilterPoolReference;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 
 /**
@@ -230,6 +231,9 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 * @see org.eclipse.rse.core.model.ISystemProfile#setName(java.lang.String)
 	 */
 	public void setName(String newName) {
+		if (newName.indexOf(SystemFilterPoolReference.DELIMITER) >= 0) {
+			throw new IllegalArgumentException("Cannot have ___ in profile name.");
+		}
 		String oldName = name;
 		if (!newName.equals(oldName)) {
 			name = newName;

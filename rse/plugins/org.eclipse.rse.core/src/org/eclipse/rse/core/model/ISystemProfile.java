@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [235800] Document naming restriction for profiles and filter pools
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -63,6 +64,7 @@ public interface ISystemProfile extends IRSEModelObject {
 	 * Profile names must not contain three consecutive underscores "___", since these are used
 	 * to separate a profile name from a filter pool name in a filter pool reference.
 	 * @param value The new value of the Name attribute
+	 * @throws IllegalArgumentException if the name contains three consecutive underscore characters.
 	 */
 	void setName(String value);
 

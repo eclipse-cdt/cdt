@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) - [235800] Document naming restriction for profiles and filter pools
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -155,6 +156,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * If the operation is successful, the pool will be saved to disk.
 	 * <p>
 	 * If this operation fails unexpectedly, an exception will be thrown.
+	 * @see ISystemFilterPool#setName(String)
 	 */
 	public ISystemFilterPool createSystemFilterPool(String name, boolean isDeletable) throws Exception;
 
@@ -197,6 +199,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * </ul>
 	 * @param pool The filter pool object to rename
 	 * @param newName The new name to give the pool
+	 * @see ISystemFilterPool#setName(String)
 	 */
 	public void renameSystemFilterPool(ISystemFilterPool pool, String newName) throws Exception;
 
@@ -214,6 +217,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * @param pool The filter pool to copy
 	 * @param newName The new name to give the copied pool
 	 * @return the new copy of the copied system filter pool
+	 * @see ISystemFilterPool#setName(String)
 	 */
 	public ISystemFilterPool copySystemFilterPool(ISystemFilterPoolManager targetMgr, ISystemFilterPool pool, String newName) throws Exception;
 
@@ -249,6 +253,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * @param oldPool The filter pool to move
 	 * @param newName The new name to give the moved pool
 	 * @return the new copy of the moved system filter pool
+	 * @see ISystemFilterPool#setName(String)
 	 */
 	public ISystemFilterPool moveSystemFilterPool(ISystemFilterPoolManager targetMgr, ISystemFilterPool oldPool, String newName) throws Exception;
 

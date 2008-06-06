@@ -359,6 +359,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 */
 	public void setName(String name)
 	{
+		if (name.indexOf(SystemFilterPoolReference.DELIMITER) >= 0) {
+			throw new IllegalArgumentException("Cannot have ___ in filter pool name.");
+		}
 		if (this.name == null || !this.name.equals(name) )
 		{
 			this.name = name;

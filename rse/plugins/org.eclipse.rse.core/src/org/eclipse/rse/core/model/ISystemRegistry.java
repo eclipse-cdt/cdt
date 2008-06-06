@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [235800] Document naming restriction for profiles and filter pools
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -179,11 +180,15 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Create a SystemProfile given its name and whether or not to make it active
+	 * Note that there are some naming restrictions on profile names.
+	 * @see ISystemProfile#setName(String)
 	 */
 	public ISystemProfile createSystemProfile(String profileName, boolean makeActive) throws Exception;
 
 	/**
 	 * Copy a SystemProfile. All connections connection data is copied.
+	 * Note that there are some naming restrictions on profile names.
+	 * @see ISystemProfile#setName(String)
 	 * @param profile Source profile to copy
 	 * @param newName Unique name to give copied profile
 	 * @param makeActive whether to make the copied profile active or not
@@ -195,6 +200,8 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Rename a SystemProfile. Rename is propagated to all subsystem factories so
 	 * they can rename their filter pool managers and whatever else is required.
+	 * Note that there are some naming restrictions on profile names.
+	 * @see ISystemProfile#setName(String)
 	 */
 	public void renameSystemProfile(ISystemProfile profile, String newName) throws Exception;
 

@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - cleanup - format and javadoc
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) - [235800] Document naming restriction for profiles and filter pools
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -122,7 +123,11 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	public String getName();
 
 	/**
-	 * @param value The new value of the Name attribute
+	 * Sets the filter pool name for this filter pool.
+	 * Filter pool names must not contain 3 consecutive underscores "___" since these are used to separate
+	 * profile names from filter pool names in a filter pool reference.
+	 * @param value The new value of the Name attribute.
+	 * @throws IllegalArgumentException if the name contains three consecutive underscore characters.
 	 */
 	public void setName(String value);
 

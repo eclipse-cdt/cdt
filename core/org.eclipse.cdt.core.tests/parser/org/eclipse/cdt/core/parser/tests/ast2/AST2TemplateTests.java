@@ -2356,7 +2356,44 @@ public class AST2TemplateTests extends AST2BaseTest {
 			}
 		}
 	}
-	
+
+	// template<typename _Tp>
+	// struct allocator {
+	//   template<typename _Tp1>
+	//   struct rebind {
+	//     typedef allocator<_Tp1> other;
+	//   };
+	// };
+	//
+	// template<typename _Val1, typename _Alloc1 = allocator<_Val1> >
+	// struct _Rb_tree {
+	//   typedef _Val1 value_type1;
+	// };
+	//
+	// template <typename _Val2, typename _Alloc2 = allocator<_Val2> >
+	// struct map {
+	//   typedef _Val2 value_type2;
+	//   typedef typename _Alloc2::template rebind<value_type2>::other _Val_alloc_type;
+	//   typedef _Rb_tree<_Val2, _Val_alloc_type> _Rep_type;
+	//   typedef typename _Rep_type::value_type1 value_type;
+	// };
+	//
+	// void f(map<int>::value_type r) {}
+	public void _testRebindPattern_236197() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		for (IASTName name : col.nameList) {
+			if ("r".equals(String.valueOf(name))) {
+				IBinding b0 = name.resolveBinding();
+				IType type = ((ICPPVariable) b0).getType();
+				type = getUltimateType(type, false);
+				assertInstance(type, IBasicType.class);
+				assertEquals("int", ASTTypeUtil.getType(type));
+			}
+		}
+	}
+
 	// template<typename _Iterator>
 	// struct IterTraits {
 	//   typedef typename _Iterator::iter_reference traits_reference;

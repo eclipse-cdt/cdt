@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [235756] [dstore] Unable to connect to host with SSL via REXEC
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.wizards;
@@ -23,8 +23,8 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.internal.dstore.security.ImageRegistry;
 import org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
-import org.eclipse.swt.widgets.Display;
 
 public class SystemImportCertAction extends SystemBaseWizardAction
 	{
@@ -36,7 +36,7 @@ public class SystemImportCertAction extends SystemBaseWizardAction
 		{
 			super(UniversalSecurityProperties.RESID_SECURITY_TRUST_IMPORT_CERTIFICATE_WIZARD, 
 					ImageRegistry.getImageDescriptor(ImageRegistry.IMG_CERTIF_FILE),
-					Display.getDefault().getActiveShell()
+					SystemBasePlugin.getActiveWorkbenchShell()
 					);
 			_certificates = certs;
 			_provider = provider;

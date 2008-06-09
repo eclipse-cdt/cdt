@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [221095] [dstore][launcher] Specified REXEC port number is not used
  * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short     
+ * David McKnight   (IBM)        - [235756] [dstore] Unable to connect to host with SSL via REXEC
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -475,7 +476,7 @@ public class RexecDstoreServer implements IServerLauncher
 
 			int inBytes = rxIn.available(); // any data available?
 			
-			int timeout = 600;  //  60 second to connect
+			int timeout = _socketTimeoutValue;
 			
 			while (inBytes == 0 && timeout > 0)
 			{

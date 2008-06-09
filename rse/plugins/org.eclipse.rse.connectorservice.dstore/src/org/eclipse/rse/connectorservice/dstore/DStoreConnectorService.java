@@ -31,6 +31,7 @@
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
+ * David McKnight   (IBM)        - [235756] [dstore] Unable to connect to host with SSL via REXEC
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -581,6 +582,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			IServerLauncher starter = getRemoteServerLauncher();
 			starter.setSignonInformation(info);
 			starter.setServerLauncherProperties(serverLauncher);
+			if (starter instanceof RexecDstoreServer){
+				((RexecDstoreServer)starter).setSocketTimeoutValue(timeout);
+			}
 			if (autoDetectSSL) timeout = 3000;
 			else setSSLProperties(isUsingSSL());
 
@@ -1183,7 +1187,29 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				else
 				{
 					Throwable exception = connectStatus.getException();
-					if (exception != null)
+					if (exception instanceof SSLHandshakeException)
+					{
+						List certs = connectStatus.getUntrustedCertificates();
+						if (certs != null && certs.size() > 0)
+						{
+							ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+							if (provider != null)
+							{
+								_isConnecting = false;
+								provider.importCertificates(certs, getHostName());								
+								_isConnecting = false;
+								
+								// Don't attempt reconnect when server was started manually.  The problem is that 
+								// in that situation, the server will have terminated on the failed connection
+								// due to the missing certs
+								if (serverLauncherType != ServerLaunchType.RUNNING_LITERAL){
+									internalConnect(monitor);
+								}
+								return;
+							}
+						}
+					}
+					else if (exception != null)
 					{
 						String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
 						msg = createSystemMessage(ICommonMessageIds.MSG_CONNECT_FAILED, IStatus.ERROR, msgTxt, exception);

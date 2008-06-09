@@ -4,7 +4,7 @@
    <topic label="Getting Started" href="gettingstarted/g_start.html">
       <topic label="Installing the Remote System Explorer" href="gettingstarted/g1installing.html"/>
       <topic label="First Steps with the Remote System Explorer" href="gettingstarted/g2firststeps.html"/>
-      <topic label="Setting up a dstore server" href="tasks/tbeginlinux.html"/>
+      <topic label="Setting up a dstore server" href="tasks/tbegindstore.html"/>
       <topic label="Using Remote Connections" href="gettingstarted/gusing.html"/>
       <topic label="Extending Remote System Explorer" href="gettingstarted/gxtending.html"/>
    </topic>

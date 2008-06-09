@@ -32,8 +32,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
-import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -313,16 +313,31 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 
 
 	/**
-	 * Perform the delete action on single item. 
-	 * Implement if the object is deletable.
-	 * If the operation is cancelled, the progress monitor will indicate this and a 
-	 * {@link SystemMessageException} with a message id of {@link ICommonMessageIds#MSG_OPERATION_CANCELLED} 
-	 * should be thrown if the generic message is desired.
-	 * @param shell The shell that can act as a parent for an adapter-issued message dialog.
+	 * Perform the delete action on single item. Implement if the object is
+	 * deletable.
+	 * <p>
+	 * Implementers have two choices of dealing with error conditions: 
+	 * handle the error themselves (for example, by showing an error dialog) and returning
+	 * <code>false</code>; or by throwing an Exception and having the framework
+	 * handle the error.
+	 * <p>
+	 * If the operation is cancelled, the implementation is free to either
+	 * return <code>false</code> or throw a
+	 * {@link SystemOperationCancelledException}, since in both cases the
+	 * framework will refresh the element to see whether it has
+	 * actually been deleted or not, but not show any other message.
+	 *
+	 * @param shell The shell that can act as a parent for an adapter-issued
+	 *            message dialog.
 	 * @param element The element that should be deleted.
-	 * @param monitor The progress monitor for progress and cancellation. May be <code>null</code>.
-	 * @return <code>true</code> indicates that the deletion succeeded, <code>false</code> indicates that the deletion failed and that a message dialog has been shown.
-	 * @throws Exception if the deletion failed and the adapter did not show a message dialog.
+	 * @param monitor The progress monitor for progress and cancellation. May be
+	 *            <code>null</code>.
+	 * @return <code>true</code> indicates that the deletion succeeded,
+	 *         <code>false</code> indicates that the deletion failed but no user
+	 *         feedback is required by the framework because the implementation
+	 *         has already handled the error or cancellation.
+	 * @throws Exception if the deletion failed and the adapter did not show a
+	 *             message dialog.
 	 * @see #showDelete(Object)
 	 * @see #canDelete(Object)
 	 */
@@ -330,15 +345,24 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 
 	/**
 	 * Perform the delete on the given set of items.
-	 * If the operation is cancelled, the progress monitor will indicate this and a 
-	 * {@link SystemMessageException} with a message id of {@link ICommonMessageIds#MSG_OPERATION_CANCELLED} 
-	 * should be thrown if the generic message is desired.
-	 * @param shell the shell that can act as a parent for an adapter-issued message dialog.
+	 * <p>
+	 * See {@link #doDelete(Shell, Object, IProgressMonitor)} for semantics of
+	 * error handling and cancellation.
+	 * 
+	 * @param shell the shell that can act as a parent for an adapter-issued
+	 *            message dialog.
 	 * @param resourceSet a list of resources that should be deleted.
-	 * @param monitor The progress monitor for progress and cancellation. May be <code>null</code>.
-	 * @return <code>true</code> if all deletions were successful, <code>false</code> if any deletion was not successful and that a message dialog has been shown.
-	 * @throws Exception if any deletion was not successful and the adapter did not show a message dialog.
-	 * If this is a {@link SystemMessageException} then the caller should examine the results and fire any necessary events.
+	 * @param monitor The progress monitor for progress and cancellation. May be
+	 *            <code>null</code>.
+	 * @return <code>true</code> if all deletions were successful,
+	 *         <code>false</code> if any deletion was not successful but proper
+	 *         error reporting has been done by the adapter already. The
+	 *         framework will only refresh the items to see which ones have
+	 *         actually been deleted.
+	 * @throws Exception if any deletion was not successful and the adapter did
+	 *             not perform any error reporting. If this is a
+	 *             {@link SystemMessageException} then the caller should examine
+	 *             the results and fire any necessary events.
 	 */
 	public boolean doDeleteBatch(Shell shell, List resourceSet, IProgressMonitor monitor) throws Exception;
 

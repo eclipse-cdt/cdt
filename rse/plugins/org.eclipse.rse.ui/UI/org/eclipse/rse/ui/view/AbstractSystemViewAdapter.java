@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM) - [208803] add exists() method
  * Xuan Chen        (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Martin Oberhuber (Wind River) - [234215] improve API documentation for doDelete and doDeleteBatch
  *******************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -64,6 +65,7 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -1079,10 +1081,13 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	}
 
 	/**
-	 * Perform the delete action. By default does nothing. Override if your
-	 * object is deletable. Return true if this was successful. Return false if
-	 * it failed and you issued a message. Throw an exception if it failed and
-	 * you want to use the generic message.
+	 * {@inheritDoc}
+	 * <p>
+	 * By default does nothing. Override if your object is deletable. Return
+	 * true if this was successful. Return false if it failed and you issued a
+	 * message. Throw an exception if it failed and you want to use the generic
+	 * message. In case of cancellation, either return <code>false</code> or
+	 * throw a {@link SystemOperationCancelledException}.
 	 * <p>
 	 * <i><b>Overridable</b> by subclasses, and usually is.</i> <br>
 	 *
@@ -1095,11 +1100,16 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	}
 
 	/**
-	 * Perform the delete action. By default just calls the doDelete method for
-	 * each item in the resourceSet. Override if you wish to perform some sort
-	 * of optimization for the batch delete. Return true if this was successful.
-	 * Return false if ANY delete op failed and a message was issued. Throw an
-	 * exception if ANY failed and you want to use the generic message.
+	 * {@inheritDoc}
+	 * <p>
+	 * By default just calls the doDelete method for each item in the
+	 * resourceSet. Override if you wish to perform some sort of optimization
+	 * for the batch delete. Return true if this was successful. Return false if
+	 * ANY delete operation failed and a message was issued. Throw an exception
+	 * if ANY failed and you want to use the generic message.
+	 * <p>
+	 * In case of cancellation, either return <code>false</code> or throw a
+	 * {@link SystemOperationCancelledException}.
 	 * <p>
 	 * <i><b>Overridable</b> by subclasses, and usually is.</i> <br>
 	 */

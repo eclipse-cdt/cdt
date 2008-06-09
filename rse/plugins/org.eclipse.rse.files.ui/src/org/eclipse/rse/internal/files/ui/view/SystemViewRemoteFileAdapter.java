@@ -51,11 +51,12 @@
  * Rupen Mardirossian (IBM)      - [210682] Copy collisions will use SystemCopyDialog now instead of renameDialog when there is a copy collision within the same connection
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
- * Rupen Mardirossian (IBM)      - [198728] Folder being copied across systems is added to original set of files in order to extract empty (sub)folders in doDrop method			
+ * Rupen Mardirossian (IBM)      - [198728] Folder being copied across systems is added to original set of files in order to extract empty (sub)folders in doDrop method
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * Rupen Mardirossian (IBM)      - [227213] Copy and pasting to the parent folder will create a "Copy of" that resource
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Anna Dushistova  (MontaVista) - [226550] [api] Launch Shell and Launch Terminal actions should be contributed declaratively
+ * Martin Oberhuber (Wind River) - [234215] improve API documentation for doDelete and doDeleteBatch
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1668,7 +1669,7 @@ public class SystemViewRemoteFileAdapter
 			    monitor.beginTask(_downloadMessage,  (int)totalByteSize);
 			    //monitor.done();
 			}
-			
+
 			//add folders to set that are being copied to the workspace in order to strip out empty folders in UniversalFileTransferUtility
 			for (int i=0;i<set.size();i++)
 			{
@@ -1679,7 +1680,7 @@ public class SystemViewRemoteFileAdapter
 					flatSet.addResource(remoteFile);
 				}
 			}
-			
+
 			try
 			{
 				//SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(flatSet, monitor);
@@ -2158,9 +2159,9 @@ public class SystemViewRemoteFileAdapter
 							String originalName = srcFileOrFolder.getName();
 							int count = 1;
 							boolean go = true;
-							
+
 							// same systemfor
-							if (sameSystem) 
+							if (sameSystem)
 							{
 								try
 								{
@@ -2169,7 +2170,7 @@ public class SystemViewRemoteFileAdapter
 										//Handle resources being copied to their parent folder.  Name = "Copy of " + name
 										if(targetFolder.getAbsolutePath().equals(srcFileOrFolder.getParentRemoteFile().getAbsolutePath()))
 										{
-											name = MessageFormat.format(FileResources.RESID_CONFLICT_COPY_PATTERN, new Object[] { 
+											name = MessageFormat.format(FileResources.RESID_CONFLICT_COPY_PATTERN, new Object[] {
 												    new Integer(count), originalName });
 											while(go)
 											{
@@ -2177,7 +2178,7 @@ public class SystemViewRemoteFileAdapter
 												if (existingFileOrFolder.exists())
 												{
 													count++;
-													name = MessageFormat.format(FileResources.RESID_CONFLICT_COPY_PATTERN, new Object[] { 
+													name = MessageFormat.format(FileResources.RESID_CONFLICT_COPY_PATTERN, new Object[] {
 														    new Integer(count), originalName });
 												}
 												else
@@ -2200,7 +2201,7 @@ public class SystemViewRemoteFileAdapter
 												*/
 												existing.add(existingFileOrFolder);
 											}
-	
+
 											if (name != null)
 											{
 												toCopy.add(srcFileOrFolder);
@@ -2232,12 +2233,12 @@ public class SystemViewRemoteFileAdapter
 							Display.getDefault().syncExec(rr);
 							overwrite = rr.getOk();
 						}
-						
-						
-						
+
+
+
 						//Following code used originally with the rename dialog which no longer exists
 						//Resources will be copied with same names if an overwrite is desired from the user
-						//Resources that are copied to their parent will be renamed to "Copy of " + name of source 
+						//Resources that are copied to their parent will be renamed to "Copy of " + name of source
 						if(existing.size()==0 || overwrite)
 						{
 							for (int x = 0; x < toCopy.size(); x++)
@@ -2587,7 +2588,7 @@ public class SystemViewRemoteFileAdapter
 						}
 						else
 						{
-							// Not sure how we can get here since if the source and target subsystems are different, then a doDrag() needs to 
+							// Not sure how we can get here since if the source and target subsystems are different, then a doDrag() needs to
 							// occur, resulting in a local resource (i.e. IFile) rather than a remote resource (i.e. IRemoteFile).
 							// TODO investigate to see if we can get rid of this code
 							if (srcFileOrFolder.isFile())
@@ -2615,7 +2616,7 @@ public class SystemViewRemoteFileAdapter
 									String newPath = newPathBuf.toString();
 
 									monitor.subTask(copyMessage.getLevelOneText());
-									
+
 									targetFS.upload(srcFileOrFolder.getAbsolutePath(), SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 
 									result = targetFS.getRemoteFileObject(targetFolder, name, monitor);
@@ -2731,7 +2732,9 @@ public class SystemViewRemoteFileAdapter
 
 
 	/**
-	 * Perform the delete action. Defers request to the remote file subsystem
+	 * {@inheritDoc}
+	 * <p>
+	 * Defers request to the remote file subsystem.
 	 */
 	public boolean doDelete(Shell shell, Object element, IProgressMonitor monitor) throws Exception
 	{
@@ -2802,7 +2805,9 @@ public class SystemViewRemoteFileAdapter
 	}
 
 	/**
-	 * Perform the delete action. Defers request to the remote file subsystem
+	 * {@inheritDoc}
+	 * <p>
+	 * Defers request to the remote file subsystem
 	 */
 	public boolean doDeleteBatch(Shell shell, List resourceSet, IProgressMonitor monitor) throws Exception
 	{
@@ -3316,7 +3321,7 @@ public class SystemViewRemoteFileAdapter
 					remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 				}
 				catch (Exception e)
-				{					
+				{
 				}
 			}
 

@@ -4,7 +4,8 @@
 <head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<!-- David Dykstal (IBM) - [193740] fix links for referenced classes -->
 <LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
 <title>Plugging In Property Pages</title>
 </head>
@@ -33,7 +34,7 @@ this property page should be registered. Available interfaces are are identical 
 <samp><A href="popup.html#objectClass">popupMenus</A></samp> extension point.</li>
 <li><b><i>filtering criteria</i></b>. To scope which objects these property pages should show up for,
 there are a series of filtering attributes. These attributes are identical to those in the <samp><A href="popup.html#filtering">popupMenus</A></samp>
-extension point.
+extension point.</li>
 <!--
 Supported through the
 <samp><a href="../../reference/api/org/eclipse/rse/core/SystemRemoteObjectMatcher.html">SystemRemoteObjectMatcher</a></samp>
@@ -51,31 +52,10 @@ values can be scalar or "simple generic", meaning it can start or end with an as
 </ul>
 
 <h2>Programming Details</h2>
-<p>To use this extension point your class will typically extend one of the supplied base classes to
-make it easier to create these property pages for remote objects. The only method you must implement in these
-classes is <samp>createContents(Composite)</samp>, which populates the details page on the right side when the node is
-selected on the left side. The supplied classes are listed here:
-</p>
-
-<TABLE border="1">
-	<TBODY>
-		<TR>
-			<TH>Base Class</TH>
-			<TH>Description</TH>
-		</TR>
-		<TR>
-			<TD><samp><A href="../../reference/api/org/eclipse/rse/ui/propertypages/SystemAbstractPropertyPageExtensionAction.html">SystemAbstractPropertyPageExtensionAction</A></samp>
-			in <samp>org.eclipse.rse.ui</samp> plugin.</TD>
-			<TD>Base class offering generic support for any remote object property page.</TD>
-		</TR>
-		<TR>
-			<TD><samp><A href="../../reference/api/org/eclipse/rse/files/ui/propertypages/SystemAbstractRemoteFilePropertyPageExtensionAction.html">SystemAbstractRemoteFilePropertyPageExtensionAction</A></samp>
-			in <samp>org.eclipse.rse.files.ui</samp> plugin.</TD>
-			<TD>Specialized base class offering specific support for any remote file object property page.</TD>
-		</TR>
-	</TBODY>
-</TABLE>
-<p>
+<p>To use this extension point your class will typically extend <samp><A href="../../reference/api/org/eclipse/rse/ui/propertypages/SystemBasePropertyPage.html">SystemBasePropertyPage</A></samp> to
+make it easier to create these property pages for remote objects. The only methods you must implement in your 
+class are <samp>createContentArea(Composite)</samp>, which populates the details page on the right side when the node is
+selected on the left side; and <samp>verifyPageContents()</samp> which, naturally, validates the contents of the page.
 </p>
 
 <br><hr>

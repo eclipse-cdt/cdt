@@ -7,7 +7,8 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
- * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
+ * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
@@ -40,6 +41,13 @@ public class TerminalConnectorTest extends TestCase {
 
 	}
 	public static class TerminalControlMock implements ITerminalControl {
+
+		public void setEncoding(String encoding) {
+		}
+
+		public String getEncoding() {
+			return "ISO-8859-1"; //$NON-NLS-1$
+		}
 
 		public void displayTextInTerminal(String text) {
 		}

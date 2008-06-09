@@ -4,14 +4,16 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
 
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -24,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
  * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
  * team.
  * </p>
- * 
+ *
  * @author Michael Scharf
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -47,9 +49,47 @@ public interface ITerminalControl {
 	Shell getShell();
 
 	/**
-	 * Show a text in the terminal. If puts newlines at the beginning and the end.
-	 * @param text
-	 * TODO: Michael Scharf: Is this really needed?
+	 * Set the encoding that the Terminal uses to decode bytes from the
+	 * Terminal-to-remote-Stream into Unicode Characters used in Java; or, to
+	 * encode Characters typed by the user into bytes sent over the wire to the
+	 * remote.
+	 *
+	 * By default, the local Platform Default Encoding is used. Also note that
+	 * the encoding must not be applied in case the terminal stream is processed
+	 * by some data transfer protocol which requires binary data.
+	 *
+	 * Validity of the encoding set here is not checked. Since some encodings do
+	 * not cover the entire range of Unicode characters, it can happen that a
+	 * particular Unicode String typed in by the user can not be encoded into a
+	 * byte Stream with the encoding specified. and UnsupportedEncodingException
+	 * will be thrown in this case at the time the String is about to be
+	 * processed.
+	 *
+	 * The concrete encoding to use can either be specified manually by a user,
+	 * by means of a dialog, or a connector can try to obtain it automatically
+	 * from the remote side e.g. by evaluating an environment variable such as
+	 * LANG on UNIX systems.
+	 *
+	 * @since org.eclipse.tm.terminal 2.0
+	 */
+	void setEncoding(String encoding) throws UnsupportedEncodingException;
+
+	/**
+	 * Return the current encoding. That's interesting when the previous
+	 * setEncoding() call failed and the fallback default encoding should be
+	 * queried, such that e.g. a combobox with encodings to choose can be
+	 * properly initialized.
+	 * 
+	 * @return the current Encoding of the Terminal.
+	 * @since org.eclipse.tm.terminal 2.0
+	 */
+	String getEncoding();
+
+	/**
+	 * Show a text in the terminal. If puts newlines at the beginning and the
+	 * end.
+	 *
+	 * @param text TODO: Michael Scharf: Is this really needed?
 	 */
 	void displayTextInTerminal(String text);
 

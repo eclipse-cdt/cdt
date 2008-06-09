@@ -21,10 +21,12 @@
  * Ruslan Sychev (Xored Software) - [217675] NPE or SWTException when closing Terminal View while connection establishing
  * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
+ * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketException;
@@ -106,6 +108,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     private ITerminalConnector		  fConnector;
     private final ITerminalConnector[]      fConnectors;
     PipedInputStream fInputStream;
+	private static final String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
+	private String fEncoding = defaultEncoding;
+	private InputStreamReader fInputStreamReader;
 
 	private ICommandInputField fCommandInputField;
 
@@ -124,9 +129,37 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fTerminalModel=TerminalTextDataFactory.makeTerminalTextData();
 		fTerminalModel.setMaxHeight(1000);
 		fInputStream=new PipedInputStream(8*1024);
-		fTerminalText=new VT100Emulator(fTerminalModel,this,fInputStream);
+		fTerminalText = new VT100Emulator(fTerminalModel, this, null);
+		try {
+			// Use Default Encoding as start, until setEncoding() is called
+			setEncoding(null);
+		} catch (UnsupportedEncodingException e) {
+			// Should never happen
+			e.printStackTrace();
+			// Fall back to local Platform Default Encoding
+			fEncoding = defaultEncoding;
+			fInputStreamReader = new InputStreamReader(fInputStream);
+			fTerminalText.setInputStreamReader(fInputStreamReader);
+		}
 
 		setupTerminal(wndParent);
+	}
+
+	public void setEncoding(String encoding) throws UnsupportedEncodingException {
+		if (encoding == null) {
+			// TODO better use a standard remote-to-local encoding?
+			encoding = "ISO-8859-1"; //$NON-NLS-1$
+			// TODO or better use the local default encoding?
+			// encoding = defaultEncoding;
+		}
+		fInputStreamReader = new InputStreamReader(fInputStream, fEncoding);
+		// remember encoding if above didn't throw an exception
+		fEncoding = encoding;
+		fTerminalText.setInputStreamReader(fInputStreamReader);
+	}
+
+	public String getEncoding() {
+		return fEncoding;
 	}
 
 	public ITerminalConnector[] getConnectors() {
@@ -166,8 +199,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			return false;
 		if (strText == null)
 			return false;
-		for (int i = 0; i < strText.length(); i++) {
-			sendChar(strText.charAt(i), false);
+		if (!fEncoding.equals(defaultEncoding)) {
+			sendString(strText);
+		} else {
+			// TODO I do not understand why pasteString would do this here...
+			for (int i = 0; i < strText.length(); i++) {
+				sendChar(strText.charAt(i), false);
+			}
 		}
 		return true;
 	}
@@ -401,8 +439,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// platform's default character encoding.
 			//
 			// TODO: Find a way to force this to use the ISO Latin-1 encoding.
+			// TODO: handle Encoding Errors in a better way
 
-			getOutputStream().write(string.getBytes());
+			getOutputStream().write(string.getBytes(fEncoding));
 			getOutputStream().flush();
 		} catch (SocketException socketException) {
 			displayTextInTerminal(socketException.getMessage());
@@ -579,7 +618,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 	private void writeToTerminal(String text) {
 		try {
-			getRemoteToTerminalOutputStream().write(text.getBytes("ISO-8859-1")); //$NON-NLS-1$
+			getRemoteToTerminalOutputStream().write(text.getBytes(fEncoding));
 		} catch (UnsupportedEncodingException e) {
 			// should never happen!
 			e.printStackTrace();

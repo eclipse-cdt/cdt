@@ -118,13 +118,13 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private int nextAnsiParameter = 0;
 
-	final Reader fReader;
+	Reader fReader;
 
 	boolean fCrAfterNewLine;
 	/**
 	 * The constructor.
 	 */
-	public VT100Emulator(ITerminalTextData data,ITerminalControlForText terminal,InputStream input) {
+	public VT100Emulator(ITerminalTextData data, ITerminalControlForText terminal, Reader reader) {
 		super();
 
 		Logger.log("entered"); //$NON-NLS-1$
@@ -134,15 +134,7 @@ public class VT100Emulator implements ControlListener {
 		for (int i = 0; i < ansiParameters.length; ++i) {
 			ansiParameters[i] = new StringBuffer();
 		}
-		Reader reader=null;
-		try {
-			// TODO convert byte to char using "ISO-8859-1"
-			reader=new InputStreamReader(input,"ISO-8859-1"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			// should never happen!
-			e.printStackTrace();
-		}
-		fReader=reader;
+		setInputStreamReader(reader);
 		if(TerminalPlugin.isOptionEnabled("org.eclipse.tm.terminal/debug/log/VT100Backend")) //$NON-NLS-1$
 			text=new VT100BackendTraceDecorator(new VT100EmulatorBackend(data),System.out);
 		else
@@ -153,6 +145,24 @@ public class VT100Emulator implements ControlListener {
 		text.setDefaultStyle(style);
 		text.setStyle(style);
 	}
+
+	/**
+	 * Set the reader that this Terminal gets its input from.
+	 *
+	 * The reader can be changed while the Terminal is running, but a change of
+	 * the reader likely loses some characters which have not yet been fully
+	 * read. Changing the reader can be done in order to change the selected
+	 * Encoding, though. This is typically done when the Terminal is
+	 * constructed, i.e. before it really starts operation; or, when the user
+	 * manually selects a different encoding and thus doesn't care about losing
+	 * old characters.
+	 *
+	 * @param reader the new Reader
+	 */
+	public void setInputStreamReader(Reader reader) {
+		fReader = reader;
+	}
+
 	public void setDimensions(int lines,int cols) {
 		text.setDimensions(lines, cols);
 		ITerminalConnector telnetConnection = getConnector();

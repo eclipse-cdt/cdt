@@ -8,13 +8,17 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
- *******************************************************************************/
+ * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
+ ******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
+
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
@@ -22,6 +26,24 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
  *
  */
 public interface ITerminalViewControl {
+	/**
+	 * Set the encoding that the Terminal uses to decode byte streams into
+	 * characters.
+	 *
+	 * @see ITerminalControl#setEncoding(String)
+	 * @since org.eclipse.tm.terminal 2.0
+	 */
+	void setEncoding(String encoding) throws UnsupportedEncodingException;
+
+	/**
+	 * Get the Terminal's current encoding.
+	 *
+	 * @return the current Encoding of the Terminal.
+	 * @see ITerminalControl#getEncoding()
+	 * @since org.eclipse.tm.terminal 2.0
+	 */
+	String getEncoding();
+
     boolean isEmpty();
 	void setFont(Font font);
 	void setInvertedColors(boolean invert);

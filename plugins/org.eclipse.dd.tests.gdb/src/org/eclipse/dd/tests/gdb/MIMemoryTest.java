@@ -483,19 +483,11 @@ public class MIMemoryTest extends BaseTestCase {
 		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 
-//		//	Un-comment this part if GDB returns a bunch of 'N/A's
-//		//  when the address is invalid
-//		assertTrue(fWait.getMessage(), fWait.isOK());
-//		MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
-//		assertTrue("Wrong value: expected '-1, 0', received '" + buffer[0].getValue() + ", " + buffer[0].getFlags() + "'",
-//				(buffer[0].getValue() == (byte) -1) && (buffer[0].getFlags() == (byte) 0));
-
-		//	Un-comment this part if GDB returns an error message
-		//  when the address is invalid
-		String expected = "Unable to read memory";	// Error msg returned by gdb
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		//	Ensure that we receive a block of invalid memory bytes
+		assertTrue(fWait.getMessage(), fWait.isOK());
+		MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
+		assertTrue("Wrong value: expected '-1, 0', received '" + buffer[0].getValue() + ", " + buffer[0].getFlags() + "'",
+				(buffer[0].getValue() == (byte) 0) && (buffer[0].getFlags() == (byte) 0));
 
 		// Ensure no MemoryChangedEvent event was received
 		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);

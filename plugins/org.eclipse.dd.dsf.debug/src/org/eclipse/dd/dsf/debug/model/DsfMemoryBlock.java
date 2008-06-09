@@ -280,71 +280,110 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	
 	@DsfServiceEventHandler 
     public void handleCacheSuspendEvent(IRunControl.ISuspendedDMEvent e) {
-		e.getReason();
-		if(e.getReason() == StateChangeReason.BREAKPOINT)
+		if (e.getReason() == StateChangeReason.BREAKPOINT)
 			fUseCachedData = false;
 	}
 	
 	private boolean isUseCacheData()
 	{
-		if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT))
+		if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT))
 			return fUseCachedData;
-		else if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL))
+
+		if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL))
 			return fUseCachedData;
-		else
-			return false;
+
+		return false;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
 	 */
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
-		if(isUseCacheData() && fBlockAddress.compareTo(address) == 0 && units * getAddressableSize() <= fBlock.length)
+
+		if (isUseCacheData() && fBlockAddress.compareTo(address) == 0 && units * getAddressableSize() <= fBlock.length)
 			return fBlock;
 		
-		MemoryByte[] block = fetchMemoryBlock(address, units);
-		int newLength = (block != null) ? block.length : 0;
+		MemoryByte[] newBlock = fetchMemoryBlock(address, units);
+		int newLength = (newBlock != null) ? newBlock.length : 0;
 
-		// Flag the changed bytes
+		// If the retrieved block overlaps with the cached block, flag the changed bytes
+		// so they can be properly highlighted in the platform Memory view. 
+		// Note: In the standard Memory view, the values are displayed in cells of 4 bytes
+		// (on 4-bytes address boundaries) and all 4 bytes have to be flagged so the
+		// cell is highlighted (and the delta sigh is shown).
 		if (fBlock != null && newLength > 0) {
 			switch (fBlockAddress.compareTo(address))	{
+				// Cached block begins before the retrieved block location
+				// If there is no overlap, there are no bytes to flag
 				case -1:
 				{
-					int offset = address.subtract(fBlockAddress).intValue();
-					int length = Math.min(fLength - offset, newLength); 
-					for (int i = 0; i < length; i += 4) {
-						boolean changed = false;
-						for (int j = i; j < (i + 4) && j < length; j++) {
-							block[j].setFlags(fBlock[offset + j].getFlags());
-							if (block[j].getValue() != fBlock[offset + j].getValue())
-								changed = true;
-						}
-						if (changed)
+					// Determine the distance between the cached and the
+					// requested block addresses 
+					BigInteger bigDistance = address.subtract(fBlockAddress);
+
+					// If the distance does not exceed the length of the cached block,
+					// then there is some overlap between the blocks and we have to
+					// mark the changed bytes (if applicable)
+					if (bigDistance.compareTo(BigInteger.valueOf(fLength)) == -1) {
+						// Here we can reasonably assume that java integers are OK
+						int distance = bigDistance.intValue(); 
+						int length = fLength - distance;
+
+						// Work by cells of 4 bytes
+						for (int i = 0; i < length; i += 4) {
+							// Determine if any byte within the cell was modified
+							boolean changed = false;
 							for (int j = i; j < (i + 4) && j < length; j++) {
-								block[j].setHistoryKnown(true);
-								block[j].setChanged(true);
+								newBlock[j].setFlags(fBlock[distance + j].getFlags());
+								if (newBlock[j].getValue() != fBlock[distance + j].getValue())
+									changed = true;
 							}
+							// If so, flag the whole cell as modified
+							if (changed)
+								for (int j = i; j < (i + 4) && j < length; j++) {
+									newBlock[j].setHistoryKnown(true);
+									newBlock[j].setChanged(true);
+								}
+						}
+						
 					}
 					break;
 				}
 
+				// Cached block begins before the retrieved block location
+				// If there is no overlap, there are no bytes to flag
+				// (this block of code is symmetric with the previous one)
 				case 0:
 				case 1:
 				{
-					int offset = fBlockAddress.subtract(address).intValue();
-					int length = Math.min(newLength - offset, fLength); 
-					for (int i = 0; i < length; i += 4) {
-						boolean changed = false;
-						for (int j = i; j < (i + 4) && j < length; j++) {
-							block[offset + j].setFlags(fBlock[j].getFlags());
-							if (block[offset + j].getValue() != fBlock[j].getValue())
-								changed = true;
-						}
-						if (changed)
+					// Determine the distance between the cached and the
+					// requested block addresses 
+					BigInteger bigDistance = fBlockAddress.subtract(address);
+
+					// If the distance does not exceed the length of the new block,
+					// then there is some overlap between the blocks and we have to
+					// mark the changed bytes (if applicable)
+					if (bigDistance.compareTo(BigInteger.valueOf(newLength)) == -1) {
+						// Here we can reasonably assume that java integers are OK
+						int distance = bigDistance.intValue(); 
+						int length = newLength - distance;
+						
+						// Work by cells of 4 bytes
+						for (int i = 0; i < length; i += 4) {
+							// Determine if any byte within the cell was modified
+							boolean changed = false;
 							for (int j = i; j < (i + 4) && j < length; j++) {
-								block[offset + j].setHistoryKnown(true);
-								block[offset + j].setChanged(true);
+								newBlock[distance + j].setFlags(fBlock[j].getFlags());
+								if (newBlock[distance + j].getValue() != fBlock[j].getValue())
+									changed = true;
 							}
+							// If so, flag the whole cell as modified
+							if (changed)
+								for (int j = i; j < (i + 4) && j < length; j++) {
+									newBlock[distance + j].setHistoryKnown(true);
+									newBlock[distance + j].setChanged(true);
+								}
+						}
 					}
 					break;
 				}
@@ -355,13 +394,13 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		}
 
 		// Update the internal state
-		fBlock = block;
+		fBlock = newBlock;
 		fBlockAddress = address;
 		fLength = newLength;
 		
-		if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT))
+		if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_BREAKPOINT))
 			fUseCachedData = true;
-		else if(fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL))
+		else if (fUpdatePolicy.equals(DsfMemoryBlock.UPDATE_POLICY_MANUAL))
 			fUseCachedData = true;
 
 		return fBlock;
@@ -472,15 +511,6 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			                    drm.setData(getData());
 			                    drm.done();
 			                }
-			    			@Override
-			    			protected void handleFailure() {
-			    				// Bug234289: If memory read fails, return a block marked as invalid
-			    				MemoryByte[] block = new MemoryByte[fWordSize * (int) length];
-		    					for (int i = 0; i < block.length; i++)
-		    						block[i] = new MemoryByte((byte) 0, (byte) 0);
-			    				drm.setData(block);
-			    				drm.done();
-			    			}
 			            });
 			    }
 				

@@ -505,6 +505,9 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	     *  only the sub-blocks needed to fill the gap(s), if any.
 	     * 
 	     *  (As is often the case, it takes much more typing to explain it than to just do it :-)
+	     *
+	     *  What is missing is a parameter that indicates the minimal block size that is worth fetching.
+	     *  This is target-specific and straight in the realm of the coalescing function... 
 	     *  
 	     * @param reqBlockStart The address of the requested block
 	     * @param count Its length
@@ -857,6 +860,15 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	    			protected void handleSuccess() {
 	    				// Retrieve the memory block
 	    				drm.setData(getData().getMIMemoryBlock());
+	    				drm.done();
+	    			}
+	    			@Override
+	    			protected void handleFailure() {
+	    				// Bug234289: If memory read fails, return a block marked as invalid
+	    				MemoryByte[] block = new MemoryByte[word_size * count];
+    					for (int i = 0; i < block.length; i++)
+    						block[i] = new MemoryByte((byte) 0, (byte) 0);
+	    				drm.setData(block);
 	    				drm.done();
 	    			}
 	    		}

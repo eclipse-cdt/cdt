@@ -4,7 +4,8 @@
 <head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<!-- David Dykstal (IBM) - [193747] updated links and corrected syntax errors -->
 <LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
 <title>Plugging In SubSystems</title>
 </head>
@@ -19,34 +20,34 @@ a connection when a connection is expanded in the Remote Systems view.
 For example, <A href="RSView_iSeries.gif">here is an iSeries connection</A> with four subsystems,
 each created by a subsystem configuration registered with this extension point.
 </p>
-<p>The <A href="../../reference/extension-points/org_eclipse_rse_core_subsystemConfiguration.html">extension markup</A> is quite simple for this extension point,
+<p>The <A href="../../reference/extension-points/org_eclipse_rse_core_subsystemConfigurations.html">extension markup</A> is quite simple for this extension point,
 as it has only one element, <b><samp>&lt;configuration&gt;</samp></b>, with only a few simple attributes to supply:
 </p>
 <ul>
 <li><b>id</b>.
 Unique id for the extension, as required for all extensions.
 There is also a way to <A href="../../reference/api/org/eclipse/rse/core/model/ISystemRegistry.html#getSubSystemConfiguration(java.lang.String)">query</A> a subsystem configuration
-object via its ID.
+object via its ID.</li>
 <li><b>vendor</b>.
-Your company name, shown in properties dialog for subsystems created by this subsystem configuration.
+Your company name, shown in properties dialog for subsystems created by this subsystem configuration.</li>
 <li><b>icon</b>.
-The icon displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
+The icon displayed in the Remote Systems view for each subsystem created by this subsystem configuration.</li>
 <li><b>iconlive</b>.
-The icon used when the subsystem is physically connected to its remote system.
+The icon used when the subsystem is physically connected to its remote system.</li>
 <li><b>name</b>.
-The name displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
+The name displayed in the Remote Systems view for each subsystem created by this subsystem configuration.</li>
 <li><b>systemTypeIds</b>.
 A semi-colon separated list of system type IDs which this subsystem configuration supports. When a user creates a
 connection, this configuration will only be asked to create a subsystem for connections to systems of these types. Wildcards are 
-supported; in order to register against all system types, specify a single "*".
+supported; in order to register against all system types, specify a single "*".</li>
 <li><b>serviceType</b>. An optional semi-colon separated list of names and transports that can be used to match this service with remotelly advertised services through DNS-SD or any other supported service discovery protocol.
 The name would usually be the keyword used by the <A href="http://www.iana.org/assignments/port-numbers">IANA</A>  
-or by <A href="http://www.dns-sd.org/ServiceTypes.html">DNS SRV service types (RFC 2782)</A>.
+or by <A href="http://www.dns-sd.org/ServiceTypes.html">DNS SRV service types (RFC 2782)</A>.</li>
 <li><b>category</b>. A name used to categorize this subsystem's functionality. Used by the <A href="popup.html">popupMenus</A>
 and <A href="propertypage.html">propertyPages</A> extension points to allow actions and property pages to be scoped to
-resources shown in subsystems of a particular category. Multiple subsystems can have the same category.
+resources shown in subsystems of a particular category. Multiple subsystems can have the same category.</li>
 <li><b>class</b>. A class implementing <A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html">ISubSystemConfiguration</A>
-interface, as described in the following programming details section.
+interface, as described in the following programming details section.</li>
 </ul>
 
 
@@ -66,7 +67,7 @@ one system can manage the live connections of multiple subsystems in the same sy
 If filters are <A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsFilters()">supported</A>
 (the default), the first connection is made, and the remote resources are subsequently shown, when filters within the subsystem
 are expanded, which results in a call to
-<samp><A href="../../reference/api/org/eclipse/rse/subsystems/files/core/subsystems/RemoteFileSubSystem.html#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)">resolveFilterString</A></samp>
+<samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html#internalResolveFilterString(java.lang.String,%20org.eclipse.core.runtime.IProgressMonitor)">resolveFilterString</A></samp>
 in the subsystem object. <BR>
 Furthermore, you will want to supply your own
 <B><A
@@ -84,14 +85,14 @@ and an RSE <B><A
 adapter</A></B>
 registered for the remote objects, which the RSE views consult to get the labels, images, actions,
 and property sheet values for the remote objects.
-Typically, you will supply actions by leveraging the <A
-	href="../api/uiAPI.html">user interface elements</A> supplied by the RSE, such as base classes for <A
-	href="../api/messages/uiMessageAPI.html">messages</A>, <A
-	href="../api/actions/uiActionsAPI.html">actions</A>, <A
-	href="../api/dialogs/uiDialogsAPI.html">dialogs</A>, <A
-	href="../api/wizards/uiWizardsAPI.html">wizards</A>, <A
-	href="../api/properties/uiPropertiesAPI.html">property pages</A> and <A
-	href="../api/preferences/uiPreferencesAPI.html">preference page editors</A>. You will probably also supply a
+Typically, you will supply actions by leveraging the 
+<A href="../api/uiAPI.html">user interface elements</A> supplied by the RSE, such as base classes for 
+<A href="../api/messages/uiMessageAPI.html">messages</A>, 
+<A href="../api/actions/uiActionsAPI.html">actions</A>, 
+<A href="../api/dialogs/uiDialogsAPI.html">dialogs</A>, 
+<A href="../api/wizards/uiWizardsAPI.html">wizards</A>, 
+<A href="../api/properties/uiPropertiesAPI.html">property pages</A> and 
+<A href="../api/preferences/uiPreferencesAPI.html">preference page editors</A>. You will probably also supply a
 	property page for your subsystem objects, via the Eclipse <samp>propertyPages</samp> extension point, and for your remote resource objects, via the RSE <A
 	href="propertypage.html">propertyPages</A> extension point.</p>
 
@@ -185,12 +186,12 @@ following summarizes the minimum set of classes you will be creating in order to
       that implements the interface you designed in step 1. This will:
       <ul>
        <li>manage persistent properties via calls to the inherited <A href="../../reference/api/org/eclipse/rse/core/model/PropertySetContainer.html#createPropertySet(java.lang.String)">createPropertySet</A>,
-       <A href="../../reference/api/org/eclipse/rse/core/model/PropertySetContainer.html#getPropertySet(java.lang.String)">getPropertySet</A> and related methods,
-       <li>use your communications layer to return instances of your model objects in its <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)">internalResolveFilterString</A> method.
+       <A href="../../reference/api/org/eclipse/rse/core/model/PropertySetContainer.html#getPropertySet(java.lang.String)">getPropertySet</A> and related methods,</li>
+       <li>use your communications layer to return instances of your model objects in its <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html#internalResolveFilterString(java.lang.String,%20org.eclipse.core.runtime.IProgressMonitor)">internalResolveFilterString</A> method.
        The input to this is one or more strings such as you designed in step 5. It will return all remote resources matching the criteria captured in the input filter string.
        You may also find the <A href="../../reference/api/org/eclipse/rse/services/clientserver/NamePatternMatcher.html">org.eclipse.rse.services.clientserver.NamePatternMatcher</a>
        class to be handy in comparing a generic pattern to a particular input. This class is in the <samp>runtime/clientserver.jar</samp> file,
-       and has no eclipse-dependencies, so it can be used in your client subsystem code, or your server-side code.
+       and has no eclipse-dependencies, so it can be used in your client subsystem code, or your server-side code.</li>
       </ul>
    </li>
   <li>Creating a subclass of <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">SubSystemConfiguration.</A></li>
@@ -220,27 +221,23 @@ following summarizes the minimum set of classes you will be creating in order to
     <ol>
       <li type="i">Create your own
             <a href="../../reference/api/org/eclipse/rse/ui/filters/SystemFilterStringEditPane.html">filter string edit pane</a>
-            subclass that contains your own GUI prompts as desired.
+            subclass that contains your own GUI prompts as desired.</li>
       <li type="i">Create your own
             <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter wizard action</a>
             subclass, and configure it to use your own edit pane subclass by overriding
             <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html#configureNewFilterWizard(org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard)">configureNewFilterWizard</a></samp>
             and in it calling <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/dialogs/SystemNewFilterWizard.html#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
-            on the given wizard.
+            on the given wizard.</li>
       <li type="i">Create your own
             <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">change-filter action</a>
             subclass, and configure it to use your own edit pane subclass by overriding
             <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html#configureFilterDialog(org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog)">configureFilterDialog</a></samp>
             and in it calling <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/dialogs/SystemChangeFilterDialog.html#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
-            on the given dialog.
-      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/ui/subsystems/ISubSystemConfigurationAdapter.html#getNewFilterPoolFilterAction(org.eclipse.rse.core.filters.ISystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
-            method in your subsystem configuration, to return an instance of your new-filter action.
+            on the given dialog.</li>
+      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/ui/subsystems/ISubSystemConfigurationAdapter.html#configureNewFilterAction(org.eclipse.rse.core.subsystems.ISubSystemConfiguration,%20org.eclipse.rse.ui.filters.actions.SystemNewFilterAction,%20java.lang.Object)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
+            method in your subsystem configuration, to configure your new-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
-            in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter action class</a>.
-      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/ui/subsystems/ISubSystemConfigurationAdapter.html#getChangeFilterAction(org.eclipse.rse.core.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
-            method in your subsystem configuration, to return an instance of your change-filter action.
-            You can actually avoid creating an action subclass if you choose, by calling the configuration methods
-            in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">change-filter action class</a>.
+            in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter action class</a>.</li>
     </ol>
   </li>
 </OL>

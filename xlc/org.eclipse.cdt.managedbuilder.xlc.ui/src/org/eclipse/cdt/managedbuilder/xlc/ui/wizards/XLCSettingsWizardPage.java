@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.xlc.ui.wizards;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPage;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.cdt.managedbuilder.xlc.ui.Messages;
-import org.eclipse.cdt.managedbuilder.xlc.ui.PixelConverter;
 import org.eclipse.cdt.managedbuilder.xlc.ui.XLCUIPlugin;
 import org.eclipse.cdt.managedbuilder.xlc.ui.preferences.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -113,17 +112,9 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		fComposite.setLayout(layout);
 		fComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		
-		
-		// set the layout data for the first column, which contains labels
-		GridData labelGridData = new GridData();
-		PixelConverter pixelConverter= new PixelConverter(parent);
-		
 		// create the first label
 		Label label1 = new Label(fComposite, SWT.NONE);
 		label1.setText(Messages.XLCSettingsWizardPage_1);
-		labelGridData.widthHint = pixelConverter.convertWidthInCharsToPixels(label1.getText().length() + 2);
-		label1.setLayoutData(labelGridData);
 		label1.setVisible(true);
 		
 		// create the text box for the path
@@ -167,13 +158,11 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		// create the second label
 		Label label2 = new Label(fComposite, SWT.NONE);
 		label2.setText(Messages.XLCSettingsWizardPage_3);
-		label2.setLayoutData(labelGridData);
 		
 		label2.setVisible(true);
 		
 		// create the version dropdown
 		GridData comboData = new GridData();
-		comboData.horizontalSpan = 2;
 		comboData.grabExcessHorizontalSpace = true;
 		comboData.horizontalAlignment = SWT.FILL;
 		

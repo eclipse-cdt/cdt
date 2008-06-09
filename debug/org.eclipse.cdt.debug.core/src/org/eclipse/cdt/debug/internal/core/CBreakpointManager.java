@@ -1188,11 +1188,37 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		setBreakpointsOnTarget0( breakpoints );
 	}
 
+	/**
+	 * Checks if matching between the symbolics referenced by the breakpoint
+	 * and the symbolics of the contained CDebugTarget should be done using also source handle.
+	 * @param breakpoint
+	 * @return true if source handle should be used
+	 */
+	private boolean breakpointUsesSourceMatching(ICBreakpoint breakpoint) {
+		boolean result = false;
+		if (breakpoint instanceof ICLineBreakpoint) {
+			result = true;
+			if (breakpoint instanceof ICFunctionBreakpoint) {
+				// ICDIFunctionBreakpoint on function elements from binary objects can be
+				// set without having a source handle. For this case of line breakpoint 
+				// don't try to match breakpoints with source locator of contained CDebugTarget.
+				String handle = "";
+				try {
+					handle = breakpoint.getSourceHandle();
+				} catch (CoreException ex) {
+					// ignore exception. source handle will be empty anyway.
+				}
+				result = handle.length() > 0;
+			}
+		}
+		return result;
+	}
+	
 	private boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
-		IResource resource = breakpoint.getMarker().getResource();
 		if ( breakpoint instanceof ICAddressBreakpoint )
 			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
-		if ( breakpoint instanceof ICLineBreakpoint ) {
+		
+		if ( breakpointUsesSourceMatching( breakpoint ) ) {
 			try {
 				String handle = breakpoint.getSourceHandle();
 				ISourceLocator sl = getSourceLocator();
@@ -1207,6 +1233,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			}
 		}
 		else {
+			IResource resource = breakpoint.getMarker().getResource();			
 			IProject project = resource.getProject();
 			if ( project != null && project.exists() ) {
 				ISourceLocator sl = getSourceLocator();

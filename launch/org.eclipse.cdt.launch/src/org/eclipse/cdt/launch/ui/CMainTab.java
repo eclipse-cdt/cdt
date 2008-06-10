@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Ken Ryall (Nokia) - bug 178731
+ *	   IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -647,7 +648,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(project);
 			if (projDes != null) {
 				String buildConfigName = projDes.getActiveConfiguration().getName();
-				name = name + " " + buildConfigName; //$NON-NLS-1$
+				//bug 234951
+				name = LaunchMessages.getFormattedString("CMainTab.Configuration_name", new String[]{name, buildConfigName}); //$NON-NLS-1$
 			}
 			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);

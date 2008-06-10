@@ -16,6 +16,7 @@
  * Yu-Fen Kuo      (MontaVista)  - Adapted from CommandsViewWorkbook
  * Anna Dushistova (MontaVista)  - Adapted from CommandsViewWorkbook
  * Yu-Fen Kuo      (MontaVista)  - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Martin Oberhuber (Wind River) - [227571] RSE Terminal should honor Encoding set on the IHost
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 

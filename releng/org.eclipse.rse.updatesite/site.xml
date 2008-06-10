@@ -343,6 +343,17 @@
    <feature url="features/org.eclipse.rse.tests_3.0.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.0.0.qualifier">
       <category name="TM and RSE 3.0"/>
    </feature>
+   <!-- !EUROPA_ONLY!
+   <feature url="features/org.eclipse.rse.remotecdt.wrapper_2.1.0.qualifier.jar" id="org.eclipse.rse.remotecdt.wrapper" version="2.1.0.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.useractions.wrapper_1.1.0.qualifier.jar" id="org.eclipse.rse.useractions.wrapper" version="1.1.0.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.wince.wrapper_0.1.0.qualifier.jar" id="org.eclipse.rse.wince.wrapper" version="0.1.0.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   !EUROPA_ONLY! -->
    <category-def name="TM and RSE 3.0" label="TM and RSE 3.0">
       <description>
          Features and add-ons of the 3.0 release of Target Management / RSE.

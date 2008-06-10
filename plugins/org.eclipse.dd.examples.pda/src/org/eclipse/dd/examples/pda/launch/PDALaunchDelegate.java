@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.variables.IValueVariable;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.examples.pda.PDAPlugin;
@@ -118,32 +116,24 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
     private void launchProcess(ILaunch launch, String program, int requestPort, int eventPort) throws CoreException {
         List<String> commandList = new ArrayList<String>();
 
-        // Find Perl executable
-        IValueVariable perl = VariablesPlugin.getDefault().getStringVariableManager().getValueVariable(PDAPlugin.VARIALBE_PERL_EXECUTABLE);
-        if (perl == null) {
-            abort("Perl executable location undefined. Check value of ${dsfPerlExecutable}.", null);
-        }
-        String path = perl.getValue();
-        if (path == null) {
-            abort("Perl executable location unspecified. Check value of ${dsfPerlExecutable}.", null);
-        }
-        File exe = new File(path);
+        // Get Java VM path
+        String javaVMHome = System.getProperty("java.home");
+        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
+        File exe = new File(javaVMExec);
         if (!exe.exists()) {
-            abort(MessageFormat.format("Specified Perl executable {0} does not exist. Check value of $dsfPerlExecutable.", new Object[]{path}), null);
+            abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null);
         }
-        commandList.add(path);
-
-        // Add PDA VM
-        File vm = PDAPlugin.getFileInPlugin(new Path("pdavm/pda.pl"));
-        if (vm == null) {
-            abort("Missing PDA VM", null);
-        }
-        commandList.add(vm.getAbsolutePath());
+        commandList.add(javaVMExec);
+        
+        commandList.add("-cp");
+        commandList.add(File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")));
+        
+        commandList.add("org.eclipse.dd.examples.pdavm.PDAVirtualMachine");
 
         // Add PDA program
         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(program));
         if (!file.exists()) {
-            abort(MessageFormat.format("Perl program {0} does not exist.", new Object[] {file.getFullPath().toString()}), null);
+            abort(MessageFormat.format("PDA program {0} does not exist.", new Object[] {file.getFullPath().toString()}), null);
         }
 
         commandList.add(file.getLocation().toOSString());
@@ -158,7 +148,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         Process process = DebugPlugin.exec(commandLine, null);
 
         // Create a debug platform process object and add it to the launch.
-        DebugPlugin.newProcess(launch, process, path);
+        DebugPlugin.newProcess(launch, process, javaVMHome);
     }
 
     /**

@@ -57,15 +57,15 @@ public class Test2 extends CommandControlTestsBase {
         expectEvent("resumed client");
         expectEvent("suspended breakpoint 12");
         sendCommand("clear 19");
-        sendCommand("stack", fProgram + "|6|main#" + fProgram + "|18|sub1|n|m#" + fProgram + "|12|sub2" );
+        sendCommand("stack", fProgram + "|6|main#" + fProgram + "|18|sub1|m|n#" + fProgram + "|12|sub2" );
         sendCommand("stepreturn");
         expectEvent("resumed client");
         expectEvent("suspended step");
-        sendCommand("stack", fProgram + "|6|main#" + fProgram + "|18|sub1|n|m#" + fProgram + "|13|sub2" );
+        sendCommand("stack", fProgram + "|6|main#" + fProgram + "|18|sub1|m|n#" + fProgram + "|13|sub2" );
         sendCommand("stepreturn");
         expectEvent("resumed client");
         expectEvent("suspended step");
-        sendCommand("stack", fProgram + "|6|main#" + fProgram + "|22|sub1|n|m" );
+        sendCommand("stack", fProgram + "|6|main#" + fProgram + "|22|sub1|m|n" );
         sendCommand("set 6");
         sendCommand("stepreturn");
         expectEvent("resumed client");

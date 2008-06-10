@@ -41,7 +41,7 @@ public class Test6 extends CommandControlTestsBase {
         sendCommand("resume");
         expectEvent("resumed client");
         expectEvent("suspended watch read inner::a");
-        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|25|inner|c|a");
+        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|25|inner|a|c");
         sendCommand("watch inner::a 0");
         sendCommand("resume");
         expectEvent("resumed client");
@@ -64,13 +64,13 @@ public class Test6 extends CommandControlTestsBase {
         sendCommand("step");
         expectEvent("resumed step");
         expectEvent("suspended step");
-        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|c|a");
+        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|a|c");
         sendCommand("data", "4|4|");
         sendCommand("eval call%20other");
         expectEvent("resumed client");
         expectEvent("evalresult 15");
         expectEvent("suspended eval");
-        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|c|a");
+        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|a|c");
         sendCommand("data", "4|4|");
         sendCommand("resume");
         expectEvent("resumed client");

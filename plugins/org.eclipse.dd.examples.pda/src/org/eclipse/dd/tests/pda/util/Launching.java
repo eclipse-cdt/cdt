@@ -20,9 +20,9 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.variables.IValueVariable;
-import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 
@@ -30,19 +30,6 @@ import org.eclipse.debug.core.DebugPlugin;
  * 
  */
 public class Launching {
-    public static String getPerlPath() {
-        // Perl executable
-        IValueVariable perl = VariablesPlugin.getDefault().getStringVariableManager().getValueVariable(PDAPlugin.VARIALBE_PERL_EXECUTABLE);
-        Assert.assertNotNull("Perl executable location undefined. Check value of ${dsfPerlExecutable}.", perl); 
-
-        String path = perl.getValue();
-        Assert.assertNotNull("Perl executable location undefined. Check value of ${dsfPerlExecutable}.", path); 
-        Assert.assertTrue(
-            MessageFormat.format("Specified Perl executable {0} does not exist. Check value of $dsfPerlExecutable.", new Object[]{path}), 
-            new File(path).exists());
-
-        return path;
-    }
     
     public static Process launchPDA(String pdaProgram, int requestPort, int eventPort) throws CoreException {
         Assert.assertTrue("Invalid request port", requestPort > 0);
@@ -50,11 +37,21 @@ public class Launching {
 
         List<String> commandList = new ArrayList<String>();
 
-        commandList.add(getPerlPath());
-       
-        File pdaVM = PDAPlugin.getFileInPlugin(new Path("pdavm/pda.pl"));
-        Assert.assertNotNull("File " + pdaVM + " not found in plugin.", pdaVM);
-        commandList.add(pdaVM.getAbsolutePath());
+        // Get Java VM path
+        String javaVMHome = System.getProperty("java.home");
+        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
+        File exe = new File(javaVMExec);
+        if (!exe.exists()) {
+            throw new CoreException(new Status(
+                IStatus.ERROR, PDAPlugin.PLUGIN_ID, 0,
+                MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null));
+        }
+        commandList.add(javaVMExec);
+
+        commandList.add("-cp");
+        commandList.add(File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")));
+
+        commandList.add("org.eclipse.dd.examples.pdavm.PDAVirtualMachine");
 
         commandList.add(pdaProgram);
         

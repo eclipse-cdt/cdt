@@ -374,6 +374,22 @@
 	</target>
 
 	<!-- ===================================================================== -->
+	<!-- Steps to do before running package. -->
+	<!-- ===================================================================== -->
+	<target name="prePackage">
+		<echo message="builder - all - customTargets.xml - prePackage"/>
+		<!-- TODO? -->
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after  running package. -->
+	<!-- ===================================================================== -->
+	<target name="postPackage">
+		<echo message="builder - all - customTargets.xml - postPackage"/>
+		<!-- TODO? -->
+	</target>
+
+	<!-- ===================================================================== -->
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
 	<target name="postBuild" depends="myInit">

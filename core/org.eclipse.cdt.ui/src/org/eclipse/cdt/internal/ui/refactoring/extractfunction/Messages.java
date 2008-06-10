@@ -29,7 +29,7 @@ public final class Messages extends NLS {
 	public static String ExtractFunctionComposite_MethodName;
 	public static String ExtractFunctionComposite_FunctionName;
 	public static String ExtractFunctionInputPage_EnterName;
-	public static String ExtractFunctionInputPage_CheckMethodName;
+	public static String ExtractFunctionInputPage_CheckFunctionName;
 	public static String ExtractFunctionInputPage_1;
 	public static String ExtractFunctionComposite_ReturnValue;
 	public static String ExtractFunctionRefactoring_CreateMethodDef;

@@ -7,10 +7,6 @@
 	<target name="allElements">
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.tm.terminal.sdk" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.core" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -35,15 +31,15 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.terminals" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.remotecdt" />
+			<property name="id" value="org.eclipse.rse.sdk" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.useractions" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.remotecdt" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -63,19 +59,11 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.sdk" />
+			<property name="id" value="org.eclipse.tm.terminal.sdk" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.remotecdt.wrapper" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.useractions.wrapper" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.wince.wrapper" />
+			<property name="id" value="org.eclipse.rse.terminals" />
 		</ant>
 	</target>
 
@@ -85,12 +73,6 @@
 	<!-- ${assembleScriptName}) but may also add pre and post processing       -->
 	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
-
-	<target name="assemble.org.eclipse.tm.terminal.sdk">
-		<property name="archiveName" value="TM-terminal-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
 
 	<target name="assemble.org.eclipse.rse.core">
 		<property name="archiveName" value="RSE-runtime-core-${buildId}.zip"/>
@@ -170,24 +152,14 @@
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.terminals">
-		<property name="archiveName" value="RSE-terminals-incubation-${buildId}.zip"/>
+	<target name="assemble.org.eclipse.tm.terminal.sdk">
+		<property name="archiveName" value="TM-terminal-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.remotecdt.wrapper">
-		<property name="archiveName" value="tmp_wrapper_remotecdt.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-	<target name="assemble.org.eclipse.rse.useractions.wrapper">
-		<property name="archiveName" value="tmp_wrapper_useractions.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-	<target name="assemble.org.eclipse.rse.wince.wrapper">
-		<property name="archiveName" value="tmp_wrapper_winceps.zip"/>
+	<target name="assemble.org.eclipse.rse.terminals">
+		<property name="archiveName" value="RSE-terminals-incubation-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

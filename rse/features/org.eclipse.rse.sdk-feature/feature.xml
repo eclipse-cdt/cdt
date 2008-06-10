@@ -51,6 +51,10 @@
          id="org.eclipse.rse.telnet.source"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.rse.terminals.source"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.rse.sdk"
          download-size="7"

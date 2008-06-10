@@ -152,7 +152,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// TODO or better use the local default encoding?
 			// encoding = defaultEncoding;
 		}
-		fInputStreamReader = new InputStreamReader(fInputStream, fEncoding);
+		fInputStreamReader = new InputStreamReader(fInputStream, encoding);
 		// remember encoding if above didn't throw an exception
 		fEncoding = encoding;
 		fTerminalText.setInputStreamReader(fInputStreamReader);

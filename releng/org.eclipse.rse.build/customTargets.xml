@@ -15,6 +15,10 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.terminals" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.dstore" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -35,7 +39,7 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.sdk" />
+			<property name="id" value="org.eclipse.rse.wince" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -44,10 +48,6 @@
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.remotecdt" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.wince" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -63,7 +63,7 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.terminals" />
+			<property name="id" value="org.eclipse.rse.sdk" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />

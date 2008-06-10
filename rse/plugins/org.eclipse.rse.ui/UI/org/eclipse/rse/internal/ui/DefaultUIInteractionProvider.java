@@ -8,6 +8,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [190231] initial API and implementation
  * Martin Oberhuber (Wind River) - brought in methods from SubSystem (c) IBM
+ * Martin Oberhuber (Wind River) - [236355] [api] Add an IRSEInteractionProvider#eventExec() method
  *******************************************************************************/
 package org.eclipse.rse.internal.ui;
 
@@ -38,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
  * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
  * team.
  * </p>
- * 
+ *
  * @since org.eclipse.rse.ui 3.0
  */
 public class DefaultUIInteractionProvider implements IRSEInteractionProvider {
@@ -138,8 +139,16 @@ public class DefaultUIInteractionProvider implements IRSEInteractionProvider {
 		return d;
 	}
 
-	public void asyncExec(Runnable runnable) {
+	public void asyncExec(final Runnable runnable) {
 		getDefaultDisplay().asyncExec(runnable);
+	}
+
+	public void eventExec(final Runnable runnable) {
+		if (Display.getCurrent() != null) {
+			runnable.run();
+		} else {
+			asyncExec(runnable);
+		}
 	}
 
 	public void flushRunnableQueue() {

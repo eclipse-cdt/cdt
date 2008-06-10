@@ -8,6 +8,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [190231] initial API and implementation
  * IBM Corporation - Javadoc for runInDefaultContext() method
+ * Martin Oberhuber (Wind River) - [236355] [api] Add an IRSEInteractionProvider#eventExec() method
  *******************************************************************************/
 package org.eclipse.rse.core;
 
@@ -106,6 +107,19 @@ public interface IRSEInteractionProvider {
 	 * @param runnable the Runnable to run asynchronously
 	 */
 	public void asyncExec(Runnable runnable);
+
+	/**
+	 * Run the given runnable with "event" semantics, that is: asynchronously
+	 * run it through {@link #asyncExec(Runnable)} on the interaction provider's
+	 * designated event thread, unless the call is already coming from that very
+	 * thread.
+	 * 
+	 * In that case, the Runnable is run immediately and synchronously.
+	 *
+	 * @param runnable the Runnable to run asynchronously with "event" semantics
+	 * @see #asyncExec(Runnable)
+	 */
+	public void eventExec(Runnable runnable);
 
 	/**
 	 * Flush the Queue of Runnables enqueued with {@link #asyncExec(Runnable)}.

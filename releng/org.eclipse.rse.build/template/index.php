@@ -216,8 +216,8 @@
         <td><small>&nbsp;</small><br/>
 			Integration of the TM Terminal Widget into RSE, such that an SSH Terminals
 			Subsystem is provided to show a tabbed view of Terminals similar to the 
-			Remote Command View. Requires TM Terminal View Plugin installed.
-			Includes Source.
+			Remote Command View. This component is already included in the RSE-SDK
+			download. It requires RSE core runtime and RSE ssh installed.
         </td>
     </tr>
 </table>

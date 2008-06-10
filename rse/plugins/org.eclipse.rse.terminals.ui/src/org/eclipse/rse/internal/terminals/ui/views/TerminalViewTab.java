@@ -19,6 +19,8 @@
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
+import java.io.UnsupportedEncodingException;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -191,13 +193,12 @@ public class TerminalViewTab extends Composite implements ITerminalListener{
             ITerminalViewControl terminalControl = TerminalViewControlFactory
                     .makeControl(this, c,
                             new ITerminalConnector[] { connector });
-            // TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=204796
 			// Specify Encoding for Terminal
-			// try {
-			// terminalControl.setEncoding(host.getDefaultEncoding(true));
-			// } catch (UnsupportedEncodingException e) {
-			// /* ignore and allow fallback to default encoding */
-			// }
+			try {
+				terminalControl.setEncoding(host.getDefaultEncoding(true));
+			} catch (UnsupportedEncodingException e) {
+				/* ignore and allow fallback to default encoding */
+			}
             terminalControl.setConnector(connector);
             terminalControl.connectTerminal();
             if (initialWorkingDirCmd != null) {
@@ -312,7 +313,7 @@ public class TerminalViewTab extends Composite implements ITerminalListener{
                     return;
                 }
             }
-            
+
             titem.setImage(va.getImageDescriptor(root).createImage());
         }
     }
@@ -325,18 +326,18 @@ public class TerminalViewTab extends Composite implements ITerminalListener{
                         Object data = item.getData();
                         if (data instanceof IHost){
                             IHost host = (IHost)data;
-                            final ITerminalServiceSubSystem terminalServiceSubSystem = TerminalServiceHelper.getTerminalSubSystem(host);         
+                            final ITerminalServiceSubSystem terminalServiceSubSystem = TerminalServiceHelper.getTerminalSubSystem(host);
 
                             if (state == TerminalState.CONNECTED)
                                 TerminalServiceHelper.updateTerminalShellForTerminalElement(item);
-                            
+
                             setTabImage(host, item);
                             ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
                             registry.fireEvent(new SystemResourceChangeEvent(terminalServiceSubSystem,
                                     ISystemResourceChangeEvents.EVENT_REFRESH, terminalServiceSubSystem));
                         }
                     }
-                }                   
+                }
             });
         }
 

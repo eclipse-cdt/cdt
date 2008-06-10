@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
+ *     Enrico Ehrich - http://bugs.eclipse.org/233866
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.gnu.cygwin;
 
@@ -134,11 +135,15 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		String tail = EMPTY; 
 		while (pattern.length() > 0) {
 			String key = REGISTRY_KEY + pattern;
-			String s = user ?
-				WindowsRegistry.getRegistry().getCurrentUserValue(key, PATH_NAME) :
-				WindowsRegistry.getRegistry().getLocalMachineValue(key, PATH_NAME);
-			if (s != null) 
-				return (s.concat(tail).replaceAll(BSLASH, SSLASH));
+			WindowsRegistry registry = WindowsRegistry.getRegistry(); 
+			if (null != registry) {
+				String s = user ?
+					registry.getCurrentUserValue(key, PATH_NAME) :
+					registry.getLocalMachineValue(key, PATH_NAME);
+
+				if (s != null) 
+					return (s.concat(tail).replaceAll(BSLASH, SSLASH));
+			}
 			if (pattern.equals(ROOTPATTERN)) 
 				break; // no other paths to search 
 			int pos = pattern.lastIndexOf(SLASH);

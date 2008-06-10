@@ -46,6 +46,7 @@
  * David McKnight     (IBM)      - [221211] [api][breaking][files] need batch operations to indicate which operations were successful
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
+ * David McKnight   (IBM)        - [236039][dstore][efs] DStoreInputStream can report EOF too early - clean up how it waits for the local temp file to be created
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -2129,7 +2130,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			mode = IUniversalDataStoreConstants.TEXT_MODE;
 		}
-		DStoreInputStream inputStream = new DStoreInputStream(getDataStore(), remotePath, getMinerElement(), getEncoding(monitor), mode);
+		DStoreInputStream inputStream = new DStoreInputStream(getDataStore(), remotePath, getMinerElement(), getEncoding(monitor), mode, getBufferDownloadSize());
 		return inputStream;
 	}
 

@@ -35,6 +35,18 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.useractions.wrapper" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.remotecdt.wrapper" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.wince.wrapper" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.useractions" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -114,6 +126,13 @@
 		<property name="archiveName" value="RSE-SDK-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
+	<target name="assemble.org.eclipse.rse.remotecdt.wrapper">
+	</target>
+	<target name="assemble.org.eclipse.rse.useractions.wrapper">
+	</target>
+	<target name="assemble.org.eclipse.rse.wince.wrapper">
 	</target>
 
 	<target name="assemble.org.eclipse.rse.useractions">

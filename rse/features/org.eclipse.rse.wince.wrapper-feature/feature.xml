@@ -37,4 +37,24 @@
       <import feature="org.eclipse.rse.ssh" version="2.1.0.qualifier" match="compatible"/>
    </requires>
 
+   <plugin
+         id="org.eclipse.rse.subsystems.wince"
+         download-size="20"
+         install-size="40"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.rapi"
+         download-size="14"
+         install-size="26"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.wince.source"
+         download-size="44"
+         install-size="55"
+         version="0.0.0"/>
+
 </feature>

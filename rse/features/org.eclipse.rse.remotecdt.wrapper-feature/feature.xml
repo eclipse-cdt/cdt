@@ -33,4 +33,17 @@
       <import feature="org.eclipse.rse" version="3.0.0.qualifier" match="compatible"/>
    </requires>
 
+   <plugin
+         id="org.eclipse.rse.remotecdt"
+         download-size="16"
+         install-size="32"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.remotecdt.source"
+         download-size="24"
+         install-size="29"
+         version="0.0.0"/>
+
 </feature>

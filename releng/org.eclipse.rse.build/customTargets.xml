@@ -39,18 +39,6 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.remotecdt.wrapper" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.useractions.wrapper" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.wince.wrapper" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.remotecdt" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -76,6 +64,18 @@
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.sdk" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.remotecdt.wrapper" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.useractions.wrapper" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.wince.wrapper" />
 		</ant>
 	</target>
 
@@ -134,13 +134,6 @@
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.remotecdt.wrapper">
-	</target>
-	<target name="assemble.org.eclipse.rse.useractions.wrapper">
-	</target>
-	<target name="assemble.org.eclipse.rse.wince.wrapper">
-	</target>
-
 	<target name="assemble.org.eclipse.rse.useractions">
 		<property name="archiveName" value="RSE-useractions-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
@@ -179,6 +172,22 @@
 
 	<target name="assemble.org.eclipse.rse.terminals">
 		<property name="archiveName" value="RSE-terminals-incubation-${buildId}.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
+	<target name="assemble.org.eclipse.rse.remotecdt.wrapper">
+		<property name="archiveName" value="tmp_wrapper_remotecdt.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+	<target name="assemble.org.eclipse.rse.useractions.wrapper">
+		<property name="archiveName" value="tmp_wrapper_useractions.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+	<target name="assemble.org.eclipse.rse.wince.wrapper">
+		<property name="archiveName" value="tmp_wrapper_winceps.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

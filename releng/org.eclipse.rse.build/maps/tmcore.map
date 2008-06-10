@@ -1,2 +1,4 @@
-plugin@org.apache.commons.net=v200711021015,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.commons.net
-plugin@org.apache.oro=v200711021015,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.oro
+plugin@org.apache.commons.net,1.4.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20080605234217/bundles/org.apache.commons.net_1.4.1.v200711021015.jar
+plugin@org.apache.commons.net.source,1.4.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20080605234217/bundles/org.apache.commons.net.source_1.4.1.v200711021015.jar
+plugin@org.apache.oro,2.0.8=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20080605234217/bundles/org.apache.oro_2.0.8.v200711021015.jar
+plugin@org.apache.oro.source,2.0.8=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20080605234217/bundles/org.apache.oro.source_2.0.8.v200711021015.jar

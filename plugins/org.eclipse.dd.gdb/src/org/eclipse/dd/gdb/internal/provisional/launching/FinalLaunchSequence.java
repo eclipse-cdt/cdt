@@ -52,6 +52,7 @@ import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
+import org.eclipse.dd.mi.service.command.commands.MIGDBSetSysroot;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.output.CLIMonitorListProcessesInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -227,7 +228,7 @@ public class FinalLaunchSequence extends Sequence {
          * Set the shared library paths
          */
         new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
+        public void execute(final RequestMonitor requestMonitor) {
       		try {
       		    @SuppressWarnings("unchecked")
     			List<String> p = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, 
@@ -236,7 +237,18 @@ public class FinalLaunchSequence extends Sequence {
    					String[] paths = p.toArray(new String[p.size()]);
    	                fCommandControl.queueCommand(
    	                	new MIGDBSetSolibSearchPath(fCommandControl.getControlDMContext(), paths), 
-   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+   	                		@Override
+   	                		protected void handleSuccess() {
+   	                			// If we are able to set the solib-search-path,
+   	                			// we should disable the sysroot variable, as indicated
+   	                			// in the GDB documentation.  This is to avoid the sysroot
+   	                			// variable finding libraries that were not meant to be found.
+   	        	                fCommandControl.queueCommand(
+   	        	   	                	new MIGDBSetSysroot(fCommandControl.getControlDMContext()), 
+   	        	   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+   	                		};
+   	                	});
    				} else {
    	                requestMonitor.done();
    				}

@@ -14,24 +14,17 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
 
 /**
  * 
- *     -gdb-set solib-search-path COLON-SEPARATED-PATH
+ *     -gdb-set sysroot PATH
  * 
  */
-public class MIGDBSetSolibSearchPath extends MIGDBSet 
+public class MIGDBSetSysroot extends MIGDBSet 
 {
-	public MIGDBSetSolibSearchPath(MIControlDMContext ctx, String[] paths) {
-		super(ctx, null);
-		// Overload the parameter
-		String sep = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < paths.length; i++) {
-			if (buffer.length() == 0) {
-				buffer.append(paths[i]);
-			} else {
-				buffer.append(sep).append(paths[i]);
-			}
-		}
-		String[] p = new String [] {"solib-search-path", buffer.toString()}; //$NON-NLS-1$
-		setParameters(p);
+	public MIGDBSetSysroot(MIControlDMContext ctx, String path) {
+		super(ctx, new String[] {"sysroot", path});//$NON-NLS-1$
+	}
+	
+	// Using /dev/null is the recommended way to disable sysroot
+	public MIGDBSetSysroot(MIControlDMContext ctx) {
+		this(ctx, "/dev/null"); //$NON-NLS-1$ 
 	}
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.tm.releng.master"
+      label="%featureName"
+      version="3.0.0.qualifier"
+      provider-name="%providerName"
+      image="eclipse_update_120.jpg">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+   </url>
+
+   <includes
+         id="org.eclipse.rse.sdk"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.tm.terminal.sdk"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.tm.discovery"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.remotecdt.wrapper"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.useractions.wrapper"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.wince.wrapper"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.examples"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.tests"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.tm.terminal.test"
+         version="0.0.0"/>
+
+</feature>

@@ -15,6 +15,7 @@ feature@org.eclipse.rse.terminals=v20080605,:pserver:anonymous:none@dev.eclipse.
 feature@org.eclipse.rse.tests=v20080605,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests-feature
 feature@org.eclipse.rse.useractions=v20080604,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.useractions-feature
 feature@org.eclipse.rse.useractions.wrapper=v20080609,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.useractions.wrapper-feature
+feature@org.eclipse.tm.releng.master=v20080609,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/releng/org.eclipse.tm.releng.master-feature
 plugin@org.eclipse.dstore.core=v20080604,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.dstore.core
 plugin@org.eclipse.dstore.doc.isv=v20080604,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/doc/org.eclipse.dstore.doc.isv
 plugin@org.eclipse.dstore.extra=v20080406,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.dstore.extra

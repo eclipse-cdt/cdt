@@ -1202,13 +1202,14 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				// ICDIFunctionBreakpoint on function elements from binary objects can be
 				// set without having a source handle. For this case of line breakpoint 
 				// don't try to match breakpoints with source locator of contained CDebugTarget.
-				String handle = "";
+				String handle = null;
 				try {
 					handle = breakpoint.getSourceHandle();
 				} catch (CoreException ex) {
 					// ignore exception. source handle will be empty anyway.
 				}
-				result = handle.length() > 0;
+				result = (handle != null) && (handle.length() > 0);
+
 			}
 		}
 		return result;

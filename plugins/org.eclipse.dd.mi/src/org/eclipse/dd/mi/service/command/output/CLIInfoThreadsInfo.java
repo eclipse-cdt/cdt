@@ -79,11 +79,11 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	protected void parseThreadInfo(String str, List<ThreadInfo> info) {
 			// Fetch the OS ThreadId & Find the current thread 
 			if(str.length() > 0 ){
-				Pattern pattern = Pattern.compile("(^\\d*|^\\*\\s*\\d*)(\\s*Thread\\s*)(\\d*)(\\s*\\(LWP\\s*)(\\d*)",  Pattern.MULTILINE); //$NON-NLS-1$
+				Pattern pattern = Pattern.compile("(^\\*?\\s*\\d+)(\\s*Thread\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\(LWP\\s*)(\\d*)",  Pattern.MULTILINE); //$NON-NLS-1$
 				Matcher matcher = pattern.matcher(str);
 				boolean isCurrentThread = false;
 				if (matcher.find()) {
-					String id = matcher.group(1);
+					String id = matcher.group(1).trim();
 					if (id.charAt(0) == '*') {
 						isCurrentThread = true;
 						id = id.substring(1).trim();

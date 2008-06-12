@@ -4845,7 +4845,7 @@ public class AST2Tests extends AST2BaseTest {
     // class C { };
     // void f1(int(C)) { }     
     public void _testParamWithFunctionTypeCpp_Bug84242() throws Exception {
-    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), false);
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 
     	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
     	isTypeEqual(f.getType(), "void (int (C) *)");

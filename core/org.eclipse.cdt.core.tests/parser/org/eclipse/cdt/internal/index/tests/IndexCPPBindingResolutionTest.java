@@ -1007,9 +1007,9 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//   const int 		const_int		= 0;
 	//
 	//   f_int(i);				 // ok
-	//   f_int(const int);       // ok (passed as value)
+	//   f_int(const_int);       // ok (passed as value)
 	//   f_const_int(i);		 // ok
-	//   f_const_int(const int); // ok
+	//   f_const_int(const_int); // ok
 	// }
 	//
 	//  void f_const_int(const int const_int) {
@@ -1017,9 +1017,9 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//  }  
 	public void testConstIntParameter() {
 		getBindingFromASTName("f_int(i)", 5);
-		getBindingFromASTName("f_int(const int)", 5);
+		getBindingFromASTName("f_int(const_int)", 5);
 		getBindingFromASTName("f_const_int(i)", 11);
-		getBindingFromASTName("f_const_int(const int)", 11);
+		getBindingFromASTName("f_const_int(const_int)", 11);
 		getProblemFromASTName("f_int_ptr(&const_int)", 9);
 	}
 
@@ -1385,8 +1385,8 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		Set expectedEnumerators = new HashSet();
 		expectedEnumerators.addAll(Arrays.asList(enumerators));
 		Set actualEnumerators = new HashSet();
-		for(int i=0; i<aEnumerators.length; i++){
-			actualEnumerators.add(aEnumerators[i].getName());
+		for (IEnumerator enumerator : aEnumerators) {
+			actualEnumerators.add(enumerator.getName());
  		}
  		assertEquals(expectedEnumerators, actualEnumerators);
  	}

@@ -62,24 +62,20 @@ int vol() volatile;
 
 //!ICPPASTFunctionTryBlockDeclarator
 //%CPP
-void foo()
+int f(int);
+class C
 {
-    int f(int);
-    class C
-    {
-        int i;
-        double d;
-    public:
-        C(int, double);
-    };
-    C::C(int ii, double id)
-    try
-    :i(f(ii)), d(id)
-    {
-    }
-    catch(...){
-    }
-
+    int i;
+    double d;
+public:
+    C(int, double);
+};
+C::C(int ii, double id)
+try
+:i(f(ii)), d(id)
+{
+}
+catch(...){
 }
 
 

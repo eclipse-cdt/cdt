@@ -14,10 +14,15 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author dsteffle
@@ -628,21 +633,25 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 
 	// #define N sizeof(T)
+	// void test() {
 	// char buf[N];
 	// T obj; // obj initialized to its original value
 	// memcpy(buf, &obj, N); // between these two calls to memcpy,
 	// // obj might be modified
 	// memcpy(&obj, buf, N); // at this point, each subobject of obj of scalar type
 	// // holds its original value
+	// }
 	public void test3_9s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	// void test() {
 	// T* t1p;
 	// T* t2p;
 	// // provided that t2p points to an initialized object ...
 	// memcpy(t1p, t2p, sizeof(T)); // at this point, every subobject of POD type in *t1p contains
 	// // the same value as the corresponding subobject in *t2p
+	// }
 	public void test3_9s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -760,6 +769,73 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// }
 	public void test5_3_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
+	// void test() {
+	//    new (int (*[10])());
+	// };
+	public void test5_3_4s3() throws Exception {
+		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTFunctionDefinition fdef= getFunctionDefinition(tu, 0);
+		IASTExpression expr= getExpressionOfStatement(fdef, 0);
+		assertInstance(expr, ICPPASTNewExpression.class);
+		ICPPASTNewExpression newExpr= (ICPPASTNewExpression) expr;
+		
+		assertNull(newExpr.getNewPlacement());
+		assertNull(newExpr.getNewInitializer());
+		assertEquals(0, newExpr.getNewTypeIdArrayExpressions().length);
+		IASTTypeId typeid= newExpr.getTypeId();
+		isTypeEqual(CPPVisitor.createType(typeid), "int () * []");
+	}
+
+	// typedef int T;
+	// void test(int f) {
+	//	  new T;
+	//    new(2,f) T;
+	//    new T[5];
+	//    new (2,f) T[5];
+	// };
+	public void _test5_3_4s12() throws Exception {
+		// failing see https://bugs.eclipse.org/bugs/show_bug.cgi?id=236856
+		
+		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTFunctionDefinition fdef= getFunctionDefinition(tu, 1);
+
+		// new T;
+		IASTExpression expr= getExpressionOfStatement(fdef, 0);
+		assertInstance(expr, ICPPASTNewExpression.class);
+		ICPPASTNewExpression newExpr= (ICPPASTNewExpression) expr;
+		assertNull(newExpr.getNewPlacement());
+		assertNull(newExpr.getNewInitializer());
+		assertEquals(0, newExpr.getNewTypeIdArrayExpressions().length);
+		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int");
+		
+		// new(2,f) T;
+		expr= getExpressionOfStatement(fdef, 1);
+		assertInstance(expr, ICPPASTNewExpression.class);
+		newExpr= (ICPPASTNewExpression) expr;
+		assertInstance(newExpr.getNewPlacement(), IASTExpressionList.class);
+		assertNull(newExpr.getNewInitializer());
+		assertEquals(0, newExpr.getNewTypeIdArrayExpressions().length);
+		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int");
+
+		// new T[5];
+		expr= getExpressionOfStatement(fdef, 2);
+		assertInstance(expr, ICPPASTNewExpression.class);
+		newExpr= (ICPPASTNewExpression) expr;
+		assertNull(newExpr.getNewPlacement());
+		assertNull(newExpr.getNewInitializer());
+		assertEquals(1, newExpr.getNewTypeIdArrayExpressions().length);
+		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int []");
+
+		// new (2,f) T[5];
+		expr= getExpressionOfStatement(fdef, 3);
+		assertInstance(expr, ICPPASTNewExpression.class);
+		newExpr= (ICPPASTNewExpression) expr;
+		assertInstance(newExpr.getNewPlacement(), IASTExpressionList.class);
+		assertNull(newExpr.getNewInitializer());
+		assertEquals(1, newExpr.getNewTypeIdArrayExpressions().length);
+		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int []");
 	}
 
 	// int n=2;
@@ -1703,8 +1779,12 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// class C { };
 	// void h(int *(C[10])); // void h(int *(*_fp)(C _parm[10]));
 	// // not: void h(int *C[10]);
-	public void test8_2s7b() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	public void _test8_2s7b() throws Exception {
+		final String code = getAboveComment();
+		parse(code, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		IFunction f= ba.assertNonProblem("h", 1, IFunction.class);
+		isTypeEqual(f.getType(), "void (int * (C *) *)");
 	}
 
 	// namespace A {
@@ -2192,8 +2272,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// X a1;
 	// Y a2;
 	// int a3;
+	// void test() {
 	// a1 = a2; // error: Y assigned to X
 	// a1 = a3; // error: int assigned to X
+	// }
 	// int f(X);
 	// int f(Y);
 	// struct S { int a; };
@@ -4383,10 +4465,12 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	// void test() {
 	// Array<int> v1(20);
 	// Array<dcomplex> v2(30);
 	// v1[3] = 7; // Array<int>::operator[]()
 	// v2[3] = dcomplex(7,8); // Array<dcomplex>::operator[]()
+	// }
 	public void test14_5_1_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}

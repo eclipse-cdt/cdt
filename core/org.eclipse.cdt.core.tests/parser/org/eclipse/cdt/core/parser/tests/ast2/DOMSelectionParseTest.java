@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1599,7 +1599,6 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 	
     public void testBug86698B() throws Exception {
         Writer writer = new StringWriter();
-        writer.write("void foo() {\n"); //$NON-NLS-1$
 		writer.write("int f(int);\n"); //$NON-NLS-1$
 		writer.write("class C {\n"); //$NON-NLS-1$
 		writer.write("int i;\n"); //$NON-NLS-1$
@@ -1618,7 +1617,6 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		writer.write("//		 handles exceptions thrown from the ctorinitializer\n"); //$NON-NLS-1$
 		writer.write("//		 and from the constructor function body\n"); //$NON-NLS-1$
 		writer.write("}\n"); //$NON-NLS-1$
-		writer.write("}\n"); //$NON-NLS-1$
 		
 		String code = writer.toString();
             
@@ -1631,7 +1629,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "i" ); //$NON-NLS-1$
-        assertEquals( ((ASTNode)decls[0]).getOffset(), 39);
+        assertEquals( code.indexOf("int i") + 4, ((ASTNode)decls[0]).getOffset());
         assertEquals( ((ASTNode)decls[0]).getLength(), 1);
     }   
 

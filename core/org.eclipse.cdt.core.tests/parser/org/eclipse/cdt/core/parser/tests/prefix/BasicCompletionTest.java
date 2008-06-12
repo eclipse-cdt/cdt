@@ -46,32 +46,34 @@ public class BasicCompletionTest extends CompletionTestBase {
 		// C++
 		IASTCompletionNode node = getGPPCompletionNode(code);
 		IASTName[] names = node.getNames();
-		// There are three names, one as an expression, one that isn't connected, one as a declaration
-		assertEquals(3, names.length);
+		// There are two names, one as an expression, one that isn't connected, one as a declaration
+		assertTrue(names.length > 1);
 		// The expression points to our functions
 		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
 		assertEquals("func2", ((IFunction)bindings[1]).getName());
-		// The second name shouldn't be hooked up
-		assertNull(names[1].getTranslationUnit());
-		// The third name shouldn't be hooked up either
-		assertNull(names[2].getTranslationUnit());
+		// The other names shouldn't be hooked up
+		for (int i = 1; i < names.length; i++) {
+			assertNull(names[i].getTranslationUnit());
+		}
 
 		// C
 		node = getGCCCompletionNode(code);
 		names = node.getNames();
 		// There are two names, one as an expression, one as a declaration
-		assertEquals(2, names.length);
+		assertTrue(names.length > 1);
 		// The expression points to our functions
 		bindings = sortBindings(names[0].getCompletionContext().findBindings(names[0], true));
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
 		assertEquals("func2", ((IFunction)bindings[1]).getName());
-		// The second name shouldn't be hooked up
-		assertNull(names[1].getTranslationUnit());
+		// The other names shouldn't be hooked up
+		for (int i = 1; i < names.length; i++) {
+			assertNull(names[i].getTranslationUnit());
+		}
 	}
 
 	public void testTypedef() throws Exception {

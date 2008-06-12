@@ -560,7 +560,6 @@ public class DOMLocationTests extends AST2BaseTest {
 
     public void testBug86698_2() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append( "void foo() {\n"); //$NON-NLS-1$
 		buffer.append( "int f(int);\n"); //$NON-NLS-1$
 		buffer.append( "class C {\n"); //$NON-NLS-1$
 		buffer.append( "int i;\n"); //$NON-NLS-1$
@@ -574,10 +573,10 @@ public class DOMLocationTests extends AST2BaseTest {
 		buffer.append( "{\n }\n"); //$NON-NLS-1$
 		buffer.append( "catch (...)\n"); //$NON-NLS-1$
 		buffer.append( "{\n }\n"); //$NON-NLS-1$
-		buffer.append( "}\n"); //$NON-NLS-1$
 		
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-		ICPPASTFunctionTryBlockDeclarator funC = (ICPPASTFunctionTryBlockDeclarator)((IASTFunctionDefinition)((IASTDeclarationStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[2]).getDeclaration()).getDeclarator();
+		final IASTFunctionDefinition fdef = (IASTFunctionDefinition)tu.getDeclarations()[2];
+		ICPPASTFunctionTryBlockDeclarator funC = (ICPPASTFunctionTryBlockDeclarator)fdef.getDeclarator();
 		assertSoleLocation( funC, buffer.toString().indexOf("C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)"), "C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)".length() );  //$NON-NLS-1$//$NON-NLS-2$
 	}
 

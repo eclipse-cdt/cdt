@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -77,6 +78,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -1061,7 +1063,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// void f( Int i );      
 	// void g( char * );     
 	// void g( char [] );    
-	// void h( int()() );    
+	// void h( int(a)() );    
 	// void h( int (*) () ); 
 	public void testFunctionDeclarations() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
@@ -1069,8 +1071,11 @@ public class AST2CPPTests extends AST2BaseTest {
 		tu.accept(collector);
 		
 		IFunction f = (IFunction) collector.getName(1).resolveBinding();
+		isTypeEqual(f.getType(), "void (int)");
 		IFunction g = (IFunction) collector.getName(8).resolveBinding();
+		isTypeEqual(g.getType(), "void (char *)");
 		IFunction h = (IFunction) collector.getName(12).resolveBinding();
+		isTypeEqual(h.getType(), "void (int () *)");
 		
 		assertInstances(collector, f, 3);
 		assertInstances(collector, g, 2);
@@ -5640,4 +5645,95 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void _testBug235196() throws Exception {
 		parseAndCheckBindings(getAboveComment());
 	}
+	
+	// typedef int tint;
+	// class X {
+	//   typedef int xtint;
+	//	 X();
+	//	 ~X();
+	//	 operator int ();
+	//	 tint(a); // 1
+	// };
+	// X::X() {}
+	// X::~X() {}
+	// X::operator int() {}
+	// X::xtint(a); // 2
+	public void _testEmptyDeclSpecifier() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("X {", 1, ICPPClassType.class);
+		ba.assertNonProblem("X()", 1, ICPPConstructor.class);
+		ba.assertNonProblem("~X", 2, ICPPMethod.class);
+		ba.assertNonProblem("operator int", 12, ICPPMethod.class);
+		ba.assertNonProblem("a); // 1", 1, ICPPField.class);
+
+		ba.assertNonProblem("X() {}", 1, ICPPConstructor.class);
+		ba.assertNonProblem("~X() {}", 2, ICPPMethod.class);
+		ba.assertNonProblem("operator int() {}", 12, ICPPMethod.class);
+		ba.assertNonProblem("a); // 2", 1, ICPPVariable.class);
+	}
+
+	// void* operator new (unsigned int, int[100]);
+	// typedef int T;
+	// int p[100]; 
+	// void test(int f) {
+	//	  new T; 
+	//    new T(f);
+	//    new (p) T; 
+	//    new (p) T(f);
+	//	  new (T); 
+	//    new (T)(f);
+	//    new (p) (T); 
+	//    new (p) (T)(f);
+	//	  new T[f][f]; 
+	//    new T[f][f](f);
+	//    new (p) T[f][f]; 
+	//    new (p) T[f][f](f);
+	//	  new (T[f][f]); 
+	//    new (T[f][f])(f);
+	//    new (p) (T[f][f]); 
+	//    new (p) (T[f][f])(f);
+	// };
+	public void _testNewPlacement_Bug236856() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment());
+		IASTFunctionDefinition fdef= getFunctionDefinition(tu, 3);
+		
+		checkNewExpression(fdef, 0, null, "int", 0, null);
+		checkNewExpression(fdef, 1, null, "int", 0, IASTIdExpression.class);
+		checkNewExpression(fdef, 2, IASTIdExpression.class, "int", 0, null);
+		checkNewExpression(fdef, 3, IASTIdExpression.class, "int", 0, IASTIdExpression.class);
+		checkNewExpression(fdef, 4, null, "int", 0, null);
+		checkNewExpression(fdef, 5, null, "int", 0, IASTIdExpression.class);
+		checkNewExpression(fdef, 6, IASTIdExpression.class, "int", 0, null);
+		checkNewExpression(fdef, 7, IASTIdExpression.class, "int", 0, IASTIdExpression.class);
+
+		checkNewExpression(fdef, 8, null, "int [] []", 2, null);
+		checkNewExpression(fdef, 9, null, "int [] []", 2, IASTIdExpression.class);
+		checkNewExpression(fdef, 10, IASTIdExpression.class, "int [] []", 2, null);
+		checkNewExpression(fdef, 11, IASTIdExpression.class, "int [] []", 2, IASTIdExpression.class);
+		checkNewExpression(fdef, 12, null, "int [] []", 2, null);
+		checkNewExpression(fdef, 13, null, "int [] []", 2, IASTIdExpression.class);
+		checkNewExpression(fdef, 14, IASTIdExpression.class, "int [] []", 2, null);
+		checkNewExpression(fdef, 15, IASTIdExpression.class, "int [] []", 2, IASTIdExpression.class);
+	}
+
+	private void checkNewExpression(IASTFunctionDefinition fdef, int i_expr, Class<?> placement, String type, int array, Class<?> init) {
+		IASTExpression expr;
+		ICPPASTNewExpression newExpr;
+		expr= getExpressionOfStatement(fdef, i_expr);
+		assertInstance(expr, ICPPASTNewExpression.class);
+		newExpr= (ICPPASTNewExpression) expr;
+		if (placement == null) {
+			assertNull(newExpr.getNewPlacement());
+		} else {
+			assertInstance(newExpr.getNewPlacement(), placement);
+		}
+		if (init == null) {
+			assertNull(newExpr.getNewInitializer());
+		} else {
+			assertInstance(newExpr.getNewInitializer(), init);
+		}
+		assertEquals(array, newExpr.getNewTypeIdArrayExpressions().length);
+		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), type);
+	}
+
 }

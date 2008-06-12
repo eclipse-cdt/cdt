@@ -171,10 +171,12 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test5_1_2_3s15() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("//#include <stdio.h>\n"); //$NON-NLS-1$
+		buffer.append("int f() {");
 		buffer.append("int sum;\n"); //$NON-NLS-1$
 		buffer.append("char *p;\n"); //$NON-NLS-1$
 		buffer.append("sum = sum * 10 - '0' + (*p++ = getchar());\n"); //$NON-NLS-1$
 		buffer.append("sum = (((sum * 10) - '0') + ((*(p++)) = (getchar())));\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
@@ -656,6 +658,9 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 */
 	public void test6_7_2_1s17() throws Exception {
 		StringBuffer buffer = new StringBuffer();
+		// offsetoff is a macro defined in stddef.h, using GNU definition
+		buffer.append("#define offsetof(TYPE, MEMBER) ((size_t) (&((TYPE *)0)->MEMBER))\n");
+
 		buffer.append("struct s { int n; double d[]; };\n"); //$NON-NLS-1$
 		buffer.append("struct ss { int n; double d[1]; };\n"); //$NON-NLS-1$
 		buffer.append("int f() {\n"); //$NON-NLS-1$

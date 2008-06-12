@@ -28,12 +28,14 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -540,5 +542,25 @@ public class AST2BaseTest extends BaseTestCase {
 				++sum;
 		}
 		assertEquals(count, sum);
+	}
+	
+	final protected IASTFunctionDefinition getFunctionDefinition(IASTTranslationUnit tu, int i_decl) {
+		IASTDeclaration[] decls= tu.getDeclarations();
+		assertTrue(decls.length > i_decl);
+		assertInstance(decls[i_decl], IASTFunctionDefinition.class);
+		return (IASTFunctionDefinition) decls[i_decl];
+	}
+
+	final protected IASTStatement getStatement(IASTFunctionDefinition fdef, int i_stmt) {
+		IASTCompoundStatement compound= (IASTCompoundStatement) fdef.getBody();
+		IASTStatement[] stmts= compound.getStatements();
+		assertTrue(stmts.length > i_stmt);
+		return stmts[i_stmt];
+	}
+
+	final protected IASTExpression getExpressionOfStatement(IASTFunctionDefinition fdef, int i) {
+		IASTStatement stmt= getStatement(fdef, i);
+		assertInstance(stmt, IASTExpressionStatement.class);
+		return ((IASTExpressionStatement) stmt).getExpression();
 	}
 }

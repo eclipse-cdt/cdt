@@ -310,7 +310,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 *
 	 * @return the C multi-line comment scanner
 	 */
-	protected ICTokenScanner getMultilineCommentScanner() {
+	private ICTokenScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
 
@@ -319,7 +319,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 *
 	 * @return the C single-line comment scanner
 	 */
-	protected ICTokenScanner getSinglelineCommentScanner() {
+	private ICTokenScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
 

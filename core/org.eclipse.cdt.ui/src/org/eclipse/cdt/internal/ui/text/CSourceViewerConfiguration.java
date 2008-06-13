@@ -119,9 +119,17 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * The C multi-line comment scanner.
 	 */
-	protected ICTokenScanner fMultilineDocCommentScanner;
+	protected ICTokenScanner fMultilineCommentScanner;
 	/**
 	 * The C single-line comment scanner.
+	 */
+	protected ICTokenScanner fSinglelineCommentScanner;
+	/**
+	 * The C multi-line doc comment scanner.
+	 */
+	protected ICTokenScanner fMultilineDocCommentScanner;
+	/**
+	 * The C single-line doc comment scanner.
 	 */
 	protected ICTokenScanner fSinglelineDocCommentScanner;
 	/**
@@ -236,10 +244,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
     }
     
 	/**
-	 * Initializes the scanners.
+	 * Initializes language independent scanners.
 	 */
 	protected void initializeScanners() {
 		fStringScanner= new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
+		fMultilineCommentScanner= new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner= new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_SINGLE_LINE_COMMENT);
 	}
 
     /**
@@ -258,11 +268,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		
-		dr= new DefaultDamagerRepairer(new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_SINGLE_LINE_COMMENT));
+		dr= new DefaultDamagerRepairer(getSinglelineCommentScanner());
 		reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 
-		dr= new DefaultDamagerRepairer(new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_MULTI_LINE_COMMENT));
+		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());
 		reconciler.setDamager(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 		
@@ -294,11 +304,29 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		
 		return reconciler;
 	}
-      
+
 	/**
 	 * Returns the C multi-line comment scanner for this configuration.
 	 *
 	 * @return the C multi-line comment scanner
+	 */
+	protected ICTokenScanner getMultilineCommentScanner() {
+		return fMultilineCommentScanner;
+	}
+
+	/**
+	 * Returns the C single-line comment scanner for this configuration.
+	 *
+	 * @return the C single-line comment scanner
+	 */
+	protected ICTokenScanner getSinglelineCommentScanner() {
+		return fSinglelineCommentScanner;
+	}
+
+	/**
+	 * Returns the C multi-line doc comment scanner for this configuration.
+	 *
+	 * @return the C multi-line doc comment scanner, may be <code>null</code>
 	 */
 	protected ICTokenScanner getMultilineDocCommentScanner(IResource resource) {
 		if (fMultilineDocCommentScanner == null) {
@@ -309,9 +337,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	/**
-	 * Returns the C single-line comment scanner for this configuration.
+	 * Returns the C single-line doc comment scanner for this configuration.
 	 *
-	 * @return the C single-line comment scanner
+	 * @return the C single-line doc comment scanner, may be <code>null</code>
 	 */
 	protected ICTokenScanner getSinglelineDocCommentScanner(IResource resource) {
 		if (fSinglelineDocCommentScanner == null) {
@@ -717,6 +745,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		if ((fMultilineDocCommentScanner != null && fMultilineDocCommentScanner.affectsBehavior(event))
 			|| (fSinglelineDocCommentScanner != null && fSinglelineDocCommentScanner.affectsBehavior(event))
+			|| fMultilineCommentScanner.affectsBehavior(event)
+			|| fSinglelineCommentScanner.affectsBehavior(event)
 			|| fStringScanner.affectsBehavior(event)) {
 			return true;
 		}
@@ -807,6 +837,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			fMultilineDocCommentScanner.adaptToPreferenceChange(event);
 		if (fSinglelineDocCommentScanner!=null && fSinglelineDocCommentScanner.affectsBehavior(event))
 			fSinglelineDocCommentScanner.adaptToPreferenceChange(event);
+		if (fMultilineCommentScanner.affectsBehavior(event))
+			fMultilineCommentScanner.adaptToPreferenceChange(event);
+		if (fSinglelineCommentScanner.affectsBehavior(event))
+			fSinglelineCommentScanner.adaptToPreferenceChange(event);
 		if (fStringScanner.affectsBehavior(event))
 			fStringScanner.adaptToPreferenceChange(event);
 		if (fPreprocessorScanner != null && fPreprocessorScanner.affectsBehavior(event))

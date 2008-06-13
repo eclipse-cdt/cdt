@@ -167,11 +167,15 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 				textWidget.setBackground(null);
 		}
 
+		if (configuration instanceof CSourceViewerConfiguration) {
+			CSourceViewerConfiguration cConfiguration= (CSourceViewerConfiguration)configuration;
+			cConfiguration.resetScanners();
+		}
+		
 		super.configure(configuration);
 
 		if (configuration instanceof CSourceViewerConfiguration) {
 			CSourceViewerConfiguration cConfiguration= (CSourceViewerConfiguration)configuration;
-			cConfiguration.resetScanners();
 			fOutlinePresenter= cConfiguration.getOutlinePresenter(this);
 			if (fOutlinePresenter != null)
 				fOutlinePresenter.install(this);

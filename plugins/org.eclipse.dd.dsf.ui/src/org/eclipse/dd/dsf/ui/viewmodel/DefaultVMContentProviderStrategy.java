@@ -194,7 +194,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                             }
                         });
                 }
-            } else if (update.isCanceled()) {
+            } else {
                 update.done();
             }
 

@@ -491,7 +491,8 @@ abstract public class AbstractVMProvider implements IVMProvider
                                         }
                                     })
                                 );
-                                    
+                        } else {
+                        	super.handleErrorOrWarning();
                         }
                     }
                     

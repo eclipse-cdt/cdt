@@ -481,7 +481,12 @@ public class MIStack extends AbstractDsfService
                         protected void handleSuccess() {
    		                    
 		                    // Create the data object.
-		                    rm.setData(new VariableData(getData().getLocals()[miVariableDmc.fIndex]));
+		                    MIArg[] locals = getData().getLocals();
+		                    if (locals.length > miVariableDmc.fIndex) {
+		                    	rm.setData(new VariableData(locals[miVariableDmc.fIndex]));
+		                    } else {
+		                        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable " + miVariableDmc, null));  //$NON-NLS-1$
+		                    }
 		                    rm.done();
                         }
                     });

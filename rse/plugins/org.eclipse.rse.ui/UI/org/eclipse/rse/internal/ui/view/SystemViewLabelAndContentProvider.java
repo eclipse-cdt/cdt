@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,15 +15,13 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Martin Oberhuber (Wind River) - [197550] Fix NPE when refreshing Pending items
+ * David McKnight   (IBM)        - [236505] Remote systems dialog not working
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
 
-import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IWorkspace;
@@ -40,6 +38,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.RSEImageMap;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.operations.SystemDeferredTreeContentManager;
@@ -74,12 +73,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	private Hashtable                   resolvedChildrenPerFolder = null; // local cache to improve performance
 	private boolean  _enableDeferredQueries = true;
 	private SystemDeferredTreeContentManager manager;
-	/**
-	 * The cache of images that have been dispensed by this provider.
-	 * Maps ImageDescriptor->Image.
-	 */
-	private Map imageTable = new Hashtable(40);	
-	
+
 	/**
 	 * Constructor
 	 */
@@ -161,19 +155,6 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 		    }
 		  }
 	    }
-        // The following we got from WorkbenchLabelProvider
-        if (imageTable != null)
-        {
-	      Collection imageValues = imageTable.values();
-	      if (imageValues!=null)
-	      {
-	        Iterator images = imageValues.iterator();	    	
-	        if (images!=null)
-	          while (images.hasNext())
-    	        ((Image)images.next()).dispose();
-    	    imageTable = null;	    
-	      }
-        }
     }
 
 	
@@ -450,31 +431,22 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	//System.out.println("Inside getImage. element = " + element + ", adapter = " + adapter);
 	    if (adapter == null)
 		  return null;
-		/*
-		boolean isOpen = false;
-		if (viewer instanceof AbstractTreeViewer)
-		{
-			AbstractTreeViewer atv = (AbstractTreeViewer)viewer;
-			isOpen = true; //atv.getExpandedState(element);
-			//System.out.println("In getImage for " + adapter.getName(element) + ": isOpen = " + isOpen);
-		}
-	    ImageDescriptor descriptor = adapter.getImageDescriptor(element, isOpen);
-	    */
+
 	    ImageDescriptor descriptor = adapter.getImageDescriptor(element);
-    	//System.out.println("...descriptor = " + descriptor);
-	    
+    
 	    if (descriptor == null)
 		  return null;
+	    
 	    //add any annotations to the image descriptor
 	    descriptor = decorateImage(descriptor, element);
 	    //obtain the cached image corresponding to the descriptor
-	    Image image = (Image) imageTable.get(descriptor);
+	    Image image = RSEImageMap.get(descriptor);
 	    if (image == null) 
 	    {
 		  image = descriptor.createImage();
-		  imageTable.put(descriptor, image);
+		  RSEImageMap.put(descriptor, image);
 	    }
-    	//System.out.println("...image = " + image);	    
+	    
 	    return image;    	
     }
     /**

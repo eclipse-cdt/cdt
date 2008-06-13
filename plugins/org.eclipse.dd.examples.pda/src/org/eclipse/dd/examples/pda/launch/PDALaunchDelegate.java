@@ -119,6 +119,9 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         // Get Java VM path
         String javaVMHome = System.getProperty("java.home");
         String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
+        if (File.separatorChar == '\\') {
+            javaVMExec += ".exe";
+        }   
         File exe = new File(javaVMExec);
         if (!exe.exists()) {
             abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null);

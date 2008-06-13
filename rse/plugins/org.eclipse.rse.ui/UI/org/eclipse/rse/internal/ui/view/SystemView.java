@@ -58,6 +58,7 @@
  * David McKnight  (IBM)         - [233570] ClassCastException when moving filter after "go into" action
  * David Dykstal (IBM)           - [233530] Backing out previous change for this bug
  * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
+ * David McKnight   (IBM)        - [236874] NPE upon selecting an item that is not associated with subsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -4826,7 +4827,8 @@ public class SystemView extends SafeTreeViewer
 
 			if (selectionIsRemoteObject && !selectionFlagsUpdated) {
 				ISubSystem srcSubSystem = adapter.getSubSystem(element);
-				if (srcSubSystem.isConnected() || element instanceof ISystemFilterReference || element instanceof ISubSystem) 
+				if (srcSubSystem != null && 
+						(srcSubSystem.isConnected() || element instanceof ISystemFilterReference || element instanceof ISubSystem)) 
 				{
 					SystemRemoteElementResourceSet set = null;
 					if (lastSet != null)

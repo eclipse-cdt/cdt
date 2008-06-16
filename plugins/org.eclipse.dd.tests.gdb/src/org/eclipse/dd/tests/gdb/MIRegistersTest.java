@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.CompositeDMContext;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -149,24 +149,20 @@ public class MIRegistersTest extends BaseTestCase {
     	final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
     	final IRegisterGroupDMContext regGroupsDMC = getRegisterGroup();
 
-    	final DataRequestMonitor<IRegisterDMContext[]> regDone = 
-    		new DataRequestMonitor<IRegisterDMContext[]>(fRegService.getExecutor(), null) {
-    			@Override
-    			protected void handleCompleted() {
-    				if (isSuccess()) {
-    					fWait.setReturnInfo(getData());
-    				}
-
-    				fWait.waitFinished(getStatus());
-    			}
-    		};
-
    		fRegService.getExecutor().submit(new Runnable() {
    			public void run() {
-//   				fRegService.getRegisters(regGroupsDMC, frameDmc, regDone);
-   				fWait.waitFinished(
-   						new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-						"Commented out some code until it can compile", null));
+   				fRegService.getRegisters(
+   				    new CompositeDMContext(new IDMContext[] { regGroupsDMC, frameDmc} ), 
+   		            new DataRequestMonitor<IRegisterDMContext[]>(fRegService.getExecutor(), null) {
+   		                @Override
+   		                protected void handleCompleted() {
+   		                    if (isSuccess()) {
+   		                        fWait.setReturnInfo(getData());
+   		                    }
+
+   		                    fWait.waitFinished(getStatus());
+   		                }
+   		            });
    			}
    		});
 
@@ -298,45 +294,23 @@ public class MIRegistersTest extends BaseTestCase {
 
     private static String REGISTER_VALUE = "";
     @Test
-    public void getModelDataForRegisterDataValueNatural() throws Throwable {
+    public void getModelDataForRegisterDataValueInDifferentNumberFormats() throws Throwable {
         IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
     	REGISTER_VALUE = val;
     	assertTrue("Register Value is not in NATURAL format " , Integer.parseInt(val)== Integer.parseInt(REGISTER_VALUE));
-    }
 
-    @Test
-    public void getModelDataForRegisterDataValueHex() throws Throwable {
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
-    	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.HEX_FORMAT, 0);
+    	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.HEX_FORMAT, 0);
     	assertTrue("Register Value is not in HEX_FORMAT " ,val.startsWith("0x"));
-    }
 
-    @Test
-    public void getModelDataForRegisterDataValueBinary() throws Throwable {
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
+    	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.BINARY_FORMAT, 0);
+    	Assert.assertEquals("Register Value is not in BINARY_FORMAT ", val, Integer.toBinaryString(Integer.parseInt(REGISTER_VALUE)));
 
-    	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.BINARY_FORMAT, 0);
-    	assertTrue("Register Value is not in BINARY_FORMAT " , val.equals(Integer.toBinaryString(Integer.parseInt(REGISTER_VALUE))));
-    }
+    	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.DECIMAL_FORMAT , 0);
+    	Assert.assertEquals("Register Value is not in DECIMAL_FORMAT", Integer.parseInt(val), Integer.parseInt(REGISTER_VALUE));
 
-    @Test
-    public void getModelDataForRegisterDataValueDecimal() throws Throwable {
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
-
-    	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.DECIMAL_FORMAT , 0);
-    	assertTrue("Register Value is not in DECIMAL_FORMAT" ,Integer.parseInt(val) == Integer.parseInt(REGISTER_VALUE));
-    }
-
-    @Test
-    public void getModelDataForRegisterDataValueOctal() throws Throwable {
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
-    	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.OCTAL_FORMAT, 0);
+    	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.OCTAL_FORMAT, 0);
     	assertTrue("Register Value is not in OCTAL_FORMAT " ,val.startsWith("0"));
     }
 
@@ -393,7 +367,6 @@ public class MIRegistersTest extends BaseTestCase {
     private void writeRegister(IFrameDMContext frameDmc, final int regIndex, final String regValue, final String formatId) throws Throwable {
     	final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
     	
-//    	final MIRegisterGroupDMC grpDmc = new MIRegisterGroupDMC( (MIRegisters)fRegService , 0 , "General Registers" ) ;
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	
  	
@@ -407,11 +380,15 @@ public class MIRegistersTest extends BaseTestCase {
 
 		fRegService.getExecutor().submit(new Runnable() {
 			public void run() {
-//				fRegService.writeRegister(grpDmc, regDMCs[regIndex], regValue, 
-//						formatId, writeDone);
-   				fWait.waitFinished(
-   						new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-						"Commented out some code until it can compile", null));
+			    fRegService.writeRegister(
+	                regDMCs[regIndex], 
+			        regValue, formatId, 
+		            new RequestMonitor(fRegService.getExecutor(), null) {
+		                @Override
+		                protected void handleCompleted() {
+		                    fWait.waitFinished(getStatus());
+		                }
+		            });
 
 			}
 		});

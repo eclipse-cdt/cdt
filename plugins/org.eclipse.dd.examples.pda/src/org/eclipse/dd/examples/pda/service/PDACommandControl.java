@@ -89,7 +89,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     private boolean fTerminated = false;
     
     //  Data Model context of this command control. 
-    private PDAProgramDMContext fDMContext;
+    private PDAVirtualMachineDMContext fDMContext;
 
     // Synchronous listeners for commands and events.
     private final List<ICommandListener> fCommandListeners = new ArrayList<ICommandListener>();
@@ -137,12 +137,12 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
     private void doInitialize(final RequestMonitor rm) {
         // Create the control's data model context.
-        fDMContext = new PDAProgramDMContext(getSession().getId(), fProgram);
+        fDMContext = new PDAVirtualMachineDMContext(getSession().getId(), fProgram);
 
         // Add a listener for PDA events to track the started/terminated state.
         addEventListener(new IEventListener() {
             public void eventReceived(Object output) {
-                if ("started".equals(output)) {
+                if ("started 1".equals(output)) {
                     setStarted();
                 } else if ("terminated".equals(output)) {
                     setTerminated();
@@ -247,7 +247,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         @Override
         protected IStatus run(IProgressMonitor monitor) {
             while (!isTerminated()) {
-                synchronized(fTxCommands) {
+                synchronized (fTxCommands) {
                     try {
                         // Remove command from send queue.
                         final CommandHandle commandHandle = fTxCommands.take();
@@ -483,10 +483,10 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     
     /**
      * Return the PDA Debugger top-level Data Model context. 
-     * @see PDAProgramDMContext
+     * @see PDAVirtualMachineDMContext
      */
     @ThreadSafe
-    public PDAProgramDMContext getProgramDMContext() {
+    public PDAVirtualMachineDMContext getVirtualMachineDMContext() {
         return fDMContext;
     }
 
@@ -498,7 +498,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         processQueues();
 
         // Issue a data model event.
-        getSession().dispatchEvent(new PDAStartedEvent(getProgramDMContext()), getProperties());
+        getSession().dispatchEvent(new PDAStartedEvent(getVirtualMachineDMContext()), getProperties());
     }
     
     /**
@@ -520,7 +520,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             processQueues();
             
             // Issue a data model event.
-            getSession().dispatchEvent(new PDATerminatedEvent(getProgramDMContext()), getProperties());
+            getSession().dispatchEvent(new PDATerminatedEvent(getVirtualMachineDMContext()), getProperties());
         }
     }
 

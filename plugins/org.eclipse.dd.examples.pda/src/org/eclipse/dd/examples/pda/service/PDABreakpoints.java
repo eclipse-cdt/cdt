@@ -51,7 +51,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
 
         final Integer fLine;
 
-        public BreakpointDMContext(String sessionId, PDAProgramDMContext commandControlCtx, Integer line) {
+        public BreakpointDMContext(String sessionId, PDAVirtualMachineDMContext commandControlCtx, Integer line) {
             super(sessionId, new IDMContext[] { commandControlCtx });
             fLine = line;
         }
@@ -81,7 +81,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         final String fFunction;
         final String fVariable; 
 
-        public WatchpointDMContext(String sessionId, PDAProgramDMContext commandControlCtx, String function, 
+        public WatchpointDMContext(String sessionId, PDAVirtualMachineDMContext commandControlCtx, String function, 
             String variable) 
         {
             super(sessionId, new IDMContext[] { commandControlCtx });
@@ -164,7 +164,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
 
     public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor<IBreakpointDMContext[]> rm) {
         // Validate the context
-        if (!fCommandControl.getProgramDMContext().equals(context)) {
+        if (!fCommandControl.getVirtualMachineDMContext().equals(context)) {
             PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid breakpoints target context");
             return;
         }
@@ -193,7 +193,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
                 // breakpoints mediator, which was called with the program context
                 // in the services initialization sequence.  So checking if 
                 // programCtx != null is mostly a formality.
-                PDAProgramDMContext programCtx = DMContexts.getAncestorOfType(context, PDAProgramDMContext.class);
+                PDAVirtualMachineDMContext programCtx = DMContexts.getAncestorOfType(context, PDAVirtualMachineDMContext.class);
                 if (programCtx != null) {
                     doInsertBreakpoint(programCtx, attributes, rm);
                 } else {
@@ -209,7 +209,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         }
     }
 
-    private void doInsertBreakpoint(PDAProgramDMContext programCtx, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> rm) 
+    private void doInsertBreakpoint(PDAVirtualMachineDMContext programCtx, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> rm) 
     {
         // Compare the program path in the breakpoint with the path in the PDA 
         // program context. Only insert the breakpoint if the program matches. 
@@ -230,7 +230,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // installed already. PDA can only track a single breakpoint at a 
         // given line, attempting to set the second breakpoint should fail.
         final BreakpointDMContext breakpointCtx = 
-            new BreakpointDMContext(getSession().getId(), fCommandControl.getProgramDMContext(), line);
+            new BreakpointDMContext(getSession().getId(), fCommandControl.getVirtualMachineDMContext(), line);
         if (fBreakpoints.contains(breakpointCtx)) {
             PDAPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint already set");
             return;
@@ -244,7 +244,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // still being processed here.
         fBreakpoints.add(breakpointCtx);
         fCommandControl.queueCommand(
-            new PDASetBreakpointCommand(fCommandControl.getProgramDMContext(), line), 
+            new PDASetBreakpointCommand(fCommandControl.getVirtualMachineDMContext(), line, false), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -286,7 +286,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // installed already. PDA can only track a single watchpoint for a given
         // function::variable, attempting to set the second breakpoint should fail.
         final WatchpointDMContext watchpointCtx = 
-            new WatchpointDMContext(getSession().getId(), fCommandControl.getProgramDMContext(), function, variable);
+            new WatchpointDMContext(getSession().getId(), fCommandControl.getVirtualMachineDMContext(), function, variable);
         if (fBreakpoints.contains(watchpointCtx)) {
             PDAPlugin.failRequest(rm, REQUEST_FAILED, "Watchpoint already set");
             return;
@@ -310,7 +310,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // still being processed here.
         fBreakpoints.add(watchpointCtx);
         fCommandControl.queueCommand(
-            new PDAWatchCommand(fCommandControl.getProgramDMContext(), function, variable, watchOperation), 
+            new PDAWatchCommand(fCommandControl.getVirtualMachineDMContext(), function, variable, watchOperation), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -350,7 +350,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         fBreakpoints.remove(bpCtx);
 
         fCommandControl.queueCommand(
-            new PDAClearBreakpointCommand(fCommandControl.getProgramDMContext(), bpCtx.fLine), 
+            new PDAClearBreakpointCommand(fCommandControl.getVirtualMachineDMContext(), bpCtx.fLine), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));        
     }
 
@@ -360,7 +360,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // Watchpoints are cleared using the same command, but with a "no watch" operation
         fCommandControl.queueCommand(
             new PDAWatchCommand(
-                fCommandControl.getProgramDMContext(), bpCtx.fFunction, bpCtx.fVariable, PDAWatchCommand.WatchOperation.NONE), 
+                fCommandControl.getVirtualMachineDMContext(), bpCtx.fFunction, bpCtx.fVariable, PDAWatchCommand.WatchOperation.NONE), 
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));        
     }
 

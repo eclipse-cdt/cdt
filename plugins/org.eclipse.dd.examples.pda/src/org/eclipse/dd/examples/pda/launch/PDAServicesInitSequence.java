@@ -78,7 +78,7 @@ public class PDAServicesInitSequence extends Sequence {
                 bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
                     @Override
                     protected void handleSuccess() {
-                        bpmService.startTrackingBreakpoints(fCommandControl.getProgramDMContext(), requestMonitor);
+                        bpmService.startTrackingBreakpoints(fCommandControl.getVirtualMachineDMContext(), requestMonitor);
                     }
                 }); 
             }
@@ -107,7 +107,7 @@ public class PDAServicesInitSequence extends Sequence {
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
-                fRunControl.resume(fCommandControl.getProgramDMContext(), requestMonitor);
+                fRunControl.resume(fCommandControl.getVirtualMachineDMContext(), requestMonitor);
             }
         },
     };

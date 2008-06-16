@@ -30,7 +30,7 @@ public class Test1 extends CommandControlTestsBase {
 
     @Test
     public void testRun() throws Throwable {
-        sendCommand("resume");
+        sendCommand("vmresume");
         expectOutput("\"hello\"");
         expectOutput("\"barfoo\"");
         expectOutput("\"first\"");

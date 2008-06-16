@@ -11,21 +11,24 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Retrieves command stack information 
  * 
  * <pre>
- *    C: stack
+ *    C: stack {thread_id}
  *    R: {file}|{line}|{function}|{var_1}|{var_2}|...#{file}|{line}|{function}|{var_1}|{var_2}|...#...
+ *    
+ * Errors:
+ *    error: invalid thread
  * </pre>
  */
 @Immutable
 public class PDAStackCommand extends AbstractPDACommand<PDAStackCommandResult> {
 
-    public PDAStackCommand(PDAProgramDMContext context) {
-        super(context, "stack");
+    public PDAStackCommand(PDAVirtualMachineDMContext context, int threadId) {
+        super(context, "stack " + threadId);
     }
     
     @Override

@@ -21,6 +21,7 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -219,24 +220,19 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
     
     
     public int getDeltaFlags(Object e) {
-        if (e instanceof IContainerResumedDMEvent || e instanceof IContainerSuspendedDMEvent) {
-            // No need to react to container events, because the container 
-            // nodes will deal with them. We need this if statement however, 
-            // because the these events extend IResumedDMEvent and 
-            // ISuspendedDMEvent and would trigger the if statement below.
+        IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+
+        if (dmc instanceof IContainerDMContext) {
             return IModelDelta.NO_CHANGE;
         } else if (e instanceof IResumedDMEvent && 
                    ((IResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
         {
             return IModelDelta.CONTENT;            
         } else if (e instanceof ISuspendedDMEvent) {
-        	// no change, update happens on FullStackRefreshEvent
             return IModelDelta.NO_CHANGE;
         } else if (e instanceof FullStackRefreshEvent) {
             return IModelDelta.CONTENT;
-        } else if (e instanceof ISteppingTimedOutEvent && 
-                 !(((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) ) 
-        {
+        } else if (e instanceof ISteppingTimedOutEvent) {
             return IModelDelta.CONTENT;            
         } else if (e instanceof ModelProxyInstalledEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
@@ -245,32 +241,51 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
     }
 
     public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        if(e instanceof IContainerResumedDMEvent || e instanceof IContainerSuspendedDMEvent) {
-            // No need to react to container events, because the container 
-            // nodes will deal with them. We need this if statement however, 
-            // because the these events extend IResumedDMEvent and 
-            // ISuspendedDMEvent and would trigger the if statement below.
+        IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+
+        if(dmc instanceof IContainerDMContext) {
+            // The IContainerDMContext sub-classes IExecutionDMContext.
+            // Also IContainerResumedDMEvent sub-classes IResumedDMEvent and
+            // IContainerSuspendedDMEvnet sub-classes ISuspendedEvent.
+            // Because of this relationship, the thread VM node can be called
+            // with data-model evnets for the containers.  This statement
+            // filters out those event.
             rm.done();
-        } else if(e instanceof IResumedDMEvent && 
-                  ((IResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
-        {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-            rm.done();
+        } else if(e instanceof IResumedDMEvent) {
+            // Resumed: 
+            // - If not stepping, update the thread and its content (its stack).
+            // - If stepping, do nothing to avoid too many updates.  If a 
+            // time-out is reached before the step completes, the 
+            // ISteppingTimedOutEvent will trigger a refresh.
+            if (((IResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) {
+                parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
+                rm.done();
+            }
         } else if (e instanceof ISuspendedDMEvent) {
-        	// no change
+            // Container suspended.  Do nothing here to give the stack the 
+            // priority in updating. The thread will update as a result of 
+            // FullStackRefreshEvent. 
         	rm.done();
         } else if (e instanceof FullStackRefreshEvent) {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+            // Full-stack refresh event is generated following a suspended event 
+            // and a fixed delay.  Refresh the whole thread upon this event.
+            parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
             rm.done();
-        } else if (e instanceof ISteppingTimedOutEvent && 
-            !(((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) ) 
-        {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-            // Workaround for bug 233730: we need to add a separate delta node for the state flag in 
-            // order to trigger an update of the run control actions.
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.STATE);
+        } else if (e instanceof ISteppingTimedOutEvent) {
+            // Stepping time-out indicates that a step operation is taking 
+            // a long time, and the view needs to be refreshed to show 
+            // the user that the program is running.  
+            parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
             rm.done();            
         } else if (e instanceof ModelProxyInstalledEvent) {
+            // Model Proxy install event is generated when the model is first 
+            // populated into the view.  This happens when a new debug session
+            // is started or when the view is first opened.  
+            // In both cases, if there are already threads in the debug model, 
+            // the desired user behavior is to show the threads and to select
+            // the first thread.  
+            // If the thread is suspended, do not select the thread, instead, 
+            // its top stack frame will be selected.
             getThreadVMCForModelProxyInstallEvent(
                 parentDelta,
                 new DataRequestMonitor<VMContextInfo>(getExecutor(), rm) {

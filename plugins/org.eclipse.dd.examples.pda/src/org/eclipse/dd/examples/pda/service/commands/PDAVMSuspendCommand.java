@@ -14,22 +14,22 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
- * Retrieves variable value 
+ * Suspends the execution of the whole virtual machine 
  * 
  * <pre>
- *    C: var  {thread_id} {frame_number} {variable_name}
- *    R: {variable_value}
+ *    C: vmsuspend
+ *    R: ok
+ *    E: vmsuspended client
  *    
  * Errors:
- *    error: invalid thread
- *    error: variable undefined
+ *    error: thread already suspended
  * </pre>
  */
 @Immutable
-public class PDAVarCommand extends AbstractPDACommand<PDACommandResult> {
+public class PDAVMSuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVarCommand(PDAVirtualMachineDMContext context, int threadId, int frameId, String name) {
-        super(context, "var " + threadId + " " + frameId + " " + name);
+    public PDAVMSuspendCommand(PDAVirtualMachineDMContext context) {
+        super(context, "vmsuspend");
     }
     
     @Override

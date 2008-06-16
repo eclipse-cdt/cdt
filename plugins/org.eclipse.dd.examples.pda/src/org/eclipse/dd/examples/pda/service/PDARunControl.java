@@ -11,7 +11,11 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service;
 
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
@@ -26,10 +30,13 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.PDAPlugin;
+import org.eclipse.dd.examples.pda.service.commands.AbstractPDACommand;
 import org.eclipse.dd.examples.pda.service.commands.PDACommandResult;
 import org.eclipse.dd.examples.pda.service.commands.PDAResumeCommand;
 import org.eclipse.dd.examples.pda.service.commands.PDAStepCommand;
-import org.eclipse.dd.examples.pda.service.commands.PDASuspendCommand;
+import org.eclipse.dd.examples.pda.service.commands.PDAStepReturnCommand;
+import org.eclipse.dd.examples.pda.service.commands.PDAVMResumeCommand;
+import org.eclipse.dd.examples.pda.service.commands.PDAVMSuspendCommand;
 import org.osgi.framework.BundleContext;
 
 
@@ -55,7 +62,112 @@ public class PDARunControl extends AbstractDsfService
     // The purpose of this pattern is to allow clients that listen to service 
     // events and track service state, to be perfectly in sync with the service
     // state.
+
+    static final private IExecutionDMContext[] EMPTY_TRIGGERING_CONTEXTS_ARRAY = new IExecutionDMContext[0];  
+
+    @Immutable 
+    private static class ThreadResumedEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IResumedDMEvent
+    {
+        private final StateChangeReason fReason;
+
+        ThreadResumedEvent(PDAThreadDMContext ctx, StateChangeReason reason) { 
+            super(ctx);
+            fReason = reason;
+        }
+        
+        public StateChangeReason getReason() {
+            return fReason;
+        }
+        
+        @Override
+        public String toString() {
+            return "THREAD RESUMED: " + getDMContext() + " (" + fReason + ")"; 
+        }
+    }
     
+    @Immutable 
+    private static class VMResumedEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IContainerResumedDMEvent
+    {
+        private final StateChangeReason fReason;
+        
+        VMResumedEvent(PDAVirtualMachineDMContext ctx, StateChangeReason reason) { 
+            super(ctx);
+            fReason = reason;
+        }
+
+        public StateChangeReason getReason() {
+            return fReason;
+        }
+
+        public IExecutionDMContext[] getTriggeringContexts() {
+            return EMPTY_TRIGGERING_CONTEXTS_ARRAY;
+        }
+        
+        @Override
+        public String toString() {
+            return "VM RESUMED: (" + fReason + ")"; 
+        }
+    }
+    
+    @Immutable
+    private static class ThreadSuspendedEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements ISuspendedDMEvent
+    {
+        private final StateChangeReason fReason;
+
+        ThreadSuspendedEvent(PDAThreadDMContext ctx, StateChangeReason reason) { 
+            super(ctx);
+            fReason = reason;
+        }
+        
+        public StateChangeReason getReason() {
+            return fReason;
+        }
+
+        @Override
+        public String toString() {
+            return "THREAD SUSPENDED: " + getDMContext() + " (" + fReason + ")"; 
+        }
+    }
+    
+    @Immutable 
+    private static class VMSuspendedEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IContainerSuspendedDMEvent
+    {
+        private final StateChangeReason fReason;
+
+        final private IExecutionDMContext[] fTriggeringThreads;  
+        
+        VMSuspendedEvent(PDAVirtualMachineDMContext ctx, PDAThreadDMContext threadCtx, StateChangeReason reason) { 
+            super(ctx);
+            fReason = reason;
+            if (threadCtx != null) {
+                fTriggeringThreads = new IExecutionDMContext[] { threadCtx };
+            } else {
+                fTriggeringThreads = EMPTY_TRIGGERING_CONTEXTS_ARRAY;
+            }
+        }
+    
+        public StateChangeReason getReason() {
+            return fReason;
+        }
+
+        public IExecutionDMContext[] getTriggeringContexts() {
+            return fTriggeringThreads;
+        }
+
+
+        @Override
+        public String toString() {
+            return "THREAD SUSPENDED: " + getDMContext() + 
+                " (" + fReason + 
+                ", trigger = " + Arrays.asList(fTriggeringThreads) +
+                ")"; 
+        }
+    }
+
     @Immutable 
     private static class ExecutionDMData implements IExecutionDMData {
         private final StateChangeReason fReason;
@@ -65,62 +177,63 @@ public class PDARunControl extends AbstractDsfService
         public StateChangeReason getStateChangeReason() { return fReason; }
     }
     
-    @Immutable 
-    private static class ResumedEvent extends AbstractDMEvent<IExecutionDMContext> 
-        implements IResumedDMEvent
+    private static class ThreadStartedEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IStartedDMEvent 
     {
-        private final String fPDAEvent;
-
-        ResumedEvent(IExecutionDMContext ctx, String pdaEvent) { 
-            super(ctx);
-            fPDAEvent = pdaEvent;
-        }
-        
-        public StateChangeReason getReason() {
-            if (fPDAEvent.startsWith("resumed breakpoint") || fPDAEvent.startsWith("suspended watch")) {
-                return StateChangeReason.BREAKPOINT;
-            } else if (fPDAEvent.equals("resumed step") || fPDAEvent.equals("resumed drop")) {
-                return StateChangeReason.STEP;
-            } else if (fPDAEvent.equals("resumed client")) {
-                return StateChangeReason.USER_REQUEST;
-            } else {
-                return StateChangeReason.UNKNOWN;
-            } 
+        ThreadStartedEvent(PDAThreadDMContext threadCtx) {
+            super(threadCtx);
         }
     }
     
-    @Immutable
-    private static class SuspendedEvent extends AbstractDMEvent<IExecutionDMContext> 
-        implements ISuspendedDMEvent
+    private static class ThreadExitedEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IExitedDMEvent 
     {
-        private final String fPDAEvent;
-        
-        SuspendedEvent(IExecutionDMContext ctx, String pdaEvent) { 
-            super(ctx);
-            fPDAEvent = pdaEvent;
-        }
-        
-        public StateChangeReason getReason() {
-            if (fPDAEvent.startsWith("suspended breakpoint") || fPDAEvent.startsWith("suspended watch")) {
-                return StateChangeReason.BREAKPOINT;
-            } else if (fPDAEvent.equals("suspended step") || fPDAEvent.equals("suspended drop")) {
-                return StateChangeReason.STEP;
-            } else if (fPDAEvent.equals("suspended client")) {
-                return StateChangeReason.USER_REQUEST;
-            } else {
-                return StateChangeReason.UNKNOWN;
-            } 
+        ThreadExitedEvent(PDAThreadDMContext threadCtx) {
+            super(threadCtx);
         }
     }
-
+    
     // Services 
     private PDACommandControl fCommandControl;
-    
-    // State flags
-	private boolean fSuspended = true;
-    private boolean fResumePending = false;
-	private boolean fStepping = false;
-	private StateChangeReason fStateChangeReason;
+
+    // Reference to the virtual machine data model context
+    private PDAVirtualMachineDMContext fDMContext;
+
+    // VM state flags
+	private boolean fVMSuspended = true;
+    private boolean fVMResumePending = false;
+    private boolean fVMSuspendPending = false;
+	private boolean fVMStepping = false;
+	private StateChangeReason fVMStateChangeReason;
+	
+	// Threads' state data 
+    private static class ThreadInfo {
+        final PDAThreadDMContext fContext;
+        boolean fSuspended = false;
+        boolean fResumePending = false;
+        boolean fSuspendPending = false;
+        boolean fStepping = false;
+        StateChangeReason fStateChangeReason = StateChangeReason.UNKNOWN;        
+
+        ThreadInfo(PDAThreadDMContext context) {
+            fContext = context;
+        }
+        
+        @Override
+        public String toString() {
+            return fContext.toString() + " (" +
+                (fSuspended ? "SUSPENDED, " : "SUSPENDED, ") +
+                fStateChangeReason + 
+                (fResumePending ? ", RESUME_PENDING, " : "") +
+                (fSuspendPending ? ", SUSPEND_PENDING, " : "") +
+                (fStepping ? ", SUSPEND_PENDING, " : "") +
+                ")";
+            		
+        }
+    }
+
+	private Map<Integer,  ThreadInfo> fThreads = new LinkedHashMap<Integer,  ThreadInfo>();
+	
 	
     public PDARunControl(DsfSession session) {
         super(session);
@@ -142,14 +255,21 @@ public class PDARunControl extends AbstractDsfService
     }
 
     private void doInitialize(final RequestMonitor rm) {
+        // Cache a reference to the command control and the virtual machine context
         fCommandControl = getServicesTracker().getService(PDACommandControl.class);
+        fDMContext = fCommandControl.getVirtualMachineDMContext();
 
-        // Add ourselves as a listener to PDA events, to catch suspended/resumed 
-        // events.
+        // Create the main thread context.
+        fThreads.put(
+            1,
+            new ThreadInfo(new PDAThreadDMContext(getSession().getId(), fDMContext, 1)));
+
+        // Add the run control service as a listener to PDA events, to catch 
+        // suspended/resumed/started/exited events from the command control.
         fCommandControl.addEventListener(this);
         
-        // Add ourselves as a listener to service events, in order to process
-        // our own suspended/resumed events.
+        // Add the run control service as a listener to service events as well, 
+        // in order to process our own suspended/resumed/started/exited events.
         getSession().addServiceEventListener(this, null);
         
         // Register the service with OSGi
@@ -182,42 +302,137 @@ public class PDARunControl extends AbstractDsfService
         if (!(output instanceof String)) return;
         String event = (String)output;
         
+        int nameEnd = event.indexOf(' ');
+        nameEnd = nameEnd == -1 ? event.length() : nameEnd;
+        String eventName = event.substring(0, nameEnd);
+        
+        PDAThreadDMContext thread = null;
+        StateChangeReason reason = StateChangeReason.UNKNOWN;
+        if (event.length() > nameEnd + 1) {
+            if ( Character.isDigit(event.charAt(nameEnd + 1)) ) {
+                int threadIdEnd = event.indexOf(' ', nameEnd + 1);
+                threadIdEnd = threadIdEnd == -1 ? event.length() : threadIdEnd;
+                try {
+                    int threadId = Integer.parseInt(event.substring(nameEnd + 1, threadIdEnd));
+                    if (fThreads.containsKey(threadId)) {
+                        thread = fThreads.get(threadId).fContext;
+                    } else {
+                        // In case where a suspended event follows directly a 
+                        // started event, a thread may not be in the list of 
+                        // known threads yet.  In this case create the
+                        // thread context based on the ID.
+                        thread = new PDAThreadDMContext(getSession().getId(), fDMContext, threadId);
+                    }
+                } catch (NumberFormatException e) {}
+                if (threadIdEnd + 1 < event.length()) {
+                    reason = parseStateChangeReason(event.substring(threadIdEnd + 1));
+                }
+            } else {
+                reason = parseStateChangeReason(event.substring(nameEnd + 1));
+            }
+        }
+        
         // Handle PDA debugger suspended/resumed events and issue the 
         // corresponding Data Model events.  Do not update the state
         // information until we start dispatching the service events.
-        if (event.startsWith("suspended")) {
-            IDMEvent<?> dmEvent = new SuspendedEvent(fCommandControl.getProgramDMContext(), event);
-            getSession().dispatchEvent(dmEvent, getProperties());
-        } else if (event.startsWith("resumed")) {
-            IDMEvent<?> dmEvent = new ResumedEvent(fCommandControl.getProgramDMContext(), event);
+        IDMEvent<?> dmEvent = null;
+        if (eventName.equals("suspended") && thread != null) {
+            dmEvent = new ThreadSuspendedEvent(thread, reason);
+        } else if (eventName.equals("resumed") && thread != null) {
+            dmEvent = new ThreadResumedEvent(thread, reason);
+        } else if (event.startsWith("vmsuspended")) {
+            dmEvent = new VMSuspendedEvent(fDMContext, thread, reason);
+        } else if (event.startsWith("vmresumed")) {
+            dmEvent = new VMResumedEvent(fDMContext, reason);
+        } else if (event.startsWith("started") && thread != null) {
+            dmEvent = new ThreadStartedEvent(thread);
+        } else if (event.startsWith("exited") && thread != null) {
+            dmEvent = new ThreadExitedEvent(thread);
+        }
+        
+        if (dmEvent != null) {
             getSession().dispatchEvent(dmEvent, getProperties());
         }
     }
     
+    private StateChangeReason parseStateChangeReason(String reasonString) {
+        if (reasonString.startsWith("breakpoint") || reasonString.startsWith("watch")) {
+            return StateChangeReason.BREAKPOINT;
+        } else if (reasonString.equals("step") || reasonString.equals("drop")) {
+            return StateChangeReason.STEP;
+        } else if (reasonString.equals("client")) {
+            return StateChangeReason.USER_REQUEST;
+        } else if (reasonString.startsWith("event")) {
+            return StateChangeReason.SIGNAL;
+        } else {
+            return StateChangeReason.UNKNOWN;
+        } 
+
+    }
     
     @DsfServiceEventHandler 
-    public void eventDispatched(ResumedEvent e) {
-        // This service should be the first to receive the ResumedEvent, 
-        // (before any other listeners are called).  Here, update the
-        // service state information based on the the resumed event.
-        fSuspended = false;
-        fResumePending = false;
-        fStateChangeReason = e.getReason();
-        fStepping = e.getReason().equals(StateChangeReason.STEP);
+    public void eventDispatched(ThreadResumedEvent e) {
+        ThreadInfo info = fThreads.get(((PDAThreadDMContext)e.getDMContext()).getID());
+        if (info != null) {
+            info.fSuspended = false;
+            info.fResumePending = false;
+            info.fStateChangeReason = e.getReason();
+            info.fStepping = e.getReason().equals(StateChangeReason.STEP);
+        }
     }    
 
 
     @DsfServiceEventHandler 
-    public void eventDispatched(SuspendedEvent e) {
-        // This service should be the first to receive the SuspendedEvent also, 
-        // (before any other listeners are called).  Here, update the
-        // service state information based on the the suspended event.
-        fStateChangeReason = e.getReason();
-        fResumePending = false;
-        fSuspended = true;
-        fStepping = false;
+    public void eventDispatched(VMResumedEvent e) {
+        fVMSuspended = false;
+        fVMResumePending = false;
+        fVMStateChangeReason = e.getReason();
+        fVMStepping = e.getReason().equals(StateChangeReason.STEP);
+        for (ThreadInfo info : fThreads.values()) {
+            info.fSuspended = false;
+            info.fStateChangeReason = StateChangeReason.CONTAINER;
+            info.fStepping = false;
+        }
+    }    
+
+    @DsfServiceEventHandler 
+    public void eventDispatched(ThreadSuspendedEvent e) {
+        ThreadInfo info = fThreads.get(((PDAThreadDMContext)e.getDMContext()).getID());
+        if (info != null) {
+            info.fSuspended = true;
+            info.fSuspendPending = false;
+            info.fStateChangeReason = e.getReason();
+            info.fStepping = e.getReason().equals(StateChangeReason.STEP);
+        }
     }
     
+
+    @DsfServiceEventHandler 
+    public void eventDispatched(VMSuspendedEvent e) {
+        fVMStateChangeReason = e.getReason();
+        fVMSuspendPending = false;
+        fVMSuspended = true;
+        fVMStepping = false;
+        List<IExecutionDMContext> triggeringContexts = Arrays.asList(e.getTriggeringContexts());
+        for (ThreadInfo info : fThreads.values()) {
+            info.fSuspended = true;
+            info.fStateChangeReason = triggeringContexts.contains(info.fContext) 
+                ? StateChangeReason.STEP : StateChangeReason.CONTAINER;
+            info.fStepping = false;
+        }        
+    }
+    
+    @DsfServiceEventHandler 
+    public void eventDispatched(ThreadStartedEvent e) {
+        PDAThreadDMContext threadCtx = (PDAThreadDMContext)e.getDMContext();
+        fThreads.put(threadCtx.getID(), new ThreadInfo(threadCtx));
+    }    
+    
+    @DsfServiceEventHandler 
+    public void eventDispatched(ThreadExitedEvent e) {
+        PDAThreadDMContext threadCtx = (PDAThreadDMContext)e.getDMContext();
+        fThreads.remove(threadCtx.getID());
+    }    
     
     public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
         rm.setData(doCanResume(context));
@@ -225,7 +440,34 @@ public class PDARunControl extends AbstractDsfService
     }
     
     private boolean doCanResume(IExecutionDMContext context) {
-        return isSuspended(context) && !fResumePending;
+        if (context instanceof PDAThreadDMContext) {
+            PDAThreadDMContext threadContext = (PDAThreadDMContext)context; 
+            // Threads can be resumed only if the VM is not suspended.
+            if (!fVMSuspended) { 
+                ThreadInfo state = fThreads.get(threadContext.getID());
+                if (state != null) {
+                    return state.fSuspended && !state.fResumePending;
+                }
+            }
+        } else {
+            return fVMSuspended && !fVMResumePending;
+        }
+        return false;
+    }
+    
+    private boolean doCanStep(IExecutionDMContext context, StepType stepType) {
+        if (stepType == StepType.STEP_OVER || stepType == StepType.STEP_RETURN) {
+            if (context instanceof PDAThreadDMContext) {
+                PDAThreadDMContext threadContext = (PDAThreadDMContext)context; 
+                // Only threads can be stepped.  But they can be stepped
+                // while the VM is suspended or when just the thread is suspended.
+                ThreadInfo state = fThreads.get(threadContext.getID());
+                if (state != null) {
+                    return state.fSuspended && !state.fResumePending;
+                }
+            }
+        }
+        return false;        
     }
 
     public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
@@ -234,35 +476,86 @@ public class PDARunControl extends AbstractDsfService
     }
     
     private boolean doCanSuspend(IExecutionDMContext context) {
-        return !isSuspended(context);
+        if (context instanceof PDAThreadDMContext) {
+            PDAThreadDMContext threadContext = (PDAThreadDMContext)context; 
+            // Threads can be resumed only if the VM is not suspended.
+            if (!fVMSuspended) { 
+                ThreadInfo state = fThreads.get(threadContext.getID());
+                if (state != null) {
+                    return !state.fSuspended && state.fSuspendPending;
+                }
+            }
+        } else {
+            return !fVMSuspended && !fVMSuspendPending;
+        }
+        return false;
     }
 
 	public boolean isSuspended(IExecutionDMContext context) {
-		return fSuspended;
+        if (context instanceof PDAThreadDMContext) {
+            PDAThreadDMContext threadContext = (PDAThreadDMContext)context; 
+            // Threads can be resumed only if the VM is not suspended.
+            if (!fVMSuspended) { 
+                ThreadInfo state = fThreads.get(threadContext.getID());
+                if (state != null) {
+                    return state.fSuspended;
+                }
+            }
+        } 
+		return fVMSuspended;
 	}
 
 	public boolean isStepping(IExecutionDMContext context) {
-    	return !isSuspended(context) && fStepping;
+	    if (isSuspended(context)) {
+            if (context instanceof PDAThreadDMContext) {
+                PDAThreadDMContext threadContext = (PDAThreadDMContext)context; 
+                // Threads can be resumed only if the VM is not suspended.
+                if (!fVMStepping) { 
+                    ThreadInfo state = fThreads.get(threadContext.getID());
+                    if (state != null) {
+                        return state.fStepping;
+                    }
+                } 
+            } 
+            return fVMStepping;
+	    }
+	    return false;
     }
 
 	public void resume(IExecutionDMContext context, final RequestMonitor rm) {
 		assert context != null;
 
 		if (doCanResume(context)) { 
-            fResumePending = true;
-            fCommandControl.queueCommand(
-            	new PDAResumeCommand(fCommandControl.getProgramDMContext()),
-            	new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
-                    @Override
-                    protected void handleFailure() {
-                        // If the resume command failed, we no longer
-                        // expect to receive a resumed event.
-                        fResumePending = false;
-                        super.handleFailure();
+            if (context instanceof PDAThreadDMContext) {
+                final PDAThreadDMContext threadCtx = (PDAThreadDMContext)context;
+                fThreads.get(threadCtx.getID()).fResumePending = true;
+                fCommandControl.queueCommand(
+                    new PDAResumeCommand(fDMContext, threadCtx.getID()),
+                    new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
+                        @Override
+                        protected void handleFailure() {
+                            ThreadInfo threadState = fThreads.get(threadCtx.getID());
+                            if (threadState != null) {
+                                threadState.fResumePending = false;
+                            }
+                            super.handleFailure();
+                        }
                     }
-            	}
-            );
-        }else {
+                );                
+            } else {
+                fVMResumePending = true;
+                fCommandControl.queueCommand(
+                	new PDAVMResumeCommand(fDMContext),
+                	new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
+                        @Override
+                        protected void handleFailure() {
+                            fVMResumePending = false;
+                            super.handleFailure();
+                        }
+                	}
+                );
+            }
+        } else {
             PDAPlugin.failRequest(rm, INVALID_STATE, "Given context: " + context + ", is already running.");
         }
 	}
@@ -271,35 +564,79 @@ public class PDARunControl extends AbstractDsfService
 		assert context != null;
 
 		if (doCanSuspend(context)) {
-            fCommandControl.queueCommand(
-                new PDASuspendCommand(fCommandControl.getProgramDMContext()),
-                new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));
-            
+            if (context instanceof PDAThreadDMContext) {
+                final PDAThreadDMContext threadCtx = (PDAThreadDMContext)context;
+                fThreads.get(threadCtx.getID()).fSuspendPending = true;
+                fCommandControl.queueCommand(
+                    new PDAVMSuspendCommand(fDMContext),
+                    new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
+                        @Override
+                        protected void handleFailure() {
+                            ThreadInfo threadState = fThreads.get(threadCtx.getID());
+                            if (threadState != null) {
+                                threadState.fSuspendPending = false;
+                            }
+                            super.handleFailure();
+                        }
+                    }
+                );
+            } else {
+                fVMSuspendPending = true; 
+                fCommandControl.queueCommand(
+                    new PDAVMSuspendCommand(fDMContext),
+                    new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
+                        @Override
+                        protected void handleFailure() {
+                            fVMSuspendPending = false;
+                            super.handleFailure();
+                        }
+                    }
+                );
+            }
         } else {
             PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_STATE, "Given context: " + context + ", is already suspended."); 
         }
     }
     
     public void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
-        canResume(context, rm);
+        rm.setData(doCanStep(context, stepType));
+        rm.done();
     }
     
     public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
     	assert context != null;
     	
-    	if (doCanResume(context)) {
-            fResumePending = true;
-            fStepping = true;
+    	if (doCanStep(context, stepType)) {
+    	    final PDAThreadDMContext threadCtx = (PDAThreadDMContext)context;
+            final boolean vmWasSuspneded = fVMSuspended;
+    	    
+    	    if (vmWasSuspneded) {
+                fVMResumePending = true;
+    	    } else {
+    	        fThreads.get(threadCtx.getID()).fResumePending = true;
+    	    }
 
+    	    AbstractPDACommand<PDACommandResult> stepCommand = 
+    	        stepType == StepType.STEP_RETURN 
+    	            ? new PDAStepReturnCommand(fDMContext, threadCtx.getID())
+    	            : new PDAStepCommand(fDMContext, threadCtx.getID());
+    	           
+    	    
             fCommandControl.queueCommand(
-                new PDAStepCommand(fCommandControl.getProgramDMContext()),
+                stepCommand, 
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                     @Override
                     protected void handleFailure() {
                         // If the step command failed, we no longer
                         // expect to receive a resumed event.
-                        fResumePending = false;
-                        fStepping = false;
+                        if (vmWasSuspneded) {
+                            fVMResumePending = false;
+                        } else {
+                            ThreadInfo threadState = fThreads.get(threadCtx.getID());
+                            if (threadState != null) {
+                                threadState.fResumePending = false;
+                            }
+                        }
                     }
                 });
 
@@ -310,11 +647,26 @@ public class PDARunControl extends AbstractDsfService
     }
 
     public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
-        PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Operation not implemented"); 
+        IExecutionDMContext[] threads = new IExecutionDMContext[fThreads.size()];
+        int i = 0;
+        for (ThreadInfo info : fThreads.values()) {
+            threads[i++] = info.fContext;
+        }
+        rm.setData(threads);
+        rm.done();
     }
     
-	public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm){
-        rm.setData( new ExecutionDMData(fStateChangeReason) );
+	public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm) {
+	    if (dmc instanceof PDAThreadDMContext) {
+	        ThreadInfo info = fThreads.get(((PDAThreadDMContext)dmc).getID());
+	        if (info == null) {
+                PDAPlugin.failRequest(rm, INVALID_HANDLE, "Unknown DMC type");
+	            return;
+	        } 
+            rm.setData( new ExecutionDMData(info.fStateChangeReason) );
+	    } else {
+	        rm.setData( new ExecutionDMData(fVMStateChangeReason) );
+	    }
         rm.done();
     }
 }

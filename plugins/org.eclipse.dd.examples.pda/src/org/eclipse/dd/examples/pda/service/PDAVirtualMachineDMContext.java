@@ -14,12 +14,12 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 
 /**
- * Top-level Data Model context for the PDA debugger representing the PDA 
- * program.  
+ * Top-level Data Model context for the PDA debugger representing the while PDA 
+ * virtual machine.  
  * <p>
  * The PDA debugger is a single-threaded application.  Therefore this
  * top level context implements IExecutionDMContext directly, hence this
@@ -32,20 +32,20 @@ import org.eclipse.dd.dsf.service.DsfSession;
  * service to install/remove breakpoints.
  * </p>
  * <p>
- * Note: There should only be one instance of PDACommandControlDMContext created
- * by each PDA command control, so its equals method defaults to using 
+ * Note: There should only be one instance of PDAVirtualMachineDMContext 
+ * created by each PDA command control, so its equals method defaults to using 
  * instance comparison. 
  * </p>
  */
-public class PDAProgramDMContext extends PlatformObject
-    implements IExecutionDMContext, IBreakpointsTargetDMContext 
+public class PDAVirtualMachineDMContext extends PlatformObject
+    implements IContainerDMContext, IBreakpointsTargetDMContext 
 {
     final static IDMContext[] EMPTY_PARENTS_ARRAY = new IDMContext[0];
     
     final private String fSessionId;
     final private String fProgram;
     
-    public PDAProgramDMContext(String sessionId, String program) {
+    public PDAVirtualMachineDMContext(String sessionId, String program) {
         fSessionId = sessionId;
         fProgram = program;
     }
@@ -64,7 +64,7 @@ public class PDAProgramDMContext extends PlatformObject
     
     @Override
     public String toString() {
-        return "PDA(" + getSessionId() + ")";
+        return "pda[" + getSessionId() + "]";
     }
 
     /**

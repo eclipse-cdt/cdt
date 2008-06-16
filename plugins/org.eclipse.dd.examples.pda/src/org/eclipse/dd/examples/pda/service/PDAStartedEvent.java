@@ -11,12 +11,16 @@
 package org.eclipse.dd.examples.pda.service;
 
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 
 /**
  * Event issued when the PDA debugger is started.
  */
-public class PDAStartedEvent extends AbstractDMEvent<PDAProgramDMContext> {
-    PDAStartedEvent(PDAProgramDMContext context) {
+public class PDAStartedEvent extends AbstractDMEvent<IExecutionDMContext> 
+    implements IStartedDMEvent
+{
+    PDAStartedEvent(PDAVirtualMachineDMContext context) {
         super(context);
     }
 }

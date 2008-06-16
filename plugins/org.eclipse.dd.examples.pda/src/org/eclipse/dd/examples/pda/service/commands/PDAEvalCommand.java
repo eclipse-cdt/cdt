@@ -11,17 +11,22 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets what events cause the execution to stop.
  * 
  * <pre>
- *    C: eval {instruction}%20{parameter}|{instruction}%20{parameter}|...
+ *    C: eval {thread_id} {instruction}%20{parameter}|{instruction}%20{parameter}|...
  *    R: ok
- *    E: resume client
+ *    E: resumed {thread_id} client
  *    E: evalresult result
- *    E: suspended eval
+ *    E: suspended {thread_id} eval
+ *    
+ * Errors:
+ *    error: invalid thread
+ *    error: cannot evaluate while vm is suspended
+ *    error: thread running        
  * </pre>
  * 
  * Where event_name could be <code>unimpinstr</code> or <code>nosuchlabel</code>.  
@@ -29,8 +34,8 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 @Immutable
 public class PDAEvalCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAEvalCommand(PDAProgramDMContext context, String operation) {
-        super(context, "eval " + operation);
+    public PDAEvalCommand(PDAVirtualMachineDMContext context, int threadId, String operation) {
+        super(context, "eval " + threadId + " " + operation);
     }
     
     @Override

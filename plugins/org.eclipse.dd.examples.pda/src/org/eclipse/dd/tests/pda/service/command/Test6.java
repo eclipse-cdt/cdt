@@ -31,49 +31,54 @@ public class Test6 extends CommandControlTestsBase {
 
     @Test
     public void testWatchPoints() throws Throwable {
-        expectEvent("started");
+        expectEvent("started 1");
         sendCommand("watch inner::a 1");
         sendCommand("watch main::a 2");
-        sendCommand("resume");
-        expectEvent("resumed client");
-        expectEvent("suspended watch write main::a");
-        sendCommand("stack", fProgram + "|4|main|a|b");
-        sendCommand("resume");
-        expectEvent("resumed client");
-        expectEvent("suspended watch read inner::a");
-        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|25|inner|a|c");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("vmsuspended 1 watch write main::a");
+        sendCommand("stack 1", fProgram + "|4|main|a|b");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("vmsuspended 1 watch read inner::a");
+        sendCommand("stack 1", fProgram + "|10|main|a|b#" + fProgram + "|25|inner|a|c");
         sendCommand("watch inner::a 0");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("exited 1");        
         expectEvent("terminated");
     }
     
     @Test
     public void testEval() throws Throwable {
-        expectEvent("started");
-        sendCommand("set 25");
-        sendCommand("resume");
-        expectEvent("resumed client");
-        expectEvent("suspended breakpoint 25");
+        expectEvent("started 1");
 
-        sendCommand("eval push%204|push%205|add");
-        expectEvent("resumed client");
+        sendCommand("eval 1 test_error", "error: cannot evaluate while vm is suspended");
+        
+        sendCommand("set 25 0");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("suspended 1 breakpoint 25");
+
+        sendCommand("eval 1 push%204|push%205|add");
+        expectEvent("resumed 1 eval");
         expectEvent("evalresult 9");
-        expectEvent("suspended eval");
+        expectEvent("suspended 1 eval");
 
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|a|c");
-        sendCommand("data", "4|4|");
-        sendCommand("eval call%20other");
-        expectEvent("resumed client");
+        sendCommand("step 1");
+        expectEvent("resumed 1 step");
+        expectEvent("suspended 1 step");
+        sendCommand("stack 1", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|a|c");
+        sendCommand("data 1", "4|4|");
+        sendCommand("eval 1 call%20other");
+        expectEvent("resumed 1 eval");
         expectEvent("evalresult 15");
-        expectEvent("suspended eval");
-        sendCommand("stack", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|a|c");
-        sendCommand("data", "4|4|");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        expectEvent("suspended 1 eval");
+        sendCommand("stack 1", fProgram + "|10|main|a|b#" + fProgram + "|26|inner|a|c");
+        sendCommand("data 1", "4|4|");
+        sendCommand("resume 1");
+        expectEvent("resumed 1 client");
+        expectEvent("exited 1");
         expectEvent("terminated");
     }
 }

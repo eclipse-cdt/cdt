@@ -38,55 +38,111 @@ public class PDAVirtualMachine {
         public Object pop() {
             return isEmpty() ? 0 : remove(size() - 1);
         }
-        
+
         public void push(Object value) {
             add(value);
         }
     }
 
     class Args {
-        private final String[] fArgs;
+        final String[] fArgs;
+
         int next = 0;
+
         Args(String[] args) {
             fArgs = args;
         }
-        
+
         String getNextStringArg() {
             if (fArgs.length > next) {
                 return fArgs[next++];
             }
             return "";
         }
-        
+
         int getNextIntArg() {
             String arg = getNextStringArg();
             try {
                 return Integer.parseInt(arg);
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
             return 0;
         }
-        
+
         Object getNextIntOrStringArg() {
             String arg = getNextStringArg();
             try {
                 return Integer.parseInt(arg);
-            } catch (NumberFormatException e) {}
-            return arg;            
+            } catch (NumberFormatException e) {
+            }
+            return arg;
+        }
+
+        PDAThread getThreadArg() {
+            int id = getNextIntArg();
+            return fThreads.get(id);
         }
     }
 
-    /** The push down automata data stack (the data stack). */
-    private final Stack fStack = new Stack();
+    class PDAThread {
+        final int fID;
 
+        /** The push down automata data stack (the data stack). */
+        final Stack fStack = new Stack();
+
+        /**
+         * PDAThread copy of the code. It can differ from the program if
+         * performing an evaluation.
+         */
+        String[] fThreadCode;
+
+        /** PDAThread copy of the labels. */
+        Map<String, Integer> fThreadLabels;
+
+        /** The stack of stack frames (the control stack) */
+        final List<Frame> fFrames = new LinkedList<Frame>();
+
+        /** Current stack frame (not includced in fFrames) */
+        Frame fCurrentFrame;
+
+        /**
+         * The run flag is true if the thread is running. If the run flag is
+         * false, the thread exits the next time the main instruction loop runs.
+         */
+        boolean fRun = true;
+
+        String fSuspend = null;
+
+        boolean fStep = false;
+
+        boolean fStepReturn = false;
+        
+        int fSavedPC;
+
+        boolean fPerformingEval = false;
+        
+        PDAThread(int id, String function, int pc) {
+            fID = id;
+            fCurrentFrame = new Frame(function, pc);
+            fThreadCode = fCode;
+            fThreadLabels = fLabels;
+        }
+    }
+
+    final Map<Integer, PDAThread> fThreads = new LinkedHashMap<Integer, PDAThread>();
+
+    int fNextThreadId = 1;
+
+    private boolean fStarted = true;
     /**
-     * The code is stored as an array of strings, each line of
-     * the source file being one entry in the array.
+     * The code is stored as an array of strings, each line of the source file
+     * being one entry in the array.
      */
-    private String[] fCode;
+    final String[] fCode;
 
     /** A mapping of labels to indicies in the code array */
-    private Map<String,Integer> fLabels = new HashMap<String, Integer>();
-    
+    final Map<String, Integer> fLabels;
+
     /** Each stack frame is a mapping of variable names to values. */
     class Frame extends LinkedHashMap<String, Object> {
         /**
@@ -95,80 +151,68 @@ public class PDAVirtualMachine {
         final String fFunction;
 
         /**
-         * The current program counter in the frame
-         * the pc points to the next instruction to be executed
+         * The current program counter in the frame the pc points to the next
+         * instruction to be executed
          */
         int fPC;
 
-        public Frame(String function, int pc) {
+        Frame(String function, int pc) {
             fFunction = function;
             fPC = pc;
         }
     }
-    
-    /** The stack of stack frames (the control stack) */
-    private final List<Frame> fFrames = new LinkedList<Frame>();
-
-    /** Current stack frame (not includced in fFrames) */
-    private Frame fCurrentFrame = new Frame("main", 0);
-    
-    /**
-     * Breakpoints are stored as a boolean for each line of code
-     * if the boolean is true, there is a breakpoint on that line
-     */
-    private final Map<Integer, Boolean> fBreakpoints = new HashMap<Integer, Boolean>();
 
     /**
-     * The run flag is true if the VM is running.
-     * If the run flag is false, the VM exits the
-     * next time the main instruction loop runs.
+     * Breakpoints are stored per each each line of code.  The boolean indicates
+     * whether the whole VM should suspend or just the triggering thread.
      */
-    private boolean fRun = true;
+    final Map<Integer, Boolean> fBreakpoints = new HashMap<Integer, Boolean>();
 
     /**
-     * The suspend flag is true if the VM should suspend
-     * running the program and just listen for debug commands.
+     * The suspend flag is true if the VM should suspend running the program and
+     * just listen for debug commands.
      */
-    private String fSuspend;
+    String fSuspendVM;
 
     /** Flag indicating whether the debugger is performing a step. */
-    private boolean fStep = false;
-    
+    boolean fStepVM = false;
+
     /** Flag indicating whether the debugger is performing a step return */
-    private boolean fStepReturn = false;
+    boolean fStepReturnVM = false;
     
-    /** Flag indicating whether the started event was sent. */
-    private boolean fStarted = true;
+    int fSteppingThread = 0;
 
     /** Name of the pda program being debugged */
-    private final String fFilename;    
+    final String fFilename;
 
-    /**The command line argument to start a debug session. */
-    private final boolean fDebug;
+    /** The command line argument to start a debug session. */
+    final boolean fDebug;
 
     /** The port to listen for debug commands on */
-    private final int fCommandPort;
+    final int fCommandPort;
 
-    /** Command socket for receiving debug commands and sending command responses */    
-    private Socket fCommandSocket;
+    /**
+     * Command socket for receiving debug commands and sending command responses
+     */
+    Socket fCommandSocket;
 
     /** Command socket reader */
-    private BufferedReader fCommandReceiveStream;
-    
+    BufferedReader fCommandReceiveStream;
+
     /** Command socket write stream. */
-    private OutputStream fCommandResponseStream;
+    OutputStream fCommandResponseStream;
 
     /** The port to send debug events to */
-    private final int fEventPort;
-    
+    final int fEventPort;
+
     /** Event socket */
-    private Socket fEventSocket;
-    
+    Socket fEventSocket;
+
     /** Event socket and write stream. */
-    private OutputStream fEventStream;
+    OutputStream fEventStream;
 
     /** The eventstops table holds which events cause suspends and which do not. */
-    private final Map<String, Boolean> fEventStops =  new HashMap<String, Boolean>();
+    final Map<String, Boolean> fEventStops = new HashMap<String, Boolean>();
     {
         fEventStops.put("unimpinstr", false);
         fEventStops.put("nosuchlabel", false);
@@ -176,37 +220,35 @@ public class PDAVirtualMachine {
 
     /**
      * The watchpoints table holds watchpoint information.
-     *  variablename_stackframedepth => N
-     *  N = 0 is no watch
-     *  N = 1 is read watch
-     *  N = 2 is write watch
-     *  N = 3 is both, etc.
+     * <p/>
+     * variablename_stackframedepth => N
+     * <ul> 
+     * <li>N = 0 is no watch</li> 
+     * <li>N = 1 is read watch</li>
+     * <li>N = 2 is write watch</li>
+     * <li>N = 3 is both, etc.</li>
      */
-    private final Map<String, Integer> fWatchpoints = new HashMap<String, Integer>();
-    
-    public String[] fSavedCode;
-    public Map<String, Integer> fSavedLables;
-    public int fSavedPC;
-    
+    final Map<String, Integer> fWatchpoints = new HashMap<String, Integer>();
+
     public static void main(String[] args) {
         String programFile = args.length >= 1 ? args[0] : null;
         if (programFile == null) {
             System.err.println("Error: No program specified");
             return;
         }
-        
+
         String debugFlag = args.length >= 2 ? args[1] : "";
         boolean debug = "-debug".equals(debugFlag);
         int commandPort = 0;
         int eventPort = 0;
-                
+
         if (debug) {
             String commandPortStr = args.length >= 3 ? args[2] : "";
             try {
                 commandPort = Integer.parseInt(commandPortStr);
             } catch (NumberFormatException e) {
                 System.err.println("Error: Invalid command port");
-                return;                
+                return;
             }
 
             String eventPortStr = args.length >= 4 ? args[3] : "";
@@ -214,10 +256,10 @@ public class PDAVirtualMachine {
                 eventPort = Integer.parseInt(eventPortStr);
             } catch (NumberFormatException e) {
                 System.err.println("Error: Invalid event port");
-                return;                
+                return;
             }
         }
-        
+
         PDAVirtualMachine pdaVM = null;
         try {
             pdaVM = new PDAVirtualMachine(programFile, debug, commandPort, eventPort);
@@ -228,10 +270,10 @@ public class PDAVirtualMachine {
         }
         pdaVM.run();
     }
-    
-    public PDAVirtualMachine(String inputFile, boolean debug, int commandPort, int eventPort) throws IOException{
+
+    PDAVirtualMachine(String inputFile, boolean debug, int commandPort, int eventPort) throws IOException {
         fFilename = inputFile;
-        
+
         // Load all the code into memory
         FileReader fileReader = new FileReader(inputFile);
         StringWriter stringWriter = new StringWriter();
@@ -249,37 +291,35 @@ public class PDAVirtualMachine {
         code.add(stringWriter.toString().trim());
         fCode = code.toArray(new String[code.size()]);
 
-        mapLabels();
-        
+        fLabels = mapLabels(fCode);
+
         fDebug = debug;
         fCommandPort = commandPort;
         fEventPort = eventPort;
-        if (fDebug) {
-            fSuspend = "client";
-        }
     }
-    
+
     /**
      * Initializes the labels map
      */
-    private void mapLabels() {
-        fLabels = new HashMap<String, Integer>();
-        for (int i = 0; i < fCode.length; i++) {
-            if (fCode[i].length() != 0 && fCode[i].charAt(0) == ':') {
-                fLabels.put(fCode[i].substring(1), i);
+    Map<String, Integer> mapLabels(String[] code) {
+        Map<String, Integer> labels = new HashMap<String, Integer>();
+        for (int i = 0; i < code.length; i++) {
+            if (code[i].length() != 0 && code[i].charAt(0) == ':') {
+                labels.put(code[i].substring(1), i);
             }
         }
-        
+        return labels;
     }
-    
-    private void sendCommandResponse(String response) {
+
+    void sendCommandResponse(String response) {
         try {
             fCommandResponseStream.write(response.getBytes());
             fCommandResponseStream.flush();
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
-    private void sendDebugEvent(String event, boolean error) {
+    void sendDebugEvent(String event, boolean error) {
         if (fDebug) {
             try {
                 fEventStream.write(event.getBytes());
@@ -287,18 +327,18 @@ public class PDAVirtualMachine {
                 fEventStream.flush();
             } catch (IOException e) {
                 System.err.println("Error: " + e);
-                fRun = false;
+                System.exit(1);
             }
         } else if (error) {
             System.err.println("Error: " + event);
         }
     }
-    
-    private void startDebugger() throws IOException {
+
+    void startDebugger() throws IOException {
         if (fDebug) {
             System.out.println("-debug " + fCommandPort + " " + fEventPort);
         }
-        
+
         ServerSocket commandServerSocket = new ServerSocket(fCommandPort);
         fCommandSocket = commandServerSocket.accept();
         fCommandReceiveStream = new BufferedReader(new InputStreamReader(fCommandSocket.getInputStream()));
@@ -309,32 +349,74 @@ public class PDAVirtualMachine {
         fEventSocket = eventServerSocket.accept();
         fEventStream = new PrintStream(fEventSocket.getOutputStream());
         eventServerSocket.close();
-        
+
         System.out.println("debug connection accepted");
-        
-        fSuspend = "client";
-        sendDebugEvent("started", false);
+
+        fSuspendVM = "client";
     }
-    
-    public void run() {
-        while (fRun) {
+
+    void run() {
+        int id = fNextThreadId++;
+        fThreads.put(id, new PDAThread(id, "main", 0));
+        if (fDebug) {
+            sendDebugEvent("started " + id, false);
+        }
+
+        boolean allThreadsSuspended = false;
+        while (!fThreads.isEmpty()) {
             checkForBreakpoint();
-            if (fSuspend != null) {
+            
+            if (fSuspendVM != null) {
                 debugUI();
-            }
-            yieldToDebug();
-            String instruction = fCode[fCurrentFrame.fPC];
-            fCurrentFrame.fPC++;
-            doOneInstruction(instruction);
-            if (fCurrentFrame.fPC > fCode.length) {
-                fRun = false;
-            } else if (fStepReturn) {
-                instruction = fCode[fCurrentFrame.fPC];
-                if ("return".equals(instruction)) {
-                    fSuspend = "step";
+            } else {
+                yieldToDebug(allThreadsSuspended);
+                if (fSuspendVM != null) {
+                    // Received a command to suspend VM, skip executing threads.
+                    continue;
                 }
             }
+
+            PDAThread[] threadsCopy = fThreads.values().toArray(new PDAThread[fThreads.size()]);
+            allThreadsSuspended = true;
+            for (PDAThread thread : threadsCopy) {
+                if (thread.fSuspend == null) {
+                    allThreadsSuspended = false;
+                    
+                    String instruction = thread.fThreadCode[thread.fCurrentFrame.fPC];
+                    thread.fCurrentFrame.fPC++;
+                    doOneInstruction(thread, instruction);
+                    if (thread.fCurrentFrame.fPC > thread.fThreadCode.length) {
+                        // Thread reached end of code, exit from the thread.
+                        thread.fRun = false;
+                    } else if (thread.fStepReturn) {
+                        // If this thread is in a step-return operation, check
+                        // if we've returned from a call.  
+                        instruction = thread.fThreadCode[thread.fCurrentFrame.fPC];
+                        if ("return".equals(instruction)) {
+                            // Note: this will only be triggered if the current 
+                            // thread also has the fStepReturn flag set.
+                            if (fStepReturnVM) {
+                                fSuspendVM = thread.fID + " step";
+                            } else {
+                                thread.fSuspend = "step";
+                            }
+                        }
+                    }
+                    if (!thread.fRun) {
+                        sendDebugEvent("exited " + thread.fID, false);
+                        fThreads.remove(thread.fID);
+                    } else if (thread.fSuspend != null) {
+                        sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false);
+                        thread.fStep = thread.fStepReturn = thread.fPerformingEval = false;
+                    }
+                } 
+            }
+            
+            // Force thread context switch to avoid starving out other
+            // processes in the system.
+            Thread.yield();
         }
+        
         sendDebugEvent("terminated", false);
         if (fDebug) {
             try {
@@ -347,122 +429,141 @@ public class PDAVirtualMachine {
                 System.out.println("Error: " + e);
             }
         }
-            
-    }
-    
-    private void doOneInstruction(String instr) {
-        if (instr.startsWith(":")) {
-            // label
-            if (fStep) {
-                fSuspend = "step";
-            }
-        } else if (instr.startsWith("#")) {
-            // comment
-        } else {
-            StringTokenizer tokenizer = new StringTokenizer(instr);
-            String op = tokenizer.nextToken();
-            List<String> tokens = new LinkedList<String>();
-            while (tokenizer.hasMoreTokens()) {
-                tokens.add(tokenizer.nextToken());
-            }
-            Args args = new Args(tokens.toArray(new String[tokens.size()]));
 
-            boolean opValid = true;
-            if (op.equals("add")) iAdd(args);
-            else if (op.equals("branch_not_zero")) iBranchNotZero(args);
-            else if (op.equals("call")) iCall(args);
-            else if (op.equals("dec")) iDec(args);
-            else if (op.equals("dup")) iDup(args);
-            else if (op.equals("halt")) iHalt(args);
-            else if (op.equals("output")) iOutput(args);
-            else if (op.equals("pop")) iPop(args);
-            else if (op.equals("push")) iPush(args);
-            else if (op.equals("return")) iReturn(args);
-            else if (op.equals("var")) iVar(args);
-            else if (op.equals("xyzzy")) iInternalEndEval(args);
-            else {
-                opValid = false;
+    }
+
+    void doOneInstruction(PDAThread thread, String instr) {
+        StringTokenizer tokenizer = new StringTokenizer(instr);
+        String op = tokenizer.nextToken();
+        List<String> tokens = new LinkedList<String>();
+        while (tokenizer.hasMoreTokens()) {
+            tokens.add(tokenizer.nextToken());
+        }
+        Args args = new Args(tokens.toArray(new String[tokens.size()]));
+
+        boolean opValid = true;
+        if (op.equals("add")) iAdd(thread, args);
+        else if (op.equals("branch_not_zero")) iBranchNotZero(thread, args);
+        else if (op.equals("call")) iCall(thread, args);
+        else if (op.equals("dec")) iDec(thread, args);
+        else if (op.equals("dup")) iDup(thread, args);
+        else if (op.equals("exec")) iExec(thread, args);            
+        else if (op.equals("halt")) iHalt(thread, args);
+        else if (op.equals("output")) iOutput(thread, args);
+        else if (op.equals("pop")) iPop(thread, args);
+        else if (op.equals("push")) iPush(thread, args);
+        else if (op.equals("return")) iReturn(thread, args);
+        else if (op.equals("var")) iVar(thread, args);
+        else if (op.equals("xyzzy")) iInternalEndEval(thread, args);
+        else if (op.startsWith(":")) {} // label
+        else if (op.startsWith("#")) {} // comment
+        else {
+            opValid = false;
+        }
+
+        if (!opValid) {
+            sendDebugEvent("unimplemented instruction " + op, true);
+            if (fEventStops.get("unimpinstr")) {
+                fSuspendVM = thread.fID + " event unimpinstr";
+                thread.fCurrentFrame.fPC--;
             }
-            
-            if (!opValid) {
-                sendDebugEvent("unimplemented instruction " + op, true);
-                if (fEventStops.get("unimpinstr")) {
-                    fSuspend = "event unimpinstr";
-                    fCurrentFrame.fPC--;
-                }
-            } else if (fStep) {
-                fSuspend = "step";
+        } else if (thread.fStep) {
+            if (fStepVM) {
+                fSuspendVM = thread.fID + " step";
+                fStepVM = false;
+            } else {
+                thread.fSuspend = "step";
             }
+            thread.fStep = false;
         }
     }
-    
-    private void checkForBreakpoint() {
+
+    void checkForBreakpoint() {
         if (fDebug) {
-            int pc = fCurrentFrame.fPC;
-            if (!"eval".equals(fSuspend) && fBreakpoints.containsKey(pc) && fBreakpoints.get(pc)) {
-                fSuspend = "breakpoint " + pc;
+            for (PDAThread thread : fThreads.values()) {
+                int pc = thread.fCurrentFrame.fPC;
+                // Suspend for breakpoint if:
+                // - the VM is not yet set to suspend, for e.g. as a result of step end,
+                // - the thread is not yet suspended and is not performing an evaluation
+                // - the breakpoints table contains a breakpoint for the given line.
+                if (fSuspendVM == null && 
+                    thread.fSuspend == null && !thread.fPerformingEval && 
+                    fBreakpoints.containsKey(pc)) 
+                {
+                    if (fBreakpoints.get(pc)) {
+                        fSuspendVM = thread.fID + " breakpoint " + pc;
+                    } else {
+                        thread.fSuspend = "breakpoint " + pc;
+                        thread.fStep = thread.fStepReturn = false;
+                        sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false);
+                    }
+                }
             }
         }
     }
-    
+
     /**
-     * For each instruction, we check the debug co-routine for
-     * control input. If there is input, we process it.
+     * After each instruction, we check the debug command channel for control input. If
+     * there are commands, process them.
      */
-    private void yieldToDebug() {
+    void yieldToDebug(boolean allThreadsSuspended) {
         if (fDebug) {
             String line = "";
             try {
-                if (fCommandReceiveStream.ready()) {
+                if (allThreadsSuspended || fCommandReceiveStream.ready()) {
                     line = fCommandReceiveStream.readLine();
                     processDebugCommand(line);
                 }
             } catch (IOException e) {
                 System.err.println("Error: " + e);
-                fRun = false;
-                return;
+                System.exit(1);
             }
         }
     }
-    
-    private void debugUI() {
-        if (fSuspend == null) {
-            return;
-        }
-        
+
+    /**
+     *  Service the debugger commands while the VM is suspended
+     */
+    void debugUI() {
         if (!fStarted) {
-            sendDebugEvent("suspended " + fSuspend, false);
+            sendDebugEvent("vmsuspended " + fSuspendVM, false);
         } else {
             fStarted = false;
         }
+
+        // Clear all stepping flags.  In case the VM suspended while
+        // a step operation was being performed for the VM or some thread.
+        fStepVM = fStepReturnVM = false;
+        for (PDAThread thread : fThreads.values()) {
+            thread.fSuspend = null;
+            thread.fStep = thread.fStepReturn = thread.fPerformingEval = false;
+        }
         
-        fStep = false;
-        fStepReturn = false;
-        
-        while (fSuspend != null) {
+        while (fSuspendVM != null) {
             String line = "";
             try {
                 line = fCommandReceiveStream.readLine();
             } catch (IOException e) {
                 System.err.println("Error: " + e);
-                fRun = false;
+                System.exit(1);
                 return;
             }
             processDebugCommand(line);
         }
-        if (fStep) {
-            sendDebugEvent("resumed step", false);
+
+        if (fStepVM || fStepReturnVM) {
+            sendDebugEvent("vmresumed step", false);
         } else {
-            sendDebugEvent("resumed client", false);
+            sendDebugEvent("vmresumed client", false);
         }
     }
-    
-    private void processDebugCommand(String line) {
+
+    void processDebugCommand(String line) {
         StringTokenizer tokenizer = new StringTokenizer(line.trim());
         if (line.length() == 0) {
             return;
         }
-        
+
         String command = tokenizer.nextToken();
         List<String> tokens = new LinkedList<String>();
         while (tokenizer.hasMoreTokens()) {
@@ -471,42 +572,64 @@ public class PDAVirtualMachine {
         Args args = new Args(tokens.toArray(new String[tokens.size()]));
 
         if ("clear".equals(command)) debugClearBreakpoint(args);
-        else if ("data".equals(command)) debugData();
-        else if ("drop".equals(command)) debugDropFrame();
+        else if ("data".equals(command)) debugData(args);
+        else if ("drop".equals(command)) debugDropFrame(args);
         else if ("eval".equals(command)) debugEval(args);
         else if ("eventstop".equals(command)) debugEventStop(args);
         else if ("exit".equals(command)) debugExit();
-        else if ("popdata".equals(command)) debugPop();
+        else if ("popdata".equals(command)) debugPop(args);
         else if ("pushdata".equals(command)) debugPush(args);
-        else if ("resume".equals(command)) debugResume();
+        else if ("resume".equals(command)) debugResume(args);
         else if ("set".equals(command)) debugSetBreakpoint(args);
         else if ("setdata".equals(command)) debugSetData(args);
         else if ("setvar".equals(command)) debugSetVariable(args);
-        else if ("stack".equals(command)) debugStack();
-        else if ("step".equals(command)) debugStep();
-        else if ("stepreturn".equals(command)) debugStepReturn();
-        else if ("suspend".equals(command)) debugSuspend();
+        else if ("stack".equals(command)) debugStack(args);
+        else if ("state".equals(command)) debugState(args);
+        else if ("step".equals(command)) debugStep(args);
+        else if ("stepreturn".equals(command)) debugStepReturn(args);
+        else if ("suspend".equals(command)) debugSuspend(args);
+        else if ("threads".equals(command)) debugThreads();
         else if ("var".equals(command)) debugVar(args);
+        else if ("vmresume".equals(command)) debugVMResume();
+        else if ("vmsuspend".equals(command)) debugVMSuspend();
         else if ("watch".equals(command)) debugWatch(args);
+        else {
+            sendCommandResponse("error: invalid command\n");
+        }
     }
-    
-    private void debugClearBreakpoint(Args args) {
+
+    void debugClearBreakpoint(Args args) {
         int line = args.getNextIntArg();
-        
-        fBreakpoints.put(line, false);
+
+        fBreakpoints.remove(line);
         sendCommandResponse("ok\n");
     }
 
     private static Pattern fPackPattern = Pattern.compile("%([a-fA-F0-9][a-fA-F0-9])");
-    private void debugEval(Args args) {
+
+    void debugEval(Args args) {
+        if (fSuspendVM != null) {
+            sendCommandResponse("error: cannot evaluate while vm is suspended\n");        
+            return;
+        }
+        
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+        
+        if (thread.fSuspend == null) {
+            sendCommandResponse("error: thread running\n");
+            return;
+        }
         
         StringTokenizer tokenizer = new StringTokenizer(args.getNextStringArg(), "|");
         tokenizer.countTokens();
-        
-        fSavedCode = fCode;
+
         int numEvalLines = tokenizer.countTokens();
-        fCode = new String[fSavedCode.length + numEvalLines + 1];
-        System.arraycopy(fSavedCode, 0, fCode, 0, fSavedCode.length);
+        thread.fThreadCode = new String[fCode.length + numEvalLines + 1];
+        System.arraycopy(fCode, 0, thread.fThreadCode, 0, fCode.length);
         for (int i = 0; i < numEvalLines; i++) {
             String line = tokenizer.nextToken();
             StringBuffer lineBuf = new StringBuffer(line.length());
@@ -516,123 +639,188 @@ public class PDAVirtualMachine {
                 lineBuf.append(line.substring(lastMatchEnd, matcher.start()));
                 String charCode = line.substring(matcher.start() + 1, matcher.start() + 3);
                 try {
-                    lineBuf.append((char)Integer.parseInt(charCode, 16));
-                } catch (NumberFormatException e) {}
+                    lineBuf.append((char) Integer.parseInt(charCode, 16));
+                } catch (NumberFormatException e) {
+                }
                 lastMatchEnd = matcher.end();
             }
             if (lastMatchEnd < line.length()) {
                 lineBuf.append(line.substring(lastMatchEnd));
             }
-            fCode[fSavedCode.length + i] = lineBuf.toString();
+            thread.fThreadCode[fCode.length + i] = lineBuf.toString();
         }
-        fCode[fSavedCode.length + numEvalLines] = "xyzzy";
-        mapLabels(); 
+        thread.fThreadCode[fCode.length + numEvalLines] = "xyzzy";
+        thread.fThreadLabels = mapLabels(fCode);
+
+        thread.fSavedPC = thread.fCurrentFrame.fPC;
+        thread.fCurrentFrame.fPC = fCode.length;
+        thread.fPerformingEval = true;
         
-        fSavedPC = fCurrentFrame.fPC;
-        fCurrentFrame.fPC = fSavedCode.length;
+        thread.fSuspend = null;
         
         sendCommandResponse("ok\n");
-        
-        fSuspend = null;
+
+        sendDebugEvent("resumed " + thread.fID + " eval", false);
     }
-    
-    private void debugData() {
+
+    void debugData(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
         StringBuffer result = new StringBuffer();
-        for (Object val : fStack) {
+        for (Object val : thread.fStack) {
             result.append(val);
             result.append('|');
         }
         result.append('\n');
         sendCommandResponse(result.toString());
     }
-    
-    private void debugDropFrame() {
-        if (!fFrames.isEmpty()) {
-            fCurrentFrame = fFrames.remove(fFrames.size() - 1);
+
+    void debugDropFrame(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
         }
-        fCurrentFrame.fPC--;
+
+        if (!thread.fFrames.isEmpty()) {
+            thread.fCurrentFrame = thread.fFrames.remove(thread.fFrames.size() - 1);
+        }
+        thread.fCurrentFrame.fPC--;
         sendCommandResponse("ok\n");
-        sendDebugEvent( "resumed drop", false );
-        sendDebugEvent( "suspended drop", false );
+        if (fSuspendVM != null) {
+            sendDebugEvent("vmresumed drop", false);
+            sendDebugEvent("vmsuspended " + thread.fID + " drop", false);
+        } else {
+            sendDebugEvent("resumed " + thread.fID + " drop", false);
+            sendDebugEvent("suspended " + thread.fID + " drop", false);
+        }
     }
-    
-    private void debugEventStop(Args args) {
+
+    void debugEventStop(Args args) {
         String event = args.getNextStringArg();
         int stop = args.getNextIntArg();
         fEventStops.put(event, stop > 0);
         sendCommandResponse("ok\n");
     }
 
-    private void debugExit() {
+    void debugExit() {
         sendCommandResponse("ok\n");
-        sendDebugEvent( "terminated", false );
+        sendDebugEvent("terminated", false);
         System.exit(0);
     }
-    
-    private void debugPop() {
-        fStack.pop();
-        sendCommandResponse("ok\n");
-    }
-    
-    private void debugPush(Args args) {
-        Object val = args.getNextIntOrStringArg();
-        fStack.push(val);
+
+    void debugPop(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
+        thread.fStack.pop();
         sendCommandResponse("ok\n");
     }
 
-    private void debugResume() {
-        fSuspend = null;
-        sendCommandResponse("ok\n");
-    }
-
-    private void debugSetBreakpoint(Args args) {
-        int line = args.getNextIntArg();
+    void debugPush(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
         
-        fBreakpoints.put(line, true);
+        Object val = args.getNextIntOrStringArg();
+        thread.fStack.push(val);
         sendCommandResponse("ok\n");
     }
-    
-    private void debugSetData(Args args) {
+
+    void debugResume(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        } 
+        if (fSuspendVM != null) {
+            sendCommandResponse("error: cannot resume thread when vm is suspended\n");
+            return;
+        } 
+        if (thread.fSuspend == null) {
+            sendCommandResponse("error: thread already running\n");
+            return;
+        } 
+        
+        thread.fSuspend = null;
+        sendDebugEvent("resumed " + thread.fID + " client", false);
+        
+        sendCommandResponse("ok\n");
+    }
+
+    void debugSetBreakpoint(Args args) {
+        int line = args.getNextIntArg();
+        int stopVM = args.getNextIntArg();
+        
+        fBreakpoints.put(line, stopVM != 0);
+        sendCommandResponse("ok\n");
+    }
+
+    void debugSetData(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+        
         int offset = args.getNextIntArg();
         Object val = args.getNextIntOrStringArg();
 
-        if (offset < fStack.size()) {
-            fStack.set(offset, val);
+        if (offset < thread.fStack.size()) {
+            thread.fStack.set(offset, val);
         } else {
-            fStack.add(0, val);
+            thread.fStack.add(0, val);
         }
         sendCommandResponse("ok\n");
     }
 
-    private void debugSetVariable(Args args) {
+    void debugSetVariable(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
         int sfnumber = args.getNextIntArg();
         String var = args.getNextStringArg();
         Object val = args.getNextIntOrStringArg();
-        
-        if (sfnumber > fFrames.size()) {
-            fCurrentFrame.put(var, val);
+
+        if (sfnumber >= thread.fFrames.size()) {
+            thread.fCurrentFrame.put(var, val);
         } else {
-            fFrames.get(sfnumber).put(var, val);
+            thread.fFrames.get(sfnumber).put(var, val);
         }
-        sendCommandResponse("ok\n");        
+        sendCommandResponse("ok\n");
     }
-    
-    private void debugStack() {
+
+    void debugStack(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
         StringBuffer result = new StringBuffer();
-        for (Frame frame : fFrames) {
+        for (Frame frame : thread.fFrames) {
             result.append(printFrame(frame));
             result.append('#');
         }
-        result.append(printFrame(fCurrentFrame));
+        result.append(printFrame(thread.fCurrentFrame));
         result.append('\n');
         sendCommandResponse(result.toString());
     }
 
-
     /**
-     * The stack frame output is:
-     * frame # frame # frame ...
-     * where each frame is:
+     * The stack frame output is: frame # frame # frame ... where each frame is:
      * filename | line number | function name | var | var | var | var ...
      */
     private String printFrame(Frame frame) {
@@ -649,161 +837,288 @@ public class PDAVirtualMachine {
         return buf.toString();
     }
 
-    private void debugStep() {
-        // set suspend to 0 to allow the debug loop to exit back to
-        // the instruction loop and thus run an instruction. However,
-        // we want to come back to the debug loop right away, so the
-        // step flag is set to true which will cause the suspend flag
-        // to get set to true when we get to the next instruction.
-        fStep = true;
-        fSuspend = null;
-        sendCommandResponse("ok\n");        
+    void debugState(Args args) {
+        PDAThread thread = args.getThreadArg();
+        String response = null;
+        if (thread == null) {
+            response = fSuspendVM == null ? "running" : fSuspendVM;
+        } else if (fSuspendVM != null) {
+            response = "vm";
+        } else {
+            response = thread.fSuspend == null ? "running" : thread.fSuspend;
+        }
+        sendCommandResponse(response + "\n");
+    }
+    
+    void debugStep(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        } 
+
+        // Set suspend to null to allow the debug loop to exit back to the 
+        // instruction loop and thus run an instruction. However, we want to 
+        // come back to the debug loop right away, so the step flag is set to 
+        // true which will cause the suspend flag to get set to true when we 
+        // get to the next instruction.
+        if (fSuspendVM != null) {
+            // All threads are suspended, so suspend all threads again when 
+            // step completes.
+            fSuspendVM = null;
+            fStepVM = true;
+            // Also mark the thread that initiated the step to mark it as
+            // the triggering thread when suspending.
+            thread.fStep = true;
+        } else {
+            if (thread.fSuspend == null) {
+                sendCommandResponse("error: thread already running\n");
+                return;
+            }
+            thread.fSuspend = null;
+            thread.fStep = true;
+            sendDebugEvent("resumed " + thread.fID + " step", false);
+        }
+        sendCommandResponse("ok\n");
     }
 
-    private void debugStepReturn() {
-        fStepReturn = true;
-        fSuspend = null;
-        sendCommandResponse("ok\n");        
+    void debugStepReturn(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        } 
+        
+        if (fSuspendVM != null) {
+            fSuspendVM = null;
+            fStepReturnVM = true;
+            thread.fStepReturn = true;
+        } else {
+            if (thread.fSuspend == null) {
+                sendCommandResponse("error: thread running\n");
+                return;
+            }
+            thread.fSuspend = null;
+            thread.fStepReturn = true;
+            sendDebugEvent("resumed " + thread.fID + " step", false);
+        }
+        sendCommandResponse("ok\n");
     }
-    
-    private void debugSuspend() {
-        fSuspend = "client";
-        sendCommandResponse("ok\n");        
+
+    void debugSuspend(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        } 
+        if (fSuspendVM != null) {
+            sendCommandResponse("error: vm already suspended\n");
+            return;
+        }
+        if (thread.fSuspend != null) {
+            sendCommandResponse("error: thread already suspended\n");
+            return;
+        } 
+        
+        thread.fSuspend = "client";
+        sendDebugEvent("suspended " + thread.fID + " client", false);
+        sendCommandResponse("ok\n");
     }
-    
-    private void debugVar(Args args) {
+
+    void debugThreads() {
+        StringBuffer response = new StringBuffer();
+        for (int threadId : fThreads.keySet()) {
+            response.append(threadId);
+            response.append(' ');
+        }
+        sendCommandResponse(response.toString().trim() + "\n");
+    }
+
+    void debugVar(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
         int sfnumber = args.getNextIntArg();
         String var = args.getNextStringArg();
 
-        if (sfnumber >= fFrames.size()) {
-            sendCommandResponse(fCurrentFrame.get(var).toString() + "\n");
+        Frame frame = sfnumber >= thread.fFrames.size()    
+            ? thread.fCurrentFrame : thread.fFrames.get(sfnumber);
+        
+        Object val = frame.get(var);
+        if (val == null) {
+            sendCommandResponse("error: variable undefined\n");
         } else {
-            sendCommandResponse(fFrames.get(sfnumber).get(var).toString() + "\n");
+            sendCommandResponse(val.toString() + "\n");
         }
     }
-    
-    private void debugWatch(Args args) {
+
+    void debugVMResume() {
+        if (fSuspendVM == null) {
+            sendCommandResponse("error: vm already running\n");
+            return;
+        } 
+
+        fSuspendVM = null;
+        sendCommandResponse("ok\n");
+    }
+
+    void debugVMSuspend() {
+        if (fSuspendVM != null) {
+            sendCommandResponse("error: vm already suspended\n");
+            return;
+        }
+
+        fSuspendVM = "client";
+        sendCommandResponse("ok\n");
+    }
+
+    void debugWatch(Args args) {
         String funcAndVar = args.getNextStringArg();
         int flags = args.getNextIntArg();
         fWatchpoints.put(funcAndVar, flags);
-        sendCommandResponse("ok\n");        
+        sendCommandResponse("ok\n");
     }
 
-    private void iAdd(Args args) {
-        Object val1 = fStack.pop();
-        Object val2 = fStack.pop();
+    void iAdd(PDAThread thread, Args args) {
+        Object val1 = thread.fStack.pop();
+        Object val2 = thread.fStack.pop();
         if (val1 instanceof Integer && val2 instanceof Integer) {
-            int intVal1 = ((Integer)val1).intValue();
-            int intVal2 = ((Integer)val2).intValue();
-            fStack.push(intVal1 + intVal2);
+            int intVal1 = ((Integer) val1).intValue();
+            int intVal2 = ((Integer) val2).intValue();
+            thread.fStack.push(intVal1 + intVal2);
         } else {
-            fStack.push(-1);
+            thread.fStack.push(-1);
         }
     }
 
-    private void iBranchNotZero(Args args) {
-        Object val = fStack.pop();
-        if( val instanceof Integer && ((Integer)val).intValue() != 0 ) {
+    void iBranchNotZero(PDAThread thread, Args args) {
+        Object val = thread.fStack.pop();
+        if (val instanceof Integer && ((Integer) val).intValue() != 0) {
             String label = args.getNextStringArg();
-            if (fLabels.containsKey(label)) {
-                fCurrentFrame.fPC = fLabels.get(label);
+            if (thread.fThreadLabels.containsKey(label)) {
+                thread.fCurrentFrame.fPC = thread.fThreadLabels.get(label);
             } else {
                 sendDebugEvent("no such label " + label, true);
-                if( fEventStops.get("nosuchlabel") ) {
-                    fSuspend = "event nosuchlabel";
-                    fStack.push(val);
-                    fCurrentFrame.fPC--;
+                if (fEventStops.get("nosuchlabel")) {
+                    fSuspendVM = thread.fID + " event nosuchlabel";
+                    thread.fStack.push(val);
+                    thread.fCurrentFrame.fPC--;
                 }
-            } 
+            }
         }
     }
 
-    private void iCall(Args args) {
+    void iCall(PDAThread thread, Args args) {
         String label = args.getNextStringArg();
-        if (fLabels.containsKey(label)) {
-            fFrames.add(fCurrentFrame);
-            fCurrentFrame = new Frame(label, fLabels.get(label));
+        if (thread.fThreadLabels.containsKey(label)) {
+            thread.fFrames.add(thread.fCurrentFrame);
+            thread.fCurrentFrame = new Frame(label, thread.fThreadLabels.get(label));
         } else {
             sendDebugEvent("no such label " + label, true);
-            if( fEventStops.get("nosuchlabel") ) {
-                fSuspend = "event nosuchlabel";
-                fCurrentFrame.fPC--;
+            if (fEventStops.get("nosuchlabel")) {
+                fSuspendVM = thread.fID + " event nosuchlabel";
+                thread.fCurrentFrame.fPC--;
             }
-        } 
+        }
     }
 
-    private void iDec(Args args) {
-        Object val = fStack.pop();
+    void iDec(PDAThread thread, Args args) {
+        Object val = thread.fStack.pop();
         if (val instanceof Integer) {
-            val = new Integer( ((Integer)val).intValue() - 1 );
+            val = new Integer(((Integer) val).intValue() - 1);
         }
-        fStack.push(val);
-    }        
+        thread.fStack.push(val);
+    }
 
-    private void iDup(Args args) {
-        Object val = fStack.pop();
-        fStack.push(val);
-        fStack.push(val);
-    }        
+    void iDup(PDAThread thread, Args args) {
+        Object val = thread.fStack.pop();
+        thread.fStack.push(val);
+        thread.fStack.push(val);
+    }
+    
+    void iExec(PDAThread thread, Args args) {
+        String label = args.getNextStringArg();
+        if (fLabels.containsKey(label)) {
+            int id = fNextThreadId++;
+            fThreads.put(id, new PDAThread(id, label, fLabels.get(label)));
+            sendDebugEvent("started " + id, false);
+        } else {
+            sendDebugEvent("no such label " + label, true);
+            if (fEventStops.get("nosuchlabel")) {
+                thread.fSuspend = "event nosuchlabel";
+                thread.fCurrentFrame.fPC--;
+            }
+        }
+    }
 
-    private void iHalt(Args args) {
-        fRun = false;
-    }        
+    void iHalt(PDAThread thread, Args args) {
+        thread.fRun = false;
+    }
 
-    private void iOutput(Args args) {
-        System.out.println(fStack.pop());
-    }        
+    void iOutput(PDAThread thread, Args args) {
+        System.out.println(thread.fStack.pop());
+    }
 
-    private void iPop(Args args) {
+    void iPop(PDAThread thread, Args args) {
         String arg = args.getNextStringArg();
         if (arg.startsWith("$")) {
             String var = arg.substring(1);
-            fCurrentFrame.put(var, fStack.pop());
-            String key = fCurrentFrame.fFunction + "::" + var;
+            thread.fCurrentFrame.put(var, thread.fStack.pop());
+            String key = thread.fCurrentFrame.fFunction + "::" + var;
             if (fWatchpoints.containsKey(key) && (fWatchpoints.get(key) & 2) != 0) {
-                fSuspend = "watch write " + key;
+                fSuspendVM = thread.fID + " watch write " + key;
             }
         } else {
-            fStack.pop();
+            thread.fStack.pop();
         }
-    }        
+    }
 
-    private void iPush(Args args) {
+    void iPush(PDAThread thread, Args args) {
         String arg = args.getNextStringArg();
         if (arg.startsWith("$")) {
             String var = arg.substring(1);
-            Object val = fCurrentFrame.containsKey(var) ? fCurrentFrame.get(var) : "<undefined>";
-            fStack.push(val);
-            String key = fCurrentFrame.fFunction + "::" + var;
+            Object val = thread.fCurrentFrame.containsKey(var) ? thread.fCurrentFrame.get(var) : "<undefined>";
+            thread.fStack.push(val);
+            String key = thread.fCurrentFrame.fFunction + "::" + var;
             if (fWatchpoints.containsKey(key) && (fWatchpoints.get(key) & 1) != 0) {
-                fSuspend = "watch read " + key;
+                fSuspendVM = thread.fID + " watch read " + key;
             }
         } else {
             Object val = arg;
             try {
                 val = Integer.parseInt(arg);
-            } catch (NumberFormatException e) {}
-            fStack.push(val);                    
+            } catch (NumberFormatException e) {
+            }
+            thread.fStack.push(val);
         }
-    }        
-    private void iReturn(Args args) {
-        if (!fFrames.isEmpty()) {
-            fCurrentFrame = fFrames.remove(fFrames.size() - 1);
-        } 
     }
-    private void iVar(Args args) {
-        String var = args.getNextStringArg();
-        fCurrentFrame.put(var, 0);
-    }        
 
-    private void iInternalEndEval(Args args) {
-        Object result = fStack.pop();
-        fCode = fSavedCode;
-        fLabels = fSavedLables;
-        fCurrentFrame.fPC = fSavedPC;
+    void iReturn(PDAThread thread, Args args) {
+        if (!thread.fFrames.isEmpty()) {
+            thread.fCurrentFrame = thread.fFrames.remove(thread.fFrames.size() - 1);
+        } else {
+            // Execution returned from the top frame, which means this thread
+            // should exit.
+            thread.fRun = false;
+        }
+    }
+
+    void iVar(PDAThread thread, Args args) {
+        String var = args.getNextStringArg();
+        thread.fCurrentFrame.put(var, 0);
+    }
+
+    void iInternalEndEval(PDAThread thread, Args args) {
+        Object result = thread.fStack.pop();
+        thread.fThreadCode = fCode;
+        thread.fThreadLabels = fLabels;
+        thread.fCurrentFrame.fPC = thread.fSavedPC;
         sendDebugEvent("evalresult " + result, false);
-        fSuspend = "eval";
-    }        
-    
-    
+        thread.fSuspend = "eval";
+        thread.fPerformingEval = false;
+    }
+
 }

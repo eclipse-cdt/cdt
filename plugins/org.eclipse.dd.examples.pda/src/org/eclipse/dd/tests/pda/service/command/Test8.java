@@ -31,40 +31,64 @@ public class Test8 extends CommandControlTestsBase {
 
     @Test
     public void testDropFrame() throws Throwable {
-        expectEvent("started");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("stack", fProgram + "|2|main|a#" + fProgram + "|8|inner|b#" + fProgram + "|12|inner2|c");
-        sendCommand("drop");
-        expectEvent("resumed drop");
-        expectEvent("suspended drop");
-        sendCommand("stack", fProgram + "|2|main|a#" + fProgram + "|7|inner|b");
-        sendCommand("step");
-        expectEvent("resumed step");
-        expectEvent("suspended step");
-        sendCommand("stack", fProgram + "|2|main|a#" + fProgram + "|8|inner|b#" + fProgram + "|10|inner2");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        expectEvent("started 1");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("stack 1", fProgram + "|2|main|a#" + fProgram + "|8|inner|b#" + fProgram + "|12|inner2|c");
+        sendCommand("drop 1");
+        expectEvent("vmresumed drop");
+        expectEvent("vmsuspended 1 drop");
+        sendCommand("stack 1", fProgram + "|2|main|a#" + fProgram + "|7|inner|b");
+        sendCommand("step 1");
+        expectEvent("vmresumed step");
+        expectEvent("vmsuspended 1 step");
+        sendCommand("stack 1", fProgram + "|2|main|a#" + fProgram + "|8|inner|b#" + fProgram + "|10|inner2");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("exited 1");
         expectEvent("terminated");
     }
-    
+
+    @Test
+    public void testDropFrameWithThreadRC() throws Throwable {
+        expectEvent("started 1");
+        sendCommand("set 12 0");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("suspended 1 breakpoint 12");
+        sendCommand("stack 1", fProgram + "|2|main|a#" + fProgram + "|8|inner|b#" + fProgram + "|12|inner2|c");
+        sendCommand("drop 1");
+        expectEvent("resumed 1 drop");
+        expectEvent("suspended 1 drop");
+        sendCommand("stack 1", fProgram + "|2|main|a#" + fProgram + "|7|inner|b");
+        sendCommand("step 1");
+        expectEvent("resumed 1 step");
+        expectEvent("suspended 1 step");
+        sendCommand("stack 1", fProgram + "|2|main|a#" + fProgram + "|8|inner|b#" + fProgram + "|10|inner2");
+        sendCommand("clear 12");
+        sendCommand("resume 1");
+        expectEvent("resumed 1 client");
+        expectEvent("exited 1");
+        expectEvent("terminated");
+    }
+
 }

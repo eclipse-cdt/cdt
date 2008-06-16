@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets a watchpoint on a given variable
@@ -19,9 +19,9 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  * <pre>
  *    C: watch {function}::{variable_name} {watch_operation}
  *    R: ok
- *    C: resume
- *    R: resume client
- *    E: suspended watch {watch_operation} {function}::{variable_name}
+ *    C: vmresume
+ *    R: vmresumed client
+ *    E: vmsuspended {thread_id} watch {watch_operation} {function}::{variable_name}
  * </pre>
  */
 @Immutable
@@ -42,7 +42,7 @@ public class PDAWatchCommand extends AbstractPDACommand<PDACommandResult> {
         }
     }
     
-    public PDAWatchCommand(PDAProgramDMContext context, String function, String variable, WatchOperation operation) {
+    public PDAWatchCommand(PDAVirtualMachineDMContext context, String function, String variable, WatchOperation operation) {
         super(context, "watch " + function+ "::" + variable + " " + getWatchOperationCode(operation));
     }
     

@@ -13,6 +13,8 @@ package org.eclipse.dd.examples.pda.service;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Immutable;
@@ -55,7 +57,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
         final private int fLevel;
 
-        FrameDMContext(String sessionId, IExecutionDMContext execDmc, int level) {
+        FrameDMContext(String sessionId, PDAThreadDMContext execDmc, int level) {
             super(sessionId, new IDMContext[] { execDmc });
             fLevel = level;
         }
@@ -119,7 +121,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
         final private String fVariable;
 
-        VariableDMContext(String sessionId, IFrameDMContext frameCtx, String variable) {
+        VariableDMContext(String sessionId, FrameDMContext frameCtx, String variable) {
             super(sessionId, new IDMContext[] { frameCtx });
             fVariable = variable;
         }
@@ -219,9 +221,18 @@ public class PDAStack extends AbstractDsfService implements IStack {
     }
 
     public void getFrameData(final IFrameDMContext frameCtx, final DataRequestMonitor<IFrameDMData> rm) {
+        PDAThreadDMContext threadCtx = 
+            DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
+        
+        if (threadCtx == null) {
+            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + frameCtx, null));
+            rm.done();
+            return;            
+        }
+        
         // Execute the PDA stack command, or retrieve the result from cache if already available.
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getProgramDMContext()),
+            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -246,21 +257,24 @@ public class PDAStack extends AbstractDsfService implements IStack {
         // however the argument context is a generic context type, so it could 
         // be an execution context, a frame, a variable, etc. Search the 
         // hierarchy of the argument context to find the execution one.
-        final IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
-        if (execCtx == null) {
-            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + context);
-            return;
+        final PDAThreadDMContext threadCtx = 
+            DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
+        
+        if (threadCtx == null) {
+            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+            rm.done();
+            return;            
         }
 
         // Execute the stack command and create the corresponding frame contexts.
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getProgramDMContext()),
+            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     IFrameDMContext[] frameCtxs = new IFrameDMContext[getData().fFrames.length];
                     for (int i = 0; i < getData().fFrames.length; i++) {
-                        frameCtxs[i] = new FrameDMContext(getSession().getId(), execCtx, i);
+                        frameCtxs[i] = new FrameDMContext(getSession().getId(), threadCtx, i);
                     }
                     rm.setData(frameCtxs);
                     rm.done();
@@ -268,10 +282,25 @@ public class PDAStack extends AbstractDsfService implements IStack {
             });
     }
 
-    public void getLocals(final IFrameDMContext frameCtx, final DataRequestMonitor<IVariableDMContext[]> rm) {
-        // Execute the stack command again.
+    public void getLocals(IFrameDMContext context, final DataRequestMonitor<IVariableDMContext[]> rm) {
+        if (!(context instanceof FrameDMContext)) {
+            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+            rm.done();
+            return;            
+        }
+        final FrameDMContext frameCtx = (FrameDMContext)context;
+        
+        final PDAThreadDMContext threadCtx = 
+            DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
+        
+        if (threadCtx == null) {
+            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + frameCtx, null));
+            rm.done();
+            return;            
+        }
+
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getProgramDMContext()),
+            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -296,9 +325,18 @@ public class PDAStack extends AbstractDsfService implements IStack {
     }
 
     public void getStackDepth(IDMContext context, int maxDepth, final DataRequestMonitor<Integer> rm) {
+        final PDAThreadDMContext threadCtx = 
+            DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
+        
+        if (threadCtx == null) {
+            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+            rm.done();
+            return;            
+        }
+
         // Execute stack command and return the data's size.
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getProgramDMContext()),
+            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -313,7 +351,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         // however the argument context is a generic context type, so it could 
         // be an execution context, a frame, a variable, etc. Search the 
         // hierarchy of the argument context to find the execution one.
-        final IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
+        final PDAThreadDMContext execCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
         if (execCtx == null) {
             PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + context);
             return;

@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Instructs the debugger to exit.
@@ -24,7 +24,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 @Immutable
 public class PDAExitCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAExitCommand(PDAProgramDMContext context) {
+    public PDAExitCommand(PDAVirtualMachineDMContext context) {
         super(context, "exit");
     }
     

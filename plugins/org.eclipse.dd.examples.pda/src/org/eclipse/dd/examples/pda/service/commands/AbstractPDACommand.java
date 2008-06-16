@@ -14,7 +14,7 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Base class for PDA commands.  The PDA commands consist of a text request and 
@@ -27,7 +27,7 @@ abstract public class AbstractPDACommand<V extends PDACommandResult> implements 
     final private IDMContext fContext;
     final private String fRequest;
     
-    public AbstractPDACommand(PDAProgramDMContext context, String request) {
+    public AbstractPDACommand(PDAVirtualMachineDMContext context, String request) {
         fContext = context;
         fRequest = request;
     }

@@ -11,24 +11,33 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Returns from the current frame without executing the rest of instructions.  
  * 
  * <pre>
- *    C: drop
+ * If VM running:
+ *    C: drop {thread_id}
  *    R: ok
- *    E: resumed drop
- *    E: suspended drop
+ *    E: resumed {thread_id} drop
+ *    E: suspended {thread_id} drop
+ *    
+ * If VM suspended:
+ *    C: drop {thread_id}
+ *    R: ok
+ *    E: vmresumed drop
+ *    E: vmsuspended {thread_id} drop
+ *    
+ * Errors:
+ *    error: invalid thread
  * </pre>
-
  */
 @Immutable
 public class PDADropFrameCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDADropFrameCommand(PDAProgramDMContext context) {
-        super(context, "drop");
+    public PDADropFrameCommand(PDAVirtualMachineDMContext context, int threadId) {
+        super(context, "drop " + threadId);
     }
     
     @Override

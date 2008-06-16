@@ -14,22 +14,22 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
- * Retrieves variable value 
+ * Resumes the execution of the whole virtual machine  
  * 
  * <pre>
- *    C: var  {thread_id} {frame_number} {variable_name}
- *    R: {variable_value}
+ *    C: vmresume
+ *    R: ok
+ *    E: vmresumed client
  *    
  * Errors:
- *    error: invalid thread
- *    error: variable undefined
+ *    error: vm already running
  * </pre>
  */
 @Immutable
-public class PDAVarCommand extends AbstractPDACommand<PDACommandResult> {
+public class PDAVMResumeCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVarCommand(PDAVirtualMachineDMContext context, int threadId, int frameId, String name) {
-        super(context, "var " + threadId + " " + frameId + " " + name);
+    public PDAVMResumeCommand(PDAVirtualMachineDMContext context) {
+        super(context, "vmresume");
     }
     
     @Override

@@ -105,7 +105,7 @@ public class CommandControlTestsBase {
 
     protected void sendCommand(String command, String expectedResult) throws Throwable {
 
-        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getProgramDMContext(), command);
+        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getVirtualMachineDMContext(), command);
         
         // Test sending the command and checking all listeners were called.
         Query<PDACommandResult> sendCommandQuery = new Query<PDACommandResult>() {

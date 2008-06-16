@@ -31,43 +31,59 @@ public class Test3 extends CommandControlTestsBase {
 
     @Test
     public void testUncaughtEvents() throws Throwable {
-        expectEvent("started");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        expectEvent("started 1");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
         expectEvent("unimplemented instruction foobar");
         expectEvent("no such label zippy");
+        expectEvent("no such label swishy");
+        expectEvent("exited 1");
         expectEvent("terminated");
     }
-    
+
     @Test
     public void testCaughtUnimpinstrEvents() throws Throwable {
-        expectEvent("started");
+        expectEvent("started 1");
         sendCommand("eventstop unimpinstr 1");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
         expectEvent("unimplemented instruction foobar");
-        expectEvent("suspended event unimpinstr");
+        expectEvent("vmsuspended 1 event unimpinstr");
         sendCommand("eventstop unimpinstr 0");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
         expectEvent("unimplemented instruction foobar");
         expectEvent("no such label zippy");
+        expectEvent("no such label swishy");
+        expectEvent("exited 1");
         expectEvent("terminated");
     }
 
     @Test
     public void testCaughtNosuchlabelEvents() throws Throwable {
-        expectEvent("started");
+        expectEvent("started 1");
         sendCommand("eventstop nosuchlabel 1");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
         expectEvent("unimplemented instruction foobar");
         expectEvent("no such label zippy");
-        expectEvent("suspended event nosuchlabel");
+        expectEvent("vmsuspended 1 event nosuchlabel");
         sendCommand("eventstop nosuchlabel 0");
-        sendCommand("resume");
-        expectEvent("resumed client");
+        sendCommand("set 11 1");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
         expectEvent("no such label zippy");
+        expectEvent("vmsuspended 1 breakpoint 11");
+        sendCommand("eventstop nosuchlabel 1");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("no such label swishy");
+        expectEvent("vmsuspended 1 event nosuchlabel");
+        sendCommand("eventstop nosuchlabel 0");
+        sendCommand("vmresume");
+        expectEvent("vmresumed client");
+        expectEvent("no such label swishy");
+        expectEvent("exited 1");
         expectEvent("terminated");
     }
 

@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Clears any breakpoint set on given line
@@ -25,7 +25,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 @Immutable
 public class PDAClearBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAClearBreakpointCommand(PDAProgramDMContext context, int line) {
+    public PDAClearBreakpointCommand(PDAVirtualMachineDMContext context, int line) {
         super(context, "clear " + (line - 1));
     }
     

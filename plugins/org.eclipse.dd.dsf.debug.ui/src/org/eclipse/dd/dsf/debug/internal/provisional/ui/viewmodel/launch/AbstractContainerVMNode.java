@@ -12,19 +12,21 @@ package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch;
 
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -40,14 +42,16 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 public abstract class AbstractContainerVMNode extends AbstractDMVMNode implements IElementLabelProvider {
 
 	public AbstractContainerVMNode(AbstractDMVMProvider provider, DsfSession session) {
-		super(provider, session, IRunControl.IExecutionDMContext.class);
+		super(provider, session, IRunControl.IContainerDMContext.class);
 	}
 
 	public void update(final ILabelUpdate[] updates) {
 	    try {
 	        getSession().getExecutor().execute(new DsfRunnable() {
 	            public void run() {
-	                updateLabelInSessionThread(updates);
+	                for (final ILabelUpdate update : updates) {
+	                    updateLabelInSessionThread(update);
+	                }
 	            }});
 	    } catch (RejectedExecutionException e) {
 	        for (ILabelUpdate update : updates) {
@@ -62,26 +66,36 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
      * @param updates  the pending label updates
      * @see {@link #update(ILabelUpdate[])
      */
-	protected abstract void updateLabelInSessionThread(ILabelUpdate[] updates);
+	protected abstract void updateLabelInSessionThread(ILabelUpdate update);
 
+    @Override
+    public void getContextsForEvent(VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
+        super.getContextsForEvent(parentDelta, e, rm);
+    }
+            
 	public int getDeltaFlags(Object e) {
-        if (e instanceof IContainerResumedDMEvent && 
-            ((IContainerResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
-        {
-            return IModelDelta.CONTENT;            
+        IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+
+	    if (e instanceof IContainerResumedDMEvent) {
+            if (((IContainerResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
+            {
+                return IModelDelta.CONTENT;
+            }
         } else if (e instanceof IContainerSuspendedDMEvent) {
-        	// no change, update happens on FullStackRefreshEvent
             return IModelDelta.NO_CHANGE;
         } else if (e instanceof FullStackRefreshEvent) {
-        	return IModelDelta.CONTENT;
-	    } else if (e instanceof ISteppingTimedOutEvent &&
-                   ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext)
-	    {
-           return IModelDelta.CONTENT;            
+            if (dmc instanceof IContainerDMContext) {
+                return IModelDelta.CONTENT;
+            }
+	    } else if (e instanceof ISteppingTimedOutEvent) {
+	        if (dmc instanceof IContainerDMContext) 
+	        {
+	            return IModelDelta.CONTENT;
+	        }
 	    } else if (e instanceof IExitedDMEvent) {
 	        return IModelDelta.CONTENT;
 	    } else if (e instanceof IStartedDMEvent) {
-	    	if (((IStartedDMEvent) e).getDMContext() instanceof IContainerDMContext) {
+	    	if (dmc instanceof IContainerDMContext) {
 	    		return IModelDelta.EXPAND | IModelDelta.SELECT;
 	    	} else {
 		        return IModelDelta.CONTENT;
@@ -91,37 +105,63 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
 	}
 
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-		if(e instanceof IContainerResumedDMEvent &&
-           ((IContainerResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
-		{
-	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+	    IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
+	    
+		if(e instanceof IContainerResumedDMEvent) {
+            // Container resumed: 
+		    // - If not stepping, update the container and the execution 
+		    // contexts under it.  
+		    // - If stepping, do nothing to avoid too many updates.  If a 
+		    // time-out is reached before the step completes, the 
+		    // ISteppingTimedOutEvent will trigger a full refresh.
+		    if (((IContainerResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) 
+		    {
+    	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+		    } 
 		} else if (e instanceof IContainerSuspendedDMEvent) {
-        	// do nothing
+            // Container suspended.  Do nothing here to give the stack the 
+		    // priority in updating. The container and threads will update as 
+		    // a result of FullStackRefreshEvent. 
 		} else if (e instanceof FullStackRefreshEvent) {
-			parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-		} else if (e instanceof ISteppingTimedOutEvent &&
-                   ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext)
-		{
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
-            // Workaround for bug 233730: we need to add a separate delta node for the state flag in 
-            // order to trigger an update of the run control actions.
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.STATE);
+		    // Full-stack refresh event is generated following a suspended event 
+		    // and a fixed delay.  If the suspended event was generated for the 
+		    // container refresh the whole container.
+		    if (dmc instanceof IContainerDMContext) {
+		        parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
+		    }
+		} else if (e instanceof ISteppingTimedOutEvent) {
+		    // Stepping time-out indicates that a step operation is taking 
+		    // a long time, and the view needs to be refreshed to show 
+		    // the user that the program is running.
+		    // If the step was issued for the whole container refresh
+		    // the whole container.
+		    if (dmc instanceof IContainerDMContext) {
+	            parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
+		    }
 		} else if (e instanceof IExitedDMEvent) {
-	    	IExecutionDMContext exeContext= ((IExitedDMEvent) e).getDMContext();
-			if (exeContext instanceof IContainerDMContext) {
+		    // An exited event could either be for a thread within a container
+		    // or for the container itself.  
+		    // If a container exited, refresh the parent element so that the 
+		    // container may be removed.
+		    // If a thread exited within a container, refresh that container.
+			if (dmc instanceof IContainerDMContext) {
 	    		parentDelta.setFlags(parentDelta.getFlags() |  IModelDelta.CONTENT);
 	    	} else {
-		        IContainerDMContext containerCtx = DMContexts.getAncestorOfType(exeContext, IContainerDMContext.class);
+		        IContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
 		        if (containerCtx != null) {
 		            parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
 		        }
 	    	}
 	    } else if (e instanceof IStartedDMEvent) {
-	    	IExecutionDMContext exeContext= ((IStartedDMEvent) e).getDMContext();
-			if (exeContext instanceof IContainerDMContext) {
-		        parentDelta.addNode(createVMContext(exeContext), IModelDelta.EXPAND | IModelDelta.SELECT);
+            // A started event could either be for a thread within a container
+            // or for the container itself.  
+            // If a container started, issue an expand and select event to 
+	        // show the threads in the new container. 
+	        // Note: the EXPAND flag implies refreshing the parent element.
+			if (dmc instanceof IContainerDMContext) {
+		        parentDelta.addNode(createVMContext(dmc), IModelDelta.EXPAND | IModelDelta.SELECT);
 			} else {
-				IContainerDMContext containerCtx = DMContexts.getAncestorOfType(exeContext, IContainerDMContext.class);
+				IContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
 				if (containerCtx != null) {
 					parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
 				}

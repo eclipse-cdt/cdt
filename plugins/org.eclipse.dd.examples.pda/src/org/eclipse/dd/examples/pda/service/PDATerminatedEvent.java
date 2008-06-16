@@ -11,12 +11,16 @@
 package org.eclipse.dd.examples.pda.service;
 
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 
 /**
  * Event issued when the PDA debugger exits.
  */
-public class PDATerminatedEvent extends AbstractDMEvent<PDAProgramDMContext> {
-    PDATerminatedEvent(PDAProgramDMContext context) {
+public class PDATerminatedEvent extends AbstractDMEvent<IExecutionDMContext> 
+    implements IExitedDMEvent
+{
+    PDATerminatedEvent(PDAVirtualMachineDMContext context) {
         super(context);
     }
 }

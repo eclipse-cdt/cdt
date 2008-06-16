@@ -101,7 +101,7 @@ public class PDARegisters extends AbstractDsfService implements IRegisters {
      * @see org.eclipse.dd.dsf.debug.service.IRegisters#getRegisterGroups(org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
      */
     public void getRegisterGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm ) {
-    	PDAProgramDMContext execDmc = DMContexts.getAncestorOfType(ctx, PDAProgramDMContext.class);
+    	PDAVirtualMachineDMContext execDmc = DMContexts.getAncestorOfType(ctx, PDAVirtualMachineDMContext.class);
         if (execDmc == null) {
             rm.setStatus( new Status( IStatus.ERROR , PDAPlugin.PLUGIN_ID , INVALID_HANDLE , "Container context not found", null ) ) ;   //$NON-NLS-1$
             rm.done();
@@ -738,7 +738,7 @@ public class PDARegisters extends AbstractDsfService implements IRegisters {
         private int fGroupNo;
         private String fGroupName;
 
-        public MIRegisterGroupDMC(PDARegisters service, PDAProgramDMContext execDmc, int groupNo, String groupName) {
+        public MIRegisterGroupDMC(PDARegisters service, PDAVirtualMachineDMContext execDmc, int groupNo, String groupName) {
             super(service.getSession().getId(), new IDMContext[] { execDmc });
             fGroupNo = groupNo;
             fGroupName = groupName;

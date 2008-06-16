@@ -11,22 +11,28 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
- * Resumes the execution  
+ * Resumes the execution of a single thread.  Can be issued only if the virtual 
+ * machine is running.
  * 
  * <pre>
- *    C: resume
+ *    C: resume {thread_id}
  *    R: ok
- *    E: resumed client
+ *    E: resumed {thread_id} client
+ *    
+ * Errors:
+ *    error: invalid thread
+ *    error: cannot resume thread when vm is suspended
+ *    error: thread already running
  * </pre>
  */
 @Immutable
 public class PDAResumeCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAResumeCommand(PDAProgramDMContext context) {
-        super(context, "resume");
+    public PDAResumeCommand(PDAVirtualMachineDMContext context, int threadId) {
+        super(context, "resume " + threadId);
     }
     
     @Override

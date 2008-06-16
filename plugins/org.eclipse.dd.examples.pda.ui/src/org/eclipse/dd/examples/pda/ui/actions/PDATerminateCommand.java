@@ -22,7 +22,7 @@ import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.examples.pda.service.PDACommandControl;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 import org.eclipse.dd.examples.pda.ui.PDAUIPlugin;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
@@ -64,7 +64,7 @@ public class PDATerminateCommand implements ITerminateHandler {
         // Find the PDA program context in the selected element.  If one is not found, 
         // the action should be disabled.
         IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
-        final PDAProgramDMContext pdaProgramCtx = DMContexts.getAncestorOfType(vmc.getDMContext(), PDAProgramDMContext.class);
+        final PDAVirtualMachineDMContext pdaProgramCtx = DMContexts.getAncestorOfType(vmc.getDMContext(), PDAVirtualMachineDMContext.class);
         if (pdaProgramCtx == null) {
             request.setEnabled(false);
             request.done();

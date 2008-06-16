@@ -11,24 +11,35 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets a breakpoint at given line
  * 
  * <pre>
- *    C: set {line_number}
+ * Suspend a single thread:
+ *    C: set {line_number} 0
  *    R: ok
- *    C: resume
- *    E: resumed client
- *    E: suspended breakpoint line_number
+ *    C: resume {thread_id}
+ *    E: resumed {thread_id} client
+ *    E: suspended {thread_id} breakpoint line_number
+ *    
+ * Suspend the VM:
+ *    C: set {line_number} 1
+ *    R: ok
+ *    C: vmresume
+ *    E: vmresumed client
+ *    E: vmsuspended {thread_id} breakpoint line_number
  * </pre>
  */
 @Immutable
 public class PDASetBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetBreakpointCommand(PDAProgramDMContext context, int line) {
-        super(context, "set " + (line - 1));
+    public PDASetBreakpointCommand(PDAVirtualMachineDMContext context, int line, boolean stopVM) {
+        super(context, 
+              "set " + 
+              (line - 1) + " " + 
+              (stopVM ? "1" : "0"));
     }
     
     @Override

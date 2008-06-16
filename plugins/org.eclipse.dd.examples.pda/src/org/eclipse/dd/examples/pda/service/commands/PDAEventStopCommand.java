@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets what events cause the execution to stop.
@@ -30,7 +30,7 @@ public class PDAEventStopCommand extends AbstractPDACommand<PDACommandResult> {
 
     public enum Event { UNIMPINSTR, NOSUCHLABEL };
     
-    public PDAEventStopCommand(PDAProgramDMContext context, Event event, boolean enable) {
+    public PDAEventStopCommand(PDAVirtualMachineDMContext context, Event event, boolean enable) {
         super(context, 
               "eventstop " + 
               (event == Event.UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") + 

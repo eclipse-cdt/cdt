@@ -68,38 +68,36 @@ public class ContainerVMNode extends AbstractContainerVMNode
 
 	
     @Override
-	protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
-        for (final ILabelUpdate update : updates) {
-        	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
-            if ( runControl == null ) {
-                handleFailedUpdate(update);
-                continue;
-            }
-            
-            final GDBControlDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), GDBControlDMContext.class);
-
-            String imageKey = null;
-            if (runControl.isSuspended(dmc)) {
-                imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
-            } else {
-                imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
-            }
-            update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
-            
-            runControl.getProcessData(
-                dmc,
-                new ViewerDataRequestMonitor<GDBProcessData>(getExecutor(), update) {
-					@Override
-                    public void handleCompleted() {
-                        if (!isSuccess()) {
-                            update.done();
-                            return;
-                        }
-                        update.setLabel(getData().getName(), 0);
-                        update.done();
-                    }
-                });
+	protected void updateLabelInSessionThread(final ILabelUpdate update) {
+    	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+        if ( runControl == null ) {
+            handleFailedUpdate(update);
+            return;
         }
+        
+        final GDBControlDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), GDBControlDMContext.class);
+
+        String imageKey = null;
+        if (runControl.isSuspended(dmc)) {
+            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
+        } else {
+            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
+        }
+        update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
+        
+        runControl.getProcessData(
+            dmc,
+            new ViewerDataRequestMonitor<GDBProcessData>(getExecutor(), update) {
+				@Override
+                public void handleCompleted() {
+                    if (!isSuccess()) {
+                        update.done();
+                        return;
+                    }
+                    update.setLabel(getData().getName(), 0);
+                    update.done();
+                }
+            });
     }
 
 	@Override

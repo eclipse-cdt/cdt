@@ -8,4 +8,6 @@ add
 call zippy
 add
 output
+push 1
+branch_not_zero swishy
 halt

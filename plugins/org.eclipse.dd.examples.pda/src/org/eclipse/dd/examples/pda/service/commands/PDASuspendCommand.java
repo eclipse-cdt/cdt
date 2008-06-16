@@ -11,22 +11,28 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
- * Suspends execution 
+ * Suspends execution of a single thread.  Can be issued only if the virtual 
+ * machine is running.
  * 
  * <pre>
- *    C: suspend
+ *    C: suspend {thread_id}
  *    R: ok
- *    E: suspended client
+ *    E: suspended {thread_id} client
+ *    
+ * Errors:
+ *    error: invalid thread
+      error: vm already suspended
+ *    error: thread already suspended
  * </pre>
  */
 @Immutable
 public class PDASuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASuspendCommand(PDAProgramDMContext context) {
-        super(context, "suspend");
+    public PDASuspendCommand(PDAVirtualMachineDMContext context, int threadId) {
+        super(context, "suspend " + threadId);
     }
     
     @Override

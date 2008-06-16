@@ -11,21 +11,24 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Pops the top value from the data stack  
  * 
  * <pre>
- *    C: popdata
+ *    C: popdata {thread_id}
  *    R: ok
+ *    
+ * Errors:
+ *    error: invalid thread
  * </pre>
  */
 @Immutable
 public class PDAPopDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAPopDataCommand(PDAProgramDMContext context) {
-        super(context, "popdata");
+    public PDAPopDataCommand(PDAVirtualMachineDMContext context, int threadId) {
+        super(context, "popdata " + threadId);
     }
     
     @Override

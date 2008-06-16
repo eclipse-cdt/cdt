@@ -11,21 +11,24 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets a variable value 
  * 
  * <pre>
- *    C: setvar {frame_number} {variable} {value}
+ *    C: setvar {thread_id} {frame_number} {variable} {value}
  *    R: ok
+ *    
+ * Errors:
+ *    error: invalid thread
  * </pre>
  */
 @Immutable
 public class PDASetVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetVarCommand(PDAProgramDMContext context, int frame, String variable, String value) {
-        super(context, "setvar " + frame + " " + variable + " " + value);
+    public PDASetVarCommand(PDAVirtualMachineDMContext context, int threadId, int frame, String variable, String value) {
+        super(context, "setvar " + threadId + " " + frame + " " + variable + " " + value);
     }
     
     @Override

@@ -11,23 +11,33 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Executes next instruction 
  * 
  * <pre>
- *    C: step
+ * If VM running:
+ *    C: step {thread_id}
  *    R: ok
- *    E: resumed client
- *    E: suspended step
+ *    E: resumed {thread_id} client
+ *    E: suspended {thread_id} step
+ *    
+ * If VM suspended:
+ *    C: step {thread_id}
+ *    R: ok
+ *    E: vmresumed client
+ *    E: vmsuspended {thread_id} step
+ *    
+ * Errors:
+ *    error: invalid thread
  * </pre>
  */
 @Immutable
 public class PDAStepCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAStepCommand(PDAProgramDMContext context) {
-        super(context, "step");
+    public PDAStepCommand(PDAVirtualMachineDMContext context, int threadId) {
+        super(context, "step " + threadId);
     }
     
     @Override

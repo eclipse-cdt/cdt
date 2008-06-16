@@ -214,11 +214,12 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
         // Create an expression based on the given context and string expression.  
         // The PDA debugger can only evaluate variables as expressions and only
         // in context of a frame.  
+        PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(ctx, PDAThreadDMContext.class);
         IFrameDMContext frameCtx = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
-        if (frameCtx != null) {
+        if (threadCtx != null && frameCtx != null) {
             return new ExpressionDMContext(getSession().getId(), frameCtx, expression);
         } else {
-            // If a frame cannot be found in context, return an "invalid" 
+            // If the thread or a frame cannot be found in context, return an "invalid" 
             // expression context, because a null return value is not allowed.
             // Evaluating an invalid expression context will always yield an 
             // error.
@@ -276,6 +277,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
     {
         final ExpressionDMContext exprCtx = DMContexts.getAncestorOfType(formattedCtx, ExpressionDMContext.class);
         if (exprCtx != null) {
+            final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
             final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
             
             // First retrieve the stack depth, needed to properly calculate
@@ -290,7 +292,11 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                         
                         // Send the command to evaluate the variable.
                         fCommandCache.execute(
-                            new PDAVarCommand(fCommandControl.getProgramDMContext(), frameId, exprCtx.getExpression()), 
+                            new PDAVarCommand(
+                                fCommandControl.getVirtualMachineDMContext(),
+                                threadCtx.getID(),
+                                frameId, 
+                                exprCtx.getExpression()), 
                             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                                 @Override
                                 protected void handleSuccess() {
@@ -310,6 +316,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
         final RequestMonitor rm) 
     {
         if (exprCtx instanceof ExpressionDMContext) {
+            final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
             final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
             
             // Similarly to retrieving the variable, retrieve the 
@@ -324,7 +331,12 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                         
                         // Send the "write" command to PDA debugger
                         fCommandCache.execute(
-                            new PDASetVarCommand(fCommandControl.getProgramDMContext(), frameId, exprCtx.getExpression(), exprValue), 
+                            new PDASetVarCommand(
+                                fCommandControl.getVirtualMachineDMContext(), 
+                                threadCtx.getID(), 
+                                frameId, 
+                                exprCtx.getExpression(), 
+                                exprValue), 
                             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                                 @Override
                                 protected void handleSuccess() {

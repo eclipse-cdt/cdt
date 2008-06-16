@@ -23,8 +23,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         TestMIBreakInsertCommand.class,
-        TestMICommandConstructCommand.class,
-        
+        TestMICommandConstructCommand.class
         /* Add your test class here */
         })
 

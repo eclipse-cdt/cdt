@@ -52,6 +52,7 @@
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
  * David McKnight   (IBM)        - [234057] Wrong or missing model change event
+ * David Dykstal (IBM) - [227750] do not fire events if there are no listeners
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -123,10 +124,6 @@ public class SystemRegistry implements ISystemRegistry
 	private final SystemPreferenceChangeManager preferenceListManager = new SystemPreferenceChangeManager();
 	private final SystemModelChangeEventManager modelListenerManager = new SystemModelChangeEventManager();
 	private final SystemRemoteChangeEventManager remoteListManager = new SystemRemoteChangeEventManager();
-
-	private int listenerCount = 0;
-	private int modelListenerCount = 0;
-	private int remoteListCount = 0;
 
 	private ISubSystemConfigurationProxy[] subsystemConfigurationProxies = null;
 	private boolean errorLoadingFactory = false;
@@ -2366,7 +2363,6 @@ public class SystemRegistry implements ISystemRegistry
 	public void addSystemResourceChangeListener(ISystemResourceChangeListener l)
 	{
 		listenerManager.addSystemResourceChangeListener(l);
-		listenerCount++;
 	}
 	/**
 	 * De-Register your interest in being told when a system resource such as a connection is changed.
@@ -2374,7 +2370,6 @@ public class SystemRegistry implements ISystemRegistry
 	public void removeSystemResourceChangeListener(ISystemResourceChangeListener l)
 	{
 		listenerManager.removeSystemResourceChangeListener(l);
-		listenerCount--;
 	}
 	/**
 	 * Query if the ISystemResourceChangeListener is already listening for SystemResourceChange events
@@ -2402,6 +2397,8 @@ public class SystemRegistry implements ISystemRegistry
 	            }
 	        }
 	    }
+
+		if (!listenerManager.hasListeners()) return;
 
 	    if (onMainThread()) {
 	    	listenerManager.notify(event);
@@ -2446,7 +2443,6 @@ public class SystemRegistry implements ISystemRegistry
 	public void addSystemModelChangeListener(ISystemModelChangeListener l)
 	{
 		modelListenerManager.addSystemModelChangeListener(l);
-		modelListenerCount++;
 	}
 	/**
 	 * De-Register your interest in being told when an RSE model resource is changed.
@@ -2454,7 +2450,6 @@ public class SystemRegistry implements ISystemRegistry
 	public void removeSystemModelChangeListener(ISystemModelChangeListener l)
 	{
 		modelListenerManager.removeSystemModelChangeListener(l);
-		modelListenerCount--;
 	}
 
 	private boolean onMainThread()
@@ -2473,6 +2468,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireEvent(ISystemModelChangeEvent event)
 	{
+		if (!modelListenerManager.hasListeners()) return;
 		if (onMainThread()) {
 			modelListenerManager.notify(event);
 		}
@@ -2487,6 +2483,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireModelChangeEvent(int eventType, int resourceType, Object resource, String oldName)
 	{
+		if (!modelListenerManager.hasListeners()) return;
 		SystemModelChangeEvent modelEvent = new SystemModelChangeEvent();
 		modelEvent.setEventType(eventType);
 		modelEvent.setResourceType(resourceType);
@@ -2528,7 +2525,6 @@ public class SystemRegistry implements ISystemRegistry
 	public void addSystemRemoteChangeListener(ISystemRemoteChangeListener l)
 	{
 		remoteListManager.addSystemRemoteChangeListener(l);
-		remoteListCount++;
 	}
 	/**
 	 * De-Register your interest in being told when a remote resource is changed.
@@ -2536,7 +2532,6 @@ public class SystemRegistry implements ISystemRegistry
 	public void removeSystemRemoteChangeListener(ISystemRemoteChangeListener l)
 	{
 		remoteListManager.removeSystemRemoteChangeListener(l);
-		remoteListCount--;
 	}
 
 	/**
@@ -2553,6 +2548,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireEvent(ISystemRemoteChangeEvent event)
 	{
+		if (!remoteListManager.hasListeners()) return;
 		if (onMainThread()) {
 			remoteListManager.notify(event);
 		}
@@ -2579,6 +2575,8 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
+
+		if (!remoteListManager.hasListeners()) return;
 
 		SystemRemoteChangeEvent remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
@@ -2618,6 +2616,8 @@ public class SystemRegistry implements ISystemRegistry
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
 
+		if (!remoteListManager.hasListeners()) return;
+
 		SystemRemoteChangeEvent	remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
@@ -2655,6 +2655,8 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
+
+		if (!remoteListManager.hasListeners()) return;
 
 		SystemRemoteChangeEvent remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setOperation(operation);
@@ -2695,6 +2697,8 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
+
+		if (!remoteListManager.hasListeners()) return;
 
 		SystemRemoteChangeEvent remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setOperation(operation);
@@ -2910,6 +2914,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireEvent(ISystemPreferenceChangeEvent event)
 	{
+		if (!preferenceListManager.hasListeners()) return;
 		if (onMainThread()) {
 			preferenceListManager.notify(event);
 		}
@@ -2922,6 +2927,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireEvent(ISystemPreferenceChangeListener l, ISystemPreferenceChangeEvent event)
 	{
+		if (!preferenceListManager.hasListeners()) return;
 		if (onMainThread()) {
 			l.systemPreferenceChanged(event);
 		}

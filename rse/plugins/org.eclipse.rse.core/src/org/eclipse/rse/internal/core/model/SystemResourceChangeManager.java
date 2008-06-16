@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [218659] Make *EventManager, *ChangeManager thread-safe
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David Dykstal (IBM) - [227750] add a test for registered listeners
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -112,6 +113,18 @@ public class SystemResourceChangeManager
     	   new SystemPostableEventNotifier(listener, event); // create and run the notifier
     	   //l.systemResourceChanged(event);
     	}
+    }
+    
+    /**
+     * Test if a manager has any listeners registered.
+     * @return true if there are any listeners, false if not.
+     */
+    public boolean hasListeners() {
+    	boolean result = false;
+    	synchronized(lockObject) {
+    		result = listeners.size() > 0;
+    	}
+    	return result;
     }
 
 }

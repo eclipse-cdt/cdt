@@ -146,7 +146,7 @@ public class CommandCache implements ICommandListener
      *      created. When the coalesced commands completes the results will be decomposed
      *      when back into individual results from this command.
      */
-    private Set<IDMContext> fUnavailableContexts = new HashSet<IDMContext>();
+    private Set<IDMContext> fAvailableContexts = new HashSet<IDMContext>();
 
     private Map<IDMContext, HashMap<CommandInfo, CommandResultInfo>> fCachedContexts = new HashMap<IDMContext, HashMap<CommandInfo, CommandResultInfo>>();
     
@@ -444,11 +444,11 @@ public class CommandCache implements ICommandListener
      * TODO
      */
     public void setContextAvailable(IDMContext context, boolean isAvailable) {
-        if (!isAvailable) {
-            fUnavailableContexts.add(context);
+        if (isAvailable) {
+            fAvailableContexts.add(context);
         } else {
-            fUnavailableContexts.remove(context);
-            for (Iterator<IDMContext> itr = fUnavailableContexts.iterator(); itr.hasNext();) {
+            fAvailableContexts.remove(context);
+            for (Iterator<IDMContext> itr = fAvailableContexts.iterator(); itr.hasNext();) {
                 if (DMContexts.isAncestorOf(itr.next(), context)) {
                     itr.remove();
                 }
@@ -461,9 +461,9 @@ public class CommandCache implements ICommandListener
      * @see #setContextAvailable(IDMContext, boolean)
      */
     public boolean isTargetAvailable(IDMContext context) {
-        for (IDMContext availableContext : fUnavailableContexts) {
+        for (IDMContext availableContext : fAvailableContexts) {
             if (context.equals(availableContext) || DMContexts.isAncestorOf(context, availableContext)) {
-                return false;
+                return true;
             }
         }
         return true;

@@ -40,6 +40,7 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetAttributes;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetChildCount;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetChildren;
@@ -453,7 +454,9 @@ public class ExpressionService extends AbstractDsfService implements IExpression
         // Create the meta command cache which will use the variable manager
         // to actually send MI commands to the back-end
         fExpressionCache = new CommandCache(getSession(), varManager);
-
+        AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
+        fExpressionCache.setContextAvailable(miControl.getControlDMContext(), true);
+        
 		requestMonitor.done();
 	}
 

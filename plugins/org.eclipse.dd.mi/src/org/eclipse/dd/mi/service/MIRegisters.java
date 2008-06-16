@@ -32,6 +32,7 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIDataListRegisterNames;
 import org.eclipse.dd.mi.service.command.commands.MIDataListRegisterValues;
 import org.eclipse.dd.mi.service.command.output.MIDataListRegisterNamesInfo;
@@ -170,8 +171,11 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
         /*
          * Create the lower level register cache.
          */
-        fRegisterValueCache = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
+        AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
+        fRegisterValueCache = new CommandCache(getSession(), miControl);
+        fRegisterValueCache.setContextAvailable(miControl.getControlDMContext(), true);
         fRegisterNameCache  = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
+        fRegisterNameCache.setContextAvailable(miControl.getControlDMContext(), true);
                
         /*
          * Sign up so we see events. We use these events to decide how to manage

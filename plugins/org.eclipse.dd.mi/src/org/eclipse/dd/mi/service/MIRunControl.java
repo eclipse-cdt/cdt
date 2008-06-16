@@ -24,11 +24,11 @@ import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecInterrupt;
@@ -257,7 +257,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         }
     }
     
-    private ICommandControl   fConnection;
+    private AbstractMIControl   fConnection;
 	private CommandCache fMICommandCache;
     
     // state flags
@@ -286,8 +286,9 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     }
 
     private void doInitialize(final RequestMonitor rm) {
-        fConnection = getServicesTracker().getService(ICommandControl.class);
+        fConnection = getServicesTracker().getService(AbstractMIControl.class);
         fMICommandCache = new CommandCache(getSession(), fConnection);
+        fMICommandCache.setContextAvailable(fConnection.getControlDMContext(), true);
         getSession().addServiceEventListener(this, null);
         
         //register(new String[]{IRunControl.class.getName(), MIRunControl.class.getName()}, new Hashtable<String,String>());

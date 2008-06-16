@@ -449,7 +449,7 @@ public class CommandCache implements ICommandListener
         } else {
             fAvailableContexts.remove(context);
             for (Iterator<IDMContext> itr = fAvailableContexts.iterator(); itr.hasNext();) {
-                if (DMContexts.isAncestorOf(itr.next(), context)) {
+                if (DMContexts.isAncestorOf(context, itr.next())) {
                     itr.remove();
                 }
             }
@@ -466,7 +466,7 @@ public class CommandCache implements ICommandListener
                 return true;
             }
         }
-        return true;
+        return false;
     }
     
     

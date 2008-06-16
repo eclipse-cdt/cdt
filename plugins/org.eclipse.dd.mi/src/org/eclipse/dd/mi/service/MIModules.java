@@ -24,10 +24,10 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IModules;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.CLIInfoSharedLibrary;
 import org.eclipse.dd.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.dd.mi.service.command.output.CLIInfoSharedLibraryInfo.DsfMISharedInfo;
@@ -60,7 +60,9 @@ public class MIModules extends AbstractDsfService implements IModules {
 
     private void doInitialize(RequestMonitor requestMonitor) {
     	// Cache for holding Modules data
-    	fModulesCache = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
+    	AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
+    	fModulesCache = new CommandCache(getSession(), miControl);
+    	fModulesCache.setContextAvailable(miControl.getControlDMContext(), true);
         /*
          * Make ourselves known so clients can use us.
          */

@@ -27,7 +27,6 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -174,7 +173,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
         AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
         fRegisterValueCache = new CommandCache(getSession(), miControl);
         fRegisterValueCache.setContextAvailable(miControl.getControlDMContext(), true);
-        fRegisterNameCache  = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
+        fRegisterNameCache  = new CommandCache(getSession(), miControl);
         fRegisterNameCache.setContextAvailable(miControl.getControlDMContext(), true);
                
         /*

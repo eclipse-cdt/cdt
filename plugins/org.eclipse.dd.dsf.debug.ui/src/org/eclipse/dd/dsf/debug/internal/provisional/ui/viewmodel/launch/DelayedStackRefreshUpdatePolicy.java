@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * <p>
  * The underlying base update policy is considered for container contexts only.
+ * In other cases the cache data is always flushed.
  * </p>
  */
 public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {

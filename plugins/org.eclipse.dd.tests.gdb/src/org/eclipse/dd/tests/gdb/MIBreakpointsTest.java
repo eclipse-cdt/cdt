@@ -162,7 +162,6 @@ public class MIBreakpointsTest extends BaseTestCase {
     public static void testSuiteInitialization() {
         // Select the binary to run the tests against
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, TEST_APPL);
-        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, SOURCE_PATH);
     }
 
     @AfterClass

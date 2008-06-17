@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Executes instructions until the current subroutine is finished 
@@ -36,8 +36,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAStepReturnCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAStepReturnCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "stepreturn " + threadId);
+    public PDAStepReturnCommand(PDAThreadDMContext thread) {
+        super(thread, "stepreturn " + thread.getID());
     }
     
     @Override

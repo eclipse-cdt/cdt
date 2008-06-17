@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Returns from the current frame without executing the rest of instructions.  
@@ -36,8 +36,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDADropFrameCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDADropFrameCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "drop " + threadId);
+    public PDADropFrameCommand(PDAThreadDMContext thread) {
+        super(thread, "drop " + thread.getID());
     }
     
     @Override

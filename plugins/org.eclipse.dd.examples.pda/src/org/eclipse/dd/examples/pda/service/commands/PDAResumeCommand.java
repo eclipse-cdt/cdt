@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Resumes the execution of a single thread.  Can be issued only if the virtual 
@@ -31,8 +31,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAResumeCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAResumeCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "resume " + threadId);
+    public PDAResumeCommand(PDAThreadDMContext thread) {
+        super(thread, "resume " + thread.getID());
     }
     
     @Override

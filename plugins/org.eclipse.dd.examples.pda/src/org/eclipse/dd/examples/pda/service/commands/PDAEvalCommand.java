@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Sets what events cause the execution to stop.
@@ -34,8 +34,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAEvalCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAEvalCommand(PDAVirtualMachineDMContext context, int threadId, String operation) {
-        super(context, "eval " + threadId + " " + operation);
+    public PDAEvalCommand(PDAThreadDMContext thread, String operation) {
+        super(thread, "eval " + thread.getID() + " " + operation);
     }
     
     @Override

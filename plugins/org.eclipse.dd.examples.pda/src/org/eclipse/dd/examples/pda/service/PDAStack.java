@@ -232,7 +232,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         
         // Execute the PDA stack command, or retrieve the result from cache if already available.
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
+            new PDAStackCommand(threadCtx),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -268,7 +268,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
         // Execute the stack command and create the corresponding frame contexts.
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
+            new PDAStackCommand(threadCtx),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -300,7 +300,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         }
 
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
+            new PDAStackCommand(threadCtx),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -336,7 +336,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
         // Execute stack command and return the data's size.
         fCommandCache.execute(
-            new PDAStackCommand(fCommandControl.getVirtualMachineDMContext(), threadCtx.getID()),
+            new PDAStackCommand(threadCtx),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {

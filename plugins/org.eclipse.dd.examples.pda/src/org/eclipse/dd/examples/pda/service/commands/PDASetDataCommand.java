@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Sets a data value in the data stack at the given location
@@ -27,8 +27,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDASetDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetDataCommand(PDAVirtualMachineDMContext context, int threadId, int index, String value) {
-        super(context, "setdata " + threadId + " " + index + " " + value);
+    public PDASetDataCommand(PDAThreadDMContext thread, int index, String value) {
+        super(thread, "setdata " + thread.getID() + " " + index + " " + value);
     }
     
     @Override

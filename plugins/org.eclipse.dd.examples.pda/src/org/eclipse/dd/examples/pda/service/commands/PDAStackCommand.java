@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Retrieves command stack information 
@@ -27,8 +27,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAStackCommand extends AbstractPDACommand<PDAStackCommandResult> {
 
-    public PDAStackCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "stack " + threadId);
+    public PDAStackCommand(PDAThreadDMContext thread) {
+        super(thread, "stack " + thread.getID());
     }
     
     @Override

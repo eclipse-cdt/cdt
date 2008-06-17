@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Pops the top value from the data stack  
@@ -27,8 +27,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAPopDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAPopDataCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "popdata " + threadId);
+    public PDAPopDataCommand(PDAThreadDMContext thread) {
+        super(thread, "popdata " + thread.getID());
     }
     
     @Override

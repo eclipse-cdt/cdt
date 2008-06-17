@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Pushes the given value on top of the data stack.
@@ -27,8 +27,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAPushDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAPushDataCommand(PDAVirtualMachineDMContext context, int threadId, int value) {
-        super(context, "pushdata " + threadId + " " + value);
+    public PDAPushDataCommand(PDAThreadDMContext thread, int value) {
+        super(thread, "pushdata " + thread.getID() + " " + value);
     }
     
     @Override

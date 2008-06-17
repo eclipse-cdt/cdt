@@ -530,7 +530,7 @@ public class PDARunControl extends AbstractDsfService
                 final PDAThreadDMContext threadCtx = (PDAThreadDMContext)context;
                 fThreads.get(threadCtx.getID()).fResumePending = true;
                 fCommandControl.queueCommand(
-                    new PDAResumeCommand(fDMContext, threadCtx.getID()),
+                    new PDAResumeCommand(threadCtx),
                     new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
                         @Override
                         protected void handleFailure() {
@@ -618,8 +618,8 @@ public class PDARunControl extends AbstractDsfService
 
     	    AbstractPDACommand<PDACommandResult> stepCommand = 
     	        stepType == StepType.STEP_RETURN 
-    	            ? new PDAStepReturnCommand(fDMContext, threadCtx.getID())
-    	            : new PDAStepCommand(fDMContext, threadCtx.getID());
+    	            ? new PDAStepReturnCommand(threadCtx)
+    	            : new PDAStepCommand(threadCtx);
     	           
     	    
             fCommandControl.queueCommand(

@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Retrieves data stack information 
@@ -27,8 +27,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDADataCommand extends AbstractPDACommand<PDADataCommandResult> {
 
-    public PDADataCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "data " + threadId);
+    public PDADataCommand(PDAThreadDMContext thread) {
+        super(thread, "data " + thread.getID());
     }
     
     @Override

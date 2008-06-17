@@ -292,11 +292,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                         
                         // Send the command to evaluate the variable.
                         fCommandCache.execute(
-                            new PDAVarCommand(
-                                fCommandControl.getVirtualMachineDMContext(),
-                                threadCtx.getID(),
-                                frameId, 
-                                exprCtx.getExpression()), 
+                            new PDAVarCommand(threadCtx, frameId, exprCtx.getExpression()), 
                             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                                 @Override
                                 protected void handleSuccess() {
@@ -331,12 +327,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                         
                         // Send the "write" command to PDA debugger
                         fCommandCache.execute(
-                            new PDASetVarCommand(
-                                fCommandControl.getVirtualMachineDMContext(), 
-                                threadCtx.getID(), 
-                                frameId, 
-                                exprCtx.getExpression(), 
-                                exprValue), 
+                            new PDASetVarCommand( threadCtx, frameId, exprCtx.getExpression(), exprValue), 
                             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                                 @Override
                                 protected void handleSuccess() {

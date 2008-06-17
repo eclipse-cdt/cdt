@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Suspends execution of a single thread.  Can be issued only if the virtual 
@@ -31,8 +31,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDASuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASuspendCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "suspend " + threadId);
+    public PDASuspendCommand(PDAThreadDMContext thread) {
+        super(thread, "suspend " + thread.getID());
     }
     
     @Override

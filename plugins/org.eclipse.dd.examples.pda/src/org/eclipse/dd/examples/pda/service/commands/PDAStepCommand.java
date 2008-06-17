@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Executes next instruction 
@@ -36,8 +36,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAStepCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAStepCommand(PDAVirtualMachineDMContext context, int threadId) {
-        super(context, "step " + threadId);
+    public PDAStepCommand(PDAThreadDMContext thread) {
+        super(thread, "step " + thread.getID());
     }
     
     @Override

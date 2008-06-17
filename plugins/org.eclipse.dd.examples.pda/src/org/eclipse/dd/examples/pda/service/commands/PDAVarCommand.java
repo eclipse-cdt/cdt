@@ -11,7 +11,7 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
  * Retrieves variable value 
@@ -28,8 +28,8 @@ import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVarCommand(PDAVirtualMachineDMContext context, int threadId, int frameId, String name) {
-        super(context, "var " + threadId + " " + frameId + " " + name);
+    public PDAVarCommand(PDAThreadDMContext thread, int frameId, String name) {
+        super(thread, "var " + thread.getID() + " " + frameId + " " + name);
     }
     
     @Override

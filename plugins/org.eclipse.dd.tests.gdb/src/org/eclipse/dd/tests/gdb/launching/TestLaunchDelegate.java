@@ -141,7 +141,9 @@ public class TestLaunchDelegate extends LaunchConfigurationDelegate
 
     @Override
     public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
-        return  new GdbLaunch(configuration, mode, null);
+    	GdbLaunch launch = new GdbLaunch(configuration, mode, null);
+        launch.initialize();
+        return launch;
     }
     
     private static String getProgramName(ILaunchConfiguration configuration) throws CoreException {

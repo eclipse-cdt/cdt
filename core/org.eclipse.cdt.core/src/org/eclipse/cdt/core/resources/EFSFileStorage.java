@@ -117,4 +117,11 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 		return locationURI;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof EFSFileStorage && locationURI != null) {
+			return locationURI.equals(((EFSFileStorage)obj).getLocationURI());
+		}
+		return false;
+	}
 }

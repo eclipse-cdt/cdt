@@ -337,9 +337,17 @@ public class GDBControl extends AbstractMIControl {
     		return;
     	}
 
+    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+    		@Override
+    		protected void handleSuccess() {
+    			getSession().dispatchEvent(new InferiorStartedDMEvent(getGDBDMContext()), getProperties());
+    			super.handleSuccess();
+    		}
+    	};
+
     	if (!stopInMain) {
     		// Just start the program.
-    		queueCommand(execCommand, new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+    		queueCommand(execCommand, execMonitor);
     	} else {
     		String stopSymbol = null;
     		try {
@@ -357,16 +365,7 @@ public class GDBControl extends AbstractMIControl {
     					@Override
     					protected void handleSuccess() {
     						// After the break-insert is done, execute the -exec-run or -exec-continue command.
-    						queueCommand(
-    						    execCommand, 
-    						    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-    						        @Override
-    						        protected void handleSuccess() {
-    						            getSession().dispatchEvent(
-    						                new InferiorStartedDMEvent(getGDBDMContext()), getProperties());
-    						            super.handleSuccess();
-    						        }
-    						    });
+    						queueCommand(execCommand, execMonitor);
     					}
     				});
     	}

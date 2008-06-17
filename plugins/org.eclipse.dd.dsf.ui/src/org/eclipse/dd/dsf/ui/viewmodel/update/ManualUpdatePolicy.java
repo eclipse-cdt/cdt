@@ -49,6 +49,11 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
                 tester instanceof UserEditEventUpdateTester &&
                 fElements.equals(((UserEditEventUpdateTester)tester).fElements);
         }
+        
+        @Override
+        public String toString() {
+            return "Edit (" + fElements + ") update tester"; //$NON-NLS-1$
+        }
     }
     
     private static IElementUpdateTester fgUpdateTester = new IElementUpdateTester() {
@@ -59,6 +64,11 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
         public boolean includes(IElementUpdateTester tester) {
             return tester.equals(this);
         }
+        
+        @Override
+        public String toString() {
+            return "Manual (refresh = false) update tester"; //$NON-NLS-1$
+        }
     };
 
     private static IElementUpdateTester fgRefreshUpdateTester = new IElementUpdateTester() {
@@ -68,6 +78,11 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
         
         public boolean includes(IElementUpdateTester tester) {
             return tester.equals(this) || tester.equals(fgUpdateTester) || tester instanceof UserEditEventUpdateTester;
+        }
+
+        @Override
+        public String toString() {
+            return "Manual (refresh = true) update tester"; //$NON-NLS-1$
         }
     };
     

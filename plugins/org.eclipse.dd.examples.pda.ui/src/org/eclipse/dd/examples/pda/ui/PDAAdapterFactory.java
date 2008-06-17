@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.DefaultDsfModelSelectionPolicyFactory;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepOverCommand;
@@ -42,6 +43,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
@@ -82,6 +84,8 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         final IDebugModelProvider fDebugModelProvider;
         final PDALaunch fLaunch;
 
+		private IModelSelectionPolicyFactory fModelSelectionPolicyFactory;
+
         LaunchAdapterSet(PDALaunch launch) {
             // Initialize launch and session.
             fLaunch = launch;
@@ -93,6 +97,10 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             // Initialize source lookup
             fSourceDisplayAdapter = new DsfSourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
             session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);
+
+            // Default selection policy
+            fModelSelectionPolicyFactory = new DefaultDsfModelSelectionPolicyFactory();
+            session.registerModelAdapter(IModelSelectionPolicyFactory.class, fModelSelectionPolicyFactory);
             
             // Initialize retargetable command handler.
             fStepIntoCommand = new DsfStepIntoCommand(session, null);
@@ -130,6 +138,8 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             session.unregisterModelAdapter(ISourceDisplay.class);
             if (fSourceDisplayAdapter != null) fSourceDisplayAdapter.dispose();
             
+            session.unregisterModelAdapter(IModelSelectionPolicyFactory.class);
+
             session.unregisterModelAdapter(IStepIntoHandler.class);
             session.unregisterModelAdapter(IStepOverHandler.class);
             session.unregisterModelAdapter(IStepReturnHandler.class);

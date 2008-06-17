@@ -138,6 +138,11 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         super(provider);
     }
 
+    @Override
+    public String toString() {
+        return "ExpressionManagerVMNode";  //$NON-NLS-1$ 
+    }
+    
     private ExpressionVMProvider getExpressionVMProvider() {
         return (ExpressionVMProvider)getVMProvider();
     }

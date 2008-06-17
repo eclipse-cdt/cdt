@@ -78,6 +78,11 @@ class TimersVMNode extends AbstractDMVMNode
         super(provider, session, TimerDMContext.class);
     }
     
+    @Override
+    public String toString() {
+        return "TimersVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
     public void update(ILabelUpdate[] updates) {
         fgLabelProvider.update(updates);
     }

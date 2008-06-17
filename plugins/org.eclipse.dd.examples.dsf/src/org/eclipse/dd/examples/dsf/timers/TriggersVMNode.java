@@ -84,6 +84,11 @@ class TriggersVMNode extends AbstractDMVMNode
     }
     
     @Override
+    public String toString() {
+        return "TriggersVMNode(" + getSession().getId() + ")"; 
+    }
+    
+    @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         AlarmService alarmService = getServicesTracker().getService(AlarmService.class, null); 
         if ( alarmService == null ) {

@@ -41,6 +41,10 @@ public class ThreadVMNode extends AbstractThreadVMNode
         super(provider, session);
     }
 
+    @Override
+    public String toString() {
+        return "ThreadVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+    }
     
     @Override
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
@@ -67,7 +71,8 @@ public class ThreadVMNode extends AbstractThreadVMNode
             	@Override
 				public void handleCompleted(){
                     if (!isSuccess()) {
-                        handleFailedUpdate(update);
+                    	update.setLabel("<unavailable>", 0); //$NON-NLS-1$
+                    	update.done();
                         return;
                     }
 

@@ -319,6 +319,41 @@
          </action>         
          
       </viewContribution>
+
+      <!-- Debug View menu contributions -->
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.debugView.Refresh"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+         
+         <menu id="updatePolicy"
+               label="%menu.threadsUpdatePolicy"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
+               label="%action.manualUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
+               label="%action.automaticUpdatePolicy.label"
+               menubarPath="updatePolicy/additions"
+               state="true"
+               style="radio">
+         </action>         
+      </viewContribution>
+
    </extension>
    
 	<extension 

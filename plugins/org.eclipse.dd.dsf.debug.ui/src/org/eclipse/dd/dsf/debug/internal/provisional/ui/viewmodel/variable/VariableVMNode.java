@@ -199,6 +199,11 @@ public class VariableVMNode extends AbstractExpressionVMNode
     }
 
     @Override
+    public String toString() {
+        return "VariableVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    @Override
     protected IDMVMContext createVMContext(IDMContext dmc) {
         return new VariableExpressionVMC(dmc);
     }

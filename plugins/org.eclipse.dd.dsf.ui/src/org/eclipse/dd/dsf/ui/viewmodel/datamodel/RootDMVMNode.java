@@ -35,6 +35,12 @@ public class RootDMVMNode extends RootVMNode
         super(provider);
     }
 
+
+    @Override
+    public String toString() {
+        return "RootDMVMNode";  //$NON-NLS-1$ 
+    }
+
     /**
      * If the input object is a Data Model context, and the event is a DMC event.
      * Then we can filter the event to make sure that the view does not

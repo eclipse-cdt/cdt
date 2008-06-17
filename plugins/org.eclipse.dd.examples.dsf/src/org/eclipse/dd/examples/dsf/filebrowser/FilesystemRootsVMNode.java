@@ -42,6 +42,11 @@ class FilesystemRootsVMNode extends AbstractVMNode
         super(provider);
     }
 
+    @Override
+    public String toString() {
+        return "FilesystemRootsVMNode"; 
+    }
+    
     public void update(final IChildrenUpdate[] updates) {
         new Job("") { //$NON-NLS-1$
             {

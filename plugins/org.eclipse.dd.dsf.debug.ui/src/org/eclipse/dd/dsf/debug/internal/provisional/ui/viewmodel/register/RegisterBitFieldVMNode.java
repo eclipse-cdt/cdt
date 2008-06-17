@@ -159,6 +159,12 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         fFormattedPrefStore = prefStore;
     }
     
+    
+    @Override
+    public String toString() {
+        return "RegisterBitFieldVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
     public IFormattedValuePreferenceStore getPreferenceStore() {
         return fFormattedPrefStore;
     }

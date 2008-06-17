@@ -259,8 +259,8 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             // ISteppingTimedOutEvent will trigger a refresh.
             if (((IResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) {
                 parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
-                rm.done();
             }
+            rm.done();
         } else if (e instanceof ISuspendedDMEvent) {
             // Container suspended.  Do nothing here to give the stack the 
             // priority in updating. The thread will update as a result of 

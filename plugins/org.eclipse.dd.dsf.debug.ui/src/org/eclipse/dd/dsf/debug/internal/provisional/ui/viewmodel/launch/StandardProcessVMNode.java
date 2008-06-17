@@ -89,6 +89,11 @@ public class StandardProcessVMNode extends AbstractVMNode {
         super(provider);
     }
 
+    @Override
+    public String toString() {
+        return "StandardProcessVMNode";  //$NON-NLS-1$ 
+    }
+
     public void update(IChildrenUpdate[] updates) {
         for (IChildrenUpdate update : updates) {
             ILaunch launch = findLaunch(update.getElementPath());

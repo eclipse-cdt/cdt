@@ -49,8 +49,14 @@ public class ModulesVMNode extends AbstractDMVMNode
         }
     }
     
+    
     public ModulesVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IModuleDMContext.class);
+    }
+    
+    @Override
+    public String toString() {
+        return "ModulesVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     @Override

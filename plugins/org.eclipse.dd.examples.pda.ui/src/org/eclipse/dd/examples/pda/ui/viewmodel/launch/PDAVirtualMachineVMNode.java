@@ -46,11 +46,15 @@ import org.eclipse.ui.IMemento;
 public class PDAVirtualMachineVMNode extends AbstractContainerVMNode
     implements IElementMementoProvider
 {
-
-    
 	public PDAVirtualMachineVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session);
 	}
+
+	@Override
+    public String toString() {
+        return "PDAContainerVMNode(" + getSession().getId() + ")"; 
+    }
+
 
 	@Override
 	protected void updateElementsInSessionThread(IChildrenUpdate update) {
@@ -97,8 +101,8 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode
         update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
 
         // Retrieve the last state change reason 
-        runControl.getExecutionData(
-            programCtx, 
+        getDMVMProvider().getModelData(
+            this, update, runControl, programCtx, 
             new ViewerDataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), update) 
             { 
                 @Override
@@ -130,31 +134,10 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode
                     update.setLabel(builder.toString(), 0);
                     update.done();
                 }
-            });        
+            },
+            getExecutor());        
     }
 
-/*    @Override
-    public int getDeltaFlags(Object e) {
-        if (e instanceof PDAStartedEvent) {
-            return IModelDelta.EXPAND | IModelDelta.SELECT;
-        }
-        return super.getDeltaFlags(e);
-    }
-
-    @Override
-    public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        if (e instanceof PDAStartedEvent) {
-            // When debug session is started expand and select the program.
-            // If the program hits a breakpoint, the top stack frame will then
-            // be selected.
-            parentDelta.addNode(createVMContext(((PDAStartedEvent)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);            
-            rm.done();
-        } else {
-            super.buildDelta(e, parentDelta, nodeOffset, rm);
-        }
-    }
-*/
-    
     private String produceProgramElementName( String viewName , PDAVirtualMachineDMContext execCtx ) {
         return "PDA." + execCtx.getProgram(); //$NON-NLS-1$
     }

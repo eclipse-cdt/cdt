@@ -151,6 +151,11 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         fFormattedPrefStore = prefStore;
     }
 
+    @Override
+    public String toString() {
+        return "RegisterVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
     protected SyncRegisterDataAccess getSyncRegisterDataAccess() {
         return fSyncRegisterDataAccess;
     }

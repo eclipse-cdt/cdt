@@ -29,6 +29,11 @@ public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
         public boolean includes(IElementUpdateTester tester) {
             return tester.equals(this);
         }
+
+        @Override
+        public String toString() {
+            return "Autoamtic update tester"; //$NON-NLS-1$
+        }
     };
     
     public String getID() {

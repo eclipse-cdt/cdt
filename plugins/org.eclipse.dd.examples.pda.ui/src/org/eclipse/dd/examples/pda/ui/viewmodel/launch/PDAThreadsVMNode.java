@@ -44,6 +44,10 @@ public class PDAThreadsVMNode extends AbstractThreadVMNode
         super(provider, session);
     }
 
+    @Override
+    public String toString() {
+        return "PDAThreadVMNode(" + getSession().getId() + ")"; 
+    }
     
     @Override
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
@@ -65,44 +69,47 @@ public class PDAThreadsVMNode extends AbstractThreadVMNode
             update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
 
             // Find the Reason for the State
-            runControl.getExecutionData(dmc,
-            		new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) {
-            	@Override
-				public void handleCompleted(){
-                    if (!isSuccess()) {
-                        handleFailedUpdate(update);
-                        return;
-                    }
+            getDMVMProvider().getModelData(
+                this, update, runControl, dmc,
+                new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) {
+                    @Override
+                    public void handleCompleted(){
+                        if (!isSuccess()) {
+                            update.setLabel("<unavailable>", 0);
+                            update.done();
+                            return;
+                        }
 
-                    // We're in a new dispatch cycle, and we have to check whether the
-                    // service reference is still valid.
-                    final PDARunControl runControl = getServicesTracker().getService(PDARunControl.class);
-                    if ( runControl == null ) {
-                        handleFailedUpdate(update);
-                        return;
-                    }
-
-                    final StateChangeReason reason = getData().getStateChangeReason();
-
-                    // Create Labels of type Thread[GDBthreadId]RealThreadID/Name (State: Reason)
-                    // Thread[1] 3457 (Suspended:BREAKPOINT)
-                    final StringBuilder builder = new StringBuilder();
-                    builder.append("Thread ");
-                    builder.append(dmc.getID());
-                    if(getServicesTracker().getService(IRunControl.class).isSuspended(dmc))
-                        builder.append(" (Suspended"); 
-                    else
-                        builder.append(" (Running"); 
-                    // Reason will be null before ContainerSuspendEvent is fired
-                    if(reason != null) {
-                        builder.append(" : "); 
-                        builder.append(reason);
-                    }
-                    builder.append(")"); 
-                    update.setLabel(builder.toString(), 0);
-                    update.done();
-            	}
-            });
+                        // We're in a new dispatch cycle, and we have to check whether the
+                        // service reference is still valid.
+                        final PDARunControl runControl = getServicesTracker().getService(PDARunControl.class);
+                        if ( runControl == null ) {
+                            handleFailedUpdate(update);
+                            return;
+                        }
+    
+                        final StateChangeReason reason = getData().getStateChangeReason();
+    
+                        // Create Labels of type Thread[GDBthreadId]RealThreadID/Name (State: Reason)
+                        // Thread[1] 3457 (Suspended:BREAKPOINT)
+                        final StringBuilder builder = new StringBuilder();
+                        builder.append("Thread ");
+                        builder.append(dmc.getID());
+                        if(getServicesTracker().getService(IRunControl.class).isSuspended(dmc))
+                            builder.append(" (Suspended"); 
+                        else
+                            builder.append(" (Running"); 
+                        // Reason will be null before ContainerSuspendEvent is fired
+                        if(reason != null) {
+                            builder.append(" : "); 
+                            builder.append(reason);
+                        }
+                        builder.append(")"); 
+                        update.setLabel(builder.toString(), 0);
+                        update.done();
+                	}
+                }, 
+                getExecutor());
             
         }
     }

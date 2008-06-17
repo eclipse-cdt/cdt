@@ -45,10 +45,13 @@ import org.eclipse.ui.IMemento;
 public class ContainerVMNode extends AbstractContainerVMNode
     implements IElementMementoProvider
 {
-
-    
 	public ContainerVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session);
+	}
+	
+	@Override
+	public String toString() {
+	    return "ContainerVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

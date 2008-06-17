@@ -42,6 +42,12 @@ class AlarmsVMNode extends AbstractDMVMNode
     }
     
     @Override
+    public String toString() {
+        return "AlarmsVMNode(" + getSession().getId() + ")";
+    }
+    
+
+    @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         // Check that the service is available and find the trigger and timer contexts.  
         // If not found, fail.

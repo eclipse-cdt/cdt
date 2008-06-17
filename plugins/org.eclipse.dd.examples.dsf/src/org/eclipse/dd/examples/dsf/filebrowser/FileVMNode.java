@@ -61,6 +61,12 @@ class FileVMNode
         fProvider = provider;
     }
 
+    @Override
+    public String toString() {
+        return "FileVMNode";  
+    }
+
+
     public void dispose() {
         // All resources garbage collected.
     }

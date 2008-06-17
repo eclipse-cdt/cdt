@@ -133,7 +133,12 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         super(provider, session, IRegisters.IRegisterGroupDMContext.class);
         fSyncRegisterDataAccess = syncDataAccess;
     }
-    
+
+    @Override
+    public String toString() {
+        return "RegisterGroupVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
     public SyncRegisterDataAccess getSyncRegisterDataAccess() {
         return fSyncRegisterDataAccess;
     }

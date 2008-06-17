@@ -58,6 +58,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
         super(provider, session, IStack.IFrameDMContext.class);
     }
     
+    @Override
+    public String toString() {
+        return "StackFramesVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateHasElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate)

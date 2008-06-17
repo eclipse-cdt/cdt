@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
@@ -79,7 +78,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         
         @Override
         public String toString() {
-            return fViewerInput + "." + fPath.toString() + "(" + fNode + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            return fNode.toString() + " " +  //$NON-NLS-1$
+                (fPath.getSegmentCount() == 0 ? fViewerInput.toString() : fPath.getLastSegment().toString());
         }
         
         @Override
@@ -183,6 +183,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             } 
             return 0;
         }
+        
+        @Override
+        public String toString() {
+            return fElementTester.toString() + " " + fRootElement.toString(); //$NON-NLS-1$
+        }
+
     }
     
     /**
@@ -198,11 +204,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         }
         
         @Override
-        public String toString() {
-            return "Root marker for " + fRootElement;
-        }
-        
-        @Override
         public boolean equals(Object obj) {
             return obj instanceof RootElementMarkerKey && ((RootElementMarkerKey)obj).fRootElement.equals(fRootElement);
         }
@@ -210,6 +211,11 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         @Override
         public int hashCode() {
             return fRootElement.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return fRootElement.toString();
         }
     }
     
@@ -222,6 +228,11 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         void remove() {
             super.remove();
             rootElementRemovedFromCache(((RootElementMarkerKey)fKey).fRootElement);
+        }
+        
+        @Override
+        public String toString() {
+            return "ROOT MARKER " + fKey;  //$NON-NLS-1$
         }
     }
         
@@ -251,7 +262,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     public AbstractCachingVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext) {
         super(adapter, presentationContext);
         
-        fCacheListHead = new Entry(null);
+        fCacheListHead = new Entry(null) {
+            @Override
+            public String toString() {
+                return "HEAD"; //$NON-NLS-1$
+            }
+        };
         fCacheListHead.fNext = fCacheListHead;
         fCacheListHead.fPrevious = fCacheListHead;
         
@@ -703,10 +719,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 
                 ElementDataKey key = makeEntryKey(node, update);
                 final ElementDataEntry entry = getElementDataEntry(key);
-                if (entry.fDirty) {
+                /*if (entry.fDirty) {
                     rm.setStatus(Status.CANCEL_STATUS);
                     rm.done();
-                } else {
+                } else */{
 	                Object dataOrStatus = entry.fDataOrStatus.get(dmc);
 	                if(dataOrStatus != null) {
 	                    if (dataOrStatus instanceof IDMData) {

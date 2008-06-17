@@ -56,6 +56,11 @@ public class LaunchRootVMNode extends RootVMNode
     }
 
     @Override
+    public String toString() {
+        return "LaunchRootVMNode";  //$NON-NLS-1$ 
+    }
+
+    @Override
     public boolean isDeltaEvent(Object rootObject, Object e) {
         if (e instanceof DebugEvent) {
             DebugEvent de = (DebugEvent)e;

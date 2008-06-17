@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
@@ -416,14 +417,26 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         // Trace to debug output.
         PDAPlugin.debug("R: " + response);
         
-        // Given the PDA response string, create the result using the command
-        // that was sent.
-        PDACommandResult result = handle.fCommand.createResult(response);
+        PDACommandResult result = null;
         
-        // Set the result to the request monitor and return to sender.
-        // Note: as long as PDA sends some response, a PDA command will never
-        // return an error.
-        handle.fRequestMonitor.setData(result);
+        if (response.startsWith("error:")) {
+            // Create a generic result with the error response
+            result = new PDACommandResult(response);
+            
+            // Set the error status to the request monitor.
+            handle.fRequestMonitor.setStatus(new Status(
+                IStatus.ERROR, PDAPlugin.PLUGIN_ID, 
+                IDsfStatusConstants.REQUEST_FAILED, response, null));
+        } else {
+            // Given the PDA response string, create the result using the command
+            // that was sent.
+            result = handle.fCommand.createResult(response);
+            
+            // Set the result to the request monitor and return to sender.
+            // Note: as long as PDA sends some response, a PDA command will never
+            // return an error.
+            handle.fRequestMonitor.setData(result);
+        }
         handle.fRequestMonitor.done();
 
         // Notify listeners of the response

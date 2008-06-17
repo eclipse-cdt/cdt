@@ -367,7 +367,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                                 // Optimization: Try to find a delta with a matching element, if found use it.  
                                 // Otherwise create a new delta for the event element.
                                 int elementIndex = nodeOffset + i;
-                                VMDelta delta = (VMDelta)parentDelta.getChildDelta(vmc);
+                                VMDelta delta = parentDelta.getChildDelta(vmc);
                                 if (delta == null || delta.getIndex() != elementIndex) {
                                     delta = parentDelta.addNode(vmc, elementIndex, IModelDelta.NO_CHANGE);
                                 }
@@ -385,7 +385,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             for (IVMContext vmc : vmcs) {
                 // Optimization: Try to find a delta with a matching element, if found use it.  
                 // Otherwise create a new delta for the event element.    
-                VMDelta delta = (VMDelta)parentDelta.getChildDelta(vmc);
+                VMDelta delta = parentDelta.getChildDelta(vmc);
                 if (delta == null) {
                     delta = parentDelta.addNode(vmc, IModelDelta.NO_CHANGE);
                 }
@@ -458,8 +458,10 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                             // and then call all the child nodes to build their delta. 
                             for (int i = 0; i < getData().size(); i++) {
                                 int elementIndex = nodeOffset >= 0 ? nodeOffset + i : -1;
-                                VMDelta delta = 
-                                    parentDelta.addNode(getData().get(i), elementIndex, IModelDelta.NO_CHANGE);
+                                VMDelta delta= parentDelta.getChildDelta(getData().get(i));
+                                if (delta == null) {
+                                    delta= parentDelta.addNode(getData().get(i), elementIndex, IModelDelta.NO_CHANGE);
+                                }
                                 callChildNodesToBuildDelta(
                                     node, childNodesWithDeltaFlags, delta, event, 
                                     elementsDeltasMultiRequestMon.add(new RequestMonitor(getVMProvider().getExecutor(), null) { 

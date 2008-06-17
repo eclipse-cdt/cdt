@@ -32,7 +32,9 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
 import org.eclipse.dd.dsf.ui.viewmodel.update.IVMUpdatePolicy;
+import org.eclipse.dd.dsf.ui.viewmodel.update.ManualUpdatePolicy;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -63,7 +65,10 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     
     @Override
 	protected IVMUpdatePolicy[] createUpdateModes() {
-		return new IVMUpdatePolicy[] { new DelayedStackRefreshUpdatePolicy() };
+		return new IVMUpdatePolicy[] {
+				new DelayedStackRefreshUpdatePolicy(new AutomaticUpdatePolicy()),
+				new DelayedStackRefreshUpdatePolicy(new ManualUpdatePolicy())
+		};
     }
     
     public void handleDebugEvents(final DebugEvent[] events) {

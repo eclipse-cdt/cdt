@@ -199,6 +199,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         // the source lookup adapter.
         
         GdbLaunch launch = new GdbLaunch(configuration, mode, null);
+        launch.initialize();
         launch.setSourceLocator(getSourceLocator(configuration, launch.getSession()));
         return launch;
     }

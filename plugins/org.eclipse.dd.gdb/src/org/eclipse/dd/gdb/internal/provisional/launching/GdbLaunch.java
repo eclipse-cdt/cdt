@@ -74,9 +74,7 @@ public class GdbLaunch extends Launch
 
     public DsfExecutor getDsfExecutor() { return fExecutor; }
     
-    @ConfinedToDsfExecutor("getExecutor")
-    public void initializeControl()
-        throws CoreException
+    public void initialize()
     {
         Runnable initRunnable = new DsfRunnable() { 
             public void run() {
@@ -96,7 +94,11 @@ public class GdbLaunch extends Launch
         } catch (ExecutionException e) {
             new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
         }
+    }
 
+    public void initializeControl()
+    throws CoreException
+    {
         // Create a memory retrieval and register it with the session 
         try {
             fExecutor.submit( new Callable<Object>() {

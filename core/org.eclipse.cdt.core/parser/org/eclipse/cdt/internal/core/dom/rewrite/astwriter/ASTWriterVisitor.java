@@ -69,6 +69,8 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 		
 		shouldVisitDeclarators = true;
 		
+		shouldVisitArrayModifiers= true;
+		
 		shouldVisitInitializers = true;
 		
 		shouldVisitBaseSpecifiers = true;
@@ -202,6 +204,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 		return ASTVisitor.PROCESS_SKIP;
 	}
 
+	@Override
 	public int visit(IASTArrayModifier amod) {
 		if(!macroHandler.checkisMacroExpansionNode(amod)) {
 			declaratorWriter.writeArrayModifier(amod);

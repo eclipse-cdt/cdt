@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.dom.IName;
  * 
  * The toString method produces a string representation of the name as
  * appropriate for the language.
- * 
- * @author Doug Schaefer
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTName extends IASTNode, IName {
 
@@ -88,4 +88,11 @@ public interface IASTName extends IASTNode, IName {
 	 * @since 5.0
 	 */
 	public IASTImageLocation getImageLocation();
+	
+	/**
+	 * For convenience this method returns the last name of a qualified name or this if this is not a
+	 * qualified name.
+	 * @since 5.1
+	 */
+	public IASTName getLastName();
 }

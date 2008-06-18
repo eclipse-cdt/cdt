@@ -63,6 +63,11 @@ public abstract class ASTVisitor {
 	 */
 	public boolean shouldVisitDeclSpecifiers = false;
 	/**
+	 * Set this flag to visit array modifiers.
+	 * @since 5.1
+	 */
+	public boolean shouldVisitArrayModifiers = false;
+	/**
 	 * Set this flag to visit expressions.
 	 */
 	public boolean shouldVisitExpressions = false;
@@ -110,7 +115,6 @@ public abstract class ASTVisitor {
 	 * Your visitor needs to implement {@link ICPPASTVisitor} to make this work.
 	 */
 	public boolean shouldVisitTemplateParameters = false;
-
 	
 	// visit methods
 	public int visit(IASTTranslationUnit tu) {
@@ -138,6 +142,13 @@ public abstract class ASTVisitor {
 	}
 
 	public int visit(IASTDeclSpecifier declSpec) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public int visit(IASTArrayModifier arrayModifier) {
 		return PROCESS_CONTINUE;
 	}
 
@@ -187,6 +198,13 @@ public abstract class ASTVisitor {
 	}
 
 	public int leave(IASTDeclSpecifier declSpec) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public int leave(IASTArrayModifier arrayModifier) {
 		return PROCESS_CONTINUE;
 	}
 

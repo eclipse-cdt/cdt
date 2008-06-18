@@ -73,6 +73,7 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		shouldVisitTranslationUnit = delegateVisitor.shouldVisitTranslationUnit;
 		shouldVisitProblems = delegateVisitor.shouldVisitProblems;
 		shouldVisitTypeIds = delegateVisitor.shouldVisitTypeIds;
+		shouldVisitArrayModifiers= delegateVisitor.shouldVisitArrayModifiers;
 
 	}
 

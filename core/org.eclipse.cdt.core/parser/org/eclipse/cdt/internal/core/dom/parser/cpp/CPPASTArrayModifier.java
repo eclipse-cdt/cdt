@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -44,10 +45,24 @@ public class CPPASTArrayModifier extends CPPASTNode implements IASTArrayModifier
 
     @Override
 	public boolean accept(ASTVisitor action) {
-        if (exp != null)
+        if (exp != null) {
+            if( action.shouldVisitArrayModifiers ){
+    		    switch( action.visit( this ) ){
+    	            case ASTVisitor.PROCESS_ABORT : return false;
+    	            case ASTVisitor.PROCESS_SKIP  : return true;
+    	            default : break;
+    	        }
+    		}
             if (!exp.accept(action))
                 return false;
-
+            if( action.shouldVisitArrayModifiers ){
+    		    switch( action.leave( this ) ){
+    	            case ASTVisitor.PROCESS_ABORT : return false;
+    	            case ASTVisitor.PROCESS_SKIP  : return true;
+    	            default : break;
+    	        }
+    		}
+        }
         return true;
     }
 

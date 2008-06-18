@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.ChangeGeneratorWriterVisitor;
@@ -80,16 +78,7 @@ public class ASTWriter {
 	 */
 	public String write(IASTNode rootNode, String fileScope, NodeCommentMap commentMap) throws ProblemRuntimeException {
 		transformationVisitor = new ChangeGeneratorWriterVisitor(modificationStore, givenIndentation, fileScope, commentMap);
-		
-		// mstodo: workaround for 
-		if (rootNode instanceof IASTArrayModifier) {
-			int result= transformationVisitor.visit((IASTArrayModifier) rootNode);
-			if (result == ASTVisitor.PROCESS_CONTINUE) {
-				rootNode.accept(transformationVisitor);
-			}
-		} else {
-			rootNode.accept(transformationVisitor);
-		}
+		rootNode.accept(transformationVisitor);
 		String str = transformationVisitor.toString();
 		transformationVisitor.cleanCache();
 		return str;

@@ -13,7 +13,10 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
@@ -54,8 +57,11 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 			public int visit(IASTExpression expression) {
 				if (expression instanceof ICPPASTNewExpression) {
 					ICPPASTNewExpression newExpression = (ICPPASTNewExpression) expression;
-					IASTExpression[] arraySizeExpressions = newExpression.getNewTypeIdArrayExpressions();
-					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE, arraySizeExpressions[1], new CPPASTLiteralExpression(0, "7"), null); //$NON-NLS-1$
+					IASTTypeId id= newExpression.getTypeId();
+					IASTArrayDeclarator dtor= (IASTArrayDeclarator) id.getAbstractDeclarator();
+					IASTArrayModifier[] mods= dtor.getArrayModifiers();
+					IASTExpression expr= mods[1].getConstantExpression();
+					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE, expr, new CPPASTLiteralExpression(0, "7"), null); //$NON-NLS-1$
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

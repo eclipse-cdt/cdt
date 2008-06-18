@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -19,6 +20,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -46,6 +48,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 		return suite(PDOMCBugsTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		cproject= CProjectHelper.createCProject("PDOMCBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		Bundle b = CTestPlugin.getDefault().getBundle();
@@ -59,6 +62,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
@@ -79,16 +83,16 @@ public class PDOMCBugsTest extends BaseTestCase {
 		IBinding[] bindings= pdom.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, NPM);
 		assertEquals(7, bindings.length);
 		Set bnames= new HashSet();
-		for(int i=0; i<bindings.length; i++) {
-			assertTrue("expected typedef, got "+bindings[i], bindings[i] instanceof ITypedef);
-			bnames.add(bindings[i].getName());
-			IType type= SemanticUtil.getUltimateType((IType)bindings[i], false);
+		for (IBinding binding : bindings) {
+			assertTrue("expected typedef, got "+binding, binding instanceof ITypedef);
+			bnames.add(binding.getName());
+			IType type= SemanticUtil.getUltimateType((IType)binding, false);
 			
-			if(bindings[i].getName().equals("J")) {
+			if(binding.getName().equals("J")) {
+				// for plain C the second J has to be interpreted as a (useless) parameter name.
 				assertTrue(type instanceof IFunctionType);
 				IFunctionType ft= (IFunctionType) type;
-				assertEquals(1, ft.getParameterTypes().length);
-				assertNull(ft.getParameterTypes()[0]);
+				assertEquals("int (int)", ASTTypeUtil.getType(ft));
 			} else {
 				assertNull("expected null, got "+type, type);
 			}

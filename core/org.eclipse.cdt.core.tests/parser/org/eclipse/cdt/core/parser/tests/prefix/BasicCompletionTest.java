@@ -78,22 +78,22 @@ public class BasicCompletionTest extends CompletionTestBase {
 
 	public void testTypedef() throws Exception {
 		String code = 
-			"typedef int blah;" +
+			"void test() {typedef int blah;" +
 			"bl";
 		
 		// C++
 		IASTCompletionNode node = getGPPCompletionNode(code);
 		IASTName[] names = node.getNames();
 		assertEquals(2, names.length);
-		assertNull(names[0].getTranslationUnit());
-		IBinding[] bindings = names[1].getCompletionContext().findBindings(names[1], true);
+		assertNull(names[1].getTranslationUnit());
+		IBinding[] bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		assertEquals(1, bindings.length);
 		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 		
 		// C
 		node = getGCCCompletionNode(code);
 		names = node.getNames();
-		assertEquals(1, names.length);
+		assert(names.length > 0);
 		bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		assertEquals(1, bindings.length);
 		assertEquals("blah", ((ITypedef)bindings[0]).getName());

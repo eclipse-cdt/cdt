@@ -10,7 +10,7 @@ void foo()
 
 //!CaseDefaultStatementTest
 //%CPP
-foo()
+void foo()
 {
     switch (1){
         case 1:

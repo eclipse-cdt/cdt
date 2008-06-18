@@ -197,10 +197,11 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getLinkage()
-	 */
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+
+	public IASTName getLastName() {
+		return this;
 	}
 }

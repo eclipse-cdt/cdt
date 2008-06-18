@@ -3746,8 +3746,17 @@ public class AST2Tests extends AST2BaseTest {
 			assertInstance(col.getName(11).resolveBinding(), ITypedef.class);
 			
 			// function ptr
-			assertInstance(col.getName(12).resolveBinding(), ITypedef.class);
-			assertInstance(col.getName(13).resolveBinding(), IProblemBinding.class);
+			final IBinding typedef = col.getName(12).resolveBinding();
+			final IBinding secondJ = col.getName(13).resolveBinding();
+			assertInstance(typedef, ITypedef.class);
+			if (lang == ParserLanguage.CPP) {
+				assertInstance(secondJ, IProblemBinding.class);
+			} else {
+				// for plain C this is actually not a problem, the second J has to be interpreted as a (useless) 
+				// parameter name.
+				assertInstance(typedef, ITypedef.class);
+				isTypeEqual(((ITypedef) typedef).getType(), "int (int) *");
+			}
 		}
 	}
 	
@@ -4817,9 +4826,7 @@ public class AST2Tests extends AST2BaseTest {
     // int f3(int (tint));
     // int f4(int (identifier));
     // int f5(int *(tint[10])); 
-    public void _testParamWithFunctionType_Bug84242() throws Exception {
-    	// works for plain-c, see testcase below.
-    	// mstodo also check related failure AST2CPPSpecFailingTest._test8_2s7a()
+    public void testParamWithFunctionType_Bug84242() throws Exception {
     	final String comment= getAboveComment();
     	final boolean[] isCpps= {false, true};
     	for (boolean isCpp : isCpps) {
@@ -4844,7 +4851,7 @@ public class AST2Tests extends AST2BaseTest {
 
     // class C { };
     // void f1(int(C)) { }     
-    public void _testParamWithFunctionTypeCpp_Bug84242() throws Exception {
+    public void testParamWithFunctionTypeCpp_Bug84242() throws Exception {
     	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 
     	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);

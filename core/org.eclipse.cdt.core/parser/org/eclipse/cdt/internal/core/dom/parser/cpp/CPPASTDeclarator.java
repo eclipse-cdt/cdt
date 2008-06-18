@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -115,23 +116,20 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
             if( !ptrOps[i].accept( action ) ) return false;
         }
         
-        if( getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
-    		nestedDeclarator == null )
-		{
-           if( getParent() instanceof IASTDeclarator )
-            {
-                IASTDeclarator outermostDeclarator = (IASTDeclarator) getParent();
-                while( outermostDeclarator.getParent() instanceof IASTDeclarator )
-                    outermostDeclarator = (IASTDeclarator) outermostDeclarator.getParent();
-                if( outermostDeclarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR )
-                    if( name != null ) if( !name.accept( action ) ) return false;
+        if (nestedDeclarator == null && name != null) {
+        	IASTDeclarator outermost= CPPVisitor.findOutermostDeclarator(this);
+        	if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
+        		if (!name.accept(action)) return false;
             }
-            else
-                if( name != null ) if( !name.accept( action ) ) return false;
 		}
         
-        if( nestedDeclarator != null ) if( !nestedDeclarator.accept( action ) ) return false;
+        if (nestedDeclarator != null) {
+        	if (!nestedDeclarator.accept(action)) return false;
+        }
       
+        if (!postAccept(action))
+        	return false;
+        
         if( action.shouldVisitDeclarators ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -139,8 +137,7 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
 	            default : break;
 	        }
 		}
-          
-        return postAccept( action );
+        return true;  
     }
     
     protected boolean postAccept( ASTVisitor action ){

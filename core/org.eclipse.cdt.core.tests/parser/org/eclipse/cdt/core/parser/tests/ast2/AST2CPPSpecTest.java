@@ -13,14 +13,18 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -776,14 +780,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// };
 	public void test5_3_4s3() throws Exception {
 		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-		IASTFunctionDefinition fdef= getFunctionDefinition(tu, 0);
+		IASTFunctionDefinition fdef= getDeclaration(tu, 0);
 		IASTExpression expr= getExpressionOfStatement(fdef, 0);
 		assertInstance(expr, ICPPASTNewExpression.class);
 		ICPPASTNewExpression newExpr= (ICPPASTNewExpression) expr;
 		
 		assertNull(newExpr.getNewPlacement());
 		assertNull(newExpr.getNewInitializer());
-		assertEquals(0, newExpr.getNewTypeIdArrayExpressions().length);
 		IASTTypeId typeid= newExpr.getTypeId();
 		isTypeEqual(CPPVisitor.createType(typeid), "int () * []");
 	}
@@ -795,11 +798,11 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	//    new T[5];
 	//    new (2,f) T[5];
 	// };
-	public void _test5_3_4s12() throws Exception {
-		// failing see https://bugs.eclipse.org/bugs/show_bug.cgi?id=236856
+	public void test5_3_4s12() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=236856
 		
 		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-		IASTFunctionDefinition fdef= getFunctionDefinition(tu, 1);
+		IASTFunctionDefinition fdef= getDeclaration(tu, 1);
 
 		// new T;
 		IASTExpression expr= getExpressionOfStatement(fdef, 0);
@@ -807,7 +810,6 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		ICPPASTNewExpression newExpr= (ICPPASTNewExpression) expr;
 		assertNull(newExpr.getNewPlacement());
 		assertNull(newExpr.getNewInitializer());
-		assertEquals(0, newExpr.getNewTypeIdArrayExpressions().length);
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int");
 		
 		// new(2,f) T;
@@ -816,7 +818,6 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		newExpr= (ICPPASTNewExpression) expr;
 		assertInstance(newExpr.getNewPlacement(), IASTExpressionList.class);
 		assertNull(newExpr.getNewInitializer());
-		assertEquals(0, newExpr.getNewTypeIdArrayExpressions().length);
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int");
 
 		// new T[5];
@@ -825,7 +826,6 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		newExpr= (ICPPASTNewExpression) expr;
 		assertNull(newExpr.getNewPlacement());
 		assertNull(newExpr.getNewInitializer());
-		assertEquals(1, newExpr.getNewTypeIdArrayExpressions().length);
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int []");
 
 		// new (2,f) T[5];
@@ -834,7 +834,6 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		newExpr= (ICPPASTNewExpression) expr;
 		assertInstance(newExpr.getNewPlacement(), IASTExpressionList.class);
 		assertNull(newExpr.getNewInitializer());
-		assertEquals(1, newExpr.getNewTypeIdArrayExpressions().length);
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), "int []");
 	}
 
@@ -1133,7 +1132,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// // an ordinary member function, not a constructor
 	// } S;
 	public void test7_1_3s5b() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTTranslationUnit tu= parseWithErrors(getAboveComment(), ParserLanguage.CPP);
+		IASTCompositeTypeSpecifier comp= getCompositeType(tu, 0);
+		IASTDeclaration d= getDeclaration(comp, 0);
+		assertInstance(d, IASTProblemDeclaration.class);
 	}
 
 	// int foo() {
@@ -1777,9 +1779,26 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 
 	// class C { };
+	// void f(int(C)) { } // void f(int (*fp)(C c)) { }
+	// // not: void f(int C);
+	// int g(C);
+	// void foo() {
+	// f(1); //error: cannot convert 1 to function pointer
+	// f(g); //OK
+	// }
+	public void test8_2s7a() throws Exception { // TODO raised bug 90633
+		final String code = getAboveComment();
+		parse(code, ParserLanguage.CPP, true, 1);
+		
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		IFunction f= ba.assertNonProblem("f", 1, IFunction.class);
+		isTypeEqual(f.getType(), "void (int (C) *)");
+	}
+
+	// class C { };
 	// void h(int *(C[10])); // void h(int *(*_fp)(C _parm[10]));
 	// // not: void h(int *C[10]);
-	public void _test8_2s7b() throws Exception {
+	public void test8_2s7b() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 0);
 		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
@@ -3958,7 +3977,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// int f(char*);
 	// void g()
 	// {
-	// extern f(int);
+	// extern int f(int);
 	// f("asdf"); //error: f(int) hides f(char*)
 	// // so there is no f(char*) in this scope
 	// }
@@ -5634,7 +5653,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// class Matherr {  virtual vf(); };
+	// class Matherr {  virtual void vf(); };
 	// class Overflow: public Matherr {  };
 	// class Underflow: public Matherr {  };
 	// class Zerodivide: public Matherr {  };
@@ -6185,7 +6204,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// int ef(D&);
 	// int ff(X&);
 	public void test11_3s2() throws Exception { //bug 92793
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTCompositeTypeSpecifier D= getCompositeType(tu, 2);
+		IASTDeclaration accessDecl= getDeclaration(D, 2);
+		assertInstance(accessDecl, ICPPASTUsingDeclaration.class);
 	}
 
 	// int z() {

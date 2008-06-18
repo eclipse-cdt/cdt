@@ -90,18 +90,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// class C { };
-	// void f(int(C)) { } // void f(int (*fp)(C c)) { }
-	// // not: void f(int C);
-	// int g(C);
-	// void foo() {
-	// f(1); //error: cannot convert 1 to function pointer
-	// f(g); //OK
-	// }
-	public void _test8_2s7a() throws Exception { // TODO raised bug 90633
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
 	// char msg[] = "Syntax error on line %s
 	// ";
 	public void _test8_5_2s1() throws Exception { // TODO raised bug 90647

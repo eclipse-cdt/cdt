@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -2155,5 +2156,56 @@ public class CVisitor {
 	    }
 	    
 	    return true; 
+	}
+
+
+	/** 
+	 * Returns the innermost declarator nested within the given <code>declarator</code>, or
+	 * <code>declarator</code> itself.
+	 * @since 5.0
+	 */
+	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
+		IASTDeclarator innermost= null;
+		while(declarator != null) {
+			innermost= declarator;
+			declarator= declarator.getNestedDeclarator();
+		}
+		return innermost;
+	}
+	
+	/** 
+	 * Returns the outermost declarator the given <code>declarator</code> nests within, or
+	 * <code>declarator</code> itself.
+	 * @since 5.0
+	 */
+	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
+		while(true) {
+			IASTNode parent= declarator.getParent();
+			if (parent instanceof IASTDeclarator) {
+				declarator= (IASTDeclarator) parent;
+			} else {
+				return declarator;
+			}
+		}
+	}
+
+	/**
+	 * Searches for the innermost declarator that contributes the the type declared.
+	 * @since 5.0
+	 */
+	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
+		IASTDeclarator result= findInnermostDeclarator(declarator);
+		while (result.getPointerOperators().length == 0 
+				&& result instanceof IASTFieldDeclarator == false
+				&& result instanceof IASTFunctionDeclarator == false
+				&& result instanceof IASTArrayModifier == false) {
+			final IASTNode parent= result.getParent();
+			if (parent instanceof IASTDeclarator) {
+				result= (IASTDeclarator) parent;
+			} else {
+				return result;
+			}
+		}
+		return result;
 	}
 }

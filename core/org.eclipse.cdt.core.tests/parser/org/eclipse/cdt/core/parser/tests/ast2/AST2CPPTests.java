@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -83,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -1621,7 +1623,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 	
 	// namespace Y { void f(float); }                         
-	// namespace A { using namespace Y; f(int); }             
+	// namespace A { using namespace Y; void f(int); }             
 	// namespace B { void f(char);  }                         
 	// namespace AB { using namespace A; using namespace B; } 
 	// void h(){         
@@ -3561,33 +3563,39 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		// 1,4,12,21 - conversion
 		// 2, 16 .isConversion
+				
+		final IASTName int1 = col.getName(1);
+		assertNotNull(int1);
+		assertTrue(int1 instanceof ICPPASTConversionName);
+		assertNotNull(((ICPPASTConversionName) int1).getTypeId());
 		
-		assertEquals(col.size(), 22);
+		IASTFunctionDefinition fdef= getDeclaration(tu, 1);
+		final IASTName x_int = fdef.getDeclarator().getName();
+		assertNotNull(x_int);
+		assertTrue(x_int instanceof ICPPASTQualifiedName);
+		assertTrue(((ICPPASTQualifiedName) x_int).isConversionOrOperator());
+
+		final IASTName int2= ((ICPPASTQualifiedName)x_int).getLastName();
+		assertNotNull(int2);
+		assertTrue(int2 instanceof ICPPASTConversionName);
+		assertNotNull(((ICPPASTConversionName) int2).getTypeId());
 		
-		assertNotNull(col.getName(1));
-		assertNotNull(col.getName(4));
-		assertNotNull(col.getName(12));
-		assertNotNull(col.getName(21));
-		assertNotNull(col.getName(2));
-		assertNotNull(col.getName(16));
-		
-		// ensure the conversions are conversions
-		assertTrue(col.getName(1) instanceof ICPPASTConversionName);
-		assertTrue(col.getName(4) instanceof ICPPASTConversionName);
-		assertTrue(col.getName(12) instanceof ICPPASTConversionName);
-		assertTrue(col.getName(21) instanceof ICPPASTConversionName);
-		assertNotNull(((ICPPASTConversionName) col.getName(1)).getTypeId());
-		assertNotNull(((ICPPASTConversionName) col.getName(4)).getTypeId());
-		assertNotNull(((ICPPASTConversionName) col.getName(12)).getTypeId());
-		assertNotNull(((ICPPASTConversionName) col.getName(21)).getTypeId());
-		
-		// ensure qualified name isConversionOrOperator
-		assertTrue(col.getName(2) instanceof ICPPASTQualifiedName);
-		assertTrue(col.getName(16) instanceof ICPPASTQualifiedName);
-		assertTrue(((ICPPASTQualifiedName) col.getName(2))
-				.isConversionOrOperator());
-		assertTrue(((ICPPASTQualifiedName) col.getName(16))
-				.isConversionOrOperator());
+		final IASTName int3 = col.getName(12);
+		assertNotNull(int3);
+		assertTrue(int3 instanceof ICPPASTConversionName);
+		assertNotNull(((ICPPASTConversionName) int3).getTypeId());
+
+		ICPPASTTemplateDeclaration tdef= getDeclaration(tu, 3);
+		fdef= (IASTFunctionDefinition) tdef.getDeclaration();
+		final IASTName x_ac_int = fdef.getDeclarator().getName();
+		assertNotNull(x_ac_int);
+		assertTrue(x_ac_int instanceof ICPPASTQualifiedName);
+		assertTrue(((ICPPASTQualifiedName) x_ac_int).isConversionOrOperator());
+
+		final IASTName int4= ((ICPPASTQualifiedName)x_ac_int).getLastName();
+		assertNotNull(int4);
+		assertTrue(int4 instanceof ICPPASTConversionName);
+		assertNotNull(((ICPPASTConversionName) int4).getTypeId());
 	}
 	
 	public void testBug88662() throws Exception {
@@ -4066,7 +4074,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(d2, r);
 	}
 	
-	// class P {                    
+	// class Point {                    
 	//    Point() : xCoord(0) {}    
 	//    int xCoord;               
 	// };                           
@@ -5021,10 +5029,6 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( blah, col.getName(6).resolveBinding() );
 	}
 	
-	public void testBug80171() throws Exception {
-		parseAndCheckBindings( "static var;"); //$NON-NLS-1$
-	}
-	
 	public void testBug78800() throws Exception {
 		parseAndCheckBindings( "class Matrix {  public: Matrix & operator *(Matrix &); }; Matrix rotate, translate; Matrix transform = rotate * translate;" ); //$NON-NLS-1$
 	}
@@ -5658,7 +5662,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// X::~X() {}
 	// X::operator int() {}
 	// X::xtint(a); // 2
-	public void _testEmptyDeclSpecifier() throws Exception {
+	public void testEmptyDeclSpecifier() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("X {", 1, ICPPClassType.class);
 		ba.assertNonProblem("X()", 1, ICPPConstructor.class);
@@ -5677,46 +5681,46 @@ public class AST2CPPTests extends AST2BaseTest {
 	// int p[100]; 
 	// void test(int f) {
 	//	  new T; 
+	//    new T();
 	//    new T(f);
 	//    new (p) T; 
+	//    new (p) T();
 	//    new (p) T(f);
 	//	  new (T); 
+	//    new (T)();
 	//    new (T)(f);
 	//    new (p) (T); 
+	//    new (p) (T)();
 	//    new (p) (T)(f);
 	//	  new T[f][f]; 
-	//    new T[f][f](f);
 	//    new (p) T[f][f]; 
-	//    new (p) T[f][f](f);
 	//	  new (T[f][f]); 
-	//    new (T[f][f])(f);
 	//    new (p) (T[f][f]); 
-	//    new (p) (T[f][f])(f);
 	// };
-	public void _testNewPlacement_Bug236856() throws Exception {
+	public void testNewPlacement() throws Exception {
 		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment());
-		IASTFunctionDefinition fdef= getFunctionDefinition(tu, 3);
+		IASTFunctionDefinition fdef= getDeclaration(tu, 3);
 		
-		checkNewExpression(fdef, 0, null, "int", 0, null);
-		checkNewExpression(fdef, 1, null, "int", 0, IASTIdExpression.class);
-		checkNewExpression(fdef, 2, IASTIdExpression.class, "int", 0, null);
-		checkNewExpression(fdef, 3, IASTIdExpression.class, "int", 0, IASTIdExpression.class);
-		checkNewExpression(fdef, 4, null, "int", 0, null);
-		checkNewExpression(fdef, 5, null, "int", 0, IASTIdExpression.class);
-		checkNewExpression(fdef, 6, IASTIdExpression.class, "int", 0, null);
-		checkNewExpression(fdef, 7, IASTIdExpression.class, "int", 0, IASTIdExpression.class);
+		checkNewExpression(fdef, 0, null, "int", null);
+		checkNewExpression(fdef, 1, null, "int", IASTExpressionList.class);
+		checkNewExpression(fdef, 2, null, "int", IASTIdExpression.class);
+		checkNewExpression(fdef, 3, IASTIdExpression.class, "int", null);
+		checkNewExpression(fdef, 4, IASTIdExpression.class, "int", IASTExpressionList.class);
+		checkNewExpression(fdef, 5, IASTIdExpression.class, "int", IASTIdExpression.class);
+		checkNewExpression(fdef, 6, null, "int", null);
+		checkNewExpression(fdef, 7, null, "int", IASTExpressionList.class);
+		checkNewExpression(fdef, 8, null, "int", IASTIdExpression.class);
+		checkNewExpression(fdef, 9, IASTIdExpression.class, "int", null);
+		checkNewExpression(fdef, 10, IASTIdExpression.class, "int", IASTExpressionList.class);
+		checkNewExpression(fdef, 11, IASTIdExpression.class, "int", IASTIdExpression.class);
 
-		checkNewExpression(fdef, 8, null, "int [] []", 2, null);
-		checkNewExpression(fdef, 9, null, "int [] []", 2, IASTIdExpression.class);
-		checkNewExpression(fdef, 10, IASTIdExpression.class, "int [] []", 2, null);
-		checkNewExpression(fdef, 11, IASTIdExpression.class, "int [] []", 2, IASTIdExpression.class);
-		checkNewExpression(fdef, 12, null, "int [] []", 2, null);
-		checkNewExpression(fdef, 13, null, "int [] []", 2, IASTIdExpression.class);
-		checkNewExpression(fdef, 14, IASTIdExpression.class, "int [] []", 2, null);
-		checkNewExpression(fdef, 15, IASTIdExpression.class, "int [] []", 2, IASTIdExpression.class);
+		checkNewExpression(fdef, 12, null, "int [] []", null);
+		checkNewExpression(fdef, 13, IASTIdExpression.class, "int [] []", null);
+		checkNewExpression(fdef, 14, null, "int [] []", null);
+		checkNewExpression(fdef, 15, IASTIdExpression.class, "int [] []", null);
 	}
 
-	private void checkNewExpression(IASTFunctionDefinition fdef, int i_expr, Class<?> placement, String type, int array, Class<?> init) {
+	private void checkNewExpression(IASTFunctionDefinition fdef, int i_expr, Class<?> placement, String type, Class<?> init) {
 		IASTExpression expr;
 		ICPPASTNewExpression newExpr;
 		expr= getExpressionOfStatement(fdef, i_expr);
@@ -5732,8 +5736,6 @@ public class AST2CPPTests extends AST2BaseTest {
 		} else {
 			assertInstance(newExpr.getNewInitializer(), init);
 		}
-		assertEquals(array, newExpr.getNewTypeIdArrayExpressions().length);
 		isTypeEqual(CPPVisitor.createType(newExpr.getTypeId()), type);
 	}
-
 }

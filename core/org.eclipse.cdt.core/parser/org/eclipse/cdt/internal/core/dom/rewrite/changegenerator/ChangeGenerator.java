@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -16,6 +17,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -26,10 +29,13 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
@@ -77,7 +83,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 		shouldVisitDeclSpecifiers = true;
 
 		shouldVisitDeclarators = true;
-
+		
 		shouldVisitInitializers = true;
 
 		shouldVisitBaseSpecifiers = true;
@@ -132,7 +138,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 	private IASTNode determineParentToBeRewritten(IASTNode modifiedNode, List<ASTModification> modificationsForNode) {
 		IASTNode modifiedNodeParent = modifiedNode;
 		for(ASTModification currentModification : modificationsForNode){
-			if(currentModification.getKind() != ASTModification.ModificationKind.APPEND_CHILD){
+			if(currentModification.getKind() == ASTModification.ModificationKind.REPLACE){
 				modifiedNodeParent = modifiedNode.getParent();
 				break;
 			}
@@ -385,9 +391,51 @@ public class ChangeGenerator extends CPPASTVisitor {
 			synthTreatment(declarator);
 			return ASTVisitor.PROCESS_SKIP;
 		}
+		
+		// mstodo workaround
+		if (declarator instanceof IASTArrayDeclarator) {
+			IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
+			for ( int i = 0; i < ptrOps.length; i++ ) {
+				if( !ptrOps[i].accept( this ) ) return PROCESS_ABORT;
+			}
+
+			IASTDeclarator nestedDeclarator= declarator.getNestedDeclarator();
+			IASTName name= declarator.getName();
+			if (nestedDeclarator == null && name != null) {
+				IASTDeclarator outermost= CPPVisitor.findOutermostDeclarator(declarator);
+				if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
+					if (!name.accept(this)) return PROCESS_ABORT;
+				}
+			}
+
+			if (nestedDeclarator != null) {
+				if (!nestedDeclarator.accept(this)) return PROCESS_ABORT;
+			}
+
+	        IASTArrayModifier [] mods = ((IASTArrayDeclarator) declarator).getArrayModifiers();
+	        for ( int i = 0; i < mods.length; i++ ) {
+	        	int result= visit(mods[i]);
+	        	if (result != PROCESS_CONTINUE) 
+	        		return result;
+	        	
+	            if( !mods[i].accept( this ) ) return PROCESS_ABORT;
+	        }
+	        IASTInitializer initializer = declarator.getInitializer();
+	        if( initializer != null ) if( !initializer.accept( this ) ) return PROCESS_ABORT;
+	        return PROCESS_CONTINUE;
+		}
+		
 		return super.visit(declarator);
 	}
-	
+
+	public int visit(IASTArrayModifier mod) {
+		if (hasChangedChild(mod)) {
+			synthTreatment(mod);
+			return ASTVisitor.PROCESS_SKIP;
+		}
+		return PROCESS_CONTINUE;
+	}
+
 
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {

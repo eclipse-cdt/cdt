@@ -7,10 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -270,6 +272,14 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		return PROCESS_SKIP;
 	}
 
+	@Override
+	public int visit(IASTArrayModifier arrayModifier) {
+		if (doBeforeEveryNode(arrayModifier) == PROCESS_CONTINUE) {
+			return super.visit(arrayModifier);
+		}
+		return PROCESS_SKIP;
+	}
+	
 	@Override
 	public int visit(IASTExpression expression) {
 		if (doBeforeEveryNode(expression) == PROCESS_CONTINUE) {

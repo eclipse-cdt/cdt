@@ -26,11 +26,12 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTDeclarator extends CASTNode implements IASTDeclarator {
+public class CASTDeclarator extends CASTNode implements IASTDeclarator, IASTAmbiguityParent {
 
     private IASTInitializer initializer;
     private IASTName name;
@@ -206,5 +207,13 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
 	            return ( n.toCharArray().length > 0 ) ? r_definition : r_declaration;
 		}
 		return r_unclear;
+	}
+
+	public void replace(IASTNode child, IASTNode other) {
+        if (child == nestedDeclarator) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
+            nestedDeclarator= (IASTDeclarator) other;
+        }
 	}
 }

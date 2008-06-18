@@ -46,6 +46,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		sourceIndexerID= indexerID;
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -60,6 +61,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		closeAllEditors();
 		CProjectHelper.delete(fCProject);
@@ -732,7 +734,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // typedef int TestTypeTwo;
 
 	// #include "testBug78354.h"
-    // main()
+    // int main()
     // {
     //    TestTypeOne myFirstLink = 5;
     //    TestTypeTwo mySecondLink = 6;

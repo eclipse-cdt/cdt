@@ -267,7 +267,7 @@ struct helper {};
 
 helper *new_helper()
 {
-    return new helper();
+    return new helper;
 }
 
 int main(int argc, char** argv)

@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -15,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -254,12 +256,18 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writeArrayModifiers(IASTArrayDeclarator arrDecl, IASTArrayModifier[] arrMods) {
 		for (IASTArrayModifier modifier : arrMods) {
-			scribe.print('[');
-			modifier.accept(visitor);
-			scribe.print(']');
+			writeArrayModifier(modifier);
 		}
 	}
 
+	protected void writeArrayModifier(IASTArrayModifier modifier) {
+		scribe.print('[');
+		IASTExpression ex= modifier.getConstantExpression();
+		if (ex != null) {
+			ex.accept(visitor);
+		}
+		scribe.print(']');
+	}
 
 	private void writeFieldDeclarator(IASTFieldDeclarator fieldDecl) {
 		IASTPointerOperator[] pointOps = fieldDecl.getPointerOperators();

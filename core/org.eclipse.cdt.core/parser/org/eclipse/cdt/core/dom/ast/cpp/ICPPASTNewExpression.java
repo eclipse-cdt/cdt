@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -81,8 +82,7 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("ICPPASTNewExpression.TYPE_ID - The type being 'newed'"); //$NON-NLS-1$
 
 	/**
-	 * Get the type Id.
-	 * 
+	 * Get the type Id. The type-id includes the optional array modifications.
 	 * @return <code>IASTTypeId</code>
 	 */
 	public IASTTypeId getTypeId();
@@ -96,9 +96,8 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	public void setTypeId(IASTTypeId typeId);
 
 	/**
-	 * Is the typeID a new type ID?
-	 * 
-	 * @return boolean
+	 * Returns whether the the typeID a new type ID, which is the case when
+	 * the type-id is provided without parenthesis.
 	 */
 	public boolean isNewTypeId();
 
@@ -117,18 +116,15 @@ public interface ICPPASTNewExpression extends IASTExpression {
 			"ICPPASTNewExpression.NEW_TYPEID_ARRAY_EXPRESSION - Expressions inside array brackets"); //$NON-NLS-1$
 
 	/**
-	 * Get the new array size expressions.
-	 * 
-	 * @return <code>IASTExpression []</code>
+	 * @deprecated the id-expressions are part of the type-id.
 	 */
+	@Deprecated
 	public IASTExpression[] getNewTypeIdArrayExpressions();
 
 	/**
-	 * Add another array size expression.
-	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code>
+	 * @deprecated the id-expressions are part of the type-id
 	 */
+	@Deprecated
 	public void addNewTypeIdArrayExpression(IASTExpression expression);
 
 }

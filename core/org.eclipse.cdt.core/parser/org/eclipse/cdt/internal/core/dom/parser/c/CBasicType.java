@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
- * Markus Schorn (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation 
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -53,8 +53,9 @@ public class CBasicType implements ICBasicType {
 		if( type == IBasicType.t_unspecified ){
 			if( (qualifiers & ( IS_COMPLEX | IS_IMAGINARY )) != 0 )
 				type = IBasicType.t_float;
-			else if( (qualifiers & ~( IS_COMPLEX | IS_IMAGINARY )) != 0 )
+			else {
 				type = IBasicType.t_int;
+			}
 		}
 	}
 	
@@ -65,8 +66,9 @@ public class CBasicType implements ICBasicType {
 		if( type == IBasicType.t_unspecified ){
 			if( (qualifiers & ( IS_COMPLEX | IS_IMAGINARY )) != 0 )
 				type = IBasicType.t_float;
-			else if( (qualifiers & ~( IS_COMPLEX | IS_IMAGINARY )) != 0 )
+			else {
 				type = IBasicType.t_int;
+			}
 		}
 	}
 	

@@ -6,19 +6,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * @author jcamelon
@@ -31,6 +37,9 @@ public class CPPASTNewExpression extends CPPASTNode implements
     private IASTExpression initializer;
     private IASTTypeId typeId;
     private boolean isNewTypeId;
+    
+    private IASTExpression [] arrayExpressions = null;
+
 
     
     public CPPASTNewExpression() {
@@ -96,20 +105,44 @@ public class CPPASTNewExpression extends CPPASTNode implements
     }
 
     public IASTExpression [] getNewTypeIdArrayExpressions() {
-        if( arrayExpressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        return (IASTExpression[]) ArrayUtil.trim( IASTExpression.class, arrayExpressions );
+        if( arrayExpressions == null ) {
+        	if (typeId != null) {
+        		IASTDeclarator dtor= CPPVisitor.findInnermostDeclarator(typeId.getAbstractDeclarator());
+        		if (dtor instanceof IASTArrayDeclarator) {
+        			IASTArrayDeclarator ad= (IASTArrayDeclarator) dtor;
+        			IASTArrayModifier[] ams= ad.getArrayModifiers();
+        			arrayExpressions= new IASTExpression[ams.length];
+        			for (int i = 0; i < ams.length; i++) {
+        				IASTArrayModifier am = ams[i];
+        				arrayExpressions[i]= am.getConstantExpression();
+        			}
+        			return arrayExpressions;
+        		} 
+        	}
+        	arrayExpressions= IASTExpression.EMPTY_EXPRESSION_ARRAY;
+        }
+        return arrayExpressions;
     }
 
     public void addNewTypeIdArrayExpression(IASTExpression expression) {
-        arrayExpressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, arrayExpressions, expression );
-        if(expression != null) {
-        	expression.setParent(this);
-			expression.setPropertyInParent(NEW_TYPEID_ARRAY_EXPRESSION);
-        }
+    	Assert.isNotNull(typeId);
+    	IASTDeclarator dtor= CPPVisitor.findInnermostDeclarator(typeId.getAbstractDeclarator());
+    	if (dtor instanceof IASTArrayDeclarator == false) {
+    		Assert.isNotNull(dtor);
+    		Assert.isTrue(dtor.getParent() == typeId);
+    		IASTArrayDeclarator adtor= new CPPASTArrayDeclarator(dtor.getName());
+    		IASTPointerOperator[] ptrOps= dtor.getPointerOperators();
+    		for (IASTPointerOperator ptr : ptrOps) {
+        		adtor.addPointerOperator(ptr);				
+			}
+    		typeId.setAbstractDeclarator(adtor);
+    		dtor= adtor;
+    	}
+    	IASTArrayModifier mod= new CPPASTArrayModifier(expression);
+    	((ASTNode) mod).setOffsetAndLength((ASTNode)expression);
+    	((IASTArrayDeclarator) dtor).addArrayModifier(mod);
     }
     
-    private IASTExpression [] arrayExpressions = null;
-
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -122,11 +155,6 @@ public class CPPASTNewExpression extends CPPASTNode implements
         
         if( placement != null ) if( !placement.accept( action ) ) return false;
         if( typeId != null ) if( !typeId.accept( action ) ) return false;
-
-        IASTExpression [] exps = getNewTypeIdArrayExpressions();
-        for( int i = 0; i < exps.length; i++ )
-            if( !exps[i].accept( action ) ) return false;
-            
         if( initializer != null ) if( !initializer.accept( action ) ) return false;
         
         if( action.shouldVisitExpressions ){
@@ -152,14 +180,6 @@ public class CPPASTNewExpression extends CPPASTNode implements
             other.setParent( child.getParent() );
             initializer  = (IASTExpression) other;
         }
-        if( arrayExpressions == null ) return;
-        for( int i = 0; i < arrayExpressions.length; ++i )
-            if( arrayExpressions[i] == child )
-            {
-                other.setPropertyInParent( child.getPropertyInParent() );
-                other.setParent( child.getParent() );
-                arrayExpressions[i] = (IASTExpression) other;
-            }   
     }
     
     public IType getExpressionType() {

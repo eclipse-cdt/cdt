@@ -16,7 +16,7 @@
  */
 package org.eclipse.cdt.core.testplugin;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
@@ -30,36 +30,37 @@ import org.eclipse.core.runtime.CoreException;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class FileManager {
-	ArrayList fileHandles;
+	HashSet<IFile> fileHandles;
 	
 	public FileManager(){
-		fileHandles = new ArrayList();
+		fileHandles = new HashSet<IFile>();
 	}
 	
 	public void addFile(IFile file){
 		fileHandles.add(file);
 	}
 	
-	public void closeAllFiles() throws CoreException{
-		Iterator iter = fileHandles.iterator();
-		while (iter.hasNext()){
-			IFile tempFile = (IFile) iter.next();
-			tempFile.refreshLocal(IResource.DEPTH_INFINITE,null);
-			
-			try {
-				tempFile.delete(true,null);
-			} catch (CoreException e) {
+	public void closeAllFiles() throws CoreException, InterruptedException{
+		int wait= 1;
+		for (int i = 0; i < 11; i++) {
+			for (Iterator iter= fileHandles.iterator(); iter.hasNext();) {
+				IFile tempFile = (IFile) iter.next();
 				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e1) {
-
-				}
-				finally{
+					if (i==1) {
+						tempFile.refreshLocal(IResource.DEPTH_INFINITE,null);
+					}
 					tempFile.delete(true,null);
+					iter.remove();
+				} catch (CoreException e) {
+					if (wait > 2000)
+						throw e;
 				}
-
 			}
-			
+
+			if (fileHandles.isEmpty())
+				return;
+			Thread.sleep(wait);
+			wait*=2;
 		}
 	}
 }

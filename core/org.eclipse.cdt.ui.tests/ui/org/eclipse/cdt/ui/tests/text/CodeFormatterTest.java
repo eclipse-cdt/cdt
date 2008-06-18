@@ -289,10 +289,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-	//main
+	//int main
 	//(
 	//    int           argc,
-	//    char const *  argv[]
+	//    char const int*  argv[]
 	//)
 	//try
 	//{
@@ -310,7 +310,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	return 2;
 	//}
 
-	//main(int argc, char const * argv[])
+	//int main(int argc, char const int* argv[])
 	//try {
 	//	for (int i = 1; i < argc; ++i) {
 	//	}
@@ -326,9 +326,9 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-	//main(int argc, char const * argv[]) { try { for (int i = 1; i < argc; ++i) { } return 0; } catch (float e) { return 1; } catch (...) { return 2; } }
+	//int main(int argc, char const int * argv[]) { try { for (int i = 1; i < argc; ++i) { } return 0; } catch (float e) { return 1; } catch (...) { return 2; } }
 	
-	//main(int argc, char const * argv[]) {
+	//int main(int argc, char const int * argv[]) {
 	//	try {
 	//		for (int i = 1; i < argc; ++i) {
 	//		}

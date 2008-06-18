@@ -1,28 +1,28 @@
 //!Commented NameTest1
 //%CPP
 //Test
-Hallo;
+int Hallo;
 
 //!Commented NameTest2
 //%CPP
-Hallo; //Test
+int Hallo; //Test
 
 //!Commented NameTest2
 //%CPP
-Hallo /*Test*/;
+int Hallo /*Test*/;
 
 //!Commented QualifiedName1
 //%CPP
 //TEST
-TestClass::Hallo;
+int TestClass::Hallo;
 
 //!Commented QualifiedName1
 //%CPP
-TestClass::Hallo; //TEST
+int TestClass::Hallo; //TEST
 
 //!Commented QualifiedName1
 //%CPP
-TestClass::Hallo /*Test*/;
+int TestClass::Hallo /*Test*/;
 
 //!Commented OperatorName1
 //%CPP

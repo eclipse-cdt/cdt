@@ -167,6 +167,10 @@ public class PDOMASTAdapter {
 		public String toString() {
 			return fDelegate.toString();
 		}
+
+		public IASTName getLastName() {
+			return this;
+		}
 	}
 
 	private static class AnonymousEnumeration implements IEnumeration {

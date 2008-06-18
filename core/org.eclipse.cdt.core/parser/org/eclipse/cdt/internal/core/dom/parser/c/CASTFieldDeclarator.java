@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -16,16 +17,12 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTFieldDeclarator extends CASTDeclarator implements
-        IASTFieldDeclarator, IASTAmbiguityParent {
-
+public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDeclarator {
     private IASTExpression bitFieldSize;
-
 
     public CASTFieldDeclarator() {
 	}
@@ -57,12 +54,14 @@ public class CASTFieldDeclarator extends CASTDeclarator implements
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
-        if( child == bitFieldSize)
-        {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
+        if( child == bitFieldSize) {
             other.setPropertyInParent( child.getPropertyInParent() );
             other.setParent( child.getParent() );
             bitFieldSize = (IASTExpression) other;
+        } else {
+        	super.replace(child, other);
         }
     }
     

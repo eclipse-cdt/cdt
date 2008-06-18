@@ -223,4 +223,8 @@ public class CASTName extends CASTNode implements IASTName, IASTCompletionContex
 		}
 		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
+
+	public IASTName getLastName() {
+		return this;
+	}
 }

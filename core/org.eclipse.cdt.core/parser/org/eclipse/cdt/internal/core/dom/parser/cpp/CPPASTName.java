@@ -274,4 +274,8 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
+
+	public IASTName getLastName() {
+		return this;
+	}
 }

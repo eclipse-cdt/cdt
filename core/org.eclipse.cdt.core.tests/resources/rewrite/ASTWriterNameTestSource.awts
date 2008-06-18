@@ -1,10 +1,10 @@
 //!NameTest
 //%CPP
-Hallo;
+int Hallo;
 
 //!QualifiedName
 //%CPP
-TestClass::Hallo;
+int TestClass::Hallo;
 
 //!OperatorName
 //%CPP

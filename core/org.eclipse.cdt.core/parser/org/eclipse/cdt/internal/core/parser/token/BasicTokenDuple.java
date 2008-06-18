@@ -33,8 +33,7 @@ public class BasicTokenDuple implements ITokenDuple {
 		lastToken = last; 
 	}
 	
-	//TODO - move numSegments to a subclass
-	private int numSegments = -1;
+	protected int numSegments = -1;
 	
 	BasicTokenDuple( ITokenDuple firstDuple, ITokenDuple secondDuple ){
 		this( firstDuple.getFirstToken(), secondDuple.getLastToken() );

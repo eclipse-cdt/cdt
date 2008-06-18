@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.index.provider.ReadOnlyPDOMProviderBridge;
@@ -77,7 +78,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			
 			String sdkCode=
 				"void SDKFunction();\n"+
-				"class SDKClass { public: SDKMethod(); };\n\n";
+				"class SDKClass { public: void SDKMethod(); };\n\n";
 			
 			fSdkFile= createExternalSDK(sdkCode);
 			assertNotNull(fSdkFile);
@@ -148,8 +149,8 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			store.setToDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
 			
 			SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
-			for (int i= 0, n= semanticHighlightings.length; i < n; i++) {
-				String enabledPreferenceKey= SemanticHighlightings.getEnabledPreferenceKey(semanticHighlightings[i]);
+			for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
+				String enabledPreferenceKey= SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting);
 				if (!store.isDefault(enabledPreferenceKey))
 					store.setToDefault(enabledPreferenceKey);
 			}
@@ -215,8 +216,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 		buf.append("// "+fCurrentHighlighting+'\n');
 		IDocument document= fSourceViewer.getDocument();
 		buf.append("Position[] expected= new Position[] {\n");
-		for (int i= 0, n= positions.length; i < n; i++) {
-			Position position= positions[i];
+		for (Position position : positions) {
 			int line= document.getLineOfOffset(position.getOffset());
 			int column= position.getOffset() - document.getLineOffset(line);
 			buf.append("\tcreatePosition(" + line + ", " + column + ", " + position.getLength() + "),\n");
@@ -253,8 +253,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, true);
 		SemanticHighlighting[] semanticHilightings= SemanticHighlightings.getSemanticHighlightings();
-		for (int i= 0, n= semanticHilightings.length; i < n; i++) {
-			SemanticHighlighting semanticHilighting= semanticHilightings[i];
+		for (SemanticHighlighting semanticHilighting : semanticHilightings) {
 			if (store.getBoolean(SemanticHighlightings.getEnabledPreferenceKey(semanticHilighting)))
 				store.setValue(SemanticHighlightings.getEnabledPreferenceKey(semanticHilighting), false);
 		}

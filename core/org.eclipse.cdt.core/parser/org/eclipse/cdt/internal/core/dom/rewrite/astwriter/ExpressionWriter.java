@@ -353,23 +353,12 @@ public class ExpressionWriter extends NodeWriter{
 		IASTTypeId typeId = newExp.getTypeId();
 		visitNodeIfNotNull(typeId);
 		
-		IASTExpression[] arraySizeExpressions = getNewTypeIdArrayExpressions(newExp, newExp.getNewTypeIdArrayExpressions());
-		for (IASTExpression expression : arraySizeExpressions) {
-			scribe.print('[');
-			expression.accept(visitor);
-			scribe.print(']');
-		}
-		if (arraySizeExpressions.length == 0 ) {
+		IASTExpression initExp= getNewInitializer(newExp);
+		if (initExp != null) {
 			scribe.print('(');
-			IASTExpression initExp = getNewInitializer(newExp);
-			visitNodeIfNotNull(initExp);
+			initExp.accept(visitor);
 			scribe.print(')');
 		}
-	}
-
-	protected IASTExpression[] getNewTypeIdArrayExpressions(
-			ICPPASTNewExpression newExp, IASTExpression[] expressions) {
-		return newExp.getNewTypeIdArrayExpressions();
 	}
 
 	protected IASTExpression getNewInitializer(ICPPASTNewExpression newExp) {

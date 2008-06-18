@@ -41,7 +41,7 @@ public:
 	void anotherMethod();
 };
 
-class {
+class xOtherClass {
 public:
 	xOtherClass(char*);
 	xOtherClass(int);

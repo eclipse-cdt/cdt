@@ -65,7 +65,11 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		parse( code, ParserLanguage.C, false, true, checkBindings, expectedProblemBindings, null);
 		parse( code, ParserLanguage.CPP, false, true, checkBindings, expectedProblemBindings, null );
 	}
-		
+
+	protected IASTTranslationUnit parseWithErrors( String code, ParserLanguage lang) throws ParserException {
+    	return parse(code, lang, false, false, false, 0, null );
+    }
+
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
     	return parse(code, lang, false, true, checkBindings, expectedProblemBindings, null );
     }
@@ -134,7 +138,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 			NameResolver res = new NameResolver();
 	        tu.accept( res );
 			if (res.problemBindings.size() != expectedProblemBindings )
-				throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); 
 			if (problems != null) {
 				for (int i = 0; i < problems.length; i++) {
 					assertEquals(problems[i], res.problemBindings.get(i));
@@ -143,24 +147,24 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		}
 
         if( parser2.encounteredError() && expectNoProblems )
-            throw new ParserException( "FAILURE"); //$NON-NLS-1$
+            throw new ParserException( "FAILURE"); 
          
         if( lang == ParserLanguage.C && expectNoProblems )
         {
 			if (CVisitor.getProblems(tu).length != 0) {
-				throw new ParserException (" CVisitor has AST Problems " ); //$NON-NLS-1$
+				throw new ParserException (" CVisitor has AST Problems " ); 
 			}
 			if (tu.getPreprocessorProblems().length != 0) {
-				throw new ParserException (" C TranslationUnit has Preprocessor Problems " ); //$NON-NLS-1$
+				throw new ParserException (" C TranslationUnit has Preprocessor Problems " ); 
 			}
         }
         else if ( lang == ParserLanguage.CPP && expectNoProblems )
         {
 			if (CPPVisitor.getProblems(tu).length != 0) {
-				throw new ParserException (" CPPVisitor has AST Problems " ); //$NON-NLS-1$
+				throw new ParserException (" CPPVisitor has AST Problems " ); 
 			}
 			if (tu.getPreprocessorProblems().length != 0) {
-				throw new ParserException (" CPP TranslationUnit has Preprocessor Problems " ); //$NON-NLS-1$
+				throw new ParserException (" CPP TranslationUnit has Preprocessor Problems " ); 
 			}
         }
         
@@ -179,6 +183,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		public int numNullBindings = 0;
 		
 		
+		@Override
 		public int visit(IASTName name) {
 			nameList.add(name);
 			IBinding binding = name.resolveBinding();

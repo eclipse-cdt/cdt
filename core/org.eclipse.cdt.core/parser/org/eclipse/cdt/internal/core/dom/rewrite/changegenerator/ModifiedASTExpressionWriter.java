@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -76,13 +77,4 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 		}
 		return initializer;
 	}
-
-	@Override
-	protected IASTExpression[] getNewTypeIdArrayExpressions(
-			ICPPASTNewExpression newExp, IASTExpression[] expressions) {
-		IASTExpression[] modifiedExpressions = modificationHelper.createModifiedChildArray(newExp, expressions, IASTExpression.class);
-		return modifiedExpressions;
-	}
-	
-	
 }

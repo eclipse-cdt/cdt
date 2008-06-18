@@ -6,19 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTParameterDeclaration extends CPPASTNode implements ICPPASTParameterDeclaration {
+public class CPPASTParameterDeclaration extends CPPASTNode implements ICPPASTParameterDeclaration, IASTAmbiguityParent {
 
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator declarator;
@@ -78,4 +81,12 @@ public class CPPASTParameterDeclaration extends CPPASTNode implements ICPPASTPar
 		}
         return true;
     }
+    
+	public void replace(IASTNode child, IASTNode other) {
+        if (child == declarator) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
+            declarator= (IASTDeclarator) other;
+        }
+	}
 }

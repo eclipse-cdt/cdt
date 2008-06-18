@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -25,8 +26,6 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
     private IASTParameterDeclaration [] parameters = null;
     private int parametersPos=-1;
     private boolean varArgs;
-    
-
     
     public CASTFunctionDeclarator() {
 	}
@@ -65,4 +64,19 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
         }
         return true;
     }
+
+	@Override
+	public void replace(IASTNode child, IASTNode other) {
+        if( parameters != null ) {
+        	for (int i = 0; i < parameters.length; ++i) {
+        		if (child == parameters[i]) {
+        			other.setPropertyInParent(child.getPropertyInParent());
+        			other.setParent(child.getParent());
+        			parameters[i]= (IASTParameterDeclaration) other;
+        			return;
+        		}
+        	}
+        }
+        super.replace(child, other);
+	}
 }

@@ -141,27 +141,29 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         }
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
     	super.setUp();
     	initProject();
     	OpenDeclarationsAction.sIsJUnitTest= true;
 		OpenDeclarationsAction.sAllowFallback= false;    	
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         if( project == null || !project.exists() )
             return;
         
         closeAllEditors();
 
         IResource [] members = project.members();
-        for( int i = 0; i < members.length; i++ ){
-            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        for (IResource member : members) {
+            if( member.getName().equals( ".project" ) || member.getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
-            if (members[i].getName().equals(".settings"))
+            if (member.getName().equals(".settings"))
             	continue;
             try{
-                members[i].delete( false, monitor );
+                member.delete( false, monitor );
             } catch( Throwable e ){
                 /*boo*/
             }
@@ -922,7 +924,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         StringBuffer buffer = new StringBuffer();
         buffer.append("typedef int TestTypeOne;\n"); //$NON-NLS-1$
         buffer.append("typedef int TestTypeTwo;\n"); //$NON-NLS-1$
-        buffer.append("main()\n"); //$NON-NLS-1$
+        buffer.append("int main()\n"); //$NON-NLS-1$
         buffer.append("{\n"); //$NON-NLS-1$
         buffer.append("TestTypeOne myFirstLink = 5;\n"); //$NON-NLS-1$
         buffer.append("TestTypeTwo mySecondLink = 6;\n"); //$NON-NLS-1$

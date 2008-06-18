@@ -99,10 +99,10 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	}
 
 	public IASTName getLastName() {
-		if (names == null || names.length == 0)
+		if (namesPos < 0)
 			return null;
 		
-		return names[names.length - 1];
+		return names[namesPos];
 	}
 	
 	public char[] toCharArray() {

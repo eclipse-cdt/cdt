@@ -22,7 +22,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	private final String headerFileName = "CompletionTestStart40.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	private final String[] expectedResults = {"notAnonymousEnum", "notAnonymousClass"};
+	private final String[] expectedResults = {"notAnonymousEnum", "notAnonymousClass", "xOtherClass"};
 	
 	public CompletionTest_AnonymousTypes(String name) {
 		super(name);
@@ -39,6 +39,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
+	@Override
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf(" x ");
 	}
@@ -46,6 +47,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedPrefix()
 	 */
+	@Override
 	protected String getExpectedPrefix() {
 		return expectedPrefix;
 	}
@@ -53,6 +55,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedResultsValues()
 	 */
+	@Override
 	protected String[] getExpectedResultsValues() {
 		return expectedResults;
 	}
@@ -60,6 +63,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileName()
 	 */
+	@Override
 	protected String getFileName() {
 		return fileName;
 	}
@@ -67,12 +71,14 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileFullPath()
 	 */
+	@Override
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */
+	@Override
 	protected String getHeaderFileFullPath() {
 		return headerFileFullPath;
 	}
@@ -80,6 +86,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileName()
 	 */
+	@Override
 	protected String getHeaderFileName() {
 		return headerFileName;
 	}

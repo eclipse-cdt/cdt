@@ -71,6 +71,9 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	public int getRoleOfName(boolean allowResolution) {
 		return IASTNameOwner.r_unclear;
 	}
+	public IASTName getLastName() {
+		return this;
+	}
 }
 
 class ASTPreprocessorDefinition extends ASTPreprocessorName {

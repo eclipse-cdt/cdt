@@ -17,14 +17,17 @@ package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
 
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.tests.FailingTest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
+
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.tests.FailingTest;
 
 /**
  * @author aniefer
@@ -63,7 +66,7 @@ public class RenameRegressionTests extends RenameTests {
     public void testSimpleRename() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write( "int boo;    // boo  \n" ); //$NON-NLS-1$
-        writer.write( "#ifdef 0            \n" ); //$NON-NLS-1$
+        writer.write( "#if 0               \n" ); //$NON-NLS-1$
         writer.write( "boo                 \n" ); //$NON-NLS-1$
         writer.write( "#endif              \n" ); //$NON-NLS-1$
         writer.write( "void f() {          \n" ); //$NON-NLS-1$

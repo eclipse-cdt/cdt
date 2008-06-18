@@ -3,7 +3,7 @@
 class Klasse0
 {
 public:
-    Klasse1();   /*
+    Klasse0();   /*
     			  * Comment
     			  */
     std::string toString();
@@ -15,7 +15,7 @@ private:
 class Klasse0
 {
 public:
-    Klasse1(); /*
+    Klasse0(); /*
     			  * Comment
     			  */
     std::string toString();
@@ -28,7 +28,7 @@ private:
 class Klasse0
 {
 public:
-    Klasse1();   //Comment
+    Klasse0();   //Comment
     std::string toString();
 private:
     int i;
@@ -38,7 +38,7 @@ private:
 class Klasse0
 {
 public:
-    Klasse1(); //Comment
+    Klasse0(); //Comment
     std::string toString();
 private:
     int i;
@@ -51,7 +51,7 @@ class Klasse0
 {
     //Comment2
 public:
-    Klasse1();
+    Klasse0();
     std::string toString();
 private:
     int i;
@@ -524,7 +524,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -541,7 +541,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0; //TEST
         i++;
@@ -557,7 +557,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -575,7 +575,7 @@ public:
     Klasse1();
     std::string toString();
     //KommentarDavor
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -592,7 +592,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -609,7 +609,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -627,7 +627,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -646,7 +646,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -663,7 +663,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -681,7 +681,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -701,7 +701,7 @@ public:
     Klasse1();
     std::string toString();
     //TEST
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -719,7 +719,7 @@ public:
     Klasse1();
     std::string toString();
     /*TEST*/
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -737,7 +737,7 @@ class Klasse1 //Nachher
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -755,7 +755,7 @@ class Klasse1 /*Nachher*/
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -774,7 +774,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -793,7 +793,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -814,7 +814,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -831,7 +831,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -848,7 +848,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -865,7 +865,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -884,7 +884,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -904,7 +904,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;
@@ -922,7 +922,7 @@ class Klasse1
 public:
     Klasse1();
     std::string toString();
-    inlineMethode()
+    void inlineMethode()
     {
         int i = 0;
         i++;

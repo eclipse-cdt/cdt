@@ -120,17 +120,17 @@ public class CommentTests extends AST2BaseTest {
 	
 	private String getCppSource() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("CppClass()\n");
+		buffer.append("void CppClass()\n");
 		buffer.append("{\n");
 		buffer.append("   // Comment in cpp\n");
-		buffer.append("   value = 1 + /*The magic 5 */5 * 6;\n");
+		buffer.append("   int value = 1 + /*The magic 5 */5 * 6;\n");
 		buffer.append("   // Another comment\n");
 		buffer.append("   value++;\n");
 		buffer.append("}\n");
 		buffer.append("/* A blockcomment \n");
 		buffer.append("* over multiple lines */\n");
 		buffer.append("//Toplevel comment\n");
-		buffer.append("doIrgendwas(){\n");
+		buffer.append("void doIrgendwas(){\n");
 		buffer.append("   //A little bit code\n");
 		buffer.append("   int i = 3; //Trailing comment\n");
 		buffer.append("		;\n");
@@ -152,7 +152,7 @@ public class CommentTests extends AST2BaseTest {
 		buffer.append("   int n = i++ +5;\n");
 		buffer.append("  //Last comment in cpp\n");
 		buffer.append("}\n");
-		buffer.append("globaleFuntktion(){\n");
+		buffer.append("int globaleFuntktion(){\n");
 		buffer.append("//An integer\n");
 		buffer.append("int i;\n");
 		buffer.append("}\n");
@@ -243,8 +243,7 @@ public class CommentTests extends AST2BaseTest {
 		assertEquals(5, comments.length);
 		assertNotNull(comments[0].getFileLocation());
 		assertNotNull(comments[0].getNodeLocations());
-		for (int i = 0; i < comments.length; i++) {
-			IASTComment comment = comments[i];
+		for (IASTComment comment : comments) {
 			IASTFileLocation loc= comment.getFileLocation();
 			int idx= loc.getNodeOffset() + comment.getRawSignature().indexOf("TODO");
 			assertEquals("TODO", code.substring(idx, idx+4));			

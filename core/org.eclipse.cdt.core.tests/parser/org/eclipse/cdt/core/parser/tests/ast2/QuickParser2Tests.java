@@ -521,7 +521,7 @@ public class QuickParser2Tests extends TestCase {
 
     public void testBug36769A() throws Exception {
 
-        parse("template <class A, B> cls<A, C>::operator  &() const {}\n"); 
+        parse("template <class A, B> cls<A, C>::operator otherType() const {}\n"); 
         parse("template <class A, B> cls<A, C>::cls() {}\n"); 
         parse("template <class A, B> cls<A, C>::~cls() {}\n"); 
     }
@@ -535,7 +535,11 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBugFunctor758() throws Exception {
-        parse("template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}"); 
+        parse(
+        	"class Functor {"+
+        	"template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}" +
+        	"};"
+        ); 
     }
 
     public void testBug36932() throws Exception {
@@ -642,10 +646,10 @@ public class QuickParser2Tests extends TestCase {
 
     public void testBug36696() throws Exception {
         Writer code = new StringWriter();
-        code
-                .write("template <typename P1> RefCounted(const RefCounted<P1>& rhs)\n"); 
-        code
-                .write(": pCount_(reinterpret_cast<const RefCounted&>(rhs).pCount_) {}\n"); 
+        code.write("template<typename T> class RefCounted {");
+        code.write("template <typename P1> RefCounted(const RefCounted<P1>& rhs)\n"); 
+        code.write(": pCount_(reinterpret_cast<const RefCounted&>(rhs).pCount_) {}\n"); 
+        code.write("};"); 
         parse(code.toString());
     }
 
@@ -839,7 +843,11 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36690() throws Exception {
-        parse("Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}"); 
+        parse(
+        	"class Functor {" +
+        	"Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}" +
+        	"}"
+        ); 
     }
 
     public void testBug36703() throws Exception {

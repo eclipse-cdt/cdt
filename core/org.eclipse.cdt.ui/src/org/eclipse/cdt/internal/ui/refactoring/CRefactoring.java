@@ -49,10 +49,6 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 /**
@@ -165,46 +161,6 @@ public abstract class CRefactoring extends Refactoring {
 		
 	}
 	
-	private class AmbiguityFinder extends ASTVisitor{
-		
-		private boolean ambiguityFound = false;
-		
-		{
-			shouldVisitDeclarations = true;
-			shouldVisitExpressions = true;
-			shouldVisitStatements= true;
-		}
-
-		@Override
-		public int visit(IASTDeclaration declaration) {
-			if (declaration instanceof IASTAmbiguousDeclaration) {
-				ambiguityFound = true;
-			}
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-
-		@Override
-		public int visit(IASTExpression expression) {
-			if (expression instanceof IASTAmbiguousExpression) {
-				ambiguityFound = true;
-			}
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-
-		@Override
-		public int visit(IASTStatement statement) {
-			if (statement instanceof IASTAmbiguousStatement) {
-				ambiguityFound = true;
-			}
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-		
-		public boolean ambiguityFound() {
-			return ambiguityFound;
-		}
-		
-	}
-
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
@@ -302,9 +258,8 @@ public abstract class CRefactoring extends Refactoring {
 	}
 	
 	protected boolean translationUnitIsAmbiguous() {
-		AmbiguityFinder af = new AmbiguityFinder();
-		unit.accept(af);
-		return af.ambiguityFound();
+		// ambiguities are resolved before the tu is passed to the refactoring.
+		return false;
 	}
 	
 	public void lockIndex() throws CoreException, InterruptedException {

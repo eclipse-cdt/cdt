@@ -98,9 +98,9 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 	
 	public void testBaseCase_FunctionDeclaration() throws Exception
 	{
-		String code = "int x(); x( );"; //$NON-NLS-1$
-		int offset1 = code.indexOf( "x()" ); //$NON-NLS-1$
-		int offset2 = code.indexOf( "()"); //$NON-NLS-1$
+		String code = "int x(); void test() {x( );}"; //$NON-NLS-1$
+		int offset1 = code.indexOf( "x( )" ); //$NON-NLS-1$
+		int offset2 = code.indexOf( "( )"); //$NON-NLS-1$
 		IASTNode node = parse( code, offset1, offset2 );
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IFunction );

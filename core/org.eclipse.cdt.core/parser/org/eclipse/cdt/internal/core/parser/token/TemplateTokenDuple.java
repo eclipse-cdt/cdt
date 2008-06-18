@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 public class TemplateTokenDuple extends BasicTokenDuple {
 
 	protected final List [] argLists;
-	private final int numSegments;
 
 	/**
 	 * @param first

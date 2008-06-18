@@ -7,11 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -200,6 +202,12 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 		return ASTVisitor.PROCESS_SKIP;
 	}
 
+	public int visit(IASTArrayModifier amod) {
+		if(!macroHandler.checkisMacroExpansionNode(amod)) {
+			declaratorWriter.writeArrayModifier(amod);
+		}
+		return ASTVisitor.PROCESS_SKIP;
+	}
 
 
 	@Override

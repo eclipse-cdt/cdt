@@ -48,23 +48,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 2);
 	}
 
-	// class T {
-	// // ...
-	// public:
-	// T();
-	// T(int);
-	// T(int, int);
-	// };
-	// T(a); //declaration
-	// T(*b)(); //declaration
-	// T(c)=7; //declaration
-	// T(d),e,f=3; //declaration
-	// extern int h;
-	// T(g)(h,2); //declaration
-	public void _test6_8s2() throws Exception { // TODO raised bug 90622
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
 	// struct B {
 	// virtual void f(int);
 	// virtual void f(char);

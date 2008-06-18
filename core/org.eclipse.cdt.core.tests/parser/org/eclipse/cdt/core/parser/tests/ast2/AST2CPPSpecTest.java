@@ -995,6 +995,23 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	// class T {
+	// // ...
+	// public:
+	// T();
+	// T(int);
+	// T(int, int);
+	// };
+	// T(a); //declaration
+	// T(*b)(); //declaration
+	// T(c)=7; //declaration
+	// T(d),e,f=3; //declaration
+	// extern int h;
+	// T(g)(h,2); //declaration
+	public void test6_8s2() throws Exception { // TODO raised bug 90622
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// struct T1 {
 	// T1 operator()(int x) { return T1(x); }
 	// int operator=(int x) { return x; }

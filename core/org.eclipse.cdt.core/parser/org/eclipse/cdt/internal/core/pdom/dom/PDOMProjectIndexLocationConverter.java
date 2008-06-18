@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -39,17 +40,19 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	 */
 	public IIndexFileLocation fromInternalFormat(String raw) {
 		String fullPath = null;
-		URI uri;
+		URI uri= null;
 		if(raw.startsWith(EXTERNAL)) {
 			try {
 				uri = new URI(raw.substring(EXTERNAL.length()));
 			} catch(URISyntaxException use) {
-				uri = null;
 			}
 		} else {
-			fullPath = raw;  
-			IResource member= root.getFile(new Path(raw));
-			uri = member.getLocationURI();
+			fullPath= raw;  
+			final IPath path= new Path(raw);
+			if (path.segmentCount() > 1) {
+				IResource member= root.getFile(path);
+				uri = member.getLocationURI();
+			}
 		}		
 		return uri == null ? null : new IndexFileLocation(uri, fullPath);
 	}

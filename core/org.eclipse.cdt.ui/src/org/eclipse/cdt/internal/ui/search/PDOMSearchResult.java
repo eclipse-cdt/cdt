@@ -67,31 +67,32 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 
 	private String getFileName(IEditorPart editor) {
-		IEditorInput input = editor.getEditorInput();
+		final IEditorInput input= editor.getEditorInput();
+		IPath path= null;
 		if (input instanceof FileEditorInput) {
-			FileEditorInput fileInput = (FileEditorInput)input;
-			return fileInput.getFile().getLocation().toOSString();
+			final FileEditorInput fileInput = (FileEditorInput)input;
+			path= fileInput.getFile().getLocation();
 		} else if (input instanceof ExternalEditorInput) {
-			ExternalEditorInput extInput = (ExternalEditorInput)input;
-			return extInput.getStorage().getFullPath().toOSString();
+			final ExternalEditorInput extInput = (ExternalEditorInput)input;
+			path= extInput.getStorage().getFullPath();
 		} else if (input instanceof IStorageEditorInput) {
-				try {
-					IStorage storage = ((IStorageEditorInput)input).getStorage();
-					if (storage.getFullPath() != null) {
-						return storage.getFullPath().toOSString();
-					}
-				} catch (CoreException exc) {
-					// ignore
-				}
+			try {
+				final IStorage storage= ((IStorageEditorInput)input).getStorage();
+				path= storage.getFullPath();
+			} catch (CoreException exc) {
+				// ignore
+			}
 		} else if (input instanceof IPathEditorInput) {
-			IPath path= ((IPathEditorInput)input).getPath();
+			path= ((IPathEditorInput)input).getPath();
+		} else {
+			ILocationProvider provider= (ILocationProvider) input.getAdapter(ILocationProvider.class);
+			if (provider != null) {
+				path= provider.getPath(input);
+			}
+		}		
+		if (path != null)
 			return path.toOSString();
-		}
-		ILocationProvider provider= (ILocationProvider) input.getAdapter(ILocationProvider.class);
-		if (provider != null) {
-			IPath path= provider.getPath(input);
-			return path.toOSString();
-		}
+		
 		return null;
 	}
 	

@@ -3237,7 +3237,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTDeclarator initDeclarator(DtorStrategy strategy, DeclarationOptions option)
             throws EndOfFileException, BacktrackException {
-
     	final IASTDeclarator dtor= declarator(strategy, option);
         if (option.fAllowInitializer) {
         	IASTInitializer initializer= optionalCPPInitializer(dtor);
@@ -3420,9 +3419,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		if (LT(1) == IToken.tRPAREN)
         			throwBacktrack(LA(1));
 
-        		final IASTDeclarator nested= declarator(strategy, option);
+        		final IASTDeclarator nested= declarator(DtorStrategy.PREFER_FUNCTION, option);
         		endOffset= consume(IToken.tRPAREN).getEndOffset();
-        		final IASTDeclarator cand2= declarator(pointerOps, null, nested, startingOffset, endOffset, DtorStrategy.PREFER_FUNCTION, option);
+        		final IASTDeclarator cand2= declarator(pointerOps, null, nested, startingOffset, endOffset, strategy, option);
         		if (cand1 == null || cand1End == null)
         			return cand2;
         		final IToken cand2End= LA(1);

@@ -9,10 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Sep 9, 2004
- */
 package org.eclipse.cdt.ui.tests.text.contentassist;
 
 import java.io.ByteArrayInputStream;
@@ -59,7 +55,8 @@ public class ContentAssistTests extends BaseUITestCase {
     static IProject 				project;
     static boolean 					disabledHelpContributions = false;
     
-    public void setUp() {
+    @Override
+	public void setUp() {
 		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
     	
     	if (project == null) {
@@ -96,9 +93,9 @@ public class ContentAssistTests extends BaseUITestCase {
 			public ITranslationUnit getTranslationUnit(){return null;}
 			}
 		);
-		for( int i = 0; i < helpBooks.length; i++ ){
-		    if( helpBooks[i] != null )
-		        helpBooks[i].enable( false );
+		for (CHelpBookDescriptor helpBook : helpBooks) {
+		    if( helpBook != null )
+		        helpBook.enable( false );
 		}
     }
     
@@ -118,20 +115,21 @@ public class ContentAssistTests extends BaseUITestCase {
 	    }
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         if( project == null || !project.exists() )
             return;
         
         closeAllEditors();
 
         IResource [] members = project.members();
-        for( int i = 0; i < members.length; i++ ){
-            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        for (IResource member : members) {
+            if( member.getName().equals( ".project" ) || member.getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
-            if (members[i].getName().equals(".settings"))
+            if (member.getName().equals(".settings"))
             	continue;
             try{
-                members[i].delete( false, monitor );
+                member.delete( false, monitor );
             } catch( Throwable e ){
                 /*boo*/
             }
@@ -179,7 +177,7 @@ public class ContentAssistTests extends BaseUITestCase {
 		return processor.computeCompletionProposals(editor.getViewer(), offset);
     }
     
-    public void testBug69334() throws Exception {
+    public void testBug69334a() throws Exception {
         importFile( "test.h", "class Test{ public : Test( int ); }; \n" );  //$NON-NLS-1$//$NON-NLS-2$
         StringWriter writer = new StringWriter();
         writer.write( "#include \"test.h\"                \n"); //$NON-NLS-1$
@@ -187,6 +185,24 @@ public class ContentAssistTests extends BaseUITestCase {
         writer.write( "int main() {                       \n"); //$NON-NLS-1$
         writer.write( "   int veryLongName = 1;           \n"); //$NON-NLS-1$
         writer.write( "   Test * ptest = new Test( very   \n"); //$NON-NLS-1$
+        
+        String code = writer.toString();
+        IFile cu = importFile( "test.cpp", code ); //$NON-NLS-1$
+        
+        ICompletionProposal [] results = getResults( cu, code.indexOf( "very " ) + 4 ); //$NON-NLS-1$
+        
+        assertEquals( 1, results.length );
+        assertEquals( "veryLongName : int", results[0].getDisplayString() ); //$NON-NLS-1$
+    }
+
+    public void testBug69334b() throws Exception {
+        importFile( "test.h", "class Test{ public : Test( int ); }; \n" );  //$NON-NLS-1$//$NON-NLS-2$
+        StringWriter writer = new StringWriter();
+        writer.write( "#include \"test.h\"                \n"); //$NON-NLS-1$
+        writer.write( "Test::Test( int i ) { return; }    \n"); //$NON-NLS-1$
+        writer.write( "int main() {                       \n"); //$NON-NLS-1$
+        writer.write( "   int veryLongName = 1;           \n"); //$NON-NLS-1$
+        writer.write( "   Test test( very   \n"); //$NON-NLS-1$
         
         String code = writer.toString();
         IFile cu = importFile( "test.cpp", code ); //$NON-NLS-1$

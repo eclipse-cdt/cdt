@@ -3199,7 +3199,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	}
     	
 		// we have an ambiguity
-		if (LA(1) != end1) {
+		if (end1 != null && LA(1).getEndOffset() != end1.getEndOffset()) {
 			backup(end1);
 			return dtor1;
 		}
@@ -3276,7 +3276,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IASTExpression astExpression = expression();
             if( astExpression == null )
                 throwBacktrack( t );
-            int l = consume(IToken.tRPAREN).getEndOffset();
+            int l = consumeOrEOC(IToken.tRPAREN).getEndOffset();
             ICPPASTConstructorInitializer result = createConstructorInitializer();
             ((ASTNode) result).setOffsetAndLength(o, l - o);
             result.setExpression(astExpression);

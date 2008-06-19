@@ -467,21 +467,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		if (declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 			return createTypeDef(parent, declSpecifier, declarator);
 		}
-		if (declarator instanceof IASTFunctionDeclarator && !hasNestedPointerOperators(declarator)) {
-			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator)declarator, isTemplate);
+		IASTDeclarator typeRelevant= CPPVisitor.findTypeRelevantDeclarator(declarator);
+		if (typeRelevant instanceof IASTFunctionDeclarator) {
+			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator)typeRelevant, isTemplate);
 		}
 		return createVariable(parent, declSpecifier, declarator, isTemplate);
-	}
-
-	private boolean hasNestedPointerOperators(IASTDeclarator declarator) {
-		declarator= declarator.getNestedDeclarator();
-		while (declarator != null) {
-			if (declarator.getPointerOperators().length > 0) {
-				return true;
-			}
-			declarator= declarator.getNestedDeclarator();
-		}
-		return false;
 	}
 
 	private void createNamespace(Parent parent, ICPPASTNamespaceDefinition declaration) throws CModelException, DOMException{
@@ -826,7 +816,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		final String functionName= ASTStringUtil.getSimpleName(name);
 		final String[] parameterTypes= ASTStringUtil.getParameterSignatureArray(declarator);
-		final String returnType= ASTStringUtil.getTypeString(declSpecifier, declarator);
+		final String returnType= ASTStringUtil.getReturnTypeString(declSpecifier, declarator);
 
 		final FunctionDeclaration element;
 		final FunctionInfo info;
@@ -963,7 +953,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		final String functionName= ASTStringUtil.getSimpleName(name);
 		final String[] parameterTypes= ASTStringUtil.getParameterSignatureArray(declarator);
-		final String returnType= ASTStringUtil.getTypeString(declSpecifier, declarator);
+		final String returnType= ASTStringUtil.getReturnTypeString(declSpecifier, declarator);
 
 		final FunctionDeclaration element;
 		final FunctionInfo info;

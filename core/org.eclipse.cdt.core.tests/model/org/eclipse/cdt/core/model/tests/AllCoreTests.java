@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.model.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.model.failedTests.FailedDeclaratorsTest;
 import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTests;
 import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
 
@@ -47,7 +46,6 @@ public class AllCoreTests {
         suite.addTest(ArchiveTests.suite());
         suite.addTest(TranslationUnitTests.suite());
 		suite.addTest(DeclaratorsTests.suite());
-		suite.addTest(FailedDeclaratorsTest.suite());
 		suite.addTest(MacroTests.suite());
 //		suite.addTest(FailedMacroTests.suite());
 		suite.addTest(CPathEntryTest.suite());

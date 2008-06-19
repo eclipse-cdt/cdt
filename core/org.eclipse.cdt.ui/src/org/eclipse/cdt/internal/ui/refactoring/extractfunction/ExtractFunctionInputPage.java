@@ -102,7 +102,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 			setPageComplete(true);
 		}
 		else{
-			setErrorMessage(Messages.ExtractFunctionInputPage_CheckFunctionName + " " + result.getMessage()); 
+			setErrorMessage(Messages.ExtractFunctionInputPage_CheckFunctionName + " " + result.getMessage());  //$NON-NLS-1$
 			setPageComplete(false);
 		}
 	}

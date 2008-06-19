@@ -1335,8 +1335,7 @@ public class CPPSemantics {
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 			if (!declSpec.isFriend()) {
 				for (IASTDeclarator declarator : declarators) {
-					while (declarator.getNestedDeclarator() != null)
-						declarator = declarator.getNestedDeclarator();
+					declarator= CPPVisitor.findInnermostDeclarator(declarator);
 					IASTName declaratorName = declarator.getName();
 					ASTInternal.addName(scope,  declaratorName);
 					if (!data.typesOnly || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
@@ -1452,7 +1451,7 @@ public class CPPSemantics {
 				IASTFunctionDeclarator declarator = functionDef.getDeclarator();
 				
 				//check the function itself
-				IASTName declName = declarator.getName();
+				IASTName declName = CPPVisitor.findInnermostDeclarator(declarator).getName();
 				ASTInternal.addName(scope,  declName);
 	
 			    if (!data.typesOnly && nameMatches(data, declName, scope)) {
@@ -2301,8 +2300,7 @@ public class CPPSemantics {
             		node = node.getParent();
             	}
             	IASTDeclarator dtor = ((IASTFunctionDefinition)node).getDeclarator();
-            	while (dtor.getNestedDeclarator() != null)
-            		dtor = dtor.getNestedDeclarator();
+            	dtor= CPPVisitor.findInnermostDeclarator(dtor);
             	IBinding binding = dtor.getName().resolveBinding();
             	if (binding instanceof IFunction) {
             		try {

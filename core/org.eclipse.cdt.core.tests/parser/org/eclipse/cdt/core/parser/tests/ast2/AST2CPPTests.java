@@ -1013,8 +1013,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		IASTFunctionDefinition def = (IASTFunctionDefinition) tu
 		.getDeclarations()[0];
-		IFunction f = (IFunction) def.getDeclarator().getNestedDeclarator()
-		.getName().resolveBinding();
+		IFunction f = (IFunction) def.getDeclarator().getName().resolveBinding();
 		
 		IFunctionType ft = f.getType();
 		assertTrue(ft.getReturnType() instanceof IPointerType);

@@ -515,28 +515,14 @@ public class CPPVisitor {
 		return null;
 	}
 	private static IBinding createBinding(IASTDeclarator declarator) {
-		IASTNode parent = declarator.getParent();
-		while (parent instanceof IASTDeclarator) {
-			parent = parent.getParent();
-		}
-		
-		while (declarator.getNestedDeclarator() != null)
-			declarator = declarator.getNestedDeclarator();
+		IASTNode parent = findOutermostDeclarator(declarator).getParent();
+		declarator= findInnermostDeclarator(declarator);
 
 		IASTFunctionDeclarator funcDeclarator= null;
-		IASTNode tmpNode= declarator;
-		do {
-			if (tmpNode instanceof IASTFunctionDeclarator) {
-				funcDeclarator= (IASTFunctionDeclarator) tmpNode;
-				break;
-			}
-			if (((IASTDeclarator) tmpNode).getPointerOperators().length > 0 ||
-					tmpNode.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR) {
-				break;
-			}
-			tmpNode= tmpNode.getParent();
+		final IASTDeclarator typeRelevantDtor= findTypeRelevantDeclarator(declarator);
+		if (typeRelevantDtor instanceof IASTFunctionDeclarator) {
+			funcDeclarator= (IASTFunctionDeclarator) typeRelevantDtor;
 		}
-		while (tmpNode instanceof IASTDeclarator);
 			
 		IASTName name= declarator.getName();
 		if (name instanceof ICPPASTQualifiedName) {
@@ -587,10 +573,10 @@ public class CPPVisitor {
 			ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration) parent;
 			parent = param.getParent();
 			if (parent instanceof IASTStandardFunctionDeclarator) {
-				IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
-				if (hasNestedPointerOperator(fDtor)) 
+				IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
+				if (hasNestedPointerOperator(fdtor)) 
 				    return null;
-				IBinding temp = fDtor.getName().resolveBinding();
+				IBinding temp = fdtor.getName().resolveBinding();
 				if (temp instanceof ICPPInternalFunction) {
 					binding = ((ICPPInternalFunction) temp).resolveParameter(param);
 				} else if (temp instanceof IProblemBinding) {
@@ -621,7 +607,7 @@ public class CPPVisitor {
 		    // if we don't resolve the target type first, we get a problem binding in case the typedef
 		    // redeclares the target type:
 		    // typedef struct S S;
-		    IType targetType= CPPVisitor.createType(declarator);
+		    IType targetType= createType(declarator);
 		    CPPTypedef td= new CPPTypedef(name);
 		    td.setType(targetType);
 			binding = td;
@@ -743,7 +729,7 @@ public class CPPVisitor {
 	    if (declarator == null      || !(declarator instanceof IASTFunctionDeclarator))
 	        return false;
         
-	    IASTName name = declarator.getName();
+	    IASTName name = findInnermostDeclarator(declarator).getName();
 	    if (name instanceof ICPPASTQualifiedName) {
 	        IASTName[] names = ((ICPPASTQualifiedName)name).getNames(); 
 	        name = names[names.length - 1];
@@ -752,7 +738,7 @@ public class CPPVisitor {
 	        return false;
 	    
 	    IASTDeclSpecifier declSpec = null;
-	    IASTNode parent = declarator.getParent();
+	    IASTNode parent = findOutermostDeclarator(declarator).getParent();
 	    if (parent instanceof IASTSimpleDeclaration) {
 	        declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 	    } else if (parent instanceof IASTFunctionDefinition) {
@@ -874,7 +860,7 @@ public class CPPVisitor {
 	    	        n = ns[ns.length - 1];
 	    	    }
 	    	    
-		        return CPPVisitor.getContainingScope(n);
+		        return getContainingScope(n);
 		    }
 		    node = node.getParent();
 		}
@@ -1011,7 +997,7 @@ public class CPPVisitor {
 			scope = getContainingScope((IASTStatement)parent);
 		} else if (parent instanceof IASTFunctionDefinition) {
 		    IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent).getDeclarator();
-		    IASTName name = fnDeclarator.getName();
+		    IASTName name = findInnermostDeclarator(fnDeclarator).getName();
 		    if (name instanceof ICPPASTQualifiedName) {
 		        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
 		        name = ns[ns.length -1];
@@ -1779,7 +1765,7 @@ public class CPPVisitor {
 				}
 				if (node instanceof IASTFunctionDeclarator) {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
-					IASTName fName = dtor.getName();
+					IASTName fName = findInnermostDeclarator(dtor).getName();
 					if (fName instanceof ICPPASTQualifiedName) {
 					    IASTName[] ns = ((ICPPASTQualifiedName)fName).getNames();
 					    fName = ns[ns.length - 1];
@@ -2180,15 +2166,6 @@ public class CPPVisitor {
 		return new CPPBasicType(IBasicType.t_int, flags, expression);
 	}
 
-	public static IASTDeclarator getMostNestedDeclarator(IASTDeclarator dtor) {
-	    if (dtor == null) return null;
-	    IASTDeclarator nested = null;
-	    while ((nested = dtor.getNestedDeclarator()) != null) {
-	        dtor = nested;
-	    }
-	    return dtor;
-	}
-	
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {
 		CollectProblemsAction action = new CollectProblemsAction();
 		tu.accept(action);
@@ -2444,23 +2421,20 @@ public class CPPVisitor {
 	/** 
 	 * Returns the outermost declarator the given <code>declarator</code> nests within, or
 	 * <code>declarator</code> itself.
-	 * @since 5.0
 	 */
 	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
-		while(true) {
-			IASTNode parent= declarator.getParent();
-			if (parent instanceof IASTDeclarator) {
-				declarator= (IASTDeclarator) parent;
-			} else {
-				return declarator;
-			}
+		IASTDeclarator outermost= null;
+		IASTNode candidate= declarator;
+		while(candidate instanceof IASTDeclarator) {
+			outermost= (IASTDeclarator) candidate;
+			candidate= outermost.getParent();
 		}
+		return outermost;
 	}
 
 	/** 
 	 * Returns the innermost declarator nested within the given <code>declarator</code>, or
 	 * <code>declarator</code> itself.
-	 * @since 5.1
 	 */
 	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
 		IASTDeclarator innermost= null;
@@ -2473,7 +2447,6 @@ public class CPPVisitor {
 
 	/**
 	 * Searches for the innermost declarator that contributes the the type declared.
-	 * @since 5.1
 	 */
 	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
 		IASTDeclarator result= findInnermostDeclarator(declarator);

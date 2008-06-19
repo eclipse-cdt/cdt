@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 
@@ -108,7 +109,7 @@ public class NodeHelper {
 				 found = true;
 				 context.setType(MethodContext.ContextType.FUNCTION);
 			 } else if (node instanceof IASTFunctionDefinition){
-				 name=((IASTFunctionDefinition)node).getDeclarator().getName();
+				 name=CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition)node).getDeclarator()).getName();
 				 found = true;
 				 context.setType(MethodContext.ContextType.FUNCTION);
 			 } 

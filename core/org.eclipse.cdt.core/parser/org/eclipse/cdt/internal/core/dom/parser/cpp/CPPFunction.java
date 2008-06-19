@@ -109,7 +109,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	
 	public CPPFunction(ICPPASTFunctionDeclarator declarator) {
 	    if (declarator != null) {
-			IASTNode parent = declarator.getParent();
+			IASTNode parent = CPPVisitor.findOutermostDeclarator(declarator).getParent();
 			if (parent instanceof IASTFunctionDefinition)
 				definition = declarator;
 			else
@@ -160,48 +160,54 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     }
     
 	public void addDefinition(IASTNode node) {
-		if (node instanceof IASTName)
-			node = node.getParent();
-		if (!(node instanceof ICPPASTFunctionDeclarator))
-			return;
-		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
-		updateParameterBindings(dtor);
-		definition = dtor;
-	}
-	public void addDeclaration(IASTNode node) {
-		if (node instanceof IASTName)
-			node = node.getParent();
-		if (!(node instanceof ICPPASTFunctionDeclarator))
-			return;
-		
-		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
-		updateParameterBindings(dtor);
-		
-		if (declarations == null) {
-			declarations = new ICPPASTFunctionDeclarator[] { dtor };
-			return;
-		}
-		
-		// Keep the lowest offset declaration in [0]
-		if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
-		    declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.prepend(ICPPASTFunctionDeclarator.class,
-		    		declarations, dtor);
-		} else {
-			declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.append(ICPPASTFunctionDeclarator.class,
-					declarations, dtor);
+		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
+		if (dtor != null) {
+			updateParameterBindings(dtor);
+			definition = dtor;
 		}
 	}
 	
-	public void removeDeclaration(IASTNode node) {
-		while (node instanceof IASTName) {
-			node = node.getParent();
+	public void addDeclaration(IASTNode node) {
+		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
+		if (dtor != null) {
+			updateParameterBindings(dtor);
+
+			if (declarations == null) {
+				declarations = new ICPPASTFunctionDeclarator[] { dtor };
+				return;
+			}
+
+			// Keep the lowest offset declaration in [0]
+			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
+				declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.prepend(ICPPASTFunctionDeclarator.class,
+						declarations, dtor);
+			} else {
+				declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.append(ICPPASTFunctionDeclarator.class,
+						declarations, dtor);
+			}
 		}
-		if (definition == node) {
+	}
+	
+	private ICPPASTFunctionDeclarator extractFunctionDtor(IASTNode node) {
+		if (node instanceof IASTName)
+			node = node.getParent();
+		if (node instanceof IASTDeclarator == false)
+			return null;
+		node= CPPVisitor.findTypeRelevantDeclarator((IASTDeclarator) node);
+		if (node instanceof ICPPASTFunctionDeclarator == false)
+			return null;
+		
+		return (ICPPASTFunctionDeclarator) node;
+	}
+
+	public void removeDeclaration(IASTNode node) {
+		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
+		if (definition == dtor) {
 			definition = null;
 			return;
 		}
 		if (declarations != null) {
-			ArrayUtil.remove(declarations, node);
+			ArrayUtil.remove(declarations, dtor);
 		}
 	}
 	
@@ -250,11 +256,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	
 	protected IASTName getASTName() {
 		IASTDeclarator dtor = (definition != null) ? definition : declarations[0];
-	    IASTDeclarator nested= dtor.getNestedDeclarator();
-	    while (nested != null) {
-	    	dtor= nested;
-	    	nested= nested.getNestedDeclarator();
-	    }
+		dtor= CPPVisitor.findInnermostDeclarator(dtor);
 	    IASTName name= dtor.getName();
 	    if (name instanceof ICPPASTQualifiedName) {
 	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
@@ -263,23 +265,17 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    return name;
 	}
 
-
-
 	public IScope getScope() {
 	    IASTName n = getASTName();
 	    IScope scope = CPPVisitor.getContainingScope(n);
 	    if (scope instanceof ICPPClassScope) {
 	    	ICPPASTDeclSpecifier declSpec = null;
 		    if (definition != null) {
-		    	IASTNode node = definition.getParent();
-		    	while (node instanceof IASTDeclarator)
-		    		node = node.getParent();
+		    	IASTNode node = CPPVisitor.findOutermostDeclarator(definition).getParent();
 		        IASTFunctionDefinition def = (IASTFunctionDefinition) node;
 			    declSpec = (ICPPASTDeclSpecifier) def.getDeclSpecifier();    
 		    } else {
-		    	IASTNode node = declarations[0].getParent();
-		    	while (node instanceof IASTDeclarator)
-		    		node = node.getParent();
+		    	IASTNode node = CPPVisitor.findOutermostDeclarator(declarations[0]).getParent();
 		        IASTSimpleDeclaration decl = (IASTSimpleDeclaration)node; 
 		        declSpec = (ICPPASTDeclSpecifier) decl.getDeclSpecifier();
 		    }

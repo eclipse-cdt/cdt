@@ -6,12 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -19,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -59,8 +62,9 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
     public void setDeclarator(IASTFunctionDeclarator declarator) {
         this.declarator = declarator;
         if (declarator != null) {
-			declarator.setParent(this);
-			declarator.setPropertyInParent(DECLARATOR);
+        	IASTDeclarator outerDtor= CPPVisitor.findOutermostDeclarator(declarator);
+        	outerDtor.setParent(this);
+        	outerDtor.setPropertyInParent(DECLARATOR);
 		}
     }
 
@@ -91,7 +95,8 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
 		}
         
         if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
-        if( declarator != null ) if( !declarator.accept( action ) ) return false;
+        final IASTDeclarator outerDtor= CPPVisitor.findOutermostDeclarator(declarator);
+        if( outerDtor != null ) if( !outerDtor.accept( action ) ) return false;
         if( bodyStatement != null ) if( !bodyStatement.accept( action ) ) return false;
         
         if( action.shouldVisitDeclarations ){
@@ -112,5 +117,4 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
             bodyStatement = (IASTStatement) other;
         }
     }
-    
 }

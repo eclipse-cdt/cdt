@@ -182,7 +182,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 				}
 			} else if( decl instanceof IASTFunctionDefinition ){
 				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
-				dtor = CPPVisitor.getMostNestedDeclarator( dtor );
+				dtor = CPPVisitor.findInnermostDeclarator(dtor);
 				binding = dtor.getName().resolveBinding();
 				if( binding instanceof ICPPMethod ){
 					result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
@@ -225,10 +225,12 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 			    for (IASTDeclarator dtor : dtors) {
 			        if( dtor == null ) break;
+			        dtor= CPPVisitor.findInnermostDeclarator(dtor);
 		            ASTInternal.addName(scope,  dtor.getName() );
 			    }
 			} else if( decl instanceof IASTFunctionDefinition ){
 			    IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
+		        dtor= CPPVisitor.findInnermostDeclarator(dtor);
 			    ASTInternal.addName(scope,  dtor.getName() );
 			}
         }

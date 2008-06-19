@@ -74,11 +74,11 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
 		if( declarations != null ){
-			for (ICPPASTFunctionDeclarator declaration : declarations) {
-				if (declaration == null) {
+			for (ICPPASTFunctionDeclarator dtor : declarations) {
+				if (dtor == null) 
 					break;
-				}
-				IASTDeclaration decl = (IASTDeclaration) declaration.getParent();
+				
+				IASTDeclaration decl= (IASTDeclaration) CPPVisitor.findOutermostDeclarator(dtor).getParent();
 				if( decl.getParent() instanceof ICPPASTCompositeTypeSpecifier )
 					return decl;
 			}
@@ -108,8 +108,8 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 				di = 0;
 				dtor = ds[0];
 				while( dtor != null ){
-					IASTName name = dtor.getName();
-					if( dtor instanceof ICPPASTFunctionDeclarator &&
+					IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
+					if( CPPVisitor.findTypeRelevantDeclarator(dtor) instanceof ICPPASTFunctionDeclarator &&
 							CharArrayUtils.equals( name.toCharArray(), getNameCharArray() ) )
 					{
 						IType t0= CPPVisitor.createType( dtor );

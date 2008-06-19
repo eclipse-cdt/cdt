@@ -1040,7 +1040,7 @@ public class CVisitor {
 		if (node instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) node;
 			IASTFunctionDeclarator functionDeclartor = functionDef.getDeclarator();
-			IASTName name = functionDeclartor.getName();
+			IASTName name = findInnermostDeclarator(functionDeclartor).getName();
 			IASTNode blockItem = getContainingBlockItem(node);
 			try {
                 return (IBinding) findBinding(blockItem, name, bits);
@@ -1211,7 +1211,7 @@ public class CVisitor {
 			scope = getContainingScope((IASTStatement)parent);
 		} else if (parent instanceof IASTFunctionDefinition) {
 			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent).getDeclarator();
-			IBinding function = fnDeclarator.getName().resolveBinding();
+			IBinding function = CVisitor.findInnermostDeclarator(fnDeclarator).getName().resolveBinding();
 			try {
 				if (function instanceof IFunction) {
 					scope = ((IFunction)function).getFunctionScope();
@@ -1611,9 +1611,7 @@ public class CVisitor {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 			for (IASTDeclarator declarator : declarators) {
-				while (declarator.getNestedDeclarator() != null) {
-					declarator = declarator.getNestedDeclarator();
-				}
+				declarator= CVisitor.findInnermostDeclarator(declarator);
 				tempName = declarator.getName();
 				if (scope != null)
 				    ASTInternal.addName(scope,  tempName);
@@ -1633,7 +1631,7 @@ public class CVisitor {
 		} else if (!typesOnly && declaration instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
 
-			IASTDeclarator dtor = functionDef.getDeclarator();
+			IASTDeclarator dtor = CVisitor.findInnermostDeclarator(functionDef.getDeclarator());
 			tempName = dtor.getName();
 			if (scope != null)
 			    ASTInternal.addName(scope,  tempName);
@@ -1692,7 +1690,7 @@ public class CVisitor {
 					
 					if (node instanceof IASTFunctionDefinition && decl instanceof IASTFunctionDeclarator) {
 						IASTFunctionDeclarator dtor = ((IASTFunctionDefinition) node).getDeclarator();
-						IASTName name = dtor.getName();
+						IASTName name = CVisitor.findInnermostDeclarator(dtor).getName();
 						if (name.toString().equals(declName)) {
 							return dtor;
 						}
@@ -2179,14 +2177,13 @@ public class CVisitor {
 	 * @since 5.0
 	 */
 	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
-		while(true) {
-			IASTNode parent= declarator.getParent();
-			if (parent instanceof IASTDeclarator) {
-				declarator= (IASTDeclarator) parent;
-			} else {
-				return declarator;
-			}
+		IASTDeclarator outermost= null;
+		IASTNode candidate= declarator;
+		while(candidate instanceof IASTDeclarator) {
+			outermost= (IASTDeclarator) candidate;
+			candidate= outermost.getParent();
 		}
+		return outermost;
 	}
 
 	/**

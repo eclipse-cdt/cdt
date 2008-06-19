@@ -432,15 +432,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		if (declarators.length != 1)
 		    throwBacktrack(firstOffset, LA(1).getEndOffset());
 
-//		IASTDeclarator declarator= CVisitor.findTypeRelevantDeclarator(declarators[0]); // mstodo
-
-		IASTDeclarator declarator = declarators[0];
-		if (!(declarator instanceof IASTFunctionDeclarator))
-		    throwBacktrack(firstOffset, LA(1).getEndOffset());
+		final IASTDeclarator outerDtor= declarators[0];
+		final IASTDeclarator fdtor= CVisitor.findTypeRelevantDeclarator(outerDtor);
+		if (fdtor instanceof IASTFunctionDeclarator == false)
+			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
 		IASTFunctionDefinition funcDefinition = createFunctionDefinition();
 		funcDefinition.setDeclSpecifier(declSpec);
-		funcDefinition.setDeclarator((IASTFunctionDeclarator) declarator);
+		funcDefinition.setDeclarator((IASTFunctionDeclarator) fdtor);
 
 		IASTStatement s= handleFunctionBody();
 		funcDefinition.setBody(s);

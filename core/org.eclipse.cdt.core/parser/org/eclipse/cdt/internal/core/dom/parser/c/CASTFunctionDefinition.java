@@ -6,12 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -61,8 +63,9 @@ public class CASTFunctionDefinition extends CASTNode implements
     public void setDeclarator(IASTFunctionDeclarator declarator) {
         this.declarator = declarator;
         if (declarator != null) {
-			declarator.setParent(this);
-			declarator.setPropertyInParent(DECLARATOR);
+        	IASTDeclarator outerDtor= CVisitor.findOutermostDeclarator(declarator);
+        	outerDtor.setParent(this);
+        	outerDtor.setPropertyInParent(DECLARATOR);
 		}
     }
 
@@ -95,7 +98,8 @@ public class CASTFunctionDefinition extends CASTNode implements
 		}
         
         if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
-        if( declarator != null ) if( !declarator.accept( action ) ) return false;
+        final IASTDeclarator outerDtor= CVisitor.findOutermostDeclarator(declarator);
+        if( outerDtor != null ) if( !outerDtor.accept( action ) ) return false;
         if( bodyStatement != null ) if( !bodyStatement.accept( action ) ) return false;
       
         if( action.shouldVisitDeclarations ){
@@ -116,6 +120,4 @@ public class CASTFunctionDefinition extends CASTNode implements
             bodyStatement = (IASTStatement) other;
         }
     }
-
-
 }

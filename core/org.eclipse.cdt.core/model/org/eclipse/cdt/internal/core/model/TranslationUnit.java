@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -1088,14 +1089,25 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	@Override
 	public void getHandleMemento(StringBuilder buff) {
 		if (getResource() == null) {
+			// external translation unit
 			((CElement)getCProject()).getHandleMemento(buff);
 			buff.append(getHandleMementoDelimiter());
-			final IPath location= getLocation();
-			if (location != null) {
-				escapeMementoName(buff, location.toPortableString());
+			final IPath fileLocation= getLocation();
+			if (fileLocation != null) {
+				escapeMementoName(buff, fileLocation.toPortableString());
 			}
-		} else {
+		} else if (getParent() instanceof ICContainer) {
+			// regular case: translation unit under source container
 			super.getHandleMemento(buff);
+		} else {
+			// translation unit below a binary
+			((CElement)getCProject()).getHandleMemento(buff);
+			buff.append(getHandleMementoDelimiter());
+			// project relative path
+			final IPath projectPath= getResource().getFullPath().removeFirstSegments(1);
+			if (projectPath != null) {
+				escapeMementoName(buff, projectPath.toPortableString());
+			}
 		}
 	}
 	

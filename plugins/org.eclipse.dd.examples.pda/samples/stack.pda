@@ -1,0 +1,11 @@
+push 100
+:inner
+dup
+output
+dup
+branch_not_zero descend
+return
+:descend
+dec
+call inner 
+return

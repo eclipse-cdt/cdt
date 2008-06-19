@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 
 /**
@@ -119,20 +120,21 @@ public class ASTStringUtil {
 	 */
 	public static String getSignatureString(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
 		final StringBuilder buffer= new StringBuilder();
-		appendDeclarationString(buffer, declSpecifier, declarator, true);
+		appendDeclarationString(buffer, declSpecifier, declarator, null);
 		return trimRight(buffer).toString();
 	}
 
 	/**
-	 * Compute a (return-)type string without parameters and initializers.
+	 * Compute the return-type string for a function declarator.
 	 * 
 	 * @param declSpecifier
-	 * @param declarator
-	 * @return the type string
+	 * @param fdecl
+	 * @return the return type string
 	 */
-	public static String getTypeString(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
+	public static String getReturnTypeString(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator fdecl) {
 		final StringBuilder buffer= new StringBuilder();
-		appendDeclarationString(buffer, declSpecifier, declarator, false);
+		final IASTDeclarator declarator= CPPVisitor.findOutermostDeclarator(fdecl);
+		appendDeclarationString(buffer, declSpecifier, declarator, fdecl);
 		return trimRight(buffer).toString();
 	}
 
@@ -240,83 +242,87 @@ public class ASTStringUtil {
 		else
 			declSpec= null;
 
-		return appendDeclarationString(buffer, declSpec, declarator, true);
+		return appendDeclarationString(buffer, declSpec, declarator, null);
 	}
 
-	private static StringBuilder appendDeclarationString(StringBuilder buffer, IASTDeclSpecifier declSpecifier,  IASTDeclarator declarator, boolean addParams) {
+	private static StringBuilder appendDeclarationString(StringBuilder buffer, IASTDeclSpecifier declSpecifier,  
+			IASTDeclarator declarator, IASTFunctionDeclarator returnTypeOf) {
 		if (declSpecifier != null) {
 			appendDeclSpecifierString(buffer, declSpecifier);
 			trimRight(buffer);
 		}
-		appendDeclaratorString(buffer, declarator, addParams);
+		appendDeclaratorString(buffer, declarator, false, returnTypeOf);
 		return buffer;
 	}
 
 	private static StringBuilder appendDeclaratorString(StringBuilder buffer, IASTDeclarator declarator,
-			boolean addParams) {
+			boolean protectPointers, IASTFunctionDeclarator returnTypeOf) {
 		if (declarator == null) {
 			return buffer;
 		}
-		appendPointerOperatorsString(buffer, declarator.getPointerOperators());
-		if (declarator instanceof IASTArrayDeclarator) {
-			appendArrayQualifiersString(buffer, (IASTArrayDeclarator)declarator);
+		final IASTPointerOperator[] ptrs = declarator.getPointerOperators();
+		final boolean useParenthesis= protectPointers && ptrs.length > 0;
+		if (useParenthesis) {
+			buffer.append(Keywords.cpLPAREN);
+			protectPointers= false;
 		}
-		final IASTDeclarator nestedDeclarator= declarator.getNestedDeclarator();
-		if (nestedDeclarator != null) {
-			StringBuilder tmp= new StringBuilder();
-			appendDeclaratorString(tmp, nestedDeclarator, addParams);
-			trimRight(tmp);
-			final int tmpLength= tmp.length();
-			if (tmpLength > 0) {
-				if (tmp.charAt(0) != Keywords.cpLPAREN[0] || tmp.charAt(tmpLength-1) != Keywords.cpRPAREN[0]) {
-					buffer.append(Keywords.cpLPAREN);
-					buffer.append(tmp);
-					buffer.append(Keywords.cpRPAREN);
-				} else {
-					buffer.append(tmp);
-				}
+
+		appendPointerOperatorsString(buffer, ptrs);
+		
+		if (declarator != returnTypeOf) {
+			final IASTDeclarator nestedDeclarator= declarator.getNestedDeclarator();
+			if (nestedDeclarator != null) {
+				protectPointers= 
+					protectPointers	|| declarator instanceof IASTArrayDeclarator 
+					|| declarator instanceof IASTFunctionDeclarator
+					|| declarator instanceof IASTFieldDeclarator;
+				appendDeclaratorString(buffer, nestedDeclarator, protectPointers, returnTypeOf);
 			}
-		}
-		if (!addParams) {
-			return buffer;
-		}
-		if (declarator instanceof IASTFunctionDeclarator) {
-			final IASTFunctionDeclarator functionDecl= (IASTFunctionDeclarator)declarator;
-			appendParameterSignatureString(buffer, functionDecl);
-			if (declarator instanceof ICPPASTFunctionDeclarator) {
-				final ICPPASTFunctionDeclarator cppFunctionDecl= (ICPPASTFunctionDeclarator)declarator;
-				if (cppFunctionDecl.isConst()) {
-					buffer.append(Keywords.CONST).append(' ');
-				}
-				if (cppFunctionDecl.isVolatile()) {
-					buffer.append(Keywords.VOLATILE).append(' ');
-				}
-				if (cppFunctionDecl.isPureVirtual()) {
-					buffer.append("=0 "); //$NON-NLS-1$
-				}
-				final IASTTypeId[] exceptionTypeIds= cppFunctionDecl.getExceptionSpecification();
-				if (exceptionTypeIds.length > 0) {
-					buffer.append(Keywords.THROW).append(' ');
-					for (int i= 0; i < exceptionTypeIds.length; i++) {
-						if (i > 0) {
-							buffer.append(COMMA_SPACE);
+
+			if (declarator instanceof IASTArrayDeclarator) {
+				appendArrayQualifiersString(buffer, (IASTArrayDeclarator)declarator);
+			} else if (declarator instanceof IASTFunctionDeclarator) {
+				final IASTFunctionDeclarator functionDecl= (IASTFunctionDeclarator)declarator;
+				appendParameterSignatureString(buffer, functionDecl);
+				if (declarator instanceof ICPPASTFunctionDeclarator) {
+					final ICPPASTFunctionDeclarator cppFunctionDecl= (ICPPASTFunctionDeclarator)declarator;
+					if (cppFunctionDecl.isConst()) {
+						buffer.append(Keywords.CONST).append(' ');
+					}
+					if (cppFunctionDecl.isVolatile()) {
+						buffer.append(Keywords.VOLATILE).append(' ');
+					}
+					if (cppFunctionDecl.isPureVirtual()) {
+						buffer.append("=0 "); //$NON-NLS-1$
+					}
+					final IASTTypeId[] exceptionTypeIds= cppFunctionDecl.getExceptionSpecification();
+					if (exceptionTypeIds.length > 0) {
+						buffer.append(Keywords.THROW).append(' ');
+						for (int i= 0; i < exceptionTypeIds.length; i++) {
+							if (i > 0) {
+								buffer.append(COMMA_SPACE);
+							}
+							appendTypeIdString(buffer, exceptionTypeIds[i]);
 						}
-						appendTypeIdString(buffer, exceptionTypeIds[i]);
+					}
+					if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
+						assert false : "TODO: handle "+ declarator.getClass().getName(); //$NON-NLS-1$
 					}
 				}
-				if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-					assert false : "TODO: handle "+ declarator.getClass().getName(); //$NON-NLS-1$
+			} else if (declarator instanceof IASTFieldDeclarator) {
+				final IASTFieldDeclarator fieldDeclarator= (IASTFieldDeclarator)declarator;
+				final IASTExpression bitFieldSize= fieldDeclarator.getBitFieldSize();
+				if (bitFieldSize != null) {
+					buffer.append(Keywords.cpCOLON);
+					appendExpressionString(buffer, bitFieldSize);
 				}
+			} else {
+				// just a nested name
 			}
-		} else if (declarator instanceof IASTFieldDeclarator) {
-			final IASTFieldDeclarator fieldDeclarator= (IASTFieldDeclarator)declarator;
-			final IASTExpression bitFieldSize= fieldDeclarator.getBitFieldSize();
-			if (bitFieldSize != null) {
-				buffer.append(Keywords.cpCOLON);
-				appendExpressionString(buffer, bitFieldSize);
-			}
-		} else {
-//			assert false : "TODO: handle "+ declarator.getClass().getName(); //$NON-NLS-1$
+		}
+		if (useParenthesis) {
+			trimRight(buffer);
+			buffer.append(Keywords.cpRPAREN);
 		}
 		return buffer;
 	}
@@ -358,7 +364,7 @@ public class ASTStringUtil {
 
 	private static StringBuilder appendTypeIdString(StringBuilder buffer, IASTTypeId typeId) {
 		appendDeclSpecifierString(buffer, typeId.getDeclSpecifier());
-		appendDeclaratorString(buffer, typeId.getAbstractDeclarator(), true);
+		appendDeclaratorString(buffer, typeId.getAbstractDeclarator(), false, null);
 		return buffer;
 	}
 
@@ -459,7 +465,7 @@ public class ASTStringUtil {
 		}
 		final IASTDeclarator declarator= parameter.getDeclarator();
 		if (declarator != null) {
-			appendDeclaratorString(buffer, declarator, true);
+			appendDeclaratorString(buffer, declarator, false, null);
 			appendInitializerString(buffer, declarator.getInitializer());
 		}
 		return buffer;

@@ -392,7 +392,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 			return ASTVisitor.PROCESS_SKIP;
 		}
 		
-		// mstodo workaround
+		// workaround for bug 237605, array modifiers cannot be visited
 		if (declarator instanceof IASTArrayDeclarator) {
 			IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
 			for ( int i = 0; i < ptrOps.length; i++ ) {

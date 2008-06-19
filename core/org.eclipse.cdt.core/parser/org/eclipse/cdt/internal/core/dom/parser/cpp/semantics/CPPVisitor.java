@@ -529,6 +529,12 @@ public class CPPVisitor {
 			name= ((ICPPASTQualifiedName)name).getLastName();
 		}
 		
+		// in case the binding was created starting from another name within the declarator.
+		IBinding candidate= name.getBinding();
+		if (candidate != null) {
+			return candidate;
+		}
+		
 		ASTNodeProperty prop = parent.getPropertyInParent();
 		if (parent instanceof IASTTypeId) {
 		    return CPPSemantics.resolveBinding(name);
@@ -574,9 +580,11 @@ public class CPPVisitor {
 			parent = param.getParent();
 			if (parent instanceof IASTStandardFunctionDeclarator) {
 				IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
-				if (hasNestedPointerOperator(fdtor)) 
-				    return null;
-				IBinding temp = fdtor.getName().resolveBinding();
+				// if the fdtor does not declare a function we don't create a binding for the parameter.
+				if (findOutermostDeclarator(fdtor).getParent() instanceof IASTDeclaration == false ||
+						findTypeRelevantDeclarator(fdtor) != fdtor)
+					return null;
+				IBinding temp = findInnermostDeclarator(fdtor).getName().resolveBinding();
 				if (temp instanceof ICPPInternalFunction) {
 					binding = ((ICPPInternalFunction) temp).resolveParameter(param);
 				} else if (temp instanceof IProblemBinding) {
@@ -690,17 +698,6 @@ public class CPPVisitor {
 		}
 		
 		return binding;
-	}
-
-	private static boolean hasNestedPointerOperator(IASTDeclarator decl) {
-		decl= decl.getNestedDeclarator();
-		while (decl != null) {
-			if (decl.getPointerOperators().length > 0) {
-				return true;
-			}
-			decl= decl.getNestedDeclarator();
-		}
-		return false;
 	}
 
 	public static boolean isConstructor(IScope containingScope, IASTDeclarator declarator) {

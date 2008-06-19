@@ -81,7 +81,7 @@ public class ASTWriter {
 	public String write(IASTNode rootNode, String fileScope, NodeCommentMap commentMap) throws ProblemRuntimeException {
 		transformationVisitor = new ChangeGeneratorWriterVisitor(modificationStore, givenIndentation, fileScope, commentMap);
 		
-		// mstodo: workaround for 
+		// workaround for bug 237605, array modifiers cannot be visited
 		if (rootNode instanceof IASTArrayModifier) {
 			int result= transformationVisitor.visit((IASTArrayModifier) rootNode);
 			if (result == ASTVisitor.PROCESS_CONTINUE) {

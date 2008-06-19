@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -287,14 +286,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			ICPPTemplateParameter p = null;
 			ICPPTemplateParameter[] result = null;
 			for (ICPPASTTemplateParameter param : params) {
-				if (param instanceof ICPPASTSimpleTypeTemplateParameter) {
-					p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter) param).getName().resolveBinding();
-				} else if (param instanceof ICPPASTParameterDeclaration) {
-					p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration) param).getDeclarator().getName().resolveBinding();
-				} else if (param instanceof ICPPASTTemplatedTypeTemplateParameter) {
-					p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter) param).getName().resolveBinding();
-				}
-				
+				p= (ICPPTemplateParameter) CPPTemplates.getTemplateParameterName(param).resolveBinding();
 				if (p != null) {
 					result = (ICPPTemplateParameter[]) ArrayUtil.append(ICPPTemplateParameter.class, result, p);
 				}

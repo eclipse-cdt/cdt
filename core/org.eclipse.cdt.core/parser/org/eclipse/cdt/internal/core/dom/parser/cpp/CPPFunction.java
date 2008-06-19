@@ -220,7 +220,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		if (size > 0) {
 			for (int i = 0; i < size; i++) {
 				IASTParameterDeclaration p = params[i];
-				final IASTName name = p.getDeclarator().getName();
+				final IASTName name = CPPVisitor.findInnermostDeclarator(p.getDeclarator()).getName();
 				final IBinding binding= name.resolveBinding();
 				if (binding instanceof IParameter) {
 					result[i]= (IParameter) binding;
@@ -322,7 +322,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     		IASTParameterDeclaration[] paramDecls = definition.getParameters();
     		if (paramDecls.length > i) { // This will be less than i if we have a void parameter
 	    		temp = paramDecls[i];
-	    		IASTName n = temp.getDeclarator().getName();
+	    		IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
 	    		if (n != name) {
 	    		    n.setBinding(binding);
 	    		    ((CPPParameter)binding).addDeclaration(n);
@@ -334,7 +334,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     			IASTParameterDeclaration[] paramDecls = declarations[j].getParameters();
     			if (paramDecls.length > i) {
 	    			temp = paramDecls[i];
-	        		IASTName n = temp.getDeclarator().getName();
+	        		IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
 	        		if (n != name) {
 	        		    n.setBinding(binding);
 	        		    ((CPPParameter)binding).addDeclaration(n);
@@ -351,7 +351,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     	IASTParameterDeclaration[] nps = fdtor.getParameters();
     	CPPParameter temp = null;
     	for (int i = 0; i < ops.length; i++) {
-    		temp = (CPPParameter) ops[i].getDeclarator().getName().getBinding();
+    		temp = (CPPParameter) CPPVisitor.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();
     		if (temp != null && nps.length > i) {		//length could be different, ie 0 or 1 with void
     		    IASTDeclarator dtor = nps[i].getDeclarator();
     		    while (dtor.getNestedDeclarator() != null)

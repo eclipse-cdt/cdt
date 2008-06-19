@@ -4917,12 +4917,12 @@ public class AST2Tests extends AST2BaseTest {
     		assertEquals(2, tu.getDeclarationsInAST(binding).length);
 
     		sdef= getDeclaration(tu, 6);
-    		binding= sdef.getDeclarators()[0].getName().resolveBinding();
+    		binding= sdef.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
     		assertInstance(binding, IFunction.class);
     		assertEquals(2, tu.getDeclarationsInAST(binding).length);
 
     		sdef= getDeclaration(tu, 7);
-    		binding= sdef.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
+    		binding= sdef.getDeclarators()[0].getNestedDeclarator().getNestedDeclarator().getName().resolveBinding();
     		assertInstance(binding, IFunction.class);
     		assertEquals(2, tu.getDeclarationsInAST(binding).length);
     	}
@@ -4944,6 +4944,17 @@ public class AST2Tests extends AST2BaseTest {
     		IVariable v1= ba.assertNonProblem("a,", 1, IVariable.class);
     		assertSame(v1, v2);
     		assertNotSame(v2, v3);
+    	}
+    }
+    
+    // int foo(int (*ptr) (int, int));
+    public void testComplexParameterBinding_Bug214482() throws Exception {
+    	final String comment= getAboveComment();
+    	final boolean[] isCpps= {false, true};
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    		IParameter p= ba.assertNonProblem("ptr", 3, IParameter.class);
+    		assertEquals("ptr", p.getName());
     	}
     }
 }

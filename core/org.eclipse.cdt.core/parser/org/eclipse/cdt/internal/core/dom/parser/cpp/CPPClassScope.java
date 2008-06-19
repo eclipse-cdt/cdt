@@ -517,9 +517,10 @@ class ImplicitsAnalysis {
 	 */
 	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec, String name) {
 		boolean result= false;
-		IASTDeclarator pdtor= dec.getDeclarator();
+		IASTDeclarator pdtor= CPPVisitor.findTypeRelevantDeclarator(dec.getDeclarator());
 		if (pdtor.getPointerOperators().length == 1 &&
 				pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator &&
+				pdtor.getParent() == dec &&
 				dec.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
 			ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) dec.getDeclSpecifier();
 			if (name == null || name.equals(nts.getName().getRawSignature())) {

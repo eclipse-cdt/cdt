@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -139,19 +140,20 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
         for (int i = 0; i < params.length; i++) {
             if (!params[i].accept(action)) return false;
         }
-        
-        ICPPASTConstructorChainInitializer[] chain = getConstructorChain();
-        for (int i = 0; i < chain.length; i++) {
-            if (!chain[i].accept(action)) return false;
-        }
-        
-        IASTInitializer initializer = getInitializer();
-        if (initializer != null && !initializer.accept(action)) return false;
-        
+
         IASTTypeId[] ids = getExceptionSpecification();
         for (int i = 0; i < ids.length; i++) {
             if (!ids[i].accept(action)) return false;
         }
+
+        IASTInitializer initializer = getInitializer();
+        if (initializer != null && !initializer.accept(action)) return false;
+
+        ICPPASTConstructorChainInitializer[] chain = getConstructorChain();
+        for (int i = 0; i < chain.length; i++) {
+            if (!chain[i].accept(action)) return false;
+        }
+
         return true;
     }
 }

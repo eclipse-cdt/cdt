@@ -468,9 +468,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			IASTName name= node.getName();
 			if (name != null && name.toCharArray().length != 0) {
-				// preserve non-space between pointer operator and name
-				if (pointerOperators.length == 0 || scribe.printComment()) {
-					scribe.space();
+				if (isFirstDeclarator(node)) {
+					// preserve non-space between pointer operator and name
+					if (pointerOperators.length == 0 || scribe.printComment()) {
+						scribe.space();
+					}
 				}
 				name.accept(this);
 			}
@@ -503,6 +505,21 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			endOfNode(node);
 		}
 		return PROCESS_SKIP;
+	}
+
+	/**
+	 * Determine whether the given declarator is the first in a list of declarators (if any).
+	 * 
+	 * @param node  the declarator node
+	 * @return <code>true</code> if this node is the first in a list
+	 */
+	private boolean isFirstDeclarator(IASTDeclarator node) {
+		IASTNode parent= node.getParent();
+		if (parent instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration simpleDecl= (IASTSimpleDeclaration) parent;
+			return simpleDecl.getDeclarators()[0] == node;
+		}
+		return true;
 	}
 
 	/*
@@ -2208,17 +2225,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (expectParen) {
 			scribe.printNextToken(Token.tRPAREN);
 		}
-		// array spec
-		final IASTExpression[] newTypeIdArrayExpressions= node.getNewTypeIdArrayExpressions();
-		for (int i= 0; i < newTypeIdArrayExpressions.length; i++) {
-			IASTExpression expression= newTypeIdArrayExpressions[i];
-			scribe.printNextToken(Token.tLBRACKET, preferences.insert_space_before_opening_bracket);
-			if (preferences.insert_space_after_opening_bracket ) {
-				scribe.space();
-			}
-			expression.accept(this);
-			scribe.printNextToken(Token.tRBRACKET, preferences.insert_space_before_closing_bracket);
-		}
+
 		// initializer
 		final IASTExpression newInitializer= node.getNewInitializer();
 		if (newInitializer != null || peekNextToken() == Token.tLPAREN) {

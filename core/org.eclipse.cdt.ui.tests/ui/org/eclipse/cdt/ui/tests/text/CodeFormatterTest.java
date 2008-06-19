@@ -563,8 +563,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-	//NOT_DEFINED void foo()
-	//	{
+	//NOT_DEFINED void foo(){
 	//	}
 	//
 	//enum T1
@@ -703,6 +702,22 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//		;
 	//}
 	public void testIndentAfterDotF_Bug232739() throws Exception {
+		assertFormatterResult();
+	}
+
+	//int a = 0, b = 1, c = 2, d = 3;
+	
+	//int a = 0,b = 1,c = 2,d = 3;
+	public void testSpaceAfterCommaInDeclaratorList_Bug234915() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
+	//int a = 0,b = 1,c = 2,d = 3;
+	
+	//int a = 0, b = 1, c = 2, d = 3;
+	public void testSpaceAfterCommaInDeclaratorList2_Bug234915() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 

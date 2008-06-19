@@ -186,18 +186,15 @@ public class ResourceToItemsMapper {
 	private static IResource getCorrespondingResource(Object element) {
 		if (element instanceof ICElement) {
 			ICElement elem= (ICElement) element;
-			if (elem.exists()) { 
-				IResource res= elem.getResource();
-				if (res == null) {
-					ITranslationUnit cu= (ITranslationUnit) elem.getAncestor(ICElement.C_UNIT);
-					if (cu != null) {
-						// elements in compilation units are mapped to the underlying resource of the original cu
-						res= cu.getResource();
-					}
+			IResource res= elem.getResource();
+			if (res == null) {
+				ITranslationUnit cu= (ITranslationUnit) elem.getAncestor(ICElement.C_UNIT);
+				if (cu != null) {
+					// elements in compilation units are mapped to the underlying resource of the original cu
+					res= cu.getResource();
 				}
-				return res; 
 			}
-			return null;
+			return res; 
 		} else if (element instanceof IResource) {
 			return (IResource) element;
 		}

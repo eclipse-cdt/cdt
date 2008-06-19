@@ -31,6 +31,8 @@ import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -116,7 +118,7 @@ public class MIStack extends AbstractDsfService
         }            
     }
     
-	private MIRunControl fRunControl;
+	private CommandCache fMICommandCache;
     private MIStoppedEvent fCachedStoppedEvent;
 
 	public MIStack(DsfSession session) 
@@ -142,7 +144,7 @@ public class MIStack extends AbstractDsfService
     }
 
     private void doInitialize(RequestMonitor rm) {
-        fRunControl = getServicesTracker().getService(MIRunControl.class);
+        fMICommandCache = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));        
         getSession().addServiceEventListener(this, null);
         register(new String[]{IStack.class.getName(), MIStack.class.getName()}, new Hashtable<String,String>());
         rm.done();
@@ -153,6 +155,7 @@ public class MIStack extends AbstractDsfService
     {
         unregister();
         getSession().removeServiceEventListener(this);
+        fMICommandCache.reset();
         super.shutdown(rm);
     }
 
@@ -195,7 +198,7 @@ public class MIStack extends AbstractDsfService
             rm.done();
             return;
         }
-        fRunControl.getCache().execute(
+        fMICommandCache.execute(
             new MIStackListFrames(execDmc),
             new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
                 @Override
@@ -330,7 +333,7 @@ public class MIStack extends AbstractDsfService
             protected MIFrame getMIFrame() { return fFrameDataCacheInfo.getMIFrames()[fFrameIndex]; }
         }
 
-        fRunControl.getCache().execute(
+        fMICommandCache.execute(
             new MIStackListFrames(execDmc),
             new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
                 @Override
@@ -374,7 +377,7 @@ public class MIStack extends AbstractDsfService
         }
 
         // If not, retrieve the full list of frame data.
-        fRunControl.getCache().execute(
+        fMICommandCache.execute(
             new MIStackListArguments(execDmc, true),
             new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
                 @Override
@@ -454,7 +457,7 @@ public class MIStack extends AbstractDsfService
         }
 
         if (miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT){
-	        fRunControl.getCache().execute(
+	        fMICommandCache.execute(
 	            new MIStackListArguments(execDmc, true),
 	            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
 	                @Override
@@ -474,7 +477,7 @@ public class MIStack extends AbstractDsfService
 	                }});
         }//if
         if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
-            fRunControl.getCache().execute(
+            fMICommandCache.execute(
                     new MIStackListLocals(frameDmc, true),
                     new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
                         @Override
@@ -536,7 +539,7 @@ public class MIStack extends AbstractDsfService
                 }
             }); 
         
-	    fRunControl.getCache().execute(
+	    fMICommandCache.execute(
                 new MIStackListLocals(frameDmc, true),
                 new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
                     @Override
@@ -555,7 +558,7 @@ public class MIStack extends AbstractDsfService
         	    if (maxDepth > 0) depthCommand = new MIStackInfoDepth(execDmc, maxDepth);
         	    else depthCommand = new MIStackInfoDepth(execDmc);
         	    
-        	    fRunControl.getCache().execute(
+        	    fMICommandCache.execute(
                         depthCommand,
                         new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) { 
                             @Override
@@ -569,16 +572,26 @@ public class MIStack extends AbstractDsfService
             rm.done();
         }
     }
+
     // IServiceEventListener
-    @DsfServiceEventHandler public void eventDispatched(IRunControl.IResumedDMEvent e) {
+    @DsfServiceEventHandler 
+    public void eventDispatched(IRunControl.IResumedDMEvent e) {
+    	fMICommandCache.setContextAvailable(e.getDMContext(), false);
         if (e.getReason() != StateChangeReason.STEP) {
             fCachedStoppedEvent = null;
+            fMICommandCache.reset();
         }
     }
     
-    //    @DsfServiceEventHandler public void eventDispatched(MIRunControl.SuspendedEvent e) {
-    @DsfServiceEventHandler public void eventDispatched(MIRunControl.ContainerSuspendedEvent e) {
-        fCachedStoppedEvent = e.getMIEvent(); 
+    @DsfServiceEventHandler 
+    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+    	fMICommandCache.setContextAvailable(e.getDMContext(), true);
+        fMICommandCache.reset();
+    }
+
+    @DsfServiceEventHandler 
+    public void eventDispatched(MIRunControl.ContainerSuspendedEvent e) {
+    	fCachedStoppedEvent = e.getMIEvent(); 
     }
     
 }

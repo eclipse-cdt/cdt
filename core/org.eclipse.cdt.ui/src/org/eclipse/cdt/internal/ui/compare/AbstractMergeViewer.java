@@ -16,7 +16,6 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -134,11 +133,6 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 	@Override
 	protected String getDocumentPartitioning() {
 		return ICPartitions.C_PARTITIONING;
-	}
-
-	@Override
-	protected IDocumentPartitioner getDocumentPartitioner() {
-		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(null);
 	}
 
 	@Override

@@ -13,13 +13,13 @@ package org.eclipse.cdt.internal.ui.compare;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
-
 import org.eclipse.cdt.internal.ui.editor.asm.AsmSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 
@@ -43,9 +43,6 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 		super(parent, style, configuration);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#getSourceViewerConfiguration()
-	 */
 	@Override
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
@@ -56,17 +53,16 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 		return fSourceViewerConfiguration;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#getTitle()
-	 */
 	@Override
 	public String getTitle() {
 		return CUIPlugin.getResourceString(TITLE);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#handlePropertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
+	@Override
+	protected IDocumentPartitioner getDocumentPartitioner() {
+		return CUIPlugin.getDefault().getAsmTextTools().createDocumentPartitioner();
+	}
+
 	@Override
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 		super.handlePropertyChange(event);

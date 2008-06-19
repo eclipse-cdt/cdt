@@ -15,12 +15,15 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.cdt.core.model.AssemblyLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
@@ -28,6 +31,7 @@ import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
+import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 
@@ -223,5 +227,16 @@ public class AsmTextTools {
 		if (fPreprocessorScanner.affectsBehavior(event))
 			fPreprocessorScanner.adaptToPreferenceChange(event);
 	}
-		
+
+	public IDocumentPartitioner createDocumentPartitioner() {
+		String[] types= new String[] {
+				ICPartitions.C_MULTI_LINE_COMMENT,
+				ICPartitions.C_SINGLE_LINE_COMMENT,
+				ICPartitions.C_STRING,
+				ICPartitions.C_CHARACTER,
+				ICPartitions.C_PREPROCESSOR
+		};
+		return new FastPartitioner(new AsmPartitionScanner(), types);
+	}
+
 }

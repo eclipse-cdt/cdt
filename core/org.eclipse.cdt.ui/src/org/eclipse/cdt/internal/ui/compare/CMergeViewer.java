@@ -14,15 +14,18 @@ package org.eclipse.cdt.internal.ui.compare;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
 /**
  * A merge viewer for C/C++ code.
@@ -48,13 +51,17 @@ public class CMergeViewer extends AbstractMergeViewer {
 	}
 
 	@Override
+	protected IDocumentPartitioner getDocumentPartitioner() {
+		// use workspace default for highlighting doc comments in compare viewer
+		IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
+		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(owner);
+	}
+
+	@Override
 	public String getTitle() {
 		return CUIPlugin.getResourceString(TITLE);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.compare.AbstractMergeViewer#handlePropertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 		super.handlePropertyChange(event);

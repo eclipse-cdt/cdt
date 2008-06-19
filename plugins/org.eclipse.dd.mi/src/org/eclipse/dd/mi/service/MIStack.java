@@ -27,16 +27,18 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.MIRunControl.SuspendedEvent;
+import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIStackInfoDepth;
 import org.eclipse.dd.mi.service.command.commands.MIStackListArguments;
 import org.eclipse.dd.mi.service.command.commands.MIStackListFrames;
@@ -144,7 +146,10 @@ public class MIStack extends AbstractDsfService
     }
 
     private void doInitialize(RequestMonitor rm) {
-        fMICommandCache = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));        
+        AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
+        fMICommandCache = new CommandCache(getSession(), miControl);
+        fMICommandCache.setContextAvailable(miControl.getControlDMContext(), true);
+        
         getSession().addServiceEventListener(this, null);
         register(new String[]{IStack.class.getName(), MIStack.class.getName()}, new Hashtable<String,String>());
         rm.done();
@@ -575,7 +580,7 @@ public class MIStack extends AbstractDsfService
 
     // IServiceEventListener
     @DsfServiceEventHandler 
-    public void eventDispatched(IRunControl.IResumedDMEvent e) {
+    public void eventDispatched(IResumedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), false);
         if (e.getReason() != StateChangeReason.STEP) {
             fCachedStoppedEvent = null;
@@ -584,14 +589,11 @@ public class MIStack extends AbstractDsfService
     }
     
     @DsfServiceEventHandler 
-    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+    public void eventDispatched(ISuspendedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
+        if (e instanceof SuspendedEvent) {
+        	fCachedStoppedEvent = ((SuspendedEvent)e).getMIEvent();
+        }
     }
-
-    @DsfServiceEventHandler 
-    public void eventDispatched(MIRunControl.ContainerSuspendedEvent e) {
-    	fCachedStoppedEvent = e.getMIEvent(); 
-    }
-    
 }

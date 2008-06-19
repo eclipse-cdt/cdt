@@ -38,6 +38,7 @@ import org.eclipse.dd.mi.service.command.commands.MIExecStep;
 import org.eclipse.dd.mi.service.command.commands.MIExecStepInstruction;
 import org.eclipse.dd.mi.service.command.commands.MIExecUntil;
 import org.eclipse.dd.mi.service.command.commands.MIThreadListIds;
+import org.eclipse.dd.mi.service.command.events.IMIDMEvent;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.dd.mi.service.command.events.MIErrorEvent;
 import org.eclipse.dd.mi.service.command.events.MIEvent;
@@ -137,7 +138,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
      */
     @Immutable
     protected static class RunControlEvent<V extends IDMContext, T extends MIEvent<? extends IDMContext>> extends AbstractDMEvent<V>
-        implements IDMEvent<V>
+        implements IDMEvent<V>, IMIDMEvent<T>
     {
         final private T fMIInfo;
         public RunControlEvent(V dmc, T miInfo) {

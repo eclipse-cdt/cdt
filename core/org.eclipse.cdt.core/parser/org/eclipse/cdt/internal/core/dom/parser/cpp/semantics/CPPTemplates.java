@@ -136,7 +136,7 @@ public class CPPTemplates {
 		else if (param instanceof ICPPASTTemplatedTypeTemplateParameter)
 			return ((ICPPASTTemplatedTypeTemplateParameter) param).getName();
 		else if (param instanceof ICPPASTParameterDeclaration)
-			return ((ICPPASTParameterDeclaration) param).getDeclarator().getName();
+			return CPPVisitor.findInnermostDeclarator(((ICPPASTParameterDeclaration) param).getDeclarator()).getName();
 		return null;
 	}
 

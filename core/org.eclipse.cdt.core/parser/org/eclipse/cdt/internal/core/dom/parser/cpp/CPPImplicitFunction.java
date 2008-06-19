@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * The CPPImplicitFunction is used to represent implicit functions that exist on the translation
@@ -84,7 +85,7 @@ public class CPPImplicitFunction extends CPPFunction {
     
     @Override
 	public IBinding resolveParameter( IASTParameterDeclaration param ){
-        IASTName aName = param.getDeclarator().getName();
+        IASTName aName = CPPVisitor.findInnermostDeclarator(param.getDeclarator()).getName();
         IParameter binding = (IParameter) aName.getBinding();
         if( binding != null )
             return binding;
@@ -103,14 +104,14 @@ public class CPPImplicitFunction extends CPPFunction {
         IASTParameterDeclaration temp = null;
         if( definition != null ){
             temp = definition.getParameters()[i];
-            IASTName n = temp.getDeclarator().getName();
+            IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
             n.setBinding( binding );
             ((CPPParameter)binding).addDeclaration( n );
         }
         if( declarations != null ){
             for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
                 temp = declarations[j].getParameters()[i];
-                IASTName n = temp.getDeclarator().getName();
+                IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
                 n.setBinding( binding );
                 ((CPPParameter)binding).addDeclaration( n );
             }
@@ -126,7 +127,7 @@ public class CPPImplicitFunction extends CPPFunction {
                 return;
 
             for( int i = 0; i < nps.length; i++ ){
-                IASTName aName = nps[i].getDeclarator().getName(); 
+                IASTName aName = CPPVisitor.findInnermostDeclarator(nps[i].getDeclarator()).getName(); 
                 aName.setBinding( parms[i] );
 				if( parms[i] instanceof ICPPInternalBinding )
 					((ICPPInternalBinding)parms[i]).addDeclaration( aName );

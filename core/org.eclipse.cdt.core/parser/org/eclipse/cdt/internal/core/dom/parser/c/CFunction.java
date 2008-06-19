@@ -135,7 +135,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 			if( size > 0 ){
 				for( int i = 0; i < size; i++ ){
 					IASTParameterDeclaration p = params[i];
-					result[i] = (IParameter) p.getDeclarator().getName().resolveBinding();
+					result[i] = (IParameter) CVisitor.findInnermostDeclarator(p.getDeclarator()).getName().resolveBinding();
 				}
 			}
 		} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
@@ -271,7 +271,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	    	IASTParameterDeclaration [] parameters = ((IASTStandardFunctionDeclarator)definition).getParameters();
     	    	if( parameters.length > idx ) {
 	    	        temp = parameters[idx];
-	        		temp.getDeclarator().getName().setBinding( binding );
+	    	        CVisitor.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
     	    	}
     	    } else if( definition instanceof ICASTKnRFunctionDeclarator ){
     	    	fKnRDtor = (ICASTKnRFunctionDeclarator) definition;
@@ -290,7 +290,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     		for( int j = 0; j < declarators.length && declarators[j] != null; j++ ){
     		    if( declarators[j].getParameters().length > idx ){
 					temp = declarators[j].getParameters()[idx];
-		    		temp.getDeclarator().getName().setBinding( binding );
+					CVisitor.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
     		    }
     		}
     	}
@@ -306,7 +306,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         	if(params.length < nps.length )
         	    return; 
         	for( int i = 0; i < nps.length; i++ ){
-        		IASTName name = nps[i].getDeclarator().getName();
+        		IASTName name = CVisitor.findInnermostDeclarator(nps[i].getDeclarator()).getName();
         		name.setBinding( params[i] );
         		if( params[i] instanceof CParameter )
         			((CParameter)params[i]).addDeclaration( name );

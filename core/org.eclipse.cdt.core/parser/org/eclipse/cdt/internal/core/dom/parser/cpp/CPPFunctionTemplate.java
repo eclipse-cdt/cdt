@@ -128,9 +128,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     	IASTParameterDeclaration [] nps = ((ICPPASTFunctionDeclarator)paramName.getParent()).getParameters();
     	CPPParameter temp = null;
     	for( int i = 0; i < nps.length; i++ ){
-    		temp = (CPPParameter) ops[i].getDeclarator().getName().getBinding();
+    		temp = (CPPParameter) CPPVisitor.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();
     		if( temp != null ){
-    		    IASTName name = nps[i].getDeclarator().getName();
+    		    IASTName name = CPPVisitor.findInnermostDeclarator(nps[i].getDeclarator()).getName();
     			name.setBinding( temp );
     			temp.addDeclaration( name );
     		}
@@ -148,7 +148,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 			if( size > 0 ){
 				for( int i = 0; i < size; i++ ){
 					IASTParameterDeclaration p = params[i];
-					final IASTName pname = p.getDeclarator().getName();
+					final IASTName pname = CPPVisitor.findInnermostDeclarator(p.getDeclarator()).getName();
 					final IBinding binding= pname.resolveBinding();
 					if (binding instanceof IParameter) {
 						result[i]= (IParameter) binding;
@@ -212,7 +212,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 
 
 	public IBinding resolveParameter(IASTParameterDeclaration param) {
-	   	IASTName name = param.getDeclarator().getName();
+	   	IASTName name = CPPVisitor.findInnermostDeclarator(param.getDeclarator()).getName();
     	IBinding binding = name.getBinding();
     	if( binding != null )
     		return binding;
@@ -232,7 +232,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(definition);
     		if (fdecl != null) {
     			temp = fdecl.getParameters()[i];
-    			IASTName n = temp.getDeclarator().getName();
+    			IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
     			if( n != name ) {
     				n.setBinding( binding );
     				((CPPParameter)binding).addDeclaration( n );
@@ -244,7 +244,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
         		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(declarations[j]);
         		if (fdecl != null) {
         			temp = fdecl.getParameters()[i];
-        			IASTName n = temp.getDeclarator().getName();
+        			IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
         			if( n != name ) {
         				n.setBinding( binding );
         				((CPPParameter)binding).addDeclaration( n );

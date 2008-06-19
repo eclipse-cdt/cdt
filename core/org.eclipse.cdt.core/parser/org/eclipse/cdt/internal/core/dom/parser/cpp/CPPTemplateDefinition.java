@@ -167,7 +167,8 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	
 	public IBinding resolveTemplateParameter(ICPPASTTemplateParameter templateParameter) {
 	   	IASTName name = CPPTemplates.getTemplateParameterName(templateParameter);
-    	IBinding binding = name.getBinding();
+    	IASTName preferredName= name;
+	   	IBinding binding = name.getBinding();
     	if (binding != null)
     		return binding;
 			
@@ -186,6 +187,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     	    ICPPASTTemplateParameter[] params = temp.getTemplateParameters();
     	    if (params.length > i) {
     	        IASTName paramName = CPPTemplates.getTemplateParameterName(params[i]);
+    	        preferredName= paramName;
     	        if (paramName.getBinding() != null) {
     	            binding = paramName.getBinding();
     	            name.setBinding(binding);
@@ -197,11 +199,11 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     	}
     	//create a new binding and set it for the corresponding parameter in all known decls
     	if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter) {
-    		binding = new CPPTemplateTypeParameter(name);
+    		binding = new CPPTemplateTypeParameter(preferredName);
     	} else if (templateParameter instanceof ICPPASTParameterDeclaration) {
-    		binding = new CPPTemplateNonTypeParameter(name);
+    		binding = new CPPTemplateNonTypeParameter(preferredName);
     	} else {
-    		binding = new CPPTemplateTemplateParameter(name);
+    		binding = new CPPTemplateTemplateParameter(preferredName);
     	}
     	
     	int length = (declarations != null) ? declarations.length : 0;

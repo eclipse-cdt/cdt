@@ -283,7 +283,7 @@ public class CPPSemantics {
         		ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
         		IType[] args = CPPTemplates.createTemplateArgumentArray(id);
         		IBinding inst = ((ICPPInternalTemplateInstantiator)cls).instantiate(args); 
-        		cls = inst instanceof ICPPClassType ? (ICPPClassType)inst : cls; 
+        		cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredTemplateInstance) ? (ICPPClassType)inst : cls; 
         	}
 		    if (cls != null) {
 			    try {
@@ -736,13 +736,13 @@ public class CPPSemantics {
 			
 			ICPPScope parentScope = (ICPPScope) getParentScope(scope, data.tu);
 			if (parentScope instanceof ICPPTemplateScope) {
-			    IASTNode parent = node.getParent();
-			    while (parent != null && !(parent instanceof ICPPASTTemplateDeclaration)) {
-			        node = parent;
-			        parent = parent.getParent();
+			    IASTNode declNode = node;
+			    while (declNode != null && !(declNode instanceof ICPPASTTemplateDeclaration)) {
+			        node = declNode;
+			        declNode = declNode.getParent();
 			    }
-			    if (parent != null) {
-			        ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) parent;
+			    if (declNode != null) {
+			        ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) declNode;
 			        ICPPTemplateScope templateScope = templateDecl.getScope();
 			        if (templateScope.getTemplateDefinition() == ((ICPPTemplateScope)parentScope).getTemplateDefinition()) {
 			            parentScope = templateScope;

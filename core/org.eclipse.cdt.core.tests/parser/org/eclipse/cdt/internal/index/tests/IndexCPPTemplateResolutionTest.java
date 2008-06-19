@@ -1374,4 +1374,60 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertTrue(!a1.isSameType(a5c));
 		assertTrue(!a1.isSameType(a5d));
 	}
+	
+    //	template<int I>
+	//	class That {
+	//	public:
+	//		That(int x) {}
+	//	};
+	//
+	//	template<int T>
+	//	class This : public That<T> {
+	//	public:
+	//		inline This();
+	//	};
+	
+	//	template <int I>
+	//	inline This<I>::This() : That<I>(I) {
+	//  }
+	public void testParameterReferenceInChainInitializer_a() throws Exception {
+		// These intermediate assertions will not hold until deferred non-type arguments are
+		// correctly modelled
+		/*
+		ICPPClassType tid= ba.assertNonProblem("This<I>::T", 7, ICPPClassType.class);
+		assertFalse(tid instanceof ICPPSpecialization);
+		ICPPConstructor th1sCtor= ba.assertNonProblem("This() :", 4, ICPPConstructor.class);
+		assertFalse(th1sCtor instanceof ICPPSpecialization);ICPPTemplateNonTypeParameter np= ba.assertNonProblem("I)", 1, ICPPTemplateNonTypeParameter.class);
+		*/
+		
+		ICPPTemplateNonTypeParameter np= getBindingFromASTName("I>(I)", 1, ICPPTemplateNonTypeParameter.class);
+		ICPPClassType clazz= getBindingFromASTName("That<I>(I)", 4, ICPPClassType.class);
+		ICPPConstructor ctor= getBindingFromASTName("That<I>(I)", 7, ICPPConstructor.class);
+	}
+	
+	//	template<typename I>
+	//	class That {
+	//		public:
+	//			That() {}
+	//	};
+	//
+	//	template<typename T>
+	//	class This : public That<T> {
+	//		public:
+	//			inline This();
+	//	};
+	
+	//	template <typename I>
+	//	inline This<I>::This() : That<I>() {
+	//	}
+	public void testParameterReferenceInChainInitializer_b() throws Exception {
+		ICPPClassType tid= getBindingFromASTName("This<I>::T", 7, ICPPClassType.class);
+		assertFalse(tid instanceof ICPPSpecialization);
+		ICPPConstructor th1sCtor= getBindingFromASTName("This() :", 4, ICPPConstructor.class);
+		assertFalse(th1sCtor instanceof ICPPSpecialization);
+		
+		ICPPTemplateTypeParameter np= getBindingFromASTName("I>()", 1, ICPPTemplateTypeParameter.class);
+		ICPPClassType clazz= getBindingFromASTName("That<I>()", 4, ICPPClassType.class);
+		ICPPConstructor ctor= getBindingFromASTName("That<I>()", 7, ICPPConstructor.class);
+	}
 }

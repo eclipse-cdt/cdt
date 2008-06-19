@@ -2880,4 +2880,64 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("A<int>", 6);
 	}
+	
+	//	template<int I>
+	//	class That {
+	//	public:
+	//		That(int x) {}
+	//	};
+	//
+	//	template<int T>
+	//	class This : public That<T> {
+	//	public:
+	//		inline This();
+	//	};
+	//
+	//	template <int I>
+	//	inline This<I>::This() : That<I>(I) {
+	//	}
+	public void testParameterReferenceInChainInitializer_a() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		
+		// These intermediate assertions will not hold until deferred non-type arguments are
+		// correctly modelled
+		/*
+		ICPPClassType tid= ba.assertNonProblem("This<I>::T", 7, ICPPClassType.class);
+		assertFalse(tid instanceof ICPPSpecialization);
+		ICPPConstructor th1sCtor= ba.assertNonProblem("This() :", 4, ICPPConstructor.class);
+		assertFalse(th1sCtor instanceof ICPPSpecialization);ICPPTemplateNonTypeParameter np= ba.assertNonProblem("I)", 1, ICPPTemplateNonTypeParameter.class);
+		*/
+		
+		ICPPTemplateNonTypeParameter np= ba.assertNonProblem("I>(I)", 1, ICPPTemplateNonTypeParameter.class);
+		ICPPClassType clazz= ba.assertNonProblem("That<I>(I)", 4, ICPPClassType.class);
+		ICPPConstructor ctor= ba.assertNonProblem("That<I>(I)", 7, ICPPConstructor.class);
+	}
+	
+	//	template<typename I>
+	//	class That {
+	//		public:
+	//			That() {}
+	//	};
+	//
+	//	template<typename T>
+	//	class This : public That<T> {
+	//		public:
+	//			inline This();
+	//	};
+	//
+	//	template <typename I>
+	//	inline This<I>::This() : That<I>() {
+	//	}
+	public void testParameterReferenceInChainInitializer_b() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+	
+		ICPPClassType tid= ba.assertNonProblem("This<I>::T", 7, ICPPClassType.class);
+		assertFalse(tid instanceof ICPPSpecialization);
+		ICPPConstructor th1sCtor= ba.assertNonProblem("This() :", 4, ICPPConstructor.class);
+		assertFalse(th1sCtor instanceof ICPPSpecialization);
+		
+		ICPPTemplateTypeParameter np= ba.assertNonProblem("I>()", 1, ICPPTemplateTypeParameter.class);
+		ICPPClassType clazz= ba.assertNonProblem("That<I>()", 4, ICPPClassType.class);
+		ICPPConstructor ctor= ba.assertNonProblem("That<I>()", 7, ICPPConstructor.class);
+	}
 }

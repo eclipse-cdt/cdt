@@ -805,7 +805,7 @@ public final class WhiteSpaceOptions {
         final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_declarator_list); 
         
         createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_declarator_list_before_comma, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_DECLARATOR_LIST, DECLARATOR_LIST_PREVIEW); 
-        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_declarator_list_after_comma, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, EXPRESSION_LIST_PREVIEW); 
+        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_declarator_list_after_comma, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, DECLARATOR_LIST_PREVIEW); 
         return root;
     }	
     

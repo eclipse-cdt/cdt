@@ -68,7 +68,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -2508,15 +2507,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         if (needFunctionBody) {
-        	if (declarators.length != 1) 
-        		throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
-        	
-    		// mstodo
-    		final IASTDeclarator fdtor= declarators[0];
-			if (fdtor instanceof ICPPASTFunctionDeclarator == false)
-    			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
-    		
-        	return functionDefinition(firstOffset, declSpec, fdtor, hasFunctionTryBlock);
+        	return functionDefinition(firstOffset, declSpec, declarators, hasFunctionTryBlock);
         }
 
         // no function body
@@ -2542,18 +2533,27 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 	private IASTDeclaration functionDefinition(final int firstOffset, IASTDeclSpecifier declSpec,
-			IASTDeclarator declarator, boolean hasFunctionTryBlock) 
-			throws EndOfFileException, BacktrackException {
+			IASTDeclarator[] dtors, boolean hasFunctionTryBlock) throws EndOfFileException, BacktrackException {
+		
+    	if (dtors.length != 1) 
+    		throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
+    	
+		final IASTDeclarator outerDtor= dtors[0];
+		final IASTDeclarator dtor= CPPVisitor.findTypeRelevantDeclarator(outerDtor);
+		if (dtor instanceof ICPPASTFunctionDeclarator == false)
+			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
+
+		final ICPPASTFunctionDeclarator fdtor= (ICPPASTFunctionDeclarator) dtor;
+		
 		if (LT(1) == IToken.tCOLON) {
 			List<ICPPASTConstructorChainInitializer> constructorChain= new ArrayList<ICPPASTConstructorChainInitializer>(DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE);
 		    ctorInitializer(constructorChain);
-		    if (!constructorChain.isEmpty() && declarator instanceof ICPPASTFunctionDeclarator) {
-		    	ICPPASTFunctionDeclarator fd = (ICPPASTFunctionDeclarator) declarator;
+		    if (!constructorChain.isEmpty()) {
 		    	for (ICPPASTConstructorChainInitializer initializer : constructorChain) {
-		    		fd.addConstructorToChain(initializer);
+		    		fdtor.addConstructorToChain(initializer);
 		    	}
 		    	// fix for 86698, update the declarator's length
-		    	adjustLength(fd, constructorChain.get(constructorChain.size()-1));
+		    	adjustLength(outerDtor, constructorChain.get(constructorChain.size()-1));
 		    }
 		}
 
@@ -2564,8 +2564,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (hasFunctionTryBlock) {
 		    List<ICPPASTCatchHandler> handlers = new ArrayList<ICPPASTCatchHandler>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
 		    catchHandlerSequence(handlers);
-		    if (!handlers.isEmpty() && declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-		    	ICPPASTFunctionTryBlockDeclarator tbd= (ICPPASTFunctionTryBlockDeclarator) declarator;
+		    if (!handlers.isEmpty() && fdtor instanceof ICPPASTFunctionTryBlockDeclarator) {
+		    	ICPPASTFunctionTryBlockDeclarator tbd= (ICPPASTFunctionTryBlockDeclarator) fdtor;
 		    	for (ICPPASTCatchHandler catchHandler : handlers) {
 					tbd.addCatchHandler(catchHandler);
 				}
@@ -2575,7 +2575,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		IASTFunctionDefinition funcDefinition = createFunctionDefinition();
 		funcDefinition.setDeclSpecifier(declSpec);
-		funcDefinition.setDeclarator((IASTStandardFunctionDeclarator) declarator);
+		funcDefinition.setDeclarator(fdtor);
 		funcDefinition.setBody(body);
 		
 		((ASTNode) funcDefinition).setOffsetAndLength(firstOffset, endOffset-firstOffset);

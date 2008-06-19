@@ -2086,10 +2086,9 @@ public class AST2Tests extends AST2BaseTest {
 		IASTTranslationUnit tu = parse(
 				"void ( * f( int ) )(){}", ParserLanguage.C); //$NON-NLS-1$
 		
-		IASTFunctionDefinition def = (IASTFunctionDefinition) tu
-		.getDeclarations()[0];
-		IFunction f = (IFunction) def.getDeclarator().getNestedDeclarator()
-		.getName().resolveBinding();
+		IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[0];
+		final IASTName fname = def.getDeclarator().getName();
+		IFunction f = (IFunction) fname.resolveBinding();
 		
 		IFunctionType ft = f.getType();
 		assertTrue(ft.getReturnType() instanceof IPointerType);
@@ -2097,11 +2096,9 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals(ft.getParameterTypes().length, 1);
 		
 		// test tu.getDeclarationsInAST(IBinding)
-		IASTName[] decls = tu.getDeclarationsInAST(def.getDeclarator()
-				.getNestedDeclarator().getName().resolveBinding());
+		IASTName[] decls = tu.getDeclarationsInAST(f);
 		assertEquals(decls.length, 1);
-		assertEquals(decls[0], def.getDeclarator().getNestedDeclarator()
-				.getName());
+		assertEquals(decls[0], fname);
 	}
 	
 	// test C99: 6.7.5.3-7 A declaration of a parameter as ''array of type''
@@ -2173,11 +2170,9 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals(decls.length, 1);
 		assertEquals(decls[0], def2.getDeclarator().getName());
 		
-		decls = tu.getDeclarationsInAST(def3.getDeclarator().getNestedDeclarator()
-				.getName().resolveBinding());
+		decls = tu.getDeclarationsInAST(def3.getDeclarator().getName().resolveBinding());
 		assertEquals(decls.length, 1);
-		assertEquals(decls[0], def3.getDeclarator().getNestedDeclarator()
-				.getName());
+		assertEquals(decls[0], def3.getDeclarator().getName());
 	}
 	
 	// any parameter to type function returning T is adjusted to be pointer to
@@ -4859,8 +4854,8 @@ public class AST2Tests extends AST2BaseTest {
     }
 
     // int (*f1(int par))[5] {};
-    public void _testFunctionReturningPtrToArray_Bug216609() throws Exception {
-    	// works for plain-c, see testcase below.
+    // int (*f1 (int par))[5];
+    public void testFunctionReturningPtrToArray_Bug216609() throws Exception {
     	final String comment= getAboveComment();
     	final boolean[] isCpps= {false, true};
     	for (boolean isCpp : isCpps) {
@@ -4868,6 +4863,68 @@ public class AST2Tests extends AST2BaseTest {
 
     		IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
     		isTypeEqual(f.getType(), "int [] * (int)");
+    		
+    		f= ba.assertNonProblem("f1 ", 2, IFunction.class);
+    		isTypeEqual(f.getType(), "int [] * (int)");
+    	}
+    }
+    
+    // void f1(){}
+    // void (f2)(){}
+    // void (f3()){}
+    // void ((f4)()){}
+    // void f1();
+    // void (f2)();
+    // void (f3());
+    // void ((f4)());
+    public void testNestedFunctionDeclarators() throws Exception {
+    	final String comment= getAboveComment();
+    	final boolean[] isCpps= {false, true};
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parseAndCheckBindings(comment, lang);
+    		IASTFunctionDefinition fdef= getDeclaration(tu, 0);
+    		IASTDeclarator dtor= fdef.getDeclarator();
+    		assertNull(dtor.getNestedDeclarator());
+    		assertInstance(dtor.getParent(), IASTFunctionDefinition.class);
+    		assertInstance(dtor.getName().resolveBinding(), IFunction.class);
+
+    		fdef= getDeclaration(tu, 1);
+    		dtor= fdef.getDeclarator();
+    		assertNotNull(dtor.getNestedDeclarator());
+    		assertInstance(dtor.getParent(), IASTFunctionDefinition.class);
+    		assertInstance(dtor.getNestedDeclarator().getName().resolveBinding(), IFunction.class);
+
+    		fdef= getDeclaration(tu, 2);
+    		dtor= fdef.getDeclarator();
+    		assertNull(dtor.getNestedDeclarator());
+    		assertInstance(dtor.getParent().getParent(), IASTFunctionDefinition.class);
+    		assertInstance(dtor.getName().resolveBinding(), IFunction.class);
+
+    		fdef= getDeclaration(tu, 3);
+    		dtor= fdef.getDeclarator();
+    		assertNotNull(dtor.getNestedDeclarator());
+    		assertInstance(dtor.getParent().getParent(), IASTFunctionDefinition.class);
+    		assertInstance(dtor.getNestedDeclarator().getName().resolveBinding(), IFunction.class);
+
+    		IASTSimpleDeclaration sdef= getDeclaration(tu, 4);
+    		IBinding binding= sdef.getDeclarators()[0].getName().resolveBinding();
+    		assertInstance(binding, IFunction.class);
+    		assertEquals(2, tu.getDeclarationsInAST(binding).length);
+    		
+    		sdef= getDeclaration(tu, 5);
+    		binding= sdef.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
+    		assertInstance(binding, IFunction.class);
+    		assertEquals(2, tu.getDeclarationsInAST(binding).length);
+
+    		sdef= getDeclaration(tu, 6);
+    		binding= sdef.getDeclarators()[0].getName().resolveBinding();
+    		assertInstance(binding, IFunction.class);
+    		assertEquals(2, tu.getDeclarationsInAST(binding).length);
+
+    		sdef= getDeclaration(tu, 7);
+    		binding= sdef.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
+    		assertInstance(binding, IFunction.class);
+    		assertEquals(2, tu.getDeclarationsInAST(binding).length);
     	}
     }
     

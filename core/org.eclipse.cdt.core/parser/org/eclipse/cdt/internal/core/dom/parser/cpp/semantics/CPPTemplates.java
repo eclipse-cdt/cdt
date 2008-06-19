@@ -177,14 +177,12 @@ public class CPPTemplates {
 					}
 				} else {
 					IASTDeclarator dtor = dtors[0];
-					while (dtor.getNestedDeclarator() != null)
-						dtor = dtor.getNestedDeclarator();
+					dtor= CPPVisitor.findInnermostDeclarator(dtor);
 					name = dtor.getName();
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
 				IASTDeclarator dtor = ((IASTFunctionDefinition) decl).getDeclarator();
-				while (dtor.getNestedDeclarator() != null)
-					dtor = dtor.getNestedDeclarator();
+				dtor= CPPVisitor.findInnermostDeclarator(dtor);
 				name = dtor.getName();
 			}
 			if (name == null)
@@ -940,9 +938,7 @@ public class CPPTemplates {
 		    }
 		} else if (nestedDecl instanceof IASTFunctionDefinition) {
 		    IASTDeclarator declarator = ((IASTFunctionDefinition) nestedDecl).getDeclarator();
-		    while (declarator.getNestedDeclarator() != null) {
-		    	declarator= declarator.getNestedDeclarator();
-		    }
+		    declarator= CPPVisitor.findInnermostDeclarator(declarator);
 			name = declarator.getName();
 		}
 		if (name != null) {

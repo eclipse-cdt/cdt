@@ -9,9 +9,6 @@
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Mar 31, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -75,7 +72,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		        if( decl instanceof IASTSimpleDeclaration ){
 					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 					for (IASTDeclarator dtor : dtors) {
-						IASTName name = CPPVisitor.getMostNestedDeclarator( dtor ).getName();
+						IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
 						if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
 							name.resolveBinding() == this )
 						{
@@ -83,7 +80,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 						}
 					}
 				} else if( decl instanceof IASTFunctionDefinition ){
-					IASTName name = CPPVisitor.getMostNestedDeclarator( ((IASTFunctionDefinition) decl).getDeclarator() ).getName();
+					IASTName name = CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition) decl).getDeclarator()).getName();
 					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
 						name.resolveBinding() == this )
 					{

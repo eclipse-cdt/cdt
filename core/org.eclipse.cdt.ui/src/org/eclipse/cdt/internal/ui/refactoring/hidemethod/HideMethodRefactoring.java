@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
@@ -109,7 +110,7 @@ public class HideMethodRefactoring extends CRefactoring {
 		sm.worked(1);
 		if(methodToHideDecl instanceof IASTFunctionDefinition) {
 			IASTDeclarator declarator = ((IASTFunctionDefinition)methodToHideDecl).getDeclarator();
-			if(declarator.getName().getRawSignature().equals(name.getRawSignature())) {
+			if(CPPVisitor.findInnermostDeclarator(declarator).getName().getRawSignature().equals(name.getRawSignature())) {
 				if (!(declarator instanceof IASTFunctionDeclarator)) {
 					initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
 					return initStatus;
@@ -215,7 +216,7 @@ public class HideMethodRefactoring extends CRefactoring {
 		IASTNode parent = compStat.getParent();
 		if(parent instanceof IASTFunctionDefinition) {
 			IASTDeclarator declarator = ((IASTFunctionDefinition)parent).getDeclarator();
-			IASTName declaratorName = getLastName(declarator);
+			IASTName declaratorName = getLastName(CPPVisitor.findInnermostDeclarator(declarator));
 
 			DeclarationFinderDO data = DeclarationFinder.getDeclaration(declaratorName, getIndex());
 

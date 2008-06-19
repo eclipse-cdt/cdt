@@ -463,12 +463,12 @@ class ImplicitsAnalysis {
 			}
 
 			boolean nameEquals= false;
+			char[] dtorname= CPPVisitor.findInnermostDeclarator(dcltor).getName().toCharArray();
 			if (constructor) {
-				nameEquals= CharArrayUtils.equals(dcltor.getName().toCharArray(), name);
+				nameEquals= CharArrayUtils.equals(dtorname, name);
 			} else {
-				char[] cname= dcltor.getName().toCharArray();
-				if (cname.length > 0 && cname[0] == '~') {
-					nameEquals= CharArrayUtils.equals(cname, 1, name.length, name);
+				if (dtorname.length > 0 && dtorname[0] == '~') {
+					nameEquals= CharArrayUtils.equals(dtorname, 1, name.length, name);
 				}
 			}
 
@@ -493,11 +493,13 @@ class ImplicitsAnalysis {
 			} else if (member instanceof IASTFunctionDefinition) {
 			    dcltor = ((IASTFunctionDefinition)member).getDeclarator();
 			}
-			if (!(dcltor instanceof ICPPASTFunctionDeclarator) ||
-					!CharArrayUtils.equals(dcltor.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
+			if (dcltor instanceof ICPPASTFunctionDeclarator == false)
+				continue;
+			
+			final char[] nchars= CPPVisitor.findInnermostDeclarator(dcltor).getName().toCharArray();
+			if (!CharArrayUtils.equals(nchars, OverloadableOperator.ASSIGN.toCharArray())) 
 	        	continue;
-			}
-
+			
 			IASTParameterDeclaration[] ps = ((ICPPASTFunctionDeclarator)dcltor).getParameters();
         	if (ps.length != 1 || !paramHasTypeReferenceToTheAssociatedClassType(ps[0], null))
         		continue;

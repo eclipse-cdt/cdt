@@ -72,8 +72,7 @@ class ClassTypeMixin {
 		}
 		ObjectSet<IBinding> resultSet = new ObjectSet<IBinding>(2);
 		IASTDeclaration [] members = host.getCompositeTypeSpecifier().getMembers();
-		for( int i = 0; i < members.length; i++ ){
-			IASTDeclaration decl = members[i];
+		for (IASTDeclaration decl : members) {
 			while( decl instanceof ICPPASTTemplateDeclaration )
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 
@@ -84,9 +83,10 @@ class ClassTypeMixin {
 					if( declSpec instanceof ICPPASTElaboratedTypeSpecifier && dtors.length == 0 ){
 						resultSet.put( ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding() );
 					} else {
-						for( int j = 0; j < dtors.length; j++ ){
-							if( dtors[j] == null ) break;
-							resultSet.put( dtors[j].getName().resolveBinding() );
+						for (IASTDeclarator dtor : dtors) {
+							if( dtor == null ) break;
+							dtor= CPPVisitor.findInnermostDeclarator(dtor);
+							resultSet.put( dtor.getName().resolveBinding() );
 						}    
 					}
 				}
@@ -94,9 +94,9 @@ class ClassTypeMixin {
 				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
 				if( declSpec.isFriend() ){
 					IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
+					dtor= CPPVisitor.findInnermostDeclarator(dtor);
 					resultSet.put( dtor.getName().resolveBinding() );
 				}
-
 			}
 		}
 
@@ -130,8 +130,8 @@ class ClassTypeMixin {
 		ICPPClassScope scope = (ICPPClassScope) host.getCompositeScope();
 		set.addAll( scope.getImplicitMethods() );
 		ICPPBase [] bases = getBases();
-		for ( int i = 0; i < bases.length; i++ ) {
-			IBinding b = bases[i].getBaseClass();
+		for (ICPPBase base : bases) {
+			IBinding b = base.getBaseClass();
 			if( b instanceof ICPPClassType )
 				set.addAll( ((ICPPClassType)b).getMethods() );
 		}
@@ -152,22 +152,22 @@ class ClassTypeMixin {
 		ICPPField [] result = null;
 
 		IASTDeclaration [] decls = host.getCompositeTypeSpecifier().getMembers();
-		for ( int i = 0; i < decls.length; i++ ) {
-			if( decls[i] instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
-				for ( int j = 0; j < dtors.length; j++ ) {
-					binding = dtors[j].getName().resolveBinding();
+		for (IASTDeclaration decl : decls) {
+			if( decl instanceof IASTSimpleDeclaration ){
+				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+				for (IASTDeclarator dtor : dtors) {
+					binding = CPPVisitor.findInnermostDeclarator(dtor).getName().resolveBinding();
 					if( binding instanceof ICPPField )
 						result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, binding );
 				}
-			} else if( decls[i] instanceof ICPPASTUsingDeclaration ){
-				IASTName n = ((ICPPASTUsingDeclaration)decls[i]).getName();
+			} else if( decl instanceof ICPPASTUsingDeclaration ){
+				IASTName n = ((ICPPASTUsingDeclaration)decl).getName();
 				binding = n.resolveBinding();
 				if( binding instanceof ICPPUsingDeclaration ){
 					IBinding [] bs = ((ICPPUsingDeclaration)binding).getDelegates();
-					for ( int j = 0; j < bs.length; j++ ) {
-						if( bs[j] instanceof ICPPField )
-							result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, bs[j] );
+					for (IBinding element : bs) {
+						if( element instanceof ICPPField )
+							result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, element );
 					}
 				} else if( binding instanceof ICPPField ) {
 					result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, binding );
@@ -189,8 +189,8 @@ class ClassTypeMixin {
 
 		ICPPMethod[] methods = getDeclaredMethods();
 		ICPPBase [] bases = getBases();
-		for ( int i = 0; i < bases.length; i++ ) {
-			IBinding b = bases[i].getBaseClass();
+		for (ICPPBase base : bases) {
+			IBinding b = base.getBaseClass();
 			if( b instanceof ICPPClassType )
 				methods = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, methods, ((ICPPClassType)b).getAllDeclaredMethods() );
 		}
@@ -210,20 +210,19 @@ class ClassTypeMixin {
 		ICPPMethod [] result = null;
 
 		IASTDeclaration [] decls = host.getCompositeTypeSpecifier().getMembers();
-		for ( int i = 0; i < decls.length; i++ ) {
-			IASTDeclaration decl = decls[i];
+		for (IASTDeclaration decl : decls) {
 			while( decl instanceof ICPPASTTemplateDeclaration )
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 			if( decl instanceof IASTSimpleDeclaration ){
 				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-				for ( int j = 0; j < dtors.length; j++ ) {
-					binding = dtors[j].getName().resolveBinding();
+				for (IASTDeclarator dtor : dtors) {
+					binding = CPPVisitor.findInnermostDeclarator(dtor).getName().resolveBinding();
 					if( binding instanceof ICPPMethod)
 						result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
 				}
 			} else if( decl instanceof IASTFunctionDefinition ){
 				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
-				dtor = CPPVisitor.getMostNestedDeclarator( dtor );
+				dtor = CPPVisitor.findInnermostDeclarator(dtor);
 				binding = dtor.getName().resolveBinding();
 				if( binding instanceof ICPPMethod ){
 					result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
@@ -233,9 +232,9 @@ class ClassTypeMixin {
 				binding = n.resolveBinding();
 				if( binding instanceof ICPPUsingDeclaration ){
 					IBinding [] bs = ((ICPPUsingDeclaration)binding).getDelegates();
-					for ( int j = 0; j < bs.length; j++ ) {
-						if( bs[j] instanceof ICPPMethod )
-							result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, bs[j] );
+					for (IBinding element : bs) {
+						if( element instanceof ICPPMethod )
+							result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, element );
 					}
 				} else if( binding instanceof ICPPMethod ) {
 					result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
@@ -263,18 +262,19 @@ class ClassTypeMixin {
 			return ((CPPClassScope)scope).getConstructors( true );
 
 		IASTDeclaration [] members = host.getCompositeTypeSpecifier().getMembers();
-		for( int i = 0; i < members.length; i++ ){
-			IASTDeclaration decl = members[i];
+		for (IASTDeclaration decl : members) {
 			if( decl instanceof ICPPASTTemplateDeclaration )
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 			if( decl instanceof IASTSimpleDeclaration ){
 				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-				for( int j = 0; j < dtors.length; j++ ){
-					if( dtors[j] == null ) break;
-					ASTInternal.addName(scope,  dtors[j].getName() );
+				for (IASTDeclarator dtor : dtors) {
+					if( dtor == null ) break;
+					dtor= CPPVisitor.findInnermostDeclarator(dtor);
+					ASTInternal.addName(scope,  dtor.getName() );
 				}
 			} else if( decl instanceof IASTFunctionDefinition ){
 				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
+				dtor= CPPVisitor.findInnermostDeclarator(dtor);
 				ASTInternal.addName(scope,  dtor.getName() );
 			}
 		}
@@ -295,8 +295,7 @@ class ClassTypeMixin {
 		ICPPClassType [] result = null;
 
 		IASTDeclaration [] decls = host.getCompositeTypeSpecifier().getMembers();
-		for ( int i = 0; i < decls.length; i++ ) {
-			IASTDeclaration decl = decls[i];
+		for (IASTDeclaration decl : decls) {
 			while( decl instanceof ICPPASTTemplateDeclaration )
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 			if( decl instanceof IASTSimpleDeclaration ){
@@ -328,8 +327,8 @@ class ClassTypeMixin {
 
 		IField[] fields = getDeclaredFields();
 		ICPPBase [] bases = getBases();
-		for ( int i = 0; i < bases.length; i++ ) {
-			IBinding b = bases[i].getBaseClass();
+		for (ICPPBase base : bases) {
+			IBinding b = base.getBaseClass();
 			if( b instanceof ICPPClassType )
 				fields = (IField[]) ArrayUtil.addAll( IField.class, fields, ((ICPPClassType)b).getFields() );
 		}
@@ -339,10 +338,10 @@ class ClassTypeMixin {
 	public IField findField(String name) throws DOMException {
 		IBinding [] bindings = CPPSemantics.findBindings( host.getCompositeScope(), name, true );
 		IField field = null;
-		for ( int i = 0; i < bindings.length; i++ ) {
-			if( bindings[i] instanceof IField ){
+		for (IBinding binding : bindings) {
+			if( binding instanceof IField ){
 				if( field == null )
-					field = (IField) bindings[i];
+					field = (IField) binding;
 				else {
 					IASTNode[] declarations= host.getDeclarations();
 					IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;

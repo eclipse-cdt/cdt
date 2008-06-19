@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -83,13 +84,11 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
 		if( declarations != null ){
-			for( int i = 0; i < declarations.length; i++ ){
-			    IASTDeclarator dtor = declarations[i];
+			for (IASTDeclarator dtor : declarations) {
 			    if (dtor == null) {
 			    	break;
 			    }
-			    while( dtor.getParent() instanceof IASTDeclarator )
-			        dtor = (IASTDeclarator) dtor.getParent();
+				dtor= CPPVisitor.findOutermostDeclarator(dtor);
 				IASTDeclaration decl = (IASTDeclaration) dtor.getParent();
 				if( decl.getParent() instanceof ICPPASTCompositeTypeSpecifier )
 					return decl;
@@ -102,23 +101,24 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(scope);
 		if (compSpec != null) {
 			IASTDeclaration [] members = compSpec.getMembers();
-			for( int i = 0; i < members.length; i++ ){
-				if( members[i] instanceof IASTSimpleDeclaration ){
-					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
-					for( int j = 0; j < dtors.length; j++ ){
-						IASTName name = dtors[j].getName();
+			for (IASTDeclaration member : members) {
+				if( member instanceof IASTSimpleDeclaration ){
+					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)member).getDeclarators();
+					for (IASTDeclarator dtor : dtors) {
+						IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
 						if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
 								name.resolveBinding() == this )
 						{
-							return members[i];
+							return member;
 						}
 					}
-				} else if( members[i] instanceof IASTFunctionDefinition ){
-					IASTName name = ((IASTFunctionDefinition) members[i]).getDeclarator().getName();
+				} else if( member instanceof IASTFunctionDefinition ){
+					final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition) member).getDeclarator();
+					IASTName name = CPPVisitor.findInnermostDeclarator(declarator).getName();
 					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
 							name.resolveBinding() == this )
 					{
-						return members[i];
+						return member;
 					}
 				}
 			}
@@ -143,10 +143,10 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 		IASTDeclaration [] members = cls.getMembers();
 		ICPPASTVisibilityLabel vis = null;
-		for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof ICPPASTVisibilityLabel )
-				vis = (ICPPASTVisibilityLabel) members[i];
-			else if( members[i] == decl )
+		for (IASTDeclaration member : members) {
+			if( member instanceof ICPPASTVisibilityLabel )
+				vis = (ICPPASTVisibilityLabel) member;
+			else if( member == decl )
 				break;
 		}
 		if( vis != null ){
@@ -163,29 +163,22 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public IScope getScope() {
-	    IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : definition;
-		if( node instanceof IASTDeclarator ){
-			IASTName name = ((IASTDeclarator)node).getName();
-			if( name instanceof ICPPASTQualifiedName ){
-				IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-				name = ns[ ns.length - 1 ];
-			}
-			return CPPVisitor.getContainingScope( name );
-		}
-		return CPPVisitor.getContainingScope( node );
-	}
-	
-	@Override
 	protected IASTName getASTName() {
-		IASTName name= definition != null ? definition.getName() : declarations[0].getName();
-	    if( name instanceof ICPPASTQualifiedName ){
-	    	final IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-	    	return ns[ns.length - 1];
+		IASTDeclarator dtor= (declarations != null && declarations.length > 0) ? declarations[0] : definition;
+		dtor= CPPVisitor.findInnermostDeclarator(dtor);
+	    IASTName name= dtor.getName();
+	    if (name instanceof ICPPASTQualifiedName) {
+	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
 	    }
 	    return name;
 	}
 
+	@Override
+	public IScope getScope() {
+		return CPPVisitor.getContainingScope(getASTName());
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */

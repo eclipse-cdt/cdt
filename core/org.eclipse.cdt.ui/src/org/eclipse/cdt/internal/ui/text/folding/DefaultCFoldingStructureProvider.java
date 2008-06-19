@@ -90,6 +90,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 
@@ -230,7 +231,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			if (declaration instanceof IASTFunctionDefinition) {
 				final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition)declaration).getDeclarator();
 				if (declarator != null) {
-					fFunction= new String(declarator.getName().toCharArray());
+					fFunction= new String(CVisitor.findInnermostDeclarator(declarator).getName().toCharArray());
 					fLevel= 0;
 				}
 			}

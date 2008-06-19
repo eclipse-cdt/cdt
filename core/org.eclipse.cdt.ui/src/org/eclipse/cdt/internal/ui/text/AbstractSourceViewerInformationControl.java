@@ -438,7 +438,8 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * {@inheritDoc}
 	 */
 	public boolean isFocusControl() {
-		return fSourceViewer.getTextWidget().isFocusControl();
+		final Shell shell = getShell();
+		return shell.getDisplay().getActiveShell() == shell;
 	}
 
 	/**

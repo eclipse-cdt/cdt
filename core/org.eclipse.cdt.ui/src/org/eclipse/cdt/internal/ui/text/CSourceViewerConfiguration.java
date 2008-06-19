@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -326,12 +327,19 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * Returns the C multi-line doc comment scanner for this configuration.
 	 *
-	 * @return the C multi-line doc comment scanner, may be <code>null</code>
+	 * @return the C multi-line doc comment scanner
 	 */
 	protected ICTokenScanner getMultilineDocCommentScanner(IResource resource) {
 		if (fMultilineDocCommentScanner == null) {
+			if (resource == null) {
+				resource= ResourcesPlugin.getWorkspace().getRoot();
+			}
 			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getMultilineConfiguration();
 			fMultilineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
+			if (fMultilineDocCommentScanner == null) {
+				// fallback: normal comment highlighting
+				fMultilineDocCommentScanner= fMultilineCommentScanner;
+			}
 		}
 		return fMultilineDocCommentScanner;
 	}
@@ -339,12 +347,19 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * Returns the C single-line doc comment scanner for this configuration.
 	 *
-	 * @return the C single-line doc comment scanner, may be <code>null</code>
+	 * @return the C single-line doc comment scanner
 	 */
 	protected ICTokenScanner getSinglelineDocCommentScanner(IResource resource) {
 		if (fSinglelineDocCommentScanner == null) {
+			if (resource == null) {
+				resource= ResourcesPlugin.getWorkspace().getRoot();
+			}
 			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getSinglelineConfiguration();
 			fSinglelineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
+			if (fSinglelineDocCommentScanner == null) {
+				// fallback: normal comment highlighting
+				fSinglelineDocCommentScanner= fSinglelineCommentScanner;
+			}
 		}
 		return fSinglelineDocCommentScanner;
 	}

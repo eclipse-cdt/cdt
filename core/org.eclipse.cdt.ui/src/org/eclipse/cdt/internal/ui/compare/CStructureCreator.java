@@ -48,8 +48,11 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
 import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
+
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
 /**
  * A structure creator for C/C++ translation units.
@@ -151,20 +154,16 @@ public class CStructureCreator extends StructureCreator {
 		return language;
 	}
 
-	/*
-	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#getDocumentPartitioning()
-	 */
 	@Override
 	protected String getDocumentPartitioning() {
 		return ICPartitions.C_PARTITIONING;
 	}
 	
-	/*
-	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#getDocumentPartitioner()
-	 */
 	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
-		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(null);
+		// use workspace default for highlighting doc comments in compare viewer
+		IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
+		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(owner);
 	}
 	
 	private static String readString(IStreamContentAccessor sa) throws CoreException {

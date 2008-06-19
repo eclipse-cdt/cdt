@@ -1101,7 +1101,7 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator"
-            extensions="c2"
+            extensions="c,cc,cxx,cpp,c++,h,hh,hxx,hpp,c2"
             id="org.eclipse.cdt.ui.compare.CContentViewerCreator">
       </viewer>
       <contentTypeBinding
@@ -1122,7 +1122,7 @@
 	  </contentTypeBinding>
       <viewer
             class="org.eclipse.cdt.internal.ui.compare.AsmContentViewerCreator"
-            extensions="asm"
+            extensions="s,asm"
             id="org.eclipse.cdt.ui.compare.AsmContentViewerCreator"/>
       <contentTypeBinding
 			contentTypeId="org.eclipse.cdt.core.asmSource"
@@ -1788,9 +1788,14 @@
 	   
 		<!-- MSVS Breakpoints -->
 		<key
-			sequence="M1+M3+B"
-			commandId="org.eclipse.debug.ui.BreakpointView"
-			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+        commandId="org.eclipse.ui.views.showView"
+        schemeId="org.eclipse.cdt.ui.visualstudio"
+        sequence="M1+M3+B">
+     <parameter
+           id="org.eclipse.ui.views.showView.viewId"
+           value="org.eclipse.debug.ui.BreakpointView">
+     </parameter>
+  </key>
 
 		<!-- Search Keys -->
 		<!-- Text Editing Keys -->

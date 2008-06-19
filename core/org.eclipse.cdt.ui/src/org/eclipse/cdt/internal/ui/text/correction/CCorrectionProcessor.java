@@ -228,8 +228,9 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 				if (problemLocation != null) {
 					problems.add(problemLocation);
 				}
-			} else if (addQuickFixes && curr instanceof SimpleMarkerAnnotation) {
-				// don't collect if annotation is already a C annotation
+			}
+			if (addQuickFixes && curr instanceof SimpleMarkerAnnotation) {
+				// collect marker proposals
 				collectMarkerProposals((SimpleMarkerAnnotation) curr, proposals);
 			}
 		}

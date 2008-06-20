@@ -721,4 +721,29 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void f() {
+	// 	class Object;
+	//	int aVeryLongParameterThatShouldBeInOneLine1;
+	//	int aVeryLongParameterThatShouldBeInOneLine2;
+	//
+	//	myNewFunctionCall1(Object(aVeryLongParameterThatShouldBeInOneLine1, aVeryLongParameterThatShouldBeInOneLine2));
+	//
+	//	myNewFunctionCall2(new Object(aVeryLongParameterThatShouldBeInOneLine1, aVeryLongParameterThatShouldBeInOneLine2));
+	//}
+
+	//void f() {
+	//	class Object;
+	//	int aVeryLongParameterThatShouldBeInOneLine1;
+	//	int aVeryLongParameterThatShouldBeInOneLine2;
+	//
+	//	myNewFunctionCall1(Object(aVeryLongParameterThatShouldBeInOneLine1,
+	//			aVeryLongParameterThatShouldBeInOneLine2));
+	//
+	//	myNewFunctionCall2(new Object(aVeryLongParameterThatShouldBeInOneLine1,
+	//			aVeryLongParameterThatShouldBeInOneLine2));
+	//}
+	public void testLineWrappingOfConstructorCall_Bug237097() throws Exception {
+		assertFormatterResult();
+	}
+
 }

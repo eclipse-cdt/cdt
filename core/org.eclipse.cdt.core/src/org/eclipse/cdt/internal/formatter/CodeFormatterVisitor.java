@@ -2229,7 +2229,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		// initializer
 		final IASTExpression newInitializer= node.getNewInitializer();
 		if (newInitializer != null || peekNextToken() == Token.tLPAREN) {
-			formatParenthesizedExpression(newInitializer);
+			formatFunctionCallArguments(newInitializer);
 		}
 		return PROCESS_SKIP;
 	}

@@ -176,10 +176,18 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 				onTerminalStatus();
 			}
 		};
-		if(Thread.currentThread()==Display.getDefault().getThread())
+		runInDisplayThread(runnable);
+	}
+
+	/**
+	 * @param runnable run in display thread
+	 */
+	private void runInDisplayThread(Runnable runnable) {
+		if(Display.findDisplay(Thread.currentThread())!=null)
 			runnable.run();
-		else
-			Display.getDefault().syncExec(runnable);
+		else if(PlatformUI.isWorkbenchRunning())
+			PlatformUI.getWorkbench().getDisplay().syncExec(runnable);
+		// else should not happen and we ignore it...
 	}
 
 
@@ -287,7 +295,15 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		fActionTerminalSettings.setEnabled(bEnabled);
 	}
 
-	public void setTerminalTitle(String strTitle) {
+	public void setTerminalTitle(final String strTitle) {
+		runInDisplayThread(new Runnable() {
+
+			public void run() {
+				runSetTitle(strTitle);
+			}});
+	}
+
+	private void runSetTitle(String strTitle) {
 		if (fCtlTerminal.isDisposed())
 			return;
 

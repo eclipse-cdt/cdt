@@ -37,12 +37,13 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.MIRunControl.SuspendedEvent;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIStackInfoDepth;
 import org.eclipse.dd.mi.service.command.commands.MIStackListArguments;
 import org.eclipse.dd.mi.service.command.commands.MIStackListFrames;
 import org.eclipse.dd.mi.service.command.commands.MIStackListLocals;
+import org.eclipse.dd.mi.service.command.events.IMIDMEvent;
+import org.eclipse.dd.mi.service.command.events.MIEvent;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.output.MIArg;
 import org.eclipse.dd.mi.service.command.output.MIFrame;
@@ -592,8 +593,14 @@ public class MIStack extends AbstractDsfService
     public void eventDispatched(ISuspendedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
-        if (e instanceof SuspendedEvent) {
-        	fCachedStoppedEvent = ((SuspendedEvent)e).getMIEvent();
-        }
     }
+    
+    @DsfServiceEventHandler 
+    public void eventDispatched(IMIDMEvent e) {
+    	MIEvent<? extends IDMContext> miEvent = e.getMIEvent();
+    	if (miEvent instanceof MIStoppedEvent) {
+    		fCachedStoppedEvent = (MIStoppedEvent)miEvent;
+    	}
+    }
+
 }

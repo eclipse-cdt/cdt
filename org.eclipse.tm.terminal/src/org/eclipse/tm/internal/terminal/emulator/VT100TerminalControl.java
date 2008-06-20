@@ -22,6 +22,7 @@
  * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
+ * Michael Scharf (Wind River) - [237398] Terminal get Invalid Thread Access when the title is set
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -548,6 +549,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 	public Control getControl() {
 		return fCtlText;
+	}
+	public Control getRootControl() {
+		return fWndParent;
 	}
 	protected void setupControls(Composite parent) {
 		// The Terminal view now aims to be an ANSI-conforming terminal emulator, so it

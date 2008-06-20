@@ -2940,4 +2940,34 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPClassType clazz= ba.assertNonProblem("That<I>()", 4, ICPPClassType.class);
 		ICPPConstructor ctor= ba.assertNonProblem("That<I>()", 7, ICPPConstructor.class);
 	}
+	
+	// template<typename T, int I>
+	// class C {};
+	//
+	// template<typename T>
+	// class C<T, 5> {};
+	// 
+	// class A {}; 
+	//
+	// C<A,5L> ca5L;
+	public void testIntegralConversionInPartialSpecializationMatching_237914() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPTemplateInstance ctps= ba.assertNonProblem("C<A,5L>", 7, ICPPTemplateInstance.class, ICPPClassType.class);
+		assertInstance(ctps.getTemplateDefinition(), ICPPClassTemplatePartialSpecialization.class);
+	}
+	
+	// template<typename T, int I>
+	// class C {};
+	//
+	// class A {};
+	//
+	// template<>
+	// class C<A, 5> {};
+	//
+	// C<A,5L> ca5L;
+	public void testIntegralConversionInSpecializationMatching_237914() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPSpecialization ctps= ba.assertNonProblem("C<A,5L>", 7, ICPPSpecialization.class, ICPPClassType.class);
+		assertFalse(ctps instanceof ICPPTemplateInstance);
+	}
 }

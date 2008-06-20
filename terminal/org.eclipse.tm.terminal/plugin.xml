@@ -10,6 +10,7 @@
 # Contributors:
 # Michael Scharf (Wind River) - initial API and implementation 
 # Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+# Michael Scharf (Wind River) - [237425] undefined tm.terminal command
 -->
 <plugin>
    <extension-point id="terminalConnectors" name="Terminal Connectors" schema="schema/terminalConnectors.exsd"/>
@@ -19,65 +20,5 @@
             description="%terminal.context.description"
             id="org.eclipse.tm.terminal.TerminalContext"
             />
-   </extension>
-   <extension
-         point="org.eclipse.ui.bindings">
-      <!--
-      These keybindings are needed to disable the menu-activation keys (e.g.,
-      Alt-F for the File menu, etc.).  The code in method
-      TerminalControl.TerminalFocusListener.focusGained() disables the Eclipse key
-      binding service, but it doesn't disable the global menu-activation
-      keys.
-      -->
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+A"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+E"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+F"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+G"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+H"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+N"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+P"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+R"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+T"/>
-      <key
-            commandId="org.eclipse.tm.terminal.command1"
-            contextId="org.eclipse.tm.terminal.TerminalContext"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+W"/>
    </extension>
 </plugin>

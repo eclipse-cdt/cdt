@@ -66,29 +66,9 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 			return instance;
 		}
 		
-		IType [] specArgs = getArguments();
-		if( specArgs.length != args.length ){
-			return null;
-		}
-		
-		boolean argsContainDependentType= false;
-		ObjectMap argMap = new ObjectMap( specArgs.length );
-		int numSpecArgs = specArgs.length;
-		for( int i = 0; i < numSpecArgs; i++ ){
-			IType spec = specArgs[i];
-			IType arg = args[i];
-			
-			argsContainDependentType= argsContainDependentType || CPPTemplates.isDependentType(arg);
-			try {
-				if( !CPPTemplates.deduceTemplateArgument( argMap,  spec, arg ) )
-					return null;
-			} catch (DOMException e) {
-				return null;
-			}
-		}
-		
-		if (argsContainDependentType) {
-			return deferredInstance( argMap, args );
+		ObjectMap argMap= CPPTemplates.deduceTemplateArguments(getArguments(), args, true);
+		if (CPPTemplates.containsDependentArg(argMap)) {
+			return deferredInstance(argMap, args);
 		}
 		
 		ICPPTemplateParameter [] params = getTemplateParameters();

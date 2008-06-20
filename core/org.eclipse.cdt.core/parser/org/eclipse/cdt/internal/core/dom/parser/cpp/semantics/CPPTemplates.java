@@ -1098,7 +1098,7 @@ public class CPPTemplates {
 					// TODO - we should normalize template arguments
 					// rather than check their original expressions
 					// are equivalent.
-					return argA.isSameType(argB) && expressionsEquivalent(eA, eB);
+					return isNonTypeArgumentConvertible(argA, argB) && expressionsEquivalent(eA, eB);
 				}
 			} catch(DOMException de) {
 				CCorePlugin.log(de);
@@ -1272,25 +1272,36 @@ public class CPPTemplates {
 	 */
 	static private ObjectMap deduceTemplateArguments(ICPPFunctionTemplate template, IType[] arguments) throws DOMException{
 		ICPPFunction function = (ICPPFunction) template;
-		IParameter[] functionParameters = null;
+		IType[] functionParameters = null;
 		try {
-			functionParameters = function.getParameters();
+			functionParameters = function.getType().getParameterTypes();
 		} catch (DOMException e) {
 			return null;
 		}
-		if (arguments == null /*|| functionParameters.length != arguments.length*/) {
+		return deduceTemplateArguments(functionParameters, arguments, false);
+	}
+	
+	/**
+	 * @param specArgs
+	 * @param args
+	 * @param all whether to match all arguments
+	 * @return the mapping required to pairwise match the specified arguments, or null if no mapping exists
+	 */
+	public static ObjectMap deduceTemplateArguments(final IType[] specArgs, final IType[] args, final boolean all) {
+		if (specArgs == null || (all && specArgs.length != args.length)) {
 			return null;
 		}
-
-		int numParams = functionParameters.length;
-		int numArgs = arguments.length;
-		ObjectMap map = new ObjectMap(numParams);
-		for (int i = 0; i < numArgs && i < numParams; i++) {
-			if (!deduceTemplateArgument(map, functionParameters[i].getType(), arguments[i])) {
+		ObjectMap map= new ObjectMap(specArgs.length);
+		int len= all ? specArgs.length : Math.min(specArgs.length, args.length);
+		for (int j=0; j<len; j++) {
+			try {
+				if (!deduceTemplateArgument(map, specArgs[j], args[j])) {
+					return null;
+				}
+			} catch(DOMException de) {
 				return null;
 			}
 		}
-
 		return map;
 	}
 
@@ -1375,15 +1386,24 @@ public class CPPTemplates {
 		}
 		return false;
 	}
-
-	static public boolean deduceTemplateArgument(ObjectMap map, IType p, IType a) throws DOMException {
+	
+	private static boolean deduceTemplateArgument(ObjectMap map, IType p, IType a) throws DOMException {
 		boolean pIsAReferenceType = (p instanceof ICPPReferenceType);
 		p = getParameterTypeForDeduction(p);
 		a = getArgumentTypeForDeduction(a, pIsAReferenceType);
 
 		if (p instanceof IBasicType) {
-			if (p.isSameType(a) && a instanceof IBasicType) {
-				return expressionsEquivalent(((IBasicType) p).getValue(), ((IBasicType) a).getValue());
+			if(a instanceof IBasicType) {
+				IBasicType pbt= (IBasicType) p, abt= (IBasicType) a;
+				
+				// non-type argument comparison
+				if(pbt.getValue() != null && abt.getValue() != null) {
+					return isNonTypeArgumentConvertible(p, a)
+						&& expressionsEquivalent(pbt.getValue(), abt.getValue());
+				}
+				
+				// type argument comparison
+				return p.isSameType(a);
 			}
 		} else {
 			while (p != null) {
@@ -1560,29 +1580,10 @@ public class CPPTemplates {
 
 		ICPPClassTemplatePartialSpecialization bestMatch = null, spec = null;
 		boolean bestMatchIsBest = true;
-		IType[] specArgs = null;
 		for (int i = 0; i < size; i++) {
 			spec = specializations[i];
-			specArgs = spec.getArguments();
-			if (specArgs == null || specArgs.length != args.length) {
-				continue;
-			}
-
-			int specArgsSize = specArgs.length;
-			ObjectMap map = new ObjectMap(specArgsSize);
-			IType t1 = null, t2 = null;
-
-			boolean match = true;
-			for (int j = 0; j < specArgsSize; j++) {
-				t1 = specArgs[j];
-				t2 = args[j];
-
-				if (!deduceTemplateArgument(map, t1, t2)) {
-					match = false;
-					break;
-				}
-			}
-			if (match) {
+			ObjectMap map= deduceTemplateArguments(spec.getArguments(), args, true);
+			if (map != null) {
 				int compare = orderSpecializations(bestMatch, spec);
 				if (compare == 0) {
 					bestMatchIsBest = false;
@@ -1596,7 +1597,6 @@ public class CPPTemplates {
 		//14.5.4.1 If none of the specializations is more specialized than all the other matching
 		//specializations, then the use of the class template is ambiguous and the program is ill-formed.
 		if (!bestMatchIsBest) {
-			//TODO problem
 			return new CPPTemplateDefinition.CPPTemplateProblem(null, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, null);
 		}
 
@@ -1738,19 +1738,7 @@ public class CPPTemplates {
 					pType = (IType) map.get(pType);
 				}
 
-				//14.1s8 function to pointer and array to pointer conversions
-				if (pType instanceof IFunctionType) {
-					pType = new CPPPointerType(pType);
-			    } else if (pType instanceof IArrayType) {
-			    	try {
-			    		pType = new CPPPointerType(((IArrayType) pType).getType());
-					} catch (DOMException e) {
-						pType = e.getProblem();
-					}
-				}
-				Cost cost = Conversions.checkStandardConversionSequence(argument, pType, false);
-
-				if (cost == null || cost.rank == Cost.NO_MATCH_RANK) {
+				if(!isNonTypeArgumentConvertible(pType, argument)) {
 					return false;
 				}
 			} catch (DOMException e) {
@@ -1758,6 +1746,29 @@ public class CPPTemplates {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns whether the template argument <code>arg</code> can be converted to
+	 * the same type as <code>paramType</code> using the rules specified in 14.3.2.5.
+	 * @param paramType
+	 * @param arg
+	 * @return
+	 * @throws DOMException
+	 */
+	private static boolean isNonTypeArgumentConvertible(IType paramType, IType arg) throws DOMException {
+		//14.1s8 function to pointer and array to pointer conversions
+		if (paramType instanceof IFunctionType) {
+			paramType = new CPPPointerType(paramType);
+	    } else if (paramType instanceof IArrayType) {
+	    	try {
+	    		paramType = new CPPPointerType(((IArrayType) paramType).getType());
+			} catch (DOMException e) {
+				paramType = e.getProblem();
+			}
+		}
+		Cost cost = Conversions.checkStandardConversionSequence(arg, paramType, false);
+		return cost != null && cost.rank != Cost.NO_MATCH_RANK;
 	}
 
 	public static IBinding instantiateWithinClassTemplate(ICPPClassTemplate template) throws DOMException {
@@ -1787,6 +1798,14 @@ public class CPPTemplates {
 			return true;
 		t = SemanticUtil.getUltimateType(t, false);
 		return t instanceof ICPPUnknownBinding;
+	}
+	
+	public static boolean containsDependentArg(ObjectMap argMap) {
+		for(Object arg : argMap.valueArray()) {
+			if(isDependentType((IType)arg))
+				return true;
+		}
+		return false;
 	}
 
 	public static IBinding instantiateTemplate(ICPPTemplateDefinition template, IType[] arguments,

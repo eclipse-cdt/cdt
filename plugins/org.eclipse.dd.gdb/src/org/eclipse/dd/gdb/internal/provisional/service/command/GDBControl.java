@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -547,8 +546,7 @@ public class GDBControl extends AbstractMIControl {
                     try {                        
                         fProcess = ProcessFactory.getFactory().exec(commandLine);
                     } catch(IOException e) {
-                        String message = MessageFormat.format("Error while launching command",   //$NON-NLS-1$
-                                                              new Object[]{commandList.toString()});
+                        String message = "Error while launching command " + commandList.toString();   //$NON-NLS-1$
                         gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
                         gdbLaunchRequestMonitor.done();
                         return Status.OK_STATUS;

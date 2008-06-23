@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Traditional Memory Rendering
-Bundle-SymbolicName: org.eclipse.dd.debug.memory.renderings.traditional;singleton:=true
+Bundle-Name: Memory Search
+Bundle-SymbolicName: org.eclipse.dd.debug.ui.memory.search;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.debug.core,
@@ -12,5 +12,6 @@ Require-Bundle: org.eclipse.debug.core,
  org.eclipse.ui,
  org.eclipse.search;bundle-version="3.4.0"
 Eclipse-LazyStart: true
-Bundle-Activator: org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPlugin
+Bundle-Activator: org.eclipse.dd.debug.ui.memory.search.MemorySearchPlugin
 Bundle-Vendor: Eclipse.org
+Import-Package: org.eclipse.debug.ui.memory

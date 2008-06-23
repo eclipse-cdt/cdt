@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,14 +9,16 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
-package org.eclipse.dd.debug.memory.renderings.actions;
+package org.eclipse.dd.debug.ui.memory.search;
 
 import java.math.BigInteger;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
@@ -25,10 +27,15 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -65,6 +72,7 @@ public class FindReplaceDialog extends SelectionDialog
 	private Combo fEndText;
 	
 	private Button fFindButton;
+	private Button fFindAllButton;
 	private Button fReplaceButton;
 	private Button fReplaceFindButton;
 	private Button fReplaceAllButton;
@@ -72,18 +80,39 @@ public class FindReplaceDialog extends SelectionDialog
 
 	private MemoryView fMemoryView;
 	
-	Button fFormatAsciiButton;
-	Button fFormatHexButton;
-	Button fFormatOctalButton;
-	Button fFormatBinaryButton;
-	Button fFormatDecimalButton;
-	Button fFormatByteSequenceButton;
+	private Button fFormatAsciiButton;
+	private Button fFormatHexButton;
+	private Button fFormatOctalButton;
+	private Button fFormatBinaryButton;
+	private Button fFormatDecimalButton;
+	private Button fFormatByteSequenceButton;
 	
-	Button fCaseInSensitiveCheckbox;
+	private Button fCaseInSensitiveCheckbox;
 	
-	Button fForwardButton;
+	private Button fWrapCheckbox;
 	
-	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, MemoryView memoryView)
+	private Button fForwardButton;
+	
+	private Properties fProperties;
+	
+	protected final static String SEARCH_FIND = "SEARCH_FIND"; //$NON-NLS-1$
+	protected final static String SEARCH_REPLACE = "SEARCH_REPLACE"; //$NON-NLS-1$
+	protected final static String SEARCH_START = "SEARCH_START"; //$NON-NLS-1$
+	protected final static String SEARCH_END = "SEARCH_END"; //$NON-NLS-1$
+	protected final static String SEARCH_LAST_FOUND = "SEARCH_LAST_FOUND"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT = "SEARCH_FORMAT"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_ASCII = "SEARCH_FORMAT_ASCII"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_HEX = "SEARCH_FORMAT_HEX"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_OCTAL = "SEARCH_FORMAT_OCTAL"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_BINARY = "SEARCH_FORMAT_BINARY"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_DECIMAL = "SEARCH_FORMAT_DECIMAL"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_BYTESEQUENCE = "SEARCH_FORMAT_BYTESEQUENCE"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_CASEINSENSTIVE = "SEARCH_FORMAT_CASEINSENSTIVE"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_FORWARD = "SEARCH_FORMAT_FORWARD"; //$NON-NLS-1$
+	protected final static String SEARCH_FORMAT_WRAP = "SEARCH_FORMAT_WRAP"; //$NON-NLS-1$
+	protected final static String SEARCH_ENABLE_FIND_NEXT = "SEARCH_ENABLE_FIND_NEXT"; //$NON-NLS-1$
+	
+	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, MemoryView memoryView, Properties properties)
 	{
 		super(parent);
 		super.setTitle(Messages.getString("FindReplaceDialog.Title"));  //$NON-NLS-1$
@@ -91,6 +120,7 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fMemoryBlock = memoryBlock;
 		fMemoryView = memoryView;
+		fProperties = properties;
 		this.setBlockOnOpen(false);
 	}
 	
@@ -125,17 +155,17 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		else if(fFormatHexButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().toUpperCase().startsWith("0X") 
+			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().toUpperCase().startsWith("0X")  //$NON-NLS-1$
 				? fFindText.getText().substring(2) : fFindText.getText(), 16), 16);
 		}
 		else if(fFormatOctalButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().startsWith("0") 
+			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().startsWith("0")  //$NON-NLS-1$
 					? fFindText.getText().substring(1) : fFindText.getText(), 8), 8);
 		}
 		else if(fFormatBinaryButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().toUpperCase().startsWith("0B") 
+			phrase = new BigIntegerSearchPhrase(new BigInteger(fFindText.getText().toUpperCase().startsWith("0B")  //$NON-NLS-1$
 					? fFindText.getText().substring(2) : fFindText.getText(), 2), 2);
 		}
 		else if(fFormatDecimalButton.getSelection())
@@ -153,14 +183,14 @@ public class FindReplaceDialog extends SelectionDialog
 	protected byte[] parseByteSequence(String s)
 	{
 		Vector<Byte> sequence = new Vector<Byte>();
-		StringTokenizer st = new StringTokenizer(s, " ");
+		StringTokenizer st = new StringTokenizer(s, " "); //$NON-NLS-1$
 		while(st.hasMoreElements())
 		{
 			String element = ((String) st.nextElement()).trim();
 			if(element.length() > 0)
 			{
 				BigInteger value;
-				if(element.toUpperCase().startsWith("0X"))
+				if(element.toUpperCase().startsWith("0X")) //$NON-NLS-1$
 					value = new BigInteger(element.substring(2), 16);
 				else
 					value = new BigInteger(element, 10);
@@ -184,11 +214,11 @@ public class FindReplaceDialog extends SelectionDialog
 		if(fFormatAsciiButton.getSelection())
 			return fReplaceText.getText().getBytes();
 		else if(fFormatHexButton.getSelection())
-			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().toUpperCase().startsWith("0X") ? fReplaceText.getText().substring(2) : fReplaceText.getText(), 16).toByteArray());
+			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().toUpperCase().startsWith("0X") ? fReplaceText.getText().substring(2) : fReplaceText.getText(), 16).toByteArray()); //$NON-NLS-1$
 		else if(fFormatOctalButton.getSelection())
-			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().startsWith("0") ? fReplaceText.getText().substring(1) : fReplaceText.getText(), 8).toByteArray());
+			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().startsWith("0") ? fReplaceText.getText().substring(1) : fReplaceText.getText(), 8).toByteArray()); //$NON-NLS-1$
 		else if(fFormatBinaryButton.getSelection())
-			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().toUpperCase().startsWith("0B") ? fReplaceText.getText().substring(2) : fReplaceText.getText(), 2).toByteArray());
+			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText().toUpperCase().startsWith("0B") ? fReplaceText.getText().substring(2) : fReplaceText.getText(), 2).toByteArray()); //$NON-NLS-1$
 		else if(fFormatDecimalButton.getSelection())
 			return removeZeroPrefixByte(new BigInteger(fReplaceText.getText(), 10).toByteArray());
 		else if(fFormatByteSequenceButton.getSelection())
@@ -201,6 +231,7 @@ public class FindReplaceDialog extends SelectionDialog
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
+		
 		fFindButton = createButton(parent, 10, Messages.getString("FindReplaceDialog.ButtonFind"), true); //$NON-NLS-1$
 		fFindButton.addSelectionListener(new SelectionListener()
 		{
@@ -208,6 +239,17 @@ public class FindReplaceDialog extends SelectionDialog
 
 			public void widgetSelected(SelectionEvent e) {
 				performFind(getUserStart(), getUserEnd(), getSearchPhrase(), getIsDirectionForward(), null, false, false);
+				cancelPressed();
+			}
+		});
+		
+		fFindAllButton = createButton(parent, 10, Messages.getString("FindReplaceDialog.ButtonFindAll"), true); //$NON-NLS-1$
+		fFindAllButton.addSelectionListener(new SelectionListener()
+		{
+			public void widgetDefaultSelected(SelectionEvent e) { }
+
+			public void widgetSelected(SelectionEvent e) {
+				performFind(getUserStart(), getUserEnd(), getSearchPhrase(), getIsDirectionForward(), null, true, false);
 				cancelPressed();
 			}
 		});
@@ -271,6 +313,31 @@ public class FindReplaceDialog extends SelectionDialog
 	 */
 	protected void cancelPressed() {
 		
+		fProperties.setProperty(SEARCH_FIND, fFindText.getText());
+		fProperties.setProperty(SEARCH_REPLACE, fReplaceText.getText());
+		fProperties.setProperty(SEARCH_START, fStartText.getText());
+		fProperties.setProperty(SEARCH_END, fEndText.getText());
+		if(fFormatAsciiButton.getSelection())
+			fProperties.setProperty(SEARCH_FORMAT, SEARCH_FORMAT_ASCII);
+		else if(fFormatBinaryButton.getSelection())
+			fProperties.setProperty(SEARCH_FORMAT, SEARCH_FORMAT_BINARY);
+		else if(fFormatByteSequenceButton.getSelection())
+			fProperties.setProperty(SEARCH_FORMAT, SEARCH_FORMAT_BYTESEQUENCE);
+		else if(fFormatDecimalButton.getSelection())
+			fProperties.setProperty(SEARCH_FORMAT, SEARCH_FORMAT_DECIMAL);
+		else if(fFormatHexButton.getSelection())
+			fProperties.setProperty(SEARCH_FORMAT, SEARCH_FORMAT_HEX);
+		else if(fFormatOctalButton.getSelection())
+			fProperties.setProperty(SEARCH_FORMAT, SEARCH_FORMAT_OCTAL);
+		
+		fProperties.setProperty(SEARCH_FORMAT_FORWARD, "" + fForwardButton.getSelection());
+		
+		fProperties.setProperty(FindReplaceDialog.SEARCH_FORMAT_CASEINSENSTIVE, "" + fCaseInSensitiveCheckbox.getSelection());
+		
+		fProperties.setProperty(FindReplaceDialog.SEARCH_FORMAT_WRAP, "" + fWrapCheckbox.getSelection());
+
+		fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, "false");
+		
 		setResult(null);
 		
 		super.cancelPressed();
@@ -280,7 +347,7 @@ public class FindReplaceDialog extends SelectionDialog
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		setSelectionResult(new Object[]{ });
+		setSelectionResult(new Object[]{ fProperties });
 		
 		super.okPressed();
 	}
@@ -322,7 +389,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		catch(Throwable ex)
 		{
-			
+			// do nothing
 		}
 		
 		fFindButton.setEnabled(valid);
@@ -357,6 +424,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		catch(DebugException de)
 		{
+			// do nothing
 		}
 		
 		if(base == null)
@@ -387,6 +455,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		catch(DebugException de)
 		{
+			// do nothing
 		}
 		
 		if(start == null)
@@ -405,6 +474,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		catch(DebugException de)
 		{
+			// do nothing
 		}
 		
 		if(end == null)
@@ -460,6 +530,7 @@ public class FindReplaceDialog extends SelectionDialog
 		data.left = new FormAttachment(fReplaceText, 0, SWT.LEFT);
 		data.width = 260;
 		fFindText.setLayoutData(data);
+		fFindText.setText(fProperties.getProperty(FindReplaceDialog.SEARCH_FIND, ""));
 		
 		data = new FormData();
 		data.top = new FormAttachment(fFindText, 0, SWT.CENTER);
@@ -477,6 +548,7 @@ public class FindReplaceDialog extends SelectionDialog
 		data.left = new FormAttachment(replaceLabel);
 		data.width = 260;
 		fReplaceText.setLayoutData(data);
+		fReplaceText.setText(fProperties.getProperty(FindReplaceDialog.SEARCH_REPLACE, ""));
 		
 		// group direction
 		
@@ -493,6 +565,8 @@ public class FindReplaceDialog extends SelectionDialog
 		fForwardButton.setText(Messages.getString("FindReplaceDialog.ButtonForward")); //$NON-NLS-1$
 		Button backwardButton = new Button(directionGroup, SWT.RADIO);
 		backwardButton.setText(Messages.getString("FindReplaceDialog.ButtonBackward")); //$NON-NLS-1$
+		fForwardButton.setSelection(fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT_FORWARD, "true").equalsIgnoreCase("true"));
+		backwardButton.setSelection(!fForwardButton.getSelection());
 		
 		data = new FormData();
 		data.top = new FormAttachment(fReplaceText);
@@ -539,6 +613,10 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fStartText.setItems(removeNullElements(new String[] { getViewportStart(), getStart(), getEnd(), getMemoryBlockBaseAddress() }));
 		fEndText.setItems(removeNullElements(new String[] { getEnd(), getStart(), getMemoryBlockBaseAddress(), getViewportStart() }));
+		if(fProperties.getProperty(FindReplaceDialog.SEARCH_START) != null)
+			fStartText.add(fProperties.getProperty(FindReplaceDialog.SEARCH_START), 0);
+		if(fProperties.getProperty(FindReplaceDialog.SEARCH_END) != null)
+			fEndText.add(fProperties.getProperty(FindReplaceDialog.SEARCH_END), 0);
 		fStartText.select(0);
 		fEndText.select(0);
 		
@@ -551,7 +629,7 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fFormatAsciiButton = new Button(formatGroup, SWT.RADIO);
 		fFormatAsciiButton.setText(Messages.getString("FindReplaceDialog.ButtonASCII")); //$NON-NLS-1$
-				
+		
 		fFormatHexButton = new Button(formatGroup, SWT.RADIO);
 		fFormatHexButton.setText(Messages.getString("FindReplaceDialog.ButtonHexadecimal")); //$NON-NLS-1$
 		
@@ -566,6 +644,19 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fFormatByteSequenceButton = new Button(formatGroup, SWT.RADIO);
 		fFormatByteSequenceButton.setText(Messages.getString("FindReplaceDialog.ButtonByteSequence")); //$NON-NLS-1$
+		
+		final String format = fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT, FindReplaceDialog.SEARCH_FORMAT_ASCII);
+		
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run() {
+				fFormatAsciiButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_ASCII));
+				fFormatOctalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_OCTAL));
+				fFormatBinaryButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BINARY));
+				fFormatDecimalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_DECIMAL));
+				fFormatHexButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_HEX));
+				fFormatByteSequenceButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BYTESEQUENCE));
+			}
+		});
 		
 		data = new FormData();
 		data.top = new FormAttachment(rangeGroup);
@@ -590,9 +681,9 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		// wrap
 		
-		Button wrapCheckbox = new Button(optionsGroup, SWT.CHECK);
-		wrapCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonWrapSearch")); //$NON-NLS-1$
-		wrapCheckbox.setEnabled(false); // TODO implement wrap
+		fWrapCheckbox = new Button(optionsGroup, SWT.CHECK);
+		fWrapCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonWrapSearch")); //$NON-NLS-1$
+		fWrapCheckbox.setEnabled(false); // TODO implement wrap
 		
 		fCaseInSensitiveCheckbox = new Button(optionsGroup, SWT.CHECK);
 		fCaseInSensitiveCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonCaseInsensitive")); //$NON-NLS-1$
@@ -718,16 +809,86 @@ public class FindReplaceDialog extends SelectionDialog
 		return bytes;
 	}
 	
-	private void performFind(final BigInteger start, final BigInteger end, final SearchPhrase searchPhrase, 
-		final boolean searchForward, final byte[] replaceData, final boolean isReplaceAll, final boolean replaceThenFind)
+	private BigInteger parseHexBigInteger(String s)
 	{
-		Job job = new Job("Searching memory for " + searchPhrase){ //$NON-NLS-1$
-			public IStatus run(IProgressMonitor monitor) {
+		if(s.toUpperCase().startsWith("0X"))
+			return new BigInteger(s.substring(2), 16);
+		else
+			return new BigInteger(s, 16);
+	}
+	
+	protected void performFindNext()
+	{
+		try
+		{
+			BigInteger start = parseHexBigInteger(fProperties.getProperty(SEARCH_LAST_FOUND));
+			BigInteger end = parseHexBigInteger(fProperties.getProperty(SEARCH_END));
+			boolean searchForward = fProperties.getProperty(SEARCH_FORMAT_FORWARD, "false").equals("true");
+			boolean caseInSensitive = fProperties.getProperty(SEARCH_FORMAT_CASEINSENSTIVE, "false").equals("true");
+			if(searchForward)
+				start = start.add(BigInteger.ONE);
+			else
+				start = start.subtract(BigInteger.ONE);
+			SearchPhrase phrase = null;
+			String findText = fProperties.getProperty(SEARCH_FIND);
+			
+			if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_ASCII))
+				phrase = new AsciiSearchPhrase(findText, caseInSensitive);
+			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_HEX))
+				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.toUpperCase().startsWith("0X")  //$NON-NLS-1$
+					? findText.substring(2) : findText, 16), 16);
+			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_OCTAL))
+				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.startsWith("0")  //$NON-NLS-1$
+					? findText.substring(1) : findText, 8), 8);
+			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_BINARY))
+				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.toUpperCase().startsWith("0B")  //$NON-NLS-1$
+					? findText.substring(2) : findText, 2), 2);
+			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_DECIMAL))
+				phrase = new BigIntegerSearchPhrase(new BigInteger(findText, 10), 10);
+			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_BYTESEQUENCE))
+				phrase = new ByteSequenceSearchPhrase(findText);
+			
+			performFind(start, end, phrase, searchForward, null, false, false);
+			
+		}
+		catch(Exception e)
+		{
+			MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.MemorySearchFailure"), e);
+		}
+	}
+	
+	private void performFind(final BigInteger start, final BigInteger end, final SearchPhrase searchPhrase, 
+		final boolean searchForward, final byte[] replaceData, final boolean all, final boolean replaceThenFind)
+	{		
+		final ISearchQuery query = new IMemorySearchQuery() 
+		{
+			private ISearchResult fSearchResult = null;
+			
+			public boolean canRerun() {
+				return false;
+			}
+
+			public boolean canRunInBackground() {
+				return true;
+			}
+
+			public String getLabel() {
+				return Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase; //$NON-NLS-1$
+			}
+
+			public ISearchResult getSearchResult() {
+				if(fSearchResult == null)
+					fSearchResult = new MemorySearchResult(this, Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase);	 //$NON-NLS-1$
+				return fSearchResult;
+			}
+
+			public IStatus run(IProgressMonitor monitor)
+					throws OperationCanceledException {
+
 				BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
 				BigInteger range = searchForward ? end.subtract(start) : start.subtract(end);
 				BigInteger currentPosition = start;
-				
-				
+
 				boolean isReplace = replaceData != null;
 				
 				BigInteger jobs = range.subtract(searchPhraseLength);
@@ -745,31 +906,81 @@ public class FindReplaceDialog extends SelectionDialog
 				FindReplaceMemoryCache cache = new FindReplaceMemoryCache();
 				
 				monitor.beginTask(Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase, jobs.intValue()); //$NON-NLS-1$
-				
+		
 				boolean matched = false;
-				while(!matched && 
-						((searchForward && currentPosition.compareTo(end.subtract(searchPhraseLength)) < 0) 
-								|| (!searchForward && currentPosition.compareTo(end) > 0))
-						&& !monitor.isCanceled()) 
+				while(((searchForward && currentPosition.compareTo(end.subtract(searchPhraseLength)) < 0) 
+					|| (!searchForward && currentPosition.compareTo(end) > 0)) && !monitor.isCanceled()) 
 				{
 					try
 					{
-						// TODO cache and reuse previously read bytes?
 						MemoryByte bytes[] = getBytesFromAddress(currentPosition, searchPhraseLength.intValue(), cache);
 						matched = searchPhrase.isMatch(bytes);
-					}
-					catch(DebugException e)
-					{
-						// TODO log ?
-						// stop search? preference?
-					}
-					
-					if(!matched)
-					{
+						if(matched)
+						{
+							if(all && !isReplace)
+								((MemorySearchResult) getSearchResult()).addMatch("0x" + currentPosition.toString(16)); //$NON-NLS-1$
+						
+							if(isReplace)
+							{
+								try
+								{
+									fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), replaceData);
+								}
+								catch(DebugException de)
+								{
+									MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.MemoryReadFailed"), de); //$NON-NLS-1$
+								}
+
+								replaceCount = replaceCount.add(BigInteger.ONE);
+							}
+							
+							if(isReplace && replaceThenFind && replaceCount.compareTo(BigInteger.ONE) == 0)
+							{
+								isReplace = false;
+								matched = false;
+							}
+							
+							if(matched && !all)
+							{
+								final BigInteger finalCurrentPosition = currentPosition;
+								Display.getDefault().asyncExec(new Runnable(){
+
+									public void run() {
+										IMemoryRenderingContainer containers[] = getMemoryView().getMemoryRenderingContainers();
+										for(int i = 0; i < containers.length; i++)
+										{
+											IMemoryRendering rendering = containers[i].getActiveRendering();
+											if(rendering instanceof IRepositionableMemoryRendering)
+											{
+												try {
+													((IRepositionableMemoryRendering) rendering).goToAddress(finalCurrentPosition);
+												} catch (DebugException e) {
+													MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.RepositioningMemoryViewFailed"), e); //$NON-NLS-1$
+												}
+											}
+										}
+									}
+									
+								});
+								
+								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, "true");
+								fProperties.setProperty(SEARCH_LAST_FOUND, "0x" + finalCurrentPosition.toString(16));
+								return Status.OK_STATUS;
+							}
+						}
+						
+						matched = false;
+						
 						if(searchForward)
 							currentPosition = currentPosition.add(BigInteger.ONE);
 						else
 							currentPosition = currentPosition.subtract(BigInteger.ONE);
+						
+					}
+					catch(DebugException e)
+					{
+						MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.MemorySearchFailure"), e); //$NON-NLS-1$
+						return Status.CANCEL_STATUS;
 					}
 					
 					jobCount = jobCount.add(BigInteger.ONE);
@@ -777,73 +988,40 @@ public class FindReplaceDialog extends SelectionDialog
 					{
 						jobCount = BigInteger.ZERO;
 						monitor.worked(1);
-					}
-					
-					if(matched)
-					{
-						if(isReplace)
-						{
-							try
-							{
-								fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), replaceData);
-							}
-							catch(DebugException de)
-							{
-								// TODO log?
-							}
-
-							replaceCount = replaceCount.add(BigInteger.ONE);
-						}
-						
-						if(isReplace && replaceThenFind && replaceCount.compareTo(BigInteger.ONE) == 0)
-						{
-							isReplace = false;
-							matched = false;
-							
-							if(searchForward)
-								currentPosition = currentPosition.add(BigInteger.ONE);
-							else
-								currentPosition = currentPosition.subtract(BigInteger.ONE);
-						}
-						
-						if(isReplaceAll)
-						{
-							matched = false;
-							
-							if(searchForward)
-								currentPosition = currentPosition.add(BigInteger.ONE);
-							else
-								currentPosition = currentPosition.subtract(BigInteger.ONE);
-						}
-					}
+					}	
 				}
 				
 				if(monitor.isCanceled())
 					return Status.CANCEL_STATUS;
 				
-				if(matched)
-				{
-					ISelection selection = fMemoryView.getViewPane(IDebugUIConstants.ID_RENDERING_VIEW_PANE_1).getSelectionProvider().getSelection();
-					if(selection instanceof StructuredSelection)
-					{
-						if(((StructuredSelection) selection).getFirstElement() instanceof IRepositionableMemoryRendering)
-						{
-							try
-							{
-								((IRepositionableMemoryRendering) ((StructuredSelection) selection).getFirstElement()).goToAddress(currentPosition);
-							}
-							catch(DebugException de)
-							{
-								// log
-							}
-						}
-					}
-				}
-				
 				return Status.OK_STATUS;
 			}
+
+			public MemoryView getMemoryView() {
+				return fMemoryView;
+			}
 		};
-		job.schedule();
+		
+		if(all && replaceData == null)
+		{
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run()
+				{
+					NewSearchUI.activateSearchResultView();
+					NewSearchUI.runQueryInBackground(query);
+				}
+			});
+		}
+		else
+		{
+			Job job = new Job("Searching memory for " + searchPhrase){ //$NON-NLS-1$
+				public IStatus run(IProgressMonitor monitor) {
+					return query.run(monitor);
+				}
+			};
+			job.schedule();
+		}
+			
 	}
 
 	interface SearchPhrase
@@ -910,10 +1088,10 @@ public class FindReplaceDialog extends SelectionDialog
 		public String toString()
 		{
 			if(fBytes == null)
-				return "";
+				return ""; //$NON-NLS-1$
 			StringBuffer buf = new StringBuffer();
 			for(int i = 0; i < fBytes.length; i++)
-				buf.append(BigInteger.valueOf(fBytes[i]).toString(16) + " ");
+				buf.append(BigInteger.valueOf(fBytes[i]).toString(16) + " "); //$NON-NLS-1$
 			return buf.toString();
 		}
 		
@@ -970,5 +1148,10 @@ public class FindReplaceDialog extends SelectionDialog
 		System.arraycopy(bytes, 1, processedBytes, 0, processedBytes.length);
 		return processedBytes;
 	}
+	
+	interface IMemorySearchQuery extends ISearchQuery
+	{
+		public MemoryView getMemoryView();
+	};
 	
 }

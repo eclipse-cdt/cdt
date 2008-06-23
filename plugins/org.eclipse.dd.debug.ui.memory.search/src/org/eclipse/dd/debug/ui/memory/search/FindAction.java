@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,9 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
-package org.eclipse.dd.debug.memory.renderings.actions;
+package org.eclipse.dd.debug.ui.memory.search;
+
+import java.util.Properties;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -26,6 +28,8 @@ import org.eclipse.ui.IViewPart;
 public class FindAction implements IViewActionDelegate {
 
 	private MemoryView fView;
+	
+	private static Properties fSearchDialogProperties = new Properties();
 
 	public void init(IViewPart view) {
 		if (view instanceof MemoryView)
@@ -57,16 +61,32 @@ public class FindAction implements IViewActionDelegate {
 			}
 			
 			Shell shell = DebugUIPlugin.getShell();
-			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, fView);
-			dialog.open();
-			
-			Object results[] = dialog.getResult();
+			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
+				fView, (Properties) fSearchDialogProperties);
+			if(action.getText().equalsIgnoreCase("Find Next"))
+			{
+				if(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, "false").equals("true"))
+				{
+					dialog.performFindNext();
+				}
+				return;
+			}
+			else
+			{
+				dialog.open();
+				
+				Object results[] = dialog.getResult();
+			}
 		}
 
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-
+		if(action.getText().equalsIgnoreCase("Find Next"))
+		{
+			action.setEnabled(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, "false")
+				.equals("true"));
+		}
 	}
 
 }

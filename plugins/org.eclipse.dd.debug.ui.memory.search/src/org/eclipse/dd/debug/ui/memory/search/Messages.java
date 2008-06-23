@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,13 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
-package org.eclipse.dd.debug.memory.renderings.actions;
+package org.eclipse.dd.debug.ui.memory.search;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class Messages {
-	private static final String BUNDLE_NAME = "org.eclipse.dd.debug.memory.renderings.actions.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.dd.debug.ui.memory.search.messages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

@@ -28,16 +28,6 @@
    <initializer class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferenceInitializer"/>
 </extension>
 
-<extension point="org.eclipse.ui.viewActions">
- <viewContribution
-       id="org.eclipse.debug.ui.MemoryView.findReplace"
-       targetID="org.eclipse.debug.ui.MemoryView">
-    <action
-          class="org.eclipse.dd.debug.memory.renderings.actions.FindAction"
-          id="org.eclipse.dd.debug.memory.renderings.traditional.action2"
-          label="Find/Replace"
-          menubarPath="additions">
-    </action>
- </viewContribution>
-</extension>
 </plugin>
+
+

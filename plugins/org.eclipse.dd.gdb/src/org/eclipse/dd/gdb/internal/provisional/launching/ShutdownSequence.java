@@ -16,20 +16,20 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
+import org.eclipse.dd.dsf.debug.service.IBreakpoints;
+import org.eclipse.dd.dsf.debug.service.IDisassembly;
+import org.eclipse.dd.dsf.debug.service.IExpressions;
+import org.eclipse.dd.dsf.debug.service.IMemory;
+import org.eclipse.dd.dsf.debug.service.IModules;
+import org.eclipse.dd.dsf.debug.service.IRegisters;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.ISourceLookup;
+import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.mi.service.CSourceLookup;
-import org.eclipse.dd.mi.service.ExpressionService;
-import org.eclipse.dd.mi.service.MIBreakpoints;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
-import org.eclipse.dd.mi.service.MIDisassembly;
-import org.eclipse.dd.mi.service.MIMemory;
-import org.eclipse.dd.mi.service.MIModules;
-import org.eclipse.dd.mi.service.MIRegisters;
-import org.eclipse.dd.mi.service.MIStack;
 
 public class ShutdownSequence extends Sequence {
 
@@ -68,12 +68,12 @@ public class ShutdownSequence extends Sequence {
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIDisassembly.class, requestMonitor);
+            shutdownService(IDisassembly.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIRegisters.class, requestMonitor);
+            shutdownService(IRegisters.class, requestMonitor);
         }
     }, new Step() {
         @Override
@@ -83,42 +83,42 @@ public class ShutdownSequence extends Sequence {
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIBreakpoints.class, requestMonitor);
+            shutdownService(IBreakpoints.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(CSourceLookup.class, requestMonitor);
+            shutdownService(ISourceLookup.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(ExpressionService.class, requestMonitor);
+            shutdownService(IExpressions.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIStack.class, requestMonitor);
+            shutdownService(IStack.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIModules.class, requestMonitor);
+            shutdownService(IModules.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIMemory.class, requestMonitor);
+            shutdownService(IMemory.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(GDBRunControl.class, requestMonitor);
+            shutdownService(IRunControl.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(GDBControl.class, requestMonitor);
+            shutdownService(ICommandControl.class, requestMonitor);
         }
     }, new Step() {
         @Override

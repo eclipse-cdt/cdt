@@ -4,7 +4,7 @@
 <!-- Define the top level topics                                                   -->
 <!-- ============================================================================= -->
 
-<toc label="DSF Documents">
+<toc label="DSF Developer Guide">
 	<topic href="docs/dsf_white_paper.html" label="DSF White Paper">
  </topic>
  <topic href="docs/intro/dsf_programming_intro.html" label="Introduction to Programming with DSF">

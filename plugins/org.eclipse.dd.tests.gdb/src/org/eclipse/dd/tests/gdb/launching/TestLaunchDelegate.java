@@ -25,7 +25,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.gdb.internal.provisional.launching.FinalLaunchSequence;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
+import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
 import org.eclipse.dd.gdb.internal.provisional.launching.ServicesLaunchSequence;
+import org.eclipse.dd.gdb.internal.provisional.service.GdbDebugServicesFactory;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -80,6 +82,8 @@ public class TestLaunchDelegate extends LaunchConfigurationDelegate
 		
         monitor.worked( 1 );  
         
+        launch.setServiceFactory(new GdbDebugServicesFactory(LaunchUtils.getGDBVersion(config)));
+
         final ServicesLaunchSequence servicesLaunchSequence = 
             new ServicesLaunchSequence(launch.getSession(), launch, exePath, SessionType.LOCAL, false);
         launch.getSession().getExecutor().execute(servicesLaunchSequence);

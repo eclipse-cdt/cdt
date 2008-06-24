@@ -31,10 +31,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.dd.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
+import org.eclipse.dd.gdb.internal.provisional.service.GdbDebugServicesFactory;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -102,6 +104,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     	
         monitor.worked( 1 );
 
+        launch.setServiceFactory(newServiceFactory(LaunchUtils.getGDBVersion(config)));
+        
         // Create and invoke the launch sequence to create the debug control and services
         final ServicesLaunchSequence servicesLaunchSequence = 
             new ServicesLaunchSequence(launch.getSession(), launch, exePath, sessionType, attach);
@@ -308,5 +312,14 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		}
 		return false;
 	}
+	
+	private IDsfDebugServicesFactory newServiceFactory(String version) {
+		if (version.startsWith("6.6") ||  //$NON-NLS-1$
+			version.startsWith("6.7") ||  //$NON-NLS-1$
+			version.startsWith("6.8")) {  //$NON-NLS-1$
+			return new GdbDebugServicesFactory(version);
+		}
 
+		return new GdbDebugServicesFactory(version);
+	}
 }

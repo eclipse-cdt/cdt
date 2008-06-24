@@ -30,6 +30,7 @@ import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
+import org.eclipse.dd.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
@@ -60,6 +61,7 @@ public class GdbLaunch extends Launch
     private boolean fShutDown = false;
 
     private DsfMemoryBlockRetrieval fMemRetrieval;
+    private IDsfDebugServicesFactory fServiceFactory;
     
     public GdbLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
         super(launchConfiguration, mode, locator);
@@ -73,6 +75,7 @@ public class GdbLaunch extends Launch
     }
 
     public DsfExecutor getDsfExecutor() { return fExecutor; }
+    public IDsfDebugServicesFactory getServiceFactory() { return fServiceFactory; }
     
     public void initialize()
     {
@@ -172,6 +175,10 @@ public class GdbLaunch extends Launch
         } catch (RejectedExecutionException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         } 
+    }
+    
+    public void setServiceFactory(IDsfDebugServicesFactory factory) {
+    	fServiceFactory = factory;
     }
     
     ///////////////////////////////////////////////////////////////////////////

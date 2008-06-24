@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -19,6 +25,7 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,6 +36,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
+import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class LaunchUtils {
@@ -176,6 +185,47 @@ public class LaunchUtils {
 
 	private static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+	}
+	
+    public static IPath getGDBPath(ILaunchConfiguration configuration) {
+        IPath retVal = new Path(IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+        try {
+            retVal = new Path(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
+            		                                     IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT));
+        } catch (CoreException e) {
+        }
+        return retVal;
+    }
+    
+	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {
+        String line, version = "";//$NON-NLS-1$
+        Process process = null;
+        String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
+        try {                        
+        	process = ProcessFactory.getFactory().exec(cmd);
+        } catch(IOException e) {
+        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
+        			"Error while launching command: " + cmd, e.getCause()));//$NON-NLS-1$
+        }
+        
+        try {
+        	InputStream stream = process.getInputStream();
+        	Reader r = new InputStreamReader(stream);
+        	BufferedReader reader = new BufferedReader(r);
+        	Pattern pattern = Pattern.compile(" gdb (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+
+        	while ((line = reader.readLine()) != null) {
+        		Matcher matcher = pattern.matcher(line);
+        		if (matcher.find()) {
+        			version = matcher.group(1);
+        		}
+        	}
+        } catch (IOException e) {
+        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
+        			"Error reading GDB STDOUT after sending: " + cmd, e.getCause()));//$NON-NLS-1$
+        }
+
+        return version;
 	}
 }
 

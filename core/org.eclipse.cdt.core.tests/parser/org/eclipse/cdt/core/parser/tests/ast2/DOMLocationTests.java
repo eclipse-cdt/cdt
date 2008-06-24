@@ -467,7 +467,7 @@ public class DOMLocationTests extends AST2BaseTest {
             assertSoleLocation(problems[0], code, "xxx(!");
             assertSoleLocation( decls[0], code, "int x;"); 
             assertSoleLocation( problems[1], code, "\\"); 
-            assertFileLocation( decls[1], code, "int x\\i"); 
+            assertFileLocation( decls[1], code, "int x\\i;"); 
             assertSoleLocation( decls[2], code, "int x2;"); 
         }
     }

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -277,8 +279,9 @@ public class AST2KnRTests extends AST2BaseTest {
     	buffer.append( "int f(x) char\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
-    	
-    	assertTrue( tu.getDeclarations()[0] instanceof IASTProblemDeclaration );
+    	IASTDeclaration[] decls= tu.getDeclarations();
+    
+    	assertTrue(CVisitor.getProblems(tu).length > 0); 
     }
     
     public void testKRCProblem2() throws Exception {
@@ -288,8 +291,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
     	
-		assertTrue( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
-		assertTrue( tu.getDeclarations()[2] instanceof IASTProblemDeclaration );
+    	IASTSimpleDeclaration sd= getDeclaration(tu, 0);
+    	assertTrue(CVisitor.getProblems(tu).length > 0); 
 	}
 
     public void testKRCProblem3() throws Exception {

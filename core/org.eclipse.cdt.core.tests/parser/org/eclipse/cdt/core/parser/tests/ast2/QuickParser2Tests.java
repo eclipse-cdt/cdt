@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -846,7 +847,7 @@ public class QuickParser2Tests extends TestCase {
         parse(
         	"class Functor {" +
         	"Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}" +
-        	"}"
+        	"};"
         ); 
     }
 
@@ -1524,7 +1525,7 @@ public class QuickParser2Tests extends TestCase {
         writer.write("B::B() : a(( { int y = foo (); int z;\n"); 
         writer.write("if (y > 0) z = y;\n"); 
         writer.write("else z = - y;\n");
-        writer.write("z; }))\n");
+        writer.write("z; })) {}\n");
         parse(writer.toString(), true, ParserLanguage.CPP, true);
         writer = new StringWriter();
         writer.write("int x = ({ int y = foo (); int z;\n"); 

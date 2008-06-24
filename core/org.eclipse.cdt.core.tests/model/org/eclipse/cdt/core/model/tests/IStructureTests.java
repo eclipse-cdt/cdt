@@ -1,25 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *    IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jun 9, 2003
- * by bnicolle
- */
 package org.eclipse.cdt.core.model.tests;
 
-import org.eclipse.cdt.core.model.*;
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-
-import junit.framework.*;
-
 import java.util.List;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 /**
  * @author bnicolle
@@ -36,6 +38,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
+	@Override
 	public String getSourcefileSubdir() {
 		return "resources/cmodel/";
 	}
@@ -43,6 +46,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
+	@Override
 	public String getSourcefileResource() {
 		return "IStructure.cpp";
 	}
@@ -83,7 +87,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		ITranslationUnit tu = getTU();
 		List arrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		String[] myExpectedStructs = {
-			"testStruct1", "testStruct2", "testStruct3",
+			"testStruct1", "testStruct2", "testStruct3", "testStruct4NoSemicolon",
 			 /* 2 anonymous structs */ "", "", "testStruct7",
 			 "testStruct8"
 		};
@@ -98,8 +102,8 @@ public class IStructureTests extends IntegratedCModelTest {
 		ITranslationUnit tu = getTU();
 		List arrayClasses = tu.getChildrenOfType(ICElement.C_CLASS);
 		String[] myExpectedClasses = {
-			"testClass1", "testClass3", "testClass4Abstract",
-			"testClass5", "testClass6" };
+			"testClass1", "testClass2NoSemicolon", "testClass3", "testClass4Abstract",
+			"testClass5", "testClass6"};
 		assertEquals(myExpectedClasses.length,arrayClasses.size());
 		for(int i=0; i<myExpectedClasses.length; i++) {
 			IStructure myIStruct = (IStructure) arrayClasses.get(i);

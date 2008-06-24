@@ -51,6 +51,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -553,6 +555,20 @@ public class AST2BaseTest extends BaseTestCase {
 		return (T) decls[i_decl];
 	}
 
+	final protected <T extends IASTDeclaration> T getDeclaration(ICPPASTNamespaceDefinition ns, int i_decl) {
+		Class<T> tclass;
+		IASTDeclaration[] decls= ns.getDeclarations();
+		assertTrue(decls.length > i_decl);
+		return (T) decls[i_decl];
+	}
+
+	final protected <T extends IASTDeclaration> T getDeclaration(ICPPASTLinkageSpecification ls, int i_decl) {
+		Class<T> tclass;
+		IASTDeclaration[] decls= ls.getDeclarations();
+		assertTrue(decls.length > i_decl);
+		return (T) decls[i_decl];
+	}
+
 	final protected <T extends IASTDeclaration> T getDeclaration(IASTCompositeTypeSpecifier ct, int i_decl) {
 		Class<T> tclass;
 		IASTDeclaration[] decls= ct.getMembers();
@@ -566,7 +582,10 @@ public class AST2BaseTest extends BaseTestCase {
 	}
 
 	final protected <T extends IASTStatement> T getStatement(IASTFunctionDefinition fdef, int i_stmt) {
-		IASTCompoundStatement compound= (IASTCompoundStatement) fdef.getBody();
+		return getStatement((IASTCompoundStatement) fdef.getBody(), i_stmt);
+	}
+
+	final protected <T extends IASTStatement> T getStatement(IASTCompoundStatement compound, int i_stmt) {
 		IASTStatement[] stmts= compound.getStatements();
 		assertTrue(stmts.length > i_stmt);
 		return (T) stmts[i_stmt];

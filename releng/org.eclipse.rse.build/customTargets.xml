@@ -74,91 +74,91 @@
 	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
 
-	<target name="assemble.org.eclipse.rse.core">
+	<target name="assemble.org.eclipse.rse.core.group.group.group">
 		<property name="archiveName" value="RSE-runtime-core-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.dstore">
+	<target name="assemble.org.eclipse.rse.dstore.group.group.group">
 		<property name="archiveName" value="RSE-runtime-dstore-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.ftp">
+	<target name="assemble.org.eclipse.rse.ftp.group.group.group">
 		<property name="archiveName" value="RSE-runtime-ftp-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.local">
+	<target name="assemble.org.eclipse.rse.local.group.group.group">
 		<property name="archiveName" value="RSE-runtime-local-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.ssh">
+	<target name="assemble.org.eclipse.rse.ssh.group.group.group">
 		<property name="archiveName" value="RSE-runtime-ssh-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.telnet">
+	<target name="assemble.org.eclipse.rse.telnet.group.group.group">
 		<property name="archiveName" value="RSE-runtime-telnet-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.sdk">
+	<target name="assemble.org.eclipse.rse.sdk.group.group.group">
 		<property name="archiveName" value="RSE-SDK-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.useractions">
+	<target name="assemble.org.eclipse.rse.useractions.group.group.group">
 		<property name="archiveName" value="RSE-useractions-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.examples">
+	<target name="assemble.org.eclipse.rse.examples.group.group.group">
 		<property name="archiveName" value="RSE-examples-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.remotecdt">
+	<target name="assemble.org.eclipse.rse.remotecdt.group.group.group">
 		<property name="archiveName" value="RSE-remotecdt-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.wince">
+	<target name="assemble.org.eclipse.rse.wince.group.group.group">
 		<property name="archiveName" value="RSE-wince-incubation-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.tests">
+	<target name="assemble.org.eclipse.rse.tests.group.group.group">
 		<property name="archiveName" value="RSE-tests-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.tm.discovery">
+	<target name="assemble.org.eclipse.tm.discovery.group.group.group">
 		<property name="archiveName" value="TM-discovery-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.tm.terminal.sdk">
+	<target name="assemble.org.eclipse.tm.terminal.sdk.group.group.group">
 		<property name="archiveName" value="TM-terminal-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.terminals">
+	<target name="assemble.org.eclipse.rse.terminals.group.group.group">
 		<property name="archiveName" value="RSE-terminals-incubation-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />

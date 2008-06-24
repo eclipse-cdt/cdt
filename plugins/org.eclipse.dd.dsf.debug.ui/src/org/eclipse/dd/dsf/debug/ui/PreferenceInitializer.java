@@ -52,5 +52,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		 * Expressions View
 		 */
 		prefs.setDefault(IDsfDebugUIConstants.EXPRESSIONS_DETAIL_PANE_ORIENTATION, IDsfDebugUIConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-	}
+
+		/* 
+		 * Debug View
+		 */
+		prefs.setDefault(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, 100);
+		prefs.setDefault(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE, true);
+}
 }

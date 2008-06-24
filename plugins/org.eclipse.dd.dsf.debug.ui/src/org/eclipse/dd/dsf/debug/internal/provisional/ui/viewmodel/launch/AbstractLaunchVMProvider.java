@@ -24,13 +24,17 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode.LaunchesEvent;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode.IncompleteStackVMContext;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMModelProxy;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
 import org.eclipse.dd.dsf.ui.viewmodel.update.IVMUpdatePolicy;
@@ -41,6 +45,12 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 
 /**
@@ -57,10 +67,36 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 	
     private final Map<IExecutionDMContext,ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<IExecutionDMContext,ScheduledFuture<?>>();
 
+	private IPropertyChangeListener fPreferencesListener;
+
 	@ThreadSafe
     public AbstractLaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)
     {
         super(adapter, presentationContext, session);
+        
+        final IPreferenceStore store= DsfDebugUIPlugin.getDefault().getPreferenceStore();
+        if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
+        	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
+        }
+        
+        fPreferencesListener = new IPropertyChangeListener() {
+			public void propertyChange(final PropertyChangeEvent event) {
+				String property = event.getProperty();
+				if (IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE.equals(property)
+						|| IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) {
+					if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
+			        	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
+					} else {
+			        	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, null);
+					}
+					getExecutor().execute(new DsfRunnable() {
+					    public void run() {
+					        handleEvent(event);
+					    }
+					});
+				}
+			}};
+        store.addPropertyChangeListener(fPreferencesListener);
     }
     
     @Override
@@ -89,6 +125,33 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
             // Ignore.  This exception could be thrown if the provider is being 
             // shut down.  
         }
+    }
+
+    @Override
+    public void handleEvent(Object event) {
+        if (event instanceof DoubleClickEvent && !isDisposed()) {
+            final ISelection selection= ((DoubleClickEvent) event).getSelection();
+            if (selection instanceof IStructuredSelection) {
+                Object element= ((IStructuredSelection) selection).getFirstElement();
+                if (element instanceof IncompleteStackVMContext) {
+                    IncompleteStackVMContext incStackVmc = ((IncompleteStackVMContext) element); 
+                    IVMNode node = ((IncompleteStackVMContext) element).getVMNode();
+                    if (incStackVmc.getVMNode() instanceof StackFramesVMNode) {
+                        IExecutionDMContext exeCtx= incStackVmc.getExecutionDMContext();
+						((StackFramesVMNode) node).incrementStackFrameLimit(exeCtx);
+						// replace double click event with expand stack event
+						final ExpandStackEvent expandStackEvent = new ExpandStackEvent(exeCtx);
+						getExecutor().execute(new DsfRunnable() {
+						    public void run() {
+						        handleEvent(expandStackEvent);
+						    }
+						});
+                    }
+                }
+            }
+            return;
+        }
+    	super.handleEvent(event);
     }
 
     @Override
@@ -131,6 +194,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     			fRefreshStackFramesFutures.remove(exeContext);
     		}
     	}
+		
     }
 
     /**
@@ -150,6 +214,10 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     public void dispose() {
         DebugPlugin.getDefault().removeDebugEventListener(this);
         DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+
+        final IPreferenceStore store= DsfDebugUIPlugin.getDefault().getPreferenceStore();
+        store.removePropertyChangeListener(fPreferencesListener);
+
         super.dispose();
     }
     

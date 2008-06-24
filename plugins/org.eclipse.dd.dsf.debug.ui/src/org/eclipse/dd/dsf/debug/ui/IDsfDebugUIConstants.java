@@ -55,7 +55,20 @@ public interface IDsfDebugUIConstants {
      * the workbench font preference page.
      */ 
     public static final String DETAIL_PANE_FONT= PLUGIN_ID + "DetailPaneFont"; //$NON-NLS-1$ 
-    
+
+	/**
+	 * Integer preference to control the maximum amount of stack frames to
+	 * retrieve from the backend. Default value is 100.
+	 * @see {@link #PREF_STACK_FRAME_LIMIT_ENABLE}
+	 */
+	public static final String PREF_STACK_FRAME_LIMIT = "stackFrameLimit"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference whether to apply the stack frame limit preference.
+	 * @see {@link #PREF_STACK_FRAME_LIMIT}
+	 */
+	public static final String PREF_STACK_FRAME_LIMIT_ENABLE = "stackFrameLimitEnable"; //$NON-NLS-1$
+
     /**
      * Help prefixes.
      */
@@ -71,4 +84,6 @@ public interface IDsfDebugUIConstants {
 	public static final String DETAIL_PANE_FIND_REPLACE_ACTION = PREFIX + "detail_pane_find_replace_action_context"; //$NON-NLS-1$
     public static final String DETAIL_PANE_WORD_WRAP_ACTION = PREFIX + "detail_pane_word_wrap_action_context"; //$NON-NLS-1$
     public static final String DETAIL_PANE_MAX_LENGTH_ACTION = PREFIX + "detail_pane_max_length_action_context"; //$NON-NLS-1$
+
+    public static final String PREFERENCE_PAGE= PREFIX + "preference_page_context"; //$NON-NLS-1$
 }

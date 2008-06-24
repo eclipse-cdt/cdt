@@ -32,6 +32,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 
@@ -55,6 +58,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     private Viewer fViewer;
     private boolean fDisposed = false;
     private ListenerList fListeners = new ListenerList();
+	private IDoubleClickListener fDoubleClickListener;
     
     /**
      * Debug flag indicating whether the deltas should be traced in stdout. 
@@ -154,6 +158,10 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      */
     public void dispose() {
         fDisposed = true;
+        if (fViewer instanceof StructuredViewer && fDoubleClickListener != null) {
+        	((StructuredViewer) fViewer).removeDoubleClickListener(fDoubleClickListener);
+        	fDoubleClickListener= null;
+        }
     }
 
     /* (non-Javadoc)
@@ -187,9 +195,29 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 fProvider.handleEvent(new ModelProxyInstalledEvent(DefaultVMModelProxyStrategy.this, viewer, fRootElement));
             }
         });
+        if (fViewer instanceof StructuredViewer && fDoubleClickListener == null) {
+        	((StructuredViewer) fViewer).addDoubleClickListener(fDoubleClickListener= new IDoubleClickListener() {
+        		public void doubleClick(DoubleClickEvent e) {
+        			handleDoubleClick(e);
+        		}
+        	});
+        }
     }
     
     /**
+     * Handle viewer double click.
+     * 
+	 * @param e  the event
+	 */
+	protected void handleDoubleClick(final DoubleClickEvent e) {
+        getVMProvider().getExecutor().execute( new DsfRunnable() {
+            public void run() {
+				getVMProvider().handleEvent(e);
+            }
+        });
+	}
+
+	/**
      * Returns the viewer this proxy is installed in.
      * 
      * @return viewer or <code>null</code> if not installed

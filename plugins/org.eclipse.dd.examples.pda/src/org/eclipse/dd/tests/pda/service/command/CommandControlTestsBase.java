@@ -114,14 +114,21 @@ public class CommandControlTestsBase {
                 fCommandControl.queueCommand(testCommand, rm);
             }
         };
-        
+
+        String responseText = null;
         fExecutor.execute(sendCommandQuery);
         try {
             PDACommandResult result = sendCommandQuery.get();
-            Assert.assertEquals("Command returned an unexpected result", expectedResult, result.fResponseText);
+            responseText = result.fResponseText;
         } catch (ExecutionException e) {
-            throw e.getCause();
+            if (e.getCause() instanceof CoreException) {
+                responseText = ((CoreException)e.getCause()).getStatus().getMessage();
+            } else {
+                throw e.getCause();
+            }
         }
+        Assert.assertEquals("Command returned an unexpected result", expectedResult, responseText);
+
     }
     
     protected void clearEvents() {

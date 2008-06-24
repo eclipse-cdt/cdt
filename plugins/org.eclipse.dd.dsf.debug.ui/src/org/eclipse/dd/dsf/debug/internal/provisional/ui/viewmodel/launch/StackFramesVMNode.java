@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -21,14 +24,19 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.IStack2;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
+import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
+import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.ModelProxyInstalledEvent;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
@@ -47,6 +55,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
 @SuppressWarnings("restriction")
@@ -54,7 +63,42 @@ public class StackFramesVMNode extends AbstractDMVMNode
     implements IElementLabelProvider, IElementMementoProvider
 {
     
-    public StackFramesVMNode(AbstractDMVMProvider provider, DsfSession session) {
+	/**
+	 * View model context representing the end of an incomplete stack.
+	 */
+	public class IncompleteStackVMContext extends AbstractVMContext {
+		private final int fLevel;
+		private final IExecutionDMContext fDmc;
+
+		public IncompleteStackVMContext(IExecutionDMContext dmc, int level) {
+			super(StackFramesVMNode.this);
+			fDmc = dmc;
+			fLevel = level;
+		}
+		public int getLevel() {
+			return fLevel;
+		}
+		public IExecutionDMContext getExecutionDMContext() {
+			return fDmc;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof IncompleteStackVMContext && 
+			    ((IncompleteStackVMContext)obj).fDmc.equals(fDmc);
+		}
+
+		@Override
+		public int hashCode() {
+			return fDmc.hashCode();
+		}
+	}
+
+	/**
+	 * Temporary stack frame limit to allow incremental stack updates.
+	 */
+	private Map<IExecutionDMContext, Integer> fTemporaryLimits = new HashMap<IExecutionDMContext, Integer>();
+
+	public StackFramesVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IStack.IFrameDMContext.class);
     }
     
@@ -89,8 +133,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
             return;
         }          
         
+        final int stackFrameLimit= getStackFrameLimit(execDmc);
         stackService.getStackDepth(
-            execDmc, 0,
+            execDmc, stackFrameLimit == Integer.MAX_VALUE ? 0 : stackFrameLimit + 1,
             new ViewerDataRequestMonitor<Integer>(getSession().getExecutor(), update) { 
                 @Override
                 public void handleCompleted() {
@@ -98,7 +143,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
                         handleFailedUpdate(update);
                         return;
                     }
-                    update.setChildCount(getData());
+                    int stackDepth= getData();
+                    if (stackFrameLimit < stackDepth) {
+                    	stackDepth = stackFrameLimit + 1;
+                    }
+					update.setChildCount(stackDepth);
                     update.done();
                 }
             });
@@ -117,7 +166,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
             return;
         }          
         
-        if (update.getOffset() == 0 && update.getLength() == 1) {
+        final int stackFrameLimit= getStackFrameLimit(execDmc);
+        final int startIndex= update.getOffset();
+
+		if (startIndex == 0 && update.getLength() == 1) {
             // Requesting top stack frame only
             stackService.getTopFrame(
                 execDmc, 
@@ -134,24 +186,59 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 });
             
         } else {
-        	// full stack dump
-            stackService.getFrames(
-                execDmc, 
-                new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
-                    @Override
-                    public void handleCompleted() {
-                        if (!isSuccess()) {
-                            handleFailedUpdate(update);
-                            return;
+        	if (startIndex >= 0 && update.getLength() > 0 && stackService instanceof IStack2) {
+            	// partial stack dump
+        		IStack2 stackService2= (IStack2) stackService;
+                int endIndex= startIndex + update.getLength() - 1;
+            	if (startIndex < stackFrameLimit && endIndex >= stackFrameLimit) {
+            		endIndex = stackFrameLimit - 1;
+            	}
+				stackService2.getFrames(
+                    execDmc, 
+                    startIndex,
+                    endIndex,
+                    new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
+                        @Override
+                        public void handleCompleted() {
+                            if (!isSuccess()) {
+                                handleFailedUpdate(update);
+                                return;
+                            }
+                            IFrameDMContext[] frames = getData();
+							fillUpdateWithVMCs(update, frames, startIndex);
+							if (startIndex + update.getLength() > stackFrameLimit) {
+								update.setChild(new IncompleteStackVMContext(execDmc, stackFrameLimit), stackFrameLimit);
+							}
+                            update.done();
                         }
-                        fillUpdateWithVMCs(update, getData());
-                        update.done();
-                    }
-                });
+                    });
+        	} else {
+	        	// full stack dump
+	            stackService.getFrames(
+	                execDmc, 
+	                new ViewerDataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), update) { 
+	                    @Override
+	                    public void handleCompleted() {
+	                        if (!isSuccess()) {
+	                            handleFailedUpdate(update);
+	                            return;
+	                        }
+	                        IFrameDMContext[] frames = getData();
+	                        if (frames.length > stackFrameLimit) {
+	                        	IFrameDMContext[] tmpFrames = new IFrameDMContext[stackFrameLimit];
+	                        	System.arraycopy(frames, 0, tmpFrames, 0, stackFrameLimit);
+	                        	frames = tmpFrames;
+								update.setChild(new IncompleteStackVMContext(execDmc, stackFrameLimit), stackFrameLimit);
+	                        }
+							fillUpdateWithVMCs(update, frames);
+	                        update.done();
+	                    }
+	                });
+        	}
         }
     }
     
-    /*
+	/*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */
@@ -171,13 +258,25 @@ public class StackFramesVMNode extends AbstractDMVMNode
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             IStack stackService = getServicesTracker().getService(IStack.class);
-            final IFrameDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IFrameDMContext.class);
             
-            if (stackService == null || dmc == null) {
+            if (stackService == null) {
             	handleFailedUpdate(update);
             	continue;
             }
-            
+
+        	if (update.getElement() instanceof IncompleteStackVMContext) {
+				update.setLabel("<...more frames...>", 0); //$NON-NLS-1$
+        		update.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME), 0);
+        		update.done();
+        		return;
+        	}
+
+            final IFrameDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IFrameDMContext.class);
+            if (dmc == null) {
+            	handleFailedUpdate(update);
+            	continue;
+            }
+
             getDMVMProvider().getModelData(
                 this, update, 
                 getServicesTracker().getService(IStack.class, null),
@@ -314,7 +413,22 @@ public class StackFramesVMNode extends AbstractDMVMNode
             return IModelDelta.CONTENT;
         } else if (e instanceof ModelProxyInstalledEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
-        }
+        } else if (e instanceof ExpandStackEvent) {
+        	return IModelDelta.CONTENT;
+    	} else if (e instanceof IExitedDMEvent) {
+    	    // Do not generate a delta for this event, but do clear the
+    	    // internal stack frame limit to avoid a memory leak.
+    	    clearStackFrameLimit( ((IExitedDMEvent)e).getDMContext() );
+            return IModelDelta.NO_CHANGE;
+        } else if (e instanceof PropertyChangeEvent) {
+            String property = ((PropertyChangeEvent)e).getProperty();
+            if (IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE.equals(property)
+                || IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) 
+            {
+                return IModelDelta.CONTENT;
+            }
+        } else {
+    	}
 
         return IModelDelta.NO_CHANGE;
     }
@@ -325,6 +439,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
      */
     public void buildDelta(final Object e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IContainerSuspendedDMEvent) {
+            // Clear the limit on the stack frames for all stack frames under a given container.
+            clearStackFrameLimit( ((IContainerSuspendedDMEvent)e).getDMContext() );
+
             IContainerSuspendedDMEvent csEvent = (IContainerSuspendedDMEvent)e;
             
             IExecutionDMContext triggeringCtx = csEvent.getTriggeringContexts().length != 0 
@@ -341,12 +458,23 @@ public class StackFramesVMNode extends AbstractDMVMNode
             IExecutionDMContext execDmc = ((FullStackRefreshEvent)e).getDMContext();
             buildDeltaForFullStackRefreshEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof ISuspendedDMEvent) {
+            clearStackFrameLimit( ((ISuspendedDMEvent)e).getDMContext() );
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();
             buildDeltaForSuspendedEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
             buildDeltaForSteppingTimedOutEvent((StepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof ModelProxyInstalledEvent) {
             buildDeltaForModelProxyInstalledEvent(parent, nodeOffset, rm);
+        } else if (e instanceof ExpandStackEvent) {
+            IExecutionDMContext execDmc = ((ExpandStackEvent)e).getDMContext();
+        	buildDeltaForExpandStackEvent(execDmc, parent, rm);
+        } else if (e instanceof PropertyChangeEvent) {
+            String property = ((PropertyChangeEvent)e).getProperty();
+            if (IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE.equals(property)
+                || IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) 
+            {
+                buildDeltaForStackFrameLimitPreferenceChangedEvent(parent, rm);                
+            }
         } else {
             rm.done();
         }
@@ -443,6 +571,17 @@ public class StackFramesVMNode extends AbstractDMVMNode
             );
     }
 
+    private void buildDeltaForExpandStackEvent(IExecutionDMContext execDmc, final VMDelta parentDelta, final RequestMonitor rm) {
+    	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        rm.done();
+    }
+
+
+    private void buildDeltaForStackFrameLimitPreferenceChangedEvent(final VMDelta parentDelta, final RequestMonitor rm) {
+        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        rm.done();
+    }
+
     private String produceFrameElementName( String viewName , IFrameDMContext frame ) {
     	/*
     	 *  We are addressing Bugzilla 211490 which wants the Register View  to keep the same expanded
@@ -516,4 +655,47 @@ public class StackFramesVMNode extends AbstractDMVMNode
             request.done();
         }
     }
+
+	/**
+	 * Get the current active stack frame limit. If no limit is applicable {@link Integer.MAX_VALUE} is returned.
+	 * 
+	 * @return the current stack frame limit
+	 */
+	public int getStackFrameLimit(IExecutionDMContext execCtx) {
+		if (fTemporaryLimits.containsKey(execCtx)) {
+			return fTemporaryLimits.get(execCtx);
+		}
+        Object stackDepthLimit= getVMProvider().getPresentationContext().getProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT);
+        if (stackDepthLimit instanceof Integer) {
+        	return (Integer)stackDepthLimit;
+        }
+		return Integer.MAX_VALUE;
+	}
+
+    private void clearStackFrameLimit(IExecutionDMContext execCtx) {
+        if (execCtx instanceof IContainerDMContext) {
+            for (Iterator<IExecutionDMContext> itr = fTemporaryLimits.keySet().iterator(); itr.hasNext();) {
+                IExecutionDMContext limitCtx = itr.next();
+                if (limitCtx.equals(execCtx) ||  DMContexts.isAncestorOf(limitCtx, execCtx)) {
+                    itr.remove();
+                }
+            }
+        } else {
+            fTemporaryLimits.remove(execCtx);
+        }
+    }
+    
+
+	/**
+	 * Increment the stack frame limit by the default increment.
+	 * This implementation doubles the current limit.
+	 */
+	public void incrementStackFrameLimit(IExecutionDMContext execCtx) {
+		final int stackFrameLimit= getStackFrameLimit(execCtx);
+		if (stackFrameLimit < Integer.MAX_VALUE / 2) {
+			fTemporaryLimits.put(execCtx, stackFrameLimit * 2);
+		} else {
+            fTemporaryLimits.put(execCtx, Integer.MAX_VALUE);
+		}
+	}
 }

@@ -24,6 +24,7 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.IStack2;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -34,8 +35,12 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.service.commands.PDAFrame;
+import org.eclipse.dd.examples.pda.service.commands.PDAFrameCommand;
+import org.eclipse.dd.examples.pda.service.commands.PDAFrameCommandResult;
 import org.eclipse.dd.examples.pda.service.commands.PDAStackCommand;
 import org.eclipse.dd.examples.pda.service.commands.PDAStackCommandResult;
+import org.eclipse.dd.examples.pda.service.commands.PDAStackDepthCommand;
+import org.eclipse.dd.examples.pda.service.commands.PDAStackDepthCommandResult;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -46,7 +51,7 @@ import org.osgi.framework.BundleContext;
  * this service is initialized.
  * </p>
  */
-public class PDAStack extends AbstractDsfService implements IStack {
+public class PDAStack extends AbstractDsfService implements IStack2 {
 
     /**
      * PDA stack frame contains only the stack frame level.  It is only 
@@ -221,7 +226,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
     }
 
     public void getFrameData(final IFrameDMContext frameCtx, final DataRequestMonitor<IFrameDMData> rm) {
-        PDAThreadDMContext threadCtx = 
+        final PDAThreadDMContext threadCtx = 
             DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
         
         if (threadCtx == null) {
@@ -230,23 +235,30 @@ public class PDAStack extends AbstractDsfService implements IStack {
             return;            
         }
         
-        // Execute the PDA stack command, or retrieve the result from cache if already available.
-        fCommandCache.execute(
-            new PDAStackCommand(threadCtx),
-            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
+        getStackDepth(
+            threadCtx, -1, 
+            new DataRequestMonitor<Integer>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     // PDAFrame array is ordered highest to lowest.  We need to 
                     // calculate the index based on frame level.
-                    int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
-                    if (frameId < 0) {
+                    int frameNum = getData() - frameCtx.getLevel() - 1;
+                    if (frameNum < 0) {
                         PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid frame level " + frameCtx);
                         return;
                     }
 
-                    // Create the frame data object based on the corresponding PDAFrame
-                    rm.setData(new FrameDMData(getData().fFrames[frameId]));
-                    rm.done();
+                    // Execute the PDA stack command, or retrieve the result from cache if already available.
+                    fCommandCache.execute(
+                        new PDAFrameCommand(threadCtx, frameNum),
+                        new DataRequestMonitor<PDAFrameCommandResult>(getExecutor(), rm) {
+                            @Override
+                            protected void handleSuccess() {
+                                // Create the frame data object based on the corresponding PDAFrame
+                                rm.setData(new FrameDMData(getData().fFrame));
+                                rm.done();
+                            }
+                        });
                 }
             });
     }
@@ -267,13 +279,13 @@ public class PDAStack extends AbstractDsfService implements IStack {
         }
 
         // Execute the stack command and create the corresponding frame contexts.
-        fCommandCache.execute(
-            new PDAStackCommand(threadCtx),
-            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
+        getStackDepth(
+            context, -1, 
+            new DataRequestMonitor<Integer>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
-                    IFrameDMContext[] frameCtxs = new IFrameDMContext[getData().fFrames.length];
-                    for (int i = 0; i < getData().fFrames.length; i++) {
+                    IFrameDMContext[] frameCtxs = new IFrameDMContext[getData()];
+                    for (int i = 0; i < getData(); i++) {
                         frameCtxs[i] = new FrameDMContext(getSession().getId(), threadCtx, i);
                     }
                     rm.setData(frameCtxs);
@@ -282,6 +294,38 @@ public class PDAStack extends AbstractDsfService implements IStack {
             });
     }
 
+    public void getFrames(IDMContext context, final int startIndex, final int endIndex, final DataRequestMonitor<IFrameDMContext[]> rm) {
+        // Validate index range.
+        assert startIndex >=0 && (endIndex < 0 || startIndex <= endIndex);
+        
+        final PDAThreadDMContext threadCtx = 
+            DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
+        
+        if (threadCtx == null) {
+            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+            rm.done();
+            return;            
+        }
+
+        // Execute the stack command and create the corresponding frame contexts.
+        getStackDepth(
+            context, -1, 
+            new DataRequestMonitor<Integer>(getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    int numFrames = endIndex < 0 
+                        ? (getData() - startIndex) 
+                        : Math.min(endIndex + 1, getData()) - startIndex;
+                    IFrameDMContext[] frameCtxs = new IFrameDMContext[numFrames];
+                    for (int i = 0; i < numFrames; i++) {
+                        frameCtxs[i] = new FrameDMContext(getSession().getId(), threadCtx, startIndex + i);
+                    }
+                    rm.setData(frameCtxs);
+                    rm.done();
+                }
+            });
+    }
+    
     public void getLocals(IFrameDMContext context, final DataRequestMonitor<IVariableDMContext[]> rm) {
         if (!(context instanceof FrameDMContext)) {
             rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
@@ -324,7 +368,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
     }
 
-    public void getStackDepth(IDMContext context, int maxDepth, final DataRequestMonitor<Integer> rm) {
+    public void getStackDepth(IDMContext context, final int maxDepth, final DataRequestMonitor<Integer> rm) {
         final PDAThreadDMContext threadCtx = 
             DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
         
@@ -336,11 +380,15 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
         // Execute stack command and return the data's size.
         fCommandCache.execute(
-            new PDAStackCommand(threadCtx),
-            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
+            new PDAStackDepthCommand(threadCtx),
+            new DataRequestMonitor<PDAStackDepthCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
-                    rm.setData(getData().fFrames.length);
+                    int depth= getData().fDepth;
+                    if (maxDepth > 0 && maxDepth < depth) {
+                    	depth = maxDepth;
+                    }
+					rm.setData(depth);
                     rm.done();
                 }
             });

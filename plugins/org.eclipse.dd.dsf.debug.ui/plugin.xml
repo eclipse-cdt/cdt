@@ -448,6 +448,12 @@
             category="org.eclipse.debug.ui.DebugPreferencePage"
             name="%disassemblyPreferencePage.name"
             id="org.eclipse.dd.dsf.debug.ui.disassembly.preferencePage"/>
+      <page
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.dd.dsf.debug.internal.ui.preferences.DsfDebugPreferencePage"
+            id="org.eclipse.dd.dsf.debug.ui.preferences"
+            name="%preferencePage.name">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -522,5 +528,19 @@
 	         </action>
 	     </viewContribution>
      </extension>
+
+   <!-- Debug view context menu contributions -->
+   <extension point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.dd.dsf.debug.ui.DebugView.context"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.actions.ExpandStackAction"
+               id="org.eclipse.dd.dsf.debug.ui.retrieveMoreFrames"
+               label="%action.expandStack.label"
+               menubarPath="renderGroup">
+         </action>
+      </viewerContribution>
+   </extension>
 
 </plugin>

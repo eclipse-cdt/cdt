@@ -323,13 +323,34 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         return vmContexts;
     }
     
+    /**
+     * Fill update request with view model contexts based on given data model contexts.
+     * Assumes that data model context elements start at index 0.
+     * 
+     * @param update  the viewer update request
+     * @param dmcs  the data model contexts
+     */
     protected void fillUpdateWithVMCs(IChildrenUpdate update, IDMContext[] dmcs) {
-        int startIdx = update.getOffset() != -1 ? update.getOffset() : 0;
-        int endIdx = update.getLength() != -1 ? startIdx + update.getLength() : dmcs.length;
-        // Ted: added bounds limitation of dmcs.length
-        // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
-        for (int i = startIdx; i < endIdx && i < dmcs.length; i++) {
-            update.setChild(createVMContext(dmcs[i]), i);
+    	fillUpdateWithVMCs(update, dmcs, 0);
+    }
+
+    /**
+     * Fill update request with view model contexts based on given data model contexts.
+     * 
+     * @param update  the viewer update request
+     * @param dmcs  the data model contexts
+     * @param firstIndex  the index of the first data model context
+     */
+    protected void fillUpdateWithVMCs(IChildrenUpdate update, IDMContext[] dmcs, int firstIndex) {
+        int updateIdx = update.getOffset() != -1 ? update.getOffset() : 0;
+        final int endIdx = updateIdx + (update.getLength() != -1 ? update.getLength() : dmcs.length);
+        int dmcIdx = updateIdx - firstIndex;
+        if (dmcIdx < 0) {
+        	updateIdx -= dmcIdx;
+        	dmcIdx = 0;
+        }
+        while (updateIdx < endIdx && dmcIdx < dmcs.length) {
+        	update.setChild(createVMContext(dmcs[dmcIdx++]), updateIdx++);
         }
     }
     

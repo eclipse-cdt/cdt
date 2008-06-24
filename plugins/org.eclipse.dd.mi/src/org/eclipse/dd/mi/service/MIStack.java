@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.IStack2;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -54,7 +55,7 @@ import org.eclipse.dd.mi.service.command.output.MIStackListLocalsInfo;
 import org.osgi.framework.BundleContext;
 
 public class MIStack extends AbstractDsfService
-	implements IStack
+	implements IStack2
 {
     protected static class MIFrameDMC extends AbstractDMContext 
         implements IFrameDMContext
@@ -194,22 +195,55 @@ public class MIStack extends AbstractDsfService
         return new MIFrameDMC(getSession().getId(), execDmc, level);
     }
     
-	public void getFrames(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext[]> rm) {
+    public void getFrames(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext[]> rm) {
+    	getFrames(ctx, 0, ALL_FRAMES, rm);
+    }
+
+	public void getFrames(final IDMContext ctx, final int startIndex, final int endIndex, final DataRequestMonitor<IFrameDMContext[]> rm) {
+
+	    if (startIndex < 0 || endIndex > 0 && endIndex < startIndex) {
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid stack frame range [" + startIndex + ',' + endIndex + ']', null)); //$NON-NLS-1$
+            rm.done();
+            return;
+	    }
 
 		final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
 	    
 	    if (execDmc == null) {
             //rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, -1, "No frame context found in " + ctx, null)); //$NON-NLS-1$
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + ctx, null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context " + ctx, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
-        fMICommandCache.execute(
-            new MIStackListFrames(execDmc),
+
+	    if (startIndex == 0 && endIndex == 0) {
+	        // Try to retrieve the top stack frame from the cached stopped event.
+	        if (fCachedStoppedEvent != null && 
+	            fCachedStoppedEvent.getFrame() != null && 
+	            execDmc.equals(fCachedStoppedEvent.getDMContext())) 
+	        {
+	            rm.setData(new IFrameDMContext[] { createFrameDMContext(execDmc, fCachedStoppedEvent.getFrame().getLevel()) });
+	            rm.done();
+	            return;
+	        }
+	    }
+
+	    final MIStackListFrames miStackListCmd;
+	    // firstIndex is the first index retrieved
+	    final int firstIndex;
+	    if (endIndex >= 0) {
+	    	miStackListCmd = new MIStackListFrames(execDmc, startIndex, endIndex);
+	    	firstIndex = startIndex;
+	    } else {
+	    	miStackListCmd = new MIStackListFrames(execDmc);
+	    	firstIndex = 0;
+	    }
+		fMICommandCache.execute(
+            miStackListCmd,
             new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
                 @Override
                 protected void handleSuccess() {
-                    rm.setData(getFrames(execDmc, getData()));
+                    rm.setData(getFrames(execDmc, getData(), firstIndex, endIndex, startIndex));
                     rm.done();
                 }
             });
@@ -234,9 +268,11 @@ public class MIStack extends AbstractDsfService
         }
         
         // If stopped event is not available or doesn't contain frame info, 
-        // query the full list of frames.
+        // query top stack frame
         getFrames(
             ctx, 
+            0,
+            0,
             new DataRequestMonitor<IFrameDMContext[]>(getExecutor(), rm) { 
                 @Override
                 protected void handleSuccess() {
@@ -247,11 +283,20 @@ public class MIStack extends AbstractDsfService
     }
     
     //private MIFrameDMC[] getFrames(DsfMIStackListFramesInfo info) {
-    private IFrameDMContext[] getFrames(IMIExecutionDMContext execDmc, MIStackListFramesInfo info) {
-        IFrameDMContext[] frameDMCs = new MIFrameDMC[info.getMIFrames().length];
-        for (int i = 0; i < info.getMIFrames().length; i++) {
+    private IFrameDMContext[] getFrames(IMIExecutionDMContext execDmc, MIStackListFramesInfo info, int firstIndex, int lastIndex, int startIndex) {
+        int length = info.getMIFrames().length;
+        if (lastIndex > 0) {
+        	int limit= lastIndex - startIndex + 1;
+        	if (limit < length) {
+        		length = limit;
+        	}
+        }
+		IFrameDMContext[] frameDMCs = new MIFrameDMC[length];
+        for (int i = 0; i < length; i++) {
 	        //frameDMCs[i] = new MIFrameDMC(this, info.getMIFrames()[i].getLevel()); 
-            frameDMCs[i] = createFrameDMContext(execDmc, info.getMIFrames()[i].getLevel()); 
+        	final MIFrame frame= info.getMIFrames()[i + startIndex - firstIndex];
+			assert startIndex + i == frame.getLevel();
+            frameDMCs[i] = createFrameDMContext(execDmc, frame.getLevel()); 
         }
         return frameDMCs;
     }

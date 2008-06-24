@@ -577,6 +577,7 @@ public class PDAVirtualMachine {
         else if ("eval".equals(command)) debugEval(args);
         else if ("eventstop".equals(command)) debugEventStop(args);
         else if ("exit".equals(command)) debugExit();
+        else if ("frame".equals(command)) debugFrame(args);
         else if ("popdata".equals(command)) debugPop(args);
         else if ("pushdata".equals(command)) debugPush(args);
         else if ("resume".equals(command)) debugResume(args);
@@ -584,6 +585,7 @@ public class PDAVirtualMachine {
         else if ("setdata".equals(command)) debugSetData(args);
         else if ("setvar".equals(command)) debugSetVariable(args);
         else if ("stack".equals(command)) debugStack(args);
+        else if ("stackdepth".equals(command)) debugStackDepth(args);
         else if ("state".equals(command)) debugState(args);
         else if ("step".equals(command)) debugStep(args);
         else if ("stepreturn".equals(command)) debugStepReturn(args);
@@ -713,6 +715,23 @@ public class PDAVirtualMachine {
         System.exit(0);
     }
 
+    void debugFrame(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
+        int sfnumber = args.getNextIntArg();
+        Frame frame = null;
+        if (sfnumber >= thread.fFrames.size()) {
+            frame = thread.fCurrentFrame;
+        } else {
+            frame = thread.fFrames.get(sfnumber);
+        }
+        sendCommandResponse(printFrame(frame) + "\n");
+    }
+
     void debugPop(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
@@ -818,6 +837,16 @@ public class PDAVirtualMachine {
         result.append('\n');
         sendCommandResponse(result.toString());
     }
+
+    void debugStackDepth(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+        sendCommandResponse( Integer.toString(thread.fFrames.size() + 1) + "\n" );
+    }
+
 
     /**
      * The stack frame output is: frame # frame # frame ... where each frame is:

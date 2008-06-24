@@ -58,6 +58,10 @@ public class Test2 extends CommandControlTestsBase {
         expectEvent("vmsuspended 1 breakpoint 12");
         sendCommand("clear 19");
         sendCommand("stack 1", fProgram + "|6|main#" + fProgram + "|18|sub1|m|n#" + fProgram + "|12|sub2" );
+        sendCommand("stackdepth 1", "3");
+        sendCommand("frame 1 0", fProgram + "|6|main");
+        sendCommand("frame 1 1", fProgram + "|18|sub1|m|n");
+        sendCommand("frame 1 2", fProgram + "|12|sub2" );
         sendCommand("stepreturn 1");
         expectEvent("vmresumed step");
         expectEvent("vmsuspended 1 step");
@@ -139,6 +143,10 @@ public class Test2 extends CommandControlTestsBase {
         expectEvent("suspended 1 breakpoint 12");
         sendCommand("clear 19");
         sendCommand("stack 1", fProgram + "|6|main#" + fProgram + "|18|sub1|m|n#" + fProgram + "|12|sub2" );
+        sendCommand("stackdepth 1", "3");
+        sendCommand("frame 1 0", fProgram + "|6|main");
+        sendCommand("frame 1 1", fProgram + "|18|sub1|m|n");
+        sendCommand("frame 1 2", fProgram + "|12|sub2" );
         sendCommand("stepreturn 1");
         expectEvent("resumed 1 step");
         expectEvent("suspended 1 step");

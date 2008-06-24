@@ -599,7 +599,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         IVMModelProxy proxy = null;
         for (Iterator<IVMModelProxy> itr = getActiveModelProxies().iterator(); itr.hasNext();) {
             IVMModelProxy next = itr.next();
-            if (next == null && next.getRootElement().equals(element)) {
+            if (next != null && next.getRootElement().equals(element)) {
                 proxy = next;
             }
         }

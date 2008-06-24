@@ -540,10 +540,12 @@ abstract public class AbstractVMProvider implements IVMProvider
         IVMModelProxy proxy = null;
         for (Iterator<IVMModelProxy> itr = getActiveModelProxies().iterator(); itr.hasNext();) {
             IVMModelProxy next = itr.next();
-            if (next == null && next.getRootElement().equals(element)) {
-                proxy = next;
-            } else if (next.isDisposed()) {
-                itr.remove();
+            if (next != null) {
+            	if (next.getRootElement().equals(element)) {
+            		proxy = next;
+            	} else if (next.isDisposed()) {
+            		itr.remove();
+            	}
             }
         }
         if (proxy == null) {

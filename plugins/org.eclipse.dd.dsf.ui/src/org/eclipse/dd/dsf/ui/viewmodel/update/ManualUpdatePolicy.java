@@ -52,7 +52,7 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
         
         @Override
         public String toString() {
-            return "Edit (" + fElements + ") update tester"; //$NON-NLS-1$
+            return "Edit (" + fElements + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     

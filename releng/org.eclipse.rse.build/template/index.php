@@ -56,7 +56,7 @@
     	<a href="http://archive.eclipse.org/eclipse/downloads/">
          Eclipse 3.3</a> or later for the SSH component; the SSH encoding fix
          (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224799">bug 224799</a>)
-         requires <a href="http://download.eclipse.org/eclipse/downloads/">Eclipse 3.4M6</a>
+         requires <a href="http://download.eclipse.org/eclipse/downloads/">Eclipse 3.4</a>
          or later.
     </b></td></tr>
     <tr><td>

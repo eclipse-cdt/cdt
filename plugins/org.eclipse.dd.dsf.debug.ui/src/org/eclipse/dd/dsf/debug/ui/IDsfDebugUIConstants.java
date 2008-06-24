@@ -58,7 +58,7 @@ public interface IDsfDebugUIConstants {
 
 	/**
 	 * Integer preference to control the maximum amount of stack frames to
-	 * retrieve from the backend. Default value is 100.
+	 * retrieve from the backend. Default value is 10.
 	 * @see {@link #PREF_STACK_FRAME_LIMIT_ENABLE}
 	 */
 	public static final String PREF_STACK_FRAME_LIMIT = "stackFrameLimit"; //$NON-NLS-1$

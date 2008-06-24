@@ -56,7 +56,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		/* 
 		 * Debug View
 		 */
-		prefs.setDefault(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, 100);
+		prefs.setDefault(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, 10);
 		prefs.setDefault(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE, true);
 }
 }

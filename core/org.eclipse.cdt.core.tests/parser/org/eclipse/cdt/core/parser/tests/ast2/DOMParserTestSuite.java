@@ -50,6 +50,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(TaskParserTest.suite());
 		suite.addTest(CompletionTestSuite.suite());
 		suite.addTestSuite(CharArrayMapTest.class);
+		suite.addTest(FaultToleranceTests.suite());
 		return suite;
 	}
 }

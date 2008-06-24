@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -4955,6 +4956,67 @@ public class AST2Tests extends AST2BaseTest {
     		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
     		IParameter p= ba.assertNonProblem("ptr", 3, IParameter.class);
     		assertEquals("ptr", p.getName());
+    	}
+    }
+    
+    // void test() {}
+    // +error
+    public void testTrailingSyntaxErrorInTU() throws Exception {
+    	final String comment= getAboveComment();
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parse(comment, lang, false, false);
+    		IASTDeclaration decl= getDeclaration(tu, 0);
+    		IASTProblemDeclaration pdecl= getDeclaration(tu, 1);
+    		assertEquals("+error", pdecl.getRawSignature());
+    	}
+    }
+
+    // struct X {
+    // int test;
+    // +error
+    // };
+    public void testTrailingSyntaxErrorInCompositeType() throws Exception {
+    	final String comment= getAboveComment();
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parse(comment, lang, false, false);
+    		IASTCompositeTypeSpecifier ct= getCompositeType(tu, 0);
+    		IASTDeclaration decl= getDeclaration(ct, 0);
+    		IASTProblemDeclaration pdecl= getDeclaration(ct, 1);
+    		assertEquals("+error", pdecl.getRawSignature());
+    	}
+    }
+    
+    // void func() {
+    //    {
+    //       int test;
+    //       +error
+    //    }
+    // }
+    public void testTrailingSyntaxErrorInCompoundStatements() throws Exception {
+    	final String comment= getAboveComment();
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parse(comment, lang, false, false);
+    		IASTFunctionDefinition def= getDeclaration(tu, 0);
+    		IASTCompoundStatement compStmt= getStatement(def, 0);
+    		IASTDeclarationStatement dstmt= getStatement(compStmt, 0);
+    		IASTProblemStatement pstmt= getStatement(compStmt, 1);
+    		assertEquals("+error", pstmt.getRawSignature());
+    	}
+    }
+    
+    // struct X {
+    //  ;
+    // };
+    // ;
+    public void testEmptyDeclarations() throws Exception {
+    	final String comment= getAboveComment();
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parse(comment, lang, false, false);
+    		IASTCompositeTypeSpecifier ct= getCompositeType(tu, 0);
+    		IASTDeclaration empty= getDeclaration(ct, 0);
+    		assertEquals(";", empty.getRawSignature());
+    		empty= getDeclaration(tu, 1);
+    		assertEquals(";", empty.getRawSignature());
     	}
     }
 }

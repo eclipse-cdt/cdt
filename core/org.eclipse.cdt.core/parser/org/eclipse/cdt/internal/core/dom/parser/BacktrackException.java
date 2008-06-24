@@ -6,10 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 
 /**
@@ -17,20 +19,35 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
  */
 public class BacktrackException extends Exception {
     private IASTProblem problem;
+    private IASTNode nodeBeforeProblem;	// a node has been created in spite of the problem.
     private int offset, length; 
+  
+    public BacktrackException() {	
+    }
+    
+	public BacktrackException(BacktrackException e) {
+		problem= e.problem;
+		nodeBeforeProblem= e.nodeBeforeProblem;
+		offset= e.offset;
+		length= e.length;
+	}
 
-    /**
-     * @param p
-     */
     public void initialize(IASTProblem p) {
         reset();
         problem = p;
+    }
+
+    public void initialize(IASTProblem p, IASTNode node) {
+        reset();
+        problem = p;
+        nodeBeforeProblem= node;
     }
 
     /**
      * 
      */
     private void reset() {
+    	nodeBeforeProblem= null;
         problem = null;
         offset = 0;
         length = 0;
@@ -40,6 +57,10 @@ public class BacktrackException extends Exception {
      */
     public final IASTProblem getProblem() {
         return problem;
+    }
+    
+    public final IASTNode getNodeBeforeProblem() {
+    	return nodeBeforeProblem;
     }
 
     public void initialize(int start, int l ) {

@@ -41,11 +41,12 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-ep_ver=3.4RC3
-ep_date=200805301730
+ep_rel=R
+ep_ver=3.4
+ep_date=200806172000
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448f.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -58,7 +59,7 @@ if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448.jar ]; then
   fi
   # Eclipse SDK: Need the SDK so we can link into docs
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-${ep_ver}-${ep_date}/eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz"
+  wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}-${ep_ver}-${ep_date}/eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz"
   tar xfvz eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
   rm eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
   if ${P2_disabled} ; then
@@ -106,15 +107,16 @@ else
   DROPUP=../..
 fi
 
-# EMF 2.4.0RC3
+# EMF 2.4.0
 EMFBRANCH=2.4.0
-EMFDATE=200806021643
-EMFVER=2.4.0RC3
+EMFREL=R
+EMFDATE=200806091234
+EMFVER=2.4.0
 if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
   cd ${DROPIN}
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/${EMFBRANCH}/S${EMFDATE}/emf-sdo-xsd-SDK-${EMFVER}.zip"
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/${EMFBRANCH}/${EMFREL}${EMFDATE}/emf-sdo-xsd-SDK-${EMFVER}.zip"
   unzip -o emf-sdo-xsd-SDK-${EMFVER}.zip
   rm emf-sdo-xsd-SDK-${EMFVER}.zip
   cd ${DROPUP}
@@ -122,7 +124,7 @@ fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-${ep_ver}-${ep_date}/eclipse-test-framework-${ep_ver}.zip"
+  wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}-${ep_ver}-${ep_date}/eclipse-test-framework-${ep_ver}.zip"
   unzip -o eclipse-test-framework-${ep_ver}.zip
   rm eclipse-test-framework-${ep_ver}.zip
 fi
@@ -135,15 +137,19 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   cd ${DROPUP}
 fi
 
-# CDT 5.0RC3 Runtime
-CDTVER=200805300802
+# CDT 5.0 Runtime
+CDTVER=200806171202
+#CDTNAME=cdt-master-5.0.0-I${CDTVER}.zip
+#CDTLOC=builds/5.0.0/I.I${CDTVER}/${CDTNAME}
+CDTNAME=cdt-master-5.0.0.zip
+CDTLOC=releases/ganymede/dist/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I${CDTVER}/cdt-master-5.0.0-I${CDTVER}.zip"
+  wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"
   CDTTMP=`pwd`/tmp.$$
   mkdir ${CDTTMP}
   cd ${CDTTMP}
-  unzip ../cdt-master-5.0.0-I${CDTVER}.zip
+  unzip ../${CDTNAME}
   cd ..
   #java -jar eclipse/startup.jar \
   java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
@@ -159,11 +165,10 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
     -featureId org.eclipse.cdt \
     -version 5.0.0.${CDTVER}
   rm -rf ${CDTTMP}
-  rm cdt-master-5.0.0-I${CDTVER}.zip
+  rm ${CDTNAME}
 fi
 
 # checkout the basebuilder
-#baseBuilderTag=vI20080502-0100
 baseBuilderTag=RC2_34
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080515-2000.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.4.0.v20080522/pdebuild.jar \

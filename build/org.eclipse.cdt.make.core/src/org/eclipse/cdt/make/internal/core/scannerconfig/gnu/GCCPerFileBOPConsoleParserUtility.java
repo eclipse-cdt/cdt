@@ -241,6 +241,14 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
             if (!cwd.isAbsolute()) {
                 cwd = getBaseDirectory().append(cwd);
             }
+            if (filePath.startsWith("`pwd`")) { //$NON-NLS-1$
+            	if (filePath.length() > 5 && (filePath.charAt(5) == '/' || filePath.charAt(5) == '\\')) {
+            		filePath = filePath.substring(6);
+            	}
+            	else {
+            		filePath = filePath.substring(5);
+            	}
+            }
             pFilePath = cwd.append(filePath);
         }
         return pFilePath;

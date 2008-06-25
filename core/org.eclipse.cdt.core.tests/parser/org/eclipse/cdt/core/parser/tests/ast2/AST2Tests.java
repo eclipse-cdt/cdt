@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -5017,6 +5018,25 @@ public class AST2Tests extends AST2BaseTest {
     		assertEquals(";", empty.getRawSignature());
     		empty= getDeclaration(tu, 1);
     		assertEquals(";", empty.getRawSignature());
+    	}
+    }
+    
+    // void test() {
+    //    int foux = 3;
+    //    switch(foux)    // no brace!
+    //       case 0:
+    //       case 1:
+    //          foux= 0;
+    //    foux= 1;
+    // }
+    public void testSwitchWithoutCompound_Bug105334() throws Exception {
+    	final String comment= getAboveComment();
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parse(comment, lang);
+    		IASTFunctionDefinition fdef= getDeclaration(tu, 0);
+    		IASTSwitchStatement sw= getStatement(fdef, 1);
+    		IASTStatement stmt= getStatement(fdef, 2);
+    		assertEquals("foux= 1;", stmt.getRawSignature());
     	}
     }
 }

@@ -1654,6 +1654,27 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return break_statement;
     }
 
+    protected IASTStatement parseSwitchBody() throws EndOfFileException, BacktrackException {
+		IASTStatement stmt= null;
+        if (LT(1) != IToken.tEOC)
+        	stmt= statement();
+    
+        if (stmt instanceof IASTCaseStatement == false) 
+        	return stmt;
+        
+        // bug 105334, switch without compound statement
+        IASTCompoundStatement comp= createCompoundStatement();
+        ((ASTNode) comp).setOffsetAndLength((ASTNode) stmt);
+        comp.addStatement(stmt);
+
+        while (LT(1) != IToken.tEOC && stmt instanceof IASTCaseStatement) {
+        	stmt= statement();
+        	comp.addStatement(stmt);
+        }
+        adjustLength(comp, stmt);
+		return comp;
+	}
+
     protected IASTStatement parseContinueStatement() throws EndOfFileException,
             BacktrackException {
         int startOffset = consume().getOffset(); // t_continue

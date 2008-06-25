@@ -50,7 +50,7 @@ Software User Agreement</a> unless otherwise specified. </p>
 <b>Other eclipse.org project</b> downloads are available
 <a href="http://www.eclipse.org/downloads/index.php">here</a>.<br/>
 If you just want the latest drops (no dstore server), you can also get them from the 
-<a href="http://download.eclipse.org/dsdp/tm/updates/2.0">TM 2.0 update site</a>.</p>
+<a href="http://download.eclipse.org/dsdp/tm/updates/3.0">TM 3.0 update site</a>.</p>
 
 <p>
 For information about different kinds of builds look

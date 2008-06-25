@@ -2488,10 +2488,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         default:
             throwBacktrack(LA(1));
         }
-        IASTStatement  switch_body = null;
-        if (LT(1) != IToken.tEOC)
-        	switch_body = statement();
-    
+
+        IASTStatement switch_body = parseSwitchBody();
         IASTSwitchStatement switch_statement = createSwitchStatement();
         ((ASTNode) switch_statement).setOffsetAndLength(startOffset,
         		(switch_body != null ? calculateEndOffset(switch_body) : LA(1).getEndOffset()) - startOffset);

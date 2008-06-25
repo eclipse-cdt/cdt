@@ -8,7 +8,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
-import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
@@ -19,32 +19,39 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
  * @author Mike Kucera
  *
  */
-public class ScannerExtensionConfiguration implements IScannerExtensionConfiguration {
+public class ScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
 
+	@Override
 	public CharArrayIntMap getAdditionalKeywords() {
 		return null;
 	}
 
+	@Override
 	public IMacro[] getAdditionalMacros() {
 		return null;
 	}
 
+	@Override
 	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
 		return null;
 	}
 
+	@Override
 	public boolean initializeMacroValuesTo1() {
 		return false;
 	}
 
+	@Override
 	public boolean support$InIdentifiers() {
 		return true;
 	}
 
+	@Override
 	public char[] supportAdditionalNumericLiteralSuffixes() {
 		return null;
 	}
 
+	@Override
 	public boolean supportMinAndMaxOperators() {
 		return false;
 	}

@@ -50,8 +50,8 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public class InternalASTServiceProvider implements IASTServiceProvider {
 
-	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
-    protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = new GPPScannerExtensionConfiguration();
+	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = GCCScannerExtensionConfiguration.getInstance();
+    protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = GPPScannerExtensionConfiguration.getInstance();
     private static final String[] dialects = {
    		"C99",   //$NON-NLS-1$
    		"C++98", //$NON-NLS-1$

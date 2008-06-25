@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Ed Swartz (Nokia)
- * Anton Leherbauer (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Ed Swartz (Nokia)
+ *    Anton Leherbauer (Wind River Systems)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
@@ -18,21 +19,11 @@ import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 /**
  * C++ parser extension configuration interface.
  * 
- * <p>
- * This interface is not intended to be implemented directly. Clients should
- * subclass {@link AbstractCPPParserExtensionConfiguration} instead.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ * Clients can subclass {@link AbstractCPPParserExtensionConfiguration} instead.
  * 
  * @see "http://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html"
  * @see "http://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Extensions.html"
- * 
- * @author jcamelon
  * @since 4.0
  */
 public interface ICPPParserExtensionConfiguration {
@@ -75,16 +66,6 @@ public interface ICPPParserExtensionConfiguration {
 	 *         enabled
 	 */
 	public boolean supportComplexNumbers();
-
-	/**
-	 * Support for the GNU <code>__restrict__</code> keyword.
-	 * 
-	 * @return <code>true</code> if support for the extension should be
-	 *         enabled
-	 * @deprecated configure extra keywords, via {@link IScannerExtensionConfiguration#getAdditionalKeywords()}      
-	 */
-	@Deprecated
-	public boolean supportRestrictKeyword();
 
 	/**
 	 * Support for GNU long long types.
@@ -130,16 +111,6 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportKnRC();
 
 	/**
-	 * See http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html for more
-	 * information on GCC's Other Built-in Symbols.
-	 * 
-	 * @return <code>true</code> if support for the extension should be enabled
-	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
-	 */
-	@Deprecated
-	public boolean supportGCCOtherBuiltinSymbols();
-
-	/**
 	 * See http://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html for more
 	 * information on GCC's Attribute Specifiers.
 	 * 
@@ -163,4 +134,24 @@ public interface ICPPParserExtensionConfiguration {
 	 *         <code>null</code>
 	 */
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider();
+
+	/**
+	 * Skips information in brackets provided at the beginning of a parameter declaration:
+	 * <br>
+	 * void accelerate([proc=marsh] const Speed &data);
+	 * @since 5.1
+	 */
+	public boolean supportParameterInfoBlock();
+	
+	/**
+	 * @deprecated configure extra keywords, via {@link IScannerExtensionConfiguration#getAdditionalKeywords()}      
+	 */
+	@Deprecated
+	public boolean supportRestrictKeyword();
+
+	/**
+	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
+	 */
+	@Deprecated
+	public boolean supportGCCOtherBuiltinSymbols();
 }

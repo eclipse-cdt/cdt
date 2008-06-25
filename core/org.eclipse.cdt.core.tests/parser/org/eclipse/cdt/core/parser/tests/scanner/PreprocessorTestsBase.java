@@ -67,10 +67,10 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		IScannerExtensionConfiguration scannerConfig;
 	
 	    if (lang == ParserLanguage.C) {
-	    	scannerConfig= new GCCScannerExtensionConfiguration();
+	    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();
 	    }
 	    else {
-	    	scannerConfig= new GPPScannerExtensionConfiguration();
+	    	scannerConfig= GPPScannerExtensionConfiguration.getInstance();
 	    }
 	    
 		fScanner= new CPreprocessor(input, scannerInfo, lang, NULL_LOG, scannerConfig, readerFactory);

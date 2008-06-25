@@ -85,7 +85,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	private MacroExpander createExpander(final String macrodefs) throws OffsetLimitReachedException {
 		CPreprocessor cpp= new CPreprocessor(new CodeReader(macrodefs.toCharArray()),
 				new ScannerInfo(), ParserLanguage.C, new NullLogService(), 
-				new GCCScannerExtensionConfiguration(), NullCodeReaderFactory.getInstance());
+				GCCScannerExtensionConfiguration.getInstance(), NullCodeReaderFactory.getInstance());
 		int type;
 		do {
 			type= cpp.nextTokenRaw().getType();

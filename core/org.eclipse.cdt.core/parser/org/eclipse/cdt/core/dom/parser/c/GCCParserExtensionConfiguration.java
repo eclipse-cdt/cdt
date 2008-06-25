@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Ed Swartz (Nokia)
+ *    IBM Rational Software - Initial API and implementation
+ *    Ed Swartz (Nokia)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.c;
 
@@ -16,9 +17,16 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 
 /**
- * @author jcamelon
+ * Configures the parser for c-source code as accepted by gcc.
  */
 public class GCCParserExtensionConfiguration extends AbstractCParserExtensionConfiguration {
+	private static GCCParserExtensionConfiguration sInstance= new GCCParserExtensionConfiguration();
+	/**
+	 * @since 5.1
+	 */
+	public static GCCParserExtensionConfiguration getInstance() {
+		return sInstance;
+	}
 
     /*
      * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportStatementsInExpressions()

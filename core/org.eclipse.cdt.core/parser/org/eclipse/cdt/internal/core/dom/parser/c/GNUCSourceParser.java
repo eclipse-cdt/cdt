@@ -146,6 +146,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 config.supportDeclspecSpecifiers(),
                 config.getBuiltinBindingsProvider());
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
+        supportParameterInfoBlock= config.supportParameterInfoBlock();
         this.index= index;
     }
 
@@ -434,22 +435,24 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	endOffset= figureEndOffset(declSpec, declarators);
             break;
         default:
-        	insertSemi= true;
-        	if (markBeforDtor == null || !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
-        		if (markBeforDtor != null) {
-        			backup(markBeforDtor);
+        	if (declOption != DeclarationOptions.LOCAL) {
+        		insertSemi= true;
+        		if (markBeforDtor == null || !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
+        			if (markBeforDtor != null) {
+        				backup(markBeforDtor);
+        			}
+        			declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+        			endOffset= calculateEndOffset(declSpec);
+        			break;
         		}
-        		declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        		endOffset= calculateEndOffset(declSpec);
-        		break;
+        		endOffset= figureEndOffset(declSpec, declarators);
+        		if (lt1 == 0 || !isOnSameLine(endOffset, LA(1).getOffset())) {
+        			break;
+        		}
+        		if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
+        			break;
+        		}
         	}
-        	endOffset= figureEndOffset(declSpec, declarators);
-    		if (lt1 == 0 || !isOnSameLine(endOffset, LA(1).getOffset())) {
-        		break;
-    		}
-    		if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
-    			break;
-    		}
         	throwBacktrack(LA(1));
         }
 
@@ -2014,7 +2017,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTParameterDeclaration parameterDeclaration(DeclarationOptions option) throws BacktrackException, EndOfFileException {
         final IToken current = LA(1);
         int startingOffset = current.getOffset();
-        
+        if (current.getType() == IToken.tLBRACKET && supportParameterInfoBlock) {
+        	skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET);
+        }
+
         IASTDeclSpecifier declSpec = null;
         IASTDeclarator declarator = null;
         IASTDeclSpecifier altDeclSpec = null;

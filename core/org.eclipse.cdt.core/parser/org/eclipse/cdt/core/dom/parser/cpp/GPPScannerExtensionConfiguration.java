@@ -16,20 +16,24 @@ package org.eclipse.cdt.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.parser.GNUScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 /**
- * @author jcamelon
+ * Configures the preprocessor for c++-sources as accepted by g++.
  */
 public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
 
-	private static CharArrayIntMap sAdditionalKeywords;
-	static {
-		sAdditionalKeywords= new CharArrayIntMap(10, -1);
-		GNUScannerExtensionConfiguration.addAdditionalGNUKeywords(sAdditionalKeywords);
-		sAdditionalKeywords.put( Keywords.cRESTRICT, IToken.t_restrict );
-		sAdditionalKeywords.put( Keywords.c_COMPLEX, IToken.t__Complex );
-		sAdditionalKeywords.put( Keywords.c_IMAGINARY, IToken.t__Imaginary );
+	private static GPPScannerExtensionConfiguration sInstance= new GPPScannerExtensionConfiguration();
+	/**
+	 * @since 5.1
+	 */
+	public static GPPScannerExtensionConfiguration getInstance() {
+		return sInstance;
+	}
+	
+	public GPPScannerExtensionConfiguration() {
+		addKeyword(Keywords.cRESTRICT, IToken.t_restrict);
+		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
+		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
 	}
 	
     /* (non-Javadoc)
@@ -38,13 +42,5 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
     @Override
 	public boolean supportMinAndMaxOperators() {
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalKeywords()
-     */
-    @Override
-	public CharArrayIntMap getAdditionalKeywords() {
-		return sAdditionalKeywords;
     }
 }

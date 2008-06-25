@@ -13,24 +13,22 @@
 package org.eclipse.cdt.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.parser.GNUScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.IMacro;
-import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 /**
- * @author jcamelon
+ * Configures the preprocessor for parsing c-sources as accepted by gcc.
  */
 public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
 
-	private static IMacro[] sAdditionalMacros;
-	private static CharArrayIntMap sAdditionalKeywords;
-	static {
-		final IMacro[] macros = GNUScannerExtensionConfiguration.getAdditionalGNUMacros();
-		sAdditionalMacros= new IMacro[macros.length+1];
-		System.arraycopy(macros, 0, sAdditionalMacros, 0, macros.length);
-		sAdditionalMacros[macros.length]= createMacro("_Pragma(arg)", "");  //$NON-NLS-1$//$NON-NLS-2$
-		
-		sAdditionalKeywords= new CharArrayIntMap(10, -1);
-		GNUScannerExtensionConfiguration.addAdditionalGNUKeywords(sAdditionalKeywords);
+	private static GCCScannerExtensionConfiguration sInstance= new GCCScannerExtensionConfiguration();
+	/**
+	 * @since 5.1
+	 */
+	public static GCCScannerExtensionConfiguration getInstance() {
+		return sInstance;
+	}
+
+	public GCCScannerExtensionConfiguration() {
+		addMacro("_Pragma(arg)", "");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
     /* (non-Javadoc)
@@ -40,22 +38,4 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	public boolean supportMinAndMaxOperators() {
         return false;
     }
-    
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalMacros()
-     */
-    @Override
-	public IMacro[] getAdditionalMacros() {
-    	return sAdditionalMacros;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalKeywords()
-     */
-    @Override
-	public CharArrayIntMap getAdditionalKeywords() {
-    	return sAdditionalKeywords;
-    }
-
 }

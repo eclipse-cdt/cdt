@@ -147,7 +147,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
         fLog = log;
         fAdditionalNumericLiteralSuffixes= nonNull(configuration.supportAdditionalNumericLiteralSuffixes());
-        fLexOptions.fSupportDollarInitializers= configuration.support$InIdentifiers();
+        fLexOptions.fSupportDollarInIdentifiers= configuration.support$InIdentifiers();
+        fLexOptions.fSupportAtSignInIdentifiers= configuration.supportAtSignInIdentifiers();
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);

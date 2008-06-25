@@ -18,19 +18,9 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 /**
  * Scanner extension configuration interface.
- * 
- * <p>
- * This interface is not intended to be implemented directly. Clients should
- * subclass {@link AbstractScannerExtensionConfiguration} instead.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
- * 
- * @author jcamelon
+ *
+ * @noimplement This interface is not intended to be implemented by clients. Clients can subclass
+ * {@link AbstractScannerExtensionConfiguration}, instead.
  */
 public interface IScannerExtensionConfiguration {
 
@@ -49,6 +39,14 @@ public interface IScannerExtensionConfiguration {
 	 * @return <code>true</code>, if $ should be supported in identifiers
 	 */
 	public boolean support$InIdentifiers();
+
+	/**
+	 * Support for extension "At Signs in Identifier Names". If enabled, the '@' sign is treated as part of
+	 * identifiers.
+	 * @return <code>true</code>, if @ should be supported in identifiers
+	 * @since 5.1
+	 */
+	public boolean supportAtSignInIdentifiers();
 
 	/**
 	 * Support for (deprecated) GNU minimum and maximum operators (<code>&lt;?</code>

@@ -11,22 +11,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 /**
  * Abstract scanner extension configuration to help model C/C++ dialects.
- *
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
- * 
  * @since 4.0
  */
 public abstract class AbstractScannerExtensionConfiguration implements IScannerExtensionConfiguration {
+	private static final IMacro[] EMPTY_MACRO_ARRAY = new IMacro[0];
+	private ArrayList<IMacro> fAddMacroList;
+	private IMacro[] fAddMacros;
+	private CharArrayIntMap fAddKeywords;
+	private CharArrayIntMap fAddPreprocessorKeywords;
+	
 	protected static class MacroDefinition implements IMacro {
 		private char[] fSignature;
 		private char[] fExpansion;
@@ -44,18 +45,21 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		}
 	}
 
-	/**
-	 * @deprecated see {@link IScannerExtensionConfiguration#initializeMacroValuesTo1()}
-	 */
-	@Deprecated
-	public boolean initializeMacroValuesTo1() {
-		return false;
+	public AbstractScannerExtensionConfiguration() {
 	}
-
+	
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#support$InIdentifiers()
 	 */
 	public boolean support$InIdentifiers() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since 5.1
+	 */
+	public boolean supportAtSignInIdentifiers() {
 		return false;
 	}
 
@@ -73,41 +77,82 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#getAdditionalKeywords()
-	 */
-	public CharArrayIntMap getAdditionalKeywords() {
-		return null;
+	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
+		return fAddPreprocessorKeywords;
 	}
-
+	
+	public CharArrayIntMap getAdditionalKeywords() {
+		return fAddKeywords;
+	}
 
 	public IMacro[] getAdditionalMacros() {
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#getAdditionalPreprocessorKeywords()
-	 */
-	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
-		return null;
+		if (fAddMacros == null) {
+			if (fAddMacroList == null) {
+				fAddMacros= EMPTY_MACRO_ARRAY;
+			} else {
+				fAddMacros= fAddMacroList.toArray(new IMacro[fAddMacroList.size()]);
+			}
+		}
+		return fAddMacros;
 	}
 
 	/**
-	 * Helper method to add an object style macro to the given map.
+	 * Adds a macro to the list of additional macros. 
+	 * The macro can either be of object- or of function-style.
+	 * <pre>
+	 * Example:
+	 *    addMacro("max(a,b)", "(((a)>(b) ? (a) : (b))");
+	 * </pre>
 	 * @param signature the signature of the macro, see {@link IMacro#getSignature()}.
 	 * @param value the macro value
+	 * @since 5.1
 	 */
+	protected void addMacro(String signature, String value) {
+		if (fAddMacroList == null) {
+			fAddMacroList= new ArrayList<IMacro>();
+		}
+		fAddMacroList.add(new MacroDefinition(signature.toCharArray(), value.toCharArray()));
+		fAddMacros= null;
+	}
+	
+	/**
+	 * Adds a preprocessor keyword to the map of additional preprocessor keywords. 
+	 * @param name the name of the keyword
+	 * @param tokenKind the kind of token the keyword is mapped to. See {@link IToken}.
+	 * @since 5.1
+	 */
+	protected void addPreprocessorKeyword(char[] name, int tokenKind) {
+		if (fAddPreprocessorKeywords == null) {
+			fAddPreprocessorKeywords= new CharArrayIntMap(10, -1);
+		}
+		fAddPreprocessorKeywords.put(name, tokenKind);
+	}
+
+	/**
+	 * Adds a  keyword to the map of additional keywords. 
+	 * @param name the name of the keyword
+	 * @param tokenKind the kind of token the keyword is mapped to. See {@link IToken}.
+	 * @since 5.1
+	 */
+	protected void addKeyword(char[] name, int tokenKind) {
+		if (fAddKeywords == null) {
+			fAddKeywords= new CharArrayIntMap(10, -1);
+		}
+		fAddKeywords.put(name, tokenKind);
+	}
+
+	/**
+	 * @deprecated use {@link #addMacro(String, String)}
+	 */
+	@Deprecated
 	protected static IMacro createMacro(String signature, String value) {
 		return new MacroDefinition(signature.toCharArray(), value.toCharArray());
 	}
 
 	/**
-	 * Helper method to add a function style macro to the given map.
-	 * 
-	 * @param name the macro name
-	 * @param value the macro value
-	 * @param arguments the macro arguments
+	 * @deprecated use {@link #addMacro(String, String)}
 	 */
+	@Deprecated
 	protected static IMacro createFunctionStyleMacro(String name, String value, String[] arguments) {
 		StringBuffer buf= new StringBuffer();
 		buf.append(name);
@@ -123,4 +168,13 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		buf.getChars(0, signature.length, signature, 0);
 		return new MacroDefinition(signature, value.toCharArray());
 	}
+	
+	/**
+	 * @deprecated see {@link IScannerExtensionConfiguration#initializeMacroValuesTo1()}
+	 */
+	@Deprecated
+	public boolean initializeMacroValuesTo1() {
+		return false;
+	}
+
 }

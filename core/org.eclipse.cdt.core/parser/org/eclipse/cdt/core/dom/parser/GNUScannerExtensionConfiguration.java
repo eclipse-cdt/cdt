@@ -21,47 +21,52 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 /**
- * @author jcamelon
+ * Base class for all gnu scanner configurations. Provides gnu-specific macros and keywords.
+ * @since 5.0
  */
 public abstract class GNUScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
-
-	private static IMacro[] sAdditionalMacros= new IMacro[] {
-		createMacro("__complex__", "_Complex"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__extension__", ""), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__imag__", "(int)"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__null", "(void *)0"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__real__", "(int)"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__stdcall", ""), //$NON-NLS-1$ //$NON-NLS-2$
-
-		createMacro("__builtin_va_arg(ap,type)", "*(type *)ap"),  //$NON-NLS-1$//$NON-NLS-2$
-		createMacro("__builtin_constant_p(exp)", "0") //$NON-NLS-1$//$NON-NLS-2$
-	};
-
-	public static IMacro[] getAdditionalGNUMacros() {
-		return sAdditionalMacros;
-	}
+	private static GNUScannerExtensionConfiguration sInstance;
 	
-	public static void addAdditionalGNUKeywords(CharArrayIntMap target) {
-		target.put(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
-		target.put(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
-		target.put(GCCKeywords.cp__ASM, IToken.t_asm); 
-		target.put(GCCKeywords.cp__ASM__, IToken.t_asm); 
-		target.put(GCCKeywords.cp__ATTRIBUTE, IGCCToken.t__attribute__ );
-		target.put(GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
-		target.put(GCCKeywords.cp__CONST, IToken.t_const); 
-		target.put(GCCKeywords.cp__CONST__, IToken.t_const); 
-		target.put(GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec );
-		target.put(GCCKeywords.cp__INLINE, IToken.t_inline); 
-		target.put(GCCKeywords.cp__INLINE__, IToken.t_inline); 
-		target.put(GCCKeywords.cp__RESTRICT, IToken.t_restrict); 
-		target.put(GCCKeywords.cp__RESTRICT__, IToken.t_restrict); 
-		target.put(GCCKeywords.cp__VOLATILE, IToken.t_volatile); 
-		target.put(GCCKeywords.cp__VOLATILE__, IToken.t_volatile); 
-		target.put(GCCKeywords.cp__SIGNED, IToken.t_signed); 
-		target.put(GCCKeywords.cp__SIGNED__, IToken.t_signed); 
-		target.put(GCCKeywords.cp__TYPEOF, IGCCToken.t_typeof); 
-		target.put(GCCKeywords.cp__TYPEOF__, IGCCToken.t_typeof); 
-		target.put(GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
+	@SuppressWarnings("nls")
+	public GNUScannerExtensionConfiguration() {
+		addMacro("__complex__", "_Complex");
+		addMacro("__extension__", ""); 
+		addMacro("__imag__", "(int)"); 
+		addMacro("__null", "(void *)0");
+		addMacro("__real__", "(int)");
+		addMacro("__stdcall", "");
+
+		addMacro("__builtin_va_arg(ap,type)", "*(type *)ap");
+		addMacro("__builtin_constant_p(exp)", "0");
+		
+    	addPreprocessorKeyword(Keywords.cINCLUDE_NEXT, IPreprocessorDirective.ppInclude_next); 
+    	addPreprocessorKeyword(Keywords.cIMPORT, IPreprocessorDirective.ppImport);
+    	addPreprocessorKeyword(Keywords.cWARNING, IPreprocessorDirective.ppWarning);
+    	addPreprocessorKeyword(Keywords.cIDENT, IPreprocessorDirective.ppIgnore);
+    	addPreprocessorKeyword(Keywords.cSCCS, IPreprocessorDirective.ppIgnore);
+    	addPreprocessorKeyword(Keywords.cASSERT, IPreprocessorDirective.ppIgnore);
+    	addPreprocessorKeyword(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
+
+		addKeyword(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		addKeyword(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		addKeyword(GCCKeywords.cp__ASM, IToken.t_asm); 
+		addKeyword(GCCKeywords.cp__ASM__, IToken.t_asm); 
+		addKeyword(GCCKeywords.cp__ATTRIBUTE, IGCCToken.t__attribute__ );
+		addKeyword(GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
+		addKeyword(GCCKeywords.cp__CONST, IToken.t_const); 
+		addKeyword(GCCKeywords.cp__CONST__, IToken.t_const); 
+		addKeyword(GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec );
+		addKeyword(GCCKeywords.cp__INLINE, IToken.t_inline); 
+		addKeyword(GCCKeywords.cp__INLINE__, IToken.t_inline); 
+		addKeyword(GCCKeywords.cp__RESTRICT, IToken.t_restrict); 
+		addKeyword(GCCKeywords.cp__RESTRICT__, IToken.t_restrict); 
+		addKeyword(GCCKeywords.cp__VOLATILE, IToken.t_volatile); 
+		addKeyword(GCCKeywords.cp__VOLATILE__, IToken.t_volatile); 
+		addKeyword(GCCKeywords.cp__SIGNED, IToken.t_signed); 
+		addKeyword(GCCKeywords.cp__SIGNED__, IToken.t_signed); 
+		addKeyword(GCCKeywords.cp__TYPEOF, IGCCToken.t_typeof); 
+		addKeyword(GCCKeywords.cp__TYPEOF__, IGCCToken.t_typeof); 
+		addKeyword(GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
 	}
 
     @Override
@@ -73,25 +78,28 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 	public char[] supportAdditionalNumericLiteralSuffixes() {
         return "ij".toCharArray(); //$NON-NLS-1$
     }
-        
-    @Override
-	public IMacro[] getAdditionalMacros() {
-    	return sAdditionalMacros;
-    }
-    
-    /*
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#getAdditionalPreprocessorKeywords()
-     */
-    @Override
-	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
-    	CharArrayIntMap additionalPPKeywords= new CharArrayIntMap(8, IPreprocessorDirective.ppInvalid);
-        additionalPPKeywords.put(Keywords.cINCLUDE_NEXT, IPreprocessorDirective.ppInclude_next); 
-        additionalPPKeywords.put(Keywords.cIMPORT, IPreprocessorDirective.ppImport);
-        additionalPPKeywords.put(Keywords.cWARNING, IPreprocessorDirective.ppWarning);
-        additionalPPKeywords.put(Keywords.cIDENT, IPreprocessorDirective.ppIgnore);
-        additionalPPKeywords.put(Keywords.cSCCS, IPreprocessorDirective.ppIgnore);
-        additionalPPKeywords.put(Keywords.cASSERT, IPreprocessorDirective.ppIgnore);
-        additionalPPKeywords.put(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
-    	return additionalPPKeywords;
-    }
+        	
+	/**
+	 * @deprecated simply derive from this class and use {@link #addMacro(String, String)} to
+	 * add additional macros.
+	 */
+	@Deprecated
+	public static IMacro[] getAdditionalGNUMacros() {
+		if (sInstance == null) {
+			sInstance= new GNUScannerExtensionConfiguration() {};
+		}
+		return sInstance.getAdditionalMacros();
+	}
+	
+	/**
+	 * @deprecated simply derive from this class and use {@link #addKeyword(char[], int)} to
+	 * add additional keywords.
+	 */
+	@Deprecated
+	public static void addAdditionalGNUKeywords(CharArrayIntMap target) {
+		if (sInstance == null) {
+			sInstance= new GNUScannerExtensionConfiguration() {};
+		}
+		target.putAll(sInstance.getAdditionalKeywords());
+	}
 }

@@ -92,6 +92,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final boolean supportKnRC;
     protected final boolean supportAttributeSpecifiers;
     protected final boolean supportDeclspecSpecifiers;
+    protected boolean supportParameterInfoBlock;
     protected final IBuiltinBindingsProvider builtinBindingsProvider;
     
     /**
@@ -124,7 +125,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         this.supportDeclspecSpecifiers = supportDeclspecSpecifiers;
         this.builtinBindingsProvider= builtinBindingsProvider;
     }
-
+    
     private AbstractParserLogService wrapLogService(IParserLogService logService) {
 		if (logService instanceof AbstractParserLogService) {
 			return (AbstractParserLogService) logService;
@@ -2186,6 +2187,25 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	
         default:
         	return false;
+		}
+	}
+	
+	protected void skipBrackets(int left, int right) throws EndOfFileException, BacktrackException {
+		consume(left);
+		int nesting= 0;
+		while(true) {
+			final int lt1= LT(1);
+			if (lt1 == IToken.tEOC)
+				throwBacktrack(LA(1));
+
+			consume();
+			if (lt1 == left) {
+				nesting++;
+			} else if (lt1 == right) {
+				if (--nesting < 0) {
+					return;
+				}
+			}
 		}
 	}
 }

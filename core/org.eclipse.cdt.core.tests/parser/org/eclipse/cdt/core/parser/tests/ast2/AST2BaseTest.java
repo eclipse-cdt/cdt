@@ -165,9 +165,9 @@ public class AST2BaseTest extends BaseTestCase {
 			IScannerInfo scannerInfo, boolean parseComments) {
 		IScannerExtensionConfiguration configuration = null;
         if( lang == ParserLanguage.C )
-            configuration = new GCCScannerExtensionConfiguration();
+            configuration= GCCScannerExtensionConfiguration.getInstance();
         else
-            configuration = new GPPScannerExtensionConfiguration();
+            configuration= GPPScannerExtensionConfiguration.getInstance();
         IScanner scanner;
         scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
         		FileCodeReaderFactory.getInstance());

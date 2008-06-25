@@ -2558,26 +2558,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLBRACE:
             return functionDefinition(firstOffset, declSpec, declarators, false);
         default:
-    		insertSemi= true;
-        	if (validWithoutDtor(declOption, declSpec)) {
-            	// class definition without semicolon
-        		if (markBeforDtor == null || !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
-        			if (markBeforDtor != null) {
-        				backup(markBeforDtor);
+        	if (declOption != DeclarationOptions.LOCAL) {
+        		insertSemi= true;
+        		if (validWithoutDtor(declOption, declSpec)) {
+        			// class definition without semicolon
+        			if (markBeforDtor == null || !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
+        				if (markBeforDtor != null) {
+        					backup(markBeforDtor);
+        				}
+        				declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+        				endOffset= calculateEndOffset(declSpec);
+        				break;
         			}
-        			declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        			endOffset= calculateEndOffset(declSpec);
+        		} 
+        		endOffset= figureEndOffset(declSpec, declarators);
+        		if (lt1 == 0 || !isOnSameLine(endOffset, LA(1).getOffset())) {
+        			insertSemi= true;
         			break;
         		}
-        	} 
-    		endOffset= figureEndOffset(declSpec, declarators);
-    		if (lt1 == 0 || !isOnSameLine(endOffset, LA(1).getOffset())) {
-        		insertSemi= true;
-        		break;
-    		}
-    		if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
-    			break;
-    		}
+        		if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
+        			break;
+        		}
+        	}
         	throwBacktrack(LA(1));
         }
 
@@ -2756,6 +2758,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected ICPPASTParameterDeclaration parameterDeclaration() throws BacktrackException, EndOfFileException {
         final int startOffset= LA(1).getOffset();
         
+		if (LT(1) == IToken.tLBRACKET && supportParameterInfoBlock) {
+			skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET);
+		}
+		
         IASTDeclSpecifier declSpec;
         IASTDeclarator declarator;
         try {
@@ -2775,7 +2781,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ((ASTNode) parm).setOffsetAndLength(startOffset, endOffset - startOffset);
         return parm;
     }
-
 
     protected ICPPASTParameterDeclaration createParameterDeclaration() {
         return new CPPASTParameterDeclaration();

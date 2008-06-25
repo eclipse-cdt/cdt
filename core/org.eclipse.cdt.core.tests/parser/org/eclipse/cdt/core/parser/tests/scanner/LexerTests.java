@@ -53,7 +53,7 @@ public class LexerTests extends BaseTestCase {
 	private void init(String input, boolean dollar, boolean minmax) throws Exception {
 		fLog.clear();
 		final LexerOptions lexerOptions = new LexerOptions();
-		lexerOptions.fSupportDollarInitializers= dollar;
+		lexerOptions.fSupportDollarInIdentifiers= dollar;
 		lexerOptions.fSupportMinAndMax= minmax;
 		fLexer= new Lexer(input.toCharArray(), lexerOptions, fLog, null);
 		fLexer.nextToken();

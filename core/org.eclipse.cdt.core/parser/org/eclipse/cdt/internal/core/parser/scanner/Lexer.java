@@ -46,7 +46,8 @@ final public class Lexer {
 	private static final int ORIGIN_LEXER = OffsetLimitReachedException.ORIGIN_LEXER;
 	
 	public final static class LexerOptions implements Cloneable {
-		public boolean fSupportDollarInitializers= true;
+		public boolean fSupportDollarInIdentifiers= true;
+		public boolean fSupportAtSignInIdentifiers= true;
 		public boolean fSupportMinAndMax= true;
 		public boolean fCreateImageLocations= true;
 		
@@ -357,7 +358,12 @@ final public class Lexer {
 				return identifier(start, 1);
 
 			case '$':
-				if (fOptions.fSupportDollarInitializers) {
+				if (fOptions.fSupportDollarInIdentifiers) {
+					return identifier(start, 1);
+				}
+				break;
+			case '@':
+				if (fOptions.fSupportAtSignInIdentifiers) {
 					return identifier(start, 1);
 				}
 				break;
@@ -820,7 +826,10 @@ final public class Lexer {
             	break;
 
             case '$':
-            	isPartOfIdentifier= fOptions.fSupportDollarInitializers;
+            	isPartOfIdentifier= fOptions.fSupportDollarInIdentifiers;
+            	break;
+            case '@':
+            	isPartOfIdentifier= fOptions.fSupportAtSignInIdentifiers;
             	break;
             	
             case '{': case '}': case '[': case ']': case '#': case '(': case ')': case '<': case '>':

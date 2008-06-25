@@ -5764,4 +5764,35 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTProblemDeclaration pdecl= getDeclaration(ls, 1);
 		assertEquals("+error", pdecl.getRawSignature());
     }
+    
+    // class C;
+    // void func(void (C::*m)(int) const);
+    public void test233889_a() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction func= bh.assertNonProblem("func(", 4, ICPPFunction.class);
+		assertEquals(1,func.getParameters().length);
+		IType type= func.getParameters()[0].getType();
+		ICPPPointerToMemberType ptm= assertInstance(type, ICPPPointerToMemberType.class);
+		ICPPFunctionType t= ((ICPPFunctionType)ptm.getType());
+		assertTrue(t.isConst());
+    }
+    
+	//	 struct C {
+	//		 int m1(int a);
+	//		 int m2(int a) const;
+	//	 }; 
+	//
+	//	 C* func(int (C::*m)(int) const);
+	//	 C* func(int (C::*m)(int));
+	//
+	//	 void ref() {
+	//		 func(&C::m1);
+	//		 func(&C::m2);
+	//	 }
+    public void testBug233889_b() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction fn1= bh.assertNonProblem("func(&C::m1", 4, ICPPFunction.class);
+		ICPPFunction fn2= bh.assertNonProblem("func(&C::m2", 4, ICPPFunction.class);
+		assertNotSame(fn1, fn2);
+    }
 }

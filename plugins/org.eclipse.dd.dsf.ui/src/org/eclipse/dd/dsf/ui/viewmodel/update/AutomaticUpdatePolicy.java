@@ -32,7 +32,7 @@ public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
 
         @Override
         public String toString() {
-            return "Autoamtic update tester"; //$NON-NLS-1$
+            return "Automatic update tester"; //$NON-NLS-1$
         }
     };
     

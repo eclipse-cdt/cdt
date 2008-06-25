@@ -26,12 +26,14 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.MIStack;
 import org.eclipse.dd.mi.service.command.commands.MIBreakDelete;
@@ -311,4 +313,15 @@ public class SyncUtil {
         };
         return fSession.getExecutor().submit(callable).get();
     }
+    
+    public static IMIExecutionDMContext SyncCreateExecutionContext(final IContainerDMContext parentCtx, final int threadId)
+    throws Throwable {
+    Callable<IMIExecutionDMContext> callable = new Callable<IMIExecutionDMContext>() {
+        public IMIExecutionDMContext call() throws Exception {
+            return fRunControl.createMIExecutionContext(parentCtx, threadId);
+        }
+    };
+    return fSession.getExecutor().submit(callable).get();
+}
+
 }

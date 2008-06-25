@@ -28,9 +28,6 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
-import org.eclipse.dd.mi.service.MIRunControl;
-import org.eclipse.dd.mi.service.MIStack;
-import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BackgroundRunner;
 import org.eclipse.dd.tests.gdb.framework.BaseTestCase;
@@ -57,15 +54,14 @@ public class MIRegistersTest extends BaseTestCase {
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
-	
+	private static final String SRC_NAME = "MultiThread.cc";
+
     // Will be used to wait for asynchronous call to complete
     //private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
 	private GDBControlDMContext fGdbControlDmc;
     private IRegisters fRegService;
-    private MIRunControl fRunControl;
-    private MIStack fStack;
     
 	@Before
 	public void init() throws Exception {
@@ -78,17 +74,6 @@ public class MIRegistersTest extends BaseTestCase {
 		fGdbControlDmc = gdbControl.getGDBDMContext();
 		
 		fRegService = fServicesTracker.getService(IRegisters.class);
-		fRunControl = fServicesTracker.getService(MIRunControl.class);
-		fStack = fServicesTracker.getService(MIStack.class);
-		
-// This is the way to have the entire application run		
-//		final IDMContext<IExecutionDMData> execDMContext = ((MIRunControl)fRunControl).getExecutionDMC();
-//	   	fRunControl.getExecutor().submit(new Runnable() {
-//   			public void run() {
-//   				fRunControl.resume(execDMContext, null);
-//   			}
-//   		});
-
 	}
 	
 	@BeforeClass
@@ -101,8 +86,6 @@ public class MIRegistersTest extends BaseTestCase {
 	@After
 	public void tearDown() {
 		fRegService = null;
-		fRunControl = null;
-		fStack = null;
 	}
 
     /*
@@ -207,7 +190,7 @@ public class MIRegistersTest extends BaseTestCase {
     
     @Test
     public void getRegistersLength() throws Throwable {   
-    	IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+    	IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
     	IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	assertTrue("The number of registers should have been " + NUMBER_OF_REGISTERS +
@@ -218,7 +201,7 @@ public class MIRegistersTest extends BaseTestCase {
     
     @Test
     public void getRegisters() throws Throwable {
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+        IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	List<String> regNames = Arrays.asList("eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","orig_eax","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7");
@@ -256,9 +239,8 @@ public class MIRegistersTest extends BaseTestCase {
     	}
     }
     
-    //private static String REGISTER_VALUE = "16";
     private String getModelDataForRegisterDataValue(IFrameDMContext frameDmc, String format, int regNo) throws Throwable {
-    	final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
+    	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
     	
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	final FormattedValueDMContext valueDmc = fRegService.getFormattedValueContext(regDMCs[regNo], format);
@@ -268,10 +250,10 @@ public class MIRegistersTest extends BaseTestCase {
             @Override
             protected void handleCompleted() {
                 if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    wait.setReturnInfo(getData());
                 }
                 
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
             }
         };
         
@@ -281,21 +263,19 @@ public class MIRegistersTest extends BaseTestCase {
             }
         });
         
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        assertTrue(fWait.getMessage(), fWait.isOK());
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
 
         
-        FormattedValueDMData data = (FormattedValueDMData)fWait.getReturnInfo();
-        String val = data.getFormattedValue();
-        fWait.waitReset();
-        return val;
+        FormattedValueDMData data = (FormattedValueDMData)wait.getReturnInfo();
+        return data.getFormattedValue();
     }
 
 
     private static String REGISTER_VALUE = "";
     @Test
     public void getModelDataForRegisterDataValueInDifferentNumberFormats() throws Throwable {
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+        IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
     	REGISTER_VALUE = val;
@@ -317,21 +297,9 @@ public class MIRegistersTest extends BaseTestCase {
     
     @Test
     public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-    	final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
-    	
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+    	SyncUtil.SyncRunToLine(SRC_NAME, "22");
+    	IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 2);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
-
-    	String regVal0 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
-    	String regVal1 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 1);
-    	String regVal2 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 2);
-    	String regVal3 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 3);
-    	String regVal4 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 4);
-    	String regVal5 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 5);
-
-    	MIStoppedEvent stoppedEvent = SyncUtil.SyncRunToLine(EXEC_NAME + ".cc", "22");
-        execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 2);
-    	frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	String thread2RegVal0 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
     	String thread2RegVal1 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 1);
     	String thread2RegVal2 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 2);
@@ -340,12 +308,12 @@ public class MIRegistersTest extends BaseTestCase {
     	String thread2RegVal5 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 5);
 
     	// Set execution context to 1
-        execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+        execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
         frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
 
     	// Re-set the execution context to 2 and Fetch from the Cache
-        execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 2);
+        execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 2);
         frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	String dupliThread2RegVal0 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
     	String dupliThread2RegVal1 = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 1);
@@ -368,15 +336,6 @@ public class MIRegistersTest extends BaseTestCase {
     	final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
     	
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
-    	
- 	
-		final RequestMonitor writeDone = 
-			new RequestMonitor(fRegService.getExecutor(), null) {
-				@Override
-				protected void handleCompleted() {
-					fWait.waitFinished(getStatus());
-				}
-			};
 
 		fRegService.getExecutor().submit(new Runnable() {
 			public void run() {
@@ -400,7 +359,7 @@ public class MIRegistersTest extends BaseTestCase {
 
     @Test
     public void writeRegisterNaturalFormat() throws Throwable{
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+        IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	String regValue = "10";
     	int regIndex = 3;
@@ -411,7 +370,7 @@ public class MIRegistersTest extends BaseTestCase {
     
     @Test
     public void writeRegisterHEXFormat() throws Throwable{
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+        IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	String regValue = "0x10";
     	int regIndex = 3;
@@ -423,7 +382,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Test
     @Ignore
     public void writeRegisterBinaryFormat() throws Throwable{
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+        IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	//String regValue = "0100101001";
     	String regValue = "10";
@@ -435,7 +394,7 @@ public class MIRegistersTest extends BaseTestCase {
 
     @Test
     public void writeRegisterOctalFormat() throws Throwable{
-        IMIExecutionDMContext execDmc = fRunControl.createMIExecutionContext(fGdbControlDmc, 1);
+        IMIExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(fGdbControlDmc, 1);
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	//String regValue = "10";
     	String regValue = "012";

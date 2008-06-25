@@ -135,6 +135,7 @@ public class GDBProcessesTest extends BaseTestCase {
        } 
 	}
 	
+    IMIExecutionDMContext fExecDmc = null;
 	/* 
 	 * getThreadData() for multiple threads
 	 */
@@ -151,17 +152,15 @@ public class GDBProcessesTest extends BaseTestCase {
             }
         };
 
-        /* 
-         * Create an execution DMC
-         */
-        final IMIExecutionDMContext dmc = fRunCtrl.createMIExecutionContext(fGdbCtrl.getGDBDMContext(), 1);
-        
+         
         /*
-         * getModelData for Execution DMC
+         * Create an execution DMC then getModelData for Execution DMC
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	fRunCtrl.getThreadData(dmc, rm);
+            	fExecDmc = fRunCtrl.createMIExecutionContext(fGdbCtrl.getGDBDMContext(), 1);
+
+            	fRunCtrl.getThreadData(fExecDmc, rm);
             }
         });
         fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -169,7 +168,7 @@ public class GDBProcessesTest extends BaseTestCase {
         
         GDBThreadData threadData = rm.getData();
         if(threadData == null)
-       	 fail("Thread data not returned for thread id = " + dmc.getThreadId());
+       	 fail("Thread data not returned for thread id = " + fExecDmc.getThreadId());
         else{
         	// Thread id is only a series of numbers
         	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$

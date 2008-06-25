@@ -554,8 +554,8 @@ public class DisassemblyDocument extends REDDocument {
 				for (Iterator<Position> iterator = getPositionIterator(CATEGORY_SOURCE, 0); iterator.hasNext(); ) {
 					SourcePosition pos= (SourcePosition) iterator.next();
 					if (pos.fFileInfo == info && pos.fValid && lineNumber >= pos.fLine) {
-						int baseOffset= info.fSource.getLineOffset(srcPos.fLine);
-						if (lineOffset + lineLength - baseOffset <= srcPos.length) {
+						int baseOffset= info.fSource.getLineOffset(pos.fLine);
+						if (lineOffset + lineLength - baseOffset <= pos.length) {
 							srcPos= pos;
 							break;
 						}

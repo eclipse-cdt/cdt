@@ -27,9 +27,9 @@
   Other components may work with earlier Eclipse versions, but these have not been tested.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.<br>
-  <b>Building</b> the RSE SSH service requires <b>Eclipse 3.4M6</b> or later for the fix
+  <b>Building</b> the RSE SSH service requires <b>Eclipse 3.4</b> or later for the fix
   of <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224799">bug 224799</a>;
-  the fix also requires 3.4M6 at runtime, but the code contains a backward 
+  the fix also requires 3.4 at runtime, but the code contains a backward 
   compatibility fallback to also run on Eclipse 3.3 if that particular fix
   is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
@@ -96,12 +96,12 @@
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=212382">212382</a>].</li>
 </ul></li>
 <li>At least 100 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-04-12&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B3457%5D"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.0+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
-  this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M5-200802181400/">
-  TM 3.0M5</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M5-200802181400/buildNotes.php">build notes</a>].</li>
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-06-25&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B345%5D"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.0+M7&target_milestone=3.0+RC1&target_milestone=3.0+RC2&target_milestone=3.0+RC3&target_milestone=3.0+RC4&target_milestone=3.0+RC5&target_milestone=3.0&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+  this query</a> to show the list of bugs fixed since <!-- the last milestone, -->
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M6-200804112145/">
+  TM 3.0M6</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M6-200804112145/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://www.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -172,7 +172,10 @@ user attention. A short hint on what needs to change is given directly in the li
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM @buildId@ Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M6&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
+<li>TM @buildId@ Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M7&target_milestone=3.0+RC1&target_milestone=3.0+RC2&target_milestone=3.0+RC3&target_milestone=3.0+RC4&target_milestone=3.0+RC5&target_milestone=3.0&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
+<ul>
+</ul>
+<li>TM 3.0M6 Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M6&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
 <ul>
 <li><b>RSE UI Adapter Loading</b> has been made more lazy. This means, that contributors
   of RSE subsystems, which provide core services and UI adapters in separate plugins, may
@@ -300,11 +303,17 @@ More information can be found in the associated bugzilla items.
 </ul>
 
 Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2007-06-28&chfieldto=2008-07-01&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2007-06-28&chfieldto=2008-07-01&chfield=resolution&cmdtype=doit">
+  <!-- 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.0+M3&cmdtype=doit">
-  this query</a> to show the full list of API changes since TM 2.0, and
+   -->
+  this query</a> to show the full list of API changes since TM 2.0
+  <!--
+  , and
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
-  this query</a> to show the list of additional API changes proposed for TM 3.0.
+  this query</a> to show the list of additional API changes proposed for TM 3.0
+  -->
+  .
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -317,14 +326,16 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
+
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=235221">bug 235221</a> - cri - Files truncated on exit of Eclipse</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=225360">bug 225360</a> - cri - [files] Deadlock on Startup with a remote file in the Editor</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238156">bug 238156</a> - maj - Export/Import Connection doesn't create default filters for the specified connection</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj - [persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=236443">bug 236443</a> - maj - [releng] Using P2 to install "remotecdt" only from update site creates an unusable installation</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227944">bug 227944</a> - maj - [efs][regression] IllegalArgumentException for RemoteSystemsTempFiles project.</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - maj - [efs] Eclipse hangs on startup of a Workspace with a large efs-shared file system on a slow connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197027">bug 197027</a> - maj - [persistence] Can lose data if close Eclipse before saving profile completes</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=219934">bug 219934</a> - maj - [regression][dnd] Cannot Copy & Paste / Drag&Drop remote to Resource Navigator</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj - [persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226727">bug 226727</a> - maj - Remote search results in ConcurrentModificationException</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=225573">bug 225573</a> - maj - [dstore] client not falling back to single operation when missing batch descriptors (due to old server)</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

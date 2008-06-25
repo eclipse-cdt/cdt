@@ -121,7 +121,7 @@ if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ];
   rm emf-sdo-xsd-SDK-${EMFVER}.zip
   cd ${DROPUP}
 fi
-if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080327/junit.jar ]; then
+if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080602-1318/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
   wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}-${ep_ver}-${ep_date}/eclipse-test-framework-${ep_ver}.zip"

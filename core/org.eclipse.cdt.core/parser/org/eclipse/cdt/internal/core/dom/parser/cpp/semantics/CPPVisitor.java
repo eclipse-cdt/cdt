@@ -1563,7 +1563,14 @@ public class CPPVisitor {
 	    }
 	    
 	    IScope scope = fnDtor.getFunctionScope();
-	    IType thisType = getThisType(scope);
+	    IType thisType= getThisType(scope);
+	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
+	    if(thisType == null && nested != null) {
+	    	IType pts= getPointerTypes(new CPPBasicType(-1,-1), nested);
+	    	if(pts instanceof ICPPPointerToMemberType) {
+	    		thisType= new CPPPointerType(((ICPPPointerToMemberType)pts).getMemberOfClass());
+	    	}
+	    }
 	    if (thisType instanceof IPointerType) {
 			try {
 				IType classType = ((IPointerType) thisType).getType();
@@ -1574,7 +1581,6 @@ public class CPPVisitor {
 	    	thisType = null;
 	    }
 	    IType type = new CPPFunctionType(returnType, pTypes, (IPointerType) thisType);
-	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
 	    if (nested != null) {
 	    	return createType(type, nested);
 	    }

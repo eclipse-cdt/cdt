@@ -2055,7 +2055,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	 func(c, &C::m1);
 	//	 func(d, &C::m2);
 	// }
-    public void _testBug233889() throws Exception {
+    public void testBug233889() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction fn1= bh.assertNonProblem("func(c", 4, ICPPFunction.class);
 		ICPPFunction fn2= bh.assertNonProblem("func(d", 4, ICPPFunction.class);

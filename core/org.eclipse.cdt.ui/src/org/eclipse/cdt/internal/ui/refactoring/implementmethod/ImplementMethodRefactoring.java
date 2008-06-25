@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -181,6 +182,9 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		createdMethodDeclarator = new CPPASTFunctionDeclarator();
 		createdMethodDeclarator.setName(qname);
 		createdMethodDeclarator.setConst(functionDeclarator.isConst());
+		for(IASTPointerOperator pop : functionDeclarator.getPointerOperators()) {
+			createdMethodDeclarator.addPointerOperator(pop);
+		}
 	
 		func.setDeclarator(createdMethodDeclarator);
 		func.setBody(new CPPASTCompoundStatement());

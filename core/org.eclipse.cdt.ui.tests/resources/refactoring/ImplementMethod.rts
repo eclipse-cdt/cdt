@@ -688,3 +688,27 @@ void Class::test()
 
 
 
+//! Bug 238253 Pointer refence of the return value lost
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+
+class TestClass {
+public:
+	//$int* get(char* val);$//
+};
+
+
+//@A.cpp
+#include "A.h"
+
+//=
+#include "A.h"
+
+int *TestClass::get(char *val)
+{
+}
+
+
+

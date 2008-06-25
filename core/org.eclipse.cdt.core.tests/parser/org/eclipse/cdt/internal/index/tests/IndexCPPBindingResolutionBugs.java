@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -814,4 +815,36 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		type= ((IPointerType) type).getType();
 		assertSame(type, cl);
 	}
+	
+    // class A {
+    // public:
+    //    void foo() const volatile;
+    //    void foo() volatile;
+    //    void foo() const;
+    //    void foo();
+    //    void bar() const volatile;
+    //    void bar() volatile;
+    //    void bar() const;
+    //    void bar();
+    // };
+    
+    // void A::foo() const volatile { bar();/*1*/ }
+    // void A::foo() volatile       { bar();/*2*/ }
+    // void A::foo() const          { bar();/*3*/ }
+    // void A::foo()                { bar();/*4*/ }
+    public void _testMemberFunctionDisambiguationByCVness_238409() throws Exception {
+    	ICPPMethod bar_cv= getBindingFromASTName("bar();/*1*/", 3, ICPPMethod.class);
+    	ICPPMethod bar_v=  getBindingFromASTName("bar();/*2*/", 3, ICPPMethod.class);
+    	ICPPMethod bar_c=  getBindingFromASTName("bar();/*3*/", 3, ICPPMethod.class);
+    	ICPPMethod bar=    getBindingFromASTName("bar();/*4*/", 3, ICPPMethod.class);
+    	ICPPFunctionType bar_cv_ft= (ICPPFunctionType) bar_cv.getType();
+    	ICPPFunctionType bar_v_ft=  (ICPPFunctionType) bar_v.getType();
+    	ICPPFunctionType bar_c_ft=  (ICPPFunctionType) bar_c.getType();
+    	ICPPFunctionType bar_ft=    (ICPPFunctionType) bar.getType();
+    	
+    	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
+    	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());
+    	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
+    	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
+    }
 }

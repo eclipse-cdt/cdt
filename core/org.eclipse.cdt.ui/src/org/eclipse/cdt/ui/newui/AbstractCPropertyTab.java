@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -48,6 +49,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -112,7 +114,10 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected static final String ENUM = "enum"; //$NON-NLS-1$
 	protected static final String SSET = "set";  //$NON-NLS-1$
 	
-	private   CLabel  background; 
+	private PageBook pageBook; // to select between background and usercomp.
+	private CLabel  background;
+	private Composite userdata;
+	
 	protected Composite usercomp; // space where user can create widgets 
 	protected Composite buttoncomp; // space for buttons on the right
 	private Button[] buttons;     // buttons in buttoncomp
@@ -136,15 +141,24 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	protected void createControls(Composite parent) {
 		parent.setLayout(new FillLayout());
-		background = new CLabel(parent, SWT.CENTER | SWT.SHADOW_NONE);
+        pageBook = new PageBook(parent, SWT.NULL);
+
+		background = new CLabel(pageBook, SWT.CENTER | SWT.SHADOW_NONE);
 		background.setText(EMPTY_STR);
-		background.setLayout(new GridLayout(2, false));
-		usercomp = new Composite(background, SWT.NONE);
-		usercomp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		buttoncomp = new Composite(background, SWT.NONE);
-		GridData d = new GridData(GridData.END);
-		d.widthHint = 1;
-		buttoncomp.setLayoutData(d);
+
+        GridData gd;
+		userdata= new Composite(pageBook, SWT.NONE);
+		userdata.setLayout(new GridLayout(2, false));
+		
+		usercomp = new Composite(userdata, SWT.NONE);
+		usercomp.setLayoutData(gd= new GridData(GridData.FILL_BOTH));
+		gd.widthHint= 150;
+		
+		buttoncomp = new Composite(userdata, SWT.NONE);
+		buttoncomp.setLayoutData(gd= new GridData(GridData.END));
+		gd.widthHint= 150;
+		
+		pageBook.showPage(userdata);
 		
 	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpId);
 	}
@@ -628,9 +642,12 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param msg - text to be shown instead of panes
 	 */
 	protected void setAllVisible(boolean visible, String msg) {
-		setBackgroundText(visible ? EMPTY_STR : msg);
-		usercomp.setVisible(visible);
-		buttoncomp.setVisible(visible);
+		if (!visible) {
+			setBackgroundText(msg);
+			pageBook.showPage(background);
+		} else {
+			pageBook.showPage(userdata);
+		}
 		if (page != null) {
 			Button b = page.getAButton();
 			if (b != null)

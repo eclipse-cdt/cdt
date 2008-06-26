@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -136,15 +137,21 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	protected void createControls(Composite parent) {
 		parent.setLayout(new FillLayout());
-		background = new CLabel(parent, SWT.CENTER | SWT.SHADOW_NONE);
+		Composite comp= new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout(3, false));
+		
+		background = new CLabel(comp, SWT.CENTER | SWT.SHADOW_NONE);
 		background.setText(EMPTY_STR);
-		background.setLayout(new GridLayout(2, false));
-		usercomp = new Composite(background, SWT.NONE);
-		usercomp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		buttoncomp = new Composite(background, SWT.NONE);
-		GridData d = new GridData(GridData.END);
-		d.widthHint = 1;
-		buttoncomp.setLayoutData(d);
+		background.setVisible(false);
+		
+		GridData d;
+		usercomp = new Composite(comp, SWT.NONE);
+		usercomp.setLayoutData(d= new GridData(GridData.FILL_BOTH));
+		d.widthHint= 20;
+		
+		buttoncomp = new Composite(comp, SWT.NONE);
+		buttoncomp.setLayoutData(d = new GridData(GridData.END));
+		d.widthHint= 10;
 		
 	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpId);
 	}
@@ -629,6 +636,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	protected void setAllVisible(boolean visible, String msg) {
 		setBackgroundText(visible ? EMPTY_STR : msg);
+		background.setVisible(!visible);
 		usercomp.setVisible(visible);
 		buttoncomp.setVisible(visible);
 		if (page != null) {

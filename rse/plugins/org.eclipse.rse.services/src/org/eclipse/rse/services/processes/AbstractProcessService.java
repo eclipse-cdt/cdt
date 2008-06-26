@@ -20,6 +20,7 @@ package org.eclipse.rse.services.processes;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.rse.services.AbstractService;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
@@ -48,7 +49,7 @@ public abstract class AbstractProcessService extends AbstractService implements 
 
 	/**
 	 * Return a single IHostProcess object for the 'init' process with pid 1.
-	 * 
+	 *
 	 * @param monitor Progress monitor
 	 * @return Array with 1 element, the IHostProcess object for the root
 	 *         process
@@ -95,6 +96,12 @@ public abstract class AbstractProcessService extends AbstractService implements 
 		else return results[0];
 	}
 
+	/**
+	 * @deprecated This method was removed from IProcessService in RSE 3.0, and
+	 *             implementers are not expected to return anything useful. Use
+	 *             {@link SimpleSystemMessage} to create system messages
+	 *             instead.
+	 */
 	public SystemMessage getMessage(String messageID)
 	{
 		return null;

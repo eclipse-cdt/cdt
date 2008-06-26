@@ -87,7 +87,8 @@ For information about different kinds of builds look
 					$fileCount = $fileCount + 1;
 				}
 			}
-			$aDropDirectory.closedir();
+			//See http://at2.php.net/manual/en/class.dir.php
+			$aDropDirectory->close();
 			// Read the count file
 			$countFile = "drops/".$anEntry."/package.count";
 			$indexFile = "drops/".$anEntry."/index.php";
@@ -143,7 +144,7 @@ For information about different kinds of builds look
 			}
 		}
 	}
-	// $aDirectory.closedir();
+	$aDirectory->close();
  ?>
  
 <table width="100%" cellspacing=0 cellpadding=3 align=center>

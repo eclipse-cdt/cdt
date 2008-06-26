@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -121,7 +122,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		addTree(sashForm).setLayoutData(new GridData(GridData.FILL_VERTICAL));
 	    table = new Table(sashForm, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	    gd = new GridData(GridData.FILL_BOTH);
-	    gd.widthHint = 255;
+	    gd.widthHint = 150;
 	    table.setLayoutData(gd);
   	    table.setHeaderVisible(isHeaderVisible());
   	    table.setLinesVisible(true);

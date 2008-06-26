@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -250,12 +251,11 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	@Override
 	public void updateData(ICResourceDescription _cfgd) {
 		if (page.isMultiCfg()) {
-			usercomp.setVisible(false);
+			setAllVisible(false, ""); //$NON-NLS-1$
 			return;
 		}
-		if ( !usercomp.getVisible())
-			usercomp.setVisible(true);
 		
+		setAllVisible(true, null);
 		cfgd = _cfgd;
 		src = new ArrayList<_Entry>();
 		for (ICExclusionPatternPathEntry e : getEntries(cfgd))

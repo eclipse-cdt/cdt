@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -243,6 +244,7 @@ implements
 			Group configGroup = ControlFactory.createGroup(composite, EMPTY_STR, 1);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.grabExcessHorizontalSpace = true;
+			gd.widthHint= 150;
 			configGroup.setLayoutData(gd);
 			configGroup.setLayout(new GridLayout(3, false));
 
@@ -256,12 +258,7 @@ implements
 					handleConfigSelection();
 				}
 			});
-			gd = new GridData(GridData.FILL);
-			gd.grabExcessHorizontalSpace = true;
-			gd.grabExcessVerticalSpace = true;
-			gd.horizontalAlignment = GridData.FILL;
-			gd.verticalAlignment = GridData.FILL;
-
+			gd = new GridData(GridData.FILL_BOTH);
 			configSelector.setLayoutData(gd);
 
 			if (!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG)) {
@@ -328,9 +325,10 @@ implements
 	}
 
 	public void createWidgets(Composite c) {
+		GridData gd;
 		parentComposite = new Composite(c, SWT.NONE);
-		parentComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+		parentComposite.setLayoutData(gd= new GridData(GridData.FILL_BOTH));
+		gd.widthHint= 200;
 		itabs.clear(); 
 		if (!isSingle()) {
 			parentComposite.setLayout(new FillLayout());

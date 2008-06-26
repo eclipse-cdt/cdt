@@ -40,6 +40,7 @@
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight (IBM)          - [233435] SubSystem.resolveFilterStrings(*) does not prompt for a connection when the subsystem is not connected
  * David Dykstal (IBM) - [233876] filters lost after restart
+ * David McKnight (IBM)          - [238609] Substitution value missing for disconnect failed message
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -588,7 +589,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 					}
 					else
 					{
-						String msgTxt = CommonMessages.MSG_DISCONNECT_FAILED;
+						String msgTxt = NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, getHostName());
 						SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
 								ICommonMessageIds.MSG_DISCONNECT_FAILED,
 								IStatus.ERROR, msgTxt);

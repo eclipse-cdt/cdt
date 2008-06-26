@@ -572,7 +572,7 @@ public class RenameRegressionTests extends RenameTests {
     writer = new StringWriter();
     writer.write( "#include \"t.hh\"                            \n" ); //$NON-NLS-1$
     writer.write( "void test() {                                \n" ); //$NON-NLS-1$
-    writer.write( "  Foo d;                                    \n" ); //$NON-NLS-1$
+    writer.write( "  Foo* d;                                    \n" ); //$NON-NLS-1$
     writer.write( "  d->method1(1);                             \n" ); //$NON-NLS-1$
     writer.write( "}                                            \n" ); //$NON-NLS-1$
     String source = writer.toString();

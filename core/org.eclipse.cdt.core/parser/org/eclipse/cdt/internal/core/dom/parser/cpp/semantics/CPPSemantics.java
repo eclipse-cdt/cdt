@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +62,9 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -126,6 +129,8 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -138,6 +143,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -2372,6 +2378,80 @@ public class CPPSemantics {
         }
         return result;
     }
+    
+    /**
+     * For a pointer dereference expression e1->e2, return the type that e1 ultimately evaluates to
+     * when chaining overloaded class member access operators <code>operator->()</code> calls.
+     * @param fieldReference
+     * @return the type the field owner expression ultimately evaluates to when chaining overloaded
+     * class member access operators <code>operator->()</code> calls.
+     * @throws DOMException
+     */
+    public static IType getChainedMemberAccessOperatorReturnType(ICPPASTFieldReference fieldReference) throws DOMException {
+    	IASTExpression owner = fieldReference.getFieldOwner();
+    	IType result= CPPVisitor.getExpressionType(owner);
+
+    	if (fieldReference.isPointerDereference()) {
+    		IType type= getUltimateTypeUptoPointers(result);
+    		boolean needCheckClassMemberAccessOperator= true;
+    		if(type instanceof IPointerType) {
+    			type= getUltimateTypeUptoPointers(((IPointerType) type).getType());
+    			if(type instanceof ICPPClassType) {
+    				needCheckClassMemberAccessOperator= false;
+    			}
+    		}
+
+    		if(needCheckClassMemberAccessOperator) {
+    			IType temp= result;
+    			result= null;
+
+    			// bug 205964: as long as the type is a class type, recurse. 
+    			// Be defensive and allow a max of 10 levels.
+    			for (int j = 0; j < 10; j++) {
+    				IType uTemp= getUltimateTypeUptoPointers(temp);
+    				if (uTemp instanceof ICPPClassType) {
+    					/*
+    					 * 13.5.6-1: An expression x->m is interpreted as (x.operator->())->m for a
+    					 * class object x of type T
+    					 * 
+    					 * Construct an AST fragment for x.operator-> which the lookup routines can
+    					 * examine for type information.
+    					 */
+
+    					CPPASTName x= new CPPASTName();
+    					boolean isConst= false, isVolatile= false;
+    					if(temp instanceof IQualifierType) {
+    						isConst= ((IQualifierType)temp).isConst();
+    						isVolatile= ((IQualifierType)temp).isVolatile();
+    					}
+    					x.setBinding(createVariable(x, uTemp, isConst, isVolatile));
+    					
+    					IASTName arw= new CPPASTName(OverloadableOperator.ARROW.toCharArray());
+    					IASTFieldReference innerFR= new CPPASTFieldReference(arw, new CPPASTIdExpression(x));
+    					innerFR.setParent(fieldReference); // connect to the AST 
+
+    					ICPPFunction op = CPPSemantics.findOperator(innerFR, (ICPPClassType) uTemp);
+    					if (op != null) {
+    						result= temp= op.getType().getReturnType();
+    						continue;
+    					}
+    				}
+    				break;
+    			}
+    		}
+    	}
+
+    	return result;
+    }
+    
+    private static ICPPVariable createVariable(IASTName name, final IType type, final boolean isConst, final boolean isVolatile) {
+    	return new CPPVariable(name) {
+			@Override public IType getType() {
+				return new CPPQualifierType(type, isConst, isVolatile);
+			}
+		};
+    }
+    
     public static ICPPFunction findOperator(IASTExpression exp, ICPPClassType cls) {
 		IScope scope = null;
 		try {

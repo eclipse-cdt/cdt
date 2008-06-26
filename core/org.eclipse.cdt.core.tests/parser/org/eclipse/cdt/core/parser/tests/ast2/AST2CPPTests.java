@@ -5795,4 +5795,120 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPFunction fn2= bh.assertNonProblem("func(&C::m2", 4, ICPPFunction.class);
 		assertNotSame(fn1, fn2);
     }
+    
+    //	class A;
+	//
+	//	void foo(A* a) {}
+	//	void foo(const A* a) {}
+	//	void foo(volatile A* a) {}
+	//	void foo(const volatile A* a) {}
+	//
+	//	class A {
+	//	public:
+	//		void member1() { foo(this);/*1*/ }
+	//		void member2() const { foo(this);/*2*/ }
+	//		void member3() volatile { foo(this);/*3*/ }
+	//		void member4() const volatile { foo(this);/*4*/ }
+	//	};
+	public void testThisType() throws Exception {
+		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction pt1= ba.assertNonProblem("foo(this);/*1*/", 3, ICPPFunction.class);
+		ICPPFunction pt2= ba.assertNonProblem("foo(this);/*2*/", 3, ICPPFunction.class);
+		ICPPFunction pt3= ba.assertNonProblem("foo(this);/*3*/", 3, ICPPFunction.class);
+		ICPPFunction pt4= ba.assertNonProblem("foo(this);/*4*/", 3, ICPPFunction.class);
+		
+		IType t1= ((IPointerType)pt1.getType().getParameterTypes()[0]).getType();
+		IQualifierType t2= (IQualifierType) ((IPointerType) pt2.getType().getParameterTypes()[0]).getType();
+		IQualifierType t3= (IQualifierType)((IPointerType) pt3.getType().getParameterTypes()[0]).getType();
+		IQualifierType t4= (IQualifierType)((IPointerType) pt4.getType().getParameterTypes()[0]).getType();
+		
+		assertTrue(!(t1 instanceof IQualifierType));
+		assertTrue(t2.isConst()); assertTrue(!t2.isVolatile());
+		assertTrue(!t3.isConst()); assertTrue(t3.isVolatile());
+		assertTrue(t4.isConst()); assertTrue(t4.isVolatile());
+	}
+	
+	//	class A {
+	//		public:
+	//			void foo() {}
+	//	};
+	//
+	//	void ref() {
+	//		A a1= *new A();
+	//		a1->foo();/*1*/
+	//      A* a2= new A();
+	//      a2->foo();/*2*/
+	//	}
+	public void testMemberAccessOperator_a() throws Exception {
+		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("foo();/*1*/", 3);
+		ba.assertNonProblem("foo();/*2*/", 3);
+	}
+	
+	//	class A {
+	//		public:
+	//			void foo() {};
+	//	};
+	//
+	//	class B {
+	//		public:
+	//			void foo() {};
+	//			A* operator->() {return new A();}
+	//	};
+	//
+	//	void ref() {
+	//		B b= *new B();
+	//		b->foo();/*1*/
+	//		B* b2= new B();
+	//		b2->foo();/*2*/
+	//	}
+	public void testMemberAccessOperator_b() throws Exception {
+		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		ICPPMethod m1= ba.assertNonProblem("foo();/*1*/", 3, ICPPMethod.class);
+		ICPPMethod m2= ba.assertNonProblem("foo();/*2*/", 3, ICPPMethod.class);
+		assertEquals(m1.getClassOwner().getName(), "A");
+		assertEquals(m2.getClassOwner().getName(), "B");
+	}
+	
+	//	class A { public: void foo(); };
+	//	class B { public: A* operator->() {return  new A();} };
+	//	class C { public: B  operator->() {return *new B();} };
+	//
+	//	void ref() {
+	//	   C c;
+	//	   c->foo();/**/ // refers to A::foo
+	//	}
+	public void testMemberAccessOperator_c() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("foo();/**/", 3);
+	}
+	
+	//	class A { public: void foo(); };
+	//	class B { public: A* operator->() {return  new A();} };
+	//	class C { public: B* operator->() {return new B();} };
+	//
+	//	void ref() {
+	//	   C c;
+	//	   c->foo();/**/ // expect problem - foo is not in B
+	//	}
+	public void testMemberAccessOperator_d() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("foo();/**/", 3);
+	}
+	
+	//	class A { public: void foo(); };
+	//  typedef A A2;
+	//	class B { public: A2* operator->() {return  new A();} };
+	//  typedef B B2;
+	//	class C { public: B2 operator->() {return *new B();} };
+	//
+	//  typedef C C2;
+	//	void ref() {
+	//	   C2 c;
+	//	   c->foo();/**/ // refers to A::foo
+	//	}
+	public void testMemberAccessOperator_e() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("foo();/**/", 3);
+	}
 }

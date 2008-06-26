@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -66,7 +67,9 @@ public class Conversions {
 	public static Cost checkImplicitConversionSequence(boolean allowUDC, IASTExpression sourceExp, IType source, IType target, boolean isImpliedObject) throws DOMException {
 		Cost cost;
 		
-		if (!isImpliedObject && target instanceof ICPPReferenceType) {
+		allowUDC &= !isImpliedObject;
+		
+		if (target instanceof ICPPReferenceType) {
 			// [13.3.3.3.1] Reference binding 
 			IType cv1T1= ((ICPPReferenceType)target).getType();
 			cost= new Cost(source, cv1T1);
@@ -79,6 +82,14 @@ public class Conversions {
 				/* Direct reference binding */
 				// [13.3.3.1.4]
 				
+				if (cost.source.isSameType(cost.target) || 
+						// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
+						// it were a pointer to the derived class
+						(isImpliedObject && cost.source instanceof ICPPClassType && cost.target instanceof ICPPClassType)) {
+					cost.rank = Cost.IDENTITY_RANK;
+					return cost;
+				}
+				
 				/*
 				 * is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
 				 */
@@ -87,43 +98,45 @@ public class Conversions {
 				qualificationConversion(cost);
 
 				derivedToBaseConversion(cost);
-			} else if (T2 instanceof ICPPClassType && allowUDC) {
-				/*
-				 * or has a class type (i.e., T2 is a class type) and can be implicitly converted to
-				 * an lvalue of type "cv3 T3," where "cv1 T1" is reference-compatible with "cv3 T3" 92)
-				 * (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
-				 * and choosing the best one through overload resolution (13.3)).
-				 */
-				ICPPMethod[] fcns= SemanticUtil.getConversionOperators((ICPPClassType)T2);
-				Cost operatorCost= null;
-				ICPPMethod conv= null;
-				boolean ambiguousConversionOperator= false;
-				if (fcns.length > 0 && fcns[0] instanceof IProblemBinding == false) {
-					for (final ICPPMethod op : fcns) {
-						Cost cost2 = checkStandardConversionSequence(op.getType().getReturnType(), target, false);
-						if (cost2.rank != Cost.NO_MATCH_RANK) {
-							if (operatorCost == null) {
-								operatorCost= cost2;
-								conv= op;
-							} else {
-								int cmp= operatorCost.compare(cost2);
-								if (cmp >= 0) {
-									ambiguousConversionOperator= cmp == 0;
+			} else if (T2 instanceof ICPPClassType) {
+				if(allowUDC) {
+					/*
+					 * or has a class type (i.e., T2 is a class type) and can be implicitly converted to
+					 * an lvalue of type "cv3 T3," where "cv1 T1" is reference-compatible with "cv3 T3" 92)
+					 * (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
+					 * and choosing the best one through overload resolution (13.3)).
+					 */
+					ICPPMethod[] fcns= SemanticUtil.getConversionOperators((ICPPClassType)T2);
+					Cost operatorCost= null;
+					ICPPMethod conv= null;
+					boolean ambiguousConversionOperator= false;
+					if (fcns.length > 0 && fcns[0] instanceof IProblemBinding == false) {
+						for (final ICPPMethod op : fcns) {
+							Cost cost2 = checkStandardConversionSequence(op.getType().getReturnType(), target, false);
+							if (cost2.rank != Cost.NO_MATCH_RANK) {
+								if (operatorCost == null) {
 									operatorCost= cost2;
 									conv= op;
+								} else {
+									int cmp= operatorCost.compare(cost2);
+									if (cmp >= 0) {
+										ambiguousConversionOperator= cmp == 0;
+										operatorCost= cost2;
+										conv= op;
+									}
 								}
 							}
 						}
 					}
-				}
 
-				if (conv!= null && !ambiguousConversionOperator) {
-					IType newSource= conv.getType().getReturnType();
-					boolean isNewSourceLValue= newSource instanceof ICPPReferenceType;
-					if (isNewSourceLValue && isReferenceCompatible(cv1T1, newSource)) {
-						cost= new Cost(cv1T1, newSource);
-						qualificationConversion(cost);
-						derivedToBaseConversion(cost);
+					if (conv!= null && !ambiguousConversionOperator) {
+						IType newSource= conv.getType().getReturnType();
+						boolean isNewSourceLValue= newSource instanceof ICPPReferenceType;
+						if (isNewSourceLValue && isReferenceCompatible(cv1T1, newSource)) {
+							cost= new Cost(cv1T1, newSource);
+							qualificationConversion(cost);
+							derivedToBaseConversion(cost);
+						}
 					}
 				}
 			}
@@ -449,8 +462,11 @@ public class Conversions {
 
 		if (maxdepth > 0 && type instanceof ICPPClassType && ancestorToFind instanceof ICPPClassType) {
 			ICPPClassType clazz = (ICPPClassType) type;
-			ICPPBase[] bases= clazz.getBases();
-			for (ICPPBase cppBase : bases) {
+			if(clazz instanceof ICPPDeferredClassInstance) {
+				clazz= (ICPPClassType) ((ICPPDeferredClassInstance)clazz).getSpecializedBinding();
+			}
+			
+			for (ICPPBase cppBase : clazz.getBases()) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof IType) {
 					IType tbase= (IType) base;

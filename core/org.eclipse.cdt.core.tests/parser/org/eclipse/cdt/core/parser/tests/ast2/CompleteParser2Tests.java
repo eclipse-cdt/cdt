@@ -1275,7 +1275,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buff.append( "   void f_SD_01();         \n"); //$NON-NLS-1$
 		buff.append( "};                         \n"); //$NON-NLS-1$
 		buff.append( "int main(){                \n"); //$NON-NLS-1$
-		buff.append( "   SD_01 a = new SD_01();  \n"); //$NON-NLS-1$  // REFERENCE SD_01 * 2 
+		buff.append( "   SD_01* a = new SD_01(); \n"); //$NON-NLS-1$  // REFERENCE SD_01 * 2 
 		buff.append( "   a->f_SD_01();           \n"); //$NON-NLS-1$  // REFERENCE a && REFERENCE f_SD_01 
 		buff.append( "}                          \n"); //$NON-NLS-1$
 		buff.append( "void SD_01::f_SD_01()      \n"); //$NON-NLS-1$ // REFERENCE SD_01 

@@ -53,6 +53,7 @@
  * David McKnight   (IBM)		 - [229116] NPE in when editing remote file in new workspace
  * David McKnight   (IBM)        - [234057] Wrong or missing model change event
  * David Dykstal (IBM) - [227750] do not fire events if there are no listeners
+ * David McKnight   (IBM)        - [238673] Expansion icon (plus sign) disappears from Work With Libraries entry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -101,6 +102,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
@@ -944,6 +946,12 @@ public class SystemRegistry implements ISystemRegistry
 		if (firstObject == null || secondObject == null){
 			return false;
 		}
+		
+		// two different message objects should not be considered the same
+		if (firstObject instanceof SystemMessageObject){
+			return false;
+		}
+		
 		ISystemDragDropAdapter adA = null;
 		ISystemDragDropAdapter adB = null;
 		if (firstObjectFullName == null) {

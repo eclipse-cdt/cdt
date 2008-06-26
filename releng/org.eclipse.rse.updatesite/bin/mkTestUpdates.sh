@@ -237,7 +237,7 @@ elif [ `basename $SITE` = interim ]; then
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
     	-e 's,Project 2.0 Update,Project Interim Update,g' \
     	-e '\,</h1>,a\
-This site contains Target Management Interim Maintenance builds (M-builds) in order \
+This site contains Target Management Interim Maintenance builds (I-, S-, and M-builds) in order \
 to test them before going live.' \
     	index.html > index.html.new
     mv -f index.html.new index.html
@@ -251,26 +251,29 @@ to test them before going live.' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = 3.0 ]; then
-    echo "Working on 3.0 milestone update site"
+    echo "Working on 3.0 update site"
     TYPE=milestone
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/3.0,g' \
-    	-e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
+    	-e 's,Project 2.0 Update,Project 3.0 Update,g' \
     	-e '\,</h1>,a\
-This site contains Target Management 3.0 Milestones (I-, and S- builds) which are \
+This site contains Target Management 3.0 Releases and Updates (R- builds) which are \
 being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## dont keep 2.0.x features in site.xml
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/3.0,g' \
-        -e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
+        -e 's,Project 2.0 Update,Project 3.0 Update,g' \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-        site.xml > site.xml.new
+        site.xml > site.xml.new1
+    sed -e '/<!-- BEGIN_3_0_1 -->/,/<!-- END_3_0_1 -->/d' \
+        site.xml.new1 > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
+    rm site.xml.new1
+    sed -e 's,Project 2.0 Update,Project 3.0 Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 else
@@ -283,9 +286,11 @@ else
     sed -e '/<!-- BEGIN_2_0_5 -->/,/<!-- END_2_0_5 -->/d' \
         site.xml > site.xml.new1
     sed -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0 -->/d' \
-        site.xml.new1 > site.xml.new
+        site.xml.new1 > site.xml.new2
+    sed -e '/<!-- BEGIN_3_0_1 -->/,/<!-- END_3_0_1 -->/d' \
+        site.xml.new2 > site.xml.new
     mv -f site.xml.new site.xml
-    rm site.xml.new1
+    rm site.xml.new1 site.xml.new2
 fi
 FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do

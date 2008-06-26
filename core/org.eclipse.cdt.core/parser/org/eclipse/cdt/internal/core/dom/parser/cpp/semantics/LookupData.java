@@ -55,8 +55,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -334,18 +332,11 @@ class LookupData {
         	} 
         	if (prop == IASTFieldReference.FIELD_NAME) {
         		ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
-        		IType implied = CPPVisitor.getExpressionType(fieldRef.getFieldOwner());
-        		IType ultimateImplied= SemanticUtil.getUltimateTypeUptoPointers(implied);
-        		if (fieldRef.isPointerDereference()) {
-        			if (ultimateImplied instanceof ICPPClassType) {
-        				ICPPFunction operator= CPPSemantics.findOperator(fieldRef, (ICPPClassType) ultimateImplied);
-        				if (operator!=null) {
-        					return operator.getType().getReturnType();
-        				}
-        			} else if (implied instanceof IPointerType) {
-        				return ((IPointerType)implied).getType();
-        			}
-        		}
+        		IType implied= CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldRef);
+        		implied= SemanticUtil.getUltimateTypeUptoPointers(implied);
+        		if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
+    				return ((IPointerType)implied).getType();
+    			}
         		return implied;
         	}
         	if (prop == IASTIdExpression.ID_NAME) {

@@ -2970,4 +2970,54 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPSpecialization ctps= ba.assertNonProblem("C<A,5L>", 7, ICPPSpecialization.class, ICPPClassType.class);
 		assertFalse(ctps instanceof ICPPTemplateInstance);
 	}
+	
+	//	class A {
+	//		public:
+	//			A(const A& a) {}
+	//	};
+	//
+	//	template<typename T>
+	//	class B : A {
+	//		public:
+	//			B(const B<T>& other) : A(other) {}
+	//	};
+	public void testChainInitializerLookupThroughDeferredClassBase() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("A(other", 1);
+	}
+	
+	//	class A {};
+	//
+	//	class B {
+	//	public:
+	//		void foo(const A& b);
+	//	};
+	//
+	//	template<typename T>
+	//	class C : public B {
+	//	public:
+	//		void foo(T *t) {
+	//			B::foo(static_cast<A*>(t));
+	//		}
+	//	};
+	public void testMemberLookupThroughDeferredClassBase() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("foo(s", 3);
+	}
+	
+	//	template <class T>
+	//	class A {
+	//	public:
+	//		inline int foo() const;
+	//		inline int bar() const;
+	//	};
+	//
+	//	template <class T>
+	//	inline int A<T>::bar() const {
+	//		return foo();
+	//	}
+	public void testMemberReferenceFromTemplatedMethodDefinition_238232() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("foo();", 3);
+	}
 }

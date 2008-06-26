@@ -939,24 +939,8 @@ public class CPPVisitor {
 				} 
 			} else if (parent instanceof ICPPASTFieldReference) {
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference)parent;
-				IASTExpression owner = fieldReference.getFieldOwner();
-				IType type = getExpressionType(owner);
-				if (fieldReference.isPointerDereference()) {
-					// bug 205964: as long as the type is a class type, recurse. 
-					// Be defensive and allow a max of 10 levels.
-					for (int j = 0; j < 10; j++) {
-						type= getUltimateTypeUptoPointers(type);
-						if (type instanceof ICPPClassType) {
-							ICPPFunction op = CPPSemantics.findOperator(fieldReference, (ICPPClassType) type);
-							if (op != null) {
-								type = op.getType().getReturnType();
-							}
-						} else {
-							break;
-						}
-					}
-				} 
-				type =  getUltimateType(type, false);
+				IType type = CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldReference);
+				type= getUltimateType(type, false);
 				if (type instanceof ICPPClassType) {
 					return ((ICPPClassType) type).getCompositeScope();
 				}

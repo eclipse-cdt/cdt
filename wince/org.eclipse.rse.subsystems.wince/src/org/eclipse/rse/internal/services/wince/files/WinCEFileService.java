@@ -14,6 +14,7 @@
  * Radoslav Gerganov (ProSyst) - [231425] [WinCE] Use the progress monitors in WinCEFileService
  * Radoslav Gerganov (ProSyst) - [230856] [WinCE] Improve the error handling in WinCEFileService
  * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
+ * Radoslav Gerganov (ProSyst) - [235360] Return proper "Root" IHostFile
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -104,10 +105,9 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
   private WinCEHostFile makeHostFile(String parentPath, String fileName, RapiFindData findData) {
     boolean isDirectory = (findData.fileAttributes & Rapi.FILE_ATTRIBUTE_DIRECTORY) != 0;
     boolean isWritable = (findData.fileAttributes & Rapi.FILE_ATTRIBUTE_READONLY) == 0;
-    boolean isRoot = "\\".equals(parentPath) && "\\".equals(fileName); //$NON-NLS-1$ //$NON-NLS-2$
     long lastModified = (findData.lastWriteTime / 10000) - Rapi.TIME_DIFF;
     long size = findData.fileSize;
-    return new WinCEHostFile(parentPath, fileName, isDirectory, isRoot, isWritable, lastModified, size);
+    return new WinCEHostFile(parentPath, fileName, isDirectory, false, isWritable, lastModified, size);
   }
 
   private boolean isDirectory(IRapiSession session, String fullPath) {
@@ -290,6 +290,10 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
   }
 
   public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor) throws SystemMessageException {
+    if (remoteParent == null || remoteParent.length() == 0) {
+    	// special case for root
+    	return getRoots(null)[0];
+    }
     IRapiSession session = sessionProvider.getSession();
     try {
       RapiFindData findData = new RapiFindData();
@@ -306,7 +310,7 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
   }
 
   public IHostFile[] getRoots(IProgressMonitor monitor) throws SystemMessageException {
-    return new WinCEHostFile[] { new WinCEHostFile("\\", "\\", true, true, true, 0, 0) }; //$NON-NLS-1$ //$NON-NLS-2$
+    return new WinCEHostFile[] { new WinCEHostFile(null, "\\", true, true, true, 0, 0) }; //$NON-NLS-1$
   }
 
   public IHostFile getUserHome() {

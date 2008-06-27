@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class SourceFilesContentProvider extends CElementContentProvider {
 
@@ -35,7 +36,7 @@ public class SourceFilesContentProvider extends CElementContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof Executable) {
 			Executable executable = (Executable) inputElement;
-			ITranslationUnit[] sourceFiles = executable.getSourceFiles();
+			ITranslationUnit[] sourceFiles = executable.getSourceFiles(new NullProgressMonitor());
 			if (sourceFiles.length == 0)
 				return new String[] { Messages.SourceFilesContentProvider_NoFilesFound + executable.getName() };
 			else

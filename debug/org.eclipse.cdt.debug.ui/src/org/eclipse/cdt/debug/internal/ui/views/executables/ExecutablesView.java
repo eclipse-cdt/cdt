@@ -52,6 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * ExecutablesView displays a list of executable files either in the workspace
@@ -264,11 +265,29 @@ public class ExecutablesView extends ViewPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection newSelection = event.getSelection();
 				if (newSelection instanceof IStructuredSelection) {
-					Object firstElement = ((IStructuredSelection) newSelection).getFirstElement();
-					sourceFilesViewer.setInput(firstElement);
-					if (firstElement instanceof Executable) {
-						sourceFilesViewer.packColumns();
-					}
+					final Object firstElement = ((IStructuredSelection) newSelection).getFirstElement();
+					
+					Job setectExeJob = new Job("Select Executable") {
+
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							if (firstElement instanceof Executable) {
+								((Executable)firstElement).getSourceFiles(monitor);
+							}
+							UIJob selectExeUIJob = new UIJob("Select Executable"){
+								@Override
+								public IStatus runInUIThread(
+										IProgressMonitor monitor) {
+									sourceFilesViewer.setInput(firstElement);
+									if (firstElement instanceof Executable) {
+										sourceFilesViewer.packColumns();
+									}
+									return Status.OK_STATUS;
+								}};
+								selectExeUIJob.schedule();								
+								return Status.OK_STATUS;
+						}};
+						setectExeJob.schedule();
 				}
 			}
 		});

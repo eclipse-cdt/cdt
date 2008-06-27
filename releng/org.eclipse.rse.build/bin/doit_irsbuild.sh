@@ -39,8 +39,7 @@ mapTag=HEAD
 buildType=$1
 buildId=$2
 case x$buildType in
-  xP|xN|xI|xS|xR) ok=1 ;;
-  xM) mapTag=R2_0_maintenance ; ok=1 ;;
+  xP|xN|xI|xS|xR|xM) ok=1 ;;
   *) ok=0 ;;
 esac
 if [ "$3" != "" ]; then
@@ -127,7 +126,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
     fi
   fi
 
-  if [ ${buildType} != M -a ${buildType} != N ]; then
+  if [ ${buildType} != N ]; then
       #Update the testUpdates site
       echo "Refreshing update site"
       cd $HOME/downloads-tm/testUpdates/bin

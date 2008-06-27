@@ -37,6 +37,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
@@ -51,6 +52,7 @@ public class Executable extends PlatformObject {
 	private IResource resource;
 	private Map<ITranslationUnit, String> remappedPaths;
 	private ArrayList<ITranslationUnit> sourceFiles;
+	private boolean refreshSourceFiles;
 
 	public IPath getPath() {
 		return path;
@@ -67,6 +69,7 @@ public class Executable extends PlatformObject {
 		this.resource = resource;
 		remappedPaths = new HashMap<ITranslationUnit, String>();
 		sourceFiles = new ArrayList<ITranslationUnit>();
+		refreshSourceFiles = true;
 	}
 
 	public IResource getResource() {
@@ -203,7 +206,11 @@ public class Executable extends PlatformObject {
 		return null;
 	}
 
-	public ITranslationUnit[] getSourceFiles() {
+	public TranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
+		
+		if (!refreshSourceFiles)
+			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
+		
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
 
@@ -296,7 +303,12 @@ public class Executable extends PlatformObject {
 
 		}
 
-		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]);
+		refreshSourceFiles = false;
+		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
+	}
+
+	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
+		this.refreshSourceFiles = refreshSourceFiles;
 	}
 
 	public String getOriginalLocation(ITranslationUnit tu) {

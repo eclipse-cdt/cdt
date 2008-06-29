@@ -358,7 +358,17 @@
                id="org.eclipse.cdt.msvc.link.option.debug"
                name="Generate Debug Info (/debug)"
                resourceFilter="all"
-               valueType="boolean"/>
+               valueType="boolean">
+            <enablement
+                  attribute="value"
+                  type="CONTAINER_ATTRIBUTE"
+                  value="true">
+               <checkBuildProperty
+                     property="org.eclipse.cdt.build.core.buildType"
+                     value="org.eclipse.cdt.build.core.buildType.debug">
+               </checkBuildProperty>
+            </enablement>
+         </option>
          <option
                category="org.eclipse.cdt.msvc.link.optionCategory.general"
                command="/nologo"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Radoslav Gerganov
+ * Copyright (c) 2008 Radoslav Gerganov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Radoslav Gerganov - initial API and implementation
+ *    Radoslav Gerganov - [238773] [WinCE] Implement IRAPISession#CeRapiInvoke    
  *******************************************************************************/
 package org.eclipse.tm.rapi;
 
@@ -277,4 +278,20 @@ public abstract class IRapiSession extends IUnknown {
    */
   public abstract ProcessInformation createProcess(String appName, String commandLine, 
       int creationFlags) throws RapiException;
+  
+  /**
+   * Invokes the specified native function on the remote device passing the specified byte array as argument.
+   * The native function must have the following signature:<p>
+   * <code>HRESULT funcName(DWORD inpLen, BYTE *inp, DWORD *outLen, BYTE **out, IRAPIStream *stream)</code><p>
+   * The native function must return <code>0</code> on success or non-zero value if an error occurs.
+   * @param dllPath the name of the dll on the remote device which contains the native function 
+   * @param funcName the name of the native function that will be called
+   * @param input byte array which will be passed to the native function; <code>inpLen</code> is initialized with
+   * the length of <code>input</code> and <code>inp</code> points to a buffer with the same content as 
+   * <code>input</code> 
+   * @return byte array returned from the native function; the length and the content of the returned array
+   * corresponds to <code>*outLen</code> and <code>*out</code> respectively
+   * @throws RapiException if an error occurs.
+   */
+  public abstract byte[] invoke(String dllPath, String funcName, byte[] input) throws RapiException;
 }

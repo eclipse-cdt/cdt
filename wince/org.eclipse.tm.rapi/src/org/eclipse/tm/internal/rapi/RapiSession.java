@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Radoslav Gerganov
+ * Copyright (c) 2008 Radoslav Gerganov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Radoslav Gerganov - initial API and implementation
+ *    Radoslav Gerganov - [238773] [WinCE] Implement IRAPISession#CeRapiInvoke
  *******************************************************************************/
 package org.eclipse.tm.internal.rapi;
 
@@ -275,6 +276,19 @@ public class RapiSession extends IRapiSession {
     }
     return pi;
   }
+  
+  public byte[] invoke(String dllPath, String funcName, byte[] input) throws RapiException {
+    int[] output = new int[2];
+    int res = CeRapiInvoke(addr, dllPath, funcName, input, output);
+    if (res != 0) {
+      throw new RapiException("CeRapiInvoke failed", res); //$NON-NLS-1$
+    }
+    int outputLength = output[0];
+    int outputPtr = output[1];
+    byte[] outputArr = new byte[outputLength];
+    CeRapiInvokeEx(outputPtr, outputArr);
+    return outputArr;
+  }
 
   public String toString() {
     return "[RapiSession] addr: " + Integer.toHexString(addr); //$NON-NLS-1$
@@ -340,4 +354,12 @@ public class RapiSession extends IRapiSession {
   
   private final native boolean CeCreateProcess(int addr, String lpApplicationName,
       String lpCommandLine, int dwCreationFlags, ProcessInformation lpProcessInformation);
+  
+  private final native int CeRapiInvoke(int addr, String dllPath, String funcName,
+      byte[] input, int[] output);
+  
+  /**
+   * Initializes the outputArr with the memory pointed by outputPtr.
+   */
+  private final native void CeRapiInvokeEx(int outputPtr, byte[] outputArr); 
 }

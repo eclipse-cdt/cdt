@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Radoslav Gerganov
+ * Copyright (c) 2008 Radoslav Gerganov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Radoslav Gerganov - initial API and implementation
+ *    Radoslav Gerganov - [238773] [WinCE] Implement IRAPISession#CeRapiInvoke
  *******************************************************************************/
 
 #include <WinSock2.h>
@@ -553,4 +554,58 @@ fail:
 	if (arg1 && lparg1) env->ReleaseStringChars(arg1, lparg1);
 	if (arg2 && lparg2) env->ReleaseStringChars(arg2, lparg2);
 	return rc;
+}
+
+JNIEXPORT jint JNICALL RAPI_NATIVE(CeRapiInvoke)
+  (JNIEnv *env, jobject that, jint arg0, jstring arg1, jstring arg2, jbyteArray arg3, jintArray arg4)
+{
+	const jchar *lparg1 = NULL;
+	const jchar *lparg2 = NULL;
+	jbyte *lparg3 = NULL;
+	jint *lparg4 = NULL;
+	int res = -1;
+	jsize cbInput = 0;
+
+	if (arg0 == 0) return -1;
+	if (arg1) {
+		lparg1 = env->GetStringChars(arg1, NULL);
+		if (lparg1 == NULL) goto fail;
+	}
+	if (arg2) {
+		lparg2 = env->GetStringChars(arg2, NULL);
+		if (lparg2 == NULL) goto fail;
+	}
+	if (arg3) {
+		lparg3 = env->GetByteArrayElements(arg3, NULL);
+		if (lparg3 == NULL) goto fail;
+		cbInput = env->GetArrayLength(arg3);
+	}
+	if (arg4) {
+		lparg4 = env->GetIntArrayElements(arg4, NULL);
+		if (lparg4 == NULL) goto fail;
+	}
+	IRAPISession *pSession = (IRAPISession*) arg0;
+	res = pSession->CeRapiInvoke((LPCWSTR)lparg1, (LPCWSTR)lparg2, cbInput, 
+		(BYTE*)lparg3, (DWORD*) lparg4, (BYTE**) (lparg4 + 1), NULL, 0);
+
+fail:
+	if (arg1 && lparg1) env->ReleaseStringChars(arg1, lparg1);
+	if (arg2 && lparg2) env->ReleaseStringChars(arg2, lparg2);
+	if (arg3 && lparg3) env->ReleaseByteArrayElements(arg3, lparg3, 0);
+	if (arg4 && lparg4) env->ReleaseIntArrayElements(arg4, lparg4, 0);
+	return res;
+}
+
+JNIEXPORT void JNICALL RAPI_NATIVE(CeRapiInvokeEx)
+  (JNIEnv *env, jobject that, jint arg0, jbyteArray arg1)
+{
+	jbyte *lparg1 = NULL;
+	jsize len = 0;
+
+	if (arg1 == 0) return;
+	lparg1 = env->GetByteArrayElements(arg1, NULL);
+	if (lparg1 == NULL) return;
+	len = env->GetArrayLength(arg1);
+	memcpy(lparg1, (void*)arg0, len);
+	env->ReleaseByteArrayElements(arg1, lparg1, 0);
 }

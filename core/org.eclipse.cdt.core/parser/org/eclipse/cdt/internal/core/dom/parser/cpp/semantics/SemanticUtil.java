@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
@@ -63,6 +64,9 @@ public class SemanticUtil {
 	 */
 	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz) throws DOMException {
 		ICPPMethod[] methods= new ICPPMethod[0];
+		if (clazz instanceof ICPPDeferredClassInstance) {
+			clazz= (ICPPClassType) ((ICPPDeferredClassInstance)clazz).getTemplateDefinition();
+		}
 		ICPPMethod[] decs= clazz.getDeclaredMethods();
 		if(decs != null) {
 			for(ICPPMethod method : decs) {

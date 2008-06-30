@@ -23,6 +23,7 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
@@ -50,7 +51,7 @@ public class ParameterHandler {
 	}
 	
 	public void initArgumentNames() {
- 		if(parameterInfos != null) {
+		if(parameterInfos != null) {
 			return;
 		}
 		needsAditionalArgumentNames = false; 
@@ -58,7 +59,10 @@ public class ParameterHandler {
 		for(IASTParameterDeclaration actParam : getParametersFromMethodNode()) {
 			String actName = actParam.getDeclarator().getName().toString();
 			boolean isChangable = false;
-			if(actName.length() == 0) {
+			if(actParam.getDeclSpecifier()instanceof IASTSimpleDeclSpecifier && ((IASTSimpleDeclSpecifier)actParam.getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_void) {
+				actName = "";
+				isChangable = false;
+			}else if(actName.length() == 0) {
 				needsAditionalArgumentNames = true;
 				isChangable = true;
 				actName = findNameForParameter(NameHelper.getTypeName(actParam));
@@ -66,7 +70,7 @@ public class ParameterHandler {
 			parameterInfos.add(new ParameterInfo(actParam, actName, isChangable));
 		}
 	}
-	
+
 	private String findNameForParameter(String typeName) {
 		if(pseudoNameGenerator == null) {
 			pseudoNameGenerator = new PseudoNameGenerator();

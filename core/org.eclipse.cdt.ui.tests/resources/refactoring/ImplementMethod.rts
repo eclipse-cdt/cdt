@@ -712,3 +712,28 @@ int *TestClass::get(char *val)
 
 
 
+//! Bug 238554 void parameters
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+
+class Test
+{
+    public:
+	//$void doNothing(void);$//
+};
+
+
+//@A.cpp
+#include "A.h"
+
+//=
+#include "A.h"
+
+void Test::doNothing(void)
+{
+}
+
+
+

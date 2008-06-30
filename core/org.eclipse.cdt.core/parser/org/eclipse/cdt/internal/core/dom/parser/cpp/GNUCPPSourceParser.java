@@ -1304,16 +1304,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             firstExpression = specialCastExpression(ICPPASTCastExpression.op_const_cast);
             break;
         case IToken.t_typeid:
-        	int lastOffset;
             int so = consume().getOffset();
-            consume(IToken.tLPAREN);
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.push(IToken.tLPAREN);
             }
-            IASTNode[] n;
             try {
-            	n= parseTypeIdOrUnaryExpression(false);
-                lastOffset = consume(IToken.tRPAREN).getEndOffset();
+            	return parseTypeidInParenthesisOrUnaryExpression(true, so, ICPPASTTypeIdExpression.op_typeid, ICPPASTUnaryExpression.op_typeid);
             }
             finally {
             	if (templateIdScopes.size() > 0) {
@@ -1321,47 +1317,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             	}
             }
 
-            switch (n.length) {
-            case 0:
-                throwBacktrack(LA(1));
-                return null; // line is never reached, hint for the parser
-            case 1:
-                if (n[0] instanceof IASTTypeId) {
-                    firstExpression = buildTypeIdExpression(
-                            ICPPASTTypeIdExpression.op_typeid,
-                            (IASTTypeId) n[0], so, lastOffset);
-                } else if (n[0] instanceof IASTExpression) {
-                    firstExpression = buildUnaryExpression(
-                            ICPPASTUnaryExpression.op_typeid,
-                            (IASTExpression) n[0], so, lastOffset);
-                } else {
-                	throwBacktrack(LA(1));
-                	return null; // line is never reached, hint for the parser
-                }
-                break;
-            case 2:
-                IASTAmbiguousExpression ambExpr = createAmbiguousExpression();
-                IASTExpression e1 = buildTypeIdExpression(
-                        ICPPASTTypeIdExpression.op_typeid, (IASTTypeId) n[0],
-                        so, lastOffset);
-                IASTExpression e2 = buildUnaryExpression(
-                        ICPPASTUnaryExpression.op_typeid,
-                        (IASTExpression) n[1], so, lastOffset);
-                ambExpr.addExpression(e1);
-                ambExpr.addExpression(e2);
-                ((ASTNode) ambExpr).setOffsetAndLength((ASTNode) e2);
-                firstExpression = ambExpr;
-                break;
-            
-            default:
-            	assert false;
-            	throwBacktrack(LA(1));
-            	return null; // line is never reached, hint for the parser
-            }
-
-            break;
         default:
             firstExpression = primaryExpression();
+        	break;
         }
         IASTExpression secondExpression = null;
         for (;;) {
@@ -1776,6 +1734,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
         supportLongLong = config.supportLongLongs();
         supportParameterInfoBlock= config.supportParameterInfoBlock();
+        supportExtendedSizeofOperator= config.supportExtendedSizeofOperator();
+        supportFunctionStyleAsm= config.supportFunctionStyleAssembler();
         this.index= index;
     }
 
@@ -2608,7 +2568,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (declSpec instanceof IASTEnumerationSpecifier)
 			return true;
 		
-		return false;
+		return option == DeclarationOptions.FUNCTION_STYLE_ASM;
 	}
 
 	private IASTDeclaration functionDefinition(final int firstOffset, IASTDeclSpecifier declSpec,
@@ -2675,7 +2635,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 
-    protected IASTFunctionDefinition createFunctionDefinition() {
+    @Override
+	protected IASTFunctionDefinition createFunctionDefinition() {
         return new CPPASTFunctionDefinition();
     }
 
@@ -2807,7 +2768,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * 		{ "class" | "struct" | "union" } classSpecifier | 
      * 		{"enum"} enumSpecifier
      */
-    protected ICPPASTDeclSpecifier declSpecifierSeq(final DeclarationOptions option)
+    @Override
+	protected ICPPASTDeclSpecifier declSpecifierSeq(final DeclarationOptions option)
     		throws BacktrackException, EndOfFileException, FoundDeclaratorException {
         int storageClass = IASTDeclSpecifier.sc_unspecified;
         int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
@@ -2995,7 +2957,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 		lookAheadForDeclarator(option);
                 	}
                 } catch (FoundDeclaratorException e) {
-                	if (e.currToken.getType() == IToken.tEOC || canBeConstructorDestructorOrConversion(option, storageClass, options, e.declarator)) {
+                	if (e.currToken.getType() == IToken.tEOC || option == DeclarationOptions.FUNCTION_STYLE_ASM 
+                			|| canBeConstructorDestructorOrConversion(option, storageClass, options, e.declarator)) {
                 		e.declSpec= createSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
                 		throw e;
                 	}
@@ -3188,7 +3151,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLBRACE:
         case IToken.t_const:
         case IToken.t_volatile:
-        	if (option == DeclarationOptions.GLOBAL || option == DeclarationOptions.CPP_MEMBER) {
+        	if (option == DeclarationOptions.GLOBAL || option == DeclarationOptions.CPP_MEMBER
+        			|| option == DeclarationOptions.FUNCTION_STYLE_ASM) {
         		if (CVisitor.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
         			return true;
         		}

@@ -5741,7 +5741,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	
     // namespace ns {
     //   void test() {}
-    //   +error
+    //   +
     // }
     public void testTrailingSyntaxErrorInNamespace() throws Exception {
     	final String comment= getAboveComment();
@@ -5749,12 +5749,12 @@ public class AST2CPPTests extends AST2BaseTest {
     	ICPPASTNamespaceDefinition ns= getDeclaration(tu, 0);
 		IASTDeclaration decl= getDeclaration(ns, 0);
 		IASTProblemDeclaration pdecl= getDeclaration(ns, 1);
-		assertEquals("+error", pdecl.getRawSignature());
+		assertEquals("+", pdecl.getRawSignature());
     }
 
     // extern "C" {
     //   void test() {}
-    //   +error
+    //   +
     // }
     public void testTrailingSyntaxErrorInLinkageSpec() throws Exception {
     	final String comment= getAboveComment();
@@ -5762,7 +5762,7 @@ public class AST2CPPTests extends AST2BaseTest {
     	ICPPASTLinkageSpecification ls= getDeclaration(tu, 0);
 		IASTDeclaration decl= getDeclaration(ls, 0);
 		IASTProblemDeclaration pdecl= getDeclaration(ls, 1);
-		assertEquals("+error", pdecl.getRawSignature());
+		assertEquals("+", pdecl.getRawSignature());
     }
     
     // class C;

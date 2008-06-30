@@ -144,6 +144,20 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportParameterInfoBlock();
 	
 	/**
+	 * Support additional parameters for the sizeof operator:
+	 * 'sizeof' '(' typeid ',' expression-list ')'
+	 * @since 5.1
+	 */
+	public boolean supportExtendedSizeofOperator();
+	
+	/**
+	 * Support function style assembler definitions:
+	 * 'asm' ['volatile'] [return-type] name '(' parameter-list ')' '{' assembler-code '}'
+	 * @since 5.1
+	 */
+	public boolean supportFunctionStyleAssembler();
+
+	/**
 	 * @deprecated configure extra keywords, via {@link IScannerExtensionConfiguration#getAdditionalKeywords()}      
 	 */
 	@Deprecated

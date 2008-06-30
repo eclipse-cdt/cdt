@@ -87,7 +87,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
  */
 public class AST2BaseTest extends BaseTestCase {
 	
-    private static final IParserLogService NULL_LOG = new NullLogService();
+    protected static final IParserLogService NULL_LOG = new NullLogService();
 
     public AST2BaseTest() {
     	super();

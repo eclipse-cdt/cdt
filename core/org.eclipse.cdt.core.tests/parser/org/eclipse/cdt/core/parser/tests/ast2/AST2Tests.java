@@ -4961,20 +4961,20 @@ public class AST2Tests extends AST2BaseTest {
     }
     
     // void test() {}
-    // +error
+    // +
     public void testTrailingSyntaxErrorInTU() throws Exception {
     	final String comment= getAboveComment();
     	for (ParserLanguage lang : ParserLanguage.values()) {
     		IASTTranslationUnit tu= parse(comment, lang, false, false);
     		IASTDeclaration decl= getDeclaration(tu, 0);
     		IASTProblemDeclaration pdecl= getDeclaration(tu, 1);
-    		assertEquals("+error", pdecl.getRawSignature());
+    		assertEquals("+", pdecl.getRawSignature());
     	}
     }
 
     // struct X {
     // int test;
-    // +error
+    // +
     // };
     public void testTrailingSyntaxErrorInCompositeType() throws Exception {
     	final String comment= getAboveComment();
@@ -4983,14 +4983,14 @@ public class AST2Tests extends AST2BaseTest {
     		IASTCompositeTypeSpecifier ct= getCompositeType(tu, 0);
     		IASTDeclaration decl= getDeclaration(ct, 0);
     		IASTProblemDeclaration pdecl= getDeclaration(ct, 1);
-    		assertEquals("+error", pdecl.getRawSignature());
+    		assertEquals("+", pdecl.getRawSignature());
     	}
     }
     
     // void func() {
     //    {
     //       int test;
-    //       +error
+    //       +
     //    }
     // }
     public void testTrailingSyntaxErrorInCompoundStatements() throws Exception {
@@ -5001,7 +5001,7 @@ public class AST2Tests extends AST2BaseTest {
     		IASTCompoundStatement compStmt= getStatement(def, 0);
     		IASTDeclarationStatement dstmt= getStatement(compStmt, 0);
     		IASTProblemStatement pstmt= getStatement(compStmt, 1);
-    		assertEquals("+error", pstmt.getRawSignature());
+    		assertEquals("+", pstmt.getRawSignature());
     	}
     }
     

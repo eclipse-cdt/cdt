@@ -95,4 +95,20 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	public boolean supportParameterInfoBlock() {
 		return false;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since 5.1
+	 */
+	public boolean supportExtendedSizeofOperator() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since 5.1
+	 */
+	public boolean supportFunctionStyleAssembler() {
+		return false;
+	}
 }

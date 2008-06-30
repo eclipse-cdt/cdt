@@ -103,6 +103,20 @@ public interface ICParserExtensionConfiguration {
 	public boolean supportParameterInfoBlock();
 	
 	/**
+	 * Support additional parameters for the sizeof operator:
+	 * 'sizeof' '(' typeid ',' expression-list ')'
+	 * @since 5.1
+	 */
+	public boolean supportExtendedSizeofOperator();
+	
+	/**
+	 * Support function style assembler definitions:
+	 * 'asm' ['volatile'] [return-type] name '(' parameter-list ')' '{' assembler-code '}'
+	 * @since 5.1
+	 */
+	public boolean supportFunctionStyleAssembler();
+	
+	/**
 	 * See http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html for more
 	 * information on GCC's Other Built-in Symbols.
 	 * 

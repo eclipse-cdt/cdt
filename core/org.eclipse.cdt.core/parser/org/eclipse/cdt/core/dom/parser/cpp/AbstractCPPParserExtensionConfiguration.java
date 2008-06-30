@@ -123,6 +123,22 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @since 5.1
+	 */
+	public boolean supportExtendedSizeofOperator() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since 5.1
+	 */
+	public boolean supportFunctionStyleAssembler() {
+		return false;
+	}
+
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#getBuiltinBindingsProvider()
 	 */

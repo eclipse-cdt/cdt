@@ -27,6 +27,7 @@ public class DeclarationOptions {
 
     public static final DeclarationOptions 
     	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_CONSTRUCTOR_INITIALIZER),
+    	FUNCTION_STYLE_ASM= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | NO_INITIALIZER),
     	C_MEMBER=   new DeclarationOptions(ALLOW_BITFIELD),
     	CPP_MEMBER= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_BITFIELD | ALLOW_CONSTRUCTOR_INITIALIZER),
     	LOCAL=	    new DeclarationOptions(ALLOW_CONSTRUCTOR_INITIALIZER),

@@ -60,7 +60,7 @@ public class ParameterHandler {
 			String actName = actParam.getDeclarator().getName().toString();
 			boolean isChangable = false;
 			if(actParam.getDeclSpecifier()instanceof IASTSimpleDeclSpecifier && ((IASTSimpleDeclSpecifier)actParam.getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_void) {
-				actName = "";
+				actName = ""; //$NON-NLS-1$
 				isChangable = false;
 			}else if(actName.length() == 0) {
 				needsAditionalArgumentNames = true;

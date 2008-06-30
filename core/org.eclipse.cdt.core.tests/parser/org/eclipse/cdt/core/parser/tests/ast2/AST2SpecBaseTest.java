@@ -27,9 +27,7 @@ import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -43,8 +41,6 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * @author dsteffle
  */
 public class AST2SpecBaseTest extends AST2BaseTest {
-    private static final IParserLogService NULL_LOG = new NullLogService();
-
 	public AST2SpecBaseTest() {
 		super();
 	}

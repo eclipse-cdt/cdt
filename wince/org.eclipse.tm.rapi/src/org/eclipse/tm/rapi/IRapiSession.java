@@ -292,6 +292,7 @@ public abstract class IRapiSession extends IUnknown {
    * @return byte array returned from the native function; the length and the content of the returned array
    * corresponds to <code>*outLen</code> and <code>*out</code> respectively
    * @throws RapiException if an error occurs.
+   * @since org.eclipse.tm.rapi 0.2
    */
   public abstract byte[] invoke(String dllPath, String funcName, byte[] input) throws RapiException;
 }

@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -76,6 +77,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
@@ -93,6 +95,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final boolean supportAttributeSpecifiers;
     protected final boolean supportDeclspecSpecifiers;
     protected boolean supportParameterInfoBlock;
+    protected boolean supportFunctionStyleAsm;
+    protected boolean supportExtendedSizeofOperator; 
     protected final IBuiltinBindingsProvider builtinBindingsProvider;
     
     /**
@@ -129,7 +133,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     public void setSupportParameterInfoBlock(boolean val) {
     	supportParameterInfoBlock= val;
     }
+
+    public void setSupportExtendedSizeofOperator(boolean val) {
+    	supportExtendedSizeofOperator= val;
+    }
     
+    public void setSupportFunctionStyleAssembler(boolean val) {
+    	supportFunctionStyleAsm= val;
+    }
+
     private AbstractParserLogService wrapLogService(IParserLogService logService) {
 		if (logService instanceof AbstractParserLogService) {
 			return (AbstractParserLogService) logService;
@@ -1301,6 +1313,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 
     protected abstract IASTExpressionStatement createExpressionStatement();
+    
+    
+    protected abstract IASTFunctionDefinition createFunctionDefinition();
 
 
     protected abstract IASTLabelStatement createLabelStatement();
@@ -1336,6 +1351,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTCaseStatement createCaseStatement();
 
     protected abstract IASTDeclaration declaration(DeclarationOptions option) throws BacktrackException, EndOfFileException;
+    protected abstract IASTDeclSpecifier declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException, FoundDeclaratorException;
 
     protected IASTDeclaration[] problemDeclaration(int offset, BacktrackException bt, DeclarationOptions option) {
     	failParse();
@@ -1399,18 +1415,63 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected IASTDeclaration asmDeclaration() throws EndOfFileException,
             BacktrackException {
-        IToken first = consume(); // t_asm
-        IToken next= LA(1);
-        if (next.getType() == IToken.t_volatile) {
+        final int offset= consume().getOffset(); // t_asm
+        if (LT(1) == IToken.t_volatile) {
         	consume();
+        }
+        
+        if (supportFunctionStyleAsm && LT(1) != IToken.tLPAREN) {
+        	return functionStyleAsmDeclaration();
         }
         
         StringBuilder buffer= new StringBuilder();
         asmExpression(buffer);
         int lastOffset = consume(IToken.tSEMI).getEndOffset();
 
-        return buildASMDirective(first.getOffset(), buffer.toString(), lastOffset);
+        return buildASMDirective(offset, buffer.toString(), lastOffset);
     }
+
+	
+	protected IASTDeclaration functionStyleAsmDeclaration() throws BacktrackException, EndOfFileException {
+
+		final int offset= LA(1).getOffset();
+		IASTDeclSpecifier declSpec;
+		IASTDeclarator dtor;
+    	try {
+			declSpec = declSpecifierSeq(DeclarationOptions.FUNCTION_STYLE_ASM);
+    		dtor = initDeclarator(DeclarationOptions.FUNCTION_STYLE_ASM);
+    	} catch (FoundDeclaratorException e) {
+        	if (e.altSpec != null) {
+        		declSpec= e.altSpec;
+        		dtor= e.altDeclarator;
+        	} else {
+        		declSpec = e.declSpec;
+        		dtor= e.declarator;
+        	}
+            backup( e.currToken );
+    	}
+
+    	if (LT(1) != IToken.tLBRACE)
+    		throwBacktrack(LA(1));
+
+    	final IASTDeclarator fdtor= CVisitor.findTypeRelevantDeclarator(dtor);
+    	if (dtor instanceof IASTFunctionDeclarator == false)
+    		throwBacktrack(offset, LA(1).getEndOffset() - offset);
+
+    	IASTFunctionDefinition funcDefinition = createFunctionDefinition();
+    	funcDefinition.setDeclSpecifier(declSpec);
+    	funcDefinition.setDeclarator((IASTFunctionDeclarator) fdtor);
+
+    	final int compoundOffset= LA(1).getOffset();
+    	final int endOffset= skipOverCompoundStatement().getEndOffset();
+    	IASTCompoundStatement cs = createCompoundStatement();
+    	((ASTNode)cs).setOffsetAndLength(compoundOffset, endOffset - compoundOffset);
+
+    	funcDefinition.setBody(cs);
+    	((ASTNode) funcDefinition).setOffsetAndLength(offset, endOffset - offset);
+
+    	return funcDefinition;
+	}
 
 	protected IToken asmExpression(StringBuilder content) throws EndOfFileException, BacktrackException {
 		IToken t= consume(IToken.tLPAREN);
@@ -1887,97 +1948,103 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throwBacktrack(token.getOffset(), token.getLength());
     }
 
-    protected IASTNode[] parseTypeIdOrUnaryExpression(boolean typeIdWithParentheses) throws EndOfFileException {
-    	return parseTypeIdOrUnaryExpression(typeIdWithParentheses, new int[1]);
-    }
+    protected IASTExpression parseTypeidInParenthesisOrUnaryExpression(boolean exprIsLimitedToParenthesis, int offset, int typeExprKind, int unaryExprKind) throws BacktrackException, EndOfFileException {
+    	IASTTypeId typeid;
+    	IASTExpression expr= null;
+        IToken typeidLA= null;
+    	IToken mark = mark();
+    	int endOffset1= -1;
+    	int endOffset2= -1;
 
-    protected IASTNode[] parseTypeIdOrUnaryExpression(boolean typeIdWithParentheses, int[] endoffset) throws EndOfFileException {
-        IASTTypeId typeId = null;
-        
-        IToken typeIdLA = null;
-        IToken mark = mark();
         try {
-            if (typeIdWithParentheses)
-                consume(IToken.tLPAREN);
-            typeId = typeId(DeclarationOptions.TYPEID);
-            if (typeId != null) {	
-            	if (typeIdWithParentheses) {
-            		switch (LT(1)) {
-            		case IToken.tRPAREN:
-            		case IToken.tEOC:
-            			endoffset[0]= consume().getEndOffset();
-                		typeIdLA = LA(1);
-            			break;
-            		default:
-            			typeId = null;
+        	consume(IToken.tLPAREN);
+        	int typeidOffset= LA(1).getOffset();
+            typeid= typeId(DeclarationOptions.TYPEID);
+            if (typeid != null) {	
+            	switch(LT(1)) {
+            	case IToken.tRPAREN:
+            	case IToken.tEOC:
+            		endOffset1= consume().getEndOffset();
+                	typeidLA= LA(1);
+            		break;
+            	case IToken.tCOMMA:
+            		if (supportExtendedSizeofOperator && typeExprKind == IASTTypeIdExpression.op_sizeof) {
+            			consume();
+            			IASTExpression expr2= expression();
+            			endOffset1= consumeOrEOC(IToken.tRPAREN).getEndOffset();
+            			
+            			expr= buildTypeIdExpression(IASTTypeIdExpression.op_typeid, typeid, typeidOffset, calculateEndOffset(typeid));
+
+            	        IASTExpressionList expressionList = createExpressionList();
+            	        ((ASTNode) expressionList).setOffsetAndLength(typeidOffset, calculateEndOffset(expr2)-typeidOffset);
+            	        expressionList.addExpression(expr);
+            	        if (expr2 instanceof IASTExpressionList) {
+            	        	for (IASTExpression e : ((IASTExpressionList) expr2).getExpressions()) {
+								expressionList.addExpression(e);
+							}
+            	        } else {
+            	        	expressionList.addExpression(expr2);
+            	        }
+            	        
+            	        return buildUnaryExpression(unaryExprKind, expressionList, offset, endOffset1);
             		}
-            	}
-            	else {
-        			endoffset[0]= calculateEndOffset(typeId);
-            		typeIdLA = LA(1);
+            		typeid= null;
+            		break;
+            	default:
+            		typeid= null;
+            		break;
             	}
             }
-        } catch (BacktrackException e) { }
-        backup(mark);
+        } catch (BacktrackException e) { 
+        	typeid= null;
+        }
         
-        IToken unaryExpressionLA = null;
-        IASTExpression unaryExpression = null;
+        backup(mark);
         try {
-            unaryExpression = unaryExpression(); // throws BacktrackException
-            unaryExpressionLA = LA(1);
-        } catch (BacktrackException bte) { }
-
-        if (unaryExpression == null && typeId != null) {
-            backup(typeIdLA);
-            return new IASTNode[] {typeId};
-        }
-        if (unaryExpression != null && typeId == null) {
-            backup(unaryExpressionLA);
-            endoffset[0]= calculateEndOffset(unaryExpression);
-            return new IASTNode[] {unaryExpression};
-        }
-        if (unaryExpression != null && typeId != null) {
-        	if (typeIdLA == unaryExpressionLA) {
-        		return new IASTNode[] {typeId, unaryExpression};
+        	if (exprIsLimitedToParenthesis) {
+        		consume(IToken.tLPAREN);
         	}
-        	return new IASTNode[] {unaryExpression};
+            expr= unaryExpression(); 
+            if (exprIsLimitedToParenthesis) {
+            	endOffset2= consumeOrEOC(IToken.tRPAREN).getEndOffset();
+            } else {
+            	endOffset2= calculateEndOffset(expr);
+            }
+        } catch (BacktrackException bte) { 
+        	if (typeid == null)
+        		throw bte;
         }
-        return IASTNode.EMPTY_NODE_ARRAY;
 
+        IASTExpression result1= null;
+        if (typeid != null && endOffset1 >= endOffset2) {
+			result1= buildTypeIdExpression(typeExprKind, typeid, offset, endOffset1);
+        	backup(typeidLA);
+        	
+        	if (expr == null || endOffset1 > endOffset2)
+        		return result1;
+        }
+        
+        IASTExpression result2= buildUnaryExpression(unaryExprKind, expr, offset, endOffset2);
+        if (result1 == null)
+        	return result2;
+
+
+        IASTAmbiguousExpression ambExpr = createAmbiguousExpression();
+        ambExpr.addExpression(result1);
+        ambExpr.addExpression(result2);
+        ((ASTNode) ambExpr).setOffsetAndLength((ASTNode) result1);
+        return ambExpr;
     }
 
     protected abstract IASTAmbiguousExpression createAmbiguousExpression();
 
     protected IASTExpression parseSizeofExpression() throws BacktrackException, EndOfFileException {
-        int startingOffset = consume().getOffset(); // t_sizeof
-        int[] endoffset= new int[] {0};
-        IASTNode[] choice = parseTypeIdOrUnaryExpression(true, endoffset);
-        switch (choice.length) {
-        case 1:
-            if (choice[0] instanceof IASTExpression)
-                return buildUnaryExpression(IASTUnaryExpression.op_sizeof,
-                        (IASTExpression) choice[0], startingOffset, endoffset[0]);
-            else if (choice[0] instanceof IASTTypeId)
-                return buildTypeIdExpression(IASTTypeIdExpression.op_sizeof,
-                        (IASTTypeId) choice[0], startingOffset, endoffset[0]);
-            throwBacktrack(LA(1));
-            break;
-        case 2:
-            IASTAmbiguousExpression ambExpr = createAmbiguousExpression();
-            IASTExpression e1 = buildTypeIdExpression(
-                    IASTTypeIdExpression.op_sizeof, (IASTTypeId) choice[0],
-                    startingOffset, endoffset[0]);
-            IASTExpression e2 = buildUnaryExpression(
-                    IASTUnaryExpression.op_sizeof, (IASTExpression) choice[1],
-                    startingOffset, endoffset[0]);
-            ambExpr.addExpression(e1);
-            ambExpr.addExpression(e2);
-            ((ASTNode) ambExpr).setOffsetAndLength((ASTNode) e2);
-            return ambExpr;
-        default:
+        final int offset = consume().getOffset(); // t_sizeof
+        if (LT(1) != IToken.tLPAREN) {
+        	IASTExpression unary= unaryExpression();
+        	return buildUnaryExpression(IASTUnaryExpression.op_sizeof, unary, offset, calculateEndOffset(unary));
         }
-        throwBacktrack(LA(1));
-        return null;
+        return parseTypeidInParenthesisOrUnaryExpression(false, offset, IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof);
     }
     
     /**

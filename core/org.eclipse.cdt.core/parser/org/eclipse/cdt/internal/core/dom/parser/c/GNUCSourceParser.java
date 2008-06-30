@@ -502,7 +502,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		}
 	}
 
-    protected IASTFunctionDefinition createFunctionDefinition() {
+    @Override
+	protected IASTFunctionDefinition createFunctionDefinition() {
         return new CASTFunctionDefinition();
     }
 
@@ -1065,7 +1066,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	private final static int INLINE=0x1, CONST=0x2, RESTRICT=0x4, VOLATILE=0x8, 
 	    SHORT=0x10,	UNSIGNED= 0x20, SIGNED=0x40, COMPLEX=0x80, IMAGINARY=0x100;
 
-    protected IASTDeclSpecifier declSpecifierSeq(final DeclarationOptions declOption)
+    @Override
+	protected IASTDeclSpecifier declSpecifierSeq(final DeclarationOptions declOption)
             throws BacktrackException, EndOfFileException, FoundDeclaratorException {
 
         final int offset= LA(1).getOffset();
@@ -1380,7 +1382,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tCOMMA:
         	return true;
         case IToken.tLBRACE:
-        	if (option == DeclarationOptions.GLOBAL || option == DeclarationOptions.C_MEMBER) {
+        	if (option == DeclarationOptions.GLOBAL || option == DeclarationOptions.C_MEMBER 
+        			|| option == DeclarationOptions.FUNCTION_STYLE_ASM) {
         		if (CVisitor.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
         			return true;
         		}

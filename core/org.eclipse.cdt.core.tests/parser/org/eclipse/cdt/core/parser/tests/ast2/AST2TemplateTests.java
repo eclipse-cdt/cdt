@@ -2542,6 +2542,25 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPFunction fn= bh.assertNonProblem("foo(cx", 3, ICPPFunction.class);
 	}
 	
+	//	class A;
+	//
+	//	int foo(A a);
+	//
+	//	template <class T>
+	//	class C {
+	//	public:
+	//		inline operator A();
+	//	};
+	//
+	//	template<typename T>
+	//	void ref(C<T> c) {
+	//	 return foo(c);
+	//	}
+	public void testUserDefinedConversions_239023() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("foo(c);", 3);
+	}
+	
 	//	template<int x>
 	//	class A {};
 	//

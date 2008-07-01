@@ -434,6 +434,17 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 		assertAutoEditBehaviour();
 	}
 	
+	//  /**X
+	//	void foo(void) {}
+	
+	//  /**
+	//   * X
+	//   */
+	//	void foo(void) {}
+	public void testAutoDocCommentContent21_238852() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
 	/** Declarations **/
 	
 	// /**X

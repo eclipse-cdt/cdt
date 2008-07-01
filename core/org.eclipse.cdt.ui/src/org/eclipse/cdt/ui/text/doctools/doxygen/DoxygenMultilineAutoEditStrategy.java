@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
@@ -87,6 +88,11 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		StringBuilder result= new StringBuilder();
 		for(int i=0; i<decls.length; i++) {
 			IASTDeclarator dtor= decls[i].getDeclarator();
+			if(decls[i].getDeclSpecifier() instanceof IASTSimpleDeclSpecifier) {
+				if(((IASTSimpleDeclSpecifier)decls[i].getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_void) {
+					continue;
+				}
+			}
 			result.append(PARAM+dtor.getName()+"\n"); //$NON-NLS-1$
 		}
 		return result;

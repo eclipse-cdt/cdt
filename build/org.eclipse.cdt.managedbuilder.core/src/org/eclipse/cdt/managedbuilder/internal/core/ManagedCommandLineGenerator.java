@@ -131,6 +131,10 @@ public class ManagedCommandLineGenerator implements
 				start = ++stop;
 //			}
 		}
+		if (stop<commandLinePattern.length()){
+			sb.append(commandLinePattern.substring(stop));
+		}
+
 		return new ManagedCommandLineInfo( sb.toString().trim(), commandLinePattern, commandName, stringArrayToString( flags ),
 				outputFlag, outputPrefix, outputName, stringArrayToString( inputResources ) );
 	}

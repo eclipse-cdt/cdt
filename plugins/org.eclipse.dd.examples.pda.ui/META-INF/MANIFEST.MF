@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDA Example Device Debugging UI Plug-in
 Bundle-SymbolicName: org.eclipse.dd.examples.pda.ui;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.dd.examples.pda.ui.PDAUIPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,

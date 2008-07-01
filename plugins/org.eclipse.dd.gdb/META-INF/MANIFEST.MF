@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GDB DSF Debugger Integration Core
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.gdb;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.dd.gdb.internal.GdbPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dd.dsf,

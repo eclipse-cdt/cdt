@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Debug Services Framework UI
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.dsf.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.dd.dsf.internal.ui.DsfUIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,

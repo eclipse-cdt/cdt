@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.dd.dsf.examples"
       label="DSF Examples Feature"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse.org">
 
    <description url="http://www.eclipse.org/dsdp/dd/">

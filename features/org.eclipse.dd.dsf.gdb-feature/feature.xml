@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.dd.dsf.gdb"
       label="DSF GDB/MI Debugger Integration"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse.org">
 
    <description url="http://www.eclipse.org/dsdp/dd/">

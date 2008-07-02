@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -154,7 +155,7 @@ public class NodeContainer {
 				declarator.addPointerOperator(pointerOp);
 			}
 
-			if (isReference) {
+			if (isReference && !hasReferenceOperartor(declarator)) {
 				declarator.addPointerOperator(new CPPASTReferenceOperator());
 			}
 
@@ -163,6 +164,15 @@ public class NodeContainer {
 			para.setDeclarator(declarator);
 
 			return para;
+		}
+
+		public boolean hasReferenceOperartor(IASTDeclarator declarator) {
+			for(IASTPointerOperator pOp :declarator.getPointerOperators()) {
+				if (pOp instanceof ICPPASTReferenceOperator) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public String getType() {

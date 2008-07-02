@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,6 +22,7 @@
  * Kevin Doyle	    (IBM) 		 - [197976] Synch up Read-Only attribute when performing save based on local copy
  * Kevin Doyle 		(IBM)		 - [204810] Saving file in Eclipse does not update remote file
  * Kevin Doyle 		(IBM)		 - [210389] Display error dialog when setting file not read-only fails when saving
+ * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -211,7 +212,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 						final SystemEditableRemoteFile fEditable = editable;
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								try {
+								
 									// defect - we get a save event when saving during a close
 									// in that case, we shouldn't reopen the editor
 									// I think this was originally here so that, if a save is done on
@@ -220,12 +221,15 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 									// now call check method before
 									if (fEditable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN)
 									{
-										fEditable.openEditor();
-									} 
+										try {
+											fEditable.openEditor();
+										}
+										catch (PartInitException e) {
+										}
+									}			
+									
 									fEditable.addAsListener();
-								} catch (PartInitException e) {
-								}
-							}							
+								} 				
 						});
 						editable.setLocalResourceProperties();
 					}
@@ -287,9 +291,6 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					Display.getDefault().syncExec(msgAction);
 				}
 
-				// get the remote file object again so that we have a fresh remote timestamp
-				remoteFile.markStale(true);
-				
 				
 				IRemoteFile parent = remoteFile.getParentRemoteFile();
 	
@@ -300,19 +301,25 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					registry.fireEvent(new SystemResourceChangeEvent(parent, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 				}
 
+				// waiting to make sure the file's timestamp is uptodate
+				Thread.sleep(1000);
+				
+				// get the remote file object again so that we have a fresh remote timestamp
+				remoteFile.markStale(true);
 				remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 				
 				registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
 			
+				long ts = remoteFile.getLastModified();
 				
 				// set the stored timestamp to be the same as the remote timestamp
-				properties.setRemoteFileTimeStamp(remoteFile.getLastModified());
+				properties.setRemoteFileTimeStamp(ts);
 
 				// indicate that the temp file is no longer dirty
 				properties.setDirty(false);
 				editable.updateDirtyIndicator();
-				
-				}
+
+			}
 			else if (storedModifiedStamp == -1)
 			{
 				// hack because Eclipse send out event after replacing local file with remote

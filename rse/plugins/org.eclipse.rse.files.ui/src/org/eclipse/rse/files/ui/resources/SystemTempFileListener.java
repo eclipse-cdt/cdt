@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [205297] Editor upload should not be on main thread
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -34,6 +35,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -49,6 +54,7 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
@@ -61,7 +67,6 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * This class manages listening for resource changes within our temp file project
@@ -69,6 +74,43 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * changes to the remote files.    */
 public abstract class SystemTempFileListener implements IResourceChangeListener
 {
+	private class TempFileSaveParticipant implements ISaveParticipant
+	{
+		private SystemTempFileListener _listener;
+
+		public TempFileSaveParticipant(SystemTempFileListener listener){
+			_listener = listener;
+		}
+		
+		public void doneSaving(ISaveContext context) {	
+		}
+
+		public void prepareToSave(ISaveContext context) throws CoreException {			
+		}
+
+		public void rollback(ISaveContext context) {
+		}
+
+		public void saving(ISaveContext context) throws CoreException {
+			
+			// wait for completion of synch
+			while (isSynching()){
+				try {
+					Thread.sleep(1000);				
+				}
+				catch (Exception e){
+					
+				}
+			}
+		}
+		
+		private boolean isSynching()
+		{			
+			return _isSynching || _changedResources.size() > 0;
+		}
+		
+	}
+	
 	private ArrayList _changedResources;
 	private ArrayList _ignoredFiles = new ArrayList();
 	private volatile boolean _isSynching;
@@ -78,7 +120,15 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 	{
 		_changedResources = new ArrayList();
 		_isSynching = false;
-		_isEnabled = true;
+		_isEnabled = true;		
+		
+	    ISaveParticipant saveParticipant = new TempFileSaveParticipant(this);
+	    try {
+	    	ResourcesPlugin.getWorkspace().addSaveParticipant(Activator.getDefault(), saveParticipant);
+	    }
+	    catch (CoreException e){
+	    	SystemBasePlugin.logError("Exception adding save participant", e); //$NON-NLS-1$
+	    }
 	}
 
 	public void setEnabled(boolean flag)
@@ -126,7 +176,6 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 	{
 		if (_isEnabled)
 		{
-
 			IResourceDelta delta = event.getDelta();
 			if (delta != null)
 			{
@@ -138,6 +187,9 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 
 					if (_changedResources.size() > 0 && !_isSynching)
 					{					
+						// indicating synching here instead of in SynchResourcesJob because
+						// otherwise two calls can get into here creating two jobs
+						_isSynching = true;
 						synchRemoteResourcesOnThread();
 					}
 				}
@@ -176,41 +228,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			return Status.OK_STATUS;
 		}	
 	}
-	
-	/***
-	 * @deprecated don't use this class, it's only here because to remove it would be
-	 * an API change, and we can't do that until 3.0.  Instead of using this, 
-	 * SynchResourcesJob should be used.
-	 */
-	public class RefreshResourcesUIJob extends WorkbenchJob
-	{
-		public RefreshResourcesUIJob()
-		{
-			super(FileResources.RSEOperation_message);
-		}
-		
-		public IStatus runInUIThread(IProgressMonitor monitor)
-		{
-			_isSynching = true;
-			try {
-				IFile[] filesToSync;
-				synchronized(_changedResources) {
-					filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
-					_changedResources.clear();
-				}
-				monitor.beginTask(FileResources.MSG_SYNCHRONIZE_PROGRESS, IProgressMonitor.UNKNOWN);
-				setName(FileResources.MSG_SYNCHRONIZE_PROGRESS);
-				for (int i = 0; i < filesToSync.length; i++)
-				{
-					synchronizeTempWithRemote(filesToSync[i], monitor);
-				}
-			} finally {
-				_isSynching = false;
-				monitor.done();
-			}
-			return Status.OK_STATUS;
-		}
-	}
+
 	
 	/**
 	 * Used for doing the upload from a job
@@ -226,21 +244,27 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		
 		public IStatus run(IProgressMonitor monitor)
 		{
-			_isSynching = true;
 			try {
-				IFile[] filesToSync;
-				synchronized(_changedResources) {
-					filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
-					_changedResources.clear();
+				// using while loop because changed resources could get added after the original batch
+				while (!_changedResources.isEmpty()){
+					IFile[] filesToSync;
+					synchronized(_changedResources) {
+						filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
+						_changedResources.clear();
+					}
+					
+					monitor.beginTask(FileResources.MSG_SYNCHRONIZE_PROGRESS, IProgressMonitor.UNKNOWN);
+					setName(FileResources.MSG_SYNCHRONIZE_PROGRESS);
+					for (int i = 0; i < filesToSync.length; i++)
+					{
+						synchronizeTempWithRemote(filesToSync[i], monitor);
+					}
 				}
-				
-				monitor.beginTask(FileResources.MSG_SYNCHRONIZE_PROGRESS, IProgressMonitor.UNKNOWN);
-				setName(FileResources.MSG_SYNCHRONIZE_PROGRESS);
-				for (int i = 0; i < filesToSync.length; i++)
-				{
-					synchronizeTempWithRemote(filesToSync[i], monitor);
-				}
-			} finally {
+			} 
+			catch (Exception e){
+				e.printStackTrace();
+			}			
+			finally {
 				_isSynching = false;
 				monitor.done();
 			}
@@ -716,5 +740,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		}
 		return false;
 	}
+	
+
 
 }

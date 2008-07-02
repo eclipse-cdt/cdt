@@ -32,6 +32,7 @@
  * Kevin Doyle		(IBM)		 - [224162] SystemEditableRemoteFile.saveAs does not work because FileServiceSubSytem.upload does invalid check
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1016,6 +1017,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					activePage = windows[0].getActivePage();
 				}
 			}
+		}
+		
+		if (activePage == null){
+			return NOT_OPEN;
 		}
 
 		IEditorReference[] activeReferences = activePage.getEditorReferences();

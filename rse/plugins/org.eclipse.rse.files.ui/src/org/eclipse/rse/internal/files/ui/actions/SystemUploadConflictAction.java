@@ -20,9 +20,11 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * Xuan Chen        (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
+
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,8 +38,8 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem.SystemMessageDialogRunnable;
-import org.eclipse.rse.files.ui.dialogs.ISaveAsDialog;
 import org.eclipse.rse.files.ui.dialogs.FileDialogFactory;
+import org.eclipse.rse.files.ui.dialogs.ISaveAsDialog;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
@@ -196,9 +198,17 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             	IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
             	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
                 fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+                // wait for timestamp to update before re-fetching remote file
+                try {
+                	Thread.sleep(1000);
+                }
+                catch (Exception e){
+                	
+                }
                 _remoteFile.markStale(true);
                 _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath(), new NullProgressMonitor());
-                properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
+                long ts = _remoteFile.getLastModified();
+                properties.setRemoteFileTimeStamp(ts);
                 properties.setDirty(false);
             }
             catch (RemoteFileSecurityException e)

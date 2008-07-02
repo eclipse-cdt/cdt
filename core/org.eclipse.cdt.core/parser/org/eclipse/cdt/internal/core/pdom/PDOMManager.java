@@ -423,7 +423,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     public void setIndexerId(final ICProject project, String indexerId) {
     	IProject prj= project.getProject();
     	IndexerPreferences.set(prj, IndexerPreferences.KEY_INDEXER_ID, indexerId);
-    	CCoreInternals.savePreferences(prj);
+    	CCoreInternals.savePreferences(prj, IndexerPreferences.getScope(prj) == IndexerPreferences.SCOPE_PROJECT_SHARED);
     }
 	
 	protected void onPreferenceChange(ICProject cproject, PreferenceChangeEvent event) {

@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.Map;
@@ -81,7 +80,7 @@ public class IndexerPreferences {
 				if (get(project, scope, KEY_INDEXER_ID, null) == null) {
 					scope= SCOPE_INSTANCE;
 					ppp.putInt(KEY_INDEXER_PREFS_SCOPE, scope);
-					CCoreInternals.savePreferences(project);
+					CCoreInternals.savePreferences(project, false);
 				}
 			}
 		}
@@ -232,20 +231,8 @@ public class IndexerPreferences {
 		if (prjPrefs.get(KEY_INDEXER_ID, null) != null) {
 			scope= SCOPE_PROJECT_SHARED;
 		}
-		else {
-			Preferences oldStyle= prjPrefs.parent();
-			String id= oldStyle.get(KEY_INDEXER_ID, null);
-			if (id != null) {
-				prjPrefs.put(KEY_INDEXER_ID, id);
-				String value= oldStyle.get(KEY_INDEX_ALL_FILES, null);
-				if (value != null) {
-					prjPrefs.put(KEY_INDEX_ALL_FILES, value);
-				}
-				scope= SCOPE_PROJECT_SHARED;
-			}
-		}
 		getLocalPreferences(project).putInt(KEY_INDEXER_PREFS_SCOPE, scope);
-		CCoreInternals.savePreferences(project);
+		CCoreInternals.savePreferences(project, false);
 		return scope;
 	}
 
@@ -378,7 +365,7 @@ public class IndexerPreferences {
 	public static void setIndexImportLocation(IProject project, String location) {
 		if (!location.equals(getIndexImportLocation(project))) {
 			getProjectPreferences(project).put(KEY_INDEX_IMPORT_LOCATION, location);
-			CCoreInternals.savePreferences(project);
+			CCoreInternals.savePreferences(project, true);
 		}
 	}
 

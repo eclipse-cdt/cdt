@@ -441,7 +441,43 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	//   * X
 	//   */
 	//	void foo(void) {}
-	public void testAutoDocCommentContent21_238852() throws CoreException {
+	public void testAutoDocCommentContent21_238852_a() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	//  /**X
+	//	void foo(void* x) {}
+	
+	//  /**
+	//   * X
+	//   * @param x
+	//   */
+	//	void foo(void* x) {}
+	public void testAutoDocCommentContent21_238852_b() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	//  /**X
+	//	void foo(void (*fp)()) {}
+	
+	//  /**
+	//   * X
+	//   * @param fp
+	//   */
+	//	void foo(void (*fp)()) {}
+	public void testAutoDocCommentContent21_238852_c() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	//  /**X
+	//	void foo(void vs[]) {}
+	
+	//  /**
+	//   * X
+	//   * @param vs
+	//   */
+	//	void foo(void vs[]) {}
+	public void testAutoDocCommentContent21_238852_d() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 	

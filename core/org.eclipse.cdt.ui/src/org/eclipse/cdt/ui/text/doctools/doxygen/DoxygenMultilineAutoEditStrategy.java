@@ -18,6 +18,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -33,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
@@ -87,15 +87,41 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	protected StringBuilder documentFunctionParameters(IASTParameterDeclaration[] decls) {
 		StringBuilder result= new StringBuilder();
 		for(int i=0; i<decls.length; i++) {
-			IASTDeclarator dtor= decls[i].getDeclarator();
-			if(decls[i].getDeclSpecifier() instanceof IASTSimpleDeclSpecifier) {
-				if(((IASTSimpleDeclSpecifier)decls[i].getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_void) {
-					continue;
-				}
+			if(!isVoidParameter(decls[i])) {
+				result.append(PARAM+getParameterName(decls[i])+"\n"); //$NON-NLS-1$
 			}
-			result.append(PARAM+dtor.getName()+"\n"); //$NON-NLS-1$
 		}
 		return result;
+	}
+	
+	/**
+	 * @param decl
+	 * @return the name of the parameter
+	 */
+	protected String getParameterName(IASTParameterDeclaration decl) {
+		IASTDeclarator dtor= decl.getDeclarator();
+		for(int i=0; i<8 && dtor.getName().getRawSignature().length()==0 && dtor.getNestedDeclarator() != null; i++) {
+			dtor= dtor.getNestedDeclarator();
+		}
+		return dtor.getName().getRawSignature();
+	}
+	
+	/**
+	 * @param decl
+	 * @return true if the specified parameter declaration is of void type
+	 */
+	protected boolean isVoidParameter(IASTParameterDeclaration decl) {
+		if(decl.getDeclSpecifier() instanceof IASTSimpleDeclSpecifier) {
+			if(((IASTSimpleDeclSpecifier)decl.getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_void) {
+				IASTDeclarator dtor= decl.getDeclarator();
+				if(dtor.getPointerOperators().length == 0) {
+					if(!(dtor instanceof IASTFunctionDeclarator) && !(dtor instanceof IASTArrayDeclarator)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

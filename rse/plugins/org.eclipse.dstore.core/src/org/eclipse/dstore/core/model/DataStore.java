@@ -24,6 +24,7 @@
  * Noriaki Takatsu  (IBM) - [228156] [dstore] DataElementRemover thread doesn't terminate after a client disconnects the server
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [231639] [dstore] in single-process multi-client mode tracing shouldn't start until the client is set
+ * Noriaki Takatsu  (IBM) - [239073] [dstore] [multithread] In multithread, the cache jar should be assigned after the client is set
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -3653,7 +3654,10 @@ public final class DataStore
 		setDefaultByteStreamHandler();
 		setDefaultClassByteStreamHandler();
 
-		assignCacheJar();
+		// only start tracing now if we're in one process per server mode
+		if (SystemServiceManager.getInstance().getSystemService() == null){
+			assignCacheJar();
+		}
 
 		registerLocalClassLoader(this.getClass().getClassLoader());
 	}
@@ -4468,6 +4472,7 @@ public final class DataStore
 					}
 				}
 			}
+			assignCacheJar();
 		}
 	}
 

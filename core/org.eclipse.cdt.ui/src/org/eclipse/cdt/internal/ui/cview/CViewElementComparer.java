@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.jface.viewers.IElementComparer;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.jface.viewers.IElementComparer;
 
 public class CViewElementComparer implements IElementComparer {
 
@@ -55,16 +56,6 @@ public class CViewElementComparer implements IElementComparer {
 	}
 
 	public int hashCode(Object o1) {
-		ICElement c1= (o1 instanceof ICElement) ? (ICElement)o1 : null;
-		if (c1 == null)
-			return o1.hashCode();
-		ITranslationUnit u1= (ITranslationUnit)c1.getAncestor(ICElement.C_UNIT);
-		if (u1 == null || !u1.isWorkingCopy())
-			return o1.hashCode();
-		// From here on c1 is a working copy.
-		c1= ((IWorkingCopy)u1).getOriginal(c1);
-		if (c1 == null)
-			return o1.hashCode();		
-		return c1.hashCode();
+		return o1.hashCode();
 	}
 }

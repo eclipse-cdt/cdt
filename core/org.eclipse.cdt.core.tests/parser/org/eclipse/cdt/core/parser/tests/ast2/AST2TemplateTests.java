@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -3038,5 +3039,58 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testMemberReferenceFromTemplatedMethodDefinition_238232() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("foo();", 3);
+	}
+	
+	//	namespace result_of {
+	//		template <typename Sequence, typename T, bool is_associative_sequence = false>
+	//		struct find;
+	//
+	//		template <typename Sequence, typename T>
+	//		struct find<Sequence, T, false> {
+	//			typedef
+	//			detail::static_seq_find_if<
+	//			typename result_of::begin<Sequence>::type
+	//			, typename result_of::end<Sequence>::type
+	//			, is_same<mpl::_, T>
+	//			>
+	//			filter;
+	//		};
+	//
+	//		template <typename Sequence, typename T>
+	//		struct find<Sequence, T, true> {
+	//			typedef detail::assoc_find<Sequence, T> filter;
+	//		}; 
+	//	}
+	public void testBug238180_ArrayOutOfBounds() throws Exception {
+		// the code above used to trigger an ArrayOutOfBoundsException
+		parse(getAboveComment(), ParserLanguage.CPP);
+	}
+	
+	//	namespace detail {
+	//		template<bool AtoB, bool BtoA, bool SameType, class A, class B>
+	//		struct str;
+	//		template<class A, class B>
+	//		struct str<true, true, false, A, B> {
+	//			typedef
+	//			detail::return_type_deduction_failure<str> type;
+	//			// ambiguous type in conditional expression
+	//		};
+	//		template<class A, class B>
+	//		struct str<true, true, true, A, B> {
+	//			typedef A type;
+	//		};
+	//	} // detail
+	public void testBug238180_ClassCast() throws Exception {
+		// the code above used to trigger a ClassCastException
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		String tmplId= "str<true, true, false, A, B>";
+		ICPPClassType p= ba.assertNonProblem(tmplId, tmplId.length(), ICPPClassType.class);
+		ICPPConstructor con= p.getConstructors()[1];
+		ICPPReferenceType reftype= (ICPPReferenceType) con.getType().getParameterTypes()[0];
+		IQualifierType qt= (IQualifierType) reftype.getType();
+		ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) qt.getType();
+		ICPPClassTemplatePartialSpecialization spec= (ICPPClassTemplatePartialSpecialization) dcl.getSpecializedBinding();
+		ICPPTemplateTypeParameter tp= (ICPPTemplateTypeParameter) spec.getTemplateParameters()[0];
+		assertNull(tp.getDefault());
 	}
 }

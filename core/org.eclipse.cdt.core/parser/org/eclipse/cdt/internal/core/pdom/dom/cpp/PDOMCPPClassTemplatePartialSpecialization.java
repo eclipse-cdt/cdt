@@ -177,6 +177,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		}
 		
 		ObjectMap argMap= CPPTemplates.deduceTemplateArguments(getArguments(), args, true);
+		if (argMap == null)
+			return null;
 		if (CPPTemplates.containsDependentArg(argMap)) {
 			return deferredInstance(argMap, args);
 		}

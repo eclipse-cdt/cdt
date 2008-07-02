@@ -606,6 +606,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			th= e; 
 		} catch (StackOverflowError e) {
 			th= e;
+		} catch (Error e) {
+			try {
+				swallowError(path, e);
+			} catch (Throwable ignore) {}
+			throw e;
 		}
 		if (th != null) {
 			swallowError(path, th);

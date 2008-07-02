@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [226561] add API markup to javadoc
+ * David McKnight(IBM) - [239257] Tooltip for Filter Pool label is incorrect
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters;
@@ -397,7 +398,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 		// filter pool
 		SystemWidgetHelpers.createLabel(topComposite, poolPromptLabel);
 		filterPoolNameLabel = SystemWidgetHelpers.createLabel(topComposite, ""); //$NON-NLS-1$
-		filterPoolNameLabel.setToolTipText(namePromptTip);
+		filterPoolNameLabel.setToolTipText(poolPromptTip);
 		ISystemFilterPool parentPool = inputFilter.getParentFilterPool();
 		filterPoolNameLabel.setText(parentPool.getName());
 		

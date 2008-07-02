@@ -42,14 +42,14 @@ public class CCoreInternals {
 	 * @param project the project for which to save preferences, may be <code>null</code>
 	 * @since 4.0
 	 */
-	public static void savePreferences(final IProject project) {
+	public static void savePreferences(final IProject project, final boolean saveSharedPrefs) {
     	Job job= new Job(CCorePlugin.getResourceString("CCoreInternals.savePreferencesJob")) { //$NON-NLS-1$
         	@Override
 			protected IStatus run(IProgressMonitor monitor) {
         		try {
         			if (project != null) {
     					new LocalProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
-    					if (project.isOpen()) {
+    					if (saveSharedPrefs && project.isOpen()) {
     						new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
     					}
         			}

@@ -505,7 +505,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     		}
     		prjDescMgr.setProjectDescription(getProject(), prefs);
     	}
-    	CCoreInternals.savePreferences(project);
+    	CCoreInternals.savePreferences(project, scope == IndexerPreferences.SCOPE_PROJECT_SHARED);
     }
 
     @Override

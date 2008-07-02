@@ -67,6 +67,7 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * This class manages listening for resource changes within our temp file project
@@ -228,6 +229,42 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			return Status.OK_STATUS;
 		}	
 	}
+
+	/***
+	 * @deprecated don't use this class, it's only here because to remove it would be
+	 * an API change, and we can't do that until 3.0.  Instead of using this, 
+	 * SynchResourcesJob should be used.
+	 */
+	public class RefreshResourcesUIJob extends WorkbenchJob
+	{
+		public RefreshResourcesUIJob()
+		{
+			super(FileResources.RSEOperation_message);
+		}
+		
+		public IStatus runInUIThread(IProgressMonitor monitor)
+		{
+			_isSynching = true;
+			try {
+				IFile[] filesToSync;
+				synchronized(_changedResources) {
+					filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
+					_changedResources.clear();
+				}
+				monitor.beginTask(FileResources.MSG_SYNCHRONIZE_PROGRESS, IProgressMonitor.UNKNOWN);
+				setName(FileResources.MSG_SYNCHRONIZE_PROGRESS);
+				for (int i = 0; i < filesToSync.length; i++)
+				{
+					synchronizeTempWithRemote(filesToSync[i], monitor);
+				}
+			} finally {
+				_isSynching = false;
+				monitor.done();
+			}
+			return Status.OK_STATUS;
+		}
+	}
+
 
 	
 	/**

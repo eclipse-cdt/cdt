@@ -356,7 +356,8 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     	ICPPASTTemplateParameter[] ops = origTemplate.getTemplateParameters();
     	ICPPASTTemplateParameter[] nps = newTemplate.getTemplateParameters();
     	ICPPInternalBinding temp = null;
-    	for (int i = 0; i < nps.length; i++) {
+    	int end= Math.min(ops.length, nps.length);
+    	for (int i = 0; i < end; i++) {
     		temp = (ICPPInternalBinding) CPPTemplates.getTemplateParameterName(ops[i]).getBinding();
     		if (temp != null) {
     		    IASTName n = CPPTemplates.getTemplateParameterName(nps[i]);

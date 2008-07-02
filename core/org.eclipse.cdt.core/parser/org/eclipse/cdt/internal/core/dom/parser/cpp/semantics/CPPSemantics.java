@@ -95,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
@@ -1508,23 +1509,25 @@ public class CPPSemantics {
 	    if (bindings == null || bindings.length == 0) {
 	        return null;
 	    } else if (bindings.length == 1) {
-//	        if (bindings[0] instanceof IBinding)
-//	    	    return (IBinding) bindings[0];
-//	    	else if (bindings[0] instanceof IASTName && ((IASTName) bindings[0]).getBinding() != null)
-//	    	    return ((IASTName) bindings[0]).getBinding();
-	        
 	    	IBinding candidate= null;
 	        if (bindings[0] instanceof IBinding) {
 	        	candidate= (IBinding) bindings[0];
 	        } else if (bindings[0] instanceof IASTName) {
 	    		candidate= ((IASTName) bindings[0]).getBinding();
+	    	} else {
+	    		return null;
 	    	}
 	        if (candidate != null) {
-	        	 if (candidate instanceof IType == false && candidate instanceof ICPPNamespace == false 
-	        			 && LookupData.typesOnly(name)) {
+	        	if (candidate instanceof IType == false && candidate instanceof ICPPNamespace == false 
+	        			&& LookupData.typesOnly(name)) {
 	        		return null;
-	        	 }
-	        	 return candidate;
+	        	}
+
+	        	// bug 238180
+	        	if (candidate instanceof ICPPClassTemplatePartialSpecialization) 
+	        		return null;
+	        	
+	        	return candidate;
 	        }
 	    }
 	    

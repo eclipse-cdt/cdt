@@ -136,7 +136,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		IBinding binding= getBindingInAST(name, forceResolve);
 		if (binding == null && forceResolve) {
 			final IASTTranslationUnit tu = name.getTranslationUnit();
-			IIndex index = tu.getIndex();
+			IIndex index = tu == null ? null : tu.getIndex();
 			if (index != null) {
 				// Try looking this up in the PDOM
 				if (physicalNode instanceof IASTTranslationUnit) {

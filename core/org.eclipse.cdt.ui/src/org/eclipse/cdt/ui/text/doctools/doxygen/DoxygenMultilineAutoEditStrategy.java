@@ -98,7 +98,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	 * @param decl
 	 * @return the name of the parameter
 	 */
-	protected String getParameterName(IASTParameterDeclaration decl) {
+	String getParameterName(IASTParameterDeclaration decl) {
 		IASTDeclarator dtor= decl.getDeclarator();
 		for(int i=0; i<8 && dtor.getName().getRawSignature().length()==0 && dtor.getNestedDeclarator() != null; i++) {
 			dtor= dtor.getNestedDeclarator();
@@ -110,7 +110,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	 * @param decl
 	 * @return true if the specified parameter declaration is of void type
 	 */
-	protected boolean isVoidParameter(IASTParameterDeclaration decl) {
+	boolean isVoidParameter(IASTParameterDeclaration decl) {
 		if(decl.getDeclSpecifier() instanceof IASTSimpleDeclSpecifier) {
 			if(((IASTSimpleDeclSpecifier)decl.getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_void) {
 				IASTDeclarator dtor= decl.getDeclarator();

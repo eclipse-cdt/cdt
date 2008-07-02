@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 
 public class ChooserComposite extends Composite {
@@ -90,7 +92,13 @@ public class ChooserComposite extends Composite {
 				// Button
 				editor = new TableEditor(table);
 				final Button referenceButton = new Button(table, SWT.CHECK);
-				referenceButton.setSelection(name.isReference());
+				if(name.hasReferenceOperartor((IASTDeclarator) name.getDeclaration().getParent()))
+				{
+					referenceButton.setSelection(true);
+					referenceButton.setEnabled(false);
+				}else {
+					referenceButton.setSelection(name.isReference());
+				}
 				referenceButton.setBackground(table.getBackground());
 				referenceButton.addSelectionListener(new SelectionListener() {
 

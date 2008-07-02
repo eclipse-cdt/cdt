@@ -2070,3 +2070,79 @@ int main(){
 	newElements[0] = "s";
 }
 
+//!Bug 239059: Double & in signature of extracted functions
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+returnvalue=false
+returnparameterindex=0
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo(int& a);
+
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo(int& a);
+private:
+    void exp(int & a, int b, int c);
+
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+int A::foo(int& a)
+{
+	int b = 7;
+	int c = 8;
+	//$a = b + c;$//
+	return a;
+}
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+void A::exp(int & a, int b, int c)
+{
+    a = b + c;
+}
+
+int A::foo(int& a)
+{
+	int b = 7;
+	int c = 8;
+    exp(a, b, c);
+	return a;
+}

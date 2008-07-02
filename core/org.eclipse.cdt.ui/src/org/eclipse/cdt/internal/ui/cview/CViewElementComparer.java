@@ -32,6 +32,9 @@ public class CViewElementComparer implements IElementComparer {
 		if (c1 == null || c2 == null)
 			return false;
 
+		if (c1.getElementType() != c2.getElementType())
+			return false;
+
 		// Below is for children of TranslationUnits but we have to make sure
 		// we handle the case that the child comes from the a workingCopy in that
 		// case it should be equal as the original element.

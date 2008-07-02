@@ -25,6 +25,7 @@
  * David McKnight   (IBM) - [208803] add exists() method
  * Xuan Chen        (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Martin Oberhuber (Wind River) - [234215] improve API documentation for doDelete and doDeleteBatch
+ * David McKnight (IBM)          - [239368] Expand to action ignores the filter string
  *******************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -2318,7 +2319,8 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	protected SystemFetchOperation getSystemFetchOperation(Object o, IElementCollector collector)
 	{
-	    return new SystemFetchOperation(null, o, this, collector);
+		IWorkbenchPart currentPart = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage().getActivePart();
+	    return new SystemFetchOperation(currentPart, o, this, collector);
 	}
 
 	/* (non-Javadoc)

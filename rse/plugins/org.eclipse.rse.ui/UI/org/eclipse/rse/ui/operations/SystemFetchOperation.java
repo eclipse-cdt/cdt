@@ -19,6 +19,7 @@
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight (IBM)          - [231964] [ssh] SSH login dialog appears twice after cancel, when doing Refresh on a node
  * David McKnight (IBM)          - [235164] SystemView should allow to create filter in disconnected mode
+ * David McKnight (IBM)          - [239368] Expand to action ignores the filter string
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -41,6 +42,8 @@ import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem.DisplayErrorMessageJob;
 import org.eclipse.rse.internal.ui.GenericMessages;
+import org.eclipse.rse.internal.ui.view.SystemView;
+import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -48,6 +51,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.IContextObject;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -289,15 +293,58 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 
 		}
 		}
+		
 		Object[] children = null;
-		if (_remoteObject instanceof IContextObject)
-		{
-			children = _adapter.getChildren((IContextObject)_remoteObject, monitor);
-		}
-		else
-		{
-			children = _adapter.getChildren((IAdaptable)_remoteObject, monitor);
-		}
+  	  	// we first test to see if this is an expand-to filter in effect for this
+  	  	//  object, and if so use it...
+  	  	if (_part instanceof SystemViewPart && _adapter instanceof ISystemRemoteElementAdapter)
+  	  	{
+  	  		final SystemView viewer = ((SystemViewPart)_part).getSystemView();
+  	  		
+  	  		class GetExpandToFilter implements Runnable
+  	  		{
+  	  			private String expandToFilter;
+  	  			public void run()
+  	  			{
+  	  				
+  	  				if (_remoteObject instanceof IContextObject){
+  	  					expandToFilter = viewer.getExpandToFilter(((IContextObject)_remoteObject).getModelObject());
+  	  				}
+  	  				else {
+  	  					expandToFilter = viewer.getExpandToFilter(_remoteObject);
+  	  				}
+  	  			}
+  	  			
+  	  			public String getExpandToFilter()
+  	  			{
+  	  				return expandToFilter;
+  	  			}
+  	  		}
+  	  		
+  	  		Display dis = Display.getDefault();
+  	  		GetExpandToFilter getExpandTo = new GetExpandToFilter();
+  	  		dis.syncExec(getExpandTo);
+  	  		String expandToFilter = getExpandTo.getExpandToFilter();
+  	  		
+  	  		if (expandToFilter != null){
+  	  			if (_remoteObject instanceof IContextObject){
+  	  				children = _adapter.getChildrenUsingExpandToFilter(((IContextObject)_remoteObject).getModelObject(), expandToFilter);
+  	  			}
+  	  			else {
+  	  				children = _adapter.getChildrenUsingExpandToFilter(_remoteObject, expandToFilter);
+  	  			}
+  	  		}
+  	  	}
+  	  	if (children == null){		
+  	  		if (_remoteObject instanceof IContextObject)
+  	  		{
+  	  			children = _adapter.getChildren((IContextObject)_remoteObject, monitor);
+  	  		}
+  	  		else
+  	  		{
+  	  			children = _adapter.getChildren((IAdaptable)_remoteObject, monitor);
+  	  		}
+  	  	}
 	    _collector.add(children, monitor);
 	    monitor.done();
 	}

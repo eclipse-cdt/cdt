@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [239459] Clear Cached Files action should not delete project metadata
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -272,6 +273,22 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 	private class ClearTempFilesRunnable implements IRunnableWithProgress
 	{
+		/**
+		 * Returns false if the member is a dot file under the project, otherwise true
+		 * @param member
+		 * @return whether to delete this file
+		 */
+		private boolean isDeletable(IResource member)
+		{
+			if (member instanceof IFile){ 
+				String name = member.getName();
+				if (name.startsWith(".")){ //$NON-NLS-1$
+					return false;
+				}
+			}
+			return true;
+		}
+		
 		public void run(IProgressMonitor monitor)
 		{
 			SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
@@ -286,19 +303,14 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			{
 				try
 				{
-//					IWorkspace workspace = SystemBasePlugin.getWorkspace();
 					IResource[] members = tempFiles.members();
 					if (members != null)
 					{
 						for (int i = 0; i < members.length; i++)
 						{
 							IResource member = members[i];
-							if ((member instanceof IFile) && 
-								member.getName().equals(".project")) //$NON-NLS-1$
+							if (isDeletable(member))
 							{								
-							}
-							else
-							{
 								// DKM - passing true now so that out-of-synch temp files are deleted too (i.e. generated .evt files)
 								// this solves the worse part of 58951
 								member.delete(true, monitor);
@@ -313,35 +325,6 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 				finally
 				{
 				    mgr.getRemoteEditProject();
-				    /*
-					try
-					{
-					    
-
-						// recreate .project
-						IProjectDescription description = tempFiles.getDescription();
-						String[] natures = description.getNatureIds();
-						String[] newNatures = new String[natures.length + 1];
-
-						// copy all previous natures
-						for (int i = 0; i < natures.length; i++)
-						{
-							newNatures[i] = natures[i];
-						}
-
-						newNatures[newNatures.length - 1] = SystemRemoteEditManager.REMOTE_EDIT_PROJECT_NATURE_ID;
-						description.setNatureIds(newNatures);
-						tempFiles.setDescription(description, null);
-						
-						mgr.addCSupport(tempFiles);
-						mgr.addJavaSupport(tempFiles);
-						
-					 
-					}
-					catch (CoreException e)
-					{
-					}
-					*/
 				}
 
 			}

@@ -34,7 +34,9 @@ public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServic
 			return (V)createMemoryService(session);
 		} else if (IRunControl.class.isAssignableFrom(clazz)) {
 			return (V)createRunControlService(session);
-		}
+		} else if (IProcesses.class.isAssignableFrom(clazz)) {
+			return (V)createProcessesService(session);
+		} 
 		
 		return null;
 	}
@@ -48,5 +50,6 @@ public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServic
 	protected abstract IModules createModulesService(DsfSession session);
 	protected abstract IMemory createMemoryService(DsfSession session);
 	protected abstract IRunControl createRunControlService(DsfSession session);
+	protected abstract IProcesses createProcessesService(DsfSession session);
 	
 }

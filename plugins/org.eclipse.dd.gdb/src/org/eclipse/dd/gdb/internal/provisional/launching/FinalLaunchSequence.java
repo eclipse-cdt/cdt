@@ -37,14 +37,15 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
+import org.eclipse.dd.gdb.internal.provisional.service.GDBProcesses;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
-import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
 import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
@@ -70,8 +71,9 @@ public class FinalLaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
             DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
             fCommandControl = tracker.getService(GDBControl.class);
-            if (fCommandControl == null) {
-        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain GDBControl service", null)); //$NON-NLS-1$
+            fProcService = tracker.getService(GDBProcesses.class);
+            if (fCommandControl == null || fProcService == null) {
+        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain service", null)); //$NON-NLS-1$
             }
             tracker.dispose();
 
@@ -437,17 +439,23 @@ public class FinalLaunchSequence extends Sequence {
         			}
 
         			if (pid != -1) {
-						fCommandControl.queueCommand(
-								new CLIAttach(fCommandControl.getControlDMContext(), pid), 
+        				IProcessDMContext procDmc = 
+        					fProcService.createProcessContext(Integer.toString(pid));
+
+        				fProcService.attachDebuggerToProcess(
+        						procDmc, 
 								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));        				
         			} else {
         				promptForProcessID(fLaunch.getLaunchConfiguration(), 
         						           new DataRequestMonitor<Integer>(getExecutor(), requestMonitor) {
         					@Override
         					protected void handleSuccess() {
-        						fCommandControl.queueCommand(
-        								new CLIAttach(fCommandControl.getControlDMContext(), getData()), 
-        								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        	    				IProcessDMContext procDmc = 
+        	    					fProcService.createProcessContext(Integer.toString(getData()));
+
+                				fProcService.attachDebuggerToProcess(
+                						procDmc, 
+        								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));        				
         					}
         				});
         			}
@@ -482,6 +490,8 @@ public class FinalLaunchSequence extends Sequence {
     boolean fAttach;
 
     GDBControl fCommandControl;
+    GDBProcesses fProcService;
+    
     // The list of processes used in the case of an ATTACH session
     IProcessInfo[] fProcessList = null;
 	

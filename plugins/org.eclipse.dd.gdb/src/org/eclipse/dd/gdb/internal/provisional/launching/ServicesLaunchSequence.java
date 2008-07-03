@@ -19,6 +19,7 @@ import org.eclipse.dd.dsf.debug.service.IDisassembly;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IModules;
+import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
@@ -48,6 +49,10 @@ public class ServicesLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
         	fLaunch.getServiceFactory().createService(fSession, IRunControl.class).initialize(requestMonitor);
+        }},
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+        	fLaunch.getServiceFactory().createService(fSession, IProcesses.class).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {

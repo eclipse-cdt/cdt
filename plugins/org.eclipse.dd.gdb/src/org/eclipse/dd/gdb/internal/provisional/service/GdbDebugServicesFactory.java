@@ -17,6 +17,7 @@ import org.eclipse.dd.dsf.debug.service.IDisassembly;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IModules;
+import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
@@ -91,6 +92,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
 		return new GDBRunControl(session);
+	}
+	
+	@Override
+	protected IProcesses createProcessesService(DsfSession session) {
+		return new GDBProcesses(session);
 	}
 	
 	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.rse.connectorservice.dstore" version="2">
+    <resource path="src/org/eclipse/rse/connectorservice/dstore/DStoreConnectorService.java" type="org.eclipse.rse.connectorservice.dstore.DStoreConnectorService">
+        <filter id="572522506">
+            <message_arguments>
+                <message_argument value="ConnectionStatus"/>
+                <message_argument value="DStoreConnectorService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

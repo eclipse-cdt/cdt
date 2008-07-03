@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.rse.services.dstore" version="2">
+    <resource path="src/org/eclipse/rse/internal/services/dstore/shells/DStoreShellService.java" type="org.eclipse.rse.internal.services.dstore.shells.DStoreShellService">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IShellService"/>
+                <message_argument value="DStoreShellService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/rse/internal/services/dstore/files/DStoreFileService.java" type="org.eclipse.rse.internal.services.dstore.files.DStoreFileService">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IFileService"/>
+                <message_argument value="DStoreFileService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/rse/internal/services/dstore/search/DStoreSearchService.java" type="org.eclipse.rse.internal.services.dstore.search.DStoreSearchService">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ISearchService"/>
+                <message_argument value="DStoreSearchService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

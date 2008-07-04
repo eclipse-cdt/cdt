@@ -56,18 +56,6 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportExtendedTemplateSyntax();
 
 	/**
-	 * Support for (deprecated) GNU minimum and maximum operators ((<code>&lt;?</code> and
-	 * <code>&gt;?</code>). If enabled, scanner extension support for those operators must
-	 * also be enabled.
-	 * 
-	 * @see IScannerExtensionConfiguration
-	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Deprecated-Features.html"
-	 * @return <code>true</code> if support for the extension should be
-	 *         enabled
-	 */
-	public boolean supportMinAndMaxOperators();
-
-	/**
 	 * Support for GNU extension "Data types for complex numbers".
 	 * 
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Complex.html#Complex"
@@ -75,16 +63,6 @@ public interface ICPPParserExtensionConfiguration {
 	 *         enabled
 	 */
 	public boolean supportComplexNumbers();
-
-	/**
-	 * Support for the GNU <code>__restrict__</code> keyword.
-	 * 
-	 * @return <code>true</code> if support for the extension should be
-	 *         enabled
-	 * @deprecated configure extra keywords, via {@link IScannerExtensionConfiguration#getAdditionalKeywords()}      
-	 */
-	@Deprecated
-	public boolean supportRestrictKeyword();
 
 	/**
 	 * Support for GNU long long types.
@@ -130,16 +108,6 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportKnRC();
 
 	/**
-	 * See http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html for more
-	 * information on GCC's Other Built-in Symbols.
-	 * 
-	 * @return <code>true</code> if support for the extension should be enabled
-	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
-	 */
-	@Deprecated
-	public boolean supportGCCOtherBuiltinSymbols();
-
-	/**
 	 * See http://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html for more
 	 * information on GCC's Attribute Specifiers.
 	 * 
@@ -163,4 +131,22 @@ public interface ICPPParserExtensionConfiguration {
 	 *         <code>null</code>
 	 */
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider();
+	
+	/**
+	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
+	 */
+	@Deprecated
+	public boolean supportGCCOtherBuiltinSymbols();
+	
+	/**
+	 * @deprecated use {@link IScannerExtensionConfiguration#supportMinAndMaxOperators()}, instead.     
+	 */
+	@Deprecated
+	public boolean supportMinAndMaxOperators();
+	
+	/**
+	 * @deprecated configure extra keywords, via {@link IScannerExtensionConfiguration#getAdditionalKeywords()}      
+	 */
+	@Deprecated
+	public boolean supportRestrictKeyword();
 }

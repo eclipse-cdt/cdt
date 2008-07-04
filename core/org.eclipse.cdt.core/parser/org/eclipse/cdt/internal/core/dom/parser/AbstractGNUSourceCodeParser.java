@@ -65,6 +65,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
@@ -84,6 +85,9 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  * @author jcamelon
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
+    protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
+    protected static int parseCount = 0;
+
 	protected final AbstractParserLogService log;
     protected final IScanner scanner;
     protected final ParserMode mode;
@@ -106,6 +110,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IToken declarationMark;
     protected IToken currToken;
     protected int eofOffset;
+    protected boolean onTopInTemplateArgs= false;
+
+    protected boolean isCancelled = false;
 	protected boolean parsePassed = true;
     protected int backtrackCount = 0;
     protected BacktrackException backtrack = new BacktrackException();
@@ -310,12 +317,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             return null;
         }
     }
-
-    protected boolean isCancelled = false;
-
-    protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
-
-    protected static int parseCount = 0;
 
     protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
         if (mode != ParserMode.COMPLETION_PARSE)
@@ -722,25 +723,25 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
     
     protected IASTExpression expression() throws BacktrackException, EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        IASTExpression assignmentExpression = assignmentExpression();
-        if (LT(1) != IToken.tCOMMA)
-            return assignmentExpression;
+    	IToken la = LA(1);
+    	int startingOffset = la.getOffset();
+    	IASTExpression assignmentExpression = assignmentExpression();
+    	if (LT(1) != IToken.tCOMMA)
+    		return assignmentExpression;
 
-        IASTExpressionList expressionList = createExpressionList();
-        ((ASTNode) expressionList).setOffset(startingOffset);
-        expressionList.addExpression(assignmentExpression);
+    	IASTExpressionList expressionList = createExpressionList();
+    	((ASTNode) expressionList).setOffset(startingOffset);
+    	expressionList.addExpression(assignmentExpression);
 
-        int lastOffset = 0;
-        while (LT(1) == IToken.tCOMMA) {
-            consume();
-            IASTExpression secondExpression = assignmentExpression();
-            expressionList.addExpression(secondExpression);
-            lastOffset = calculateEndOffset(secondExpression);
-        }
-        ((ASTNode) expressionList).setLength(lastOffset - startingOffset);
-        return expressionList;
+    	int lastOffset = 0;
+    	while (LT(1) == IToken.tCOMMA) {
+    		consume();
+    		IASTExpression secondExpression = assignmentExpression();
+    		expressionList.addExpression(secondExpression);
+    		lastOffset = calculateEndOffset(secondExpression);
+    	}
+    	((ASTNode) expressionList).setLength(lastOffset - startingOffset);
+    	return expressionList;
     }
 
     protected abstract IASTExpressionList createExpressionList();
@@ -748,15 +749,68 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTExpression assignmentExpression()
             throws BacktrackException, EndOfFileException;
 
-    protected abstract IASTExpression relationalExpression()
-            throws BacktrackException, EndOfFileException;
+	protected IASTExpression relationalExpression() throws BacktrackException, EndOfFileException {
+        IASTExpression result= shiftExpression();
+        for (;;) {
+        	int operator;
+            switch (LT(1)) {
+            case IToken.tGT:
+            	if (onTopInTemplateArgs)
+            		return result;
+            	operator= IASTBinaryExpression.op_greaterThan;
+            	break;
+            case IToken.tLT:
+                operator = IASTBinaryExpression.op_lessThan;
+                break;
+            case IToken.tLTEQUAL:
+                operator = IASTBinaryExpression.op_lessEqual;
+                break;
+            case IToken.tGTEQUAL:
+                operator = IASTBinaryExpression.op_greaterEqual;
+                break;
+            case IGCCToken.tMAX:
+                operator = IGPPASTBinaryExpression.op_max;
+                break;
+            case IGCCToken.tMIN:
+                operator = IGPPASTBinaryExpression.op_min;
+                break;
+            default:
+            	return result;
+            }
+            consume();
+            IASTExpression rhs= shiftExpression();
+            result = buildBinaryExpression(operator, result, rhs, calculateEndOffset(rhs));
+        }
+    }
 
     protected abstract IASTExpression multiplicativeExpression()
             throws BacktrackException, EndOfFileException;
 
     protected abstract IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException;
 
-    protected abstract IASTExpression castExpression() throws BacktrackException, EndOfFileException;
+	protected IASTExpression castExpression() throws EndOfFileException, BacktrackException {
+        if (LT(1) == IToken.tLPAREN) {
+            final IToken mark = mark();
+            final int startingOffset = mark.getOffset();
+            consume();
+
+            if (!avoidCastExpressionByHeuristics()) {
+            	IASTTypeId typeId = typeId(DeclarationOptions.TYPEID);
+            	if (typeId != null && LT(1) == IToken.tRPAREN) {
+            		consume();
+            		try {
+            			IASTExpression castExpression = castExpression();
+            			return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
+            					typeId, castExpression, startingOffset,
+            					LT(1) == IToken.tEOC ? LA(1).getEndOffset() : calculateEndOffset(castExpression));
+            		} catch (BacktrackException b) {
+            		}
+            	}
+            }
+            backup(mark);
+        }
+        return unaryExpression();
+    }
 
     protected abstract IASTExpression unaryExpression() throws BacktrackException, EndOfFileException;
 
@@ -826,9 +880,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return buildBinaryExpression(kind, lhs, rhs, calculateEndOffset(rhs));
     }
 
-    protected IASTExpression constantExpression() throws BacktrackException,
-            EndOfFileException {
-        return conditionalExpression();
+    protected IASTExpression constantExpression() throws BacktrackException, EndOfFileException {
+    	return conditionalExpression();
     }
 
     protected IASTExpression logicalOrExpression() throws BacktrackException,

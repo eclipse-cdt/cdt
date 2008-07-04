@@ -577,44 +577,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTExpression relationalExpression() throws BacktrackException,
-            EndOfFileException {
-
-        IASTExpression firstExpression = shiftExpression();
-        for (;;) {
-            switch (LT(1)) {
-            case IToken.tGT:
-            case IToken.tLT:
-            case IToken.tLTEQUAL:
-            case IToken.tGTEQUAL:
-                int t = consume().getType();
-                IASTExpression secondExpression = shiftExpression();
-                int operator = 0;
-                switch (t) {
-                case IToken.tGT:
-                    operator = IASTBinaryExpression.op_greaterThan;
-                    break;
-                case IToken.tLT:
-                    operator = IASTBinaryExpression.op_lessThan;
-                    break;
-                case IToken.tLTEQUAL:
-                    operator = IASTBinaryExpression.op_lessEqual;
-                    break;
-                case IToken.tGTEQUAL:
-                    operator = IASTBinaryExpression.op_greaterEqual;
-                    break;
-                }
-                firstExpression = buildBinaryExpression(operator,
-                        firstExpression, secondExpression,
-                        calculateEndOffset(secondExpression));
-                break;
-            default:
-                return firstExpression;
-            }
-        }
-    }
-
-    @Override
 	protected IASTExpression multiplicativeExpression()
             throws BacktrackException, EndOfFileException {
         IASTExpression firstExpression = castExpression();
@@ -645,34 +607,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 return firstExpression;
             }
         }
-    }
-
-    /**
-     * castExpression : unaryExpression | "(" typeId ")" castExpression
-     */
-    @Override
-	protected IASTExpression castExpression() throws EndOfFileException, BacktrackException {
-        if (LT(1) == IToken.tLPAREN) {
-            final IToken mark = mark();
-            final int startingOffset = mark.getOffset();
-            consume();
-
-            if (!avoidCastExpressionByHeuristics()) {
-            	IASTTypeId typeId = typeId(DeclarationOptions.TYPEID);
-            	if (typeId != null && LT(1) == IToken.tRPAREN) {
-            		consume();
-            		try {
-            			IASTExpression castExpression = castExpression();
-            			return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
-            					typeId, castExpression, startingOffset,
-            					LT(1) == IToken.tEOC ? LA(1).getEndOffset() : calculateEndOffset(castExpression));
-            		} catch (BacktrackException b) {
-            		}
-            	}
-            }
-            backup(mark);
-        }
-        return unaryExpression();
     }
 
     @Override

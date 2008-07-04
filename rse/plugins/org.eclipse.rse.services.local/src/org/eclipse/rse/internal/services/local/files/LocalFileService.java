@@ -40,6 +40,7 @@
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
+ * David McKnight   (IBM)        - [238367] [regression] Error when deleting Archive Files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1049,7 +1050,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		}
 		else
 		{
-			result = fileToDelete.delete();
+			if (fileToDelete.exists())
+				result = fileToDelete.delete();
 		}
 		if (!result) {
 			if (fileToDelete.exists()) {

@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - Adding Javadoc
  * David McKnight   (IBM)        - [232670] SystemMessageDialog should not throw IndicatorExceptions
+ * David McKnight   (IBM)        - [238585] SystemMessageDialog's details area is always scrolled to the bottom
  *******************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -42,6 +43,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -388,6 +390,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		listCreated = true;
 		// fill the list
 		populateList(list);
+		list.setTopIndex(0);
 
 		return list;
 	}

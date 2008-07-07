@@ -41,6 +41,7 @@
  * David McKnight (IBM)          - [233435] SubSystem.resolveFilterStrings(*) does not prompt for a connection when the subsystem is not connected
  * David Dykstal (IBM) - [233876] filters lost after restart
  * David McKnight (IBM)          - [238609] Substitution value missing for disconnect failed message
+ * David McKnight   (IBM)        - [237970]  Subsystem.connect( ) fails for substituting host name when isOffline( ) is true
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -1799,7 +1800,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 				{
 					// offline and no caching support so throw exception
 					String msgTxt = NLS.bind(RSECoreMessages.MSG_OFFLINE_CANT_CONNECT,getHost().getAliasName());
-					String msgDetails = RSECoreMessages.MSG_OFFLINE_CANT_CONNECT_DETAILS;
+					String msgDetails = NLS.bind(RSECoreMessages.MSG_OFFLINE_CANT_CONNECT_DETAILS, getHost().getAliasName());
 					SystemMessage sMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
 							SystemResourceConstants.MSG_OFFLINE_CANT_CONNECT,
 							IStatus.INFO, msgTxt, msgDetails);
@@ -2288,8 +2289,12 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	public Object[] resolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
 	throws Exception
 	{
-		// for bug 233435, implicit connect if the connection is not connected
-		checkIsConnected(monitor);
+		
+		// for bug 237970, can't connect when we're in offline mode
+		if (!isOffline()){			
+			// for bug 233435, implicit connect if the connection is not connected
+			checkIsConnected(monitor);
+		}
 		
 		if (isConnected())
 		{
@@ -2473,7 +2478,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		// yantzi: artemis 6.0, offline support
 		if (isOffline()) {
 			String msgTxt = NLS.bind(RSECoreMessages.MSG_OFFLINE_CANT_CONNECT, hostName);
-			String msgDetails = RSECoreMessages.MSG_OFFLINE_CANT_CONNECT_DETAILS;
+			String msgDetails = NLS.bind(RSECoreMessages.MSG_OFFLINE_CANT_CONNECT_DETAILS, hostName);
 
 			SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
 					SystemResourceConstants.MSG_OFFLINE_CANT_CONNECT,

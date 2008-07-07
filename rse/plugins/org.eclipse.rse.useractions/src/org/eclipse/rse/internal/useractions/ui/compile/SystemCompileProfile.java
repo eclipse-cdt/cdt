@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  * Xuan Chen        (IBM)    - [225617] [useraction][api] Remove Team view support inside user action.
+ * Kevin Doyle		(IBM)	 - [239701] [useractions] Compile types show up multiple times after adding a command
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -286,7 +287,7 @@ public abstract class SystemCompileProfile {
 			IPropertySet compileType = list[i]; //This is one compile type 
 			IPropertySet[] compileNameList = compileType.getPropertySets();
 			
-			IProperty typeProperty = compileType.getProperty(ISystemCompileXMLConstants.TYPE_ATTRIBUTE);
+			IProperty typeProperty = compileType.getProperty(ISystemCompileXMLConstants.SOURCETYPE_ATTRIBUTE);
 			String type = typeProperty.getValue();
 			IProperty lastUsedProperty = compileType.getProperty(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE);
 			String lastUsed = lastUsedProperty.getValue();
@@ -511,7 +512,7 @@ public abstract class SystemCompileProfile {
 			}
 			//now create a propertySet for this compile type
 			
-			IPropertySet thisCompileTypePropertySet = compileCommandPropertySet.createPropertySet(compileType.getType() + i);
+			IPropertySet thisCompileTypePropertySet = compileCommandPropertySet.createPropertySet(compileType.getType());
 			//Set its properties.
 			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, ISystemCompileXMLConstants.TYPE_ELEMENT);
 			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, compileType.getType());

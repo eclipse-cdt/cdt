@@ -135,8 +135,8 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 	public boolean canResumeAtLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
 		if ( target instanceof IAdaptable ) {			
 			if ( part instanceof IEditorPart ) {
-				IResumeAtLine jumpToLine = (IResumeAtLine)((IAdaptable)target).getAdapter( IResumeAtLine.class );
-				if ( jumpToLine == null)
+				IResumeAtLine resumeAtLine = (IResumeAtLine)((IAdaptable)target).getAdapter( IResumeAtLine.class );
+				if ( resumeAtLine == null)
 					return false;
 				IEditorPart editorPart = (IEditorPart)part;
 				IEditorInput input = editorPart.getEditorInput();
@@ -170,11 +170,11 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 				final IPath path = convertPath( fileName, debugTarget );									
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				return jumpToLine.canResumeAtLine( path.toPortableString(), lineNumber );
+				return resumeAtLine.canResumeAtLine( path.toPortableString(), lineNumber );
 			}
 			if ( part instanceof DisassemblyView ) {
-				IResumeAtAddress jumpToAddress = (IResumeAtAddress)((IAdaptable)target).getAdapter( IResumeAtAddress.class );
-				if ( jumpToAddress == null )
+				IResumeAtAddress resumeAtAddress = (IResumeAtAddress)((IAdaptable)target).getAdapter( IResumeAtAddress.class );
+				if ( resumeAtAddress == null )
 					return false;
 				IEditorInput input = ((DisassemblyView)part).getInput();
 				if ( !(input instanceof DisassemblyEditorInput) ) {
@@ -183,7 +183,7 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
 				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				return jumpToAddress.canResumeAtAddress( address );
+				return resumeAtAddress.canResumeAtAddress( address );
 			}
 		}
 		return false;

@@ -9,12 +9,14 @@ package org.eclipse.rse.internal.useractions.ui;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Kevin Doyle	(IBM) - [239704] No Validation for Command textbox in Work with Compile and User Action dialogs
  *******************************************************************************/
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
+import org.eclipse.rse.internal.useractions.ui.validators.ValidatorUserActionCommand;
 import org.eclipse.rse.shells.ui.view.SystemCommandEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -91,6 +93,7 @@ public class SystemEditCommandDialog extends Dialog {
 	 */
 	private SourceViewer createEditor(Composite parent, int columnSpan, SystemCommandViewerConfiguration sourceViewerConfiguration, String cmd) {
 		textCommand = new SystemCommandEditor(null, parent, style, columnSpan, sourceViewerConfiguration, cmd, SystemUDAResources.RESID_UDA_INSERTVAR_BUTTON_LABEL);
+		textCommand.setCommandValidator(new ValidatorUserActionCommand());
 		return textCommand;
 	}
 

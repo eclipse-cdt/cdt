@@ -31,6 +31,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement3;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
@@ -51,6 +52,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.CoreProcess;
 import org.eclipse.cdt.debug.mi.core.IMIConstants;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -100,7 +102,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
-public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement3, ICDIAddressToSource, ICDIMemorySpaceManagement {
+public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement3, ICDIAddressToSource, ICDIMemorySpaceManagement, ICDIExecuteMoveInstructionPointer {
 
 	MISession miSession;
 	ICDITargetConfiguration fConfiguration;
@@ -705,6 +707,58 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 			throw new CDIException(CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
 		}
 
+		CLIJump jump = factory.createCLIJump(loc);
+		try {
+			miSession.postCommand(jump);
+			MIInfo info = jump.getMIInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer#moveInstructionPointer(org.eclipse.cdt.debug.core.cdi.ICDILocation)
+	 */
+	public void moveInstructionPointer(ICDILocation location) throws CDIException {
+		// Most of this code was taken from our Resume()
+		// method. The only differences are that we create a temporary
+		// breakpoint for the location and set it before we post
+		// the 'jump' command
+		CommandFactory factory = miSession.getCommandFactory();
+		LocationBreakpoint bkpt = null;
+		String loc = null;
+		File file = null;
+		if (location instanceof ICDIFileLocation) {
+			String filePath = ((ICDIFileLocation)location).getFile();
+			if (filePath != null && filePath.length() > 0)
+				file = new File(filePath);
+		}
+		if (location instanceof ICDILineLocation) {
+			ICDILineLocation lineLocation = (ICDILineLocation)location;
+			if (file != null) {
+				loc = file.getName() + ":" + lineLocation.getLineNumber(); //$NON-NLS-1$
+			}
+			bkpt = new LineBreakpoint(this, ICBreakpointType.TEMPORARY, lineLocation, null, true);			
+		} else if (location instanceof ICDIAddressLocation) {
+			ICDIAddressLocation addrLocation = (ICDIAddressLocation)location;
+			if (!addrLocation.getAddress().equals(BigInteger.ZERO)) {
+				loc = "*0x" + addrLocation.getAddress().toString(16); //$NON-NLS-1$
+			}
+			bkpt = new AddressBreakpoint(this, ICBreakpointType.TEMPORARY, addrLocation, null, true);			
+		}
+		// Throw an exception we do know where to go
+		if (loc == null) {
+			throw new CDIException(CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
+		}
+
+		// Set a temporary breakpoint at the location we're going
+		// to do a 'jump' (resume from) operation
+		Session session = (Session)getSession();
+		session.getBreakpointManager().setLocationBreakpoint(bkpt);
+		
 		CLIJump jump = factory.createCLIJump(loc);
 		try {
 			miSession.postCommand(jump);

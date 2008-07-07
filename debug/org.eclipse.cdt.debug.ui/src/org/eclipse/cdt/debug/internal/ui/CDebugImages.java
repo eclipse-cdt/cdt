@@ -116,7 +116,6 @@ public class CDebugImages {
 	public static final String IMG_LCL_LOAD_ALL_SYMBOLS = NAME_PREFIX + "load_all_symbols_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_CAST_TO_TYPE = NAME_PREFIX + "casttotype_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_DISPLAY_AS_ARRAY = NAME_PREFIX + "showasarray_co.gif";	//$NON-NLS-1$
-	public static final String IMG_LCL_RESUME_AT_LINE = NAME_PREFIX + "jump_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_DETAIL_PANE_UNDER = NAME_PREFIX + "det_pane_under.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_DETAIL_PANE_RIGHT = NAME_PREFIX + "det_pane_right.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_DETAIL_PANE_HIDE = NAME_PREFIX + "det_pane_hide.gif";	//$NON-NLS-1$
@@ -191,8 +190,6 @@ public class CDebugImages {
 	public static final ImageDescriptor DESC_WIZBAN_PATH_MAP_ENTRY = createManaged( T_WIZBAN, IMG_WIZBAN_PATH_MAP_ENTRY );
 	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_ELCL, IMG_LCL_CAST_TO_TYPE );
 	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_ELCL, IMG_LCL_DISPLAY_AS_ARRAY );
-	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE = createManaged( T_ELCL, IMG_LCL_RESUME_AT_LINE );
-	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE_DISABLED = createManaged( T_DLCL, IMG_LCL_RESUME_AT_LINE );
 	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_UNDER );
 	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_UNDER );
 	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_RIGHT = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_RIGHT );

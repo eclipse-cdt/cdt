@@ -16,14 +16,14 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Provides the ability to resume a debug target at the given line.
  */
-public interface IJumpToLine {
+public interface IResumeAtLine {
 
 	/**
 	 * Returns whether this operation is currently available for this file and line number.
 	 * 
 	 * @return whether this operation is currently available
 	 */
-	public boolean canJumpToLine( IFile file, int lineNumber );
+	public boolean canResumeAtLine( IFile file, int lineNumber );
 
 	/**
 	 * Causes this element to resume the execution at the specified line.
@@ -31,19 +31,19 @@ public interface IJumpToLine {
 	 * @exception DebugException
 	 *                on failure. Reasons include:
 	 */
-	public void jumpToLine( IFile file, int lineNumber ) throws DebugException;
+	public void resumeAtLine( IFile file, int lineNumber ) throws DebugException;
 
 	/**
 	 * Returns whether this operation is currently available for this file and line number.
 	 * 
 	 * @return whether this operation is currently available
 	 */
-	public boolean canJumpToLine( String fileName, int lineNumber );
+	public boolean canResumeAtLine( String fileName, int lineNumber );
 
 	/**
 	 * Causes this element to resume the execution at the specified line.
 	 * 
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void jumpToLine( String fileName, int lineNumber ) throws DebugException;
+	public void resumeAtLine( String fileName, int lineNumber ) throws DebugException;
 }

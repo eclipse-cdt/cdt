@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -42,7 +43,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
 
 /**
  */
-public class Thread extends CObject implements ICDIThread {
+public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstructionPointer {
 
 	static ICDIStackFrame[] noStack = new ICDIStackFrame[0];
 	int id;
@@ -551,4 +552,14 @@ public class Thread extends CObject implements ICDIThread {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer#moveInstructionPointer(org.eclipse.cdt.debug.core.cdi.ICDILocation)
+	 */
+	public void moveInstructionPointer(ICDILocation location) throws CDIException {
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.moveInstructionPointer(location);		
+		}
+	}
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2008 Freescale Secmiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     Freescale Semiconductor - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
@@ -31,15 +31,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
  
 /**
- * A resume at line action that can be contributed to a an editor. The action
- * will perform the "resume at line" operation for editors that provide
- * an appropriate <code>IResumeAtLineTarget</code> adapter.
+ * A move to line action that can be contributed to a an editor. The action
+ * will perform the "move to line" operation for editors that provide
+ * an appropriate <code>IMoveToLineTarget</code> adapter.
  */
-public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewActionDelegate, IActionDelegate2 {
+public class MoveToLineActionDelegate implements IEditorActionDelegate, IViewActionDelegate, IActionDelegate2 {
 
 	private IWorkbenchPart fActivePart = null;
 
-	private IResumeAtLineTarget fPartTarget = null;
+	private IMoveToLineTarget fPartTarget = null;
 
 	private IAction fAction = null;
 
@@ -104,10 +104,10 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewA
 	public void run( IAction action ) {
 		if ( fPartTarget != null && fTargetElement != null ) {
 			try {
-				fPartTarget.resumeAtLine( fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement );
+				fPartTarget.moveToLine( fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement );
 			}
 			catch( CoreException e ) {
-				ErrorDialog.openError( fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString( "ResumeAtLineActionDelegate.1" ), ActionMessages.getString( "ResumeAtLineActionDelegate.2" ), e.getStatus() ); //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError( fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString( "MoveToLineActionDelegate.1" ), ActionMessages.getString( "MoveToLineActionDelegate.2" ), e.getStatus() ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -131,7 +131,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewA
 				ISelectionProvider selectionProvider = site.getSelectionProvider();
 				if ( selectionProvider != null ) {
 					ISelection selection = selectionProvider.getSelection();
-					enabled = fTargetElement.isSuspended() && fPartTarget.canResumeAtLine( fActivePart, selection, fTargetElement );
+					enabled = fTargetElement.isSuspended() && fPartTarget.canMoveToLine( fActivePart, selection, fTargetElement );
 				}
 			}
 		}
@@ -152,12 +152,12 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewA
 		fActivePart = part;
 		if ( part != null ) {
 			part.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
-			fPartTarget = (IResumeAtLineTarget)part.getAdapter( IResumeAtLineTarget.class );
+			fPartTarget = (IMoveToLineTarget)part.getAdapter( IMoveToLineTarget.class );
 			if ( fPartTarget == null ) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on
-				if ( adapterManager.hasAdapter( part, IResumeAtLineTarget.class.getName() ) ) {
-					fPartTarget = (IResumeAtLineTarget)adapterManager.loadAdapter( part, IResumeAtLineTarget.class.getName() );
+				if ( adapterManager.hasAdapter( part, IMoveToLineTarget.class.getName() ) ) {
+					fPartTarget = (IMoveToLineTarget)adapterManager.loadAdapter( part, IMoveToLineTarget.class.getName() );
 				}
 			}
 			// Force the selection update

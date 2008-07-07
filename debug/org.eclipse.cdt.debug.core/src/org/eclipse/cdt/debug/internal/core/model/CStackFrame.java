@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -25,15 +26,19 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
-import org.eclipse.cdt.debug.core.model.IJumpToAddress;
-import org.eclipse.cdt.debug.core.model.IJumpToLine;
+import org.eclipse.cdt.debug.core.model.IMoveToAddress;
+import org.eclipse.cdt.debug.core.model.IMoveToLine;
 import org.eclipse.cdt.debug.core.model.IRestart;
+import org.eclipse.cdt.debug.core.model.IResumeAtAddress;
+import org.eclipse.cdt.debug.core.model.IResumeAtLine;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
@@ -53,7 +58,7 @@ import org.eclipse.debug.core.model.IVariable;
 /**
  * Proxy to a stack frame on the target.
  */
-public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart, IResumeWithoutSignal, ICDIEventListener {
+public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart, IResumeWithoutSignal, IMoveToAddress, IMoveToLine, ICDIEventListener {
 
 	/**
 	 * Underlying CDI stack frame.
@@ -475,10 +480,16 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		if ( adapter == IRunToAddress.class ) {
 			return this;
 		}
-		if ( adapter == IJumpToLine.class ) {
+		if ( adapter == IResumeAtLine.class ) {
 			return this;
 		}
-		if ( adapter == IJumpToAddress.class ) {
+		if ( adapter == IResumeAtAddress.class ) {
+			return this;
+		}
+		if ( adapter == IMoveToLine.class ) {
+			return this;
+		}
+		if ( adapter == IMoveToAddress.class ) {
 			return this;
 		}
 		if ( adapter == CStackFrame.class ) {
@@ -839,35 +850,59 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(org.eclipse.core.resources.IFile, int)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeAtLine#canResumeAtLine(org.eclipse.core.resources.IFile, int)
 	 */
-	public boolean canJumpToLine( IFile file, int lineNumber ) {
+	public boolean canResumeAtLine( IFile file, int lineNumber ) {
 		return getThread().canResume();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(org.eclipse.core.resources.IFile, int)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeAtLine#resumeAtLine(org.eclipse.core.resources.IFile, int)
 	 */
-	public void jumpToLine( IFile file, int lineNumber ) throws DebugException {
-		if ( !canJumpToLine( file, lineNumber ) )
+	public void resumeAtLine( IFile file, int lineNumber ) throws DebugException {
+		if ( !canResumeAtLine( file, lineNumber ) )
 			return;
-		jumpToLine( file.getLocation().lastSegment(), lineNumber );
+		resumeAtLine( file.getLocation().lastSegment(), lineNumber );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(java.lang.String, int)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeAtLine#canResumeAtLine(java.lang.String, int)
 	 */
-	public boolean canJumpToLine( String fileName, int lineNumber ) {
+	public boolean canResumeAtLine( String fileName, int lineNumber ) {
 		return getThread().canResume();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(java.lang.String, int)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeAtLine#resumeAtLine(java.lang.String, int)
 	 */
-	public void jumpToLine( String fileName, int lineNumber ) throws DebugException {
-		if ( !canJumpToLine( fileName, lineNumber ) )
+	public void resumeAtLine( String fileName, int lineNumber ) throws DebugException {
+		if ( !canResumeAtLine( fileName, lineNumber ) )
 			return;
+		
 		ICDILocation location = getCDITarget().createLineLocation( fileName, lineNumber );
+		try {
+			ICDIExecuteResume resumer = getCDIThread();
+			resumer.resume(location);
+		}
+		catch( CDIException e ) {
+			targetRequestFailed( e.getMessage(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeAtAddress#canResumeAtAddress(org.eclipse.cdt.core.IAddress)
+	 */
+	public boolean canResumeAtAddress( IAddress address ) {
+		return getThread().canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeAtAddress#resumeAtAddress(org.eclipse.cdt.core.IAddress)
+	 */
+	public void resumeAtAddress( IAddress address ) throws DebugException {
+		if ( !canResumeAtAddress( address ) )
+			return;
+		ICDILocation location = getCDITarget().createAddressLocation( new BigInteger( address.toString() ) );
 		try {
 			getCDIThread().resume( location );
 		}
@@ -877,21 +912,45 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#canJumpToAddress(org.eclipse.cdt.core.IAddress)
+	 * @see org.eclipse.cdt.debug.core.model.IMoveToAddress#canMoveToAddress(org.eclipse.cdt.core.IAddress)
 	 */
-	public boolean canJumpToAddress( IAddress address ) {
-		return getThread().canResume();
+	public boolean canMoveToAddress(IAddress address) {
+		return getThread().isSuspended() && (getCDIThread() instanceof ICDIExecuteMoveInstructionPointer);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#jumpToAddress(org.eclipse.cdt.core.IAddress)
+	 * @see org.eclipse.cdt.debug.core.model.IMoveToAddress#moveToAddress(org.eclipse.cdt.core.IAddress)
 	 */
-	public void jumpToAddress( IAddress address ) throws DebugException {
-		if ( !canJumpToAddress( address ) )
+	public void moveToAddress(IAddress address) throws DebugException {
+		if ( !canMoveToAddress( address ) )
 			return;
 		ICDILocation location = getCDITarget().createAddressLocation( new BigInteger( address.toString() ) );
+		ICDIExecuteMoveInstructionPointer mover = (ICDIExecuteMoveInstructionPointer)getCDIThread();
 		try {
-			getCDIThread().resume( location );
+			mover.moveInstructionPointer( location);
+		}
+		catch( CDIException e ) {
+			targetRequestFailed( e.getMessage(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IMoveToLine#canMoveToLine(java.lang.String, int)
+	 */
+	public boolean canMoveToLine(String fileName, int lineNumber) {
+		return getThread().isSuspended() && (getCDIThread() instanceof ICDIExecuteMoveInstructionPointer);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IMoveToLine#moveToLine(java.lang.String, int)
+	 */
+	public void moveToLine(String fileName, int lineNumber) throws DebugException {
+		if ( !canMoveToLine( fileName, lineNumber ) )
+			return;
+		ICDILocation location= getCDITarget().createLineLocation( fileName, lineNumber );
+		ICDIExecuteMoveInstructionPointer mover = (ICDIExecuteMoveInstructionPointer)getCDIThread();
+		try {
+			mover.moveInstructionPointer( location );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), e );

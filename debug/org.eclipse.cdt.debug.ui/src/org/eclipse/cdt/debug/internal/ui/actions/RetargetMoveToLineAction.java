@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2008 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ * Freescale Semiconductor - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
@@ -18,11 +18,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
- 
+
 /**
- * Global retargettable resume at line action.
+ * Global retargettable move to line action.
  */
-public class RetargetResumeAtLineAction extends RetargetAction {
+public class RetargetMoveToLineAction extends RetargetAction {
 
 	private ISelectionListener fSelectionListener = new DebugSelectionListener();
 
@@ -69,21 +69,21 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected void performAction( Object target, ISelection selection, IWorkbenchPart part ) throws CoreException {
-		((IResumeAtLineTarget)target).resumeAtLine( part, selection, getTargetElement() );
+		((IMoveToLineTarget)target).moveToLine( part, selection, getTargetElement() );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.RetargetAction#getAdapterClass()
 	 */
 	protected Class<?> getAdapterClass() {
-		return IResumeAtLineTarget.class;
+		return IMoveToLineTarget.class;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected boolean canPerformAction( Object target, ISelection selection, IWorkbenchPart part ) {
-		return getTargetElement() != null && ((IResumeAtLineTarget)target).canResumeAtLine( part, selection, getTargetElement() );
+		return getTargetElement() != null && ((IMoveToLineTarget)target).canMoveToLine( part, selection, getTargetElement() );
 	}
 
 	protected ISuspendResume getTargetElement() {

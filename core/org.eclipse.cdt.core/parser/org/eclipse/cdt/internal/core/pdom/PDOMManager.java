@@ -1408,7 +1408,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					IResource resource= tu.getResource();
 					if(resource instanceof IFile) {
 						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile)resource);
-						if(!areSynchronized(index, resource, location)) {
+						if(!areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location)) {
 							return false;
 						}
 					}
@@ -1425,33 +1425,38 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	
 	/**
 	 * Recursively checks that the specified file, and its include are up-to-date.
+	 * @param trail a set of previously checked include file locations
 	 * @param index the index to check against
 	 * @param resource the resource to check from the workspace
 	 * @param location the location to check from the index
 	 * @return whether the specified file, and its includes are up-to-date.
 	 * @throws CoreException
 	 */
-	private static boolean areSynchronized(IIndex index, IResource resource, IIndexFileLocation location) throws CoreException {
-		IIndexFile[] file= index.getFiles(location);
+	private static boolean areSynchronized(Set<IIndexFileLocation> trail, IIndex index, IResource resource, IIndexFileLocation location) throws CoreException {
+		if(!trail.contains(location)) {
+			trail.add(location);
+			
+			IIndexFile[] file= index.getFiles(location);
 
-		// pre-includes may be listed twice (191989)
-		if(file.length < 1 || file.length > 2)
-			return false;
+			// pre-includes may be listed twice (191989)
+			if(file.length < 1 || file.length > 2)
+				return false;
 
-		if(resource.getLocalTimeStamp() != file[0].getTimestamp())
-			return false;
-		
-		// if it is up-to-date, the includes have not changed and may
-		// be read from the index.
-		IIndexInclude[] includes= index.findIncludes(file[0]);
-		for(IIndexInclude inc : includes) {
-			IIndexFileLocation newLocation= inc.getIncludesLocation();
-			if(newLocation != null) {
-				String path= newLocation.getFullPath();
-				if(path != null) {
-					IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
-					if(!areSynchronized(index, newResource, newLocation)) {
-						return false;
+			if(resource.getLocalTimeStamp() != file[0].getTimestamp())
+				return false;
+
+			// if it is up-to-date, the includes have not changed and may
+			// be read from the index.
+			IIndexInclude[] includes= index.findIncludes(file[0]);
+			for(IIndexInclude inc : includes) {
+				IIndexFileLocation newLocation= inc.getIncludesLocation();
+				if(newLocation != null) {
+					String path= newLocation.getFullPath();
+					if(path != null) {
+						IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+						if(!areSynchronized(trail, index, newResource, newLocation)) {
+							return false;
+						}
 					}
 				}
 			}

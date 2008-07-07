@@ -54,21 +54,27 @@ import org.osgi.framework.Bundle;
  * Tests the GeneratePDOMApplication
  */
 public class GeneratePDOMApplicationTest extends PDOMTestBase {
+	private static final URI    BASEURI= URI.create("file:///base/"); // unimportant what the value is
 	private static final String SDK_VERSION = "com.acme.sdk.version";
 	private static final String ACME_SDK_ID= "com.acme.sdk.4.0.1";
+	private static final String LOC_TSTPRJ1= "resources/pdomtests/generatePDOMTests/project1";
+	private static final String LOC_TSTPRJ2= "resources/pdomtests/generatePDOMTests/project2";
+	private static final String LOC_TSTPRJ3= "resources/pdomtests/generatePDOMTests/project3";
+	private static final String LOC_CYCINC1= "resources/pdomtests/generatePDOMTests/cyclicIncludes1";
+	private static final String LOC_CYCINC2= "resources/pdomtests/generatePDOMTests/cyclicIncludes2";
+	
 	private static List toDeleteOnTearDown= new ArrayList();
-	private final static String locProject1= "resources/pdomtests/generatePDOMTests/project1";
-	private final static String locProject2= "resources/pdomtests/generatePDOMTests/project2";
-	private final static String locProject3= "resources/pdomtests/generatePDOMTests/project3";
-	private URI baseURI;
-
+	
 	public static Test suite() {
 		return suite(GeneratePDOMApplicationTest.class);
 	}
+	
+	protected File target; // the location of the generated PDOM
 
 	protected void setUp() throws Exception {
 		toDeleteOnTearDown.clear();
-		baseURI= new URI("file:///base/"); // unimportant what the value is
+		target= File.createTempFile("test", "pdom");
+		target.delete();
 	}
 
 	protected void tearDown() throws Exception {
@@ -80,7 +86,6 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 	public void testBrokenExportProjectProvider1() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for createProject 
-		File target= File.createTempFile("test", "pdom");
 		doGenerate(new String[] {
 			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
 			GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider1.class.getName()
@@ -89,7 +94,6 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 	public void testBrokenExportProjectProvider2() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for getLocationConverter 
-		File target= File.createTempFile("test", "pdom");
 		doGenerate(new String[] {
 			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
 			GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider2.class.getName()
@@ -97,13 +101,12 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}
 
 	public void testSimpleExportProjectProvider1() throws Exception {
-		File target= File.createTempFile("test", "pdom");
 		doGenerate(new String[] {
 				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider3.class.getName()
 		});
 		assertTrue(target.exists());
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
 		String fid;
@@ -118,13 +121,12 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}
 
 	public void testSimpleExportProjectProvider2() throws Exception {
-		File target= File.createTempFile("test", "pdom");
 		doGenerate(new String[] {
 				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider4.class.getName()
 		});
 		assertTrue(target.exists());
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
 		wpdom.acquireReadLock();
@@ -141,19 +143,16 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}
 
 	public void testExternalExportProjectProvider_BadCmdLine1() throws Exception {
-		File target= File.createTempFile("test", "pdom");
-		
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -source must be specified
 		
 		doGenerate(new String[] {
 			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
 			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName()
 		});
-		assertTrue(target.exists());
+		assertFalse(target.exists());
 	}
 
 	public void testExternalExportProjectProvider_BadCmdLine2() throws Exception {
-		File target= File.createTempFile("test", "pdom");
 		TestProjectProvider4 tpp4= new TestProjectProvider4();
 		ICProject cproject= tpp4.createProject();
 		
@@ -164,11 +163,10 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
 			ExternalExportProjectProvider.OPT_SOURCE, cproject.getProject().getLocation().toFile().getAbsolutePath()
 		});
-		assertTrue(target.exists());
+		assertFalse(target.exists());
 	}
 	
 	public void testExternalExportProjectProvider_BadCmdLine3() throws Exception {
-		File target= File.createTempFile("test", "pdom");
 		TestProjectProvider4 tpp4= new TestProjectProvider4();
 		ICProject cproject= tpp4.createProject();
 		
@@ -177,87 +175,44 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
 			ExternalExportProjectProvider.OPT_SOURCE, cproject.getProject().getLocation().toFile().getAbsolutePath()
 		});
-		assertTrue(target.exists());
+		assertFalse(target.exists());
 	}
 
 	public void testExternalExportProjectProvider() throws Exception {
-		File target= File.createTempFile("test", "pdom");
-
-		final int[] stateCount = new int[1];
-		IIndexerStateListener listener= new IIndexerStateListener() {
-			public void indexChanged(IIndexerStateEvent event) {
-				stateCount[0]++;
-			}
-		};
-		CCorePlugin.getIndexManager().joinIndexer(8000, new NullProgressMonitor());
-		CCorePlugin.getIndexManager().addIndexerStateListener(listener);
-
-		URL url= FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path(locProject1), null);
-		String baseDir= FileLocator.toFileURL(url).getFile();
-
-		doGenerate(new String[] {
-				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-				GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
-				ExternalExportProjectProvider.OPT_SOURCE, baseDir,
-				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "hello.world"
-		});
-		assertTrue(target.exists());
-
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		final int[] stateCount= new int[1];
+		WritablePDOM wpdom= generatePDOM(LOC_TSTPRJ1, ExternalExportProjectProvider.class, stateCount);
 		verifyProject1Content(wpdom);
 
 		wpdom.acquireReadLock();
 		try {
 			String fid = wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			assertNotNull(fid);
-			assertEquals("hello.world", fid); // check for id passed on command-line
+			assertEquals("generate.pdom.tests.id."+getName(), fid); // check for id passed on command-line
 		} finally {
 			wpdom.releaseReadLock();
 		}
 		// depending on the timing the index of the temporary project is changed once or twice. 
-		assertTrue(stateCount[0] == 2 || stateCount[0] == 4);
+		assertTrue("state is "+ stateCount[0], stateCount[0] == 2 || stateCount[0] == 4);
 	}
 
 	public void testExternalExportProjectProvider_SysIncludes() throws Exception {
-		File target= File.createTempFile("test", "pdom");
-
-		final int[] stateCount = new int[1];
-		IIndexerStateListener listener= new IIndexerStateListener() {
-			public void indexChanged(IIndexerStateEvent event) {
-				stateCount[0]++;
-			}
-		};
-		CCorePlugin.getIndexManager().addIndexerStateListener(listener);
-
-		URL url= FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path(locProject2), null);
-		String baseDir= FileLocator.toFileURL(url).getFile();
-
-		doGenerate(new String[] {
-				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-				GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
-				ExternalExportProjectProvider.OPT_SOURCE, baseDir,
-				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "hello.world"
-		});
-		assertTrue(target.exists());
-
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		WritablePDOM wpdom= generatePDOM(LOC_TSTPRJ2, ExternalExportProjectProvider.class, null);
 		verifyProject2Content(wpdom);
 	}
 	
+	public void testGenerateOnCyclicIncludes1() throws Exception {
+		// testing for zero NON-OK status objects (see BaseTestCase.setExpectedNumberOfLoggedNonOKStatusObjects)
+		WritablePDOM wpdom= generatePDOM(LOC_CYCINC1, ExternalExportProjectProvider.class, null);
+	}
+	
+	public void testGenerateOnCyclicIncludes2() throws Exception {
+		// testing for zero NON-OK status objects (see BaseTestCase.setExpectedNumberOfLoggedNonOKStatusObjects)
+		WritablePDOM wpdom= generatePDOM(LOC_CYCINC2, ExternalExportProjectProvider.class, null);
+	}
+	
 	public void testExternalExportProjectProvider_CLinkage() throws Exception {
-		File target= File.createTempFile("test", "pdom");
-
-		URL url= FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path(locProject3), null);
-		String baseDir= FileLocator.toFileURL(url).getFile();
-
-		doGenerate(new String[] {
-				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider5.class.getName(),
-				ExternalExportProjectProvider.OPT_SOURCE, baseDir,
-				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "hello.world"
-		});
-		assertTrue(target.exists());
-
+		WritablePDOM wpdom= generatePDOM(LOC_TSTPRJ3, TestProjectProvider5.class, null);
+		
 		IndexFilter CLinkage= new IndexFilter() {
 			public boolean acceptLinkage(ILinkage linkage) {
 				return linkage.getLinkageID() == ILinkage.C_LINKAGE_ID;
@@ -270,7 +225,6 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			}
 		};
 		
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		wpdom.acquireReadLock();
 		try {
 			assertEquals(1, wpdom.findBindings(new char[][] { "foo"
@@ -311,6 +265,34 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		}
 	}
 
+	private WritablePDOM generatePDOM(String testProject, Class<?> provider, final int[] stateCount) throws Exception {
+		IIndexerStateListener listener= null;
+		if(stateCount != null) {
+			listener= new IIndexerStateListener() {
+				public void indexChanged(IIndexerStateEvent event) {
+					stateCount[0]++;
+				}
+			};
+			CCorePlugin.getIndexManager().joinIndexer(8000, new NullProgressMonitor());
+			CCorePlugin.getIndexManager().addIndexerStateListener(listener);
+		}
+		
+		URL url= FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path(testProject), null);
+		String baseDir= FileLocator.toFileURL(url).getFile();
+
+		doGenerate(new String[] {
+				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, provider.getName(),
+				ExternalExportProjectProvider.OPT_SOURCE, baseDir,
+				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "generate.pdom.tests.id."+getName()
+		});
+		assertTrue(target.exists());
+		if(listener!=null) {
+			CCorePlugin.getIndexManager().removeIndexerStateListener(listener);
+		}
+		return new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+	}
+	
 	private void doGenerate(String[] args) throws CoreException {
 		GeneratePDOMApplication app = new GeneratePDOMApplication();
 		IApplicationContext ac= new MockApplicationContext(args);
@@ -320,6 +302,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	/*
 	 * IExportProjectProvider test implementations
 	 */
+	
 	public static class TestProjectProvider1 implements IExportProjectProvider {
 		public ICProject createProject() throws CoreException {return null;}
 		public Map getExportProperties() {return null;}
@@ -331,7 +314,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
-			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), locProject1);
+			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
 		public Map getExportProperties() {return null;}
@@ -343,7 +326,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
-			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), locProject1);
+			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
 		public Map getExportProperties() {return null;}
@@ -357,7 +340,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
-			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), locProject1);
+			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
 		public Map getExportProperties() {
@@ -376,7 +359,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
-			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), locProject3);
+			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ3);
 			return cproject;
 		}
 		public Map getExportProperties() {

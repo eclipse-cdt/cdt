@@ -11,6 +11,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)   - [187711] Link with Editor action for System View
+ * David McKnight   (IBM)   - [238294] ClassCastException using Link With Editor
  *******************************************************************************/
 package org.eclipse.rse.internal.files.ui.actions;
 
@@ -29,12 +30,12 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -65,16 +66,21 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 		private Object _parentObject;
 		private Object[] _children;
 		private ISystemTree _systemTree;
-		private IRemoteFile _targetRemoteFile;
+		private IAdaptable _targetRemoteObj;
 		private ISystemFilterReference _filterReference;
 		
-		public ShowChildrenInTree(Object parentObject, Object[] children, ISystemFilterReference filterReference, ISystemTree systemTree, IRemoteFile targetRemoteFile)
+		public ShowChildrenInTree(Object parentObject, Object[] children, ISystemFilterReference filterReference, ISystemTree systemTree, IAdaptable targetRemoteObj)
 		{
 			_parentObject = parentObject;
 			_children = children;
 			_systemTree = systemTree;
-			_targetRemoteFile = targetRemoteFile;
+			_targetRemoteObj = targetRemoteObj;
 			_filterReference = filterReference;
+		}
+		
+		private String getAbsolutePath(IAdaptable adaptable){
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)adaptable.getAdapter(ISystemViewElementAdapter.class);
+			return adapter.getAbsoluteName(adaptable);
 		}
 		
 		public void run()
@@ -90,29 +96,30 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 				_systemTree.createTreeItems(item, _children);				
 				item.setExpanded(true);
 				
-				IRemoteFile containingFolder = null;
+				IAdaptable containingFolder = null;
 				
 				// is one of these items our remote file?
 				for (int i = 0; i < item.getItemCount(); i++){
 					TreeItem childItem = item.getItem(i);
 					Object data = childItem.getData();
-					if (data instanceof IRemoteFile){
-						IRemoteFile childFile = (IRemoteFile)data;
-						String childPath = childFile.getAbsolutePath();
-						if (childPath.equals(_targetRemoteFile.getAbsolutePath())){
+					if (data instanceof IAdaptable){
+						IAdaptable childObj = (IAdaptable)data;
+						String childPath = getAbsolutePath(childObj);
+						String targetPath = getAbsolutePath(_targetRemoteObj);
+						if (childPath.equals(targetPath)){
 							// select our remote file
 							_systemTree.getTree().setSelection(childItem);
 							return; // we're done!
 						}
-						else if (_targetRemoteFile.getAbsolutePath().startsWith(childPath)){
-							containingFolder = childFile; // using this to start a deeper search for the target remote file
+						else if (targetPath.startsWith(childPath)){
+							containingFolder = childObj; // using this to start a deeper search for the target remote file
 						}
 					}					
 				}
 				
 				// remote file not found so now we have to expand further
 				if (containingFolder != null){						
-					LinkFromFolderJob job = new LinkFromFolderJob(containingFolder, _filterReference, _targetRemoteFile, _systemTree);
+					LinkFromFolderJob job = new LinkFromFolderJob(containingFolder, _filterReference, _targetRemoteObj, _systemTree);
 					job.schedule();
 				}
 			}
@@ -124,19 +131,26 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	 */
 	private class LinkFromFolderJob extends Job
 	{
-		private IRemoteFileSubSystem _subSystem;
-		private IRemoteFile _remoteFolder;
-		private IRemoteFile _targetRemoteFile;
+		private ISubSystem _subSystem;
+		private IAdaptable _remoteFolder;
+		private IAdaptable _targetRemoteObj;
 		private ISystemTree _systemTree;
 		private ISystemFilterReference _filterRef;
+		private ISystemViewElementAdapter _adapter;
 		
-		public LinkFromFolderJob(IRemoteFile remoteFolder, ISystemFilterReference filterRef, IRemoteFile targetRemoteFile, ISystemTree systemTree) {
+		public LinkFromFolderJob(IAdaptable remoteFolder, ISystemFilterReference filterRef, IAdaptable targetRemoteObj, ISystemTree systemTree) {
 			super(FileResources.MESSAGE_EXPANDING_FOLDER);
 			_remoteFolder = remoteFolder;
-			_subSystem = _remoteFolder.getParentRemoteFileSubSystem();
+			_subSystem = getSubSystem(remoteFolder);
 			_filterRef = filterRef; // used for context of query
-			_targetRemoteFile = targetRemoteFile;
+			_targetRemoteObj = targetRemoteObj;
 			_systemTree = systemTree;
+		}
+		
+		private ISubSystem getSubSystem(IAdaptable adaptable)
+		{
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)adaptable.getAdapter(ISystemViewElementAdapter.class);
+			return adapter.getSubSystem(adaptable);
 		}
 		
 		public IStatus run(IProgressMonitor monitor){
@@ -157,7 +171,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 												
 				// put these items in the tree and look for remoteFile
 				// if we can't find the remote file under this filter, the ShowChildrenInTree will recurse
-				Display.getDefault().asyncExec(new ShowChildrenInTree(_remoteFolder, children, _filterRef, _systemTree, _targetRemoteFile));
+				Display.getDefault().asyncExec(new ShowChildrenInTree(_remoteFolder, children, _filterRef, _systemTree, _targetRemoteObj));
 			}
 			catch (Exception e){				
 			}
@@ -171,16 +185,27 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	 */
 	private class LinkFromFilterJob extends Job
 	{
-		private IRemoteFileSubSystem _subSystem;
-		private IRemoteFile _targetRemoteFile;
+		private ISubSystem _subSystem;
+		private IAdaptable _targetRemoteObj;
 		private ISystemTree _systemTree;
 		
-		public LinkFromFilterJob(IRemoteFile targetRemoteFile, ISystemTree systemTree) {
+		public LinkFromFilterJob(IAdaptable targetRemoteObject, ISystemTree systemTree) {
 			super(FileResources.MESSAGE_EXPANDING_FILTER);
 			
-			_targetRemoteFile = targetRemoteFile;
-			_subSystem = _targetRemoteFile.getParentRemoteFileSubSystem();
+			_targetRemoteObj = targetRemoteObject;
+			_subSystem = getSubSystem(_targetRemoteObj);
 			_systemTree = systemTree;
+		}
+		
+		private ISystemViewElementAdapter getAdapter(IAdaptable adaptable)
+		{
+			return (ISystemViewElementAdapter)adaptable.getAdapter(ISystemViewElementAdapter.class);
+		}
+		
+		private ISubSystem getSubSystem(IAdaptable adaptable)
+		{
+			ISystemViewElementAdapter adapter = getAdapter(adaptable);
+			return adapter.getSubSystem(adaptable);
 		}
 		
 		public IStatus run(IProgressMonitor monitor){
@@ -193,16 +218,12 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 					// the object is nowhere to be found!
 					return Status.OK_STATUS;
 				}
-				
-				// get the adapter
-				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)ref).getAdapter(ISystemViewElementAdapter.class);
 
-				
 				// get the context
 				ContextObject contextObject = new ContextObject(ref, _subSystem, ref);
 				
 				// get the children	
-				Object[] children = adapter.getChildren(contextObject, monitor);
+				Object[] children = getAdapter((IAdaptable)ref).getChildren(contextObject, monitor);
 				
 				if (monitor.isCanceled()){
 					return Status.CANCEL_STATUS;
@@ -210,16 +231,17 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 				
 				// put these items in the tree and look for remoteFile
 				// if we can't find the remote file under this filter, the ShowChildrenInTree will recurse
-				Display.getDefault().asyncExec(new ShowChildrenInTree(ref, children, ref, _systemTree, _targetRemoteFile));
+				Display.getDefault().asyncExec(new ShowChildrenInTree(ref, children, ref, _systemTree, _targetRemoteObj));
 			}
-			catch (Exception e){				
+			catch (Exception e){	
+				e.printStackTrace();
 			}
 			return Status.OK_STATUS;
 		}		
 		
 		private ISystemFilterReference findMatchingFilterReference()
 		{
-			String remoteObjectName = _targetRemoteFile.getAbsolutePath();
+			String remoteObjectName = getAbsolutePath(_targetRemoteObj);
 	    	ISystemFilterPoolReferenceManager refmgr = _subSystem.getFilterPoolReferenceManager();
 	    	if (refmgr != null){
 			    ISystemFilterReference[] refs = refmgr.getSystemFilterReferences(_subSystem);
@@ -232,6 +254,11 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 			    }
 	    	}
 	    	return null;
+		}
+		
+		private String getAbsolutePath(IAdaptable adaptable){
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)adaptable.getAdapter(ISystemViewElementAdapter.class);
+			return adapter.getAbsoluteName(adaptable);
 		}
 		
 		private boolean doesFilterEncompass(ISystemFilter filter, String remoteObjectAbsoluteName)
@@ -247,10 +274,12 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	    	  	 {
 	    	  		 // my home filter - will encompass iff remoteObjectAbsoluteName is within the home dir	    	  		 	    	  		
 	    	  		 try
-	    	  		 {	    	  			
-	    	  			 IRemoteFile homeDir = _subSystem.getRemoteFileObject(".", new NullProgressMonitor());
-	    	  			 String homePath = homeDir.getAbsolutePath();
-	    	  			 would = remoteObjectAbsoluteName.startsWith(homePath);
+	    	  		 {	
+	    	  			 IAdaptable homeObj = (IAdaptable)_subSystem.getObjectWithAbsoluteName(".", new NullProgressMonitor());
+	    	  			 if (homeObj != null){
+	    	  				 String homePath = getAbsolutePath(homeObj);
+	    	  				 would = remoteObjectAbsoluteName.startsWith(homePath);
+	    	  			 }
 	    	  		 }
 	    	  		 catch (Exception e){	    	  			 
 	    	  		 }
@@ -264,37 +293,42 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 		
 		private boolean doesFilterStringEncompass(String filterString, String remoteObjectAbsoluteName)
 		{
-			RemoteFileFilterString rffs = new RemoteFileFilterString(_subSystem.getParentRemoteFileSubSystemConfiguration(), filterString);
-			// ok, this is a tweak: if the absolute name has " -folder" at the end, that means it is a folder...
-			if (remoteObjectAbsoluteName.endsWith(" -folder")) //$NON-NLS-1$
-			{
-				if (!rffs.getShowSubDirs())
+			if (_subSystem instanceof IRemoteFileSubSystem){
+				RemoteFileFilterString rffs = new RemoteFileFilterString(((IRemoteFileSubSystem)_subSystem).getParentRemoteFileSubSystemConfiguration(), filterString);
+				// ok, this is a tweak: if the absolute name has " -folder" at the end, that means it is a folder...
+				if (remoteObjectAbsoluteName.endsWith(" -folder")) //$NON-NLS-1$
+				{
+					if (!rffs.getShowSubDirs())
+						return false;
+					remoteObjectAbsoluteName = remoteObjectAbsoluteName.substring(0, remoteObjectAbsoluteName.indexOf(" -folder")); //$NON-NLS-1$
+				}
+				// problem 1: we don't know if the given remote object name represents a file or folder. We have to assume a file,
+				//  since we don't support filtering by folder names.
+				if (!rffs.getShowFiles())
 					return false;
-				remoteObjectAbsoluteName = remoteObjectAbsoluteName.substring(0, remoteObjectAbsoluteName.indexOf(" -folder")); //$NON-NLS-1$
-			}
-			// problem 1: we don't know if the given remote object name represents a file or folder. We have to assume a file,
-			//  since we don't support filtering by folder names.
-			if (!rffs.getShowFiles())
-				return false;
 
-			// step 1: verify the path of the remote object matches the path of the filter string
-			String container = rffs.getPath();
-			if (container == null)
-				return false;
+				// step 1: verify the path of the remote object matches the path of the filter string
+				String container = rffs.getPath();
+				if (container == null)
+					return false;
 			
-			if (container.equals(".")) //$NON-NLS-1$
-			{
-			    try 
-			    {
-			    container = _subSystem.getRemoteFileObject(container, new NullProgressMonitor()).getAbsolutePath();
-			    }
-			    catch (Exception e)
-			    {		        
-			    }
-			}
+				if (container.equals(".")) //$NON-NLS-1$
+				{
+					try 
+					{
+						IAdaptable containerObj = (IAdaptable)_subSystem.getObjectWithAbsoluteName(container, new NullProgressMonitor());
+						if (containerObj != null){
+							container = getAbsolutePath(containerObj);
+						}
+					}
+					catch (Exception e)
+					{		        
+					}
+				}
 			
-			if (remoteObjectAbsoluteName.startsWith(container)){
-				return true;
+				if (remoteObjectAbsoluteName.startsWith(container)){
+					return true;
+				}
 			}
 			
 			return false;
@@ -308,11 +342,11 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	 */
 	private class SelectFileJob extends Job
 	{
-		private IRemoteFileSubSystem _subSystem;
+		private ISubSystem _subSystem;
 		private String _path;
 		private ISystemTree _systemTree;
 		
-		public SelectFileJob(IRemoteFileSubSystem subSystem, String path, ISystemTree systemTree) {
+		public SelectFileJob(ISubSystem subSystem, String path, ISystemTree systemTree) {
 			super(FileResources.MESSSAGE_QUERYING_FILE);
 			_subSystem = subSystem;
 			_path = path;
@@ -323,21 +357,21 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 			try
 			{
 				// doing query to get the remote file
-				final IRemoteFile remoteFile = _subSystem.getRemoteFileObject(_path, monitor);
+				final IAdaptable remoteObj = (IAdaptable)_subSystem.getObjectWithAbsoluteName(_path, monitor);
 
 				Display.getDefault().asyncExec(new Runnable()
 				{
 					public void run()
 					{
 						// on main thread, looking for the reference in the tree
-						TreeItem item = (TreeItem)_systemTree.findFirstRemoteItemReference(remoteFile, null);
+						TreeItem item = (TreeItem)_systemTree.findFirstRemoteItemReference(remoteObj, null);
 						if (item != null){
 							_systemTree.getTree().setSelection(item);
 						}
 						else
 						{
 							// no reference in the tree so we will search forward from the filter in a job (avoiding query on the main thread)
-							LinkFromFilterJob job = new LinkFromFilterJob(remoteFile, _systemTree);
+							LinkFromFilterJob job = new LinkFromFilterJob(remoteObj, _systemTree);
 							job.schedule();
 						}
 					}					
@@ -411,12 +445,12 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 				IFile file = fileInput.getFile();
 				SystemIFileProperties properties = new SystemIFileProperties(file);
 				Object rmtEditable = properties.getRemoteFileObject();
-				IRemoteFile remoteObj = null;
-				IRemoteFileSubSystem subSystem = null;
+				IAdaptable remoteObj = null;
+				ISubSystem subSystem = null;
 				if (rmtEditable != null && rmtEditable instanceof ISystemEditableRemoteObject)
 				{
 					ISystemEditableRemoteObject editable = (ISystemEditableRemoteObject) rmtEditable;
-					remoteObj = (IRemoteFile)editable.getRemoteObject();
+					remoteObj = editable.getRemoteObject();
 					
 					TreeItem item = (TreeItem)systemTree.findFirstRemoteItemReference(remoteObj, null);
 					if (item != null){
@@ -424,7 +458,8 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 					}
 					else
 					{
-						subSystem = remoteObj.getParentRemoteFileSubSystem();
+						ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)remoteObj.getAdapter(ISystemViewElementAdapter.class);
+						subSystem = adapter.getSubSystem(remoteObj);
 						
 						// no match, so we will expand from filter
 						// query matching filter in  a job (to avoid main thread)
@@ -439,7 +474,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 					String path = properties.getRemoteFilePath();
 					if (subsystemId != null && path != null)
 					{
-						subSystem = (IRemoteFileSubSystem)RSECorePlugin.getTheSystemRegistry().getSubSystem(subsystemId);
+						subSystem = RSECorePlugin.getTheSystemRegistry().getSubSystem(subsystemId);
 						if (subSystem != null)
 						{
 							// query for file in a job (to avoid main thread)

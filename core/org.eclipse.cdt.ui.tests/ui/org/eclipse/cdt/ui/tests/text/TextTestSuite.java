@@ -70,5 +70,9 @@ public class TextTestSuite extends TestSuite {
 		
 		// compare tests
 		addTest(CStructureCreatorTest.suite());
+		
+		// block comment tests
+		addTest(AddBlockCommentTest.suite());
+		addTest(RemoveBlockCommentTest.suite());
     }
 }

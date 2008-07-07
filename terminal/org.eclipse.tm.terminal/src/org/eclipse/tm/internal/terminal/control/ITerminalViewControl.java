@@ -48,7 +48,14 @@ public interface ITerminalViewControl {
 	void setFont(Font font);
 	void setInvertedColors(boolean invert);
 	Font getFont();
+	/**
+	 * @return the text control
+	 */
 	Control getControl();
+	/**
+	 * @return the root of all controls
+	 */
+	Control getRootControl();
     boolean isDisposed();
     void selectAll();
     void clearTerminal();

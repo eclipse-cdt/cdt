@@ -196,8 +196,10 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	private void setupPanel(Composite wndParent) {
 		setupSettingsTypePanel(wndParent);
-		setupConnTypePanel(wndParent);
-		setupSettingsGroup(wndParent);
+		if(fConnectors.length>0) {
+			setupConnTypePanel(wndParent);
+			setupSettingsGroup(wndParent);
+		}
 	}
 	private void setupSettingsTypePanel(Composite wndParent) {
 		Group wndGroup;
@@ -246,6 +248,8 @@ class TerminalSettingsDlg extends Dialog {
 		fPageBook.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	private void setupListeners() {
+		if(fCtlConnTypeCombo==null)
+			return;
 		fCtlConnTypeCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				selectPage(fCtlConnTypeCombo.getSelectionIndex());
@@ -275,6 +279,9 @@ class TerminalSettingsDlg extends Dialog {
 			boolean enable=false;
 			if(getConnector()!=null)
 				enable=getConnector().getInitializationErrorMessage()==null;
+			// enable the OK button if no connectors are available
+			if(!enable && fConnectors.length==0)
+				enable=true;
 			getButton(IDialogConstants.OK_ID).setEnabled(enable);
 		}
 	}

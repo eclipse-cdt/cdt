@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
+ * Michael Scharf (Wind River) - [172483] switch between connections
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -53,6 +54,7 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 			map.put(ImageConsts.IMAGE_CLCL_SETTINGS, "properties_tsk.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_CLCL_COMMAND_INPUT_FIELD, "command_input_field.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_CLCL_SCROLL_LOCK, "lock_co.gif"); //$NON-NLS-1$
+			map.put(ImageConsts.IMAGE_CLCL_PIN, "pin.gif"); //$NON-NLS-1$
 
 			loadImageRegistry(imageRegistry, ImageConsts.IMAGE_DIR_LOCALTOOL, map);
 
@@ -65,7 +67,9 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 			map.put(ImageConsts.IMAGE_ELCL_SETTINGS, "properties_tsk.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_ELCL_COMMAND_INPUT_FIELD, "command_input_field.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_ELCL_SCROLL_LOCK, "lock_co.gif"); //$NON-NLS-1$
-
+			map.put(ImageConsts.IMAGE_ELCL_PIN, "pin.gif"); //$NON-NLS-1$
+			map.put(ImageConsts.IMAGE_ELCL_REMOVE, "rem_co.gif"); //$NON-NLS-1$
+			
 			loadImageRegistry(imageRegistry, ImageConsts.IMAGE_DIR_ELCL, map);
 
 			map.clear();
@@ -77,10 +81,19 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 			map.put(ImageConsts.IMAGE_DLCL_SETTINGS, "properties_tsk.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_DLCL_COMMAND_INPUT_FIELD, "command_input_field.gif"); //$NON-NLS-1$
 			map.put(ImageConsts.IMAGE_DLCL_SCROLL_LOCK, "lock_co.gif"); //$NON-NLS-1$
+			map.put(ImageConsts.IMAGE_DLCL_PIN, "pin.gif"); //$NON-NLS-1$
+			map.put(ImageConsts.IMAGE_DLCL_REMOVE, "rem_co.gif"); //$NON-NLS-1$
 
 			loadImageRegistry(imageRegistry, ImageConsts.IMAGE_DIR_DLCL, map);
 
 			map.clear();
+
+			map.put(ImageConsts.IMAGE_TERMINAL_VIEW, "terminal_view.gif"); //$NON-NLS-1$
+
+			loadImageRegistry(imageRegistry, ImageConsts.IMAGE_DIR_EVIEW, map);
+
+			map.clear();
+		
 		} catch (MalformedURLException malformedURLException) {
 			malformedURLException.printStackTrace();
 		}

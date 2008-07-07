@@ -14,37 +14,40 @@
  * Michael Scharf (Wind River) - extracted from TerminalConsts
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
+ * Michael Scharf (Wind River) - [172483] added some more icons
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
 public interface ImageConsts
 {
     public final static String  IMAGE_DIR_ROOT                 = "icons/"; //$NON-NLS-1$
-    public final static String  IMAGE_DIR_CTOOL                = "ctool16/";   // basic colors - size 16x16 //$NON-NLS-1$
     public final static String  IMAGE_DIR_LOCALTOOL            = "clcl16/";    // basic colors - size 16x16 //$NON-NLS-1$
     public final static String  IMAGE_DIR_DLCL                 = "dlcl16/";    // disabled - size 16x16 //$NON-NLS-1$
     public final static String  IMAGE_DIR_ELCL                 = "elcl16/";    // enabled - size 16x16 //$NON-NLS-1$
-    public final static String  IMAGE_DIR_OBJECT               = "obj16/";     // basic colors - size 16x16 //$NON-NLS-1$
-    public final static String  IMAGE_DIR_WIZBAN               = "wizban/";    // basic colors - size 16x16 //$NON-NLS-1$
-    public final static String  IMAGE_DIR_OVR                  = "ovr16/";     // basic colors - size 7x8 //$NON-NLS-1$
     public final static String  IMAGE_DIR_VIEW                 = "cview16/";   // views //$NON-NLS-1$
     public final static String  IMAGE_DIR_EVIEW                = "eview16/";   // views //$NON-NLS-1$
 
     public static final String  IMAGE_NEW_TERMINAL             = "TerminalViewNewTerminal"; //$NON-NLS-1$
+    public static final String  IMAGE_TERMINAL_VIEW            = "TerminalView"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_CONNECT             = "ImageClclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_DISCONNECT          = "ImageClclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_SETTINGS            = "ImageClclSettings"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_SCROLL_LOCK         = "ImageClclScrollLock"; //$NON-NLS-1$
+    public static final String  IMAGE_CLCL_PIN         	       = "ImageClclPin"; //$NON-NLS-1$
 
     public static final String  IMAGE_DLCL_CONNECT             = "ImageDlclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_DISCONNECT          = "ImageDlclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_SETTINGS            = "ImageDlclSettings"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_SCROLL_LOCK         = "ImageDlclScrollLock"; //$NON-NLS-1$
+    public static final String  IMAGE_DLCL_PIN         	       = "ImageDlclPin"; //$NON-NLS-1$
+    public static final String  IMAGE_DLCL_REMOVE         	   = "ImageDlclRemove"; //$NON-NLS-1$
 
     public static final String  IMAGE_ELCL_CONNECT             = "ImageElclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_DISCONNECT          = "ImageElclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_SETTINGS            = "ImageElclSettings"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_SCROLL_LOCK         = "ImageElclScrollLock"; //$NON-NLS-1$
+    public static final String  IMAGE_ELCL_PIN         	       = "ImageElclPin"; //$NON-NLS-1$
+    public static final String  IMAGE_ELCL_REMOVE         	   = "ImageElclRemove"; //$NON-NLS-1$
 	public static final String  IMAGE_CLCL_COMMAND_INPUT_FIELD        = "ImageClclCommandInputField";//$NON-NLS-1$
 	public static final String  IMAGE_ELCL_COMMAND_INPUT_FIELD        = "ImageDlclCommandInputField";//$NON-NLS-1$
 	public static final String  IMAGE_DLCL_COMMAND_INPUT_FIELD        = "ImageDlclCommandInputField";//$NON-NLS-1$

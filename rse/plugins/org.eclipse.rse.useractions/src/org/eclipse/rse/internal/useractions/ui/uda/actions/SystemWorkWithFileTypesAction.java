@@ -12,11 +12,13 @@ package org.eclipse.rse.internal.useractions.ui.uda.actions;
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  * Xuan Chen     (IBM) - [225617] [useraction][api] Remove Team view support inside user action.
+ * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
  *******************************************************************************/
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.Activator;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
@@ -74,7 +76,7 @@ public class SystemWorkWithFileTypesAction extends SystemBaseDialogAction {
 	 * @param parent The Shell of the parent UI for this dialog
 	 */
 	public SystemWorkWithFileTypesAction(Shell parent) {
-		super(SystemUDAResources.ACTION_WORKWITH_NAMEDTYPES_LABEL, SystemUDAResources.ACTION_WORKWITH_NAMEDTYPES_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(
+		super(SystemUDAResources.ACTION_WORKWITH_NAMEDTYPES_LABEL, SystemUDAResources.ACTION_WORKWITH_NAMEDTYPES_TOOLTIP, Activator.getDefault().getImageDescriptor(
 				IUserActionsImageIds.WORK_WITH_NAMED_TYPES_1), parent);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);

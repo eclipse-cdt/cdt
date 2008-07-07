@@ -9,11 +9,11 @@
  * IBM Corporation - initial API and implementation
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -23,65 +23,71 @@ import org.eclipse.swt.graphics.Image;
  * to access the images and descriptors.
  */
 public class UserActionsIcon {
+	
 	/**
 	 * A new user defined action.
 	 */
-	public static final UserActionsIcon USERACTION_NEW = new UserActionsIcon("user_action_new_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERACTION_NEW = new UserActionsIcon(IUserActionsImageIds.USERACTION_NEW);
+	
 	/**
 	 * An existing user defined user action.
 	 */
-	public static final UserActionsIcon USERACTION_USR = new UserActionsIcon("user_action_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERACTION_USR = new UserActionsIcon(IUserActionsImageIds.USERACTION_USR);
+	
 	/**
 	 * A predefined user defined action.
 	 */
-	public static final UserActionsIcon USERACTION_IBM = new UserActionsIcon("user_action_ibm_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERACTION_IBM = new UserActionsIcon(IUserActionsImageIds.USERACTION_IBM);
+	
 	/**
 	 * A predefined user defined action that has been modified.
 	 */
-	public static final UserActionsIcon USERACTION_IBMUSR = new UserActionsIcon("user_action_ibm_user_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERACTION_IBMUSR = new UserActionsIcon(IUserActionsImageIds.USERACTION_IBMUSR);
+	
 	/**
 	 * A new user defined type.
 	 */
-	public static final UserActionsIcon USERTYPE_NEW = new UserActionsIcon("user_type_new_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERTYPE_NEW = new UserActionsIcon(IUserActionsImageIds.USERTYPE_NEW);
+	
 	/**
 	 * An existing user defined type.
 	 */
-	public static final UserActionsIcon USERTYPE_USR = new UserActionsIcon("user_type_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERTYPE_USR = new UserActionsIcon(IUserActionsImageIds.USERTYPE_USR);
+	
 	/**
 	 * A predefined user defined type.
 	 */
-	public static final UserActionsIcon USERTYPE_IBM = new UserActionsIcon("user_type_ibm_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERTYPE_IBM = new UserActionsIcon(IUserActionsImageIds.USERTYPE_IBM);
+	
 	/**
 	 * A predefined user defined type that has been modified.
 	 */
-	public static final UserActionsIcon USERTYPE_IBMUSR = new UserActionsIcon("user_type_ibm_user_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon USERTYPE_IBMUSR = new UserActionsIcon(IUserActionsImageIds.USERTYPE_IBMUSR);
+	
 	/**
 	 * A new user defined compile command.
 	 */
-	public static final UserActionsIcon COMPILE_NEW = new UserActionsIcon("compcmd_new_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon COMPILE_NEW = new UserActionsIcon(IUserActionsImageIds.COMPILE_NEW);
+
 	/**
 	 * An existing user defined compile command.
 	 */
-	public static final UserActionsIcon COMPILE_USR = new UserActionsIcon("compcmd_user_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon COMPILE_USR = new UserActionsIcon(IUserActionsImageIds.COMPILE_USR); 
+	
 	/**
 	 * A predefined user defined compile command.
 	 */
-	public static final UserActionsIcon COMPILE_IBM = new UserActionsIcon("compcmd_ibm_obj"); //$NON-NLS-1$
+	public static final UserActionsIcon COMPILE_IBM = new UserActionsIcon(IUserActionsImageIds.COMPILE_IBM); 
+	
 	/**
 	 * A predefined user defined compile command that has been edited.
 	 */
-	public static final UserActionsIcon COMPILE_IBMUSR = new UserActionsIcon("compcmd_ibmuser_obj"); //$NON-NLS-1$	
-	private static final String PREFIX = "icon."; //$NON-NLS-1$
-	private static final String ICON_DIR = "icons/full/obj16/"; //$NON-NLS-1$
-	private static final String ICON_EXT = ".gif"; //$NON-NLS-1$
-	private String name;
-	private String id;
-	private String location;
+	public static final UserActionsIcon COMPILE_IBMUSR = new UserActionsIcon(IUserActionsImageIds.COMPILE_IBMUSR); 
+		
+	private String imageID;
 
-	private UserActionsIcon(String name) {
-		this.name = name;
-		this.id = PREFIX + name;
-		this.location = ICON_DIR + name + ICON_EXT;
+	private UserActionsIcon(String imageID) {
+		this.imageID = imageID;
 	}
 
 	/**
@@ -90,14 +96,7 @@ public class UserActionsIcon {
 	 * @return the image
 	 */
 	public Image getImage() {
-		ImageRegistry registry = Activator.getDefault().getImageRegistry();
-		Image image = registry.get(id);
-		if (image == null) {
-			ImageDescriptor descriptor = getImageDescriptor();
-			image = descriptor.createImage();
-			registry.put(id, image);
-		}
-		return image;
+		return Activator.getDefault().getImage(imageID);	
 	}
 
 	/**
@@ -105,14 +104,7 @@ public class UserActionsIcon {
 	 * @return the image descriptor
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		ImageDescriptor descriptor = Activator.getDefault().getImageDescriptor(location);
-		return descriptor;
+		return Activator.getDefault().getImageDescriptor(imageID);
 	}
 
-	/**
-	 * @return the name of the icon
-	 */
-	public String getName() {
-		return name;
-	}
 }

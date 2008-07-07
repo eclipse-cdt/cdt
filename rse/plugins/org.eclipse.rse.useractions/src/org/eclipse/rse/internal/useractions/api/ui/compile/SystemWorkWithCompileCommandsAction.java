@@ -11,6 +11,7 @@
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  * Xuan Chen        (IBM)    - [225617] [useraction][api] Remove Team view support inside user action.
+ * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.api.ui.compile;
 
@@ -20,6 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.Activator;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.api.files.compile.ISystemCompileManagerAdapter;
 import org.eclipse.rse.internal.useractions.files.compile.UniversalCompileManager;
@@ -57,7 +59,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 	 */
 	public SystemWorkWithCompileCommandsAction(Shell shell, boolean fromCascadingCompileAction) {
 		super(fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWCOMPILE_CMDS_LABEL : SystemUDAResources.ACTION_WORKWITH_COMPILE_CMDS_LABEL,
-				fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWCOMPILE_CMDS_TOOLTIP : SystemUDAResources.ACTION_WORKWITH_COMPILE_CMDS_TOOLTIP, RSEUIPlugin.getDefault()
+				fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWCOMPILE_CMDS_TOOLTIP : SystemUDAResources.ACTION_WORKWITH_COMPILE_CMDS_TOOLTIP, Activator.getDefault()
 						.getImageDescriptor(IUserActionsImageIds.WORK_WITH_COMPILE_COMMANDS_1), shell);
 		allowOnMultipleSelection(false);
 		if (!fromCascadingCompileAction)

@@ -12,6 +12,7 @@ package org.eclipse.rse.internal.useractions.ui.uda.actions;
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  * Xuan Chen     (IBM) - [225617] [useraction][api] Remove Team view support inside user action.
+ * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
  *******************************************************************************/
 //import java.util.Iterator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.Activator;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
@@ -66,7 +68,7 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 	 * @param parent The Shell of the parent UI for this dialog
 	 */
 	public SystemWorkWithUDAsAction(Shell parent) {
-		super(SystemUDAResources.ACTION_WORKWITH_UDAS_LABEL, SystemUDAResources.ACTION_WORKWITH_UDAS_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(
+		super(SystemUDAResources.ACTION_WORKWITH_UDAS_LABEL, SystemUDAResources.ACTION_WORKWITH_UDAS_TOOLTIP, Activator.getDefault().getImageDescriptor(
 				IUserActionsImageIds.WORK_WITH_USER_ACTIONS_1), parent);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);
@@ -81,7 +83,7 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 	 */
 	public SystemWorkWithUDAsAction(Shell parent, boolean fromCascadingCompileAction) {
 		super(fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWUDAS_LABEL : SystemUDAResources.ACTION_WORKWITH_UDAS_LABEL,
-				fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWUDAS_TOOLTIP : SystemUDAResources.ACTION_WORKWITH_UDAS_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(
+				fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWUDAS_TOOLTIP : SystemUDAResources.ACTION_WORKWITH_UDAS_TOOLTIP, Activator.getDefault().getImageDescriptor(
 						IUserActionsImageIds.WORK_WITH_USER_ACTIONS_1), parent);
 		allowOnMultipleSelection(false);
 		if (!fromCascadingCompileAction)

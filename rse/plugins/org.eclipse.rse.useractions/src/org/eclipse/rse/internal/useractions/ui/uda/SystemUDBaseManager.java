@@ -13,6 +13,7 @@
  *                                API to the user actions plugin
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  * Kevin Doyle		(IBM)	 - [222825] NPE when changing profile on Work with User Actions Dialog
+ * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -626,7 +627,7 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 			for (int idx = 0; idx < primedElements.length; idx++) {
 				SystemXMLElementWrapper newElement = primedElements[idx];
 				newElement.setIBM(true);
-				newElement.setUserChanged(true);
+				newElement.setUserChanged(false);
 			}
 		}
 		saveUserData(profile);

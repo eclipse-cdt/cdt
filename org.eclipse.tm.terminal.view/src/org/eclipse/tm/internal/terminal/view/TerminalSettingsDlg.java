@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
+ * Michael Scharf (Wind River) - [196454] Initial connection settings dialog should not be blank
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -181,13 +182,30 @@ class TerminalSettingsDlg extends Dialog {
 	private void initFields() {
 		// Load controls
 		for (int i = 0; i < fConnectors.length; i++) {
-			String name=fConnectors[i].getName();
-			fCtlConnTypeCombo.add(name);
-			if(fSelectedConnector==i) {
-				fCtlConnTypeCombo.select(i);
-				selectPage(i);
-			}
+			fCtlConnTypeCombo.add(fConnectors[i].getName());
 		}
+		int selectedConnector=getInitialConnector();
+		if(selectedConnector>=0) {
+			fCtlConnTypeCombo.select(selectedConnector);
+			selectPage(selectedConnector);
+		}
+	}
+	/**
+	 * @return the connector to show when the dialog opens
+	 */
+	private int getInitialConnector() {
+		// if there is a selection, use it
+		if(fSelectedConnector>=0)
+			return fSelectedConnector;
+		// try the telnet connector, because it is the cheapest
+		for (int i = 0; i < fConnectors.length; i++) {
+			if("org.eclipse.tm.internal.terminal.telnet.TelnetConnector".equals(fConnectors[i].getId())) //$NON-NLS-1$
+				return i;
+		}
+		// if no telnet connector available, use the first one in the list
+		if(fConnectors.length>0)
+			return 0;
+		return -1;
 	}
 	private boolean validateSettings() {
 		if(fSelectedConnector<0)

@@ -8,27 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Gvozdev - http://bugs.eclipse.org/236160
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
- * Action that encloses the editor's current selection with Java block comment terminators
+ * Action that encloses the editor's current selection with C block comment terminators
  * (<code>&#47;&#42;</code> and <code>&#42;&#47;</code>).
  * 
  * @since 3.0
@@ -47,127 +48,149 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		super(bundle, prefix, editor);
 	}
 	
-	/*
-	 * @see org.eclipse.jdt.internal.ui.actions.BlockCommentAction#runInternal(org.eclipse.jface.text.ITextSelection, org.eclipse.jface.text.IDocumentExtension3, org.eclipse.jdt.internal.ui.actions.BlockCommentAction.Edit.EditFactory)
-	 */
 	@Override
-	protected void runInternal(ITextSelection selection, IDocumentExtension3 docExtension, Edit.EditFactory factory) throws BadLocationException, BadPartitioningException {
-		int selectionOffset= selection.getOffset();
-		int selectionEndOffset= selectionOffset + selection.getLength();
-		List<Edit> edits= new LinkedList<Edit>();
-		ITypedRegion partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, selectionOffset, false);
-
-		handleFirstPartition(partition, edits, factory, selectionOffset);
-
-		while (partition.getOffset() + partition.getLength() < selectionEndOffset) {
-			partition= handleInteriorPartition(partition, edits, factory, docExtension);
-		}
+	protected void runInternal(ITextSelection selection,
+			IDocumentExtension3 docExtension, Edit.EditFactory factory)
+			throws BadLocationException, BadPartitioningException {
 		
-		handleLastPartition(partition, edits, factory, selectionEndOffset);
+		if ( !(docExtension instanceof IDocument) ) return;
+		
+		List<Edit> edits= new LinkedList<Edit>();
+
+		ITypedRegion firstPartition = docExtension.getPartition(ICPartitions.C_PARTITIONING,
+				selection.getOffset(), false);
+		ITypedRegion lastPartition = docExtension.getPartition(ICPartitions.C_PARTITIONING,
+				selection.getOffset() + selection.getLength() - 1, false);
+		
+		int commentAreaStart = selection.getOffset();
+		int commentAreaEnd = selection.getOffset()+selection.getLength();
+		// Include special partitions fully in the comment area
+		if (isSpecialPartition(firstPartition.getType())) {
+			commentAreaStart = firstPartition.getOffset();
+		}
+		if (isSpecialPartition(lastPartition.getType())) {
+			commentAreaEnd = lastPartition.getOffset() + lastPartition.getLength();
+		}
+		Region estimatedCommentArea = new Region(commentAreaStart,commentAreaEnd-commentAreaStart);
+
+		
+		Region commentArea = handleEnclosingPartitions(estimatedCommentArea, lastPartition,
+				(IDocument)docExtension, factory, edits);
+
+		handleInteriorPartition(commentArea, firstPartition, docExtension, factory, edits);
 		
 		executeEdits(edits);
 	}
 
 	/**
-	 * Handle the first partition of the selected text.
+	 * Add enclosing comment tags for the whole area to be commented
 	 * 
-	 * @param partition
-	 * @param edits
-	 * @param factory
-	 * @param offset
+	 * @param commentArea initial comment area which can be adjusted
+	 * @param lastPartition last partition
+	 * @param doc document
+	 * @param factory Edit factory
+	 * @param edits List of edits to update the document
+	 * @return new possibly adjusted comment area
+	 * @throws BadLocationException
 	 */
-	private void handleFirstPartition(ITypedRegion partition, List<Edit> edits, Edit.EditFactory factory, int offset) throws BadLocationException {
+	private Region handleEnclosingPartitions(Region commentArea,
+			ITypedRegion lastPartition, IDocument doc, Edit.EditFactory factory,
+			List<Edit> edits) throws BadLocationException {
 		
-		int partOffset= partition.getOffset();
-		String partType= partition.getType();
+		int commentAreaStart = commentArea.getOffset();
+		int commentAreaEnd = commentArea.getOffset() + commentArea.getLength();
 		
-		Assert.isTrue(partOffset <= offset, "illegal partition"); //$NON-NLS-1$
+		String commentStartTag = getCommentStart(); // "/*"
+		String commentEndTag   = getCommentEnd();   // "*/"
 		
-		// first partition: mark start of comment
-		if (partType == IDocument.DEFAULT_CONTENT_TYPE) {
-			// Java code: right where selection starts
-			edits.add(factory.createEdit(offset, 0, getCommentStart()));
-		} else if (isSpecialPartition(partType)) {
-			// special types: include the entire partition
-			edits.add(factory.createEdit(partOffset, 0, getCommentStart()));
-		}	// javadoc: no mark, will only start after comment
+		String startLineEOL = doc.getLineDelimiter(doc.getLineOfOffset(commentAreaStart));
+		if (startLineEOL==null) startLineEOL=""; //$NON-NLS-1$
+		String endLineEOL = doc.getLineDelimiter(doc.getLineOfOffset(commentAreaEnd-1));
+		if (endLineEOL==null) endLineEOL=""; //$NON-NLS-1$
 		
+		boolean isLeftEol = commentAreaStart<startLineEOL.length()
+			|| doc.get(commentAreaStart-startLineEOL.length(),startLineEOL.length()).equals(startLineEOL);
+		boolean isRightEol = doc.get(commentAreaEnd-endLineEOL.length(),endLineEOL.length()).equals(endLineEOL);
+		
+		if (isLeftEol && isRightEol) {
+			// Block of full lines found
+			int areaStartLine = doc.getLineOfOffset(commentAreaStart+startLineEOL.length());
+			int areaEndLine = doc.getLineOfOffset(commentAreaEnd-endLineEOL.length());
+			if (areaStartLine!=areaEndLine) {
+				// If multiple full lines arrange inserting comment tags on their own lines
+				commentStartTag = getCommentStart()+startLineEOL;
+				commentEndTag   = getCommentEnd()+endLineEOL;
+			} else {
+				// If one full line insert end comment tag on the same line (before the EOL)
+				commentAreaEnd = commentAreaEnd-endLineEOL.length();
+			}
+		} else {
+			if (lastPartition.getType() == ICPartitions.C_SINGLE_LINE_COMMENT
+					|| lastPartition.getType() == ICPartitions.C_SINGLE_LINE_DOC_COMMENT) {
+				// C++ comments "//" partition ends with EOL, insert end comment tag before it
+				// on the same line, so we get something like /*// text*/
+				commentAreaEnd = commentAreaEnd-endLineEOL.length();
+			}
+		}
+		
+		edits.add(factory.createEdit(commentAreaStart, 0, commentStartTag));
+		edits.add(factory.createEdit(commentAreaEnd, 0, commentEndTag));
+		
+		return new Region(commentAreaStart,commentAreaEnd-commentAreaStart);
 	}
 
 	/**
-	 * Handles the end of the given partition and the start of the next partition, which is returned.
+	 * Make all inside partitions join in one comment, in particular remove
+	 * all enclosing comment tokens of the inside partitions.
 	 * 
-	 * @param partition
-	 * @param edits
-	 * @param factory
-	 * @param docExtension
+	 * @param commentArea comment area region
+	 * @param partition first partition
+	 * @param docExtension document
+	 * @param factory EditFactory
+	 * @param List of edits to update the document
 	 * @throws BadLocationException
 	 * @throws BadPartitioningException
-	 * @return the region
 	 */
-	private ITypedRegion handleInteriorPartition(ITypedRegion partition, List<Edit> edits, Edit.EditFactory factory, IDocumentExtension3 docExtension) throws BadPartitioningException, BadLocationException {
-
-		// end of previous partition
-		String partType= partition.getType();
-		int partEndOffset= partition.getOffset() + partition.getLength();
-		int tokenLength= getCommentStart().length();
+	private void handleInteriorPartition(IRegion commentArea,
+			ITypedRegion partition, IDocumentExtension3 docExtension,
+			Edit.EditFactory factory, List<Edit> edits)
+			throws BadLocationException, BadPartitioningException {
 		
-		if (partType == ICPartitions.C_MULTI_LINE_COMMENT) {	
-			// already in a comment - remove ending mark
-			edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$	
+		int commentAreaEnd = commentArea.getOffset() + commentArea.getLength();
+		int prevPartitionEnd = -1;
+		int partitionEnd = partition.getOffset()+partition.getLength();
+		
+		final int startCommentTokenLength = getCommentStart().length();
+		final int endCommentTokenLength = getCommentEnd().length();
+		
+		while (partitionEnd<=commentAreaEnd) {
+			if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT
+					|| partition.getType() == ICPartitions.C_MULTI_LINE_DOC_COMMENT) {	
+				// already in a comment - remove start/end tokens
+				edits.add(factory.createEdit(partition.getOffset(), startCommentTokenLength, "")); //$NON-NLS-1$
+				edits.add(factory.createEdit(partitionEnd - endCommentTokenLength, endCommentTokenLength, "")); //$NON-NLS-1$	
+			}
+			// advance to next partition
+			prevPartitionEnd = partitionEnd;
+			partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, partitionEnd, false);
+			partitionEnd = partition.getOffset() + partition.getLength();
+			
+			// break the loop if we get stuck and no advance was made
+			if (partitionEnd<=prevPartitionEnd) break;
 		}
-
-		// advance to next partition
-		partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, partEndOffset, false);
-		partType= partition.getType();
-
-		// start of next partition		
-		if (partType == ICPartitions.C_MULTI_LINE_COMMENT) {
-			// already in a comment - remove startToken
-			edits.add(factory.createEdit(partition.getOffset(), getCommentStart().length(), "")); //$NON-NLS-1$
-		}
-		return partition;
 	}
 
 	/**
-	 * Handles the end of the last partition.
-	 * 
-	 * @param partition
-	 * @param edits
-	 * @param factory
-	 * @param endOffset
-	 */
-	private void handleLastPartition(ITypedRegion partition, List<Edit> edits, Edit.EditFactory factory, int endOffset) throws BadLocationException {
-
-		String partType= partition.getType();
-		
-		if (partType == IDocument.DEFAULT_CONTENT_TYPE) {
-			// normal java: end comment where selection ends
-			edits.add(factory.createEdit(endOffset, 0, getCommentEnd()));
-		} else if (isSpecialPartition(partType)) {
-			// special types: consume entire partition
-			edits.add(factory.createEdit(partition.getOffset() + partition.getLength(), 0, getCommentEnd()));
-		}
-		
-	}
-
-	/**
-	 * Returns whether <code>partType</code> is special, i.e. a Java <code>String</code>,
-	 * <code>Character</code>, or <code>Line End Comment</code> partition.
+	 * Returns whether <code>partType</code> is special, i.e. a <code>String</code>,
+	 * <code>Character</code>, or <code>Comment</code> partition.
 	 * 
 	 * @param partType the partition type to check
 	 * @return <code>true</code> if <code>partType</code> is special, <code>false</code> otherwise
 	 */
 	private boolean isSpecialPartition(String partType) {
-		return partType == ICPartitions.C_CHARACTER
-				|| partType == ICPartitions.C_STRING
-				|| partType == ICPartitions.C_SINGLE_LINE_COMMENT
-				|| partType == ICPartitions.C_PREPROCESSOR;
+		return partType != IDocument.DEFAULT_CONTENT_TYPE;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.actions.BlockCommentAction#validSelection(org.eclipse.jface.text.ITextSelection)
-	 */
 	@Override
 	protected boolean isValidSelection(ITextSelection selection) {
 		return selection != null && !selection.isEmpty() && selection.getLength() > 0;

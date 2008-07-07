@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Gvozdev - http://bugs.eclipse.org/236160
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.LinkedList;
@@ -17,7 +17,9 @@ import java.util.ResourceBundle;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -25,7 +27,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
- * Action that removes the enclosing comment marks from a Java block comment.
+ * Action that removes the enclosing comment marks from a C block comment.
  * 
  * @since 3.0
  */
@@ -44,44 +46,70 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 		super(bundle, prefix, editor);
 	}
 	
-	/*
-	 * @see org.eclipse.jdt.internal.ui.actions.AddBlockCommentAction#runInternal(org.eclipse.jface.text.ITextSelection, org.eclipse.jface.text.IDocumentExtension3, org.eclipse.jdt.internal.ui.actions.AddBlockCommentAction.Edit.EditFactory)
-	 */
 	@Override
 	protected void runInternal(ITextSelection selection, IDocumentExtension3 docExtension, Edit.EditFactory factory) throws BadPartitioningException, BadLocationException {
+		if ( !(docExtension instanceof IDocument) ) return;
+
 		List<Edit> edits= new LinkedList<Edit>();
-		int tokenLength= getCommentStart().length();
 		
-		int offset= selection.getOffset();
-		int endOffset= offset + selection.getLength();
+		int partitionStart = -1;
+		int partitionEnd   = selection.getOffset();
 
-		ITypedRegion partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, offset, false);
-		int partOffset= partition.getOffset();
-		int partEndOffset= partOffset + partition.getLength();
-		
-		while (partEndOffset < endOffset) {
-			
-			if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT) {
-				edits.add(factory.createEdit(partOffset, tokenLength, "")); //$NON-NLS-1$
-				edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$
+		do {
+			ITypedRegion partition = docExtension.getPartition(ICPartitions.C_PARTITIONING, partitionEnd, false);
+			if (partition.getOffset() <= partitionStart) {
+				// If we did not advance break the loop
+				break;
 			}
-			
-			partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, partEndOffset, false);
-			partOffset= partition.getOffset();
-			partEndOffset= partOffset + partition.getLength();
-		}
-
-		if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT) {
-			edits.add(factory.createEdit(partOffset, tokenLength, "")); //$NON-NLS-1$
-			edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$
-		}
+			partitionStart = partition.getOffset();
+			partitionEnd   = partitionStart + partition.getLength();
+			if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT
+					|| partition.getType() == ICPartitions.C_MULTI_LINE_DOC_COMMENT) {
+				uncommentPartition((IDocument)docExtension, factory, edits, partitionStart, partitionEnd);
+			}
+		} while (partitionEnd < selection.getOffset()+selection.getLength());
 
 		executeEdits(edits);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.actions.AddBlockCommentAction#validSelection(org.eclipse.jface.text.ITextSelection)
-	 */
+	private void uncommentPartition(IDocument doc, Edit.EditFactory factory,
+			List<Edit> edits, int partitionStart, int partitionEnd)
+			throws BadLocationException {
+		
+		int startCommentTokenLength = getCommentStart().length();
+		int endCommentTokenLength = getCommentEnd().length();
+
+		// Remove whole line (with EOL) if it contains start or end comment tag
+		// and nothing else
+		if (partitionStart >= 0) {
+			IRegion lineRegion = doc.getLineInformationOfOffset(partitionStart);
+			String lineContent = doc.get(lineRegion.getOffset(), lineRegion.getLength());
+			// start comment tag '/*'
+			if (lineContent.equals(getCommentStart())) {
+				String eol = doc.getLineDelimiter(doc.getLineOfOffset(partitionStart));
+				if (eol!=null) {
+					startCommentTokenLength = startCommentTokenLength+eol.length();
+				}
+			}
+		}
+
+		int commentContentEnd = partitionEnd - endCommentTokenLength;
+		if (partitionEnd < doc.getLength()) {
+			IRegion lineRegion = doc.getLineInformationOfOffset(partitionEnd);
+			String lineContent = doc.get(lineRegion.getOffset(), lineRegion.getLength());
+			// end comment tag '*/'
+			if (lineContent.equals(getCommentEnd())) {
+				String eol = doc.getLineDelimiter(doc.getLineOfOffset(partitionEnd));
+				if (eol!=null) {
+					endCommentTokenLength = endCommentTokenLength + eol.length();
+				}
+			}
+		}
+
+		edits.add(factory.createEdit(partitionStart, startCommentTokenLength, "")); //$NON-NLS-1$
+		edits.add(factory.createEdit(commentContentEnd, endCommentTokenLength, "")); //$NON-NLS-1$
+	}
+
 	@Override
 	protected boolean isValidSelection(ITextSelection selection) {
 		return selection != null && !selection.isEmpty() && selection.getLength() > 0;
